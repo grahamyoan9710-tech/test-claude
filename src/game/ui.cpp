@@ -53,8 +53,12 @@ void slantedOutline(Rectangle r, float s, float t, Color c) {
 Rectangle grow(Rectangle r, float px) { return {r.x - px, r.y - px, r.width + 2 * px, r.height + 2 * px}; }
 
 void glow(Vector2 c, float radius, Color col, int layers) {
-  float a = col.a / 255.0f / layers * 1.6f;
-  for (int k = 0; k < layers; ++k) DrawCircleV(c, radius * (1.0f - float(k) / layers), withAlpha(col, a));
+  // Two radial gradients instead of many stacked circles: same soft look, a fraction of the fill cost.
+  (void)layers;
+  const float a = col.a / 255.0f;
+  const Color clear = withAlpha(col, 0.0f);
+  DrawCircleGradient(int(c.x), int(c.y), radius, withAlpha(col, a * 0.55f), clear);
+  DrawCircleGradient(int(c.x), int(c.y), radius * 0.5f, withAlpha(col, a * 0.45f), clear);
 }
 
 void sunburst(Vector2 c, float radius, int rays, float rot, Color col) {
@@ -113,8 +117,14 @@ void logoText(const char* text, float x, float y, float size, Color light, Color
               Color depth, int layers) {
   const FontKind T = FontKind::Title;
   const float th = std::max(2.0f, size * 0.055f);
-  for (int i = layers * 2; i >= 1; --i)
-    drawTextOutlined(text, x + i * size * 0.005f, y + i * size * 0.007f, size, depth, depth, th, T);
+  // Extrusion: each depth layer is the outlined silhouette (8 offset copies cover the inside too).
+  for (int i = layers; i >= 1; --i) {
+    const float ox = x + i * size * 0.010f, oy = y + i * size * 0.014f;
+    for (int d = 0; d < 8; ++d) {
+      const float a = d * kPi / 4.0f;
+      drawText(text, ox + std::cos(a) * th, oy + std::sin(a) * th, size, depth, T);
+    }
+  }
   drawTextOutlined(text, x, y, size, dark, outline, th, T);
   const float w = logoWidth(text, size);
   beginClip({x - th, y - size, w + th * 2, size * 1.62f});
@@ -123,6 +133,90 @@ void logoText(const char* text, float x, float y, float size, Color light, Color
   beginClip({x - th, y - size, w + th * 2, size * 1.40f});
   drawText(text, x, y, size, light, T);
   endClip();
+}
+
+// ---- Baked sprites ------------------------------------------------------------------
+namespace {
+struct Baked {
+  RenderTexture2D rt{};
+  float size = 0, pad = 0, w = 0, h = 0;  // virtual units
+};
+Baked g_sprites[int(Sprite::Count)];
+constexpr float kBakeScale = 2.0f;
+
+struct SpriteSpec {
+  const char* text;
+  float size;
+  Color light, mid, dark, outline, depth;
+  int layers;
+};
+const SpriteSpec kSpecs[int(Sprite::Count)] = {
+    {"CLASH BROS.", 150, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9},
+    {"COMBAT", 92, {255, 255, 255, 255}, {255, 240, 220, 255}, {255, 214, 190, 255}, kInk, {90, 10, 30, 255}, 5},
+    {"VICTOIRE !", 92, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 7},
+    {"PAUSE", 96, {255, 255, 255, 255}, {235, 238, 255, 255}, {200, 206, 240, 255}, kInk, {40, 30, 80, 255}, 6},
+    {"GAME !", 260, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9},
+    {"3", 240, {255, 170, 160, 255}, {255, 90, 80, 255}, {200, 40, 50, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
+    {"2", 240, {255, 240, 170, 255}, {255, 200, 60, 255}, {230, 140, 30, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
+    {"1", 240, {190, 255, 190, 255}, {110, 230, 120, 255}, {40, 160, 70, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
+    {"GO !", 230, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
+    {"PRÊTS ?", 96, {255, 255, 255, 255}, {240, 236, 255, 255}, {210, 200, 240, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
+    {"MATCH NUL !", 80, WHITE, {230, 230, 240, 255}, {200, 200, 220, 255}, kInk, {40, 30, 60, 255}, 5},
+};
+}  // namespace
+
+void frameBlend() {
+  rlSetBlendFactorsSeparate(RL_SRC_ALPHA, RL_ONE_MINUS_SRC_ALPHA, RL_ONE, RL_ONE_MINUS_SRC_ALPHA, RL_FUNC_ADD,
+                            RL_FUNC_ADD);
+  BeginBlendMode(BLEND_CUSTOM_SEPARATE);
+}
+
+void bakeSprites() {
+  const float saved = g_renderScale;
+  g_renderScale = kBakeScale;  // beginClip() inside logoText uses it
+  for (int i = 0; i < int(Sprite::Count); ++i) {
+    const SpriteSpec& sp = kSpecs[i];
+    Baked& b = g_sprites[i];
+    b.size = sp.size;
+    b.pad = sp.size * 0.3f;
+    b.w = logoWidth(sp.text, sp.size) + b.pad * 2;
+    b.h = sp.size * 1.3f + b.pad * 2;
+    b.rt = LoadRenderTexture(int(b.w * kBakeScale), int(b.h * kBakeScale));
+    SetTextureFilter(b.rt.texture, TEXTURE_FILTER_BILINEAR);
+    BeginTextureMode(b.rt);
+    ClearBackground(BLANK);
+    rlScalef(kBakeScale, kBakeScale, 1.0f);
+    frameBlend();  // "over" for alpha too: the texture ends up premultiplied
+    logoText(sp.text, b.pad, b.pad, sp.size, sp.light, sp.mid, sp.dark, sp.outline, sp.depth, sp.layers);
+    EndBlendMode();
+    EndTextureMode();
+    GenTextureMipmaps(&b.rt.texture);
+    SetTextureFilter(b.rt.texture, TEXTURE_FILTER_TRILINEAR);
+  }
+  g_renderScale = saved;
+}
+
+void unloadSprites() {
+  for (auto& b : g_sprites)
+    if (b.rt.id != 0) UnloadRenderTexture(b.rt);
+}
+
+float spriteWidth(Sprite s, float size) {
+  const Baked& b = g_sprites[int(s)];
+  return b.size > 0 ? (b.w - b.pad * 2) * size / b.size : 0.0f;
+}
+
+void drawSprite(Sprite s, float x, float y, float size, float alpha) {
+  const Baked& b = g_sprites[int(s)];
+  if (b.rt.id == 0) return;
+  const float k = size / b.size;
+  const Rectangle src{0, 0, float(b.rt.texture.width), -float(b.rt.texture.height)};
+  const Rectangle dst{x - b.pad * k, y - b.pad * k, b.w * k, b.h * k};
+  const unsigned char a = (unsigned char)(clampf(alpha, 0.0f, 1.0f) * 255.0f);
+  BeginBlendMode(BLEND_ALPHA_PREMULTIPLY);
+  DrawTexturePro(b.rt.texture, src, dst, {0, 0}, 0.0f, {a, a, a, a});
+  EndBlendMode();
+  frameBlend();
 }
 
 void header(const char* title, const char* subtitle, Color accent, float time) {
@@ -231,11 +325,21 @@ void selector(Rectangle r, const char* value, bool focused, float time) {
 // ---- Input helpers ----------------------------------------------------------------
 bool hovered(Rectangle r) { return CheckCollisionPointRec(GetMousePosition(), r); }
 bool clicked(Rectangle r) { return hovered(r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT); }
-bool mouseMoved() {
-  if (GetTime() < 0.5) return false;  // ignore the pointer "jump" when the window opens
-  Vector2 d = GetMouseDelta();
-  return d.x != 0.0f || d.y != 0.0f;
+namespace {
+Vector2 g_prevMouse{-1.0f, -1.0f};
+bool g_mouseMoved = false;
+int g_uiFrames = 0;
+}  // namespace
+
+void newFrame() {
+  Vector2 m = GetMousePosition();
+  // The first frames see the pointer "appear" somewhere: that is not a real movement.
+  g_mouseMoved = g_uiFrames > 3 && (m.x != g_prevMouse.x || m.y != g_prevMouse.y);
+  g_prevMouse = m;
+  ++g_uiFrames;
 }
+
+bool mouseMoved() { return g_mouseMoved; }
 
 // ---- Transition ---------------------------------------------------------------------
 void wipe(float t) {

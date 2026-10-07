@@ -234,10 +234,7 @@ void MatchScreen::drawPause() {
   const auto items = pauseItems();
   const int n = int(items.size());
   Rectangle first = pauseItemRect(0, n);
-  const char* title = "PAUSE";
-  float size = 96;
-  ui::logoText(title, kScreenW * 0.5f - ui::logoWidth(title, size) * 0.5f, first.y - 128, size, {255, 255, 255, 255},
-               {235, 238, 255, 255}, {200, 206, 240, 255}, ui::kInk, {40, 30, 80, 255}, 6);
+  ui::drawSprite(ui::Sprite::Pause, kScreenW * 0.5f - ui::spriteWidth(ui::Sprite::Pause, 96) * 0.5f, first.y - 128, 96);
   for (int i = 0; i < n; ++i) {
     Rectangle r = pauseItemRect(i, n);
     bool sel = i == pauseSel_;
@@ -293,10 +290,8 @@ void MatchScreen::draw() {
   if (m_.finished) {
     float k = std::min(1.0f, endTimer_ / 14.0f);
     float size = lerpf(260.0f, 170.0f, k);
-    const char* txt = "GAME !";
-    float w = ui::logoWidth(txt, size);
-    ui::logoText(txt, kScreenW * 0.5f - w * 0.5f, kScreenH * 0.32f - size * 0.5f, size, {255, 248, 190, 255},
-                 {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9);
+    float w = ui::spriteWidth(ui::Sprite::Game, size);
+    ui::drawSprite(ui::Sprite::Game, kScreenW * 0.5f - w * 0.5f, kScreenH * 0.32f - size * 0.5f, size);
   }
   if (debug_) drawTextOutlined("F1 : zones de coup", 10, kScreenH - 150, 16, WHITE);
   if (paused_) drawPause();

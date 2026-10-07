@@ -3,21 +3,29 @@
 Un jeu de combat de plateforme en C++ inspiré de **Super Smash Bros.** : on ne vide pas une barre de vie,
 on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l'**éjecter hors de l'écran**.
 
-![Combat](docs/combat.png)
+![Écran titre](docs/titre.jpg)
 
-Tout est procédural : les personnages sont dessinés et animés par le code (squelette + cinématique inverse),
-les sons et la musique sont synthétisés au lancement. Aucun fichier de ressources.
+Les personnages sont dessinés et animés par le code (squelette + cinématique inverse), les sons et la
+musique sont synthétisés au lancement. Les seules ressources sont deux polices libres, intégrées
+directement dans l'exécutable : il n'y a aucun fichier à installer à côté.
 
-| Écran titre | Sélection des combattants |
+| Menu principal | Sélection des combattants |
 |---|---|
-| ![Titre](docs/titre.png) | ![Sélection](docs/selection.png) |
-| **Destination Finale** | **Attaque finale** |
-| ![Combat 2](docs/combat2.png) | ![Attaque finale](docs/attaque_finale.png) |
-| **Résultats** | |
-| ![Résultats](docs/resultats.png) | |
+| ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
+| **Choix de l'arène** | **Combat** |
+| ![Arène](docs/arene.jpg) | ![Combat](docs/combat.jpg) |
+| **Attaque finale SUPER CLASH** | **Entraînement** |
+| ![Attaque finale](docs/attaque_finale.jpg) | ![Entraînement](docs/entrainement.jpg) |
+| **Paramètres** | **Résultats** |
+| ![Paramètres](docs/parametres.jpg) | ![Résultats](docs/resultats.jpg) |
 
 ## Le jeu
 
+- **Combat** : de 2 à 4 combattants, humains (2 sur le clavier + manettes) et/ou **ordinateurs de
+  niveau 1 à 9**, de 1 à 5 vies.
+- **Entraînement** : vies infinies face à un **mannequin** (immobile, qui saute, qui se protège, ou
+  piloté par l'ordinateur), réinitialisation des positions, **compteur de combos** et dégâts du combo,
+  affichage des zones de coup. Tout se règle dans le menu pause.
 - **6 combattants** avec chacun ses stats (poids, vitesse, gravité, sauts) et ses 4 attaques spéciales :
   | | Style | Spéciales |
   |---|---|---|
@@ -35,28 +43,45 @@ les sons et la musique sont synthétisés au lancement. Aucun fichier de ressour
   et mobiles.
 - **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
   de l'arène. Frappez-la jusqu'à la briser : votre combattant s'illumine et sa prochaine **spéciale**
-  déclenche l'attaque finale **SUPER CLASH** (cinématique, ondes de choc dévastatrices). Désactivable
-  dans le menu (« ORBE CLASH : NON »).
+  déclenche l'attaque finale **SUPER CLASH** (cinématique, ondes de choc dévastatrices).
 - **3 arènes** : Destination Finale, Champ de Bataille, Îles Célestes (plateforme mobile).
-- **1 à 4 joueurs** : humains (2 sur le clavier + manettes) et/ou **ordinateurs de niveau 1 à 9**.
 - Effets : étincelles, traînées d'éjection, rayon de K.O., tremblement d'écran, bulles quand un
-  combattant est hors-champ, caméra dynamique, compte à rebours, « GAME ! », écran de résultats.
+  combattant est hors-champ, caméra dynamique, compte à rebours, « GAME ! », écran de résultats,
+  transitions animées entre les écrans.
+
+## Paramètres
+
+Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquement dans le fichier
+`super_clash.cfg`, à côté de l'exécutable :
+
+- **Audio** : volume général, musique, effets sonores (et un bouton pour tester).
+- **Affichage** : plein écran, qualité graphique (*Haute* = contours lissés, rendu en double
+  résolution ; *Normale* pour les petites machines), secousses de l'écran, noms au-dessus des joueurs,
+  compteur d'images (FPS), zones de coup.
+- **Jeu** : nombre de vies, Orbe Clash, niveau des ordinateurs par défaut, tout réinitialiser.
+- **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
+  est échangée), avec un rappel des commandes manette.
+
+Si l'ordinateur n'arrive pas à suivre en qualité *Haute*, le jeu passe tout seul en *Normale*.
 
 ## Contrôles
+
+Touches par défaut (modifiables dans **Paramètres → Commandes**) :
 
 | Action | Clavier 1 | Clavier 2 | Manette |
 |---|---|---|---|
 | Se déplacer / viser | `W` `A` `S` `D` | Flèches | Stick gauche / croix |
-| Sauter | `Espace` | `Pavé 0` ou `,` | `Y` / `X` |
-| Attaque | `J` | `Pavé 1` ou `.` | `A` |
-| Spéciale | `K` | `Pavé 2` ou `/` | `B` |
-| Bouclier / esquive | `L` | `Pavé 3` ou `Maj droite` | `RB` / gâchettes |
-| Saisie | `I` (ou bouclier + attaque) | `Pavé 5` ou `Ctrl droit` | `LB` |
-| Attaque smash | `O` (+ direction) | `Pavé 4` ou `;` | Stick droit |
+| Sauter | `Espace` | `,` ou `Pavé 0` | `Y` / `X` |
+| Attaque | `J` | `.` ou `Pavé 1` | `A` |
+| Spéciale | `K` | `/` ou `Pavé 2` | `B` |
+| Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `RB` / gâchettes |
+| Saisie | `I` (ou bouclier + attaque) | `Ctrl droit` ou `Pavé 5` | `LB` |
+| Attaque smash | `O` (+ direction) | `;` ou `Pavé 4` | Stick droit |
 | Pause | `Échap` / `P` | `Échap` / `P` | `Start` |
 
-Les touches sont **physiques** (disposition QWERTY) : sur un clavier AZERTY, le joueur 1 se déplace avec
-`Z` `Q` `S` `D`, et la touche smash est la même que `O`.
+Les touches correspondent à des **positions** sur le clavier (celles d'un clavier QWERTY) : sur un
+clavier AZERTY, le joueur 1 se déplace donc avec `Z` `Q` `S` `D`. L'écran **Commandes** affiche le nom
+réel des touches de votre clavier.
 
 Combinaisons :
 - **Attaque smash** : direction + attaque *en même temps* (ou la touche smash). Maintenir pour charger.
@@ -69,14 +94,15 @@ Combinaisons :
 - **Saisie puis direction** = projection, **saisie puis attaque** = coup de genou.
 - **Bas sur une plateforme fine** = la traverser. Au **rebord** : vers la scène pour remonter, saut,
   attaque ou bouclier.
-- Dans les menus : flèches/`WASD`, `Espace`/`J` pour modifier, `K` pour revenir en arrière dans une liste,
-  `Entrée` pour valider, `Échap` pour revenir ; la souris marche aussi (clic gauche/droit).
-- `M` : couper le son. `F11` : plein écran. `F1` en combat : afficher les hitboxes.
+
+Dans les menus : flèches (ou `WASD`), `Entrée` pour valider, `Échap` pour revenir, `Espace`/`J` pour
+modifier une valeur et `K` pour revenir à la valeur précédente. La souris marche partout (clic gauche
+et clic droit). `F11` : plein écran. `F1` en combat : afficher les zones de coup.
 
 ## Compilation
 
-Prérequis : un compilateur C++17, CMake ≥ 3.16. [raylib](https://www.raylib.com/) 5.5 est téléchargée
-automatiquement par CMake si elle n'est pas installée.
+Prérequis : un compilateur C++17 et CMake ≥ 3.16. [raylib](https://www.raylib.com/) 5.5 est téléchargée
+automatiquement depuis GitHub par CMake si elle n'est pas installée.
 
 **Linux** (Debian/Ubuntu) :
 ```bash
@@ -87,21 +113,30 @@ cmake --build build -j
 ./build/super_clash
 ```
 
-**macOS** : `brew install cmake`, puis les trois mêmes commandes `cmake`.
+**macOS** : `xcode-select --install` et `brew install cmake`, puis les trois mêmes commandes `cmake`.
 
-**Windows** : avec Visual Studio 2022 (« Développement Desktop en C++ »), ouvrir le dossier ou :
+**Windows** : avec Visual Studio 2022 (« Développement Desktop en C++ »), dans l'invite de commandes
+développeur :
 ```bat
 cmake -S . -B build
 cmake --build build --config Release
 build\Release\super_clash.exe
 ```
 
+**Sans accès à GitHub depuis le terminal** (réseau d'école ou d'entreprise) : téléchargez raylib
+avec le navigateur (`https://github.com/raysan5/raylib/archive/refs/tags/5.5.zip`), décompressez-la,
+puis indiquez son dossier à CMake :
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFETCHCONTENT_SOURCE_DIR_RAYLIB=/chemin/vers/raylib-5.5
+```
+
 ### Options de lancement
 
 ```
 super_clash --demo            # match de démonstration entre 4 ordinateurs
+super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
 super_clash --stage 2         # arène par défaut (0, 1 ou 2)
-super_clash --debug           # hitboxes visibles
+super_clash --debug           # zones de coup visibles
 super_clash --export-audio d  # écrit tous les sons et musiques en .wav dans le dossier d
 ```
 
@@ -117,8 +152,8 @@ cmake --build build-core -j
 
 Les tests vérifient la formule de recul, les coups, les K.O., chaque commande clavier (petit/grand saut,
 smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), l'Orbe Clash et l'attaque finale,
-la remontée de chaque personnage
-depuis le vide, des dizaines de matchs complets entre ordinateurs, l'équilibrage et le déterminisme.
+le mode entraînement, la remontée de chaque personnage depuis le vide, des dizaines de matchs complets
+entre ordinateurs, l'équilibrage et le déterminisme.
 
 ## Architecture
 
@@ -130,17 +165,31 @@ src/core/   simulation pure (aucune dépendance)
   fighter_update.cpp   machine à états des combattants (contrôles)
   fighter_physics.cpp  déplacements, collisions, atterrissages, rebords
   combat.cpp           détection des coups, recul, bouclier, contres, saisies, projectiles
-  match.cpp            déroulement du match, K.O., réapparition, fin de partie
-  ai.cpp               ordinateur (niveaux 1 à 9)
+  match.cpp            déroulement du match, K.O., réapparition, Orbe Clash, entraînement
+  ai.cpp               ordinateur (niveaux 1 à 9) et mannequins
 src/game/   interface raylib
+  app.cpp              boucle principale, rendu suréchantillonné, transitions
+  screen_title.cpp     écran titre et menu principal
+  screen_settings.cpp  paramètres (audio, affichage, jeu, touches)
+  menus.cpp            sélection des combattants et de l'arène
+  screen_results.cpp   résultats
+  match_screen.cpp     combat, pause, outils d'entraînement
+  ui.cpp               kit d'interface : fonds animés, tuiles, curseurs, titres en relief
+  settings.cpp         paramètres enregistrés et noms des touches
+  fonts.cpp            polices intégrées
   render_body.cpp      dessin des personnages (squelette + IK)
   render_fighter.cpp   poses : chaque attaque anime le membre qui porte la hitbox
-  render_world.cpp     décors, plateformes, projectiles
-  render_hud.cpp       pourcentages, vies, bulles hors-champ
+  render_world.cpp     décors, plateformes, projectiles, aperçus des arènes
+  render_hud.cpp       pourcentages, vies, bulles hors-champ, compte à rebours
   fx.cpp               particules, rayons de K.O., tremblements, sons
   audio.cpp            synthèse des sons et de la musique
-  menus.cpp, app.cpp   écrans titre, sélection, arène, résultats
+assets/fonts/          polices (intégrées à la compilation par cmake/embed.cmake)
 tests/sim_test.cpp     tests sans écran
 ```
 
 La simulation tourne à 60 images/seconde à pas fixe et est entièrement déterministe.
+
+## Crédits
+
+- Police **Luckiest Guy** par Astigmatic — licence Apache 2.0 (`assets/fonts/LuckiestGuy-LICENSE.txt`).
+- Police **Poppins** par Indian Type Foundry — licence SIL Open Font License 1.1 (`assets/fonts/Poppins-OFL.txt`).

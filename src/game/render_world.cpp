@@ -63,7 +63,8 @@ void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
         float x = std::fmod(hash(i * 7) * 1800.0f - cam.x * 0.04f + 2000.0f, 1800.0f) - 260.0f;
         float y = hash(i * 13) * H * 0.8f - cam.y * 0.03f;
         Color c = i % 2 ? Color{120, 40, 160, 255} : Color{40, 90, 180, 255};
-        for (int k = 0; k < 10; ++k) DrawCircleV({x, y}, 240.0f - k * 22.0f, withAlpha(c, 0.025f + k * 0.006f));
+        DrawCircleGradient(int(x), int(y), 250.0f, withAlpha(c, 0.30f), withAlpha(c, 0.0f));
+        DrawCircleGradient(int(x), int(y), 120.0f, withAlpha(c, 0.16f), withAlpha(c, 0.0f));
       }
       for (int i = 0; i < 160; ++i) {  // stars
         float depth = 0.02f + hash(i * 3) * 0.08f;
@@ -82,7 +83,8 @@ void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
       DrawRectangleGradientV(0, 0, kScreenW, int(H * 0.62f), {60, 36, 110, 255}, {250, 140, 90, 255});
       DrawRectangle(0, int(H * 0.62f), kScreenW, kScreenH, {250, 140, 90, 255});
       Vector2 sun{W * 0.5f - cam.x * 0.03f, H * 0.6f - cam.y * 0.02f};
-      for (int k = 0; k < 5; ++k) DrawCircleV(sun, 150.0f - k * 20.0f, withAlpha({255, 220, 140, 255}, 0.08f + k * 0.04f));
+      DrawCircleGradient(int(sun.x), int(sun.y), 170.0f, withAlpha({255, 220, 140, 255}, 0.55f),
+                         withAlpha({255, 220, 140, 255}, 0.0f));
       DrawCircleV(sun, 70, {255, 236, 170, 255});
       mountains(H * 0.66f - cam.y * 0.05f, 70, cam.x * 0.08f, 0.006f, {150, 70, 110, 255}, 1);
       mountains(H * 0.76f - cam.y * 0.1f, 60, cam.x * 0.18f, 0.009f, {95, 45, 90, 255}, 4);

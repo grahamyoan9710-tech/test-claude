@@ -36,15 +36,11 @@ void App::drawResults() {
     if (d.style == BodyStyle::Puff) p.handF = {0.32f * H, -0.2f * H}, p.handB = {-0.32f * H, -0.2f * H};
     float hop = std::fabs(std::sin(t * 4.0f)) * 18.0f;
     drawCharacter(d, winnerPalette_, p, {330, 630 - hop}, 1, 250.0f / H, 1.0f, WHITE, 0.0f, t);
-    const char* title = "VICTOIRE !";
-    float size = 92;
-    ui::logoText(title, 330 - ui::logoWidth(title, size) * 0.5f, 26, size, {255, 248, 190, 255}, {255, 206, 64, 255},
-                 {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 7);
+    ui::drawSprite(ui::Sprite::Victory, 330 - ui::spriteWidth(ui::Sprite::Victory, 92) * 0.5f, 26, 92);
     drawTextCentered(d.name.c_str(), 330, 134, 44, wc, true, FontKind::Title);
     drawTextCentered(winnerCpu_ ? "Ordinateur" : TextFormat("Joueur %d", winnerPort_ + 1), 330, 186, 22, ui::kCream);
   } else {
-    ui::logoText("MATCH NUL !", 60, 60, 80, WHITE, {230, 230, 240, 255}, {200, 200, 220, 255}, ui::kInk,
-                 {40, 30, 60, 255}, 5);
+    ui::drawSprite(ui::Sprite::Draw, 330 - ui::spriteWidth(ui::Sprite::Draw, 80) * 0.5f, 60, 80);
   }
 
   const float tx = 650, ty = 112;

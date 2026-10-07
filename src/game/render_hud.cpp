@@ -93,23 +93,20 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
 
 void drawCountdown(const Match& m) {
   const float cx = kScreenW * 0.5f, cy = kScreenH * 0.38f;
-  auto big = [&](const char* txt, float size, Color light, Color mid, Color dark) {
-    float w = ui::logoWidth(txt, size);
-    ui::logoText(txt, cx - w * 0.5f, cy - size * 0.55f, size, light, mid, dark, {30, 10, 30, 255}, {20, 6, 24, 255}, 7);
+  auto big = [&](ui::Sprite sp, float size) {
+    ui::drawSprite(sp, cx - ui::spriteWidth(sp, size) * 0.5f, cy - size * 0.55f, size);
   };
   if (m.countdown > 0) {
     int n = (m.countdown + 59) / 60;
     if (m.countdown > 180) {
-      big("PRÊTS ?", 96, {255, 255, 255, 255}, {240, 236, 255, 255}, {210, 200, 240, 255});
+      big(ui::Sprite::Ready, 96);
       return;
     }
     float k = float(m.countdown % 60) / 60.0f;
     float size = 150.0f + 90.0f * k * k;
-    if (n == 3) big("3", size, {255, 170, 160, 255}, {255, 90, 80, 255}, {200, 40, 50, 255});
-    else if (n == 2) big("2", size, {255, 240, 170, 255}, {255, 200, 60, 255}, {230, 140, 30, 255});
-    else big("1", size, {190, 255, 190, 255}, {110, 230, 120, 255}, {40, 160, 70, 255});
+    big(n == 3 ? ui::Sprite::Count3 : n == 2 ? ui::Sprite::Count2 : ui::Sprite::Count1, size);
   } else if (m.frame < 200 + 50) {
     float k = (m.frame - 200) / 50.0f;
-    if (k < 0.8f) big("GO !", 190.0f + 40.0f * k, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255});
+    if (k < 0.8f) big(ui::Sprite::Go, 190.0f + 40.0f * k);
   }
 }

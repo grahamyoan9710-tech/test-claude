@@ -33,6 +33,15 @@ void backdrop(float time, Color top, Color bottom, Color bands);
 void logoText(const char* text, float x, float y, float size, Color light, Color mid, Color dark, Color outline,
               Color depth, int depthLayers = 8);
 float logoWidth(const char* text, float size);
+// Pre-rendered big titles (rendering an extruded text is expensive: ~90 draws).
+enum class Sprite : int { Logo, Combat, Victory, Pause, Game, Count3, Count2, Count1, Go, Ready, Draw, Count };
+void bakeSprites();    // after loadFonts(), outside of any BeginTextureMode
+void unloadSprites();
+// Draws the sprite like logoText would draw its text at (x, y) with the given size.
+void drawSprite(Sprite s, float x, float y, float size, float alpha = 1.0f);
+float spriteWidth(Sprite s, float size);
+// Blend mode used for the whole frame (keeps the off-screen image opaque).
+void frameBlend();
 // Screen title on a slanted ribbon (top-left) + optional subtitle.
 void header(const char* title, const char* subtitle, Color accent, float time);
 // Key cap (e.g. [ENTRÉE]) - returns its width.
@@ -51,7 +60,8 @@ void arrowTri(Vector2 c, float size, int dir, Color col);  // dir: -1 left, +1 r
 // ---- Input helpers ----------------------------------------------------------------
 bool hovered(Rectangle r);
 bool clicked(Rectangle r);
-bool mouseMoved();
+bool mouseMoved();  // the pointer really moved this frame (not the initial jump)
+void newFrame();    // call once per frame, before the screen updates
 
 // ---- Screen transition (t in [0,1], fully covered at 0.5) -----------------------
 void wipe(float t);

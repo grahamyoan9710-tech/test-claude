@@ -145,10 +145,8 @@ void App::drawTitle() {
                      s1, withAlpha(ui::kCream, alpha), withAlpha({130, 20, 40, 255}, alpha), 4.0f * scale,
                      FontKind::Title);
     float size = 150 * scale;
-    const char* logo = "CLASH BROS.";
-    float w = ui::logoWidth(logo, size);
-    ui::logoText(logo, center.x - w * 0.5f + shakeX, 108 - (scale - 1) * 60, size, {255, 248, 190, 255},
-                 {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9);
+    float w = ui::spriteWidth(ui::Sprite::Logo, size);
+    ui::drawSprite(ui::Sprite::Logo, center.x - w * 0.5f + shakeX, 108 - (scale - 1) * 60, size, alpha);
   }
   // Subtitle ribbon
   if (f > 28) {
@@ -241,8 +239,7 @@ void App::drawMainMenu() {
   ui::backdrop(t, {22, 12, 56, 255}, {74, 22, 84, 255}, {255, 120, 170, 255});
   ui::header("MENU PRINCIPAL", nullptr, {230, 60, 70, 255}, t);
   // small logo, top right
-  ui::logoText("CLASH BROS.", kScreenW - 360, 30, 52, {255, 248, 190, 255}, {255, 206, 64, 255},
-               {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 4);
+  ui::drawSprite(ui::Sprite::Logo, kScreenW - 360, 30, 52);
 
   const auto& r = roster();
   for (int i = 0; i < 4; ++i) {
@@ -281,8 +278,7 @@ void App::drawMainMenu() {
         drawCharacter(d, 0, p, {x, rr.y + rr.height - 132 - hop}, k < 2 ? 1 : -1, scale, 1.0f, WHITE, 0.0f, t + k);
       }
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 6.0f : 0.0f;
-      ui::logoText(tile.label, rr.x + 36, rr.y + rr.height - 118 - bounce, 92, {255, 255, 255, 255},
-                   {255, 240, 220, 255}, {255, 214, 190, 255}, ui::kInk, {90, 10, 30, 255}, 5);
+      ui::drawSprite(ui::Sprite::Combat, rr.x + 36, rr.y + rr.height - 118 - bounce, 92);
       drawTextOutlined("Jusqu'à 4 joueurs  •  Ordinateurs niveaux 1 à 9", rr.x + 40, rr.y + rr.height - 30, 18,
                        ui::kCream, ui::kInk, 2.0f);
     } else {

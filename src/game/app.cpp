@@ -111,6 +111,7 @@ void App::run() {
   SetTargetFPS(60);
   rlDisableBackfaceCulling();  // pure 2D: polygons may be wound either way
   loadFonts();
+  ui::bakeSprites();
   loadSettings();
   audio_.init();
   applyDisplaySettings();
@@ -154,6 +155,19 @@ void App::run() {
     ++screenFrames_;
     time_ += 1.0f / 60.0f;
     if (toastTimer_ > 0) --toastTimer_;
+    // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once.
+    const bool testRun = !opt_.shots.empty() || opt_.quitAfter > 0;
+    if (!testRun && settings().highQuality && !autoQualityDone_ && frames_ > 120) {
+      const float dt = GetFrameTime();
+      slowTime_ = dt > 1.0f / 45.0f ? slowTime_ + dt : std::max(0.0f, slowTime_ - dt * 0.5f);
+      if (slowTime_ > 3.0f) {
+        settings().highQuality = false;
+        applyDisplaySettings();
+        saveSettings();
+        autoQualityDone_ = true;
+        toast("Qualité graphique réglée sur « Normale » pour plus de fluidité");
+      }
+    }
     if (IsKeyPressed(KEY_F11)) {
       settings().fullscreen = !settings().fullscreen;
       applyDisplaySettings();
@@ -165,6 +179,7 @@ void App::run() {
       if (transition_ == kHalfTransition) enterScreen(next_);
       if (transition_ >= kHalfTransition * 2) transition_ = -1;
     }
+    ui::newFrame();
     MenuNav nav = (screen_ != Screen::Match && !blocked) ? readMenuNav() : MenuNav{};
     if (!blocked) {
       switch (screen_) {
@@ -188,9 +203,7 @@ void App::run() {
     ClearBackground(BLACK);
     // Standard alpha blending for colours, but the frame itself stays opaque: overlapping
     // anti-aliased edges must not punch translucent holes into the off-screen image.
-    rlSetBlendFactorsSeparate(RL_SRC_ALPHA, RL_ONE_MINUS_SRC_ALPHA, RL_ONE, RL_ONE_MINUS_SRC_ALPHA, RL_FUNC_ADD,
-                              RL_FUNC_ADD);
-    BeginBlendMode(BLEND_CUSTOM_SEPARATE);
+    ui::frameBlend();
     switch (screen_) {
       case Screen::Title: drawTitle(); break;
       case Screen::MainMenu: drawMainMenu(); break;
@@ -238,6 +251,7 @@ void App::run() {
   saveSettings();
   match_.reset();
   UnloadRenderTexture(target_);
+  ui::unloadSprites();
   unloadFonts();
   audio_.shutdown();
   CloseWindow();
