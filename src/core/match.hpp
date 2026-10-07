@@ -1,0 +1,116 @@
+#pragma once
+#include <array>
+#include <vector>
+
+#include "core/fighter.hpp"
+#include "core/stage.hpp"
+
+struct MatchConfig {
+  struct Slot {
+    bool active = false;
+    int character = 0;
+    bool cpu = false;
+    int level = 5;
+  };
+  int stage = 0;
+  int stocks = 3;
+  std::array<Slot, 4> slots;
+  uint32_t seed = 12345;
+};
+
+enum class EvType : uint8_t {
+  Hit, ShieldHit, KO, Jump, AirJump, Land, Dash, Grab, Throw, Projectile, ShieldBreak,
+  Respawn, Tech, LedgeGrab, Counter, Swing, Clank, Countdown, Go, GameSet
+};
+
+struct GameEvent {
+  EvType type = EvType::Hit;
+  Vec2 pos;
+  Vec2 dir;
+  float strength = 0.0f;  // damage for hits, knockback for KOs...
+  int a = -1;             // main fighter (attacker / jumper / KO'd fighter)
+  int b = -1;             // other fighter (victim)
+  HitFx fx = HitFx::Normal;
+};
+
+struct Projectile {
+  int owner = -1;
+  Vec2 pos, vel;
+  float gravity = 0.0f;
+  float radius = 10.0f;
+  int life = 0, maxLife = 1;
+  HitboxDef hit;
+  bool bounces = false;
+  bool piercing = false;
+  ProjVisual visual = ProjVisual::Fireball;
+  bool alive = true;
+  std::vector<int> hitList;
+};
+
+class Match {
+ public:
+  explicit Match(const MatchConfig& cfg);
+
+  // Advance the simulation by one frame (1/60 s). inputs are indexed by port.
+  void step(const std::array<InputState, 4>& inputs);
+
+  const StageDef& stage() const { return *stageDef; }
+  bool started() const { return countdown <= 0; }
+  int ledgeCount() const { return int(platforms.size()) * 2; }
+  bool ledgeValid(int ledge) const;
+  Vec2 ledgePoint(int ledge) const;  // ledge = platform * 2 + (0 left / 1 right)
+  int ledgeOwner(int ledge) const;
+  // Final ranking: fighter ids from 1st to last.
+  std::vector<int> ranking() const;
+
+  MatchConfig cfg;
+  const StageDef* stageDef = nullptr;
+  std::vector<Fighter> fighters;
+  std::vector<Platform> platforms;
+  std::vector<Projectile> projectiles;
+  std::vector<GameEvent> events;
+  int frame = 0;
+  int countdown = 200;
+  bool finished = false;
+  int winner = -1;
+  int finishFrame = 0;
+  Rng rng;
+
+  // --- internals (split across several .cpp files) ---
+  void emit(EvType t, Vec2 pos, int a = -1, int b = -1, float strength = 0.0f, Vec2 dir = {},
+            HitFx fx = HitFx::Normal);
+  // fighter_update.cpp
+  void updateFighter(Fighter& f);
+  void setState(Fighter& f, FState s, int timer = 0);
+  void startMove(Fighter& f, int move);
+  bool tryGroundActions(Fighter& f);
+  bool tryAirActions(Fighter& f);
+  void updateMove(Fighter& f);
+  void airControl(Fighter& f, float driftMul = 1.0f);
+  void applyGravity(Fighter& f, float mul = 1.0f);
+  void groundFriction(Fighter& f, float mul = 1.0f);
+  void startJump(Fighter& f);
+  void airJump(Fighter& f);
+  void updateLedge(Fighter& f);
+  void updateGrabbed(Fighter& f);
+  void releaseGrab(Fighter& f, bool escaped);
+  // fighter_physics.cpp
+  void moveFighter(Fighter& f);
+  void onLand(Fighter& f, float impact);
+  void tryLedgeGrab(Fighter& f);
+  bool groundBelow(Vec2 feet, float maxDist) const;
+  // combat.cpp
+  void resolveHits();
+  void updateProjectiles();
+  void applyHit(Fighter* attacker, Fighter& victim, const HitboxDef& h, Vec2 hitPos, int dirSign,
+                float damageMul, bool throwHit);
+  void spawnProjectiles(Fighter& f, const ProjectileDef& p);
+  bool tryCounter(Fighter& victim, Fighter* attacker);
+  // match.cpp
+  void checkBlastZones();
+  void koFighter(Fighter& f);
+  void respawnFighter(Fighter& f);
+  void checkEnd();
+};
+
+float computeKnockback(float percentAfter, float damage, float weight, float growth, float base);
