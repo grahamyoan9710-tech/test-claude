@@ -120,7 +120,7 @@ void Match::koFighter(Fighter& f) {
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;
-  f.stocks--;
+  if (!cfg.training) f.stocks--;
   f.finalSmash = false;
   f.state = FState::Dead;
   f.stateFrame = 0;
@@ -151,7 +151,7 @@ void Match::respawnFighter(Fighter& f) {
 }
 
 void Match::checkEnd() {
-  if (fighters.size() < 2) return;
+  if (fighters.size() < 2 || cfg.training) return;
   int alive = 0, last = -1;
   for (const auto& f : fighters)
     if (!f.eliminated) {
@@ -226,6 +226,30 @@ void Match::startFinalSmash(Fighter& f) {
   freezeOwner = f.id;
   HitFx fx = f.def->moves[FinalSmash].hitboxes.empty() ? HitFx::Magic : f.def->moves[FinalSmash].hitboxes[0].fx;
   emit(EvType::FinalSmash, f.center(), f.id, -1, 0.0f, {}, fx);
+}
+
+void Match::resetPositions() {
+  projectiles.clear();
+  for (auto& f : fighters) {
+    if (f.eliminated) continue;
+    if (f.grabPartner >= 0) releaseGrab(f, false);
+    Vec2 spawn = stageDef->spawns[f.id % stageDef->spawns.size()];
+    f.pos = spawn;
+    f.vel = f.kbVel = {0, 0};
+    f.facing = spawn.x > 0 ? -1 : 1;
+    f.percent = 0.0f;
+    f.shield = kMaxShield;
+    f.hitlag = f.hitstun = 0;
+    f.intangible = f.invincible = 0;
+    f.grounded = false;
+    f.groundPlat = -1;
+    f.ledge = -1;
+    f.airJumps = f.def->airJumps;
+    f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
+    f.finalSmash = false;
+    setState(f, FState::Air);
+  }
+  freezeTimer = 0;
 }
 
 std::vector<int> Match::ranking() const {

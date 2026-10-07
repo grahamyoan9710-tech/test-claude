@@ -1,5 +1,6 @@
 #include "game/controls.hpp"
 
+#include "game/settings.hpp"
 #include "raylib.h"
 
 namespace {
@@ -28,27 +29,21 @@ bool deviceAvailable(int d) {
 
 InputState readDevice(int d) {
   InputState in;
-  if (d == kKeyboard1) {
-    // W A S D + Space (jump), J (attack), K (special), L (shield), I (grab), O (smash)
-    in.stick.x = float(IsKeyDown(KEY_D)) - float(IsKeyDown(KEY_A));
-    in.stick.y = float(IsKeyDown(KEY_S)) - float(IsKeyDown(KEY_W));
-    in.jump = IsKeyDown(KEY_SPACE);
-    in.attack = IsKeyDown(KEY_J);
-    in.special = IsKeyDown(KEY_K);
-    in.shield = IsKeyDown(KEY_L);
-    in.grab = IsKeyDown(KEY_I);
-    in.smash = IsKeyDown(KEY_O);
-  } else if (d == kKeyboard2) {
-    // Arrows + numpad (0 jump, 1 attack, 2 special, 3 shield, 5 grab, 4 smash)
-    // or laptop keys: , (jump) . (attack) / (special) Right Shift (shield) Right Ctrl (grab) ; (smash)
-    in.stick.x = float(IsKeyDown(KEY_RIGHT)) - float(IsKeyDown(KEY_LEFT));
-    in.stick.y = float(IsKeyDown(KEY_DOWN)) - float(IsKeyDown(KEY_UP));
-    in.jump = anyDown({KEY_KP_0, KEY_COMMA});
-    in.attack = anyDown({KEY_KP_1, KEY_PERIOD});
-    in.special = anyDown({KEY_KP_2, KEY_SLASH});
-    in.shield = anyDown({KEY_KP_3, KEY_RIGHT_SHIFT});
-    in.grab = anyDown({KEY_KP_5, KEY_RIGHT_CONTROL});
-    in.smash = anyDown({KEY_KP_4, KEY_SEMICOLON});
+  if (d == kKeyboard1 || d == kKeyboard2) {
+    // Rebindable keys (Paramètres > Commandes). Clavier 2 also accepts the numpad.
+    const auto& k = settings().keys[d == kKeyboard1 ? 0 : 1];
+    const bool pad = d == kKeyboard2;
+    auto down = [&](int action, int numpadKey) {
+      return IsKeyDown(k[action]) || (pad && numpadKey >= 0 && IsKeyDown(numpadKey));
+    };
+    in.stick.x = float(down(kActRight, -1)) - float(down(kActLeft, -1));
+    in.stick.y = float(down(kActDown, -1)) - float(down(kActUp, -1));
+    in.jump = down(kActJump, KEY_KP_0);
+    in.attack = down(kActAttack, KEY_KP_1);
+    in.special = down(kActSpecial, KEY_KP_2);
+    in.shield = down(kActShield, KEY_KP_3);
+    in.grab = down(kActGrab, KEY_KP_5);
+    in.smash = down(kActSmash, KEY_KP_4);
   } else if (d >= kPad1 && d < kDeviceCount) {
     int g = d - kPad1;
     if (!IsGamepadAvailable(g)) return in;

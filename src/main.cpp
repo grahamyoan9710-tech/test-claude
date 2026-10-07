@@ -1,6 +1,7 @@
 // Super Clash Bros. - a platform fighter inspired by Super Smash Bros.
 //
-// Usage: super_clash [--demo] [--stage N] [--screen title|css|stage|results]
+// Usage: super_clash [--demo] [--stage N] [--screen title|menu|css|stage|results|settings|training]
+//                    [--tab N] [--training]
 //                    [--shot FRAME FILE.png]... [--quit-after FRAMES] [--debug]
 //                    [--export-audio DIR]
 #include <cstdio>
@@ -17,6 +18,9 @@ int main(int argc, char** argv) {
     else if (is("--debug")) opt.debug = true;
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);
     else if (is("--screen") && i + 1 < argc) opt.screen = argv[++i];
+    else if (is("--tab") && i + 1 < argc) opt.tab = std::atoi(argv[++i]);
+    else if (is("--training")) opt.training = true;
+    else if (is("--pause-at") && i + 1 < argc) opt.pauseAt = std::atoi(argv[++i]);
     else if (is("--quit-after") && i + 1 < argc) opt.quitAfter = std::atoi(argv[++i]);
     else if (is("--export-audio") && i + 1 < argc) {
       int n = Audio::exportAll(argv[++i]);

@@ -94,7 +94,7 @@ void buildSwordNormals(CharacterDef& c, float S, float P) {
                               hb(4, 7, 42, -14, 18, 4.0f, 361, 35, 80, L::Weapon, 0, sl)});
   m[FTilt] = mv("Taille", 32, {hb(7, 10, 84, -10, 18, 12.0f, 361, 25, 90, L::Weapon, 0, sl),
                                hb(7, 10, 48, -10, 20, 9.0f, 361, 25, 80, L::Weapon, 0, sl)});
-  m[UTilt] = mv("Arc celeste", 30, {hb(6, 12, 20, -82, 22, 7.5f, 95, 35, 105, L::Weapon, 0, sl),
+  m[UTilt] = mv("Arc céleste", 30, {hb(6, 12, 20, -82, 22, 7.5f, 95, 35, 105, L::Weapon, 0, sl),
                                     hb(6, 12, 48, -50, 20, 7.0f, 95, 35, 100, L::Weapon, 0, sl)});
   m[DTilt] = mv("Fauche", 22, {hb(6, 8, 80, 40, 16, 9.0f, 30, 20, 60, L::Weapon, 0, sl),
                                hb(6, 8, 44, 40, 16, 7.0f, 30, 20, 50, L::Weapon, 0, sl)});
@@ -105,7 +105,7 @@ void buildSwordNormals(CharacterDef& c, float S, float P) {
   m[FSmash] = mv("Smash epee", 50, {hb(12, 15, 92, 0, 18, 19.0f, 361, 32, 100, L::Weapon, 0, sl),
                                     hb(12, 15, 50, -10, 24, 14.0f, 361, 30, 92, L::Weapon, 0, sl)});
   m[FSmash].chargeFrame = 6;
-  m[USmash] = mv("Pic celeste", 44, {hb(13, 17, 4, -102, 18, 17.0f, 90, 30, 98, L::Weapon, 0, sl),
+  m[USmash] = mv("Pic céleste", 44, {hb(13, 17, 4, -102, 18, 17.0f, 90, 30, 98, L::Weapon, 0, sl),
                                      hb(13, 17, 4, -60, 22, 13.0f, 90, 30, 92, L::Weapon, 0, sl)});
   m[USmash].chargeFrame = 6;
   m[DSmash] = mv("Moulinet bas", 48, {hb(6, 8, 74, 42, 18, 12.0f, 25, 30, 90, L::Weapon, 0, sl),
@@ -146,7 +146,7 @@ void buildCommonMoves(CharacterDef& c, float S, float P) {
   m[LedgeAttack] = mv("Attaque bord", 32, {hb(12, 16, 42, 10, 26, 9.0f, 361, 45, 25, L::LegFront)});
   m[LedgeAttack].intangibleStart = 0;
   m[LedgeAttack].intangibleEnd = 12;
-  m[GetupAttack] = mv("Releve offensif", 32, {hb(12, 15, 44, 34, 22, 7.0f, 361, 50, 30, L::LegFront),
+  m[GetupAttack] = mv("Relevé offensif", 32, {hb(12, 15, 44, 34, 22, 7.0f, 361, 50, 30, L::LegFront),
                                               rev(hb(17, 20, -44, 34, 22, 7.0f, 361, 50, 30, L::LegBack, 1))});
   m[GetupAttack].intangibleStart = 0;
   m[GetupAttack].intangibleEnd = 15;

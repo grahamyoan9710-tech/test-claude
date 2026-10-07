@@ -5,8 +5,12 @@
 // like a human controller would, so the CPU plays by the same rules.
 class CpuBrain {
  public:
+  // Training dummy behaviours.
+  enum Dummy : int { kDummyCpu = 0, kDummyStand, kDummyJump, kDummyShield, kDummyCount };
   explicit CpuBrain(int level = 5, uint32_t seed = 1);
   InputState think(const Match& m, int self);
+  void setDummy(int mode) { dummy_ = mode; }
+  int dummy() const { return dummy_; }
 
  private:
   void tap(InputState& in, bool InputState::*b) const { in.*b = !(last_.*b); }
@@ -26,4 +30,5 @@ class CpuBrain {
   int chargeHold_ = 0;
   Vec2 chargeDir_;
   int waitTimer_ = -1;
+  int dummy_ = kDummyCpu;
 };

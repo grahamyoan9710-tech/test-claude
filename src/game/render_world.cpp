@@ -116,9 +116,10 @@ void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
   }
 }
 
-void drawPlatforms(const Match& m, float time) {
-  const StageTheme theme = m.stage().theme;
-  for (const auto& p : m.platforms) {
+void drawPlatforms(const Match& m, float time) { drawPlatformList(m.platforms, m.stage().theme, time); }
+
+void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, float time) {
+  for (const auto& p : platforms) {
     const Rect& r = p.rect;
     if (p.solid) {
       Color top, body, edge;
@@ -246,27 +247,19 @@ void drawOrb(const Match& m, float time) {
 }
 
 void drawStagePreview(const StageDef& s, Rectangle area, float time) {
-  Color top, bottom;
-  switch (s.theme) {
-    case StageTheme::Cosmic: top = {8, 4, 24, 255}; bottom = {44, 12, 70, 255}; break;
-    case StageTheme::Sunset: top = {60, 36, 110, 255}; bottom = {250, 140, 90, 255}; break;
-    default: top = {80, 150, 240, 255}; bottom = {200, 235, 255, 255}; break;
-  }
-  DrawRectangleGradientV(int(area.x), int(area.y), int(area.width), int(area.height), top, bottom);
-  if (s.theme == StageTheme::Cosmic)
-    for (int i = 0; i < 30; ++i)
-      DrawCircleV({area.x + hash(i) * area.width, area.y + hash(i + 50) * area.height}, 1.2f,
-                  withAlpha(WHITE, 0.5f + 0.5f * std::sin(time * 2 + i)));
-  float sc = area.width / 1500.0f;
-  Vec2 o{area.x + area.width * 0.5f, area.y + area.height * 0.62f};
-  for (const auto& p : s.platforms) {
-    Rect r = p.base;
-    Rectangle rr{o.x + r.x * sc, o.y + r.y * sc, r.w * sc, std::max(3.0f, r.h * sc)};
-    if (p.solid) {
-      DrawRectangleRec(rr, s.theme == StageTheme::Cosmic ? Color{60, 66, 100, 255} : Color{130, 90, 60, 255});
-      DrawRectangle(int(rr.x), int(rr.y), int(rr.width), 3, s.theme == StageTheme::Cosmic ? Color{90, 230, 255, 255} : Color{100, 190, 80, 255});
-    } else {
-      DrawRectangleRec(rr, {240, 240, 250, 220});
-    }
-  }
+  // The real stage, scaled down and cropped to the area.
+  const float sc = std::max(area.width / kScreenW, area.height / kScreenH);
+  beginClip(area);
+  rlPushMatrix();
+  rlTranslatef(area.x + (area.width - kScreenW * sc) * 0.5f, area.y + (area.height - kScreenH * sc) * 0.5f, 0.0f);
+  rlScalef(sc, sc, 1.0f);
+  drawBackground(s, {std::sin(time * 0.3f) * 60.0f, -150.0f}, 1.0f, time);
+  rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
+  rlScalef(0.78f, 0.78f, 1.0f);
+  rlTranslatef(0.0f, 90.0f, 0.0f);
+  std::vector<Platform> plats = s.platforms;
+  updatePlatforms(plats, int(time * 60.0f));
+  drawPlatformList(plats, s.theme, time);
+  rlPopMatrix();
+  endClip();
 }

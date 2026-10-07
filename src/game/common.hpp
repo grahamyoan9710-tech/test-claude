@@ -1,10 +1,16 @@
 #pragma once
 // Shared helpers for the raylib front-end.
 #include "core/match.hpp"
+#include "game/fonts.hpp"
 #include "raylib.h"
+#include "rlgl.h"
 
 constexpr int kScreenW = 1280;
 constexpr int kScreenH = 720;
+
+// The whole frame is drawn in a 1280x720 virtual space into an off-screen
+// texture that is `g_renderScale` times larger (supersampling = smooth edges).
+inline float g_renderScale = 2.0f;
 
 inline Vector2 V(Vec2 v) { return {v.x, v.y}; }
 inline Vec2 W(Vector2 v) { return {v.x, v.y}; }
@@ -23,6 +29,24 @@ inline Color shade(Color c, float k) {
           (unsigned char)clampf(c.b * k, 0, 255), c.a};
 }
 
+// World drawing with a camera, compatible with the supersampled frame.
+inline void beginWorld(Camera2D cam) {
+  cam.offset.x *= g_renderScale;
+  cam.offset.y *= g_renderScale;
+  cam.zoom *= g_renderScale;
+  BeginMode2D(cam);
+}
+inline void endWorld() {
+  EndMode2D();
+  rlScalef(g_renderScale, g_renderScale, 1.0f);
+}
+// Clip drawing to a rectangle given in virtual coordinates.
+inline void beginClip(Rectangle r) {
+  BeginScissorMode(int(r.x * g_renderScale), int(r.y * g_renderScale), int(r.width * g_renderScale),
+                   int(r.height * g_renderScale));
+}
+inline void endClip() { EndScissorMode(); }
+
 inline Color portColor(int port) {
   static const Color cols[4] = {{235, 60, 60, 255}, {60, 120, 245, 255}, {245, 200, 40, 255}, {60, 200, 90, 255}};
   return cols[port & 3];
@@ -30,24 +54,33 @@ inline Color portColor(int port) {
 inline Color cpuColor() { return {150, 150, 160, 255}; }
 inline Color slotColor(const Fighter& f) { return f.cpu ? cpuColor() : portColor(f.port); }
 
-// Text with a dark outline, drawn with the default font.
+// ---- Text ------------------------------------------------------------------
+inline float textSpacing(float size, FontKind k) { return k == FontKind::Title ? size * 0.02f : size * 0.01f; }
+inline float textWidth(const char* text, float size, FontKind k = FontKind::Ui) {
+  return MeasureTextEx(gameFont(k), text, size, textSpacing(size, k)).x;
+}
+inline void drawText(const char* text, float x, float y, float size, Color col, FontKind k = FontKind::Ui) {
+  DrawTextEx(gameFont(k), text, {x, y}, size, textSpacing(size, k), col);
+}
+// Text with a smooth dark outline. thick < 0 picks a thickness from the size.
 inline void drawTextOutlined(const char* text, float x, float y, float size, Color col,
-                             Color outline = {15, 15, 25, 255}, float thick = 2.0f) {
-  Font font = GetFontDefault();
-  float spacing = size / 10.0f;
-  for (int dx = -1; dx <= 1; ++dx)
-    for (int dy = -1; dy <= 1; ++dy)
-      if (dx || dy) DrawTextEx(font, text, {x + dx * thick, y + dy * thick}, size, spacing, outline);
-  DrawTextEx(font, text, {x, y}, size, spacing, col);
+                             Color outline = {15, 15, 25, 255}, float thick = -1.0f,
+                             FontKind k = FontKind::Ui) {
+  if (thick < 0.0f) thick = std::max(1.5f, size * 0.07f);
+  if (thick > 0.0f && outline.a > 0) {
+    const int dirs = thick > 3.0f ? 16 : 8;
+    for (int i = 0; i < dirs; ++i) {
+      float a = i * 2.0f * kPi / dirs;
+      drawText(text, x + std::cos(a) * thick, y + std::sin(a) * thick, size, outline, k);
+    }
+  }
+  drawText(text, x, y, size, col, k);
 }
-inline float textWidth(const char* text, float size) {
-  return MeasureTextEx(GetFontDefault(), text, size, size / 10.0f).x;
-}
-inline void drawTextCentered(const char* text, float cx, float y, float size, Color col,
-                             bool outline = true) {
-  float w = textWidth(text, size);
-  if (outline) drawTextOutlined(text, cx - w * 0.5f, y, size, col);
-  else DrawTextEx(GetFontDefault(), text, {cx - w * 0.5f, y}, size, size / 10.0f, col);
+inline void drawTextCentered(const char* text, float cx, float y, float size, Color col, bool outline = true,
+                             FontKind k = FontKind::Ui) {
+  float w = textWidth(text, size, k);
+  if (outline) drawTextOutlined(text, cx - w * 0.5f, y, size, col, {15, 15, 25, 255}, -1.0f, k);
+  else drawText(text, cx - w * 0.5f, y, size, col, k);
 }
 
 // Percent colour, white -> yellow -> orange -> red -> dark red.

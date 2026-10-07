@@ -39,7 +39,9 @@ add_test(NAME sim_test COMMAND sim_test)
 # ---------------------------------------------------------------------------
 if(CLASH_BUILD_GAME)
   find_package(raylib 5.0 QUIET)
+  set(CLASH_GLFW_KEYNAMES OFF)
   if(NOT raylib_FOUND)
+    set(CLASH_GLFW_KEYNAMES ON)  # our own raylib build uses GLFW: keyboard-layout aware key names
     include(FetchContent)
     set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
     set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
@@ -50,20 +52,37 @@ if(CLASH_BUILD_GAME)
     FetchContent_MakeAvailable(raylib)
   endif()
 
+  # Fonts are compiled into the executable (see cmake/embed.cmake).
+  include(cmake/embed.cmake)
+  set(CLASH_FONTS_C "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_fonts.c")
+  embed_files(OUTPUT "${CLASH_FONTS_C}" FILES
+    font_title_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/LuckiestGuy-Regular.ttf"
+    font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Poppins-Bold.ttf")
+
   add_executable(super_clash
     src/main.cpp
     src/game/app.cpp
+    src/game/screen_title.cpp
+    src/game/screen_settings.cpp
+    src/game/screen_results.cpp
     src/game/menus.cpp
     src/game/match_screen.cpp
     src/game/controls.cpp
+    src/game/settings.cpp
+    src/game/fonts.cpp
+    src/game/ui.cpp
     src/game/audio.cpp
     src/game/render_fighter.cpp
     src/game/render_body.cpp
     src/game/render_world.cpp
     src/game/render_hud.cpp
     src/game/fx.cpp
+    "${CLASH_FONTS_C}"
   )
   target_link_libraries(super_clash PRIVATE clash_core raylib)
+  if(CLASH_GLFW_KEYNAMES)
+    target_compile_definitions(super_clash PRIVATE CLASH_GLFW_KEYNAMES=1)
+  endif()
   if(APPLE)
     target_link_libraries(super_clash PRIVATE "-framework IOKit" "-framework Cocoa" "-framework OpenGL")
   endif()

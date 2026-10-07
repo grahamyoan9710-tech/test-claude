@@ -87,7 +87,7 @@ CharacterDef makeBlaze() {
 CharacterDef makeVolt() {
   CharacterDef c;
   c.name = "VOLT";
-  c.title = "L'eclair vivant";
+  c.title = "L'éclair vivant";
   c.style = BodyStyle::Speedster;
   c.palettes = {pal({250, 210, 40}, {70, 60, 60}, {90, 220, 255}, {250, 210, 40}),
                 pal({250, 140, 40}, {60, 40, 40}, {255, 255, 120}, {250, 140, 40})};
@@ -208,7 +208,7 @@ CharacterDef makeAria() {
 CharacterDef makePuffo() {
   CharacterDef c;
   c.name = "PUFFO";
-  c.title = "La boule celeste";
+  c.title = "La boule céleste";
   c.style = BodyStyle::Puff;
   c.palettes = {pal({255, 150, 190}, {230, 60, 110}, {255, 255, 255}, {255, 150, 190}),
                 pal({150, 200, 255}, {60, 100, 220}, {255, 255, 255}, {150, 200, 255})};

@@ -1,34 +1,132 @@
 // The fight itself: inputs -> simulation -> effects -> camera -> drawing.
 #include "game/app.hpp"
 #include "game/render.hpp"
+#include "game/settings.hpp"
+#include "game/ui.hpp"
+
+namespace {
+const char* dummyName(const CpuBrain& b, int level) {
+  switch (b.dummy()) {
+    case CpuBrain::kDummyStand: return "IMMOBILE";
+    case CpuBrain::kDummyJump: return "SAUTE";
+    case CpuBrain::kDummyShield: return "BOUCLIER";
+    default: return TextFormat("ORDINATEUR (niv. %d)", level);
+  }
+}
+Rectangle pauseItemRect(int i, int n) {
+  float h = 52, gap = 12;
+  float top = kScreenH * 0.5f - (n * (h + gap)) * 0.5f + 40;
+  return {kScreenW * 0.5f - 260, top + i * (h + gap), 520, h};
+}
+}  // namespace
 
 MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug)
     : m_(cfg), devices_(devices), audio_(audio), fx_(&audio), debug_(debug) {
-  for (const auto& f : m_.fighters) brains_.emplace_back(f.cpuLevel, cfg.seed + 31u * uint32_t(f.id + 1));
+  for (const auto& f : m_.fighters) {
+    brains_.emplace_back(f.cpuLevel, cfg.seed + 31u * uint32_t(f.id + 1));
+    if (cfg.training && f.cpu) brains_.back().setDummy(CpuBrain::kDummyStand);
+  }
+  prevPercent_.assign(m_.fighters.size(), 0.0f);
+  combo_.assign(m_.fighters.size(), 0);
+  comboStart_.assign(m_.fighters.size(), 0.0f);
+  comboShow_.assign(m_.fighters.size(), 0);
   updateCamera(true);
   audio_.setMusic(2);
+}
+
+std::vector<std::string> MatchScreen::pauseItems() const {
+  if (!training()) return {"REPRENDRE", "QUITTER LE COMBAT"};
+  int dummy = -1;
+  for (const auto& f : m_.fighters)
+    if (f.cpu) dummy = f.id;
+  std::string mode = dummy >= 0 ? dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel) : "-";
+  return {"REPRENDRE", "RÉINITIALISER LES POSITIONS", "MANNEQUIN : " + mode,
+          std::string("ZONES DE COUP : ") + (debug_ ? "OUI" : "NON"), "QUITTER L'ENTRAÎNEMENT"};
+}
+
+MatchScreen::Result MatchScreen::updatePause() {
+  MenuNav nav = readMenuNav();
+  const auto items = pauseItems();
+  const int n = int(items.size());
+  int before = pauseSel_;
+  if (nav.up) pauseSel_ = (pauseSel_ + n - 1) % n;
+  if (nav.down) pauseSel_ = (pauseSel_ + 1) % n;
+  bool click = false;
+  for (int i = 0; i < n; ++i) {
+    if (!ui::hovered(pauseItemRect(i, n))) continue;
+    if (ui::mouseMoved()) pauseSel_ = i;
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+      pauseSel_ = i;
+      click = true;
+    }
+  }
+  if (pauseSel_ != before) audio_.play(Sfx::MenuMove);
+  bool resume = false;
+  for (const auto& f : m_.fighters)
+    if (!f.cpu && devicePausePressed(devices_[f.port])) resume = true;
+  if (resume) {
+    paused_ = false;
+    audio_.play(Sfx::MenuBack);
+    return Result::Running;
+  }
+  const bool activate = nav.confirm || click;
+  const bool cycle = activate || nav.left || nav.right;
+  if (training()) {
+    if (pauseSel_ == 2 && cycle) {
+      int d = nav.left ? -1 : 1;
+      for (auto& b : brains_) b.setDummy((b.dummy() + d + CpuBrain::kDummyCount) % CpuBrain::kDummyCount);
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 3 && cycle) {
+      debug_ = !debug_;
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+  }
+  if (!activate) return Result::Running;
+  audio_.play(Sfx::MenuSelect);
+  if (pauseSel_ == 0) {
+    paused_ = false;
+  } else if (pauseSel_ == n - 1) {
+    return Result::Quit;
+  } else if (training() && pauseSel_ == 1) {
+    m_.resetPositions();
+    std::fill(combo_.begin(), combo_.end(), 0);
+    std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
+    paused_ = false;
+  }
+  return Result::Running;
+}
+
+void MatchScreen::trackCombos() {
+  for (const auto& f : m_.fighters) {
+    const int i = f.id;
+    bool stunned = f.state == FState::Hitstun || f.hitlag > 0 || f.state == FState::Grabbed;
+    if (f.percent > prevPercent_[i] + 0.01f) {
+      if (combo_[i] > 0) combo_[i]++;
+      else {
+        combo_[i] = 1;
+        comboStart_[i] = prevPercent_[i];
+      }
+      comboShow_[i] = 120;
+    } else if (!stunned && combo_[i] > 0) {
+      if (combo_[i] >= 2) {
+        lastCombo_ = combo_[i];
+        lastComboDamage_ = f.percent - comboStart_[i];
+        bestCombo_ = std::max(bestCombo_, combo_[i]);
+      }
+      combo_[i] = 0;
+    }
+    if (comboShow_[i] > 0) --comboShow_[i];
+    prevPercent_[i] = f.percent;
+  }
 }
 
 MatchScreen::Result MatchScreen::update() {
   time_ += 1.0f / 60.0f;
   if (IsKeyPressed(KEY_F1)) debug_ = !debug_;
-
-  if (paused_) {
-    MenuNav nav = readMenuNav();
-    if (nav.up || nav.down) {
-      pauseSel_ = 1 - pauseSel_;
-      audio_.play(Sfx::MenuMove);
-    }
-    bool resume = false;
-    for (const auto& f : m_.fighters)
-      if (!f.cpu && devicePausePressed(devices_[f.port])) resume = true;
-    if (nav.confirm || resume) {
-      audio_.play(Sfx::MenuSelect);
-      if (pauseSel_ == 1 && !resume) return Result::Quit;
-      paused_ = false;
-    }
-    return Result::Running;
-  }
+  if (paused_) return updatePause();
 
   bool anyHuman = false;
   for (const auto& f : m_.fighters) {
@@ -53,8 +151,9 @@ MatchScreen::Result MatchScreen::update() {
   m_.step(inputs);
   fx_.onEvents(m_);
   fx_.update(m_);
+  if (training()) trackCombos();
   updateCamera(false);
-  shake_ = fx_.shakeOffset();
+  shake_ = fx_.shakeOffset() * shakeScale();
 
   if (m_.finished) {
     if (endTimer_ == 0) audio_.setMusic(0);
@@ -108,10 +207,59 @@ Camera2D MatchScreen::camera() {
   return cam;
 }
 
+void MatchScreen::drawTrainingPanel() {
+  int dummy = -1;
+  for (const auto& f : m_.fighters)
+    if (f.cpu) dummy = f.id;
+  Rectangle p{18, 18, 330, 172};
+  DrawRectangleRounded(p, 0.12f, 8, withAlpha(ui::kInk, 0.78f));
+  DrawRectangleRoundedLinesEx(p, 0.12f, 8, 2, withAlpha({64, 190, 108, 255}, 0.9f));
+  drawText("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, {120, 230, 150, 255}, FontKind::Title);
+  int live = dummy >= 0 ? combo_[dummy] : 0;
+  int shown = live >= 2 ? live : lastCombo_;
+  Color cc = live >= 2 ? ui::kGold : ui::kCream;
+  drawTextOutlined(TextFormat("%d", shown), p.x + 16, p.y + 40, 54, cc, ui::kInk, 3.0f, FontKind::Title);
+  drawText("COUPS", p.x + 22 + textWidth(TextFormat("%d", shown), 54, FontKind::Title), p.y + 52, 18, ui::kMuted);
+  float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
+  drawText(TextFormat("Dégâts du combo : %d %%", int(dmg)), p.x + 16, p.y + 98, 16, ui::kCream);
+  drawText(TextFormat("Meilleur combo : %d   •   ÉCHAP : options", bestCombo_), p.x + 16, p.y + 120, 14, ui::kMuted);
+  if (dummy >= 0) {
+    std::string mode = std::string("Mannequin : ") + dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel);
+    drawText(mode.c_str(), p.x + 16, p.y + 142, 15, withAlpha(ui::kCream, 0.85f));
+  }
+}
+
+void MatchScreen::drawPause() {
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.6f));
+  const auto items = pauseItems();
+  const int n = int(items.size());
+  Rectangle first = pauseItemRect(0, n);
+  const char* title = "PAUSE";
+  float size = 96;
+  ui::logoText(title, kScreenW * 0.5f - ui::logoWidth(title, size) * 0.5f, first.y - 128, size, {255, 255, 255, 255},
+               {235, 238, 255, 255}, {200, 206, 240, 255}, ui::kInk, {40, 30, 80, 255}, 6);
+  for (int i = 0; i < n; ++i) {
+    Rectangle r = pauseItemRect(i, n);
+    bool sel = i == pauseSel_;
+    if (sel) r = ui::grow(r, 4);
+    ui::slanted({r.x + 6, r.y + 7, r.width, r.height}, 18, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
+    ui::slanted(r, 18, sel ? Color{236, 66, 56, 255} : Color{46, 42, 88, 255},
+                sel ? Color{150, 20, 46, 255} : Color{30, 26, 60, 255});
+    ui::slantedOutline(r, 18, sel ? 4.0f : 2.0f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
+    drawTextCentered(items[i].c_str(), r.x + r.width * 0.5f, r.y + r.height * 0.5f - 12, 24,
+                     sel ? WHITE : ui::kMuted, true);
+    if (sel && training() && (i == 2 || i == 3)) {
+      ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, ui::kGold);
+      ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
+    }
+  }
+  ui::footer({{"HAUT/BAS", "Choisir"}, {"ENTRÉE", "Valider"}, {"ÉCHAP", "Reprendre"}});
+}
+
 void MatchScreen::draw() {
   Camera2D cam = camera();
   drawBackground(m_.stage(), camPos_, camZoom_, time_);
-  BeginMode2D(cam);
+  beginWorld(cam);
   drawPlatforms(m_, time_);
   drawOrb(m_, time_);
   // Grabbed fighters and victims are drawn last so they stay visible;
@@ -135,29 +283,21 @@ void MatchScreen::draw() {
     for (int l = 0; l < m_.ledgeCount(); ++l)
       if (m_.ledgeValid(l)) DrawCircleV(V(m_.ledgePoint(l)), 6, ORANGE);
   }
-  EndMode2D();
+  endWorld();
   fx_.drawScreen(cam);
   drawOffscreenBubbles(m_, cam, time_);
   drawHud(m_, fx_.hudShake, time_);
   drawCountdown(m_);
+  if (training()) drawTrainingPanel();
 
   if (m_.finished) {
-    float k = std::min(1.0f, endTimer_ / 20.0f);
-    float size = 190.0f - 60.0f * k;
-    drawTextCentered("GAME !", kScreenW * 0.5f, kScreenH * 0.3f - size * 0.5f, size,
-                     withAlpha({255, 230, 90, 255}, k));
+    float k = std::min(1.0f, endTimer_ / 14.0f);
+    float size = lerpf(260.0f, 170.0f, k);
+    const char* txt = "GAME !";
+    float w = ui::logoWidth(txt, size);
+    ui::logoText(txt, kScreenW * 0.5f - w * 0.5f, kScreenH * 0.32f - size * 0.5f, size, {255, 248, 190, 255},
+                 {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9);
   }
-  if (debug_) {
-    DrawFPS(10, 10);
-    DrawText("F1: hitboxes", 10, 32, 16, WHITE);
-  }
-  if (paused_) {
-    DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.55f));
-    drawTextCentered("PAUSE", kScreenW * 0.5f, 200, 80, WHITE);
-    const char* items[2] = {"REPRENDRE", "QUITTER LE COMBAT"};
-    for (int i = 0; i < 2; ++i) {
-      Color c = i == pauseSel_ ? Color{255, 220, 80, 255} : Color{200, 200, 210, 255};
-      drawTextCentered(TextFormat(i == pauseSel_ ? "> %s <" : "%s", items[i]), kScreenW * 0.5f, 330.0f + i * 60.0f, 36, c);
-    }
-  }
+  if (debug_) drawTextOutlined("F1 : zones de coup", 10, kScreenH - 150, 16, WHITE);
+  if (paused_) drawPause();
 }

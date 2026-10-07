@@ -162,6 +162,7 @@ Wave makeSfx(Sfx s) {
 // ----------------------------------------------------------------------------
 std::atomic<int> g_musicMode{0};
 std::atomic<bool> g_musicMuted{false};
+std::atomic<float> g_musicGain{0.6f};
 
 float noteFreq(int midi) { return 440.0f * std::pow(2.0f, (midi - 69) / 12.0f); }
 
@@ -221,7 +222,7 @@ void musicCallback(void* buffer, unsigned int frames) {
         if (st % 2 == 0) v += 0.05f * nz() * float(std::exp(-inStep * 80.0));
       }
     }
-    out[i] = short(std::fmax(-1.0f, std::fmin(1.0f, v * vol * 0.8f)) * 30000.0f);
+    out[i] = short(std::fmax(-1.0f, std::fmin(1.0f, v * vol * 1.3f * g_musicGain.load())) * 30000.0f);
     t += 1.0 / kRate;
   }
 }
@@ -261,7 +262,7 @@ void Audio::play(Sfx s, float volume, float pitch) {
   int i = int(s);
   Sound& snd = voices_[i][next_[i]];
   next_[i] = (next_[i] + 1) % kVoices;
-  SetSoundVolume(snd, volume);
+  SetSoundVolume(snd, std::min(1.0f, volume * sfxGain_));
   SetSoundPitch(snd, pitch);
   PlaySound(snd);
 }
@@ -291,6 +292,12 @@ int Audio::exportAll(const char* dir) {
   }
   g_musicMode.store(0);
   return written;
+}
+
+void Audio::setVolumes(int master, int music, int sfx) {
+  if (ready_) SetMasterVolume(master / 100.0f);
+  g_musicGain.store(music / 100.0f);
+  sfxGain_ = sfx / 100.0f;
 }
 
 void Audio::toggleMute() {

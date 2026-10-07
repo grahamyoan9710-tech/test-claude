@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <vector>
 
 #include "game/common.hpp"
 
@@ -33,6 +34,7 @@ void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size,
 // ---- World (render_world.cpp) -----------------------------------------------
 void drawBackground(const StageDef& stage, Vec2 camTarget, float camZoom, float time);
 void drawPlatforms(const Match& m, float time);
+void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, float time);
 void drawProjectiles(const Match& m, float time);
 void drawOrb(const Match& m, float time);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);

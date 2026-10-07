@@ -3,6 +3,7 @@
 #include <cstdio>
 
 #include "game/render.hpp"
+#include "game/settings.hpp"
 
 namespace {
 bool isPuff(const CharacterDef& d) { return d.style == BodyStyle::Puff; }
@@ -402,14 +403,14 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     }
   }
   // Player tag
-  if (f.state != FState::Grabbed) {
+  if (f.state != FState::Grabbed && settings().playerTags) {
     Color pc = slotColor(f);
     char tag[8];
     std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-    float ty = f.pos.y - H - 34.0f;
+    float ty = f.pos.y - H - 36.0f;
     if (f.state == FState::Knockdown) ty = f.pos.y - H * 0.5f - 30.0f;
-    DrawTriangle({f.pos.x - 7, ty + 18}, {f.pos.x, ty + 26}, {f.pos.x + 7, ty + 18}, pc);
-    drawTextCentered(tag, f.pos.x, ty, 18, pc);
+    DrawTriangle({f.pos.x - 8, ty + 20}, {f.pos.x, ty + 29}, {f.pos.x + 8, ty + 20}, pc);
+    drawTextCentered(tag, f.pos.x, ty, 20, pc, true, FontKind::Title);
   }
   if (debugBoxes) {
     Rect hr = f.hurtbox();

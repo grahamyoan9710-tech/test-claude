@@ -67,6 +67,14 @@ InputState CpuBrain::think(const Match& m, int self) {
     last_ = in;
     return in;
   }
+  if (dummy_ != kDummyCpu) {  // training dummy
+    bool free = f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Landing;
+    if (f.state == FState::Respawn && f.stateFrame > 60) in.stick.y = 1.0f;
+    if (dummy_ == kDummyJump && free && f.grounded) tap(in, &IS::jump);
+    if (dummy_ == kDummyShield && f.grounded && f.state != FState::Respawn) in.shield = true;
+    last_ = in;
+    return in;
+  }
 
   switch (f.state) {
     case FState::Respawn:

@@ -39,7 +39,7 @@ StageDef battlefield() {
 
 StageDef skyIslands() {
   StageDef s;
-  s.name = "Iles Celestes";
+  s.name = "Îles Célestes";
   s.theme = StageTheme::Sky;
   Platform moving = thin(-100, 100, -170);
   moving.amplitude = {360, 0};

@@ -2,51 +2,63 @@
 #include <cstdio>
 
 #include "game/render.hpp"
+#include "game/ui.hpp"
 
 void drawHud(const Match& m, const std::array<float, 4>& shake, float time) {
   const int n = int(m.fighters.size());
-  const float pw = 236.0f, ph = 92.0f, gap = 18.0f;
+  const float pw = 240.0f, ph = 90.0f, gap = 18.0f;
   const float total = n * pw + (n - 1) * gap;
   float x = (kScreenW - total) * 0.5f;
   const float y = kScreenH - ph - 12.0f;
   for (const auto& f : m.fighters) {
     Color pc = slotColor(f);
-    Color bg = f.eliminated ? Color{70, 70, 80, 220} : withAlpha(shade(pc, 0.55f), 0.9f);
-    DrawRectangleRounded({x + 4, y + 5, pw, ph}, 0.3f, 8, withAlpha(BLACK, 0.35f));
-    DrawRectangleRounded({x, y, pw, ph}, 0.3f, 8, bg);
-    DrawRectangleRoundedLinesEx({x, y, pw, ph}, 0.3f, 8, 3, f.eliminated ? GRAY : pc);
+    Rectangle card{x, y, pw, ph};
+    ui::slanted({x + 5, y + 6, pw, ph}, 16, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
+    if (f.eliminated) {
+      ui::slanted(card, 16, {80, 80, 92, 235}, {40, 40, 50, 235});
+    } else {
+      ui::slanted(card, 16, withAlpha(mixColor(pc, BLACK, 0.3f), 0.95f), withAlpha(mixColor(pc, BLACK, 0.72f), 0.95f));
+      ui::slanted({x + 14, y, pw - 14, 10}, 2, withAlpha(WHITE, 0.25f), withAlpha(WHITE, 0.0f));
+    }
+    ui::slantedOutline(card, 16, 3, withAlpha(ui::kInk, 0.95f));
     if (f.finalSmash) {
       Color rb = ColorFromHSV(std::fmod(time * 300.0f, 360.0f), 0.8f, 1.0f);
-      DrawRectangleRoundedLinesEx({x - 3, y - 3, pw + 6, ph + 6}, 0.3f, 8, 4, rb);
-      drawTextOutlined("SUPER !", x + pw - 82, y - 14, 20, rb);
+      ui::slantedOutline(ui::grow(card, 3), 16, 4, rb);
+      drawTextOutlined("SUPER !", x + pw - 92, y - 18, 24, rb, ui::kInk, 3.0f, FontKind::Title);
     }
-    DrawCircleV({x + 48, y + 46}, 38, withAlpha(BLACK, 0.35f));
-    drawPortrait(*f.def, f.palette, {x + 48, y + 44}, 64, time + f.id);
+    DrawCircleV({x + 50, y + 46}, 36, withAlpha(BLACK, 0.4f));
+    DrawRing({x + 50, y + 46}, 34, 37, 0, 360, 36, withAlpha(pc, 0.9f));
+    drawPortrait(*f.def, f.palette, {x + 50, y + 44}, 62, time + f.id);
 
     char label[16];
     std::snprintf(label, sizeof label, f.cpu ? "CPU" : "J%d", f.port + 1);
-    drawTextOutlined(f.def->name.c_str(), x + 92, y + 8, 18, WHITE);
-    drawTextOutlined(label, x + pw - 12 - textWidth(label, 16), y + 9, 16, pc);
+    drawTextOutlined(f.def->name.c_str(), x + 94, y + 6, 22, WHITE, ui::kInk, 2.5f, FontKind::Title);
+    float lw = textWidth(label, 15) + 16;
+    DrawRectangleRounded({x + pw - lw - 10, y + 8, lw, 20}, 0.5f, 6, pc);
+    drawText(label, x + pw - lw - 2, y + 9, 15, WHITE);
 
     if (f.eliminated) {
-      drawTextOutlined("K.O.", x + 100, y + 32, 40, {200, 200, 210, 255});
+      drawTextOutlined("K.O.", x + 104, y + 34, 42, {210, 210, 220, 255}, ui::kInk, 3.0f, FontKind::Title);
     } else {
       char pct[16];
       std::snprintf(pct, sizeof pct, "%d", int(f.percent));
-      float s = shake[f.id & 3];
-      float jx = s > 0 ? std::sin(time * 90.0f) * s : 0.0f;
-      float jy = s > 0 ? std::cos(time * 77.0f) * s : 0.0f;
+      float sh = shake[f.id & 3];
+      float jx = sh > 0 ? std::sin(time * 90.0f) * sh : 0.0f;
+      float jy = sh > 0 ? std::cos(time * 77.0f) * sh : 0.0f;
       Color col = percentColor(f.percent);
-      float size = 46.0f + std::min(8.0f, s);
-      float w = textWidth(pct, size);
-      drawTextOutlined(pct, x + 168 - w + jx, y + 28 + jy, size, col, {15, 15, 25, 255}, 3.0f);
-      drawTextOutlined("%", x + 172 + jx, y + 46 + jy, 24, col);
-      for (int i = 0; i < std::min(f.stocks, 6); ++i) {
-        Vector2 c{x + 100.0f + i * 18.0f, y + 79.0f};
-        DrawCircleV(c, 7, {20, 18, 30, 255});
-        DrawCircleV(c, 5.5f, C(f.def->palettes[f.palette].primary));
+      float size = 50.0f + std::min(8.0f, sh);
+      float w = textWidth(pct, size, FontKind::Title);
+      drawTextOutlined(pct, x + 180 - w + jx, y + 30 + jy, size, col, ui::kInk, 4.0f, FontKind::Title);
+      drawTextOutlined("%", x + 184 + jx, y + 50 + jy, 26, col, ui::kInk, 3.0f, FontKind::Title);
+      if (!m.cfg.training) {
+        for (int i = 0; i < std::min(f.stocks, 6); ++i) {
+          Vector2 c{x + 104.0f + i * 17.0f, y + 78.0f};
+          DrawCircleV(c, 7, ui::kInk);
+          DrawCircleV(c, 5.5f, C(f.def->palettes[f.palette].primary));
+          DrawCircleV({c.x - 1.5f, c.y - 1.5f}, 2.0f, withAlpha(WHITE, 0.6f));
+        }
+        if (f.stocks > 6) drawTextOutlined(TextFormat("x%d", f.stocks), x + 210, y + 70, 15, WHITE);
       }
-      if (f.stocks > 6) drawTextOutlined(TextFormat("x%d", f.stocks), x + 210, y + 72, 14, WHITE);
     }
     x += pw + gap;
   }
@@ -81,19 +93,23 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
 
 void drawCountdown(const Match& m) {
   const float cx = kScreenW * 0.5f, cy = kScreenH * 0.38f;
+  auto big = [&](const char* txt, float size, Color light, Color mid, Color dark) {
+    float w = ui::logoWidth(txt, size);
+    ui::logoText(txt, cx - w * 0.5f, cy - size * 0.55f, size, light, mid, dark, {30, 10, 30, 255}, {20, 6, 24, 255}, 7);
+  };
   if (m.countdown > 0) {
     int n = (m.countdown + 59) / 60;
     if (m.countdown > 180) {
-      drawTextCentered("PRETS ?", cx, cy - 30, 64, {255, 240, 200, 255});
+      big("PRÊTS ?", 96, {255, 255, 255, 255}, {240, 236, 255, 255}, {210, 200, 240, 255});
       return;
     }
     float k = float(m.countdown % 60) / 60.0f;
-    float size = 120.0f + 80.0f * k;
-    Color col = n == 3 ? Color{255, 90, 90, 255} : n == 2 ? Color{255, 200, 60, 255} : Color{120, 230, 120, 255};
-    drawTextCentered(TextFormat("%d", n), cx, cy - size * 0.5f, size, withAlpha(col, 0.4f + 0.6f * k));
+    float size = 150.0f + 90.0f * k * k;
+    if (n == 3) big("3", size, {255, 170, 160, 255}, {255, 90, 80, 255}, {200, 40, 50, 255});
+    else if (n == 2) big("2", size, {255, 240, 170, 255}, {255, 200, 60, 255}, {230, 140, 30, 255});
+    else big("1", size, {190, 255, 190, 255}, {110, 230, 120, 255}, {40, 160, 70, 255});
   } else if (m.frame < 200 + 50) {
     float k = (m.frame - 200) / 50.0f;
-    float size = 150.0f + 60.0f * k;
-    drawTextCentered("GO !", cx, cy - size * 0.5f, size, withAlpha({255, 255, 255, 255}, 1.0f - k * k));
+    if (k < 0.8f) big("GO !", 190.0f + 40.0f * k, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255});
   }
 }

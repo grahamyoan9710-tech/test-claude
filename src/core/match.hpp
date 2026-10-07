@@ -15,6 +15,7 @@ struct MatchConfig {
   int stage = 0;
   int stocks = 3;
   bool items = true;  // Clash Orb
+  bool training = false;  // infinite lives, the match never ends
   std::array<Slot, 4> slots;
   uint32_t seed = 12345;
 };
@@ -75,6 +76,8 @@ class Match {
   int ledgeOwner(int ledge) const;
   // Final ranking: fighter ids from 1st to last.
   std::vector<int> ranking() const;
+  // Training: put everybody back on their spawn point at 0%.
+  void resetPositions();
 
   MatchConfig cfg;
   const StageDef* stageDef = nullptr;

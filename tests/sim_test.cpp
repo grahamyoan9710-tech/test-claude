@@ -263,6 +263,41 @@ static void testFinalSmash() {
   CHECK(v.stocks < stocks, "final smash KOs a 60%% Titan (percent %.0f)", v.percent);
 }
 
+static void testTraining() {
+  std::printf("[training mode]\n");
+  MatchConfig cfg = duel(0, 2, 0, false, true);
+  cfg.training = true;
+  cfg.items = false;
+  Match m(cfg);
+  skipCountdown(m);
+  CpuBrain dummy(5, 3);
+  dummy.setDummy(CpuBrain::kDummyStand);
+  Fighter& v = m.fighters[1];
+  v.percent = 200;
+  m.fighters[0].pos = {200, 0};
+  m.fighters[0].facing = 1;
+  v.pos = {270, 0};
+  std::array<InputState, 4> in{};
+  for (int i = 0; i < 10; ++i) {
+    in[1] = dummy.think(m, 1);
+    m.step(in);
+  }
+  CHECK(in[1].stick.len() == 0.0f && !in[1].attack && !in[1].jump, "standing dummy does nothing");
+  in[0].cstick = {1, 0};
+  m.step(in);
+  in[0].cstick = {0, 0};
+  int falls = v.falls;
+  for (int i = 0; i < 600; ++i) {
+    in[1] = dummy.think(m, 1);
+    m.step(in);
+  }
+  CHECK(v.falls > falls, "the dummy was KO'd");
+  CHECK(v.stocks == 3 && !v.eliminated && !m.finished, "no stock lost in training (stocks %d)", v.stocks);
+  v.percent = 80;
+  m.resetPositions();
+  CHECK(v.percent == 0.0f && m.fighters[0].percent == 0.0f, "reset clears damage");
+}
+
 static void testRecovery() {
   std::printf("[recovery]\n");
   const int nChars = int(roster().size());
@@ -403,6 +438,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "fs") testFinalSmash();
+  if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "battle") testBattles();
   if (only.empty() || only == "balance") testBalance();

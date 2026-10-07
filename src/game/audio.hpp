@@ -17,6 +17,8 @@ class Audio {
   // 0 = silence, 1 = menu theme, 2 = battle theme
   void setMusic(int mode);
   void toggleMute();
+  // Volumes in percent (0..100), applied immediately.
+  void setVolumes(int master, int music, int sfx);
   bool muted() const { return muted_; }
   bool ready() const { return ready_; }
   // Writes every synthesized sound + 20 s of each music theme as .wav files (no audio device needed).
@@ -26,6 +28,7 @@ class Audio {
   static constexpr int kVoices = 4;
   bool ready_ = false;
   bool muted_ = false;
+  float sfxGain_ = 1.0f;
   Sound voices_[int(Sfx::Count)][kVoices] = {};
   int next_[int(Sfx::Count)] = {};
   AudioStream music_ = {};
