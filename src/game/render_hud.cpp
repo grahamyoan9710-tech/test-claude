@@ -15,6 +15,11 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time) {
     DrawRectangleRounded({x + 4, y + 5, pw, ph}, 0.3f, 8, withAlpha(BLACK, 0.35f));
     DrawRectangleRounded({x, y, pw, ph}, 0.3f, 8, bg);
     DrawRectangleRoundedLinesEx({x, y, pw, ph}, 0.3f, 8, 3, f.eliminated ? GRAY : pc);
+    if (f.finalSmash) {
+      Color rb = ColorFromHSV(std::fmod(time * 300.0f, 360.0f), 0.8f, 1.0f);
+      DrawRectangleRoundedLinesEx({x - 3, y - 3, pw + 6, ph + 6}, 0.3f, 8, 4, rb);
+      drawTextOutlined("SUPER !", x + pw - 82, y - 14, 20, rb);
+    }
     DrawCircleV({x + 48, y + 46}, 38, withAlpha(BLACK, 0.35f));
     drawPortrait(*f.def, f.palette, {x + 48, y + 44}, 64, time + f.id);
 

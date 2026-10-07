@@ -82,6 +82,10 @@ bool Match::tryGroundActions(Fighter& f) {
     return true;
   }
   if (f.pressed(&IS::special)) {
+    if (f.finalSmash) {
+      startFinalSmash(f);
+      return true;
+    }
     int sp = specialFor(f);
     if (sp >= 0) {
       startMove(f, sp);
@@ -118,6 +122,10 @@ bool Match::tryGroundActions(Fighter& f) {
 
 bool Match::tryAirActions(Fighter& f) {
   if (f.pressed(&IS::special)) {
+    if (f.finalSmash) {
+      startFinalSmash(f);
+      return true;
+    }
     int sp = specialFor(f);
     if (sp >= 0) {
       startMove(f, sp);

@@ -11,8 +11,10 @@ les sons et la musique sont synthétisés au lancement. Aucun fichier de ressour
 | Écran titre | Sélection des combattants |
 |---|---|
 | ![Titre](docs/titre.png) | ![Sélection](docs/selection.png) |
-| **Destination Finale** | **Résultats** |
-| ![Combat 2](docs/combat2.png) | ![Résultats](docs/resultats.png) |
+| **Destination Finale** | **Attaque finale** |
+| ![Combat 2](docs/combat2.png) | ![Attaque finale](docs/attaque_finale.png) |
+| **Résultats** | |
+| ![Résultats](docs/resultats.png) | |
 
 ## Le jeu
 
@@ -31,6 +33,10 @@ les sons et la musique sont synthétisés au lancement. Aucun fichier de ressour
   rebords (accroche, remontée, attaque, roulade, saut), retombée en culbute + *tech*, chute libre après
   la remontée, attaques smash à charger, super armure, contres, projectiles, plateformes traversables
   et mobiles.
+- **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
+  de l'arène. Frappez-la jusqu'à la briser : votre combattant s'illumine et sa prochaine **spéciale**
+  déclenche l'attaque finale **SUPER CLASH** (cinématique, ondes de choc dévastatrices). Désactivable
+  dans le menu (« ORBE CLASH : NON »).
 - **3 arènes** : Destination Finale, Champ de Bataille, Îles Célestes (plateforme mobile).
 - **1 à 4 joueurs** : humains (2 sur le clavier + manettes) et/ou **ordinateurs de niveau 1 à 9**.
 - Effets : étincelles, traînées d'éjection, rayon de K.O., tremblement d'écran, bulles quand un
@@ -110,7 +116,8 @@ cmake --build build-core -j
 ```
 
 Les tests vérifient la formule de recul, les coups, les K.O., chaque commande clavier (petit/grand saut,
-smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), la remontée de chaque personnage
+smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), l'Orbe Clash et l'attaque finale,
+la remontée de chaque personnage
 depuis le vide, des dizaines de matchs complets entre ordinateurs, l'équilibrage et le déterminisme.
 
 ## Architecture

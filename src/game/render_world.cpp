@@ -214,6 +214,37 @@ void drawProjectiles(const Match& m, float time) {
   }
 }
 
+void drawOrb(const Match& m, float time) {
+  const Orb& o = m.orb;
+  if (!o.active) return;
+  if (o.life < 120 && (o.life / 6) % 2 == 0) return;  // about to vanish: blink
+  Vector2 c = V(o.pos);
+  float r = o.radius;
+  float hue = std::fmod(time * 120.0f, 360.0f);
+  for (int k = 0; k < 6; ++k)
+    DrawCircleV(c, r * (2.4f - k * 0.2f), withAlpha(ColorFromHSV(std::fmod(hue + k * 40.0f, 360.0f), 0.7f, 1.0f), 0.08f));
+  for (int i = 0; i < 8; ++i) {  // rotating rays
+    float a = time * 1.5f + i * kPi / 4.0f;
+    Vector2 tip{c.x + std::cos(a) * r * 2.6f, c.y + std::sin(a) * r * 2.6f};
+    DrawLineEx(c, tip, 3, withAlpha(ColorFromHSV(std::fmod(hue + i * 45.0f, 360.0f), 0.6f, 1.0f), 0.35f));
+  }
+  DrawCircleV(c, r + 3, {30, 20, 40, 255});
+  DrawCircleGradient(int(c.x), int(c.y), r, {255, 250, 220, 255}, ColorFromHSV(hue, 0.85f, 1.0f));
+  float spin = time * 2.0f;
+  for (int s = -1; s <= 1; s += 2) {  // the ball's two curved bands
+    Vec2 off = rotate({s * r * 0.95f, 0.0f}, spin);
+    DrawRing({c.x + off.x, c.y + off.y}, r * 0.78f, r * 0.9f, 0, 360, 32, withAlpha({40, 25, 60, 255}, 0.55f));
+  }
+  DrawCircleV(c, r * 0.45f, {255, 255, 255, 255});
+  star(c, r * 0.42f, r * 0.18f, spin, ColorFromHSV(hue, 0.9f, 0.9f));
+  if (o.hp < 25.0f) {  // cracks
+    DrawLineEx({c.x - r * 0.6f, c.y - r * 0.2f}, {c.x - r * 0.1f, c.y + r * 0.1f}, 2, {40, 20, 50, 255});
+    DrawLineEx({c.x - r * 0.1f, c.y + r * 0.1f}, {c.x + r * 0.2f, c.y + r * 0.6f}, 2, {40, 20, 50, 255});
+  }
+  if (o.hp < 12.0f) DrawLineEx({c.x + r * 0.6f, c.y - r * 0.5f}, {c.x + r * 0.1f, c.y - r * 0.05f}, 2, {40, 20, 50, 255});
+  if (o.flash > 0) DrawCircleV(c, r, withAlpha(WHITE, o.flash / 8.0f));
+}
+
 void drawStagePreview(const StageDef& s, Rectangle area, float time) {
   Color top, bottom;
   switch (s.theme) {

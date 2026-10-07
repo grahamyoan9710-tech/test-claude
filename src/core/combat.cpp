@@ -50,6 +50,19 @@ void Match::resolveHits() {
     if (m->counterStart >= 0 && !a.counterTriggered) continue;
     float mul = 1.0f;
     if (m->chargeFrame >= 0) mul += m->chargeDamageMul * float(a.charge) / float(m->maxCharge);
+    if (orb.active && !m->isGrab) {
+      for (const auto& h : m->hitboxes) {
+        if (a.moveFrame < h.start || a.moveFrame >= h.end) continue;
+        int key = 63 * 64 + h.group;
+        if (std::find(a.hitList.begin(), a.hitList.end(), key) != a.hitList.end()) continue;
+        Vec2 hp = a.center() + Vec2{h.offset.x * a.facing, h.offset.y};
+        if ((hp - orb.pos).len() > h.radius + orb.radius) continue;
+        a.hitList.push_back(key);
+        a.hitlag = std::max(a.hitlag, 4);
+        hitOrb(a.id, h.damage * mul, a.center(), h.fx);
+        break;
+      }
+    }
     for (auto& v : fighters) {
       if (v.id == a.id || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
       if (v.state == FState::Grabbed && v.grabPartner == a.id) continue;
@@ -216,6 +229,15 @@ void Match::updateProjectiles() {
       }
     }
     if (!pr.alive) continue;
+    if (orb.active && (pr.pos - orb.pos).len() < pr.radius + orb.radius &&
+        std::find(pr.hitList.begin(), pr.hitList.end(), 63) == pr.hitList.end()) {
+      pr.hitList.push_back(63);
+      hitOrb(pr.owner, pr.hit.damage, pr.pos - pr.vel, pr.hit.fx);
+      if (!pr.piercing) {
+        pr.alive = false;
+        continue;
+      }
+    }
     for (auto& v : fighters) {
       if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
       if (std::find(pr.hitList.begin(), pr.hitList.end(), v.id) != pr.hitList.end()) continue;

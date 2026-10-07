@@ -27,6 +27,7 @@ void App::startMatch() {
   MatchConfig cfg;
   cfg.stage = stage_;
   cfg.stocks = stocks_;
+  cfg.items = items_;
   cfg.seed = uint32_t(frames_) * 2654435761u + 12345u;
   std::array<int, 4> devices{};
   for (int i = 0; i < 4; ++i) {

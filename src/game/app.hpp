@@ -84,6 +84,8 @@ class App {
 
   std::array<SlotSetup, 4> slots_;
   int stocks_ = 3;
+  bool items_ = true;
+  int rulesCol_ = 0;
   int stage_ = 0;
   int cssCol_ = 0, cssRow_ = 1;
   int titleSel_ = 0;

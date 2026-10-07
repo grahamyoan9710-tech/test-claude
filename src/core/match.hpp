@@ -14,13 +14,26 @@ struct MatchConfig {
   };
   int stage = 0;
   int stocks = 3;
+  bool items = true;  // Clash Orb
   std::array<Slot, 4> slots;
   uint32_t seed = 12345;
 };
 
 enum class EvType : uint8_t {
   Hit, ShieldHit, KO, Jump, AirJump, Land, Dash, Grab, Throw, Projectile, ShieldBreak,
-  Respawn, Tech, LedgeGrab, Counter, Swing, Clank, Countdown, Go, GameSet
+  Respawn, Tech, LedgeGrab, Counter, Swing, Clank, Countdown, Go, GameSet,
+  OrbSpawn, OrbHit, OrbBreak, FinalSmash
+};
+
+// The Clash Orb: floats around the stage, whoever breaks it gets a final smash.
+struct Orb {
+  bool active = false;
+  Vec2 pos, vel;
+  float hp = 0.0f;
+  float radius = 26.0f;
+  int life = 0;
+  int flash = 0;
+  std::vector<int> hitBy;  // attacker * 4096 + move instance
 };
 
 struct GameEvent {
@@ -69,6 +82,10 @@ class Match {
   std::vector<Platform> platforms;
   std::vector<Projectile> projectiles;
   std::vector<GameEvent> events;
+  Orb orb;
+  int orbTimer = 0;       // frames until the next orb
+  int freezeTimer = 0;    // final smash cinematic: everyone but the user is frozen
+  int freezeOwner = -1;
   int frame = 0;
   int countdown = 200;
   bool finished = false;
@@ -111,6 +128,9 @@ class Match {
   void koFighter(Fighter& f);
   void respawnFighter(Fighter& f);
   void checkEnd();
+  void updateOrb();
+  void hitOrb(int attacker, float damage, Vec2 from, HitFx fx);
+  void startFinalSmash(Fighter& f);
 };
 
 float computeKnockback(float percentAfter, float damage, float weight, float growth, float base);

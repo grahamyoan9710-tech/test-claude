@@ -277,6 +277,15 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.handB = {-0.05f * H, 0.15f * H};
       break;
     case FState::Attack:
+      if (f.move == FinalSmash) {
+        float k = smoothstep(f.moveFrame / 20.0f);
+        p.handF = lerpv(p.handF, {0.28f * H, -0.48f * H}, k);
+        p.handB = lerpv(p.handB, {-0.26f * H, -0.46f * H}, k);
+        p.footF = {0.10f * H, 0.46f * H};
+        p.footB = {-0.08f * H, 0.48f * H};
+        p.lean = -0.1f * k;
+        break;
+      }
       if (!f.grounded) p = airPose(f, m, tt);
       applyMove(p, f, tt);
       break;
@@ -318,6 +327,16 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     flashCol = {30, 30, 50, 255};
     flash = 0.35f;
   }
+  const bool usingFs = f.state == FState::Attack && f.move == FinalSmash;
+  if (f.finalSmash || usingFs) {  // rainbow aura
+    float hue = std::fmod(time * 200.0f, 360.0f);
+    Vec2 c0 = f.center();
+    for (int k = 0; k < 5; ++k)
+      DrawCircleV(V(c0), H * (0.75f - k * 0.08f) + std::sin(time * 10.0f + k) * 4.0f,
+                  withAlpha(ColorFromHSV(std::fmod(hue + k * 50.0f, 360.0f), 0.8f, 1.0f), 0.08f));
+    flashCol = ColorFromHSV(hue, 0.6f, 1.0f);
+    flash = std::max(flash, 0.22f + 0.1f * std::sin(time * 12.0f));
+  }
   Vec2 feet = f.pos;
   if (f.hitlag > 0 && f.state == FState::Hitstun) feet.x += std::sin(m.frame * 2.7f) * 4.0f;
 
@@ -334,6 +353,30 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, alpha, flashCol, flash, time + f.id);
 
   Vec2 c = f.center();
+  if (usingFs) {
+    const MoveDef& mv = d.moves[FinalSmash];
+    Color col = fxColor(mv.hitboxes.empty() ? HitFx::Magic : mv.hitboxes[0].fx);
+    if (f.moveFrame < 34) {  // gathering energy
+      float k = f.moveFrame / 34.0f;
+      for (int i = 0; i < 10; ++i) {
+        float a = time * 3.0f + i * kPi / 5.0f;
+        float rr = H * (1.6f - k);
+        DrawLineEx(V(c + Vec2{std::cos(a), std::sin(a)} * rr), V(c + Vec2{std::cos(a), std::sin(a)} * (rr * 0.6f)), 4,
+                   withAlpha(col, 0.7f));
+      }
+      DrawCircleV(V(c), H * 0.3f * k, withAlpha(WHITE, 0.6f));
+    }
+    for (const auto& h : mv.hitboxes) {
+      int t = f.moveFrame - h.start + 4;
+      if (t < 0 || t > 22) continue;
+      float k = smoothstep(t / 12.0f);
+      float r = h.radius * k;
+      float a = 1.0f - t / 22.0f;
+      DrawCircleV(V(c), r, withAlpha(col, 0.18f * a));
+      DrawRing(V(c), std::max(0.0f, r - 18.0f), r, 0, 360, 64, withAlpha(col, 0.85f * a));
+      DrawRing(V(c), std::max(0.0f, r - 6.0f), r, 0, 360, 64, withAlpha(WHITE, 0.9f * a));
+    }
+  }
   if (pose.trail > 0.0f) {
     Vec2 tp = c + Vec2{pose.trailPos.x * f.facing, pose.trailPos.y};
     Color col = fxColor(pose.trailFx);

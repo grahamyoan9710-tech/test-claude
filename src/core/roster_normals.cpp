@@ -153,4 +153,14 @@ void buildCommonMoves(CharacterDef& c, float S, float P) {
 
   for (int id : {Grab, Pummel, FThrow, BThrow, UThrow, DThrow, LedgeAttack, GetupAttack})
     scale(m[id], S, P);
+
+  // Final smash: a growing shock wave, the last ring launches very hard.
+  m[FinalSmash] = mv("SUPER CLASH", 110, {hb(34, 38, 0, 0, 130, 8, 80, 40, 20, L::Body, 0, HitFx::Magic),
+                                          hb(46, 50, 0, 0, 250, 8, 80, 40, 20, L::Body, 1, HitFx::Magic),
+                                          hb(60, 66, 0, 0, 420, 22, 50, 95, 105, L::Body, 2, HitFx::Magic)});
+  m[FinalSmash].intangibleStart = 0;
+  m[FinalSmash].intangibleEnd = 110;
+  m[FinalSmash].vel = {{1, VelMode::Set, {0.0f, -3.0f}}, {22, VelMode::Set, {0.0f, 0.0f}}};
+  m[FinalSmash].gravityMul = 0.0f;
+  m[FinalSmash].allowDrift = false;
 }

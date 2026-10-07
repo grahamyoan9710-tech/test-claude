@@ -27,6 +27,7 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
     f.grounded = false;
     fighters.push_back(f);
   }
+  orbTimer = rng.irange(60 * 10, 60 * 20);
 }
 
 void Match::emit(EvType t, Vec2 pos, int a, int b, float strength, Vec2 dir, HitFx fx) {
@@ -62,8 +63,14 @@ void Match::step(const std::array<InputState, 4>& inputs) {
     for (int i = 5; i > 0; --i) f.stickHist[i] = f.stickHist[i - 1];
     f.stickHist[0] = f.in.stick;
   }
-  for (auto& f : fighters) updateFighter(f);
-  updateProjectiles();
+  if (freezeTimer > 0) {  // final smash cinematic: only its user moves
+    --freezeTimer;
+    updateFighter(fighters[freezeOwner]);
+  } else {
+    for (auto& f : fighters) updateFighter(f);
+    updateProjectiles();
+    updateOrb();
+  }
   resolveHits();
   checkBlastZones();
   checkEnd();
@@ -114,6 +121,7 @@ void Match::koFighter(Fighter& f) {
     fighters[f.lastHitBy].kos++;
   f.falls++;
   f.stocks--;
+  f.finalSmash = false;
   f.state = FState::Dead;
   f.stateFrame = 0;
   f.respawnTimer = 100;
@@ -156,6 +164,68 @@ void Match::checkEnd() {
     finishFrame = frame;
     emit(EvType::GameSet, {}, winner);
   }
+}
+
+void Match::updateOrb() {
+  if (!cfg.items || !started()) return;
+  if (!orb.active) {
+    if (--orbTimer > 0) return;
+    for (const auto& f : fighters)
+      if (f.finalSmash || (f.state == FState::Attack && f.move == FinalSmash)) {
+        orbTimer = 300;  // one final smash at a time
+        return;
+      }
+    orb = Orb{};
+    orb.active = true;
+    orb.pos = {rng.range(-350.0f, 350.0f), -520.0f};
+    orb.vel = {rng.range(-2.0f, 2.0f), 1.5f};
+    orb.hp = 40.0f;
+    orb.life = 60 * 18;
+    emit(EvType::OrbSpawn, orb.pos);
+    return;
+  }
+  if (orb.flash > 0) --orb.flash;
+  if (--orb.life <= 0) {
+    orb.active = false;
+    orbTimer = rng.irange(60 * 15, 60 * 30);
+    return;
+  }
+  orb.vel += Vec2{rng.range(-0.15f, 0.15f), rng.range(-0.15f, 0.15f)};
+  float sp = orb.vel.len();
+  if (sp > 3.2f) orb.vel = orb.vel * approach(1.0f, 3.2f / sp, 0.05f);
+  if (sp < 1.2f) orb.vel = orb.vel.len() > 0.01f ? orb.vel * (1.2f / sp) : Vec2{1.2f, 0.0f};
+  orb.pos += orb.vel;
+  if (orb.pos.x < -550.0f || orb.pos.x > 550.0f) {
+    orb.pos.x = clampf(orb.pos.x, -550.0f, 550.0f);
+    orb.vel.x = -orb.vel.x;
+  }
+  if (orb.pos.y < -560.0f || orb.pos.y > -70.0f) {
+    orb.pos.y = clampf(orb.pos.y, -560.0f, -70.0f);
+    orb.vel.y = -orb.vel.y;
+  }
+}
+
+void Match::hitOrb(int attacker, float damage, Vec2 from, HitFx fx) {
+  orb.hp -= damage;
+  orb.flash = 8;
+  Vec2 d = (orb.pos - from).norm();
+  orb.vel += d * (2.0f + damage * 0.25f);
+  if (orb.vel.len() > 9.0f) orb.vel = orb.vel.norm() * 9.0f;
+  emit(EvType::OrbHit, orb.pos, attacker, -1, damage, d, fx);
+  if (orb.hp > 0.0f) return;
+  orb.active = false;
+  orbTimer = rng.irange(60 * 25, 60 * 45);
+  if (attacker >= 0) fighters[attacker].finalSmash = true;
+  emit(EvType::OrbBreak, orb.pos, attacker);
+}
+
+void Match::startFinalSmash(Fighter& f) {
+  f.finalSmash = false;
+  startMove(f, FinalSmash);
+  freezeTimer = 30;
+  freezeOwner = f.id;
+  HitFx fx = f.def->moves[FinalSmash].hitboxes.empty() ? HitFx::Magic : f.def->moves[FinalSmash].hitboxes[0].fx;
+  emit(EvType::FinalSmash, f.center(), f.id, -1, 0.0f, {}, fx);
 }
 
 std::vector<int> Match::ranking() const {

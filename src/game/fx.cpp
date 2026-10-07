@@ -147,6 +147,46 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::Crowd, 0.9f, 0.9f);
         break;
       case EvType::Clank: break;
+      case EvType::OrbSpawn:
+        burst(e.pos, 24, 6, {255, 250, 200, 255}, PK::Star, 40, 6);
+        au.play(Sfx::Go, 0.6f, 1.4f);
+        break;
+      case EvType::OrbHit: {
+        for (int i = 0; i < 10; ++i) {
+          float a = rng_.range(0, 2 * kPi);
+          add(PK::Spark, e.pos, Vec2{std::cos(a), std::sin(a)} * rng_.range(4, 9), 14, 3, 0,
+              ColorFromHSV(rng_.range(0, 360), 0.7f, 1.0f));
+        }
+        shake_ = std::max(shake_, 3.0f);
+        au.play(Sfx::HitMedium, 0.6f, 1.4f);
+        au.play(Sfx::ShieldHit, 0.4f, 1.3f);
+        break;
+      }
+      case EvType::OrbBreak:
+        for (int i = 0; i < 50; ++i) {
+          float a = rng_.range(0, 2 * kPi);
+          add(PK::Star, e.pos, Vec2{std::cos(a), std::sin(a)} * rng_.range(3, 14), rng_.range(30, 60), rng_.range(5, 10), 1,
+              ColorFromHSV(rng_.range(0, 360), 0.7f, 1.0f));
+        }
+        add(PK::Ring, e.pos, {}, 30, 10, 220, WHITE);
+        flash_ = std::max(flash_, 0.45f);
+        flashCol_ = WHITE;
+        shake_ = std::max(shake_, 14.0f);
+        au.play(Sfx::ShieldBreak, 1.0f, 1.2f);
+        au.play(Sfx::GameSet, 0.8f, 1.25f);
+        au.play(Sfx::Crowd, 0.8f, 1.1f);
+        break;
+      case EvType::FinalSmash: {
+        Color c = ColorFromHSV(rng_.range(0, 360), 0.5f, 1.0f);
+        flash_ = std::max(flash_, 0.6f);
+        flashCol_ = c;
+        shake_ = std::max(shake_, 10.0f);
+        add(PK::Ring, e.pos, {}, 40, 20, 400, WHITE);
+        au.play(Sfx::Counter, 1.0f, 0.6f);
+        au.play(Sfx::KO, 0.8f, 1.6f);
+        au.play(Sfx::Crowd, 0.9f, 1.15f);
+        break;
+      }
     }
   }
 }
@@ -169,6 +209,11 @@ void Fx::update(const Match& m) {
     if (f.state == FState::Hitstun && sp > 8.0f && m.frame % 2 == 0) {
       Color c = sp > 16.0f ? Color{255, 170, 90, 220} : Color{230, 230, 235, 200};
       add(PK::Smoke, f.center(), f.kbVel * -0.05f, 26, 8, 20 + sp, c);
+    }
+    if (f.finalSmash && m.frame % 3 == 0) {
+      float a = rng_.range(0, 2 * kPi);
+      Vec2 o = Vec2{std::cos(a), std::sin(a)} * (f.height() * rng_.range(0.3f, 0.7f));
+      add(PK::Star, f.center() + o, {0, -1.5f}, 24, 4, 1, ColorFromHSV(rng_.range(0, 360), 0.6f, 1.0f));
     }
     if (f.charging && m.frame % 3 == 0) {
       float a = rng_.range(0, 2 * kPi);

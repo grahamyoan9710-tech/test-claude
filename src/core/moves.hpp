@@ -62,6 +62,7 @@ enum MoveId : int {
   Grab, Pummel, FThrow, BThrow, UThrow, DThrow,
   LedgeAttack, GetupAttack,
   Extra1, Extra2, Extra3,  // follow-ups (combos, landing shockwaves...)
+  FinalSmash,              // granted by breaking the Clash Orb
   MOVE_COUNT
 };
 

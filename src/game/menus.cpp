@@ -8,7 +8,7 @@ constexpr float kCardW = 290, kCardH = 360, kCardGap = 16, kCardY = 290;
 float cardX(int col) { return (kScreenW - (4 * kCardW + 3 * kCardGap)) * 0.5f + col * (kCardW + kCardGap); }
 
 Rectangle fieldRect(int col, int row) {
-  if (row < 0) return {kScreenW * 0.5f - 110, 74, 220, 36};
+  if (row < 0) return {kScreenW * 0.5f + (col == 0 ? -230.0f : 10.0f), 74, 220, 36};
   float x = cardX(col);
   switch (row) {
     case 0: return {x + 20, kCardY + 48, kCardW - 40, 34};
@@ -36,7 +36,8 @@ void drawField(Rectangle r, const char* text, bool focused, bool enabled, float 
 void App::changeField(int col, int row, int delta) {
   audio_.play(Sfx::MenuMove);
   if (row < 0) {
-    stocks_ = 1 + (stocks_ - 1 + delta + 5) % 5;
+    if (col == 0) stocks_ = 1 + (stocks_ - 1 + delta + 5) % 5;
+    else items_ = !items_;
     return;
   }
   SlotSetup& s = slots_[col];
@@ -75,25 +76,27 @@ void App::updateCss(const MenuNav& nav) {
     if (nav.left) cssCol_ = (cssCol_ + 3) % 4;
     if (nav.right) cssCol_ = (cssCol_ + 1) % 4;
   } else if (nav.left || nav.right) {
-    changeField(0, -1, nav.left ? -1 : 1);
+    rulesCol_ = 1 - rulesCol_;
   }
-  if (nav.up || nav.down || ((nav.left || nav.right) && cssRow_ >= 0)) audio_.play(Sfx::MenuMove, 0.6f);
+  if (nav.up || nav.down || nav.left || nav.right) audio_.play(Sfx::MenuMove, 0.6f);
+  const int fieldCol = cssRow_ < 0 ? rulesCol_ : cssCol_;
 
   bool prev = IsKeyPressed(KEY_K) || IsKeyPressed(KEY_KP_2) || IsKeyPressed(KEY_SLASH);
   for (int g = 0; g < 4; ++g)
     if (IsGamepadAvailable(g) && IsGamepadButtonPressed(g, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)) prev = true;
   bool back = nav.back && !prev;
-  if (nav.confirm && !nav.start) changeField(cssCol_, cssRow_, 1);
-  if (prev) changeField(cssCol_, cssRow_, -1);
+  if (nav.confirm && !nav.start) changeField(fieldCol, cssRow_, 1);
+  if (prev) changeField(fieldCol, cssRow_, -1);
 
   Vector2 mouse = GetMousePosition();
   bool moved = GetMouseDelta().x != 0 || GetMouseDelta().y != 0;
   for (int row = -1; row <= 2; ++row)
-    for (int col = 0; col < (row < 0 ? 1 : 4); ++col) {
+    for (int col = 0; col < (row < 0 ? 2 : 4); ++col) {
       if (!CheckCollisionPointRec(mouse, fieldRect(col, row))) continue;
       if (moved) {
         cssRow_ = row;
-        cssCol_ = row < 0 ? cssCol_ : col;
+        if (row < 0) rulesCol_ = col;
+        else cssCol_ = col;
       }
       if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) changeField(col, row, 1);
       if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) changeField(col, row, -1);
@@ -118,7 +121,8 @@ void App::drawCss() {
   drawBackground(stageList()[1], {std::sin(time_ * 0.15f) * 300.0f, 0}, 1.0f, time_);
   DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.35f));
   drawTextCentered("CHOISISSEZ VOS COMBATTANTS", kScreenW * 0.5f, 18, 42, {255, 230, 120, 255});
-  drawField(fieldRect(0, -1), TextFormat("VIES : %d", stocks_), cssRow_ < 0, true, time_);
+  drawField(fieldRect(0, -1), TextFormat("VIES : %d", stocks_), cssRow_ < 0 && rulesCol_ == 0, true, time_);
+  drawField(fieldRect(1, -1), items_ ? "ORBE CLASH : OUI" : "ORBE CLASH : NON", cssRow_ < 0 && rulesCol_ == 1, true, time_);
 
   // Roster strip
   const auto& r = roster();
@@ -226,7 +230,8 @@ void App::drawStage() {
     DrawRectangleRoundedLinesEx(r, 0.06f, 8, sel ? 6 : 3, sel ? Color{255, 220, 70, 255} : Color{220, 220, 240, 255});
     drawTextCentered(stages[i].name.c_str(), r.x + r.width * 0.5f, r.y + r.height + 18, 28, sel ? Color{255, 220, 70, 255} : WHITE);
   }
-  drawTextCentered(TextFormat("%d combattants  -  %d vies", activeSlots(), stocks_), kScreenW * 0.5f, 560, 24, WHITE);
+  drawTextCentered(TextFormat("%d combattants  -  %d vies  -  orbe %s", activeSlots(), stocks_, items_ ? "activee" : "desactivee"),
+                   kScreenW * 0.5f, 560, 24, WHITE);
   drawTextCentered("Gauche/Droite : choisir   Entree : combattre !   Echap : retour", kScreenW * 0.5f, 640, 20,
                    {210, 215, 240, 255});
 }

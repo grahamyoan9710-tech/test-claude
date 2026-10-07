@@ -283,7 +283,12 @@ CharacterDef makeShade() {
 }  // namespace
 
 const std::vector<CharacterDef>& roster() {
-  static const std::vector<CharacterDef> r = {makeBlaze(), makeVolt(), makeTitan(),
-                                              makeAria(), makePuffo(), makeShade()};
+  static const std::vector<CharacterDef> r = [] {
+    std::vector<CharacterDef> v = {makeBlaze(), makeVolt(), makeTitan(), makeAria(), makePuffo(), makeShade()};
+    const HitFx sig[] = {HitFx::Fire, HitFx::Electric, HitFx::Normal, HitFx::Slash, HitFx::Magic, HitFx::Dark};
+    for (size_t i = 0; i < v.size(); ++i)
+      for (auto& h : v[i].moves[FinalSmash].hitboxes) h.fx = sig[i];
+    return v;
+  }();
   return r;
 }

@@ -233,6 +233,36 @@ static void testKeyboardControls() {
   }
 }
 
+static void testFinalSmash() {
+  std::printf("[clash orb + final smash]\n");
+  Match m(duel(0, 0, 2, false, false));
+  skipCountdown(m);
+  Fighter& f = m.fighters[0];
+  Fighter& v = m.fighters[1];
+  f.pos = {-100, 0};
+  f.facing = 1;
+  v.pos = {150, 0};
+  v.percent = 60;
+  m.orb = Orb{};
+  m.orb.active = true;
+  m.orb.hp = 40;
+  m.orb.life = 10000;
+  Pad p{m};
+  for (int i = 0; i < 400 && !f.finalSmash; ++i) {
+    m.orb.pos = {-55, -60};
+    m.orb.vel = {0, 0};
+    p.run(1, key(0, 0, i % 4 == 0));
+  }
+  CHECK(f.finalSmash, "breaking the orb grants the final smash (orb hp %.0f)", m.orb.hp);
+  p.idle(30);
+  p.run(1, key(0, 0, false, false, false, true));
+  CHECK(f.state == FState::Attack && f.move == FinalSmash, "special triggers the final smash");
+  CHECK(m.freezeTimer > 0, "cinematic freeze");
+  int stocks = v.stocks;
+  p.idle(300);
+  CHECK(v.stocks < stocks, "final smash KOs a 60%% Titan (percent %.0f)", v.percent);
+}
+
 static void testRecovery() {
   std::printf("[recovery]\n");
   const int nChars = int(roster().size());
@@ -372,6 +402,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "jab") testJabHits();
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
+  if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "battle") testBattles();
   if (only.empty() || only == "balance") testBalance();

@@ -77,6 +77,7 @@ struct Fighter {
   int grabPartner = -1;
   int escapeTimer = 0;
   int respawnTimer = 0;
+  bool finalSmash = false;   // broke the Clash Orb: next special is the final smash
 
   // Input
   InputState in, prev;

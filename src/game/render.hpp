@@ -34,6 +34,7 @@ void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size,
 void drawBackground(const StageDef& stage, Vec2 camTarget, float camZoom, float time);
 void drawPlatforms(const Match& m, float time);
 void drawProjectiles(const Match& m, float time);
+void drawOrb(const Match& m, float time);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------

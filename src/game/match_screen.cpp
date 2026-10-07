@@ -79,6 +79,10 @@ void MatchScreen::updateCamera(bool snap) {
   float w = maxX - minX, h = maxY - minY;
   float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
+  if (m_.freezeTimer > 0 && m_.freezeOwner >= 0) {  // final smash close-up
+    target = m_.fighters[m_.freezeOwner].center();
+    zoom = 1.45f;
+  }
   if (m_.finished && m_.winner >= 0) {  // zoom on the winner
     const Fighter& w2 = m_.fighters[m_.winner];
     if (w2.active()) {
@@ -90,8 +94,9 @@ void MatchScreen::updateCamera(bool snap) {
     camPos_ = target;
     camZoom_ = zoom;
   } else {
-    camPos_ += (target - camPos_) * 0.08f;
-    camZoom_ += (zoom - camZoom_) * 0.05f;
+    float speed = m_.freezeTimer > 0 ? 0.2f : 0.08f;
+    camPos_ += (target - camPos_) * speed;
+    camZoom_ += (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : 0.05f);
   }
 }
 
@@ -108,12 +113,20 @@ void MatchScreen::draw() {
   drawBackground(m_.stage(), camPos_, camZoom_, time_);
   BeginMode2D(cam);
   drawPlatforms(m_, time_);
-  // Grabbed fighters and victims are drawn last so they stay visible.
+  drawOrb(m_, time_);
+  // Grabbed fighters and victims are drawn last so they stay visible;
+  // during a final smash cinematic the scene darkens behind its user.
+  const int star = m_.freezeTimer > 0 ? m_.freezeOwner : -1;
   for (int pass = 0; pass < 2; ++pass)
     for (const auto& f : m_.fighters) {
       bool late = f.state == FState::Hitstun || f.state == FState::Grabbed;
-      if ((pass == 1) == late) drawFighter(f, m_, time_, debug_);
+      if ((pass == 1) == late && f.id != star) drawFighter(f, m_, time_, debug_);
     }
+  if (star >= 0) {
+    float k = std::min(1.0f, (30 - m_.freezeTimer) / 8.0f) * std::min(1.0f, m_.freezeTimer / 6.0f);
+    DrawRectangle(-5000, -5000, 10000, 10000, withAlpha(BLACK, 0.6f * k));
+    drawFighter(m_.fighters[star], m_, time_, debug_);
+  }
   drawProjectiles(m_, time_);
   fx_.drawWorld();
   if (debug_) {

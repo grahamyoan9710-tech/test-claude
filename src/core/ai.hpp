@@ -14,6 +14,7 @@ class CpuBrain {
     in.cstick = last_.cstick.len() > 0.5f ? Vec2{} : dir;
   }
   bool recover(const Match& m, const Fighter& f, InputState& in);
+  bool chaseOrb(const Match& m, const Fighter& f, InputState& in);
   void fight(const Match& m, const Fighter& f, const Fighter& t, InputState& in);
 
   int level_;

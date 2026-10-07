@@ -133,6 +133,10 @@ InputState CpuBrain::think(const Match& m, int self) {
     last_ = in;
     return in;
   }
+  if (m.orb.active && chaseOrb(m, f, in)) {
+    last_ = in;
+    return in;
+  }
 
   // Pick the closest opponent.
   const Fighter* target = nullptr;
@@ -183,8 +187,37 @@ bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
   return true;
 }
 
+bool CpuBrain::chaseOrb(const Match& m, const Fighter& f, InputState& in) {
+  Vec2 d = m.orb.pos - f.center();
+  if (d.len() > 520.0f || f.finalSmash) return false;
+  for (const auto& o : m.fighters)
+    if (o.id != f.id && o.active() && (o.pos - f.pos).len() < 120.0f) return false;  // busy fighting
+  if (!f.grounded && !m.groundBelow({f.pos.x + f.vel.x * 12.0f, f.pos.y}, 1500.0f)) return false;
+  in.stick.x = std::fabs(d.x) > 30.0f ? signf(d.x) : 0.0f;
+  if (f.grounded && !m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f)) in.stick.x = 0.0f;
+  if (--decisionTimer_ > 0) return true;
+  decisionTimer_ = std::max(3, 14 - level_);
+  bool canAct = f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run ||
+                f.state == FState::Crouch || f.state == FState::Air;
+  if (!canAct) return true;
+  if (d.len() < 90.0f) {
+    Vec2 dir = std::fabs(d.x) > std::fabs(d.y) ? Vec2{signf(d.x), 0.0f} : Vec2{0.0f, signf(d.y)};
+    tapCStick(in, dir);
+  } else if (f.grounded && d.y < -60.0f && std::fabs(d.x) < 140.0f) {
+    tap(in, &IS::jump);
+  } else if (!f.grounded && f.airJumps > 0 && d.y < -80.0f && f.vel.y > 0.0f) {
+    tap(in, &IS::jump);
+  }
+  return true;
+}
+
 void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputState& in) {
   const CharacterDef& d = *f.def;
+  if (f.finalSmash && (t.center() - f.center()).len() < 320.0f && t.state != FState::Respawn &&
+      (f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run || f.state == FState::Air)) {
+    tap(in, &IS::special);
+    return;
+  }
   float dx = t.pos.x - f.pos.x;
   float dy = t.center().y - f.center().y;
   float adx = std::fabs(dx);
