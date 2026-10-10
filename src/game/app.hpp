@@ -104,7 +104,8 @@ class App {
   void drawCss();
   void updateStage(const MenuNav& nav);
   void drawStage();
-  void changeField(int col, int row, int delta);
+  // by: the device that pressed (-1: mouse / unknown).
+  void changeField(int col, int row, int delta, int by = -1);
   bool padJoins();
   int activeSlots() const;
   // screens (screen_results.cpp)

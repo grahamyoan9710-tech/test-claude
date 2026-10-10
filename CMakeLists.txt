@@ -39,7 +39,7 @@ add_test(NAME sim_test COMMAND sim_test)
 # Game: raylib front-end
 # ---------------------------------------------------------------------------
 if(CLASH_BUILD_GAME)
-  find_package(raylib 5.0 QUIET)
+  find_package(raylib 5.5 QUIET)  # older versions lack APIs we use: fetch 5.5 instead
   set(CLASH_HAS_GLFW OFF)
   if(NOT raylib_FOUND)
     set(CLASH_HAS_GLFW ON)  # our own raylib build: its GLFW can be called (key names, joysticks)

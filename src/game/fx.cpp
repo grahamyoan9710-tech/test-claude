@@ -233,26 +233,18 @@ void Fx::update(const Match& m) {
   kos_.erase(std::remove_if(kos_.begin(), kos_.end(), [](const KoBeam& k) { return k.t > 70; }), kos_.end());
 
   for (const auto& f : m.fighters) {
-    if (!f.active() || f.hitlag > 0) continue;
-    float sp = f.kbVel.len();
-    if (f.state == FState::Hitstun && sp > 8.0f && m.frame % 2 == 0) {
-      Color c = sp > 16.0f ? Color{255, 170, 90, 220} : Color{230, 230, 235, 200};
-      add(PK::Smoke, f.center(), f.kbVel * -0.05f, 26, 8, 20 + sp, c);
-    }
+    if (!f.active()) continue;
     const float H = f.height();
-    if (f.finalSmash && m.frame % 3 == 0)  // ultimate ready: motes rising around the body
-      add(PK::Mote, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.0f, 0.9f) * H},
-          {rng_.range(-0.3f, 0.3f), rng_.range(-1.6f, -0.8f)}, rng_.range(30, 50), rng_.range(1.8f, 3.2f), 0.4f,
-          m.frame % 4 ? kZonaiGlow : mixColor(kZonaiGlow, WHITE, 0.6f), -0.02f, 0.99f);
     if (f.state == FState::Attack && f.move == FinalSmash) {
-      if (f.moveFrame < 34) {  // gathering: energy flows in
+      if (f.moveFrame < 34 && f.hitlag == 0) {  // gathering: energy flows in
         for (int i = 0; i < 2; ++i) {
           float a = rng_.range(0, 2 * kPi);
           Vec2 dir{std::cos(a), std::sin(a)};
           add(PK::Mote, f.center() + dir * (1.6f * H), dir * -7.0f, 15, rng_.range(2.0f, 3.2f), 1.0f, kZonaiGlow, 0.0f, 1.0f);
         }
       }
-      int& wave = fsWave_[f.id & 3];  // once per shock wave, even if hit-stop holds the frame
+      // Once per shock wave, on impact: the wave's own hit-stop holds the frame.
+      int& wave = fsWave_[f.id & 3];
       for (const auto& h : f.def->moves[FinalSmash].hitboxes)
         if (h.start == f.moveFrame && wave != h.start) {
           wave = h.start;
@@ -262,6 +254,16 @@ void Fx::update(const Match& m) {
     } else {
       fsWave_[f.id & 3] = -1;
     }
+    if (f.hitlag > 0) continue;
+    float sp = f.kbVel.len();
+    if (f.state == FState::Hitstun && sp > 8.0f && m.frame % 2 == 0) {
+      Color c = sp > 16.0f ? Color{255, 170, 90, 220} : Color{230, 230, 235, 200};
+      add(PK::Smoke, f.center(), f.kbVel * -0.05f, 26, 8, 20 + sp, c);
+    }
+    if (f.finalSmash && m.frame % 3 == 0)  // ultimate ready: motes rising around the body
+      add(PK::Mote, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.0f, 0.9f) * H},
+          {rng_.range(-0.3f, 0.3f), rng_.range(-1.6f, -0.8f)}, rng_.range(30, 50), rng_.range(1.8f, 3.2f), 0.4f,
+          m.frame % 4 ? kZonaiGlow : mixColor(kZonaiGlow, WHITE, 0.6f), -0.02f, 0.99f);
     if (f.charging && m.frame % 3 == 0) {
       float a = rng_.range(0, 2 * kPi);
       Vec2 o = Vec2{std::cos(a), std::sin(a)} * (f.height() * 0.6f);

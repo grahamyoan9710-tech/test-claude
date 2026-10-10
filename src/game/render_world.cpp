@@ -694,12 +694,12 @@ void bakeDepths(Art& a) {
     }
   });
   // Near: a great lightroot, crystal spires and a Zonai monolith.
-  a.near = bake(1800, 600, 1.25f, [&] {
+  a.near = bake(1800, 660, 1.25f, [&] {  // 660: below the lowest point of depthsGround (~642)
     const Color rock{20, 28, 42, 255}, rockLow = kRockLow;
     auto ground = depthsGround;
     for (float x = 0; x < 1800; x += 8) {
       float y0 = ground(x), y1 = ground(x + 8);
-      gquad({x, y0}, {x + 8, y1}, {x + 8, 600}, {x, 600}, rock, rock, rockLow, rockLow);
+      gquad({x, y0}, {x + 8, y1}, {x + 8, 660}, {x, 660}, rock, rock, rockLow, rockLow);
       DrawLineEx({x, y0}, {x + 8, y1}, 2.0f, withAlpha(teal, 0.35f));
     }
     lightroot({kRootX, ground(kRootX) + 10}, kRootS, {16, 26, 34, 255}, lightG, bulb);
@@ -1049,7 +1049,7 @@ void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
             withAlpha({255, 30, 70, 255}, 0.12f + 0.1f * pulse));
       const float nx = -260.0f - dx * 0.2f, ny = 140.0f - dy * 0.2f;
       drawLayer(a.near, nx, ny, true);
-      if (ny + 599.0f < kScreenH) DrawRectangleRec({0, ny + 599.0f, float(kScreenW), kScreenH - ny - 599.0f}, kRockLow);
+      if (ny + 659.0f < kScreenH) DrawRectangleRec({0, ny + 659.0f, float(kScreenW), kScreenH - ny - 659.0f}, kRockLow);
       float bx = wrapPos(nx, kRootX, 1800.0f, 300.0f);
       glow({bx, ny + depthsGround(kRootX) + 10.0f - kRootS * 1.65f}, 160.0f + 30.0f * pulse, {170, 255, 190, 255}, 0.18f + 0.1f * pulse, 24);
       motes(40, 37, pc, time, 3.0f, -14.0f, {110, 255, 220, 255}, {220, 255, 150, 255}, 1.5f);

@@ -132,6 +132,8 @@ void Match::koFighter(Fighter& f) {
   if (f.stocks <= 0) {
     f.eliminated = true;
     f.koFrame = frame;
+    f.finalSmash = false;  // nothing left to unleash it with
+    f.ult = 0.0f;
   }
 }
 

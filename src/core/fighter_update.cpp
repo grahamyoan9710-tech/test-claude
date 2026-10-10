@@ -68,6 +68,7 @@ void Match::startMove(Fighter& f, int id) {
   f.moveLeftGround = false;
   f.moveStartedAir = !f.grounded;
   f.hitList.clear();
+  if (m.intangibleStart == 0) f.intangible = std::max(f.intangible, 1);  // covers the start frame too
   if (id == SSpecial && !f.grounded) f.sideSpecialUsed = true;
 }
 

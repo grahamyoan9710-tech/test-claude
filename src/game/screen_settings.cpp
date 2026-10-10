@@ -1,4 +1,6 @@
 // Settings screen: audio, display, rules and keyboard bindings.
+#include <cstring>
+
 #include "game/app.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
@@ -69,6 +71,21 @@ const PadAction kPadActions[] = {
     {ui::Btn::LT, ui::Btn::RT, "Bouclier"},        {ui::Btn::LB, ui::Btn::None, "Saisie"},
     {ui::Btn::RB, ui::Btn::None, "Ultime"},        {ui::Btn::RStick, ui::Btn::None, "Attaque smash"},
     {ui::Btn::Start, ui::Btn::None, "Pause"}};
+
+// A connected pad of that family without triggers (SNES-style: RB shields, Back = ultimate)?
+bool triggerless(PadFamily f) {
+  for (int p = 0; p < kMaxPads; ++p)
+    if (padConnected(p) && padFamily(p) == f) return !padHasTriggers(p);
+  return false;
+}
+// Button of an action on such a pad.
+PadAction forPad(PadAction a, bool noTriggers) {
+  if (!noTriggers) return a;
+  if (a.btn == ui::Btn::LT) return {ui::Btn::RB, ui::Btn::None, a.label};
+  if (a.btn == ui::Btn::RB) return {ui::Btn::Back, ui::Btn::None, a.label};
+  return a;
+}
+bool isUltimate(const char* label) { return std::strcmp(label, "Ultime") == 0; }
 
 // Draws one or two glyphs (vertically centred on cy), returns the width.
 float glyphs(ui::Btn a, ui::Btn b, float x, float cy, float h, PadFamily f) {
@@ -153,15 +170,19 @@ void drawPadControls(PadFamily f) {
     const char* label;
   };
   const bool psSticks = f == PadFamily::PlayStation;  // d-pad above the left stick
+  const bool noTrig = triggerless(f);
   const Callout left[4] = {
-      {ui::Btn::LT, ui::Btn::None, {-124, -150}, "Bouclier"},
+      noTrig ? Callout{ui::Btn::Back, ui::Btn::None, L.select, "Ultime"}
+             : Callout{ui::Btn::LT, ui::Btn::None, {-124, -150}, "Bouclier"},
       {ui::Btn::LB, ui::Btn::None, {-124, -115}, "Saisie"},
       psSticks ? Callout{ui::Btn::DPad, ui::Btn::None, L.dpad, "Se déplacer"}
                : Callout{ui::Btn::LStick, ui::Btn::None, L.lstick, "Se déplacer"},
       psSticks ? Callout{ui::Btn::LStick, ui::Btn::None, L.lstick, "Se déplacer"}
                : Callout{ui::Btn::DPad, ui::Btn::None, L.dpad, "Se déplacer"}};
-  const Callout right[6] = {{ui::Btn::RT, ui::Btn::None, {124, -150}, "Bouclier"},
-                            {ui::Btn::RB, ui::Btn::None, {124, -115}, "Ultime"},
+  const Callout right[6] = {noTrig ? Callout{ui::Btn::RB, ui::Btn::None, {124, -115}, "Bouclier"}
+                                   : Callout{ui::Btn::RT, ui::Btn::None, {124, -150}, "Bouclier"},
+                            noTrig ? Callout{ui::Btn::None, ui::Btn::None, {}, nullptr}
+                                   : Callout{ui::Btn::RB, ui::Btn::None, {124, -115}, "Ultime"},
                             {ui::Btn::Y, ui::Btn::X, {L.face.x, L.face.y - d}, "Saut"},
                             {ui::Btn::B, ui::Btn::None, {L.face.x + d, L.face.y}, "Spéciale"},
                             {ui::Btn::A, ui::Btn::None, {L.face.x, L.face.y + d}, "Attaque"},
@@ -176,7 +197,8 @@ void drawPadControls(PadFamily f) {
   auto rightY = [&](int i) { return c.y - 140 + i * 44.0f; };
   const float leftX = c.x - 236, rightX = c.x + 236;
   for (int i = 0; i < 4; ++i) leader({leftX + 8, leftY(i)}, left[i].to);
-  for (int i = 0; i < 6; ++i) leader({rightX - 8, rightY(i)}, right[i].to);
+  for (int i = 0; i < 6; ++i)
+    if (right[i].label) leader({rightX - 8, rightY(i)}, right[i].to);
   const float sw = ui::padGlyphWidth(ui::Btn::Start, gh, f) + 10 + textWidth("Pause", 21);
   const Vector2 sp{at(L.start).x - sw * 0.5f, c.y - 186};  // Pause, above the middle
   leader({at(L.start).x, sp.y + 18}, L.start);
@@ -185,7 +207,7 @@ void drawPadControls(PadFamily f) {
   const float sh = 26;
   for (int side = -1; side <= 1; side += 2) {
     const ui::Btn trig = side < 0 ? ui::Btn::LT : ui::Btn::RT, bump = side < 0 ? ui::Btn::LB : ui::Btn::RB;
-    ui::padGlyph(trig, c.x + side * 124 - ui::padGlyphWidth(trig, sh, f) * 0.5f, c.y - 164, sh, f);
+    if (!noTrig) ui::padGlyph(trig, c.x + side * 124 - ui::padGlyphWidth(trig, sh, f) * 0.5f, c.y - 164, sh, f);
     ui::padGlyph(bump, c.x + side * 124 - ui::padGlyphWidth(bump, sh, f) * 0.5f, c.y - 128, sh, f);
   }
   ui::padGlyph(ui::Btn::Start, at(L.start).x - ui::padGlyphWidth(ui::Btn::Start, 24, f) * 0.5f, at(L.start).y - 12, 24, f);
@@ -203,13 +225,14 @@ void drawPadControls(PadFamily f) {
   for (int i = 0; i < 4; ++i) {
     const Callout& co = left[i];
     const float tw = textWidth(co.label, 21);
-    drawText(co.label, leftX - tw, leftY(i) - 13, 21, ui::kCream);
+    drawText(co.label, leftX - tw, leftY(i) - 13, 21, isUltimate(co.label) ? ui::kGold : ui::kCream);
     glyphs(co.btn, co.btn2, leftX - tw - 10 - glyphsWidth(co.btn, co.btn2, gh, f), leftY(i), gh, f);
   }
   for (int i = 0; i < 6; ++i) {
     const Callout& co = right[i];
+    if (!co.label) continue;
     const float w = glyphs(co.btn, co.btn2, rightX, rightY(i), gh, f);
-    drawText(co.label, rightX + w + 10, rightY(i) - 13, 21, co.btn == ui::Btn::RB ? ui::kGold : ui::kCream);
+    drawText(co.label, rightX + w + 10, rightY(i) - 13, 21, isUltimate(co.label) ? ui::kGold : ui::kCream);
   }
   ui::padGlyph(ui::Btn::Start, sp.x, sp.y - gh * 0.5f, gh, f);
   drawText("Pause", sp.x + ui::padGlyphWidth(ui::Btn::Start, gh, f) + 10, sp.y - 13, 21, ui::kCream);
@@ -523,11 +546,12 @@ void App::drawSettings() {
     DrawRectangleRounded(box, 0.06f, 8, withAlpha(ui::kInk, 0.5f));
     DrawRectangleRoundedLinesEx(box, 0.06f, 8, 1.0f, withAlpha(ui::kGold, 0.3f));
     drawText("MANETTE", box.x + 18, box.y + 10, 26, ui::kGold, FontKind::Title);
+    const bool noTrig = triggerless(f);
     for (int i = 0; i < int(sizeof(kPadActions) / sizeof(kPadActions[0])); ++i) {
-      const PadAction& a = kPadActions[i];
+      const PadAction a = forPad(kPadActions[i], noTrig);
       const float y = box.y + 62 + i * 33.0f;
       glyphs(a.btn, a.btn2, box.x + 18, y, 24, f);
-      drawText(a.label, box.x + 128, y - 11, 17, a.btn == ui::Btn::RB ? ui::kGold : ui::kCream);
+      drawText(a.label, box.x + 128, y - 11, 17, isUltimate(a.label) ? ui::kGold : ui::kCream);
     }
     drawText("Clavier 2 : le pavé numérique marche", box.x + 18, box.y + box.height - 46, 15, ui::kMuted);
     drawText("aussi (0 à 6).", box.x + 18, box.y + box.height - 27, 15, ui::kMuted);

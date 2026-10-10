@@ -66,7 +66,8 @@ void additive(bool on) {
   else ui::frameBlend();
 }
 
-Pose airPose(const Fighter& f, const Match& m, float time) {
+// flip: the air-jump somersault (never for attacks: the striking limb must stay on its hitbox).
+Pose airPose(const Fighter& f, const Match& m, float time, bool flip = true) {
   const float H = f.height();
   Pose p = restPose(*f.def, time);
   float k = smoothstep((f.vel.y + 3.0f) / 6.0f);  // rising -> falling, no pop at the apex
@@ -78,7 +79,7 @@ Pose airPose(const Fighter& f, const Match& m, float time) {
   p.squash = 1.0f + st;  // stretched along the vertical speed
   p.sx = 1.0f - st * 0.6f;
   int since = m.frame - f.airJumpFrame;
-  if (since >= 0 && since < 24) {  // somersault, tucked in the middle
+  if (flip && since >= 0 && since < 24) {  // somersault, tucked in the middle
     float u = since / 24.0f;
     float tuck = std::sin(u * kPi);
     p.rot = smoothstep(u) * 2.0f * kPi;
@@ -614,10 +615,10 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       break;
     case FState::Attack:
       if (f.move == FinalSmash) {
-        p = finalSmashPose(f, f.grounded ? p : airPose(f, m, tt));
+        p = finalSmashPose(f, f.grounded ? p : airPose(f, m, tt, false));
         break;
       }
-      if (!f.grounded) p = airPose(f, m, tt);
+      if (!f.grounded) p = airPose(f, m, tt, false);
       applyMove(p, f, tt);
       break;
     default:

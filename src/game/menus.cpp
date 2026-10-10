@@ -60,7 +60,7 @@ void App::assignDevice(int col, int device) {
       slots_[j].device = old >= 0 && old != device ? old : freeDevice(j);
 }
 
-void App::changeField(int col, int row, int delta) {
+void App::changeField(int col, int row, int delta, int by) {
   audio_.play(Sfx::MenuMove);
   if (row < 0) {
     if (col == 0) settings().stocks = 1 + (settings().stocks - 1 + delta + 5) % 5;
@@ -78,10 +78,16 @@ void App::changeField(int col, int row, int delta) {
   if (s.type == 0 && row > 0) row = 0;  // pressing on an empty card joins it
   switch (row) {
     case 0: {
-      if (s.type == 1 && s.device >= kPad1) padLeft_[s.device - kPad1] = true;  // its pad leaves the card
+      if (s.type == 1 && s.device >= kPad1 && s.device == by) padLeft_[s.device - kPad1] = true;  // it leaves
       s.type = (s.type + delta + 3) % 3;
       if (s.type == 2) s.level = settings().cpuLevel;
-      if (s.type == 1) s.device = freeDevice(col);
+      if (s.type == 1) {
+        bool byFreePad = by >= kPad1 && by < kDeviceCount;  // a pad that plays nobody takes the card itself
+        for (int j = 0; j < 4 && byFreePad; ++j)
+          if (j != col && slots_[j].type == 1 && slots_[j].device == by) byFreePad = false;
+        if (byFreePad) padLeft_[by - kPad1] = false;
+        s.device = byFreePad ? by : freeDevice(col);
+      }
       break;
     }
     case 1:
@@ -136,7 +142,7 @@ void App::updateCss(const MenuNav& nav) {
 
   const bool prev = nav.prev;
   const bool back = nav.back && !prev;
-  if (nav.confirm && !nav.start) changeField(fieldCol, cssRow_, 1);
+  if (nav.confirm && !nav.start) changeField(fieldCol, cssRow_, 1, nav.device);
   if (prev) changeField(fieldCol, cssRow_, -1);
 
   // Mouse: fields, roster tiles, ready banner
