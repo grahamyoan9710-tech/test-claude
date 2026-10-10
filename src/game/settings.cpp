@@ -6,7 +6,7 @@
 
 #include "raylib.h"
 
-#ifdef CLASH_GLFW_KEYNAMES
+#ifdef CLASH_HAS_GLFW
 extern "C" const char* glfwGetKeyName(int key, int scancode);
 #endif
 
@@ -156,7 +156,7 @@ std::string keyName(int key) {
   }
   if (key >= KEY_KP_0 && key <= KEY_KP_9) return "PAVÉ " + std::to_string(key - KEY_KP_0);
   if (key >= KEY_F1 && key <= KEY_F12) return "F" + std::to_string(key - KEY_F1 + 1);
-#ifdef CLASH_GLFW_KEYNAMES
+#ifdef CLASH_HAS_GLFW
   if (key >= 32 && key <= 96) {
     const char* n = glfwGetKeyName(key, 0);
     if (n && *n) {

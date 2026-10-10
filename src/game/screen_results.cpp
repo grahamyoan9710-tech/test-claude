@@ -67,5 +67,5 @@ void App::drawResults() {
     drawTextCentered(TextFormat("%d", row.falls), x + 430, y + 22, 38, WHITE, true, FontKind::Title);
     drawTextCentered(TextFormat("%d%%", int(row.damage)), x + 525, y + 22, 34, WHITE, true, FontKind::Title);
   }
-  if (screenFrames_ > 40) ui::footer({{"ENTRÉE", "Continuer"}});
+  if (screenFrames_ > 40) ui::footer({{"ENTRÉE", ui::Btn::A, "Continuer"}});
 }

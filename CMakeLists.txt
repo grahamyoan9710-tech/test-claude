@@ -40,9 +40,9 @@ add_test(NAME sim_test COMMAND sim_test)
 # ---------------------------------------------------------------------------
 if(CLASH_BUILD_GAME)
   find_package(raylib 5.0 QUIET)
-  set(CLASH_GLFW_KEYNAMES OFF)
+  set(CLASH_HAS_GLFW OFF)
   if(NOT raylib_FOUND)
-    set(CLASH_GLFW_KEYNAMES ON)  # our own raylib build uses GLFW: keyboard-layout aware key names
+    set(CLASH_HAS_GLFW ON)  # our own raylib build: its GLFW can be called (key names, joysticks)
     include(FetchContent)
     set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
     set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
@@ -53,13 +53,14 @@ if(CLASH_BUILD_GAME)
     FetchContent_MakeAvailable(raylib)
   endif()
 
-  # Fonts and icon are compiled into the executable (see cmake/embed.cmake).
+  # Fonts, icon and controller database are compiled into the executable (see cmake/embed.cmake).
   include(cmake/embed.cmake)
   set(CLASH_ASSETS_C "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_assets.c")
   embed_files(OUTPUT "${CLASH_ASSETS_C}" FILES
     font_title_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/LuckiestGuy-Regular.ttf"
     font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Poppins-Bold.ttf"
-    icon_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png")
+    icon_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
+    gamecontrollerdb_txt "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt")
   set(CLASH_EXTRA_SOURCES "${CLASH_ASSETS_C}")
   if(WIN32)  # icon of the .exe in the file explorer
     set(CLASH_RC "${CMAKE_CURRENT_BINARY_DIR}/generated/icon.rc")
@@ -94,8 +95,9 @@ if(CLASH_BUILD_GAME)
   elseif(CLASH_PORTABLE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND NOT APPLE)
     target_link_options(super_clash PRIVATE -static-libstdc++ -static-libgcc)
   endif()
-  if(CLASH_GLFW_KEYNAMES)
-    target_compile_definitions(super_clash PRIVATE CLASH_GLFW_KEYNAMES=1)
+  if(CLASH_HAS_GLFW)
+    target_compile_definitions(super_clash PRIVATE CLASH_HAS_GLFW=1)
+    target_include_directories(super_clash PRIVATE "${raylib_SOURCE_DIR}/src/external/glfw/include")
   endif()
   if(APPLE)
     target_link_libraries(super_clash PRIVATE "-framework IOKit" "-framework Cocoa" "-framework OpenGL")

@@ -122,6 +122,8 @@ void App::run() {
   InitWindow(kScreenW, kScreenH, "Super Clash Bros.");
   SetExitKey(KEY_NULL);
   SetTargetFPS(60);
+  initPads();
+  if (opt_.padGlyphs >= 0) forcePadPrompts(PadFamily(opt_.padGlyphs));
   setWindowIcon();
   rlDisableBackfaceCulling();  // pure 2D: polygons may be wound either way
   loadFonts();
@@ -169,6 +171,9 @@ void App::run() {
     ++screenFrames_;
     time_ += 1.0f / 60.0f;
     if (toastTimer_ > 0) --toastTimer_;
+    updatePads();
+    const std::string padNotice = takePadNotice();
+    if (!padNotice.empty()) toast(padNotice.c_str());
     // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once.
     const bool testRun = !opt_.shots.empty() || opt_.quitAfter > 0;
     if (!testRun && settings().highQuality && !autoQualityDone_ && frames_ > 120) {
@@ -230,7 +235,7 @@ void App::run() {
     if (toastTimer_ > 0) {
       float a = std::min(1.0f, toastTimer_ / 20.0f);
       float w = textWidth(toast_.c_str(), 20) + 48;
-      Rectangle r{(kScreenW - w) * 0.5f, kScreenH - 110.0f, w, 44};
+      Rectangle r{(kScreenW - w) * 0.5f, screen_ == Screen::Match ? 22.0f : kScreenH - 110.0f, w, 44};  // clear of the HUD
       DrawRectangleRounded(r, 0.5f, 10, withAlpha(ui::kInk, 0.9f * a));
       DrawRectangleRoundedLinesEx(r, 0.5f, 10, 2, withAlpha(ui::kGold, a));
       drawText(toast_.c_str(), r.x + 24, r.y + 10, 20, withAlpha(ui::kCream, a));

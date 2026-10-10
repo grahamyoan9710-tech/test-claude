@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "game/common.hpp"
+#include "game/controls.hpp"
 
 namespace ui {
 
@@ -46,8 +47,32 @@ void frameBlend();
 void header(const char* title, const char* subtitle, Color accent, float time);
 // Key cap (e.g. [ENTRÉE]) - returns its width.
 float keycap(const char* label, float x, float y, float h, bool lit = false);
-// Bottom bar with control hints: {{"ENTRÉE", "Choisir"}, {"ÉCHAP", "Retour"}}.
-void footer(std::initializer_list<std::pair<const char*, const char*>> hints, const char* info = nullptr);
+float keycapWidth(const char* label, float h);
+
+// ---- Button prompts ---------------------------------------------------------------
+// Gamepad buttons drawn like on a controller of the family (procedural: crisp at any size).
+// Face buttons by position: A = bottom, B = right, X = left, Y = top (a Nintendo "B" is A here).
+enum class Btn : int { None, A, B, X, Y, LB, RB, LT, RT, Start, LStick, RStick, DPad, DPadUD, DPadLR, DPadDown, Move };
+float padGlyph(Btn b, float x, float y, float h, PadFamily family);  // returns its width
+float padGlyphWidth(Btn b, float h, PadFamily family);
+// Key cap or gamepad button, following the prompt mode (last used device). Returns its width.
+float prompt(const char* key, Btn pad, float x, float y, float h, bool lit = false);
+float promptWidth(const char* key, Btn pad, float h);
+// Button of a KeyAction on the gamepad (kActUltimate -> RB...).
+Btn padButtonFor(int action);
+// Prompt of one player's device, whatever the prompt mode: the key cap of the key bound to the action
+// on CLAVIER 1/2, or the button of that gamepad (its own family). E.g. the ULTIME button on the HUD:
+// actionPrompt(devices[port], kActUltimate, x, y, 24). Returns its width.
+float actionPrompt(int device, int action, float x, float y, float h, bool lit = false);
+float actionPromptWidth(int device, int action, float h);
+// One hint of the bottom bar: keyboard key, gamepad button, what it does.
+struct Hint {
+  const char* key;
+  Btn pad;
+  const char* label;
+};
+// Bottom bar with control hints: {{"ENTRÉE", Btn::A, "Choisir"}, {"ÉCHAP", Btn::B, "Retour"}}.
+void footer(std::initializer_list<Hint> hints, const char* info = nullptr);
 
 // ---- Widgets ----------------------------------------------------------------------
 void panel(Rectangle r, Color fill, Color border, float roundness = 0.08f);

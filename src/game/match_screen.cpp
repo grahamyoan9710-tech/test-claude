@@ -18,6 +18,16 @@ Rectangle pauseItemRect(int i, int n) {
   float top = kScreenH * 0.5f - (n * (h + gap)) * 0.5f + 40;
   return {kScreenW * 0.5f - 260, top + i * (h + gap), 520, h};
 }
+constexpr bool InputState::*kButtons[] = {&InputState::attack, &InputState::special, &InputState::jump,
+                                          &InputState::shield, &InputState::grab,    &InputState::smash,
+                                          &InputState::ultimate};
+// Buttons pressed in the pause menu stay ignored until released (A on "REPRENDRE" must not attack).
+void maskHeld(InputState& in, InputState& held) {
+  for (bool InputState::*b : kButtons) {
+    if (!(in.*b)) held.*b = false;
+    else if (held.*b) in.*b = false;
+  }
+}
 }  // namespace
 
 MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug)
@@ -61,11 +71,11 @@ MatchScreen::Result MatchScreen::updatePause() {
     }
   }
   if (pauseSel_ != before) audio_.play(Sfx::MenuMove);
-  bool resume = false;
+  bool unpause = padAnyPressed(kPadB);
   for (const auto& f : m_.fighters)
-    if (!f.cpu && devicePausePressed(devices_[f.port])) resume = true;
-  if (resume) {
-    paused_ = false;
+    if (!f.cpu && devicePausePressed(devices_[f.port])) unpause = true;
+  if (unpause) {
+    resume();
     audio_.play(Sfx::MenuBack);
     return Result::Running;
   }
@@ -87,16 +97,25 @@ MatchScreen::Result MatchScreen::updatePause() {
   if (!activate) return Result::Running;
   audio_.play(Sfx::MenuSelect);
   if (pauseSel_ == 0) {
-    paused_ = false;
+    resume();
   } else if (pauseSel_ == n - 1) {
     return Result::Quit;
   } else if (training() && pauseSel_ == 1) {
     m_.resetPositions();
     std::fill(combo_.begin(), combo_.end(), 0);
     std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
-    paused_ = false;
+    resume();
   }
   return Result::Running;
+}
+
+void MatchScreen::resume() {
+  paused_ = false;
+  for (const auto& f : m_.fighters) {
+    if (f.cpu) continue;
+    const InputState now = readDevice(devices_[f.port]);
+    for (bool InputState::*b : kButtons) held_[f.port].*b = now.*b && !(f.in.*b);  // held since before: goes on
+  }
 }
 
 void MatchScreen::trackCombos() {
@@ -126,6 +145,17 @@ void MatchScreen::trackCombos() {
 MatchScreen::Result MatchScreen::update() {
   time_ += 1.0f / 60.0f;
   if (IsKeyPressed(KEY_F1)) debug_ = !debug_;
+  // A player's gamepad got unplugged: pause until it is back (or until the players resume anyway).
+  for (const auto& f : m_.fighters) {
+    const int d = devices_[f.port];
+    const bool lost = !f.cpu && !f.eliminated && d >= kPad1 && !deviceAvailable(d);
+    if (lost && !padLost_[f.port] && !m_.finished && !paused_) {
+      paused_ = true;
+      pauseSel_ = 0;
+      audio_.play(Sfx::MenuBack);
+    }
+    padLost_[f.port] = lost;
+  }
   if (paused_) return updatePause();
 
   bool anyHuman = false;
@@ -139,15 +169,21 @@ MatchScreen::Result MatchScreen::update() {
       return Result::Running;
     }
   }
-  if (!anyHuman && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P))) {
+  if (!anyHuman && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
     paused_ = true;
     pauseSel_ = 0;
     return Result::Running;
   }
 
   std::array<InputState, 4> inputs{};
-  for (const auto& f : m_.fighters)
-    inputs[f.port] = f.cpu ? brains_[f.id].think(m_, f.id) : readDevice(devices_[f.port]);
+  for (const auto& f : m_.fighters) {
+    if (f.cpu) {
+      inputs[f.port] = brains_[f.id].think(m_, f.id);
+      continue;
+    }
+    inputs[f.port] = readDevice(devices_[f.port]);
+    maskHeld(inputs[f.port], held_[f.port]);
+  }
   m_.step(inputs);
   fx_.onEvents(m_);
   fx_.update(m_);
@@ -222,7 +258,13 @@ void MatchScreen::drawTrainingPanel() {
   drawText("COUPS", p.x + 22 + textWidth(TextFormat("%d", shown), 54, FontKind::Title), p.y + 52, 18, ui::kMuted);
   float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
   drawText(TextFormat("Dégâts du combo : %d %%", int(dmg)), p.x + 16, p.y + 98, 16, ui::kCream);
-  drawText(TextFormat("Meilleur combo : %d   •   ÉCHAP : options", bestCombo_), p.x + 16, p.y + 120, 14, ui::kMuted);
+  drawText(TextFormat("Meilleur combo : %d", bestCombo_), p.x + 16, p.y + 120, 14, ui::kMuted);
+  const bool pad = padPrompts();  // options hint, right-aligned
+  const char* opt = pad ? ": options" : "ÉCHAP : options";
+  const float gw = pad ? ui::padGlyphWidth(ui::Btn::Start, 20, promptFamily()) + 4 : 0.0f;
+  float ox = p.x + p.width - 16 - textWidth(opt, 14) - gw;
+  if (pad) ox += ui::padGlyph(ui::Btn::Start, ox, p.y + 117, 20, promptFamily()) + 4;
+  drawText(opt, ox, p.y + 120, 14, ui::kMuted);
   if (dummy >= 0) {
     std::string mode = std::string("Mannequin : ") + dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel);
     drawText(mode.c_str(), p.x + 16, p.y + 142, 15, withAlpha(ui::kCream, 0.85f));
@@ -250,7 +292,23 @@ void MatchScreen::drawPause() {
       ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
     }
   }
-  ui::footer({{"HAUT/BAS", "Choisir"}, {"ENTRÉE", "Valider"}, {"ÉCHAP", "Reprendre"}});
+  // Unplugged gamepads
+  int lostCount = 0, lostPort = 0;
+  for (const auto& f : m_.fighters)
+    if (padLost_[f.port]) ++lostCount, lostPort = f.port;
+  if (lostCount > 0) {
+    Rectangle b{kScreenW * 0.5f - 340, kScreenH - 146.0f, 680, 82};
+    ui::panel(b, {64, 18, 34, 245}, {255, 112, 96, 255}, 0.25f);
+    std::string title = lostCount > 1 ? std::string("MANETTES DÉBRANCHÉES")
+                                      : std::string(deviceName(devices_[lostPort])) + " DÉBRANCHÉE (JOUEUR " +
+                                            std::to_string(lostPort + 1) + ")";
+    drawTextCentered(title.c_str(), b.x + b.width * 0.5f, b.y + 12, 26, ui::kCream, true, FontKind::Title);
+    drawTextCentered(lostCount > 1 ? "Rebranchez-les : chacune retrouve son joueur. Ou reprenez le combat sans elles."
+                                   : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
+                     b.x + b.width * 0.5f, b.y + 48, 17, {255, 214, 205, 255}, false);
+  }
+  ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
+              {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
 }
 
 void MatchScreen::draw() {
@@ -284,7 +342,7 @@ void MatchScreen::draw() {
   fx_.drawScreen(cam);
   drawOffscreenBubbles(m_, cam, time_);
   drawHud(m_, fx_.hudShake, time_);
-  drawCountdown(m_);
+  if (!paused_) drawCountdown(m_);  // (an unplugged gamepad can pause before "GO !")
   if (training()) drawTrainingPanel();
 
   if (m_.finished) {

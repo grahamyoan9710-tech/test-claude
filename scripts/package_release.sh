@@ -22,7 +22,8 @@ stage() {  # platform, executable, readme
   mkdir -p "$out/licences"
   cp "$2" "$out/"
   cp "$3" "$out/LISEZ-MOI.txt"
-  cp "$ROOT/assets/fonts/LuckiestGuy-LICENSE.txt" "$ROOT/assets/fonts/Poppins-OFL.txt" "$out/licences/"
+  cp "$ROOT/assets/fonts/LuckiestGuy-LICENSE.txt" "$ROOT/assets/fonts/Poppins-OFL.txt" \
+    "$ROOT/assets/gamecontrollerdb-LICENSE.txt" "$out/licences/"
 }
 
 # Linux: static C++ runtime, X11/OpenGL/audio libraries are loaded at run time.

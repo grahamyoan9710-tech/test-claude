@@ -29,7 +29,7 @@ const RowInfo kRows[3][6] = {
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 9)."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},
 };
-const int kRowCounts[4] = {4, 6, 4, 11};
+const int kRowCounts[4] = {4, 6, 4, kActionCount + 1};  // controls: the actions + the reset buttons
 
 Rectangle tabRect(int i) { return {72.0f + i * 252.0f, 136, 236, 50}; }
 Rectangle rowRect(int row) { return {kPanel.x + 20, kPanel.y + 20 + row * 60.0f, kPanel.width - 40, 52}; }
@@ -41,8 +41,8 @@ Rectangle sliderRect(int row) {
   Rectangle w = widgetRect(row);
   return {w.x + 12, w.y + 10, w.width - 110, 14};
 }
-Rectangle keyRect(int row, int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 52 + row * 34.0f, 216, 30}; }
-Rectangle resetRect(int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 52 + 10 * 34.0f + 8, 216, 32}; }
+Rectangle keyRect(int row, int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 48 + row * 30.0f, 216, 26}; }
+Rectangle resetRect(int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 56 + kActionCount * 30.0f, 216, 30}; }
 
 enum class Widget { Slider, Toggle, Selector, Button };
 Widget widgetFor(int tab, int row) {
@@ -55,9 +55,182 @@ int* volumeFor(int row) {
   Settings& s = settings();
   return row == 0 ? &s.masterVolume : row == 1 ? &s.musicVolume : &s.sfxVolume;
 }
+
+// ---- Gamepad controls ------------------------------------------------------------------
+// Gamepad button + action, the same for every pad.
+struct PadAction {
+  ui::Btn btn, btn2;
+  const char* label;
+};
+const PadAction kPadActions[] = {
+    {ui::Btn::Move, ui::Btn::None, "Se déplacer"}, {ui::Btn::A, ui::Btn::None, "Attaque"},
+    {ui::Btn::B, ui::Btn::None, "Spéciale"},       {ui::Btn::X, ui::Btn::Y, "Saut"},
+    {ui::Btn::LT, ui::Btn::RT, "Bouclier"},        {ui::Btn::LB, ui::Btn::None, "Saisie"},
+    {ui::Btn::RB, ui::Btn::None, "Ultime"},        {ui::Btn::RStick, ui::Btn::None, "Attaque smash"},
+    {ui::Btn::Start, ui::Btn::None, "Pause"}};
+
+// Draws one or two glyphs (vertically centred on cy), returns the width.
+float glyphs(ui::Btn a, ui::Btn b, float x, float cy, float h, PadFamily f) {
+  float w = ui::padGlyph(a, x, cy - h * 0.5f, h, f);
+  if (b != ui::Btn::None) w += 6 + ui::padGlyph(b, x + w + 6, cy - h * 0.5f, h, f);
+  return w;
+}
+float glyphsWidth(ui::Btn a, ui::Btn b, float h, PadFamily f) {
+  return ui::padGlyphWidth(a, h, f) + (b != ui::Btn::None ? 6 + ui::padGlyphWidth(b, h, f) : 0.0f);
+}
+
+void ellipse(Vector2 c, float rx, float ry, float rot, Color col) {
+  Vector2 pts[42];
+  pts[0] = c;
+  for (int i = 0; i <= 40; ++i) {
+    const float a = i * 2.0f * kPi / 40, ex = std::cos(a) * rx, ey = std::sin(a) * ry;
+    pts[i + 1] = {c.x + ex * std::cos(rot) - ey * std::sin(rot), c.y + ex * std::sin(rot) + ey * std::cos(rot)};
+  }
+  DrawTriangleFan(pts, 42, col);
+}
+
+// Where things sit on the controller (from its centre).
+struct PadLayout {
+  Vector2 lstick, rstick, dpad, face, start, select;
+};
+PadLayout layoutFor(PadFamily f) {
+  if (f == PadFamily::PlayStation) return {{-62, 38}, {62, 38}, {-122, -24}, {122, -24}, {86, -76}, {-86, -76}};
+  return {{-122, -24}, {62, 38}, {-62, 38}, {122, -24}, {34, -46}, {-34, -46}};
+}
+
+// A labelled controller: every action next to its button (gamepad prompt mode).
+void drawPadControls(PadFamily f) {
+  const Vector2 c{640, 418};
+  const PadLayout L = layoutFor(f);
+  auto at = [&](Vector2 v) { return Vector2{c.x + v.x, c.y + v.y}; };
+  const Color body = f == PadFamily::PlayStation ? Color{214, 216, 232, 255}
+                     : f == PadFamily::Nintendo  ? Color{62, 60, 78, 255}
+                                                 : Color{74, 76, 102, 255};
+  // Title: the pad in use (or the family)
+  const char* model = f == PadFamily::PlayStation ? "Manette PlayStation"
+                      : f == PadFamily::Nintendo  ? "Manette Nintendo"
+                                                  : "Manette Xbox";
+  for (int p = 0; p < kMaxPads; ++p)
+    if (padConnected(p) && padFamily(p) == f) {
+      model = padModel(p);
+      break;
+    }
+  std::string title = model;
+  for (char& ch : title)
+    if (ch >= 'a' && ch <= 'z') ch = char(ch - 'a' + 'A');
+  drawText(title.c_str(), kPanel.x + 30, kPanel.y + 18, 28, ui::kGold, FontKind::Title);
+
+  // Body: outline, then plastic
+  auto shapes = [&](float g, Vector2 o, Color col) {
+    DrawRectangleRounded({c.x - 180 - g + o.x, c.y - 94 - g + o.y, 360 + 2 * g, 126 + 2 * g}, 0.62f, 16, col);
+    ellipse({c.x - 130 + o.x, c.y + 44 + o.y}, 58 + g, 84 + g, 0.38f, col);
+    ellipse({c.x + 130 + o.x, c.y + 44 + o.y}, 58 + g, 84 + g, -0.38f, col);
+  };
+  shapes(4, {7, 9}, withAlpha(BLACK, 0.35f));
+  shapes(4, {0, 0}, ui::kInk);
+  shapes(0, {0, 0}, body);
+  DrawRectangleRounded({c.x - 140, c.y - 88, 280, 18}, 1.0f, 12, withAlpha(WHITE, 0.1f));
+  const Color well = shade(body, 0.72f);
+  if (f == PadFamily::PlayStation) {
+    const Rectangle pad{c.x - 62, c.y - 92, 124, 66};
+    DrawRectangleRounded(ui::grow(pad, 2), 0.25f, 8, ui::kInk);
+    DrawRectangleRounded(pad, 0.25f, 8, shade(body, 0.86f));
+    DrawCircleV(at({0, 14}), 9, ui::kInk);
+  } else {
+    DrawCircleV(at({0, -72}), 13, well);
+    DrawCircleV(at({0, -72}), 9, shade(body, 1.25f));
+  }
+  for (Vector2 v : {L.lstick, L.rstick, L.dpad}) DrawCircleV(at(v), 32, well);
+  DrawCircleV(at(L.face), 48, well);
+  DrawCircleV(at(L.select), 9, ui::kInk);
+
+  // Callouts: glyph + action on both sides, a thin line to the button (drawn under the buttons)
+  const float d = 27;  // face buttons around the cluster centre
+  struct Callout {
+    ui::Btn btn, btn2;
+    Vector2 to;
+    const char* label;
+  };
+  const bool psSticks = f == PadFamily::PlayStation;  // d-pad above the left stick
+  const Callout left[4] = {
+      {ui::Btn::LT, ui::Btn::None, {-124, -150}, "Bouclier"},
+      {ui::Btn::LB, ui::Btn::None, {-124, -115}, "Saisie"},
+      psSticks ? Callout{ui::Btn::DPad, ui::Btn::None, L.dpad, "Se déplacer"}
+               : Callout{ui::Btn::LStick, ui::Btn::None, L.lstick, "Se déplacer"},
+      psSticks ? Callout{ui::Btn::LStick, ui::Btn::None, L.lstick, "Se déplacer"}
+               : Callout{ui::Btn::DPad, ui::Btn::None, L.dpad, "Se déplacer"}};
+  const Callout right[6] = {{ui::Btn::RT, ui::Btn::None, {124, -150}, "Bouclier"},
+                            {ui::Btn::RB, ui::Btn::None, {124, -115}, "Ultime"},
+                            {ui::Btn::Y, ui::Btn::X, {L.face.x, L.face.y - d}, "Saut"},
+                            {ui::Btn::B, ui::Btn::None, {L.face.x + d, L.face.y}, "Spéciale"},
+                            {ui::Btn::A, ui::Btn::None, {L.face.x, L.face.y + d}, "Attaque"},
+                            {ui::Btn::RStick, ui::Btn::None, L.rstick, "Attaque smash"}};
+  const float gh = 28;
+  const Color line = withAlpha(ui::kGold, 0.55f);
+  auto leader = [&](Vector2 from, Vector2 to) {
+    DrawLineEx(from, at(to), 2, line);
+    DrawCircleV(from, 3, line);
+  };
+  auto leftY = [&](int i) { return c.y - 140 + i * 58.0f + (i >= 2 ? 22.0f : 0.0f); };
+  auto rightY = [&](int i) { return c.y - 140 + i * 44.0f; };
+  const float leftX = c.x - 236, rightX = c.x + 236;
+  for (int i = 0; i < 4; ++i) leader({leftX + 8, leftY(i)}, left[i].to);
+  for (int i = 0; i < 6; ++i) leader({rightX - 8, rightY(i)}, right[i].to);
+  const float sw = ui::padGlyphWidth(ui::Btn::Start, gh, f) + 10 + textWidth("Pause", 21);
+  const Vector2 sp{at(L.start).x - sw * 0.5f, c.y - 186};  // Pause, above the middle
+  leader({at(L.start).x, sp.y + 18}, L.start);
+
+  // Buttons
+  const float sh = 26;
+  for (int side = -1; side <= 1; side += 2) {
+    const ui::Btn trig = side < 0 ? ui::Btn::LT : ui::Btn::RT, bump = side < 0 ? ui::Btn::LB : ui::Btn::RB;
+    ui::padGlyph(trig, c.x + side * 124 - ui::padGlyphWidth(trig, sh, f) * 0.5f, c.y - 164, sh, f);
+    ui::padGlyph(bump, c.x + side * 124 - ui::padGlyphWidth(bump, sh, f) * 0.5f, c.y - 128, sh, f);
+  }
+  ui::padGlyph(ui::Btn::Start, at(L.start).x - ui::padGlyphWidth(ui::Btn::Start, 24, f) * 0.5f, at(L.start).y - 12, 24, f);
+  ui::padGlyph(ui::Btn::LStick, at(L.lstick).x - 20, at(L.lstick).y - 20, 40, f);
+  ui::padGlyph(ui::Btn::RStick, at(L.rstick).x - 20, at(L.rstick).y - 20, 40, f);
+  ui::padGlyph(ui::Btn::DPad, at(L.dpad).x - 23, at(L.dpad).y - 23, 46, f);
+  const Vector2 fc = at(L.face);
+  const float fh = 28;
+  ui::padGlyph(ui::Btn::Y, fc.x - fh * 0.5f, fc.y - d - fh * 0.5f, fh, f);
+  ui::padGlyph(ui::Btn::X, fc.x - d - fh * 0.5f, fc.y - fh * 0.5f, fh, f);
+  ui::padGlyph(ui::Btn::B, fc.x + d - fh * 0.5f, fc.y - fh * 0.5f, fh, f);
+  ui::padGlyph(ui::Btn::A, fc.x - fh * 0.5f, fc.y + d - fh * 0.5f, fh, f);
+
+  // Labels
+  for (int i = 0; i < 4; ++i) {
+    const Callout& co = left[i];
+    const float tw = textWidth(co.label, 21);
+    drawText(co.label, leftX - tw, leftY(i) - 13, 21, ui::kCream);
+    glyphs(co.btn, co.btn2, leftX - tw - 10 - glyphsWidth(co.btn, co.btn2, gh, f), leftY(i), gh, f);
+  }
+  for (int i = 0; i < 6; ++i) {
+    const Callout& co = right[i];
+    const float w = glyphs(co.btn, co.btn2, rightX, rightY(i), gh, f);
+    drawText(co.label, rightX + w + 10, rightY(i) - 13, 21, co.btn == ui::Btn::RB ? ui::kGold : ui::kCream);
+  }
+  ui::padGlyph(ui::Btn::Start, sp.x, sp.y - gh * 0.5f, gh, f);
+  drawText("Pause", sp.x + ui::padGlyphWidth(ui::Btn::Start, gh, f) + 10, sp.y - 13, 21, ui::kCream);
+
+  // Menus
+  float x = kPanel.x + 30, y = kPanel.y + kPanel.height - 34;
+  drawText("Menus :", x, y - 11, 18, ui::kMuted);
+  x += textWidth("Menus :", 18) + 14;
+  const PadAction menu[4] = {{ui::Btn::A, ui::Btn::None, "Valider"}, {ui::Btn::B, ui::Btn::None, "Retour"},
+                             {ui::Btn::X, ui::Btn::None, "Valeur précédente"}, {ui::Btn::Start, ui::Btn::None, "Commencer"}};
+  for (const PadAction& m : menu) {
+    x += glyphs(m.btn, m.btn2, x, y, 24, f) + 8;
+    drawText(m.label, x, y - 11, 18, ui::kCream);
+    x += textWidth(m.label, 18) + 24;
+  }
+}
 }  // namespace
 
-int App::settingsRowCount() const { return kRowCounts[setTab_]; }
+int App::settingsRowCount() const {
+  if (setTab_ == 3 && padPrompts()) return 0;  // the controller layout: nothing to select
+  return kRowCounts[setTab_];
+}
 
 void App::changeSetting(int row, int delta) {
   Settings& s = settings();
@@ -101,6 +274,11 @@ void App::updateSettings(const MenuNav& nav) {
   const int rows = settingsRowCount();
 
   if (waitingKey_) {  // rebinding a key
+    if (padAnyPressed(kPadB)) {
+      waitingKey_ = false;
+      audio_.play(Sfx::MenuBack);
+      return;
+    }
     int key = GetKeyPressed();
     while (key != 0) {
       if (key == KEY_ESCAPE) {
@@ -183,7 +361,7 @@ void App::updateSettings(const MenuNav& nav) {
         else changeSetting(r, 1);
       }
     }
-  } else {
+  } else if (!padPrompts()) {  // keyboard table (the gamepad view has nothing to click)
     for (int r = 0; r < kActionCount; ++r)
       for (int c = 0; c < 2; ++c) {
         if (ui::hovered(keyRect(r, c)) && ui::mouseMoved()) setRow_ = r, setCol_ = c;
@@ -281,19 +459,21 @@ void App::drawSettings() {
         }
       }
     }
+  } else if (padPrompts()) {
+    drawPadControls(promptFamily());
   } else {
     // Keyboard bindings table
-    drawText("ACTION", kPanel.x + 46, kPanel.y + 18, 18, ui::kMuted);
+    drawText("ACTION", kPanel.x + 46, kPanel.y + 16, 18, ui::kMuted);
     for (int c = 0; c < 2; ++c) {
       Rectangle k = keyRect(0, c);
-      drawTextCentered(c == 0 ? "CLAVIER 1" : "CLAVIER 2", k.x + k.width * 0.5f, kPanel.y + 16, 20,
+      drawTextCentered(c == 0 ? "CLAVIER 1" : "CLAVIER 2", k.x + k.width * 0.5f, kPanel.y + 13, 20,
                        portColor(c), true, FontKind::Title);
     }
     for (int r = 0; r < kActionCount; ++r) {
       bool rowFoc = r == setRow_;
       Rectangle k0 = keyRect(r, 0);
       if (rowFoc) DrawRectangleRounded({kPanel.x + 24, k0.y - 2, 750, k0.height + 4}, 0.4f, 8, withAlpha(accent, 0.18f));
-      drawText(actionName(r), kPanel.x + 46, k0.y + 4, 19, rowFoc ? ui::kCream : Color{200, 200, 225, 255});
+      drawText(actionName(r), kPanel.x + 46, k0.y + 2, 18, rowFoc ? ui::kCream : Color{200, 200, 225, 255});
       for (int c = 0; c < 2; ++c) {
         Rectangle k = keyRect(r, c);
         bool foc = rowFoc && c == setCol_;
@@ -302,7 +482,7 @@ void App::drawSettings() {
         DrawRectangleRounded(k, 0.4f, 8, wait ? mixColor(ui::kGold, WHITE, 0.3f) : foc ? Color{70, 64, 120, 255}
                                                                                        : Color{48, 44, 88, 255});
         std::string name = wait ? (int(t * 3) % 2 ? "..." : "") : keyName(s.keys[c][r]);
-        drawTextCentered(name.c_str(), k.x + k.width * 0.5f, k.y + 5, 17, wait ? ui::kInk : ui::kCream, false);
+        drawTextCentered(name.c_str(), k.x + k.width * 0.5f, k.y + 4, 16, wait ? ui::kInk : ui::kCream, false);
         if (foc && !wait) ui::focusFrame(k, t, 0.4f);
       }
     }
@@ -310,24 +490,22 @@ void App::drawSettings() {
       Rectangle b = resetRect(c);
       bool foc = setRow_ == kActionCount && setCol_ == c;
       DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, WHITE, 0.2f) : shade(accent, 0.75f));
-      drawTextCentered("RÉINITIALISER", b.x + b.width * 0.5f, b.y + 7, 17, ui::kCream);
+      drawTextCentered("RÉINITIALISER", b.x + b.width * 0.5f, b.y + 6, 17, ui::kCream);
       if (foc) ui::focusFrame(b, t, 0.5f);
     }
     // Gamepad reference
-    Rectangle box{kPanel.x + 810, kPanel.y + 16, 330, kPanel.height - 70};
+    const PadFamily f = promptFamily();
+    Rectangle box{kPanel.x + 806, kPanel.y + 16, 338, kPanel.height - 32};
     DrawRectangleRounded(box, 0.06f, 8, withAlpha(BLACK, 0.3f));
-    drawText("MANETTE", box.x + 18, box.y + 12, 26, ui::kGold, FontKind::Title);
-    const char* pad[][2] = {{"Stick gauche", "Se déplacer"}, {"A", "Attaque"},          {"B", "Spéciale"},
-                            {"X / Y", "Saut"},               {"RB / gâchettes", "Bouclier"},
-                            {"LB", "Saisie"},                {"Stick droit", "Attaque smash"},
-                            {"Start", "Pause"}};
-    for (int i = 0; i < 8; ++i) {
-      float y = box.y + 52 + i * 33.0f;
-      drawText(pad[i][0], box.x + 18, y, 17, ui::kCream);
-      drawText(pad[i][1], box.x + 170, y, 17, ui::kMuted);
+    drawText("MANETTE", box.x + 18, box.y + 10, 26, ui::kGold, FontKind::Title);
+    for (int i = 0; i < int(sizeof(kPadActions) / sizeof(kPadActions[0])); ++i) {
+      const PadAction& a = kPadActions[i];
+      const float y = box.y + 62 + i * 33.0f;
+      glyphs(a.btn, a.btn2, box.x + 18, y, 24, f);
+      drawText(a.label, box.x + 128, y - 11, 17, a.btn == ui::Btn::RB ? ui::kGold : ui::kCream);
     }
-    drawText("Clavier 2 : le pavé numérique", box.x + 18, box.y + box.height - 50, 15, ui::kMuted);
-    drawText("marche aussi (0 à 5).", box.x + 18, box.y + box.height - 30, 15, ui::kMuted);
+    drawText("Clavier 2 : le pavé numérique marche", box.x + 18, box.y + box.height - 46, 15, ui::kMuted);
+    drawText("aussi (0 à 6).", box.x + 18, box.y + box.height - 27, 15, ui::kMuted);
   }
   if (help) {
     float y = kPanel.y + kPanel.height - 40;
@@ -346,11 +524,15 @@ void App::drawSettings() {
     drawTextCentered("Appuyez sur une touche  —  ÉCHAP pour annuler", m.x + m.width * 0.5f, m.y + 112, 19,
                      ui::kMuted, false);
   }
-  if (setRow_ < 0)
-    ui::footer({{"GAUCHE/DROITE", "Onglet"}, {"BAS", "Réglages"}, {"ÉCHAP", "Retour"}});
+  using ui::Btn;
+  if (setTab_ == 3 && padPrompts())
+    ui::footer({{"GAUCHE/DROITE", Btn::DPadLR, "Onglet"}, {"ÉCHAP", Btn::B, "Retour"}},
+               "Touches du clavier : appuyez sur une touche.");
+  else if (setRow_ < 0)
+    ui::footer({{"GAUCHE/DROITE", Btn::DPadLR, "Onglet"}, {"BAS", Btn::DPadDown, "Réglages"}, {"ÉCHAP", Btn::B, "Retour"}});
   else if (setTab_ == 3)
-    ui::footer({{"FLÈCHES", "Naviguer"}, {"ENTRÉE", "Changer"}, {"ÉCHAP", "Retour"}},
+    ui::footer({{"FLÈCHES", Btn::DPad, "Naviguer"}, {"ENTRÉE", Btn::A, "Changer"}, {"ÉCHAP", Btn::B, "Retour"}},
                setRow_ < kActionCount ? "Une touche déjà utilisée est échangée." : "Touches d'origine.");
   else
-    ui::footer({{"HAUT/BAS", "Choisir"}, {"GAUCHE/DROITE", "Modifier"}, {"ÉCHAP", "Retour"}});
+    ui::footer({{"HAUT/BAS", Btn::DPadUD, "Choisir"}, {"GAUCHE/DROITE", Btn::DPadLR, "Modifier"}, {"ÉCHAP", Btn::B, "Retour"}});
 }

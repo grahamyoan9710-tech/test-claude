@@ -1,7 +1,8 @@
 // Super Clash Bros. - a platform fighter inspired by Super Smash Bros.
 //
 // Usage: super_clash [--demo] [--stage N] [--screen title|menu|css|stage|results|settings|training]
-//                    [--tab N] [--training]
+//                    [--tab N] [--training] [--pause-at FRAME]
+//                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
 //                    [--shot FRAME FILE.png]... [--quit-after FRAMES] [--debug]
 //                    [--export-audio DIR]
 #include <cstdio>
@@ -22,7 +23,12 @@ int main(int argc, char** argv) {
     else if (is("--training")) opt.training = true;
     else if (is("--pause-at") && i + 1 < argc) opt.pauseAt = std::atoi(argv[++i]);
     else if (is("--quit-after") && i + 1 < argc) opt.quitAfter = std::atoi(argv[++i]);
-    else if (is("--export-audio") && i + 1 < argc) {
+    else if (is("--pad-glyphs") && i + 1 < argc) {
+      const char* f = argv[++i];
+      opt.padGlyphs = int(std::strcmp(f, "ps") == 0       ? PadFamily::PlayStation
+                          : std::strcmp(f, "switch") == 0 ? PadFamily::Nintendo
+                                                          : PadFamily::Xbox);
+    } else if (is("--export-audio") && i + 1 < argc) {
       int n = Audio::exportAll(argv[++i]);
       std::printf("%d audio files written\n", n);
       return n > 0 ? 0 : 1;

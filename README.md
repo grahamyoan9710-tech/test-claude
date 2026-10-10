@@ -68,21 +68,39 @@ Si l'ordinateur n'arrive pas à suivre en qualité *Haute*, le jeu passe tout se
 
 Touches par défaut (modifiables dans **Paramètres → Commandes**) :
 
-| Action | Clavier 1 | Clavier 2 | Manette |
+| Action | Clavier 1 | Clavier 2 | Manette (Xbox / PlayStation / Switch) |
 |---|---|---|---|
 | Se déplacer / viser | `W` `A` `S` `D` | Flèches | Stick gauche / croix |
-| Sauter | `Espace` | `,` ou `Pavé 0` | `Y` / `X` |
-| Attaque | `J` | `.` ou `Pavé 1` | `A` |
-| Spéciale | `K` | `/` ou `Pavé 2` | `B` |
-| Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `RB` / gâchettes |
-| Saisie | `I` (ou bouclier + attaque) | `Ctrl droit` ou `Pavé 5` | `LB` |
+| Sauter | `Espace` | `,` ou `Pavé 0` | `X` / `Y` (□ / △) |
+| Attaque | `J` | `.` ou `Pavé 1` | `A` (✕, `B` sur Switch) |
+| Spéciale | `K` | `/` ou `Pavé 2` | `B` (○, `A` sur Switch) |
+| Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `LT` / `RT` (`L2` / `R2`, `ZL` / `ZR`) |
+| Saisie | `I` (ou bouclier + attaque) | `Ctrl droit` ou `Pavé 5` | `LB` (`L1`, `L`) |
 | Attaque smash | `O` (+ direction) | `;` ou `Pavé 4` | Stick droit |
-| Pause | `Échap` / `P` | `Échap` / `P` | `Start` |
+| **Ultime** (barre pleine) | `U` | `'` ou `Pavé 6` | `RB` (`R1`, `R`) |
+| Pause | `Échap` / `P` | `Échap` / `P` | `Start` (`Options`, `+`) |
 
 Les touches correspondent à des **positions** sur le clavier (celles d'un clavier QWERTY) : sur un
 clavier AZERTY, le joueur 1 se déplace donc avec `Z` `Q` `S` `D`, et le joueur 2 utilise `;` (saut),
-`:` (attaque), `!` (spéciale) et `M` (smash). L'écran **Commandes** affiche le nom réel des touches de
-votre clavier.
+`:` (attaque), `!` (spéciale), `M` (smash) et `ù` (ultime). L'écran **Commandes** affiche le nom réel
+des touches de votre clavier.
+
+Les boutons de la manette sont désignés par leur **position** (comme sur une manette Xbox) : sur une
+manette Switch, l'attaque est donc le bouton du bas (`B`) et la spéciale celui de droite (`A`).
+
+**Manettes** : branchez-les quand vous voulez, elles sont reconnues automatiquement (Xbox, PlayStation,
+Switch Pro, 8BitDo, Logitech... grâce à la base [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
+intégrée au jeu, licence zlib : `assets/gamecontrollerdb-LICENSE.txt`). Le pavé tactile et les capteurs de
+mouvement des manettes PlayStation, que Linux présente comme des manettes à part, sont ignorés.
+- La manette (ou le clavier) qui ouvre **Combat** ou **Entraînement** devient celle du joueur 1.
+- Dans la sélection des combattants, une autre manette **rejoint la partie en appuyant sur `A` (ou
+  `Start`)** : elle prend la première place libre (ou celle d'un ordinateur). On peut toujours choisir
+  l'appareil de chaque joueur à la main, en bas de sa carte (« MANETTE 2 », avec le modèle reconnu).
+- Si la manette d'un joueur se débranche pendant un combat, le jeu se met en **pause** ; rebranchée,
+  elle retrouve son numéro et son joueur.
+- Dès qu'une manette est branchée ou utilisée, l'écran montre **ses boutons** (symboles Xbox,
+  PlayStation ou Nintendo) ; une touche du clavier fait revenir les touches du clavier. L'onglet
+  **Commandes** montre alors le schéma de la manette avec chaque action.
 
 Combinaisons :
 - **Attaque smash** : direction + attaque *en même temps* (ou la touche smash). Maintenir pour charger.
@@ -97,8 +115,11 @@ Combinaisons :
   attaque ou bouclier.
 
 Dans les menus : flèches (ou `WASD`), `Entrée` pour valider, `Échap` pour revenir, `Espace`/`J` pour
-modifier une valeur et `K` pour revenir à la valeur précédente. La souris marche partout (clic gauche
-et clic droit). `F11` : plein écran. `F1` en combat : afficher les zones de coup.
+modifier une valeur et `K` pour revenir à la valeur précédente. À la manette : stick gauche ou croix,
+`A` pour valider ou modifier, `B` pour revenir, `X` pour la valeur précédente, `Start` pour lancer le
+combat. La souris marche partout (clic gauche et clic droit). `F11` : plein écran. `F1` en combat :
+afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir une :
+`super_clash --pad-glyphs xbox` (ou `ps`, `switch`).
 
 ## Jouer sans compiler
 

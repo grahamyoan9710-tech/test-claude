@@ -18,6 +18,7 @@ struct Options {
   std::vector<std::pair<int, std::string>> shots;  // frame -> screenshot path
   int quitAfter = -1;
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
+  int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
 };
 
@@ -36,6 +37,7 @@ class MatchScreen {
   Camera2D camera();
   Result updatePause();
   void drawPause();
+  void resume();
   void trackCombos();
   void drawTrainingPanel();
   std::vector<std::string> pauseItems() const;
@@ -50,6 +52,8 @@ class MatchScreen {
   Vec2 shake_;
   bool paused_ = false;
   int pauseSel_ = 0;
+  std::array<bool, 4> padLost_{};      // the player's gamepad got unplugged (auto pause)
+  std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;
   bool debug_ = false;
   float time_ = 0.0f;
@@ -90,13 +94,15 @@ class App {
   void drawTitle();
   void updateMainMenu(const MenuNav& nav);
   void drawMainMenu();
-  void activateMenu(int item);
+  void activateMenu(int item, int device = -1);
+  void claimP1(int device);
   // screens (menus.cpp)
   void updateCss(const MenuNav& nav);
   void drawCss();
   void updateStage(const MenuNav& nav);
   void drawStage();
   void changeField(int col, int row, int delta);
+  bool padJoins();
   int activeSlots() const;
   // screens (screen_results.cpp)
   void updateResults(const MenuNav& nav);
@@ -133,6 +139,7 @@ class App {
   int stage_ = 0;
   int cssCol_ = 0, cssRow_ = 1;
   int rulesCol_ = 0;
+  std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::unique_ptr<MatchScreen> match_;
   // settings
   int setTab_ = 0;

@@ -77,7 +77,7 @@ const Tile kTiles[4] = {
     {{728, 126, 500, 142}, 21, {70, 200, 112, 255}, {16, 100, 70, 255}, "ENTRAÎNEMENT",
      "Vies infinies, mannequin, compteur de combos : idéal pour apprendre."},
     {{704, 292, 500, 142}, 21, {72, 132, 246, 255}, {28, 46, 150, 255}, "PARAMÈTRES",
-     "Son, affichage, règles du jeu et touches du clavier."},
+     "Son, affichage, règles du jeu, touches et manettes."},
     {{680, 458, 500, 142}, 21, {150, 96, 196, 255}, {58, 34, 96, 255}, "QUITTER",
      "Quitter Super Clash Bros."},
 };
@@ -90,8 +90,6 @@ void App::updateTitle(const MenuNav& nav) {
   if (screenFrames_ == 22) audio_.play(Sfx::HitHeavy, 0.9f, 0.8f);
   if (screenFrames_ == 24) audio_.play(Sfx::Crowd, 0.5f, 1.1f);
   bool go = nav.confirm || nav.start || IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
-  for (int g = 0; g < 4; ++g)
-    if (IsGamepadAvailable(g) && IsGamepadButtonPressed(g, GAMEPAD_BUTTON_MIDDLE_RIGHT)) go = true;
   if (go && screenFrames_ > 20) {
     audio_.play(Sfx::Go, 0.8f);
     goTo(Screen::MainMenu);
@@ -167,11 +165,11 @@ void App::drawTitle() {
   if (f > 40) {
     float a = 0.55f + 0.45f * std::sin(t * 4.0f);
     const char* txt = "APPUYEZ SUR";
-    float kw = std::max(30.0f, textWidth("ENTRÉE", 34 * 0.48f) + 34 * 0.7f);
-    float total = textWidth(txt, 26) + 14 + kw;
+    const float ph = padPrompts() ? 44 : 34;  // a gamepad button is a smaller shape than a key cap
+    float total = textWidth(txt, 26) + 14 + ui::promptWidth("ENTRÉE", ui::Btn::Start, ph);
     float x = center.x - total * 0.5f;
     drawTextOutlined(txt, x, 368, 26, withAlpha(WHITE, a), withAlpha(ui::kInk, a), 2.5f);
-    ui::keycap("ENTRÉE", x + textWidth(txt, 26) + 14, 364, 34, true);
+    ui::prompt("ENTRÉE", ui::Btn::Start, x + textWidth(txt, 26) + 14, 381 - ph * 0.5f, ph, true);
   }
   drawText("v2.0", kScreenW - 54, kScreenH - 26, 15, withAlpha(ui::kMuted, 0.8f));
   drawText("C++ & raylib", 16, kScreenH - 26, 15, withAlpha(ui::kMuted, 0.8f));
@@ -181,18 +179,29 @@ void App::drawTitle() {
 // ---------------------------------------------------------------------------
 // Main menu
 // ---------------------------------------------------------------------------
-void App::activateMenu(int item) {
+// The device that opens the character select plays player 1 (keyboard or gamepad).
+void App::claimP1(int device) {
+  if (device < 0) return;
+  for (int i = 1; i < 4; ++i)
+    if (slots_[i].type == 1 && slots_[i].device == device) slots_[i].device = slots_[0].device;
+  slots_[0].type = 1;
+  slots_[0].device = device;
+}
+
+void App::activateMenu(int item, int device) {
   audio_.play(Sfx::MenuSelect);
   switch (item) {
     case 0:
       training_ = false;
       cssRow_ = 1;
+      claimP1(device);
       goTo(Screen::CharSelect);
       break;
     case 1:
       training_ = true;
       cssRow_ = 1;
       cssCol_ = 0;
+      claimP1(device);
       goTo(Screen::CharSelect);
       break;
     case 2:
@@ -227,7 +236,7 @@ void App::updateMainMenu(const MenuNav& nav) {
   }
   if (menuSel_ != 0) menuRight_ = menuSel_;
   if (menuSel_ != before) audio_.play(Sfx::MenuMove, 0.7f);
-  if (nav.confirm || nav.start) activateMenu(menuSel_);
+  if (nav.confirm || nav.start) activateMenu(menuSel_, nav.device);
   else if (nav.back) {
     audio_.play(Sfx::MenuBack);
     goTo(Screen::Title);
@@ -291,5 +300,6 @@ void App::drawMainMenu() {
       if (i == 3) drawExit({ic.x - 10, ic.y}, 32);
     }
   }
-  ui::footer({{"FLÈCHES", "Naviguer"}, {"ENTRÉE", "Choisir"}, {"ÉCHAP", "Retour"}}, kTiles[menuSel_].desc);
+  ui::footer({{"FLÈCHES", ui::Btn::Move, "Naviguer"}, {"ENTRÉE", ui::Btn::A, "Choisir"}, {"ÉCHAP", ui::Btn::B, "Retour"}},
+             kTiles[menuSel_].desc);
 }

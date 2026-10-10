@@ -26,6 +26,17 @@ Rectangle rosterRect(int i) { return {82.0f + i * 188.0f, 112, 176, 132}; }
 Rectangle readyRect() { return {0, 632, float(kScreenW), 38}; }
 Rectangle bigPreviewRect() { return {60, 116, 768, 432}; }
 Rectangle stageCardRect(int i) { return {866.0f - i * 10.0f, 116.0f + i * 150.0f, 360, 134}; }
+
+// Input device selector: "MANETTE 2" with, under it, the model of the gamepad (or "non branchée").
+void deviceSelector(Rectangle r, int device, bool focused, float t) {
+  const bool plugged = deviceAvailable(device);
+  const char* sub = !plugged ? "non branchée" : device >= kPad1 ? padModel(device - kPad1) : nullptr;
+  ui::selector(r, sub ? "" : deviceName(device), focused, t);
+  if (!sub) return;
+  const float cx = r.x + r.width * 0.5f;
+  drawTextCentered(deviceName(device), cx, r.y + 2, 15, ui::kCream, false);
+  drawTextCentered(sub, cx, r.y + 19, 13, plugged ? ui::kMuted : Color{255, 160, 160, 255}, false);
+}
 }  // namespace
 
 void App::changeField(int col, int row, int delta) {
@@ -48,16 +59,18 @@ void App::changeField(int col, int row, int delta) {
     case 0: {
       s.type = (s.type + delta + 3) % 3;
       if (s.type == 2) s.level = settings().cpuLevel;
-      if (s.type == 1) {  // pick a free input device
-        for (int d = 0; d < kDeviceCount; ++d) {
-          bool used = false;
-          for (int j = 0; j < 4; ++j)
-            if (j != col && slots_[j].type == 1 && slots_[j].device == d) used = true;
-          if (!used) {
-            s.device = d;
-            break;
+      if (s.type == 1) {  // pick a free input device, a plugged-in one first
+        bool found = false;
+        for (int pass = 0; pass < 2 && !found; ++pass)
+          for (int d = 0; d < kDeviceCount && !found; ++d) {
+            bool used = pass == 0 && !deviceAvailable(d);
+            for (int j = 0; j < 4; ++j)
+              if (j != col && slots_[j].type == 1 && slots_[j].device == d) used = true;
+            if (!used) {
+              s.device = d;
+              found = true;
+            }
           }
-        }
       }
       break;
     }
@@ -71,7 +84,32 @@ void App::changeField(int col, int row, int delta) {
   }
 }
 
+// A gamepad that plays nobody joins with A or START: it takes the first card that is not a
+// human player (player 1 in training, the dummy is never played).
+bool App::padJoins() {
+  for (int p = 0; p < kMaxPads; ++p) {
+    if (!padPressed(p, kPadA) && !padPressed(p, kPadStart)) continue;
+    const int dev = kPad1 + p;
+    bool assigned = false;
+    for (int i = 0; i < (training_ ? 1 : 4); ++i)
+      assigned = assigned || ((training_ || slots_[i].type == 1) && slots_[i].device == dev);
+    int col = training_ ? 0 : -1;
+    for (int i = 0; i < 4 && col < 0; ++i)
+      if (slots_[i].type != 1) col = i;
+    if (assigned || col < 0) continue;
+    slots_[col].type = 1;
+    slots_[col].device = dev;
+    joinedAt_[col] = frames_;
+    cssCol_ = col;  // the newcomer picks a fighter right away
+    cssRow_ = 1;
+    audio_.play(Sfx::MenuSelect);
+    return true;
+  }
+  return false;
+}
+
 void App::updateCss(const MenuNav& nav) {
+  if (padJoins()) return;  // that press is used up
   const int cols = cardCount(training_);
   const int minRow = training_ ? 0 : -1;
   cssCol_ = std::min(cssCol_, cols - 1);
@@ -87,10 +125,8 @@ void App::updateCss(const MenuNav& nav) {
   if (nav.up || nav.down || nav.left || nav.right) audio_.play(Sfx::MenuMove, 0.6f);
   const int fieldCol = cssRow_ < 0 ? rulesCol_ : cssCol_;
 
-  bool prev = IsKeyPressed(KEY_K) || IsKeyPressed(KEY_KP_2) || IsKeyPressed(KEY_SLASH);
-  for (int g = 0; g < 4; ++g)
-    if (IsGamepadAvailable(g) && IsGamepadButtonPressed(g, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)) prev = true;
-  bool back = nav.back && !prev;
+  const bool prev = nav.prev;
+  const bool back = nav.back && !prev;
   if (nav.confirm && !nav.start) changeField(fieldCol, cssRow_, 1);
   if (prev) changeField(fieldCol, cssRow_, -1);
 
@@ -189,6 +225,8 @@ void App::drawCss() {
     ui::slanted({cr.x + kCardSlant * 0.85f, cr.y, cr.width - kCardSlant * 0.85f, 44}, kCardSlant * 44 / kCardH, pc,
                 shade(pc, 0.75f));
     ui::slantedOutline(cr, kCardSlant, 3, withAlpha(ui::kInk, 0.95f));
+    const float joined = 1.0f - (frames_ - joinedAt_[col]) / 45.0f;  // a gamepad just joined
+    if (joined > 0.0f) ui::slantedOutline(ui::grow(cr, 3), kCardSlant, 6, withAlpha(ui::kGold, joined));
     const char* head = training_ ? (col == 0 ? "JOUEUR 1" : "MANNEQUIN") : TextFormat("JOUEUR %d", col + 1);
     drawTextOutlined(head, cr.x + 30, cr.y + 7, 30, WHITE, ui::kInk, 3.0f, FontKind::Title);
 
@@ -223,18 +261,17 @@ void App::drawCss() {
         ui::arrowTri({f1.x + 16, f1.y + 80}, 22, -1, ui::kGold);
         ui::arrowTri({f1.x + f1.width - 16, f1.y + 80}, 22, 1, ui::kGold);
       }
-    } else {
-      drawTextCentered("ESPACE", f1.x + f1.width * 0.5f, f1.y + 64, 30, ui::kMuted, true, FontKind::Title);
-      drawTextCentered("pour rejoindre", f1.x + f1.width * 0.5f, f1.y + 102, 18, ui::kMuted, false);
+    } else {  // join hint: A on any free gamepad, or ESPACE on this card
+      if (padPrompts()) ui::padGlyph(ui::Btn::A, f1.x + f1.width * 0.5f - 26, f1.y + 46, 52, promptFamily());
+      else drawTextCentered("ESPACE", f1.x + f1.width * 0.5f, f1.y + 64, 30, ui::kMuted, true, FontKind::Title);
+      drawTextCentered("pour rejoindre", f1.x + f1.width * 0.5f, f1.y + 108, 18, ui::kMuted, false);
       if (foc1) ui::focusFrame(f1, t, 0.12f);
     }
 
     Rectangle f2 = fieldRect(col, 2, training_);
     bool foc2 = cssRow_ == 2 && cssCol_ == col;
     if (type == 1) {
-      ui::selector(f2, deviceName(s.device), foc2, t);
-      if (!deviceAvailable(s.device))
-        drawTextCentered("(non branchée)", f2.x + f2.width * 0.5f, f2.y - 18, 14, {255, 160, 160, 255}, false);
+      deviceSelector(f2, s.device, foc2, t);
     } else if (type == 2 && !training_) {
       ui::selector(f2, TextFormat("NIVEAU %d", s.level), foc2, t);
     } else {
@@ -254,9 +291,10 @@ void App::drawCss() {
     const char* txt = training_ ? "PRÊT POUR L'ENTRAÎNEMENT !" : "PRÊTS AU COMBAT !";
     float w = textWidth(txt, 30, FontKind::Title);
     drawTextOutlined(txt, kScreenW * 0.5f - w * 0.5f - 60, rb.y + 4, 30, WHITE, ui::kInk, 3.0f, FontKind::Title);
-    ui::keycap("ENTRÉE", kScreenW * 0.5f + w * 0.5f - 40, rb.y + 6, 26, true);
+    ui::prompt("ENTRÉE", ui::Btn::Start, kScreenW * 0.5f + w * 0.5f - 40, rb.y + 6, 26, true);
   }
-  ui::footer({{"FLÈCHES", "Naviguer"}, {"ESPACE", "Modifier"}, {"K", "Précédent"}, {"ÉCHAP", "Retour"}},
+  ui::footer({{"FLÈCHES", ui::Btn::Move, "Naviguer"}, {"ESPACE", ui::Btn::A, "Modifier"},
+              {"K", ui::Btn::X, "Précédent"}, {"ÉCHAP", ui::Btn::B, "Retour"}},
              ready ? nullptr : "Il faut au moins 2 combattants.");
 }
 
@@ -318,5 +356,5 @@ void App::drawStage() {
              FontKind::Title);
     DrawRectangleRoundedLinesEx(rr, 0.08f, 8, sel ? 5.0f : 2.5f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
   }
-  ui::footer({{"FLÈCHES", "Choisir"}, {"ENTRÉE", "Combattre !"}, {"ÉCHAP", "Retour"}});
+  ui::footer({{"FLÈCHES", ui::Btn::Move, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Combattre !"}, {"ÉCHAP", ui::Btn::B, "Retour"}});
 }

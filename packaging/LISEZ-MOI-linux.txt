@@ -20,26 +20,46 @@ COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
 --------------------------------------------------------------
 Joueur 1 (clavier) : W A S D pour se déplacer (Z Q S D sur un clavier AZERTY)
                      Espace = saut, J = attaque, K = spéciale, L = bouclier,
-                     I = saisie, O = attaque smash
+                     I = saisie, O = attaque smash, U = ultime
 Joueur 2 (clavier) : flèches pour se déplacer
-                     clavier AZERTY : ; = saut, : = attaque, ! = spéciale, M = smash
-                     clavier QWERTY : , = saut, . = attaque, / = spéciale, ; = smash
+                     clavier AZERTY : ; = saut, : = attaque, ! = spéciale,
+                                      M = smash, ù = ultime
+                     clavier QWERTY : , = saut, . = attaque, / = spéciale,
+                                      ; = smash, ' = ultime
                      Maj droite = bouclier, Ctrl droit = saisie
                      (ou le pavé numérique : 0 saut, 1 attaque, 2 spéciale,
-                     3 bouclier, 4 smash, 5 saisie)
-Manettes           : reconnues automatiquement
+                     3 bouclier, 4 smash, 5 saisie, 6 ultime)
 Échap ou P         : pause            F11 : plein écran
+
+MANETTES (Xbox, PlayStation, Switch Pro, 8BitDo... reconnues automatiquement)
+--------
+Stick gauche ou croix = se déplacer   A = attaque       B = spéciale
+X ou Y = saut                         LB = saisie       RB = ULTIME
+LT ou RT (gâchettes) = bouclier       stick droit = attaque smash
+Start = pause
+(PlayStation : croix = attaque, rond = spéciale, carré/triangle = saut,
+ L1 = saisie, R1 = ultime, L2/R2 = bouclier. Switch : les boutons gardent
+ leur place, B = attaque, A = spéciale, ZL/ZR = bouclier, R = ultime.)
+
+- La manette qui ouvre « Combat » devient celle du joueur 1. Une autre
+  manette rejoint la partie en appuyant sur A (ou Start) dans la sélection
+  des combattants.
+- Si une manette se débranche en plein combat, le jeu se met en pause :
+  rebranchez-la, elle retrouve son joueur.
+- Quand une manette est branchée, l'écran affiche ses boutons ; appuyez sur
+  une touche du clavier pour revoir les touches du clavier.
 
 ASTUCES
 -------
 - Direction + attaque en même temps = attaque smash (maintenez pour charger).
-- Brisez l'Orbe Clash qui flotte au-dessus de l'arène : votre prochaine
-  spéciale déclenchera l'attaque finale SUPER CLASH !
+- Donnez et recevez des coups pour remplir votre barre d'ulti (ou brisez
+  l'Orbe Clash qui flotte au-dessus de l'arène) : appuyez alors sur ULTIME
+  pour déclencher l'attaque finale SUPER CLASH !
 - Le mode Entraînement permet de s'exercer contre un mannequin.
 
 Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
 Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
 Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
 
-Polices : Luckiest Guy (Apache 2.0) et Poppins (SIL OFL 1.1), voir le
-dossier « licences ».
+Polices : Luckiest Guy (Apache 2.0) et Poppins (SIL OFL 1.1). Manettes :
+base SDL_GameControllerDB (zlib). Voir le dossier « licences ».
