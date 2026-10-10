@@ -6,8 +6,12 @@ on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l
 ![Écran titre](docs/titre.jpg)
 
 Les personnages sont dessinés et animés par le code (squelette + cinématique inverse), les sons et la
-musique sont synthétisés au lancement. Les seules ressources sont deux polices libres, intégrées
-directement dans l'exécutable : il n'y a aucun fichier à installer à côté.
+musique sont synthétisés au lancement. Les seules ressources sont deux polices libres et la base de
+manettes SDL, intégrées directement dans l'exécutable : il n'y a aucun fichier à installer à côté.
+
+La direction artistique s'inspire de *Zelda: Tears of the Kingdom* : îles célestes, ruines Zonaï aux
+runes turquoise, profondeurs éclairées par des racines lumineuses, personnages en ombrage « peint ».
+Tout est dessiné par le code (aucune image ni logo repris du jeu).
 
 | Menu principal | Sélection des combattants |
 |---|---|
@@ -41,10 +45,18 @@ directement dans l'exécutable : il n'y a aucun fichier à installer à côté.
   rebords (accroche, remontée, attaque, roulade, saut), retombée en culbute + *tech*, chute libre après
   la remontée, attaques smash à charger, super armure, contres, projectiles, plateformes traversables
   et mobiles.
+- **La barre d'ulti** : sous forme de cellules d'énergie Zonaï au-dessus de chaque carte de dégâts, elle
+  se remplit **en frappant** (0,45 point par % infligé) **et en prenant des coups** (0,35 point par %
+  reçu). Pleine, le combattant s'entoure d'une aura turquoise, la carte affiche « ULTI PRÊTE ! » avec le
+  bouton à presser, et la touche **Ultime** déclenche l'attaque finale **SUPER CLASH** (cinématique,
+  ondes de choc dévastatrices). Les ordinateurs s'en servent aussi.
 - **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
-  de l'arène. Frappez-la jusqu'à la briser : votre combattant s'illumine et sa prochaine **spéciale**
-  déclenche l'attaque finale **SUPER CLASH** (cinématique, ondes de choc dévastatrices).
-- **3 arènes** : Destination Finale, Champ de Bataille, Îles Célestes (plateforme mobile).
+  de l'arène. Celui qui la brise **remplit d'un coup sa barre d'ulti**.
+- **3 arènes** : **Profondeurs** (abîme, racines lumineuses et cristaux), **Sanctuaire** (temple Zonaï en
+  ruine au soleil couchant) et **Îles Célestes** (îles flottantes, cascades, plateforme mobile).
+- **Animations** : transitions fluides entre les poses, élan et accompagnement des coups, traînées des
+  attaques, étirements au saut et tassements à l'atterrissage, capes, écharpes et cheveux qui suivent
+  le mouvement, respiration et clignements d'yeux.
 - Effets : étincelles, traînées d'éjection, rayon de K.O., tremblement d'écran, bulles quand un
   combattant est hors-champ, caméra dynamique, compte à rebours, « GAME ! », écran de résultats,
   transitions animées entre les écrans.
@@ -60,7 +72,7 @@ Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquemen
   compteur d'images (FPS), zones de coup.
 - **Jeu** : nombre de vies, Orbe Clash, niveau des ordinateurs par défaut, tout réinitialiser.
 - **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
-  est échangée), avec un rappel des commandes manette.
+  est échangée) ; quand une manette est utilisée, l'onglet montre le schéma de la manette.
 
 Si l'ordinateur n'arrive pas à suivre en qualité *Haute*, le jeu passe tout seul en *Normale*.
 
@@ -125,9 +137,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-2.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-3.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-2.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-3.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -187,7 +199,8 @@ cmake --build build-core -j
 ```
 
 Les tests vérifient la formule de recul, les coups, les K.O., chaque commande clavier (petit/grand saut,
-smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), l'Orbe Clash et l'attaque finale,
+smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), la barre d'ulti, l'Orbe Clash et
+l'attaque finale,
 le mode entraînement, la remontée de chaque personnage depuis le vide, des dizaines de matchs complets
 entre ordinateurs, l'équilibrage et le déterminisme.
 
@@ -201,7 +214,7 @@ src/core/   simulation pure (aucune dépendance)
   fighter_update.cpp   machine à états des combattants (contrôles)
   fighter_physics.cpp  déplacements, collisions, atterrissages, rebords
   combat.cpp           détection des coups, recul, bouclier, contres, saisies, projectiles
-  match.cpp            déroulement du match, K.O., réapparition, Orbe Clash, entraînement
+  match.cpp            déroulement du match, K.O., réapparition, barre d'ulti, Orbe Clash, entraînement
   ai.cpp               ordinateur (niveaux 1 à 9) et mannequins
 src/game/   interface raylib
   app.cpp              boucle principale, rendu suréchantillonné, transitions
@@ -210,16 +223,18 @@ src/game/   interface raylib
   menus.cpp            sélection des combattants et de l'arène
   screen_results.cpp   résultats
   match_screen.cpp     combat, pause, outils d'entraînement
-  ui.cpp               kit d'interface : fonds animés, tuiles, curseurs, titres en relief
+  controls.cpp         claviers, manettes (numérotation, branchement à chaud), navigation des menus
+  ui.cpp               kit d'interface : fonds animés, tuiles, curseurs, titres en relief, boutons de manette
   settings.cpp         paramètres enregistrés et noms des touches
   fonts.cpp            polices intégrées
   render_body.cpp      dessin des personnages (squelette + IK)
   render_fighter.cpp   poses : chaque attaque anime le membre qui porte la hitbox
   render_world.cpp     décors, plateformes, projectiles, aperçus des arènes
-  render_hud.cpp       pourcentages, vies, bulles hors-champ, compte à rebours
+  render_hud.cpp       pourcentages, vies, barre d'ulti, bulles hors-champ, compte à rebours
   fx.cpp               particules, rayons de K.O., tremblements, sons
   audio.cpp            synthèse des sons et de la musique
 assets/fonts/          polices (intégrées à la compilation par cmake/embed.cmake)
+assets/gamecontrollerdb.txt  base des manettes SDL (intégrée elle aussi)
 tests/sim_test.cpp     tests sans écran
 ```
 
@@ -229,3 +244,6 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 
 - Police **Luckiest Guy** par Astigmatic — licence Apache 2.0 (`assets/fonts/LuckiestGuy-LICENSE.txt`).
 - Police **Poppins** par Indian Type Foundry — licence SIL Open Font License 1.1 (`assets/fonts/Poppins-OFL.txt`).
+- Base de manettes **SDL_GameControllerDB** — licence zlib (`assets/gamecontrollerdb-LICENSE.txt`).
+- Direction artistique inspirée de *The Legend of Zelda: Tears of the Kingdom* (Nintendo) ; aucun élément
+  du jeu n'est repris, tout est dessiné par le code.
