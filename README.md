@@ -80,8 +80,9 @@ Touches par défaut (modifiables dans **Paramètres → Commandes**) :
 | Pause | `Échap` / `P` | `Échap` / `P` | `Start` |
 
 Les touches correspondent à des **positions** sur le clavier (celles d'un clavier QWERTY) : sur un
-clavier AZERTY, le joueur 1 se déplace donc avec `Z` `Q` `S` `D`. L'écran **Commandes** affiche le nom
-réel des touches de votre clavier.
+clavier AZERTY, le joueur 1 se déplace donc avec `Z` `Q` `S` `D`, et le joueur 2 utilise `;` (saut),
+`:` (attaque), `!` (spéciale) et `M` (smash). L'écran **Commandes** affiche le nom réel des touches de
+votre clavier.
 
 Combinaisons :
 - **Attaque smash** : direction + attaque *en même temps* (ou la touche smash). Maintenir pour charger.
@@ -98,6 +99,20 @@ Combinaisons :
 Dans les menus : flèches (ou `WASD`), `Entrée` pour valider, `Échap` pour revenir, `Espace`/`J` pour
 modifier une valeur et `K` pour revenir à la valeur précédente. La souris marche partout (clic gauche
 et clic droit). `F11` : plein écran. `F1` en combat : afficher les zones de coup.
+
+## Jouer sans compiler
+
+Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
+
+- **Linux 64 bits** (`SuperClashBros-2.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+  puis dans un terminal ouvert dans le dossier : `./super_clash`.
+- **Windows 64 bits** (`SuperClashBros-2.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+  `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
+  complémentaires » puis « Exécuter quand même »).
+
+Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
+`LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64
+(`cmake/mingw-w64.cmake`).
 
 ## Compilation
 

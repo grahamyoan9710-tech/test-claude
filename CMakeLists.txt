@@ -8,6 +8,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 option(CLASH_BUILD_GAME "Build the graphical game (needs raylib)" ON)
+option(CLASH_PORTABLE "Self-contained executable (static C++ runtime) for distribution" OFF)
 
 # ---------------------------------------------------------------------------
 # Core simulation: pure C++, no graphics dependency (testable headless)
@@ -52,12 +53,19 @@ if(CLASH_BUILD_GAME)
     FetchContent_MakeAvailable(raylib)
   endif()
 
-  # Fonts are compiled into the executable (see cmake/embed.cmake).
+  # Fonts and icon are compiled into the executable (see cmake/embed.cmake).
   include(cmake/embed.cmake)
-  set(CLASH_FONTS_C "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_fonts.c")
-  embed_files(OUTPUT "${CLASH_FONTS_C}" FILES
+  set(CLASH_ASSETS_C "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_assets.c")
+  embed_files(OUTPUT "${CLASH_ASSETS_C}" FILES
     font_title_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/LuckiestGuy-Regular.ttf"
-    font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Poppins-Bold.ttf")
+    font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Poppins-Bold.ttf"
+    icon_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png")
+  set(CLASH_EXTRA_SOURCES "${CLASH_ASSETS_C}")
+  if(WIN32)  # icon of the .exe in the file explorer
+    set(CLASH_RC "${CMAKE_CURRENT_BINARY_DIR}/generated/icon.rc")
+    file(WRITE "${CLASH_RC}" "IDI_ICON1 ICON \"${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.ico\"\n")
+    list(APPEND CLASH_EXTRA_SOURCES "${CLASH_RC}")
+  endif()
 
   add_executable(super_clash
     src/main.cpp
@@ -77,9 +85,15 @@ if(CLASH_BUILD_GAME)
     src/game/render_world.cpp
     src/game/render_hud.cpp
     src/game/fx.cpp
-    "${CLASH_FONTS_C}"
+    ${CLASH_EXTRA_SOURCES}
   )
   target_link_libraries(super_clash PRIVATE clash_core raylib)
+  if(MINGW)
+    # One self-contained .exe, no console window.
+    target_link_options(super_clash PRIVATE -static -static-libgcc -static-libstdc++ -mwindows)
+  elseif(CLASH_PORTABLE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND NOT APPLE)
+    target_link_options(super_clash PRIVATE -static-libstdc++ -static-libgcc)
+  endif()
   if(CLASH_GLFW_KEYNAMES)
     target_compile_definitions(super_clash PRIVATE CLASH_GLFW_KEYNAMES=1)
   endif()

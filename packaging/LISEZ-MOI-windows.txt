@@ -1,0 +1,44 @@
+SUPER CLASH BROS. - version Windows (64 bits)
+=============================================
+
+POUR JOUER
+----------
+1. Décompressez l'archive (clic droit > « Extraire tout... »).
+   Ne lancez pas le jeu directement depuis le fichier .zip.
+2. Double-cliquez sur super_clash.exe.
+
+Windows peut afficher « Windows a protégé votre ordinateur » car le jeu
+n'est pas signé : cliquez sur « Informations complémentaires », puis sur
+« Exécuter quand même ».
+
+Aucune installation n'est nécessaire : tout (polices, sons, musique) est
+dans le fichier super_clash.exe.
+
+COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
+--------------------------------------------------------------
+Joueur 1 (clavier) : Z Q S D pour se déplacer sur un clavier AZERTY
+                     (W A S D sur un clavier QWERTY)
+                     Espace = saut, J = attaque, K = spéciale, L = bouclier,
+                     I = saisie, O = attaque smash
+Joueur 2 (clavier) : flèches pour se déplacer
+                     clavier AZERTY : ; = saut, : = attaque, ! = spéciale, M = smash
+                     clavier QWERTY : , = saut, . = attaque, / = spéciale, ; = smash
+                     Maj droite = bouclier, Ctrl droit = saisie
+                     (ou le pavé numérique : 0 saut, 1 attaque, 2 spéciale,
+                     3 bouclier, 4 smash, 5 saisie)
+Manettes           : reconnues automatiquement (Xbox, PlayStation...)
+Échap ou P         : pause            F11 : plein écran
+
+ASTUCES
+-------
+- Direction + attaque en même temps = attaque smash (maintenez pour charger).
+- Brisez l'Orbe Clash qui flotte au-dessus de l'arène : votre prochaine
+  spéciale déclenchera l'attaque finale SUPER CLASH !
+- Le mode Entraînement permet de s'exercer contre un mannequin.
+
+Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
+Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
+Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
+
+Polices : Luckiest Guy (Apache 2.0) et Poppins (SIL OFL 1.1), voir le
+dossier « licences ».

@@ -1,0 +1,45 @@
+SUPER CLASH BROS. - version Linux (64 bits)
+===========================================
+
+POUR JOUER
+----------
+1. Décompressez l'archive (clic droit > « Extraire ici »).
+2. Ouvrez un terminal dans le dossier SuperClashBros
+   (clic droit dans le dossier > « Ouvrir dans un terminal »), puis tapez :
+
+       ./super_clash
+
+   Si le terminal répond « Permission non accordée », tapez d'abord :
+
+       chmod +x super_clash
+
+Aucune installation n'est nécessaire : tout (polices, sons, musique) est
+dans le fichier super_clash. Testé sur Ubuntu 24.04.
+
+COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
+--------------------------------------------------------------
+Joueur 1 (clavier) : W A S D pour se déplacer (Z Q S D sur un clavier AZERTY)
+                     Espace = saut, J = attaque, K = spéciale, L = bouclier,
+                     I = saisie, O = attaque smash
+Joueur 2 (clavier) : flèches pour se déplacer
+                     clavier AZERTY : ; = saut, : = attaque, ! = spéciale, M = smash
+                     clavier QWERTY : , = saut, . = attaque, / = spéciale, ; = smash
+                     Maj droite = bouclier, Ctrl droit = saisie
+                     (ou le pavé numérique : 0 saut, 1 attaque, 2 spéciale,
+                     3 bouclier, 4 smash, 5 saisie)
+Manettes           : reconnues automatiquement
+Échap ou P         : pause            F11 : plein écran
+
+ASTUCES
+-------
+- Direction + attaque en même temps = attaque smash (maintenez pour charger).
+- Brisez l'Orbe Clash qui flotte au-dessus de l'arène : votre prochaine
+  spéciale déclenchera l'attaque finale SUPER CLASH !
+- Le mode Entraînement permet de s'exercer contre un mannequin.
+
+Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
+Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
+Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
+
+Polices : Luckiest Guy (Apache 2.0) et Poppins (SIL OFL 1.1), voir le
+dossier « licences ».

@@ -5,9 +5,22 @@
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
+extern "C" {
+extern const unsigned char icon_png[];  // assets/icon.png, embedded at build time
+extern const unsigned int icon_png_size;
+}
+
 namespace {
 constexpr int kHalfTransition = 14;  // frames to cover the screen, same to reveal it
+
+void setWindowIcon() {
+  Image icon = LoadImageFromMemory(".png", icon_png, int(icon_png_size));
+  if (icon.data == nullptr) return;
+  ImageFormat(&icon, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+  SetWindowIcon(icon);
+  UnloadImage(icon);
 }
+}  // namespace
 
 App::App(Options opt) : opt_(std::move(opt)) {
   slots_[0] = {1, kKeyboard1, 0, 5};
@@ -109,6 +122,7 @@ void App::run() {
   InitWindow(kScreenW, kScreenH, "Super Clash Bros.");
   SetExitKey(KEY_NULL);
   SetTargetFPS(60);
+  setWindowIcon();
   rlDisableBackfaceCulling();  // pure 2D: polygons may be wound either way
   loadFonts();
   ui::bakeSprites();
