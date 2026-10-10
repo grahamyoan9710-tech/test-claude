@@ -17,7 +17,7 @@ Platform thin(float x0, float x1, float y) {
 
 StageDef finalDestination() {
   StageDef s;
-  s.name = "Destination Finale";
+  s.name = "Profondeurs";
   s.theme = StageTheme::Cosmic;
   s.platforms = {solid(-440, 440, 0, 70)};
   s.blast = {-1150, -950, 2300, 1600};
@@ -28,7 +28,7 @@ StageDef finalDestination() {
 
 StageDef battlefield() {
   StageDef s;
-  s.name = "Champ de Bataille";
+  s.name = "Sanctuaire";
   s.theme = StageTheme::Sunset;
   s.platforms = {solid(-380, 380, 0, 60), thin(-300, -120, -150), thin(120, 300, -150), thin(-90, 90, -290)};
   s.blast = {-1100, -950, 2200, 1600};
