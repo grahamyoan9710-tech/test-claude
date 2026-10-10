@@ -1032,6 +1032,30 @@ void drawFinalSmashFx(const Fighter& f, Vec2 c, float t, bool front) {
 }
 }  // namespace
 
+namespace {
+// Height of a fighter's name tag; tags of fighters standing close together stack up.
+float tagY(const Match& m, int id) {
+  float ys[8];
+  for (int i = 0; i <= id && i < int(m.fighters.size()) && i < 8; ++i) {
+    const Fighter& o = m.fighters[i];
+    float y = o.state == FState::Knockdown ? o.pos.y - o.height() * 0.5f - 30.0f : o.pos.y - o.height() - 36.0f;
+    for (bool moved = true; moved;) {
+      moved = false;
+      for (int j = 0; j < i; ++j) {
+        const Fighter& p = m.fighters[j];
+        if (!p.active() || p.state == FState::Grabbed) continue;
+        if (std::fabs(p.pos.x - o.pos.x) < 56.0f && std::fabs(ys[j] - y) < 22.0f) {
+          y = ys[j] - 24.0f;
+          moved = true;
+        }
+      }
+    }
+    ys[i] = y;
+  }
+  return ys[std::min(id, 7)];
+}
+}  // namespace
+
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) {
   if (!f.active()) return;
   const CharacterDef& d = *f.def;
@@ -1120,15 +1144,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     Color pc = slotColor(f);
     char tag[8];
     std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-    auto baseY = [](const Fighter& o) {
-      return o.state == FState::Knockdown ? o.pos.y - o.height() * 0.5f - 30.0f : o.pos.y - o.height() - 36.0f;
-    };
-    float ty = baseY(f);
-    // Tags of fighters standing close together stack up instead of overlapping.
-    for (const auto& o : m.fighters) {
-      if (o.id >= f.id || !o.active() || o.state == FState::Grabbed) continue;
-      if (std::fabs(o.pos.x - f.pos.x) < 48.0f && std::fabs(baseY(o) - ty) < 22.0f) ty = std::min(ty, baseY(o)) - 24.0f;
-    }
+    float ty = tagY(m, f.id);
     DrawTriangle({f.pos.x - 8, ty + 20}, {f.pos.x, ty + 29}, {f.pos.x + 8, ty + 20}, pc);
     drawTextCentered(tag, f.pos.x, ty, 20, pc, true, FontKind::Title);
   }
