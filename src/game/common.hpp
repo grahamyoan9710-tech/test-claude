@@ -47,11 +47,16 @@ inline void beginClip(Rectangle r) {
 }
 inline void endClip() { EndScissorMode(); }
 
+// ---- Palette ----------------------------------------------------------------
+// Ancient-tech glow (TotK Zonai teal-green): runes on outfits, ultimate aura, menu selection.
+constexpr Color kZonaiGlow = {72, 228, 190, 255};
+constexpr Color kOutline = {12, 18, 22, 255};  // default text outline (teal ink)
+
 inline Color portColor(int port) {
-  static const Color cols[4] = {{235, 60, 60, 255}, {60, 120, 245, 255}, {245, 200, 40, 255}, {60, 200, 90, 255}};
+  static const Color cols[4] = {{230, 68, 56, 255}, {62, 124, 236, 255}, {240, 196, 52, 255}, {68, 192, 100, 255}};
   return cols[port & 3];
 }
-inline Color cpuColor() { return {150, 150, 160, 255}; }
+inline Color cpuColor() { return {150, 156, 152, 255}; }
 inline Color slotColor(const Fighter& f) { return f.cpu ? cpuColor() : portColor(f.port); }
 
 // ---- Text ------------------------------------------------------------------
@@ -64,7 +69,7 @@ inline void drawText(const char* text, float x, float y, float size, Color col, 
 }
 // Text with a smooth dark outline. thick < 0 picks a thickness from the size.
 inline void drawTextOutlined(const char* text, float x, float y, float size, Color col,
-                             Color outline = {15, 15, 25, 255}, float thick = -1.0f,
+                             Color outline = kOutline, float thick = -1.0f,
                              FontKind k = FontKind::Ui) {
   if (thick < 0.0f) thick = std::max(1.5f, size * 0.07f);
   if (thick > 0.0f && outline.a > 0) {
@@ -79,7 +84,7 @@ inline void drawTextOutlined(const char* text, float x, float y, float size, Col
 inline void drawTextCentered(const char* text, float cx, float y, float size, Color col, bool outline = true,
                              FontKind k = FontKind::Ui) {
   float w = textWidth(text, size, k);
-  if (outline) drawTextOutlined(text, cx - w * 0.5f, y, size, col, {15, 15, 25, 255}, -1.0f, k);
+  if (outline) drawTextOutlined(text, cx - w * 0.5f, y, size, col, kOutline, -1.0f, k);
   else drawText(text, cx - w * 0.5f, y, size, col, k);
 }
 

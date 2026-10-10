@@ -5,8 +5,7 @@
 #include "game/common.hpp"
 
 // ---- Fighters (render_fighter.cpp) ----------------------------------------
-// Ancient-tech glow (TotK Zonai teal-green): runes on outfits, ultimate aura.
-constexpr Color kZonaiGlow = {72, 228, 190, 255};
+// kZonaiGlow (ancient-tech teal-green) lives with the palette in common.hpp.
 
 // Pose in fighter-local pixels, relative to the body center, facing right.
 struct Pose {

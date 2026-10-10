@@ -1,5 +1,6 @@
 #pragma once
-// Small immediate-mode UI kit: the visual identity of every menu.
+// Small immediate-mode UI kit: the visual identity of every menu (TotK-like: slate ink panels,
+// gold hairlines, parchment text, Zonai teal glow).
 #include <initializer_list>
 #include <utility>
 
@@ -8,10 +9,14 @@
 
 namespace ui {
 
-constexpr Color kInk = {18, 14, 32, 255};
-constexpr Color kGold = {255, 206, 64, 255};
-constexpr Color kCream = {255, 246, 228, 255};
-constexpr Color kMuted = {170, 172, 205, 255};
+constexpr Color kInk = {14, 22, 26, 255};       // deep slate / teal ink
+constexpr Color kSlate = {26, 40, 44, 255};     // panel fill
+constexpr Color kStone = {112, 126, 120, 255};  // idle frames, quiet lines
+constexpr Color kGold = {232, 196, 110, 255};   // hairlines, focus, highlights
+constexpr Color kCream = {246, 236, 212, 255};  // parchment text
+constexpr Color kMuted = {158, 176, 168, 255};  // secondary text
+constexpr Color kUmber = {58, 34, 20, 255};     // warm depth of the big titles
+constexpr Color kTeal = kZonaiGlow;             // Zonai glow: selection accents
 
 // ---- Shapes -------------------------------------------------------------------
 // Quad with one colour per corner (a = top-left, b = top-right, c = bottom-right, d = bottom-left).
@@ -24,10 +29,27 @@ void glow(Vector2 c, float radius, Color col, int layers = 10);
 void sunburst(Vector2 c, float radius, int rays, float rot, Color col);
 void vignette(float strength);
 void star(Vector2 c, float rOut, float rIn, float rot, Color col);
+void diamond(Vector2 c, float r, Color col);
+// Short L brackets on the corners of a slanted box (slant 0 = rectangle).
+void corners(Rectangle r, float slant, float len, float thick, Color col);
+// Slanted slate plate: drop shadow, fill, gold hairline and corner ornaments.
+void plate(Rectangle r, float slant, Color top, Color bottom, Color line);
+// Hairline rule with small diamonds at both ends.
+void rule(float x0, float x1, float y, Color col);
+// Zonai rune glyph (kind 0 spiral, 1 eye, 2 three dots, 3 compass) inside a circle of radius r.
+void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
+// Rotating Zonai ring emblem with rune marks and a teal glow.
+void zonaiRing(Vector2 c, float r, float time, float alpha = 1.0f);
+// Ancient stone disc (fighters stand on it): mossy rim, glowing runes, teal under-glow.
+void stoneDisc(Vector2 c, float rx, float ry, float time, bool rock = true);
 
 // ---- Backgrounds ----------------------------------------------------------------
-// Animated menu background: gradient, moving diagonal bands, floating sparks.
-void backdrop(float time, Color top, Color bottom, Color bands);
+// Painterly sky: gradient, soft cloud banks, drifting motes (tinted by `motes`).
+void backdrop(float time, Color top, Color bottom, Color motes);
+// A real stage background, slowly panning, under a teal-ink veil (dim 0..1) and drifting Zonai motes.
+void stageBackdrop(int stage, float time, float dim);
+// Drifting glowing motes rising across the screen.
+void motes(int count, float time, Color col, float alpha = 1.0f);
 
 // ---- Text -----------------------------------------------------------------------
 // Big extruded title text with a three-tone fill (Title font).

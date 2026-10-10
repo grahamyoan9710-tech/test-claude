@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "game/render.hpp"
 #include "game/settings.hpp"
 
 namespace ui {
@@ -26,6 +27,83 @@ void triGrad(Vector2 a, Vector2 b, Vector2 c, Color ca, Color cb, Color cc) {
   rlEnd();
 }
 float easeInOut(float t) { return t < 0.5f ? 4 * t * t * t : 1 - std::pow(-2 * t + 2, 3) / 2; }
+void roundLine(Vector2 a, Vector2 b, float t, Color col) {
+  DrawLineEx(a, b, t, col);
+  DrawCircleV(a, t * 0.5f, col);
+  DrawCircleV(b, t * 0.5f, col);
+}
+// Radial gradient (float centre: no 1-px steps on slow movements); sy squashes it vertically.
+void radial(Vector2 c, float r, Color in, Color out, int segs = 36, float sy = 1.0f) {
+  rlBegin(RL_TRIANGLES);
+  for (int i = 0; i < segs; ++i) {
+    const float a0 = i * 2.0f * kPi / segs, a1 = (i + 1) * 2.0f * kPi / segs;
+    vtx(c, in);
+    vtx({c.x + std::cos(a1) * r, c.y + std::sin(a1) * r * sy}, out);
+    vtx({c.x + std::cos(a0) * r, c.y + std::sin(a0) * r * sy}, out);
+  }
+  rlEnd();
+}
+// Filled ellipse, vertical gradient.
+void ellipseGrad(Vector2 c, float rx, float ry, Color top, Color bottom, int segs = 48) {
+  const Color mid = mixColor(top, bottom, 0.5f);
+  rlBegin(RL_TRIANGLES);
+  for (int i = 0; i < segs; ++i) {
+    const float a0 = i * 2.0f * kPi / segs, a1 = (i + 1) * 2.0f * kPi / segs;
+    vtx(c, mid);
+    vtx({c.x + std::cos(a1) * rx, c.y + std::sin(a1) * ry}, mixColor(top, bottom, 0.5f + 0.5f * std::sin(a1)));
+    vtx({c.x + std::cos(a0) * rx, c.y + std::sin(a0) * ry}, mixColor(top, bottom, 0.5f + 0.5f * std::sin(a0)));
+  }
+  rlEnd();
+}
+// Polyline as one mitred strip: no overlapping joints, so it stays clean when translucent.
+void polyline(const Vector2* p, int n, float t, Color col) {
+  if (n < 2) return;
+  auto normal = [&](int i) {  // of segment i -> i + 1
+    const float dx = p[i + 1].x - p[i].x, dy = p[i + 1].y - p[i].y, l = std::max(1e-4f, std::sqrt(dx * dx + dy * dy));
+    return Vector2{-dy / l, dx / l};
+  };
+  Vector2 pl{}, pr{};
+  rlBegin(RL_TRIANGLES);
+  for (int i = 0; i < n; ++i) {
+    Vector2 m = normal(std::min(i, n - 2));
+    float len = t * 0.5f;
+    if (i > 0 && i < n - 1) {
+      const Vector2 a = normal(i - 1), b = normal(i);
+      const float mx = a.x + b.x, my = a.y + b.y, ml = std::sqrt(mx * mx + my * my);
+      if (ml > 1e-3f) {
+        m = {mx / ml, my / ml};
+        len /= std::max(0.35f, m.x * a.x + m.y * a.y);
+      }
+    }
+    const Vector2 l{p[i].x + m.x * len, p[i].y + m.y * len}, r{p[i].x - m.x * len, p[i].y - m.y * len};
+    if (i > 0) {
+      vtx(pl, col), vtx(pr, col), vtx(r, col);
+      vtx(pl, col), vtx(r, col), vtx(l, col);
+    }
+    pl = l;
+    pr = r;
+  }
+  rlEnd();
+}
+// Elliptic arc (radians, y down: 0..pi is the front half).
+void ellipseArc(Vector2 c, float rx, float ry, float a0, float a1, float t, Color col, int segs = 40) {
+  Vector2 pts[129];
+  segs = std::min(segs, 128);
+  for (int i = 0; i <= segs; ++i) {
+    const float a = a0 + (a1 - a0) * i / segs;
+    pts[i] = {c.x + std::cos(a) * rx, c.y + std::sin(a) * ry};
+  }
+  polyline(pts, segs + 1, t, col);
+}
+void spiral(Vector2 c, float r, float turns, float rot, float t, Color col) {
+  const int n = 32;
+  Vector2 pts[n + 1];
+  for (int i = 0; i <= n; ++i) {
+    const float k = float(i) / n, a = rot + k * turns * 2.0f * kPi, rr = r * (0.08f + 0.92f * k);
+    pts[i] = {c.x + std::cos(a) * rr, c.y + std::sin(a) * rr};
+  }
+  polyline(pts, n + 1, t, col);
+}
 }  // namespace
 
 // ---- Shapes -------------------------------------------------------------------
@@ -60,8 +138,8 @@ void glow(Vector2 c, float radius, Color col, int layers) {
   (void)layers;
   const float a = col.a / 255.0f;
   const Color clear = withAlpha(col, 0.0f);
-  DrawCircleGradient(int(c.x), int(c.y), radius, withAlpha(col, a * 0.55f), clear);
-  DrawCircleGradient(int(c.x), int(c.y), radius * 0.5f, withAlpha(col, a * 0.45f), clear);
+  radial(c, radius, withAlpha(col, a * 0.55f), clear);
+  radial(c, radius * 0.5f, withAlpha(col, a * 0.45f), clear);
 }
 
 void sunburst(Vector2 c, float radius, int rays, float rot, Color col) {
@@ -75,7 +153,8 @@ void sunburst(Vector2 c, float radius, int rays, float rot, Color col) {
 }
 
 void vignette(float s) {
-  Color dark = withAlpha(BLACK, s), clear = withAlpha(BLACK, 0.0f);
+  const Color k{4, 8, 10, 255};
+  Color dark = withAlpha(k, s), clear = withAlpha(k, 0.0f);
   DrawRectangleGradientV(0, 0, kScreenW, 150, dark, clear);
   DrawRectangleGradientV(0, kScreenH - 170, kScreenW, 170, clear, dark);
   DrawRectangleGradientH(0, 0, 200, kScreenH, dark, clear);
@@ -92,25 +171,183 @@ void star(Vector2 c, float rOut, float rIn, float rot, Color col) {
   for (int i = 0; i < 10; ++i) DrawTriangle(c, pts[i], pts[(i + 1) % 10], col);
 }
 
+void diamond(Vector2 c, float r, Color col) {
+  quad({c.x, c.y - r}, {c.x + r, c.y}, {c.x, c.y + r}, {c.x - r, c.y}, col, col, col, col);
+}
+
+void corners(Rectangle r, float s, float len, float t, Color col) {
+  const Vector2 p[4] = {{r.x + s, r.y}, {r.x + r.width, r.y}, {r.x + r.width - s, r.y + r.height}, {r.x, r.y + r.height}};
+  for (int i = 0; i < 4; ++i) {
+    Vector2 q[3] = {p[(i + 3) % 4], p[i], p[(i + 1) % 4]};
+    for (int j : {0, 2}) {
+      const float dx = q[j].x - p[i].x, dy = q[j].y - p[i].y, l = std::max(1.0f, std::sqrt(dx * dx + dy * dy));
+      const float k = std::min(len, l * 0.45f) / l;
+      q[j] = {p[i].x + dx * k, p[i].y + dy * k};
+    }
+    polyline(q, 3, t, col);
+  }
+}
+
+void plate(Rectangle r, float s, Color top, Color bottom, Color line) {
+  slanted({r.x + 6, r.y + 8, r.width, r.height}, s, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
+  slanted(r, s, top, bottom);
+  slantedOutline(r, s, 1.5f, withAlpha(line, line.a / 255.0f * 0.6f));
+  corners(r, s, std::min(18.0f, r.height * 0.3f), 2.5f, line);
+}
+
+void rule(float x0, float x1, float y, Color col) {
+  DrawLineEx({x0 + 5, y}, {x1 - 5, y}, 1.5f, col);
+  diamond({x0, y}, 4, col);
+  diamond({x1, y}, 4, col);
+}
+
+void rune(Vector2 c, float r, int kind, float rot, Color col, float t) {
+  DrawRing(c, r - t, r, 0, 360, 32, col);
+  switch (kind & 3) {
+    case 0: spiral(c, r * 0.62f, 1.6f, rot, t, col); break;
+    case 1: {  // eye: lens + pupil
+      Vector2 pts[17];
+      for (int i = 0; i <= 16; ++i) {
+        const float k = i <= 8 ? i / 8.0f : (16 - i) / 8.0f, sgn = i <= 8 ? -1.0f : 1.0f;
+        pts[i] = {c.x - r * 0.62f + k * r * 1.24f, c.y + sgn * r * 0.34f * std::sin(k * kPi)};
+      }
+      polyline(pts, 17, t, col);
+      DrawCircleV(c, r * 0.16f + t * 0.3f, col);
+      break;
+    }
+    case 2:
+      for (int i = 0; i < 3; ++i) {
+        const float a = rot + i * 2.0f * kPi / 3.0f;
+        DrawCircleV({c.x + std::cos(a) * r * 0.42f, c.y + std::sin(a) * r * 0.42f}, r * 0.16f + t * 0.2f, col);
+      }
+      break;
+    default:
+      for (int i = 0; i < 4; ++i) {
+        const float a = rot + i * kPi * 0.5f;
+        const Vector2 d{std::cos(a), std::sin(a)};
+        roundLine({c.x + d.x * r * 0.3f, c.y + d.y * r * 0.3f}, {c.x + d.x * r * 0.62f, c.y + d.y * r * 0.62f}, t, col);
+      }
+      DrawCircleV(c, r * 0.12f + t * 0.3f, col);
+      break;
+  }
+}
+
+void zonaiRing(Vector2 c, float r, float time, float alpha) {
+  auto A = [&](Color k, float a) { return withAlpha(k, a * alpha); };
+  const Color pale = mixColor(kTeal, WHITE, 0.55f);
+  glow(c, r * 1.35f, A(kTeal, 0.5f));
+  // Outer band: dark stone between two glowing edges, rune marks turning slowly.
+  DrawRing(c, r * 0.84f, r, 0, 360, 120, A(kInk, 0.42f));
+  DrawRing(c, r - 2.0f, r, 0, 360, 120, A(pale, 0.75f));
+  DrawRing(c, r * 0.84f, r * 0.84f + 1.5f, 0, 360, 120, A(kTeal, 0.6f));
+  const float rot = time * 0.06f;
+  for (int i = 0; i < 24; ++i) {
+    const float a = rot + i * 2.0f * kPi / 24.0f;
+    const Vector2 d{std::cos(a), std::sin(a)}, p{c.x + d.x * r * 0.92f, c.y + d.y * r * 0.92f};
+    if (i % 6 == 0) {
+      rune(p, r * 0.062f, i / 6, a, A(pale, 0.95f), 2.0f);
+    } else if (i % 2 == 0) {
+      DrawCircleV(p, r * 0.016f + 1.0f, A(kTeal, 0.9f));
+    } else {
+      roundLine({p.x - d.x * r * 0.03f, p.y - d.y * r * 0.03f}, {p.x + d.x * r * 0.03f, p.y + d.y * r * 0.03f}, 2.5f,
+                A(kTeal, 0.75f));
+    }
+  }
+  // Segmented middle ring turning the other way, then a hairline with three diamonds.
+  const float rot2 = -time * 6.0f;
+  for (int i = 0; i < 6; ++i)
+    DrawRing(c, r * 0.7f, r * 0.74f, rot2 + i * 60.0f + 6.0f, rot2 + i * 60.0f + 50.0f, 14, A(kTeal, 0.55f));
+  DrawRing(c, r * 0.6f - 1.0f, r * 0.6f + 1.0f, 0, 360, 96, A(pale, 0.35f));
+  for (int i = 0; i < 3; ++i) {
+    const float a = time * 0.2f + i * 2.0f * kPi / 3.0f;
+    diamond({c.x + std::cos(a) * r * 0.6f, c.y + std::sin(a) * r * 0.6f}, r * 0.03f, A(pale, 0.9f));
+  }
+}
+
+void stoneDisc(Vector2 c, float rx, float ry, float time, bool rock) {
+  const float th = ry * 0.85f;  // slab thickness
+  const float pulse = 0.5f + 0.5f * std::sin(time * 1.6f);
+  const Color top{170, 162, 134, 255}, topDk{120, 118, 98, 255}, side{88, 90, 80, 255}, sideDk{40, 46, 44, 255};
+  const Color moss{78, 116, 58, 255}, mossHi{138, 170, 84, 255};
+  radial({c.x, c.y + th + ry * 0.4f}, rx * 1.08f, withAlpha(kTeal, 0.22f + 0.08f * pulse), withAlpha(kTeal, 0.0f), 36,
+         ry * 2.6f / rx);
+  if (rock) {  // the floating rock under the slab
+    const int n = 9;
+    Vector2 prev{c.x - rx * 0.97f, c.y + th};
+    for (int i = 1; i <= n; ++i) {
+      const float k = float(i) / n, x = c.x - rx * 0.97f + k * rx * 1.94f;
+      const float depth = ry * (1.2f + 2.6f * std::sin(k * kPi)) * (0.8f + 0.4f * hash(i * 7));
+      const Vector2 p{x, c.y + th + (i == n ? 0.0f : depth)};
+      triGrad({prev.x, c.y + th}, {p.x, c.y + th}, p, side, side, sideDk);
+      triGrad({prev.x, c.y + th}, p, prev, side, sideDk, i == 1 ? side : sideDk);
+      prev = p;
+    }
+  }
+  ellipseGrad({c.x, c.y + th}, rx, ry, side, sideDk);
+  DrawRectangleGradientV(int(c.x - rx), int(c.y), int(rx * 2), int(th), side, mixColor(side, sideDk, 0.5f));
+  // Carved slots on the side, glowing
+  const int slots = std::max(5, int(rx / 34.0f));
+  for (int i = 0; i < slots; ++i) {
+    const float a = (i + 0.5f) / slots * kPi, k = std::sin(a);
+    const float x = c.x + std::cos(a) * rx * 0.97f, y = c.y + k * ry + th * 0.5f, w = std::max(2.0f, k * rx * 0.07f);
+    DrawRectangleRec({x - w * 0.5f, y - 1.5f, w, 3.0f}, withAlpha(kTeal, (0.35f + 0.45f * pulse) * k));
+  }
+  ellipseGrad(c, rx, ry, top, topDk);
+  ellipseArc(c, rx * 0.8f, ry * 0.8f, 0.0f, 2.0f * kPi, 2.0f, withAlpha(kInk, 0.3f), 56);
+  ellipseArc(c, rx * 0.8f, ry * 0.8f + 1.5f, 0.15f, kPi - 0.15f, 1.5f, withAlpha(kTeal, 0.25f + 0.25f * pulse), 28);
+  ellipseArc(c, rx * 0.46f, ry * 0.46f, 0.0f, 2.0f * kPi, 1.5f, withAlpha(kInk, 0.22f), 40);
+  ellipseArc(c, rx, ry, kPi + 0.05f, 2.0f * kPi - 0.05f, 1.5f, withAlpha(WHITE, 0.3f), 40);
+  ellipseArc(c, rx, ry, 0.03f, kPi - 0.03f, 2.5f, withAlpha(kTeal, 0.45f + 0.35f * pulse), 40);
+  // Moss growing over the front rim, a few strands hanging down
+  const int tufts = std::max(3, int(rx / 50.0f));
+  const float w = std::max(3.0f, ry * 0.22f);
+  for (int i = 0; i < tufts; ++i) {
+    const float a = (i + 0.15f + 0.7f * hash(i * 13)) / tufts * kPi, da = (0.03f + 0.04f * hash(i * 5)) * 600.0f / rx;
+    for (int pass = 0; pass < 2; ++pass)
+      for (int j = 0; j < 6; ++j) {
+        const float b = a - da + 2.0f * da * (j + 0.5f) / 6.0f, br = w * (0.45f + 0.35f * hash(i * 31 + j));
+        const Vector2 p{c.x + std::cos(b) * rx, c.y + std::sin(b) * ry + w * 0.15f};
+        if (pass == 0) DrawCircleV(p, br, moss);
+        else DrawCircleV({p.x - br * 0.2f, p.y - br * 0.4f}, br * 0.5f, mossHi);
+      }
+    if (rock && hash(i * 3) > 0.35f) {
+      const Vector2 d{c.x + std::cos(a) * rx, c.y + std::sin(a) * ry + w * 0.5f};
+      roundLine(d, {d.x + 1.5f, d.y + th * (0.5f + 0.6f * hash(i * 17))}, 2.0f, moss);
+    }
+  }
+}
+
 // ---- Backgrounds ----------------------------------------------------------------
-void backdrop(float time, Color top, Color bottom, Color bands) {
+void motes(int count, float time, Color col, float alpha) {
+  const float H = kScreenH + 60.0f;
+  for (int i = 0; i < count; ++i) {
+    const float speed = 9.0f + 20.0f * hash(i * 3);
+    const float x = hash(i) * kScreenW + std::sin(time * 0.5f + i * 1.7f) * 26.0f;
+    const float y = kScreenH + 30 - std::fmod(time * speed + hash(i + 77) * H, H);
+    const float tw = 0.5f + 0.5f * std::sin(time * 2.3f + i * 2.1f), r = 1.3f + 1.8f * hash(i * 5);
+    radial({x, y}, r * 4.5f, withAlpha(col, 0.2f * tw * alpha), withAlpha(col, 0.0f), 12);
+    DrawCircleV({x, y}, r, withAlpha(mixColor(col, WHITE, 0.55f), (0.35f + 0.5f * tw) * alpha));
+  }
+}
+
+void backdrop(float time, Color top, Color bottom, Color moteCol) {
   DrawRectangleGradientV(0, 0, kScreenW, kScreenH, top, bottom);
-  const float period = 230.0f;
-  for (int i = 0; i < 9; ++i) {
-    float x = std::fmod(i * period + time * 22.0f, period * 9) - period * 2;
-    float w = 70.0f + 60.0f * hash(i * 7);
-    slanted({x, 0, w + 320, float(kScreenH)}, 320, withAlpha(bands, 0.05f + 0.04f * hash(i)),
-            withAlpha(bands, 0.02f));
+  for (int i = 0; i < 6; ++i) {  // soft cloud banks drifting by
+    const float w = 420.0f + 260.0f * hash(i * 9), x = std::fmod(i * 310.0f + time * (6.0f + 4.0f * hash(i)), kScreenW + w) - w * 0.5f;
+    radial({x, 180.0f + i * 90.0f}, w * 0.5f, withAlpha(kCream, 0.06f), withAlpha(kCream, 0.0f), 28, 0.22f);
   }
-  glow({kScreenW * 0.5f, kScreenH * 0.32f}, 620, withAlpha(bands, 0.22f), 12);
-  for (int i = 0; i < 46; ++i) {  // rising sparks
-    float speed = 18.0f + 40.0f * hash(i * 3);
-    float x = hash(i) * kScreenW + std::sin(time * 0.7f + i) * 18.0f;
-    float y = kScreenH + 20 - std::fmod(time * speed + hash(i + 77) * (kScreenH + 40), float(kScreenH + 40));
-    float tw = 0.4f + 0.6f * (0.5f + 0.5f * std::sin(time * 3.0f + i));
-    DrawCircleV({x, y}, 1.2f + 2.2f * hash(i * 5), withAlpha(mixColor(bands, WHITE, 0.6f), 0.45f * tw));
-  }
-  vignette(0.55f);
+  motes(36, time, moteCol);
+  vignette(0.5f);
+}
+
+void stageBackdrop(int stage, float time, float dim) {
+  const auto& list = stageList();
+  const StageDef& s = list[std::clamp(stage, 0, int(list.size()) - 1)];
+  drawBackground(s, {std::sin(time * 0.045f) * 800.0f, -150.0f}, 1.0f, time);
+  if (dim > 0.0f)
+    DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(kInk, dim * 0.8f), withAlpha(kInk, std::min(1.0f, dim * 1.12f)));
+  motes(dim > 0.0f ? 30 : 16, time, kTeal, 0.6f + 0.4f * dim);
+  vignette(0.25f + 0.4f * dim);
 }
 
 // ---- Text -----------------------------------------------------------------------
@@ -153,20 +390,22 @@ struct SpriteSpec {
   Color light, mid, dark, outline, depth;
   int layers;
 };
+// Gold and parchment with a warm umber extrusion (TotK title look).
+constexpr Color kGoldLight{255, 246, 212, 255}, kGoldMid{242, 208, 122, 255}, kGoldDark{204, 146, 64, 255};
+constexpr Color kDepth{36, 20, 12, 255};
 const SpriteSpec kSpecs[int(Sprite::Count)] = {
-    {"CLASH BROS.", 150, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9},
-    {"COMBAT", 92, {255, 255, 255, 255}, {255, 240, 220, 255}, {255, 214, 190, 255}, kInk, {90, 10, 30, 255}, 5},
-    {"VICTOIRE !", 92, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 7},
-    {"PAUSE", 96, {255, 255, 255, 255}, {235, 238, 255, 255}, {200, 206, 240, 255}, kInk, {40, 30, 80, 255}, 6},
-    {"GAME !", 260, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {110, 16, 34, 255}, {70, 8, 30, 255}, 9},
-    {"3", 240, {255, 170, 160, 255}, {255, 90, 80, 255}, {200, 40, 50, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
-    {"2", 240, {255, 240, 170, 255}, {255, 200, 60, 255}, {230, 140, 30, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
-    {"1", 240, {190, 255, 190, 255}, {110, 230, 120, 255}, {40, 160, 70, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
-    {"GO !", 230, {255, 248, 190, 255}, {255, 206, 64, 255}, {242, 124, 34, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
-    {"PRÊTS ?", 96, {255, 255, 255, 255}, {240, 236, 255, 255}, {210, 200, 240, 255}, {30, 10, 30, 255}, {20, 6, 24, 255}, 7},
-    {"MATCH NUL !", 80, WHITE, {230, 230, 240, 255}, {200, 200, 220, 255}, kInk, {40, 30, 60, 255}, 5},
-};
-}  // namespace
+    {"CLASH BROS.", 150, kGoldLight, kGoldMid, kGoldDark, kUmber, kDepth, 9},
+    {"COMBAT", 92, {255, 252, 240, 255}, {250, 236, 204, 255}, {236, 206, 150, 255}, kUmber, kDepth, 5},
+    {"VICTOIRE !", 92, kGoldLight, kGoldMid, kGoldDark, kUmber, kDepth, 7},
+    {"PAUSE", 96, {255, 252, 240, 255}, {248, 232, 196, 255}, {226, 194, 128, 255}, kUmber, kDepth, 6},
+    {"GAME !", 260, kGoldLight, kGoldMid, kGoldDark, kUmber, kDepth, 9},
+    {"3", 240, {255, 228, 196, 255}, {240, 164, 104, 255}, {190, 96, 56, 255}, kUmber, kDepth, 7},
+    {"2", 240, kGoldLight, kGoldMid, kGoldDark, kUmber, kDepth, 7},
+    {"1", 240, {255, 252, 236, 255}, {246, 232, 188, 255}, {214, 184, 112, 255}, kUmber, kDepth, 7},
+    {"GO !", 230, kGoldLight, kGoldMid, kGoldDark, kUmber, kDepth, 7},
+    {"PRÊTS ?", 96, {255, 252, 240, 255}, {248, 236, 206, 255}, {226, 202, 150, 255}, kUmber, kDepth, 7},
+    {"MATCH NUL !", 80, {250, 246, 236, 255}, {226, 224, 210, 255}, {184, 184, 168, 255}, kUmber, kDepth, 5},
+};}  // namespace
 
 void frameBlend() {
   rlSetBlendFactorsSeparate(RL_SRC_ALPHA, RL_ONE_MINUS_SRC_ALPHA, RL_ONE, RL_ONE_MINUS_SRC_ALPHA, RL_FUNC_ADD,
@@ -223,15 +462,22 @@ void drawSprite(Sprite s, float x, float y, float size, float alpha) {
 }
 
 void header(const char* title, const char* subtitle, Color accent, float time) {
-  Rectangle r{-60, 24, 640, 72};
-  slanted({r.x + 8, r.y + 8, r.width, r.height}, 40, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
-  slanted(r, 40, mixColor(accent, WHITE, 0.15f), shade(accent, 0.6f));
-  slanted({r.x, r.y, r.width - 8, 8}, 5, withAlpha(WHITE, 0.35f), withAlpha(WHITE, 0.1f));
-  slanted({r.x + r.width + 12, r.y, 26, r.height}, 40, kGold, shade(kGold, 0.7f));
-  slanted({r.x + r.width + 48, r.y, 12, r.height}, 40, withAlpha(kGold, 0.6f), withAlpha(kGold, 0.3f));
+  const Rectangle r{-60, 24, 640, 72};
+  const float s = 40;
+  slanted({r.x + 8, r.y + 8, r.width, r.height}, s, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
+  slanted(r, s, withAlpha({32, 50, 54, 255}, 0.96f), withAlpha(kInk, 0.96f));
+  DrawRectangleGradientH(0, int(r.y), 340, int(r.height), withAlpha(accent, 0.38f), withAlpha(accent, 0.0f));
+  DrawLineEx({0, r.y + r.height - 7}, {r.x + r.width - s * (r.height - 7) / r.height - 9, r.y + r.height - 7}, 1.0f,
+             withAlpha(kGold, 0.35f));
+  slantedOutline(r, s, 2.0f, kGold);
+  rune({r.x + r.width - 86, r.y + r.height * 0.5f}, 17, 0, time * 0.4f, withAlpha(kTeal, 0.6f), 2.0f);
+  // Trailing slashes: the screen's accent, then a gold one.
+  const Rectangle a{r.x + r.width + 10, r.y, 24, r.height};
+  slanted(a, s, accent, shade(accent, 0.6f));
+  slantedOutline(a, s, 1.5f, withAlpha(kGold, 0.8f));
+  slanted({r.x + r.width + 44, r.y, 6, r.height}, s, kGold, shade(kGold, 0.7f));
   drawTextOutlined(title, 36, r.y + 10, 52, kCream, kInk, 4.0f, FontKind::Title);
   if (subtitle) drawTextOutlined(subtitle, 44, r.y + r.height + 10, 19, kMuted, kInk, 2.0f);
-  (void)time;
 }
 
 float keycapWidth(const char* label, float h) { return std::max(h, textWidth(label, h * 0.48f) + h * 0.7f); }
@@ -239,26 +485,22 @@ float keycapWidth(const char* label, float h) { return std::max(h, textWidth(lab
 float keycap(const char* label, float x, float y, float h, bool lit) {
   float ts = h * 0.48f;
   float w = keycapWidth(label, h);
-  DrawRectangleRounded({x, y + 3, w, h}, 0.35f, 6, shade(lit ? kGold : kCream, 0.55f));
-  DrawRectangleRounded({x, y, w, h}, 0.35f, 6, lit ? kGold : kCream);
+  const Color face = lit ? kGold : Color{236, 226, 200, 255};
+  DrawRectangleRounded({x, y + 3, w, h}, 0.35f, 6, shade(face, 0.5f));
+  DrawRectangleRounded({x, y, w, h}, 0.35f, 6, face);
   drawText(label, x + (w - textWidth(label, ts)) * 0.5f, y + (h - ts) * 0.5f - 1, ts, kInk);
   return w;
 }
 
 // ---- Button prompts -------------------------------------------------------------------
 namespace {
-const Color kPlastic = {46, 44, 66, 255};    // dark buttons
-const Color kRim = {146, 144, 182, 255};     // their edge (visible on dark backgrounds)
-const Color kLight = {230, 228, 244, 255};   // shoulders, sticks, d-pad
+const Color kPlastic = {40, 48, 52, 255};    // dark buttons
+const Color kRim = {140, 158, 154, 255};     // their edge (visible on dark backgrounds)
+const Color kLight = {234, 230, 218, 255};   // shoulders, sticks, d-pad
 
 // Text centred on c (capitals look centred).
 void centred(const char* s, Vector2 c, float size, Color col) {
   drawText(s, c.x - textWidth(s, size) * 0.5f, c.y - size * 0.5f, size, col);
-}
-void roundLine(Vector2 a, Vector2 b, float t, Color col) {
-  DrawLineEx(a, b, t, col);
-  DrawCircleV(a, t * 0.5f, col);
-  DrawCircleV(b, t * 0.5f, col);
 }
 // Dark round body with a light rim, and its drop shadow.
 void darkDisc(Vector2 c, float r, Color body = kPlastic) {
@@ -302,7 +544,7 @@ void faceButton(int pos, Vector2 c, float r, PadFamily f) {
     }
   } else {  // Nintendo: the letters sit elsewhere (bottom B, right A, left Y, top X)
     static const char* letters[4] = {"B", "A", "Y", "X"};
-    darkDisc(c, r, {66, 64, 84, 255});
+    darkDisc(c, r, {56, 64, 68, 255});
     centred(letters[pos], {c.x, c.y + r * 0.02f}, r * 1.7f, kCream);
   }
 }
@@ -475,8 +717,10 @@ float actionPrompt(int device, int action, float x, float y, float h, bool lit) 
 void footer(std::initializer_list<Hint> hints, const char* info) {
   const float h = 46, y = kScreenH - h, kh = 28;
   DrawRectangleGradientV(0, int(y - 30), kScreenW, 30, withAlpha(kInk, 0.0f), withAlpha(kInk, 0.6f));
-  DrawRectangle(0, int(y), kScreenW, int(h), withAlpha(kInk, 0.88f));
-  DrawRectangle(0, int(y), kScreenW, 2, withAlpha(kGold, 0.7f));
+  DrawRectangle(0, int(y), kScreenW, int(h), withAlpha(kInk, 0.9f));
+  DrawRectangleGradientH(0, int(y), kScreenW / 2, 2, withAlpha(kGold, 0.1f), withAlpha(kGold, 0.85f));
+  DrawRectangleGradientH(kScreenW / 2, int(y), kScreenW / 2, 2, withAlpha(kGold, 0.85f), withAlpha(kGold, 0.1f));
+  diamond({kScreenW * 0.5f, y + 1}, 5, kGold);
   // Measure from the right
   float total = 0;
   for (const Hint& hint : hints) total += promptWidth(hint.key, hint.pad, kh) + 8 + textWidth(hint.label, 18) + 26;
@@ -493,13 +737,21 @@ void footer(std::initializer_list<Hint> hints, const char* info) {
 void panel(Rectangle r, Color fill, Color border, float roundness) {
   DrawRectangleRounded({r.x + 6, r.y + 8, r.width, r.height}, roundness, 8, withAlpha(BLACK, 0.35f));
   DrawRectangleRounded(r, roundness, 8, fill);
-  DrawRectangleRoundedLinesEx(r, roundness, 8, 3, border);
+  DrawRectangleRoundedLinesEx(r, roundness, 8, 2.0f, border);
+  // Inner hairline with a diamond on each corner (TotK frame).
+  const Rectangle in = grow(r, -6);
+  const float k = std::min(r.width, r.height) / std::min(in.width, in.height);
+  DrawRectangleRoundedLinesEx(in, roundness * k, 8, 1.0f, withAlpha(border, border.a / 255.0f * 0.35f));
+  const float rad = roundness * k * std::min(in.width, in.height) * 0.5f * 0.3f;
+  for (int i = 0; i < 4; ++i)
+    diamond({i % 2 ? in.x + in.width - rad : in.x + rad, i / 2 ? in.y + in.height - rad : in.y + rad}, 4, border);
 }
 
 void focusFrame(Rectangle r, float time, float roundness) {
-  float pulse = 0.5f + 0.5f * std::sin(time * 7.0f);
-  DrawRectangleRoundedLinesEx(grow(r, 5 + pulse * 2), roundness, 8, 6, withAlpha(kGold, 0.25f + 0.2f * pulse));
-  DrawRectangleRoundedLinesEx(grow(r, 2), roundness, 8, 3.5f, withAlpha(kGold, 0.75f + 0.25f * pulse));
+  const float pulse = 0.5f + 0.5f * std::sin(time * 6.0f);
+  DrawRectangleRoundedLinesEx(grow(r, 5 + pulse * 2), roundness, 8, 5, withAlpha(kTeal, 0.14f + 0.14f * pulse));
+  DrawRectangleRoundedLinesEx(grow(r, 2), roundness, 8, 2.5f, withAlpha(kGold, 0.8f + 0.2f * pulse));
+  corners(grow(r, 6 + pulse * 2), 0, std::min(16.0f, r.height * 0.35f), 3.0f, kGold);
 }
 
 void arrowTri(Vector2 c, float s, int dir, Color col) {
@@ -510,45 +762,56 @@ void arrowTri(Vector2 c, float s, int dir, Color col) {
 void slider(Rectangle r, float v, bool focused, Color fill, float time) {
   v = clampf(v, 0.0f, 1.0f);
   DrawRectangleRounded(grow(r, 2), 1.0f, 12, kInk);
-  DrawRectangleRounded(r, 1.0f, 12, {44, 42, 74, 255});
+  DrawRectangleRounded(r, 1.0f, 12, {32, 46, 48, 255});
   if (v > 0.01f) {
     Rectangle f{r.x, r.y, std::max(r.height, r.width * v), r.height};
     DrawRectangleRounded(f, 1.0f, 12, fill);
-    DrawRectangleRounded({f.x + 4, f.y + 2, f.width - 8, f.height * 0.35f}, 1.0f, 8, withAlpha(WHITE, 0.3f));
+    DrawRectangleRounded({f.x + 4, f.y + 2, f.width - 8, f.height * 0.35f}, 1.0f, 8, withAlpha(WHITE, 0.22f));
   }
+  for (int i = 1; i < 10; ++i)  // battery cells
+    DrawRectangleRec({r.x + r.width * i / 10.0f - 0.75f, r.y + 3, 1.5f, r.height - 6}, withAlpha(kInk, 0.4f));
   Vector2 k{r.x + r.width * v, r.y + r.height * 0.5f};
   float kr = r.height * 0.95f;
-  if (focused) glow(k, kr * 2.2f, withAlpha(kGold, 0.8f), 6);
+  const float pulse = 0.5f + 0.5f * std::sin(time * 6.0f);
+  if (focused) glow(k, kr * 2.6f, withAlpha(kTeal, 0.6f + 0.2f * pulse), 6);
   DrawCircleV(k, kr + 2.5f, kInk);
   DrawCircleV(k, kr, focused ? kGold : kCream);
-  DrawCircleV({k.x - kr * 0.3f, k.y - kr * 0.3f}, kr * 0.3f, withAlpha(WHITE, 0.6f));
-  (void)time;
+  DrawCircleV(k, kr * 0.5f, withAlpha(kInk, 0.75f));
+  DrawCircleV(k, kr * 0.32f, focused ? mixColor(kTeal, WHITE, 0.3f * pulse) : kStone);
 }
 
 void toggle(Rectangle r, bool on, bool focused, float time) {
-  Color bg = on ? Color{60, 190, 105, 255} : Color{90, 88, 115, 255};
+  Color bg = on ? Color{38, 126, 106, 255} : Color{62, 70, 72, 255};
   DrawRectangleRounded(grow(r, 2), 1.0f, 12, kInk);
   DrawRectangleRounded(r, 1.0f, 12, bg);
+  DrawRectangleRounded({r.x + 6, r.y + 3, r.width - 12, r.height * 0.32f}, 1.0f, 8, withAlpha(WHITE, 0.1f));
   const char* txt = on ? "OUI" : "NON";
   float ts = r.height * 0.5f;
   float kr = r.height * 0.5f - 4;
   float kx = on ? r.x + r.width - kr - 5 : r.x + kr + 5;
   float tx = on ? r.x + 12 : r.x + r.width - 12 - textWidth(txt, ts);
-  drawText(txt, tx, r.y + (r.height - ts) * 0.5f - 1, ts, kCream);
-  DrawCircleV({kx, r.y + r.height * 0.5f}, kr, focused ? kGold : kCream);
-  if (focused) DrawRectangleRoundedLinesEx(grow(r, 4), 1.0f, 12, 3, withAlpha(kGold, 0.6f + 0.4f * std::sin(time * 7)));
+  drawText(txt, tx, r.y + (r.height - ts) * 0.5f - 1, ts, on ? kCream : kMuted);
+  const Vector2 kc{kx, r.y + r.height * 0.5f};
+  if (on) glow(kc, kr * 2.4f, withAlpha(kTeal, 0.5f), 6);
+  DrawCircleV(kc, kr, focused ? kGold : kCream);
+  DrawCircleV(kc, kr * 0.36f, on ? Color{40, 150, 124, 255} : kStone);
+  if (focused) DrawRectangleRoundedLinesEx(grow(r, 4), 1.0f, 12, 2.5f, withAlpha(kGold, 0.6f + 0.4f * std::sin(time * 7)));
 }
 
 void selector(Rectangle r, const char* value, bool focused, float time) {
   DrawRectangleRounded(grow(r, 2), 0.5f, 10, kInk);
-  DrawRectangleRounded(r, 0.5f, 10, {44, 42, 74, 255});
+  DrawRectangleRounded(r, 0.5f, 10, focused ? Color{34, 54, 56, 255} : Color{26, 40, 44, 255});
+  DrawRectangleRoundedLinesEx(grow(r, -2), 0.5f, 10, 1.0f, withAlpha(focused ? kGold : kStone, 0.4f));
   float ts = r.height * 0.48f;
   drawText(value, r.x + (r.width - textWidth(value, ts)) * 0.5f, r.y + (r.height - ts) * 0.5f - 1, ts, kCream);
   float bob = focused ? std::sin(time * 8.0f) * 2.0f : 0.0f;
-  Color ac = focused ? kGold : kMuted;
+  Color ac = focused ? kGold : kStone;
   arrowTri({r.x + 16 - bob, r.y + r.height * 0.5f}, r.height * 0.42f, -1, ac);
   arrowTri({r.x + r.width - 16 + bob, r.y + r.height * 0.5f}, r.height * 0.42f, 1, ac);
-  if (focused) DrawRectangleRoundedLinesEx(grow(r, 4), 0.5f, 10, 3, withAlpha(kGold, 0.6f + 0.4f * std::sin(time * 7)));
+  if (focused) {
+    DrawRectangleRoundedLinesEx(grow(r, 6), 0.5f, 10, 4, withAlpha(kTeal, 0.2f + 0.1f * std::sin(time * 6)));
+    DrawRectangleRoundedLinesEx(grow(r, 3), 0.5f, 10, 2.5f, withAlpha(kGold, 0.7f + 0.3f * std::sin(time * 7)));
+  }
 }
 
 // ---- Input helpers ----------------------------------------------------------------
@@ -588,7 +851,7 @@ void wipe(float t) {
     quad({l + s, 0}, {r + s, 0}, {r, H}, {l, H}, c, c, c, c);
   };
   band(26, kGold);
-  band(12, {225, 55, 55, 255});
+  band(12, {34, 124, 108, 255});
   band(0, kInk);
 }
 

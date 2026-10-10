@@ -22,19 +22,6 @@ float easeOut(float t) {
   return 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
 }
 
-// The "Clash" emblem: a ring crossed by a lightning bolt.
-void emblem(Vector2 c, float r, Color col) {
-  DrawRing(c, r * 0.86f, r, 0, 360, 96, col);
-  Vector2 p[4] = {{c.x + r * 0.42f, c.y - r * 1.05f}, {c.x - r * 0.18f, c.y - r * 0.02f},
-                  {c.x + r * 0.22f, c.y + r * 0.06f}, {c.x - r * 0.46f, c.y + r * 1.08f}};
-  float th[3] = {r * 0.2f, r * 0.15f, r * 0.09f};
-  for (int i = 0; i < 3; ++i) {
-    DrawLineEx(p[i], p[i + 1], th[i], col);
-    DrawCircleV(p[i + 1], th[i] * 0.5f, col);
-  }
-  DrawCircleV(p[0], th[0] * 0.5f, col);
-}
-
 void drawGear(Vector2 c, float r, float rot, Color col) {
   for (int i = 0; i < 8; ++i) {
     float a = rot + i * kPi / 4.0f;
@@ -42,25 +29,28 @@ void drawGear(Vector2 c, float r, float rot, Color col) {
                      {r * 0.21f, r * 0.21f}, a * 180.0f / kPi, col);
   }
   DrawCircleV(c, r * 0.82f, col);
-  DrawCircleV(c, r * 0.36f, withAlpha(BLACK, 0.35f));
+  DrawCircleV(c, r * 0.36f, withAlpha(ui::kInk, 0.55f));
+  DrawRing(c, r * 0.5f, r * 0.58f, 0, 360, 32, withAlpha(ui::kInk, 0.25f));
 }
 
 void drawTarget(Vector2 c, float r, float time) {
-  const Color cols[3] = {{255, 255, 255, 255}, {230, 60, 60, 255}, {255, 255, 255, 255}};
+  const Color cream{240, 230, 204, 255}, terra{184, 76, 56, 255};
+  const Color cols[3] = {cream, terra, cream};
+  DrawCircleV(c, r + 2.5f, ui::kInk);
   for (int i = 0; i < 3; ++i) DrawCircleV(c, r * (1.0f - i * 0.3f), cols[i]);
-  DrawCircleV(c, r * 0.14f, {230, 60, 60, 255});
+  DrawCircleV(c, r * 0.14f, terra);
   float wob = std::sin(time * 3.0f) * 4.0f;
-  DrawLineEx({c.x + r * 1.2f + wob, c.y - r * 0.9f - wob}, {c.x + r * 0.1f, c.y - r * 0.05f}, 6, {120, 70, 40, 255});
+  DrawLineEx({c.x + r * 1.2f + wob, c.y - r * 0.9f - wob}, {c.x + r * 0.1f, c.y - r * 0.05f}, 6, {112, 76, 46, 255});
   DrawTriangle({c.x + r * 0.05f, c.y}, {c.x + r * 0.3f, c.y - r * 0.08f}, {c.x + r * 0.1f, c.y - r * 0.25f},
-               {200, 200, 210, 255});
+               {196, 200, 190, 255});
 }
 
 void drawExit(Vector2 c, float r) {
-  DrawRectangleRounded({c.x - r * 0.75f, c.y - r, r * 1.1f, r * 2.0f}, 0.15f, 6, {245, 235, 255, 255});
-  DrawRectangleRounded({c.x - r * 0.6f, c.y - r * 0.85f, r * 0.8f, r * 1.7f}, 0.15f, 6, {90, 60, 130, 255});
-  DrawCircleV({c.x + r * 0.05f, c.y + r * 0.05f}, r * 0.09f, {255, 210, 80, 255});
-  DrawLineEx({c.x + r * 0.2f, c.y}, {c.x + r * 1.1f, c.y}, r * 0.22f, {255, 210, 80, 255});
-  ui::arrowTri({c.x + r * 1.15f, c.y}, r * 0.55f, 1, {255, 210, 80, 255});
+  DrawRectangleRounded({c.x - r * 0.75f, c.y - r, r * 1.1f, r * 2.0f}, 0.15f, 6, {238, 228, 204, 255});
+  DrawRectangleRounded({c.x - r * 0.6f, c.y - r * 0.85f, r * 0.8f, r * 1.7f}, 0.15f, 6, {56, 42, 62, 255});
+  DrawCircleV({c.x + r * 0.05f, c.y + r * 0.05f}, r * 0.09f, ui::kGold);
+  DrawLineEx({c.x + r * 0.2f, c.y}, {c.x + r * 1.1f, c.y}, r * 0.22f, ui::kGold);
+  ui::arrowTri({c.x + r * 1.15f, c.y}, r * 0.55f, 1, ui::kGold);
 }
 
 struct Tile {
@@ -71,14 +61,15 @@ struct Tile {
   const char* desc;
 };
 
+// Earthy tiles: terracotta, moss, slate blue, dusk plum.
 const Tile kTiles[4] = {
-    {{60, 126, 640, 474}, 70, {236, 66, 56, 255}, {130, 16, 46, 255}, "COMBAT",
+    {{60, 126, 640, 474}, 70, {178, 82, 58, 255}, {86, 30, 32, 255}, "COMBAT",
      "Affrontez jusqu'à 3 adversaires, humains ou ordinateurs."},
-    {{728, 126, 500, 142}, 21, {70, 200, 112, 255}, {16, 100, 70, 255}, "ENTRAÎNEMENT",
+    {{728, 126, 500, 142}, 21, {98, 136, 76, 255}, {36, 62, 44, 255}, "ENTRAÎNEMENT",
      "Vies infinies, mannequin, compteur de combos : idéal pour apprendre."},
-    {{704, 292, 500, 142}, 21, {72, 132, 246, 255}, {28, 46, 150, 255}, "PARAMÈTRES",
+    {{704, 292, 500, 142}, 21, {66, 112, 132, 255}, {24, 46, 62, 255}, "PARAMÈTRES",
      "Son, affichage, règles du jeu, touches et manettes."},
-    {{680, 458, 500, 142}, 21, {150, 96, 196, 255}, {58, 34, 96, 255}, "QUITTER",
+    {{680, 458, 500, 142}, 21, {112, 86, 110, 255}, {46, 34, 52, 255}, "QUITTER",
      "Quitter Super Clash Bros."},
 };
 }  // namespace
@@ -100,23 +91,13 @@ void App::drawTitle() {
   const float t = time_, f = float(screenFrames_);
   const Vector2 center{kScreenW * 0.5f, 232};
 
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, {12, 6, 36, 255}, {78, 20, 86, 255});
-  for (int i = 0; i < 150; ++i) {
-    float x = std::fmod(hash(i) * kScreenW + t * (4.0f + 10.0f * hash(i + 9)), float(kScreenW));
-    float y = hash(i + 500) * kScreenH * 0.8f;
-    float tw = 0.5f + 0.5f * std::sin(t * (1.0f + 3.0f * hash(i + 3)) + i);
-    DrawCircleV({x, y}, 0.7f + 1.6f * hash(i + 7), withAlpha(WHITE, 0.25f + 0.6f * tw));
-  }
-  ui::sunburst(center, 1100, 28, t * 0.07f, withAlpha({255, 214, 150, 255}, 0.13f));
-  ui::glow(center, 470, withAlpha({255, 110, 90, 255}, 0.6f), 16);
-  float pulse = 1.0f + 0.03f * std::sin(t * 2.0f);
-  emblem(center, 215 * pulse, withAlpha(WHITE, 0.12f));
+  ui::stageBackdrop(2, t, 0.0f);  // the sky islands, slowly drifting
+  DrawRectangleGradientV(0, 0, kScreenW, 420, withAlpha(ui::kInk, 0.5f), withAlpha(ui::kInk, 0.0f));
+  float pulse = 1.0f + 0.02f * std::sin(t * 2.0f);
+  ui::zonaiRing(center, 226 * pulse, t, clampf(f / 30.0f, 0.0f, 1.0f));
 
-  // Floor and fighters (they run in from the sides)
-  DrawRectangleGradientV(0, 560, kScreenW, 160, withAlpha({10, 4, 24, 255}, 0.0f), {8, 4, 20, 255});
-  DrawEllipse(kScreenW / 2, 612, 600, 30, {70, 40, 130, 220});
-  DrawEllipseLines(kScreenW / 2, 612, 600, 30, withAlpha({180, 150, 255, 255}, 0.7f));
-  ui::glow({kScreenW * 0.5f, 612}, 300, withAlpha({160, 120, 255, 255}, 0.35f), 8);
+  // Ancient stone disc and fighters (they run in from the sides)
+  ui::stoneDisc({kScreenW * 0.5f, 614}, 600, 34, t);
   const auto& r = roster();
   for (int i = 0; i < int(r.size()); ++i) {
     float enter = easeOut((f - 26.0f - i * 5.0f) / 28.0f);
@@ -124,11 +105,9 @@ void App::drawTitle() {
     float x = 205.0f + i * 174.0f + side * (1.0f - enter) * 760.0f;
     float hop = std::max(0.0f, std::sin(t * 2.4f + i * 1.3f)) * 9.0f;
     int facing = i < 3 ? 1 : -1;
+    DrawEllipse(int(x), 610, 46.0f - hop, 9.0f, withAlpha(ui::kInk, 0.3f));
     Pose p = restPose(r[i], t + i);
     drawCharacter(r[i], 0, p, {x, 608 - hop}, facing, 1.3f, 1.0f, WHITE, 0.0f, t + i);
-    Pose refl = p;
-    refl.squash = -0.55f;
-    drawCharacter(r[i], 0, refl, {x, 616 + hop * 0.5f}, facing, 1.3f, 0.12f, WHITE, 0.0f, t + i);
   }
 
   // Logo: slams in, then breathes
@@ -140,26 +119,29 @@ void App::drawTitle() {
     float s1 = 46 * scale;
     const char* super = "SUPER";
     drawTextOutlined(super, center.x - textWidth(super, s1, FontKind::Title) * 0.5f + shakeX, 70 - (scale - 1) * 40,
-                     s1, withAlpha(ui::kCream, alpha), withAlpha({130, 20, 40, 255}, alpha), 4.0f * scale,
-                     FontKind::Title);
+                     s1, withAlpha(ui::kCream, alpha), withAlpha(ui::kUmber, alpha), 4.0f * scale, FontKind::Title);
     float size = 150 * scale;
     float w = ui::spriteWidth(ui::Sprite::Logo, size);
     ui::drawSprite(ui::Sprite::Logo, center.x - w * 0.5f + shakeX, 108 - (scale - 1) * 60, size, alpha);
   }
-  // Subtitle ribbon
+  // Subtitle ribbon: teal ink, gold edges, rules on both sides
   if (f > 28) {
     float a = clampf((f - 28) / 12.0f, 0.0f, 1.0f);
     Rectangle rib{center.x - 270, 286, 540, 44};
-    ui::slanted({rib.x + 6, rib.y + 6, rib.width, rib.height}, 22, withAlpha(BLACK, 0.4f * a), withAlpha(BLACK, 0.4f * a));
-    ui::slanted(rib, 22, withAlpha({232, 60, 60, 255}, a), withAlpha({150, 20, 50, 255}, a));
+    ui::slanted({rib.x + 6, rib.y + 6, rib.width, rib.height}, 22, withAlpha(BLACK, 0.35f * a), withAlpha(BLACK, 0.35f * a));
+    ui::slanted(rib, 22, withAlpha({34, 56, 60, 255}, 0.95f * a), withAlpha(ui::kInk, 0.95f * a));
+    ui::slantedOutline(rib, 22, 1.5f, withAlpha(ui::kGold, a));
+    const float my = rib.y + rib.height * 0.5f;
+    ui::rule(rib.x - 74, rib.x + 4, my, withAlpha(ui::kGold, a));
+    ui::rule(rib.x + rib.width - 4, rib.x + rib.width + 74, my, withAlpha(ui::kGold, a));
     drawTextCentered("LE CHOC DES COMBATTANTS", center.x, rib.y + 9, 23, withAlpha(ui::kCream, a));
   }
-  // Sparkles around the logo
+  // Glints around the logo
   for (int i = 0; i < 6; ++i) {
     float ph = std::fmod(t * 0.8f + hash(i + 40), 1.0f);
     float s = std::sin(ph * kPi) * 14.0f;
     Vector2 p{center.x - 380 + hash(i + 60) * 760, 100 + hash(i + 80) * 170};
-    if (f > 30 && s > 1.0f) ui::star(p, s, s * 0.3f, t, withAlpha(WHITE, 0.85f));
+    if (f > 30 && s > 1.0f) ui::star(p, s, s * 0.3f, t, withAlpha({255, 244, 210, 255}, 0.85f));
   }
   // Press start
   if (f > 40) {
@@ -168,12 +150,12 @@ void App::drawTitle() {
     const float ph = padPrompts() ? 44 : 34;  // a gamepad button is a smaller shape than a key cap
     float total = textWidth(txt, 26) + 14 + ui::promptWidth("ENTRÉE", ui::Btn::Start, ph);
     float x = center.x - total * 0.5f;
-    drawTextOutlined(txt, x, 368, 26, withAlpha(WHITE, a), withAlpha(ui::kInk, a), 2.5f);
+    drawTextOutlined(txt, x, 368, 26, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.5f);
     ui::prompt("ENTRÉE", ui::Btn::Start, x + textWidth(txt, 26) + 14, 381 - ph * 0.5f, ph, true);
   }
-  drawText("v2.0", kScreenW - 54, kScreenH - 26, 15, withAlpha(ui::kMuted, 0.8f));
-  drawText("C++ & raylib", 16, kScreenH - 26, 15, withAlpha(ui::kMuted, 0.8f));
-  if (f >= 22 && f < 40) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(WHITE, (40 - f) / 18.0f * 0.7f));
+  drawTextOutlined("v2.0", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
+  drawTextOutlined("C++ & raylib", 16, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
+  if (f >= 22 && f < 40) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({255, 248, 228, 255}, (40 - f) / 18.0f * 0.7f));
 }
 
 // ---------------------------------------------------------------------------
@@ -245,8 +227,8 @@ void App::updateMainMenu(const MenuNav& nav) {
 
 void App::drawMainMenu() {
   const float t = time_;
-  ui::backdrop(t, {22, 12, 56, 255}, {74, 22, 84, 255}, {255, 120, 170, 255});
-  ui::header("MENU PRINCIPAL", nullptr, {230, 60, 70, 255}, t);
+  ui::stageBackdrop(2, t, 0.58f);
+  ui::header("MENU PRINCIPAL", nullptr, kTiles[0].top, t);
   // small logo, top right
   ui::drawSprite(ui::Sprite::Logo, kScreenW - 360, 30, 52);
 
@@ -258,25 +240,32 @@ void App::drawMainMenu() {
     Rectangle rr = tile.r;
     rr.x += (1.0f - popIn) * (i == 0 ? -500.0f : 500.0f);
     if (sel) rr = ui::grow(rr, 6.0f + std::sin(t * 6.0f) * 1.5f);
+    const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
     // shadow, body, sheen
     ui::slanted({rr.x + 10, rr.y + 12, rr.width, rr.height}, tile.slant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    Color top = sel ? mixColor(tile.top, WHITE, 0.12f) : shade(tile.top, 0.8f);
-    Color bottom = sel ? tile.bottom : shade(tile.bottom, 0.75f);
-    ui::slanted(rr, tile.slant, top, bottom);
+    Color top = sel ? mixColor(tile.top, ui::kCream, 0.08f) : shade(tile.top, 0.72f);
+    Color bottom = sel ? tile.bottom : shade(tile.bottom, 0.7f);
+    ui::slanted(rr, tile.slant, withAlpha(top, 0.96f), withAlpha(bottom, 0.96f));
     ui::slanted({rr.x + tile.slant * 0.9f, rr.y, rr.width - tile.slant * 0.9f, rr.height * 0.18f}, tile.slant * 0.18f,
-                withAlpha(WHITE, 0.22f), withAlpha(WHITE, 0.0f));
-    // diagonal stripes inside
-    for (int s = 0; s < 5; ++s) {
-      float x0 = rr.x + 80 + s * 110 + std::fmod(t * 20.0f, 110.0f);
-      if (x0 + 40 > rr.x + rr.width - tile.slant) continue;
-      ui::slanted({x0, rr.y + 4, 40, rr.height - 8}, std::min(tile.slant, 40.0f), withAlpha(WHITE, 0.05f),
-                  withAlpha(WHITE, 0.02f));
+                withAlpha(ui::kCream, 0.14f), withAlpha(ui::kCream, 0.0f));
+    // Zonai rune carved in the tile (instead of stripes)
+    const bool big = i == 0;
+    const Vector2 rc = big ? Vector2{rr.x + rr.width * 0.56f, rr.y + rr.height * 0.4f}
+                           : Vector2{rr.x + rr.width - 78, rr.y + rr.height * 0.5f};
+    ui::rune(rc, big ? 190.0f : 62.0f, i == 0 ? 0 : i == 1 ? 3 : i == 2 ? 2 : 1, t * (sel ? 0.5f : 0.1f),
+             withAlpha(ui::kCream, sel ? 0.1f : 0.06f), big ? 7.0f : 4.0f);
+    // inner hairline, frame, corner ornaments
+    const Rectangle in = ui::grow(rr, -8);
+    ui::slantedOutline(in, tile.slant * in.height / rr.height, 1.0f, withAlpha(ui::kGold, sel ? 0.5f : 0.25f));
+    ui::slantedOutline(rr, tile.slant, sel ? 3.0f : 2.5f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
+    ui::corners(rr, tile.slant, big ? 30.0f : 18.0f, 3.0f, sel ? ui::kGold : withAlpha(ui::kGold, 0.45f));
+    if (sel) {
+      ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(ui::kTeal, 0.18f + 0.16f * pulse));
+      ui::corners(ui::grow(rr, 9 + pulse * 3), tile.slant, big ? 34.0f : 20.0f, 3.0f, ui::kGold);
     }
-    ui::slantedOutline(rr, tile.slant, sel ? 6.0f : 4.0f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
-    if (sel) ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(ui::kGold, 0.25f + 0.2f * std::sin(t * 7)));
 
     if (i == 0) {
-      ui::glow({rr.x + rr.width * 0.5f, rr.y + rr.height * 0.45f}, 230, withAlpha(WHITE, sel ? 0.35f : 0.2f), 10);
+      ui::glow({rr.x + rr.width * 0.5f, rr.y + rr.height * 0.45f}, 230, withAlpha({255, 226, 170, 255}, sel ? 0.3f : 0.16f), 10);
       const int show[4] = {0, 3, 2, 5};
       for (int k = 0; k < 4; ++k) {
         const CharacterDef& d = r[show[k]];
@@ -292,11 +281,11 @@ void App::drawMainMenu() {
                        ui::kCream, ui::kInk, 2.0f);
     } else {
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 4.0f : 0.0f;
-      drawTextOutlined(tile.label, rr.x + tile.slant + 26, rr.y + 44 - bounce, 42, ui::kCream, ui::kInk, 4.0f,
-                       FontKind::Title);
+      drawTextOutlined(tile.label, rr.x + tile.slant + 26, rr.y + 44 - bounce, 42, sel ? ui::kCream : Color{226, 218, 198, 255},
+                       ui::kInk, 4.0f, FontKind::Title);
       Vector2 ic{rr.x + rr.width - 78, rr.y + rr.height * 0.5f};
       if (i == 1) drawTarget(ic, 36, t);
-      if (i == 2) drawGear(ic, 36, t * (sel ? 1.2f : 0.3f), {235, 240, 255, 255});
+      if (i == 2) drawGear(ic, 36, t * (sel ? 1.2f : 0.3f), {236, 226, 200, 255});
       if (i == 3) drawExit({ic.x - 10, ic.y}, 32);
     }
   }

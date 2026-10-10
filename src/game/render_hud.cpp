@@ -53,12 +53,14 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     Rectangle card{x, y, pw, ph};
     ui::slanted({x + 5, y + 6, pw, ph}, 16, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
     if (f.eliminated) {
-      ui::slanted(card, 16, {80, 80, 92, 235}, {40, 40, 50, 235});
-    } else {
-      ui::slanted(card, 16, withAlpha(mixColor(pc, BLACK, 0.3f), 0.95f), withAlpha(mixColor(pc, BLACK, 0.72f), 0.95f));
-      ui::slanted({x + 14, y, pw - 14, 10}, 2, withAlpha(WHITE, 0.25f), withAlpha(WHITE, 0.0f));
+      ui::slanted(card, 16, {70, 76, 76, 235}, {34, 40, 42, 235});
+    } else {  // slate card tinted by the player colour, a bright band of it on top
+      ui::slanted(card, 16, withAlpha(mixColor(pc, ui::kInk, 0.5f), 0.94f), withAlpha(mixColor(pc, ui::kInk, 0.84f), 0.94f));
+      ui::slanted({x + 16 - 16 * 6 / ph, y, pw - 16 + 16 * 6 / ph - 2, 6}, 16 * 6 / ph, pc, shade(pc, 0.8f));
+      DrawLineEx({x + 15, y + 6.5f}, {x + pw - 1.5f, y + 6.5f}, 1.0f, withAlpha(ui::kGold, 0.6f));
     }
-    ui::slantedOutline(card, 16, 3, withAlpha(ui::kInk, 0.95f));
+    ui::slantedOutline(card, 16, 2.5f, withAlpha(ui::kInk, 0.95f));
+    ui::corners(card, 16, 12, 2.0f, withAlpha(ui::kGold, f.eliminated ? 0.3f : 0.8f));
     float& sh = shown[f.id & 3];
     const float fill = f.ult / kUltMax;
     sh = fill < sh ? std::max(fill, sh - 0.08f) : sh + (fill - sh) * 0.12f;
@@ -75,19 +77,21 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       drawTextOutlined(ready, tx, ty, 22, zon, ui::kInk, 3.0f, FontKind::Title);
       if (bw > 0) ui::actionPrompt((*devices)[f.port & 3], kActUltimate, tx + tw + 6, ty, 24, true);
     }
-    DrawCircleV({x + 50, y + 46}, 36, withAlpha(BLACK, 0.4f));
-    DrawRing({x + 50, y + 46}, 34, 37, 0, 360, 36, withAlpha(pc, 0.9f));
+    DrawCircleV({x + 50, y + 46}, 36, withAlpha(ui::kInk, 0.5f));
+    DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
+    DrawRing({x + 50, y + 46}, 37, 38.5f, 0, 360, 36, withAlpha(ui::kGold, 0.5f));
     drawPortrait(*f.def, f.palette, {x + 50, y + 44}, 62, time + f.id);
 
     char label[16];
     std::snprintf(label, sizeof label, f.cpu ? "CPU" : "J%d", f.port + 1);
-    drawTextOutlined(f.def->name.c_str(), x + 94, y + 6, 22, WHITE, ui::kInk, 2.5f, FontKind::Title);
+    drawTextOutlined(f.def->name.c_str(), x + 94, y + 9, 22, ui::kCream, ui::kInk, 2.5f, FontKind::Title);
     float lw = textWidth(label, 15) + 16;
-    DrawRectangleRounded({x + pw - lw - 10, y + 8, lw, 20}, 0.5f, 6, pc);
-    drawText(label, x + pw - lw - 2, y + 9, 15, WHITE);
+    DrawRectangleRounded({x + pw - lw - 11.5f, y + 9.5f, lw + 3, 23}, 0.5f, 6, ui::kInk);
+    DrawRectangleRounded({x + pw - lw - 10, y + 11, lw, 20}, 0.5f, 6, shade(pc, 0.85f));
+    drawText(label, x + pw - lw - 2, y + 12, 15, WHITE);
 
     if (f.eliminated) {
-      drawTextOutlined("K.O.", x + 104, y + 34, 42, {210, 210, 220, 255}, ui::kInk, 3.0f, FontKind::Title);
+      drawTextOutlined("K.O.", x + 104, y + 34, 42, {200, 204, 196, 255}, ui::kInk, 3.0f, FontKind::Title);
     } else {
       char pct[16];
       std::snprintf(pct, sizeof pct, "%d", int(f.percent));

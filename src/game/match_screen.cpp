@@ -248,9 +248,9 @@ void MatchScreen::drawTrainingPanel() {
   for (const auto& f : m_.fighters)
     if (f.cpu) dummy = f.id;
   Rectangle p{18, 18, 330, 172};
-  DrawRectangleRounded(p, 0.12f, 8, withAlpha(ui::kInk, 0.78f));
-  DrawRectangleRoundedLinesEx(p, 0.12f, 8, 2, withAlpha({64, 190, 108, 255}, 0.9f));
-  drawText("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, {120, 230, 150, 255}, FontKind::Title);
+  ui::panel(p, withAlpha(ui::kInk, 0.8f), withAlpha(ui::kGold, 0.75f), 0.12f);
+  ui::rune({p.x + p.width - 30, p.y + 24}, 12, 3, time_ * 0.5f, withAlpha(ui::kTeal, 0.7f), 2.0f);
+  drawText("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, {156, 206, 128, 255}, FontKind::Title);
   int live = dummy >= 0 ? combo_[dummy] : 0;
   int shown = live >= 2 ? live : lastCombo_;
   Color cc = live >= 2 ? ui::kGold : ui::kCream;
@@ -272,21 +272,30 @@ void MatchScreen::drawTrainingPanel() {
 }
 
 void MatchScreen::drawPause() {
-  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.6f));
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.62f), withAlpha(ui::kInk, 0.78f));
+  ui::vignette(0.4f);
   const auto items = pauseItems();
   const int n = int(items.size());
   Rectangle first = pauseItemRect(0, n);
-  ui::drawSprite(ui::Sprite::Pause, kScreenW * 0.5f - ui::spriteWidth(ui::Sprite::Pause, 96) * 0.5f, first.y - 128, 96);
+  const float pw = ui::spriteWidth(ui::Sprite::Pause, 96);
+  ui::zonaiRing({kScreenW * 0.5f, first.y - 70}, 120, time_, 0.55f);
+  ui::drawSprite(ui::Sprite::Pause, kScreenW * 0.5f - pw * 0.5f, first.y - 128, 96);
+  ui::rule(kScreenW * 0.5f - 230, kScreenW * 0.5f - pw * 0.5f - 24, first.y - 62, ui::kGold);
+  ui::rule(kScreenW * 0.5f + pw * 0.5f + 24, kScreenW * 0.5f + 230, first.y - 62, ui::kGold);
+  const float pulse = 0.5f + 0.5f * std::sin(time_ * 6.0f);
   for (int i = 0; i < n; ++i) {
     Rectangle r = pauseItemRect(i, n);
     bool sel = i == pauseSel_;
     if (sel) r = ui::grow(r, 4);
     ui::slanted({r.x + 6, r.y + 7, r.width, r.height}, 18, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    ui::slanted(r, 18, sel ? Color{236, 66, 56, 255} : Color{46, 42, 88, 255},
-                sel ? Color{150, 20, 46, 255} : Color{30, 26, 60, 255});
-    ui::slantedOutline(r, 18, sel ? 4.0f : 2.0f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
+    ui::slanted(r, 18, sel ? Color{44, 96, 90, 245} : Color{32, 46, 50, 240}, sel ? Color{20, 50, 52, 245} : Color{18, 28, 32, 240});
+    ui::slantedOutline(r, 18, sel ? 2.5f : 1.5f, sel ? ui::kGold : withAlpha(ui::kStone, 0.5f));
+    if (sel) {
+      ui::slantedOutline(ui::grow(r, 5), 18, 4, withAlpha(ui::kTeal, 0.18f + 0.16f * pulse));
+      ui::corners(ui::grow(r, 6 + pulse * 2), 18, 14, 3.0f, ui::kGold);
+    }
     drawTextCentered(items[i].c_str(), r.x + r.width * 0.5f, r.y + r.height * 0.5f - 12, 24,
-                     sel ? WHITE : ui::kMuted, true);
+                     sel ? ui::kCream : ui::kMuted, true);
     if (sel && training() && (i == 2 || i == 3)) {
       ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, ui::kGold);
       ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
@@ -298,14 +307,14 @@ void MatchScreen::drawPause() {
     if (padLost_[f.port]) ++lostCount, lostPort = f.port;
   if (lostCount > 0) {
     Rectangle b{kScreenW * 0.5f - 340, kScreenH - 146.0f, 680, 82};
-    ui::panel(b, {64, 18, 34, 245}, {255, 112, 96, 255}, 0.25f);
+    ui::panel(b, {58, 24, 26, 245}, {226, 118, 92, 255}, 0.25f);
     std::string title = lostCount > 1 ? std::string("MANETTES DÉBRANCHÉES")
                                       : std::string(deviceName(devices_[lostPort])) + " DÉBRANCHÉE (JOUEUR " +
                                             std::to_string(lostPort + 1) + ")";
     drawTextCentered(title.c_str(), b.x + b.width * 0.5f, b.y + 12, 26, ui::kCream, true, FontKind::Title);
     drawTextCentered(lostCount > 1 ? "Rebranchez-les : chacune retrouve son joueur. Ou reprenez le combat sans elles."
                                    : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
-                     b.x + b.width * 0.5f, b.y + 48, 17, {255, 214, 205, 255}, false);
+                     b.x + b.width * 0.5f, b.y + 48, 17, {250, 218, 200, 255}, false);
   }
   ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
               {"ÉCHAP", ui::Btn::Start, "Reprendre"}});

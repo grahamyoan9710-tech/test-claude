@@ -6,7 +6,8 @@
 
 namespace {
 const char* kTabNames[4] = {"AUDIO", "AFFICHAGE", "JEU", "COMMANDES"};
-const Color kTabColors[4] = {{236, 92, 72, 255}, {72, 132, 246, 255}, {64, 190, 108, 255}, {240, 170, 40, 255}};
+// Earthy tab accents: terracotta, slate blue, moss, ochre.
+const Color kTabColors[4] = {{184, 88, 62, 255}, {70, 120, 150, 255}, {96, 140, 78, 255}, {196, 150, 66, 255}};
 const Rectangle kPanel{60, 198, 1160, 440};
 
 struct RowInfo {
@@ -103,9 +104,9 @@ void drawPadControls(PadFamily f) {
   const Vector2 c{640, 418};
   const PadLayout L = layoutFor(f);
   auto at = [&](Vector2 v) { return Vector2{c.x + v.x, c.y + v.y}; };
-  const Color body = f == PadFamily::PlayStation ? Color{214, 216, 232, 255}
-                     : f == PadFamily::Nintendo  ? Color{62, 60, 78, 255}
-                                                 : Color{74, 76, 102, 255};
+  const Color body = f == PadFamily::PlayStation ? Color{214, 216, 222, 255}
+                     : f == PadFamily::Nintendo  ? Color{58, 62, 68, 255}
+                                                 : Color{70, 78, 84, 255};
   // Title: the pad in use (or the family)
   const char* model = f == PadFamily::PlayStation ? "Manette PlayStation"
                       : f == PadFamily::Nintendo  ? "Manette Nintendo"
@@ -398,8 +399,8 @@ void App::drawSettings() {
   const float t = time_;
   const Settings& s = settings();
   const Color accent = kTabColors[setTab_];
-  ui::backdrop(t, {16, 18, 52, 255}, {46, 20, 70, 255}, accent);
-  ui::header("PARAMÈTRES", "Les réglages sont enregistrés automatiquement.", {72, 110, 230, 255}, t);
+  ui::stageBackdrop(0, t, 0.6f);
+  ui::header("PARAMÈTRES", "Les réglages sont enregistrés automatiquement.", kTabColors[1], t);
 
   // Tabs
   for (int i = 0; i < 4; ++i) {
@@ -407,13 +408,26 @@ void App::drawSettings() {
     bool sel = i == setTab_;
     if (sel) r = {r.x, r.y - 6, r.width, r.height + 6};
     ui::slanted({r.x + 6, r.y + 6, r.width, r.height}, 18, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
-    ui::slanted(r, 18, sel ? mixColor(kTabColors[i], WHITE, 0.15f) : Color{44, 40, 84, 255},
-                sel ? shade(kTabColors[i], 0.7f) : Color{30, 26, 60, 255});
-    if (sel && setRow_ < 0) ui::slantedOutline(ui::grow(r, 3), 18, 4, withAlpha(ui::kGold, 0.7f + 0.3f * std::sin(t * 7)));
+    ui::slanted(r, 18, sel ? mixColor(kTabColors[i], ui::kInk, 0.2f) : withAlpha({34, 50, 54, 255}, 0.94f),
+                sel ? mixColor(kTabColors[i], ui::kInk, 0.6f) : withAlpha({20, 30, 34, 255}, 0.94f));
+    if (sel) ui::slanted({r.x + 18, r.y, r.width - 18, r.height * 0.3f}, 18 * 0.3f, withAlpha(ui::kCream, 0.12f),
+                         withAlpha(ui::kCream, 0.0f));
+    ui::slantedOutline(r, 18, sel ? 2.0f : 1.5f, sel ? ui::kGold : withAlpha(ui::kStone, 0.5f));
+    if (sel) ui::corners(r, 18, 12, 2.5f, ui::kGold);
+    if (sel && setRow_ < 0) {
+      const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
+      ui::slantedOutline(ui::grow(r, 5), 18, 4, withAlpha(ui::kTeal, 0.2f + 0.16f * pulse));
+      ui::corners(ui::grow(r, 6 + pulse * 2), 18, 14, 3.0f, ui::kGold);
+    }
     drawTextCentered(kTabNames[i], r.x + r.width * 0.5f, r.y + r.height * 0.5f - 13, 26,
                      sel ? ui::kCream : ui::kMuted, true, FontKind::Title);
   }
-  ui::panel(kPanel, withAlpha({20, 16, 46, 255}, 0.93f), withAlpha(accent, 0.9f), 0.04f);
+  ui::panel(kPanel, withAlpha({18, 28, 32, 255}, 0.93f), withAlpha(ui::kGold, 0.85f), 0.04f);
+  const Rectangle tr = tabRect(setTab_);  // the selected tab's colour runs along the panel top
+  DrawRectangleGradientH(int(kPanel.x + 20), int(kPanel.y - 1), int(tr.x - kPanel.x), 3, withAlpha(accent, 0.0f), accent);
+  DrawRectangle(int(tr.x), int(kPanel.y - 1), int(tr.width - 18), 3, accent);
+  DrawRectangleGradientH(int(tr.x + tr.width - 18), int(kPanel.y - 1), int(kPanel.x + kPanel.width - 20 - tr.x - tr.width + 18), 3,
+                         accent, withAlpha(accent, 0.0f));
 
   const char* help = nullptr;
   if (setTab_ < 3) {
@@ -421,10 +435,12 @@ void App::drawSettings() {
       Rectangle rr = rowRect(r);
       bool foc = r == setRow_;
       if (foc) {
-        DrawRectangleRounded(rr, 0.35f, 8, withAlpha(accent, 0.22f));
+        DrawRectangleRounded(rr, 0.35f, 8, withAlpha(mixColor(accent, ui::kTeal, 0.25f), 0.2f));
+        DrawRectangleRoundedLinesEx(rr, 0.35f, 8, 1.0f, withAlpha(ui::kGold, 0.35f));
+        ui::diamond({rr.x + 13, rr.y + rr.height * 0.5f}, 5, ui::kGold);
         help = kRows[setTab_][r].help;
       }
-      drawText(kRows[setTab_][r].label, rr.x + 26, rr.y + 12, 24, foc ? ui::kCream : Color{200, 200, 225, 255});
+      drawText(kRows[setTab_][r].label, rr.x + 26, rr.y + 12, 24, foc ? ui::kCream : Color{196, 206, 198, 255});
       Rectangle w = widgetRect(r);
       switch (widgetFor(setTab_, r)) {
         case Widget::Slider: {
@@ -451,8 +467,9 @@ void App::drawSettings() {
         }
         case Widget::Button: {
           Rectangle b{w.x + w.width - 220, w.y, 220, w.height};
-          DrawRectangleRounded({b.x, b.y + 3, b.width, b.height}, 0.5f, 10, shade(accent, 0.5f));
-          DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, WHITE, 0.2f) : accent);
+          DrawRectangleRounded({b.x, b.y + 3, b.width, b.height}, 0.5f, 10, shade(accent, 0.4f));
+          DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, ui::kCream, 0.12f) : shade(accent, 0.8f));
+          DrawRectangleRoundedLinesEx(ui::grow(b, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.6f));
           drawTextCentered(setTab_ == 0 ? "ÉCOUTER" : "RÉINITIALISER", b.x + b.width * 0.5f, b.y + 7, 19, ui::kCream);
           if (foc) ui::focusFrame(b, t, 0.5f);
           break;
@@ -472,15 +489,20 @@ void App::drawSettings() {
     for (int r = 0; r < kActionCount; ++r) {
       bool rowFoc = r == setRow_;
       Rectangle k0 = keyRect(r, 0);
-      if (rowFoc) DrawRectangleRounded({kPanel.x + 24, k0.y - 2, 750, k0.height + 4}, 0.4f, 8, withAlpha(accent, 0.18f));
-      drawText(actionName(r), kPanel.x + 46, k0.y + 2, 18, rowFoc ? ui::kCream : Color{200, 200, 225, 255});
+      if (rowFoc) {
+        DrawRectangleRounded({kPanel.x + 24, k0.y - 2, 750, k0.height + 4}, 0.4f, 8,
+                             withAlpha(mixColor(accent, ui::kTeal, 0.25f), 0.18f));
+        ui::diamond({kPanel.x + 34, k0.y + k0.height * 0.5f}, 4, ui::kGold);
+      }
+      drawText(actionName(r), kPanel.x + 46, k0.y + 2, 18, rowFoc ? ui::kCream : Color{196, 206, 198, 255});
       for (int c = 0; c < 2; ++c) {
         Rectangle k = keyRect(r, c);
         bool foc = rowFoc && c == setCol_;
         bool wait = foc && waitingKey_;
-        DrawRectangleRounded({k.x, k.y + 3, k.width, k.height}, 0.4f, 8, {14, 12, 30, 255});
-        DrawRectangleRounded(k, 0.4f, 8, wait ? mixColor(ui::kGold, WHITE, 0.3f) : foc ? Color{70, 64, 120, 255}
-                                                                                       : Color{48, 44, 88, 255});
+        DrawRectangleRounded({k.x, k.y + 3, k.width, k.height}, 0.4f, 8, {8, 12, 14, 255});
+        DrawRectangleRounded(k, 0.4f, 8, wait ? mixColor(ui::kGold, WHITE, 0.3f) : foc ? Color{52, 80, 82, 255}
+                                                                                       : Color{34, 50, 54, 255});
+        if (!wait) DrawRectangleRoundedLinesEx(ui::grow(k, -1), 0.4f, 8, 1.0f, withAlpha(ui::kStone, foc ? 0.6f : 0.35f));
         std::string name = wait ? (int(t * 3) % 2 ? "..." : "") : keyName(s.keys[c][r]);
         drawTextCentered(name.c_str(), k.x + k.width * 0.5f, k.y + 4, 16, wait ? ui::kInk : ui::kCream, false);
         if (foc && !wait) ui::focusFrame(k, t, 0.4f);
@@ -489,14 +511,16 @@ void App::drawSettings() {
     for (int c = 0; c < 2; ++c) {
       Rectangle b = resetRect(c);
       bool foc = setRow_ == kActionCount && setCol_ == c;
-      DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, WHITE, 0.2f) : shade(accent, 0.75f));
+      DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, ui::kCream, 0.12f) : shade(accent, 0.7f));
+      DrawRectangleRoundedLinesEx(ui::grow(b, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
       drawTextCentered("RÉINITIALISER", b.x + b.width * 0.5f, b.y + 6, 17, ui::kCream);
       if (foc) ui::focusFrame(b, t, 0.5f);
     }
     // Gamepad reference
     const PadFamily f = promptFamily();
     Rectangle box{kPanel.x + 806, kPanel.y + 16, 338, kPanel.height - 32};
-    DrawRectangleRounded(box, 0.06f, 8, withAlpha(BLACK, 0.3f));
+    DrawRectangleRounded(box, 0.06f, 8, withAlpha(ui::kInk, 0.5f));
+    DrawRectangleRoundedLinesEx(box, 0.06f, 8, 1.0f, withAlpha(ui::kGold, 0.3f));
     drawText("MANETTE", box.x + 18, box.y + 10, 26, ui::kGold, FontKind::Title);
     for (int i = 0; i < int(sizeof(kPadActions) / sizeof(kPadActions[0])); ++i) {
       const PadAction& a = kPadActions[i];
@@ -509,15 +533,16 @@ void App::drawSettings() {
   }
   if (help) {
     float y = kPanel.y + kPanel.height - 40;
-    DrawCircleV({kPanel.x + 40, y + 12}, 12, accent);
+    DrawCircleV({kPanel.x + 40, y + 12}, 13, ui::kGold);
+    DrawCircleV({kPanel.x + 40, y + 12}, 11, mixColor(accent, ui::kInk, 0.3f));
     drawTextCentered("i", kPanel.x + 40, y + 1, 18, ui::kCream, false);
-    drawText(help, kPanel.x + 62, y + 2, 18, {215, 215, 235, 255});
+    drawText(help, kPanel.x + 62, y + 2, 18, {214, 220, 208, 255});
   }
 
   if (waitingKey_) {
-    DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.55f));
+    DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.65f));
     Rectangle m{kScreenW * 0.5f - 330, kScreenH * 0.5f - 90, 660, 170};
-    ui::panel(m, {28, 24, 60, 255}, ui::kGold, 0.12f);
+    ui::panel(m, {24, 38, 42, 255}, ui::kGold, 0.12f);
     drawTextCentered(TextFormat("Nouvelle touche : %s", actionName(setRow_)), m.x + m.width * 0.5f, m.y + 28, 34,
                      ui::kCream, true, FontKind::Title);
     drawTextCentered(setCol_ == 0 ? "Clavier 1" : "Clavier 2", m.x + m.width * 0.5f, m.y + 76, 20, portColor(setCol_));
