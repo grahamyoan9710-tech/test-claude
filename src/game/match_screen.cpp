@@ -341,7 +341,7 @@ void MatchScreen::draw() {
   endWorld();
   fx_.drawScreen(cam);
   drawOffscreenBubbles(m_, cam, time_);
-  drawHud(m_, fx_.hudShake, time_);
+  drawHud(m_, fx_.hudShake, time_, &devices_);
   if (!paused_) drawCountdown(m_);  // (an unplugged gamepad can pause before "GO !")
   if (training()) drawTrainingPanel();
 

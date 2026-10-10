@@ -1120,8 +1120,15 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     Color pc = slotColor(f);
     char tag[8];
     std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-    float ty = f.pos.y - H - 36.0f;
-    if (f.state == FState::Knockdown) ty = f.pos.y - H * 0.5f - 30.0f;
+    auto baseY = [](const Fighter& o) {
+      return o.state == FState::Knockdown ? o.pos.y - o.height() * 0.5f - 30.0f : o.pos.y - o.height() - 36.0f;
+    };
+    float ty = baseY(f);
+    // Tags of fighters standing close together stack up instead of overlapping.
+    for (const auto& o : m.fighters) {
+      if (o.id >= f.id || !o.active() || o.state == FState::Grabbed) continue;
+      if (std::fabs(o.pos.x - f.pos.x) < 48.0f && std::fabs(baseY(o) - ty) < 22.0f) ty = std::min(ty, baseY(o)) - 24.0f;
+    }
     DrawTriangle({f.pos.x - 8, ty + 20}, {f.pos.x, ty + 29}, {f.pos.x + 8, ty + 20}, pc);
     drawTextCentered(tag, f.pos.x, ty, 20, pc, true, FontKind::Title);
   }

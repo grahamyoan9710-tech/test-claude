@@ -51,6 +51,7 @@ void drawOrb(const Match& m, float time);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------
-void drawHud(const Match& m, const std::array<float, 4>& shake, float time);
+// devices (indexed by port, optional): shows each human's ultimate button once the meter is full.
+void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices = nullptr);
 void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time);
 void drawCountdown(const Match& m);

@@ -2,6 +2,7 @@
 #include <cstdio>
 
 #include "game/render.hpp"
+#include "game/settings.hpp"
 #include "game/ui.hpp"
 
 namespace {
@@ -40,7 +41,7 @@ void drawUltBar(const Fighter& f, float x, float y, float w, float fill, float t
 }
 }  // namespace
 
-void drawHud(const Match& m, const std::array<float, 4>& shake, float time) {
+void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices) {
   static float shown[4] = {0, 0, 0, 0};  // displayed ultimate fill, eased towards the real meter
   const int n = int(m.fighters.size());
   const float pw = 240.0f, ph = 90.0f, gap = 18.0f;
@@ -68,7 +69,11 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time) {
       ui::slantedOutline(ui::grow(card, 3), 16, 3.5f, zon);
       const char* ready = "ULTI PRÊTE !";
       float tw = textWidth(ready, 22, FontKind::Title);
-      drawTextOutlined(ready, x + pw - tw - 4, y - 50 - 3 * pulse, 22, zon, ui::kInk, 3.0f, FontKind::Title);
+      float ty = y - 50 - 3 * pulse;
+      float bw = devices && !f.cpu ? ui::actionPromptWidth((*devices)[f.port & 3], kActUltimate, 24) : 0.0f;
+      float tx = x + pw - tw - 4 - (bw > 0 ? bw + 6 : 0);
+      drawTextOutlined(ready, tx, ty, 22, zon, ui::kInk, 3.0f, FontKind::Title);
+      if (bw > 0) ui::actionPrompt((*devices)[f.port & 3], kActUltimate, tx + tw + 6, ty, 24, true);
     }
     DrawCircleV({x + 50, y + 46}, 36, withAlpha(BLACK, 0.4f));
     DrawRing({x + 50, y + 46}, 34, 37, 0, 360, 36, withAlpha(pc, 0.9f));
