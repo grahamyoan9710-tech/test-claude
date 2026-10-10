@@ -98,12 +98,15 @@ void loadSettings() {
         if (!(kb == kb0 && a == a0) && s.keys[kb][a] == key) return true;
     return false;
   };
-  static const int spare[] = {KEY_U, KEY_Y, KEY_H, KEY_N, KEY_B, KEY_T, KEY_G, KEY_APOSTROPHE, KEY_RIGHT_BRACKET,
-                              KEY_BACKSLASH, KEY_END, KEY_PAGE_DOWN, KEY_INSERT, KEY_HOME};
+  static const int spare[2][14] = {  // near each player's hand first
+      {KEY_U, KEY_Y, KEY_H, KEY_N, KEY_B, KEY_T, KEY_G, KEY_APOSTROPHE, KEY_RIGHT_BRACKET, KEY_BACKSLASH, KEY_END,
+       KEY_PAGE_DOWN, KEY_INSERT, KEY_HOME},
+      {KEY_APOSTROPHE, KEY_RIGHT_BRACKET, KEY_BACKSLASH, KEY_END, KEY_PAGE_DOWN, KEY_INSERT, KEY_HOME, KEY_DELETE,
+       KEY_PAGE_UP, KEY_U, KEY_Y, KEY_H, KEY_N, KEY_B}};
   for (int kb = 0; kb < 2; ++kb)
     for (int a = 0; a < kActionCount; ++a) {
       if (loaded[kb][a] || !used(s.keys[kb][a], kb, a)) continue;
-      for (int key : spare)
+      for (int key : spare[kb])
         if (!used(key, kb, a)) {
           s.keys[kb][a] = key;
           break;

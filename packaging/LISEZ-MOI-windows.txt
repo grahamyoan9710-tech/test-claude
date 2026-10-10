@@ -38,7 +38,8 @@ LT ou RT (gâchettes) = bouclier       stick droit = attaque smash
 Start = pause
 (PlayStation : croix = attaque, rond = spéciale, carré/triangle = saut,
  L1 = saisie, R1 = ultime, L2/R2 = bouclier. Switch : les boutons gardent
- leur place, B = attaque, A = spéciale, ZL/ZR = bouclier, R = ultime.)
+ leur place, B = attaque, A = spéciale, ZL/ZR = bouclier, R = ultime.
+ Manette sans gâchettes, style Super Nintendo : R = bouclier, Select = ultime.)
 
 - La manette qui ouvre « Combat » devient celle du joueur 1. Une autre
   manette rejoint la partie en appuyant sur A (ou Start) dans la sélection

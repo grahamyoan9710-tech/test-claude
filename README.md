@@ -99,6 +99,8 @@ des touches de votre clavier.
 
 Les boutons de la manette sont désignés par leur **position** (comme sur une manette Xbox) : sur une
 manette Switch, l'attaque est donc le bouton du bas (`B`) et la spéciale celui de droite (`A`).
+Sur une manette **sans gâchettes** (style Super Nintendo), le bouclier passe sur `R`/`RB` et l'ultime
+sur `Select` ; l'écran affiche alors ces boutons-là.
 
 **Manettes** : branchez-les quand vous voulez, elles sont reconnues automatiquement (Xbox, PlayStation,
 Switch Pro, 8BitDo, Logitech... grâce à la base [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
