@@ -39,6 +39,27 @@ void deviceSelector(Rectangle r, int device, bool focused, float t) {
 }
 }  // namespace
 
+int App::freeDevice(int col) const {
+  // A free input device for card col, a plugged-in one first.
+  for (int pass = 0; pass < 2; ++pass)
+    for (int d = 0; d < kDeviceCount; ++d) {
+      bool used = pass == 0 && !deviceAvailable(d);
+      for (int j = 0; j < 4; ++j)
+        if (j != col && slots_[j].type == 1 && slots_[j].device == d) used = true;
+      if (!used) return d;
+    }
+  return slots_[col].device;
+}
+
+void App::assignDevice(int col, int device) {
+  const int old = slots_[col].type == 1 ? slots_[col].device : -1;
+  slots_[col].type = 1;
+  slots_[col].device = device;
+  for (int j = 0; j < 4; ++j)
+    if (j != col && slots_[j].type == 1 && slots_[j].device == device)
+      slots_[j].device = old >= 0 && old != device ? old : freeDevice(j);
+}
+
 void App::changeField(int col, int row, int delta) {
   audio_.play(Sfx::MenuMove);
   if (row < 0) {
@@ -57,21 +78,10 @@ void App::changeField(int col, int row, int delta) {
   if (s.type == 0 && row > 0) row = 0;  // pressing on an empty card joins it
   switch (row) {
     case 0: {
+      if (s.type == 1 && s.device >= kPad1) padLeft_[s.device - kPad1] = true;  // its pad leaves the card
       s.type = (s.type + delta + 3) % 3;
       if (s.type == 2) s.level = settings().cpuLevel;
-      if (s.type == 1) {  // pick a free input device, a plugged-in one first
-        bool found = false;
-        for (int pass = 0; pass < 2 && !found; ++pass)
-          for (int d = 0; d < kDeviceCount && !found; ++d) {
-            bool used = pass == 0 && !deviceAvailable(d);
-            for (int j = 0; j < 4; ++j)
-              if (j != col && slots_[j].type == 1 && slots_[j].device == d) used = true;
-            if (!used) {
-              s.device = d;
-              found = true;
-            }
-          }
-      }
+      if (s.type == 1) s.device = freeDevice(col);
       break;
     }
     case 1:
@@ -88,7 +98,7 @@ void App::changeField(int col, int row, int delta) {
 // human player (player 1 in training, the dummy is never played).
 bool App::padJoins() {
   for (int p = 0; p < kMaxPads; ++p) {
-    if (!padPressed(p, kPadA) && !padPressed(p, kPadStart)) continue;
+    if (padLeft_[p] || (!padPressed(p, kPadA) && !padPressed(p, kPadStart))) continue;
     const int dev = kPad1 + p;
     bool assigned = false;
     for (int i = 0; i < (training_ ? 1 : 4); ++i)
@@ -97,8 +107,7 @@ bool App::padJoins() {
     for (int i = 0; i < 4 && col < 0; ++i)
       if (slots_[i].type != 1) col = i;
     if (assigned || col < 0) continue;
-    slots_[col].type = 1;
-    slots_[col].device = dev;
+    assignDevice(col, dev);
     joinedAt_[col] = frames_;
     cssCol_ = col;  // the newcomer picks a fighter right away
     cssRow_ = 1;

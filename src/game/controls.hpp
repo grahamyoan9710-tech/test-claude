@@ -29,6 +29,7 @@ bool padDown(int pad, int button);
 bool padPressed(int pad, int button);
 bool padAnyPressed(int button);  // on any connected pad
 PadFamily padFamily(int pad);
+bool padHasTriggers(int pad);    // false for SNES-style pads: they shield with RB, ultimate on Back
 const char* padModel(int pad);   // short readable name: "Manette Xbox", "DualSense"...
 std::string takePadNotice();     // "MANETTE 2 connectée..." once, for a toast ("" = nothing new)
 

@@ -121,7 +121,7 @@ void Match::koFighter(Fighter& f) {
     fighters[f.lastHitBy].kos++;
   f.falls++;
   if (!cfg.training) f.stocks--;
-  f.finalSmash = false;
+  if (freezeTimer > 0 && freezeOwner == f.id) freezeTimer = 0;  // the ultimate meter itself is kept
   f.state = FState::Dead;
   f.stateFrame = 0;
   f.respawnTimer = 100;
@@ -228,7 +228,7 @@ void Match::hitOrb(int attacker, float damage, Vec2 from, HitFx fx) {
 }
 
 void Match::gainUlt(Fighter& f, float amount) {
-  if (f.finalSmash || amount <= 0.0f || (f.state == FState::Attack && f.move == FinalSmash)) return;
+  if (f.eliminated || f.finalSmash || amount <= 0.0f || (f.state == FState::Attack && f.move == FinalSmash)) return;
   f.ult = std::min(kUltMax, f.ult + amount);
   if (f.ult < kUltMax) return;
   f.finalSmash = true;

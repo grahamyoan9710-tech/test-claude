@@ -43,6 +43,12 @@ void drawUltBar(const Fighter& f, float x, float y, float w, float fill, float t
 
 void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices) {
   static float shown[4] = {0, 0, 0, 0};  // displayed ultimate fill, eased towards the real meter
+  static const Match* lastMatch = nullptr;
+  static int lastFrame = 0;
+  if (&m != lastMatch || m.frame < lastFrame)  // a new match: no easing from the previous one
+    for (const auto& f : m.fighters) shown[f.id & 3] = f.ult / kUltMax;
+  lastMatch = &m;
+  lastFrame = m.frame;
   const int n = int(m.fighters.size());
   const float pw = 240.0f, ph = 90.0f, gap = 18.0f;
   const float total = n * pw + (n - 1) * gap;

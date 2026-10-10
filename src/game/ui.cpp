@@ -608,7 +608,7 @@ void dpadGlyph(Vector2 c, float h, int lit) {
 }
 
 // Start / Menu / Options / + button.
-void startGlyph(float x, float y, float h, PadFamily f) {
+void startGlyph(float x, float y, float h, PadFamily f, bool back = false) {
   const float cy = y + h * 0.5f;
   if (f == PadFamily::PlayStation) {
     const float w = h * 1.1f, hh = h * 0.6f;
@@ -621,7 +621,14 @@ void startGlyph(float x, float y, float h, PadFamily f) {
   }
   const Vector2 c{x + (f == PadFamily::PlayStation ? h * 0.55f : h * 0.45f), cy};
   const float t = std::max(1.5f, h * 0.075f);
-  if (f == PadFamily::Nintendo) {
+  if (back) {  // Back / View / Share / "-"
+    if (f == PadFamily::Nintendo) {
+      roundLine({c.x - h * 0.17f, c.y}, {c.x + h * 0.17f, c.y}, t * 1.3f, kCream);
+    } else {  // two overlapping windows
+      DrawRectangleLinesEx({c.x - h * 0.17f, c.y - h * 0.15f, h * 0.22f, h * 0.18f}, t * 0.8f, kCream);
+      DrawRectangleLinesEx({c.x - h * 0.05f, c.y - h * 0.03f, h * 0.22f, h * 0.18f}, t * 0.8f, kCream);
+    }
+  } else if (f == PadFamily::Nintendo) {
     roundLine({c.x - h * 0.17f, c.y}, {c.x + h * 0.17f, c.y}, t * 1.3f, kCream);
     roundLine({c.x, c.y - h * 0.17f}, {c.x, c.y + h * 0.17f}, t * 1.3f, kCream);
   } else {  // "menu" lines
@@ -635,7 +642,7 @@ float padGlyphWidth(Btn b, float h, PadFamily f) {
   switch (b) {
     case Btn::None: return 0.0f;
     case Btn::LB: case Btn::RB: case Btn::LT: case Btn::RT: return shoulderWidth(b, h, f);
-    case Btn::Start: return f == PadFamily::PlayStation ? h * 1.1f : h * 0.9f;
+    case Btn::Start: case Btn::Back: return f == PadFamily::PlayStation ? h * 1.1f : h * 0.9f;
     case Btn::Move: return h * 2.15f;
     default: return h;
   }
@@ -652,6 +659,7 @@ float padGlyph(Btn b, float x, float y, float h, PadFamily f) {
     case Btn::Y: faceButton(3, c, r, f); break;
     case Btn::LB: case Btn::RB: case Btn::LT: case Btn::RT: shoulder(b, x, y, h, f); break;
     case Btn::Start: startGlyph(x, y, h, f); break;
+    case Btn::Back: startGlyph(x, y, h, f, true); break;
     case Btn::LStick: stickGlyph(c, r, "L"); break;
     case Btn::RStick: stickGlyph(c, r, "R"); break;
     case Btn::DPad: dpadGlyph(c, h, 15); break;
@@ -699,16 +707,26 @@ PadFamily deviceFamily(int device) {
 std::string actionKey(int device, int action) { return keyName(settings().keys[device][action]); }
 }  // namespace
 
+// Pads without triggers shield with RB and unleash the ultimate with Back.
+Btn deviceButtonFor(int device, int action) {
+  const int p = device - kPad1;
+  if (padConnected(p) && !padHasTriggers(p)) {
+    if (action == kActShield) return Btn::RB;
+    if (action == kActUltimate) return Btn::Back;
+  }
+  return padButtonFor(action);
+}
+
 float actionPromptWidth(int device, int action, float h) {
   if (action < 0 || action >= kActionCount || device < 0 || device >= kDeviceCount) return 0.0f;
-  if (device >= kPad1) return padGlyphWidth(padButtonFor(action), h, deviceFamily(device));
+  if (device >= kPad1) return padGlyphWidth(deviceButtonFor(device, action), h, deviceFamily(device));
   return keycapWidth(actionKey(device, action).c_str(), h);
 }
 
 float actionPrompt(int device, int action, float x, float y, float h, bool lit) {
   if (action < 0 || action >= kActionCount || device < 0 || device >= kDeviceCount) return 0.0f;
   if (device < kPad1) return keycap(actionKey(device, action).c_str(), x, y, h, lit);
-  const Btn b = padButtonFor(action);
+  const Btn b = deviceButtonFor(device, action);
   const PadFamily f = deviceFamily(device);
   if (lit) glow({x + padGlyphWidth(b, h, f) * 0.5f, y + h * 0.5f}, h * 1.2f, kGold);
   return padGlyph(b, x, y, h, f);

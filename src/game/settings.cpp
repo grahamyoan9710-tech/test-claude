@@ -59,6 +59,7 @@ void loadSettings() {
   char* text = LoadFileText(path.c_str());
   if (!text) return;
   Settings& s = g_settings;
+  bool loaded[2][kActionCount] = {};
   char* line = std::strtok(text, "\r\n");
   while (line) {
     char key[64];
@@ -80,13 +81,34 @@ void loadSettings() {
       else {
         for (int kb = 0; kb < 2; ++kb)
           for (int a = 0; a < kActionCount; ++a)
-            if (k == std::string("kb") + char('1' + kb) + "." + kActionIds[a] && keyBindable(value))
+            if (k == std::string("kb") + char('1' + kb) + "." + kActionIds[a] && keyBindable(value)) {
               s.keys[kb][a] = value;
+              loaded[kb][a] = true;
+            }
       }
     }
     line = std::strtok(nullptr, "\r\n");
   }
   UnloadFileText(text);
+  // Actions added since the file was written (e.g. "ultimate") keep their default key only if
+  // no saved binding already uses it; otherwise they get a free key.
+  auto used = [&](int key, int kb0, int a0) {
+    for (int kb = 0; kb < 2; ++kb)
+      for (int a = 0; a < kActionCount; ++a)
+        if (!(kb == kb0 && a == a0) && s.keys[kb][a] == key) return true;
+    return false;
+  };
+  static const int spare[] = {KEY_U, KEY_Y, KEY_H, KEY_N, KEY_B, KEY_T, KEY_G, KEY_APOSTROPHE, KEY_RIGHT_BRACKET,
+                              KEY_BACKSLASH, KEY_END, KEY_PAGE_DOWN, KEY_INSERT, KEY_HOME};
+  for (int kb = 0; kb < 2; ++kb)
+    for (int a = 0; a < kActionCount; ++a) {
+      if (loaded[kb][a] || !used(s.keys[kb][a], kb, a)) continue;
+      for (int key : spare)
+        if (!used(key, kb, a)) {
+          s.keys[kb][a] = key;
+          break;
+        }
+    }
 }
 
 bool saveSettings() {

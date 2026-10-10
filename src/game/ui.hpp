@@ -74,7 +74,7 @@ float keycapWidth(const char* label, float h);
 // ---- Button prompts ---------------------------------------------------------------
 // Gamepad buttons drawn like on a controller of the family (procedural: crisp at any size).
 // Face buttons by position: A = bottom, B = right, X = left, Y = top (a Nintendo "B" is A here).
-enum class Btn : int { None, A, B, X, Y, LB, RB, LT, RT, Start, LStick, RStick, DPad, DPadUD, DPadLR, DPadDown, Move };
+enum class Btn : int { None, A, B, X, Y, LB, RB, LT, RT, Start, LStick, RStick, DPad, DPadUD, DPadLR, DPadDown, Move, Back };
 float padGlyph(Btn b, float x, float y, float h, PadFamily family);  // returns its width
 float padGlyphWidth(Btn b, float h, PadFamily family);
 // Key cap or gamepad button, following the prompt mode (last used device). Returns its width.

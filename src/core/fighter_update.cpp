@@ -73,7 +73,7 @@ void Match::startMove(Fighter& f, int id) {
 
 bool Match::tryGroundActions(Fighter& f) {
   const IS& in = f.in;
-  if (f.finalSmash && f.pressed(&IS::ultimate)) {
+  if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
     return true;
   }
@@ -121,7 +121,7 @@ bool Match::tryGroundActions(Fighter& f) {
 }
 
 bool Match::tryAirActions(Fighter& f) {
-  if (f.finalSmash && f.pressed(&IS::ultimate)) {
+  if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
     return true;
   }
@@ -449,7 +449,7 @@ void Match::updateFighter(Fighter& f) {
       }
       break;
     case FState::Respawn:
-      f.pos = stageDef->respawn;
+      f.pos.y = stageDef->respawn.y;  // x keeps the side-by-side offset from respawnFighter
       f.vel = {0, 0};
       if (f.stateFrame > 300 ||
           (f.stateFrame > 30 && (in.stick.len() > 0.4f || in.attack || in.special || in.jump || in.shield))) {
@@ -506,7 +506,8 @@ void Match::updateMove(Fighter& f) {
     if (f.vel.y < -0.5f) f.grounded = false;
   }
   if (m.projectileFrame == t) spawnProjectiles(f, m.projectile);
-  if (m.intangibleStart >= 0 && t == m.intangibleStart) f.intangible = m.intangibleEnd - m.intangibleStart;
+  if (m.intangibleStart >= 0 && t == std::max(1, m.intangibleStart))  // t starts at 1
+    f.intangible = m.intangibleEnd - t;
   if (m.teleportFrame == t) {
     Vec2 dir = in.stick.len() > 0.3f ? in.stick.norm() : Vec2{0, -1};
     if (std::fabs(dir.x) > 0.2f) f.facing = dir.x > 0 ? 1 : -1;
@@ -527,6 +528,8 @@ void Match::updateMove(Fighter& f) {
       v.percent += h.damage;
       v.flash = 6;
       f.damageDealt += h.damage;
+      gainUlt(f, h.damage * kUltPerDamageDealt);
+      gainUlt(v, h.damage * kUltPerDamageTaken);
       f.hitlag = v.hitlag = 3;
       emit(EvType::Hit, v.center(), f.id, v.id, h.damage, {float(f.facing), 0});
     } else {

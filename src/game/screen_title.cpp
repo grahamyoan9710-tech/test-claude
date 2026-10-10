@@ -153,7 +153,7 @@ void App::drawTitle() {
     drawTextOutlined(txt, x, 368, 26, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.5f);
     ui::prompt("ENTRÉE", ui::Btn::Start, x + textWidth(txt, 26) + 14, 381 - ph * 0.5f, ph, true);
   }
-  drawTextOutlined("v2.0", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
+  drawTextOutlined("v3.0", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
   drawTextOutlined("C++ & raylib", 16, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
   if (f >= 22 && f < 40) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({255, 248, 228, 255}, (40 - f) / 18.0f * 0.7f));
 }
@@ -163,11 +163,8 @@ void App::drawTitle() {
 // ---------------------------------------------------------------------------
 // The device that opens the character select plays player 1 (keyboard or gamepad).
 void App::claimP1(int device) {
-  if (device < 0) return;
-  for (int i = 1; i < 4; ++i)
-    if (slots_[i].type == 1 && slots_[i].device == device) slots_[i].device = slots_[0].device;
-  slots_[0].type = 1;
-  slots_[0].device = device;
+  padLeft_ = {};
+  if (device >= 0) assignDevice(0, device);
 }
 
 void App::activateMenu(int item, int device) {

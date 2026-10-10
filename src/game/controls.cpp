@@ -159,6 +159,7 @@ struct Pad {
   Vec2 stick, cstick;
   bool trigReady[2] = {false, false};  // trigger seen released: guards against triggers stuck "pressed"
   bool trig[2] = {false, false};
+  bool digitalTrig = false;  // LT/RT seen as buttons
   bool menuDir[4] = {false, false, false, false};
 };
 Pad g_pads[kMaxPads];
@@ -283,6 +284,7 @@ void applyJoysticks(const Joy* joys) {
     const Joy& j = joys[p.joy];
     std::copy(p.down, p.down + kPadButtonCount, p.was);
     std::copy(j.btn, j.btn + kPadButtonCount, p.down);
+    p.digitalTrig = p.digitalTrig || p.down[kPadLT] || p.down[kPadRT] || (!j.mapped && j.buttonCount >= 10);
     for (int t = 0; t < 2; ++t) {  // analog triggers: 0..1 press, with hysteresis
       const float v = j.axis[4 + t];
       if (v < -0.5f) p.trigReady[t] = true;
@@ -344,8 +346,13 @@ InputState readDevice(int d) {
     in.special = p.down[kPadB];
     in.jump = p.down[kPadX] || p.down[kPadY];
     in.grab = p.down[kPadLB];
-    in.ultimate = p.down[kPadRB];
-    in.shield = p.down[kPadLT] || p.down[kPadRT];
+    if (padHasTriggers(d - kPad1)) {
+      in.ultimate = p.down[kPadRB];
+      in.shield = p.down[kPadLT] || p.down[kPadRT];
+    } else {  // no triggers (SNES-style pads)
+      in.ultimate = p.down[kPadBack];
+      in.shield = p.down[kPadRB];
+    }
   }
   return in;
 }
@@ -382,6 +389,11 @@ bool padAnyPressed(int b) {
   return false;
 }
 PadFamily padFamily(int p) { return padConnected(p) ? g_pads[p].family : PadFamily::Xbox; }
+bool padHasTriggers(int p) {
+  if (!padConnected(p)) return true;
+  const Pad& pad = g_pads[p];
+  return pad.trigReady[0] || pad.trigReady[1] || pad.digitalTrig;
+}
 const char* padModel(int p) { return padConnected(p) ? g_pads[p].model.c_str() : ""; }
 std::string takePadNotice() {
   std::string n;

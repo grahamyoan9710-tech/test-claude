@@ -314,6 +314,43 @@ static void testUltMeter() {
   CHECK(v.ult > vUlt, "the victim still charges its meter (%.1f -> %.1f)", vUlt, v.ult);
 }
 
+static void testUltEdgeCases() {
+  std::printf("[ultimate edge cases + respawns]\n");
+  {
+    Match m(duel(0, 0, 3, false, false));
+    m.cfg.items = false;
+    skipCountdown(m);
+    Fighter& a = m.fighters[0];
+    Fighter& b = m.fighters[1];
+    a.ult = kUltMax;
+    a.finalSmash = true;
+    for (Fighter* f : {&a, &b}) {  // both fall out of the stage on the same frame
+      f->pos = {0, 3000};
+      f->grounded = false;
+      f->groundPlat = -1;
+    }
+    Pad p{m};
+    for (int i = 0; i < 200 && !(a.state == FState::Respawn && b.state == FState::Respawn); ++i) p.idle(1);
+    p.idle(20);
+    CHECK(a.state == FState::Respawn && b.state == FState::Respawn, "both respawning");
+    CHECK(std::fabs(a.pos.x - b.pos.x) >= 100.0f, "side-by-side respawn platforms (x %.0f / %.0f)", a.pos.x, b.pos.x);
+    CHECK(a.finalSmash && a.ult == kUltMax, "a KO keeps a full ultimate meter");
+  }
+  {
+    Match m(duel(0, 0, 2, false, false));
+    m.cfg.items = false;
+    skipCountdown(m);
+    Fighter& f = m.fighters[0];
+    f.ult = kUltMax;
+    f.finalSmash = true;
+    InputState ult;
+    ult.ultimate = true;
+    Pad p{m};
+    p.run(2, ult);
+    CHECK(f.move == FinalSmash && f.intangible > 0, "the final smash user is intangible (%d)", f.intangible);
+  }
+}
+
 static void testTraining() {
   std::printf("[training mode]\n");
   MatchConfig cfg = duel(0, 2, 0, false, true);
@@ -490,6 +527,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();
+  if (only.empty() || only == "ult") testUltEdgeCases();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "battle") testBattles();

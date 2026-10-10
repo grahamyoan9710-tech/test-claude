@@ -96,6 +96,9 @@ class App {
   void drawMainMenu();
   void activateMenu(int item, int device = -1);
   void claimP1(int device);
+  // Gives `device` to card `col` (made human); a card that played it gets the old device or a free one.
+  void assignDevice(int col, int device);
+  int freeDevice(int col) const;
   // screens (menus.cpp)
   void updateCss(const MenuNav& nav);
   void drawCss();
@@ -140,6 +143,7 @@ class App {
   int cssCol_ = 0, cssRow_ = 1;
   int rulesCol_ = 0;
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
+  std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
   // settings
   int setTab_ = 0;

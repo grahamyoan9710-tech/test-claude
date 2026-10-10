@@ -273,9 +273,10 @@ void App::changeSetting(int row, int delta) {
 void App::updateSettings(const MenuNav& nav) {
   Settings& s = settings();
   const int rows = settingsRowCount();
+  setRow_ = std::min(setRow_, rows - 1);  // the gamepad layout of the Commandes tab has no rows
 
   if (waitingKey_) {  // rebinding a key
-    if (padAnyPressed(kPadB)) {
+    if (padAnyPressed(kPadB) || setRow_ < 0 || setRow_ >= kActionCount) {
       waitingKey_ = false;
       audio_.play(Sfx::MenuBack);
       return;

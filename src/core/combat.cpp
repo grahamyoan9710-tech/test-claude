@@ -258,6 +258,8 @@ void Match::updateProjectiles() {
         gainUlt(fighters[pr.owner], pr.hit.damage * kUltPerDamageDealt);
         v.lastHitBy = pr.owner;
         v.lastHitFrame = frame;
+      } else if (wasShielding && pr.owner >= 0) {
+        gainUlt(fighters[pr.owner], pr.hit.damage * kUltPerShieldHit);
       }
       if (!pr.piercing) {
         pr.alive = false;
