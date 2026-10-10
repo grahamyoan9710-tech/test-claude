@@ -136,7 +136,15 @@ void Match::koFighter(Fighter& f) {
 }
 
 void Match::respawnFighter(Fighter& f) {
-  f.pos = stageDef->respawn;
+  // Fighters KO'd at the same time get side-by-side respawn platforms.
+  static const float offsets[4] = {0.0f, -130.0f, 130.0f, -260.0f};
+  for (float dx : offsets) {
+    f.pos = stageDef->respawn + Vec2{dx, 0.0f};
+    bool taken = false;
+    for (const auto& o : fighters)
+      taken = taken || (o.id != f.id && o.state == FState::Respawn && std::fabs(o.pos.x - f.pos.x) < 100.0f);
+    if (!taken) break;
+  }
   f.vel = f.kbVel = {0, 0};
   f.percent = 0.0f;
   f.shield = kMaxShield;
