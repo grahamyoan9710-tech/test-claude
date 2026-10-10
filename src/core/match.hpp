@@ -23,7 +23,7 @@ struct MatchConfig {
 enum class EvType : uint8_t {
   Hit, ShieldHit, KO, Jump, AirJump, Land, Dash, Grab, Throw, Projectile, ShieldBreak,
   Respawn, Tech, LedgeGrab, Counter, Swing, Clank, Countdown, Go, GameSet,
-  OrbSpawn, OrbHit, OrbBreak, FinalSmash
+  OrbSpawn, OrbHit, OrbBreak, FinalSmash, UltReady
 };
 
 // The Clash Orb: floats around the stage, whoever breaks it gets a final smash.
@@ -134,6 +134,7 @@ class Match {
   void updateOrb();
   void hitOrb(int attacker, float damage, Vec2 from, HitFx fx);
   void startFinalSmash(Fighter& f);
+  void gainUlt(Fighter& f, float amount);
 };
 
 float computeKnockback(float percentAfter, float damage, float weight, float growth, float base);

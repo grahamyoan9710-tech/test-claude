@@ -4,7 +4,7 @@
 
 // Keyboard actions that can be rebound.
 enum KeyAction : int {
-  kActLeft, kActRight, kActUp, kActDown, kActJump, kActAttack, kActSpecial, kActShield, kActGrab, kActSmash,
+  kActLeft, kActRight, kActUp, kActDown, kActJump, kActAttack, kActSpecial, kActShield, kActGrab, kActSmash, kActUltimate,
   kActionCount
 };
 const char* actionName(int action);

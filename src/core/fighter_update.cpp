@@ -73,6 +73,10 @@ void Match::startMove(Fighter& f, int id) {
 
 bool Match::tryGroundActions(Fighter& f) {
   const IS& in = f.in;
+  if (f.finalSmash && f.pressed(&IS::ultimate)) {
+    startFinalSmash(f);
+    return true;
+  }
   if (f.pressed(&IS::jump)) {
     setState(f, FState::JumpSquat, f.def->jumpSquat);
     return true;
@@ -82,10 +86,6 @@ bool Match::tryGroundActions(Fighter& f) {
     return true;
   }
   if (f.pressed(&IS::special)) {
-    if (f.finalSmash) {
-      startFinalSmash(f);
-      return true;
-    }
     int sp = specialFor(f);
     if (sp >= 0) {
       startMove(f, sp);
@@ -121,11 +121,11 @@ bool Match::tryGroundActions(Fighter& f) {
 }
 
 bool Match::tryAirActions(Fighter& f) {
+  if (f.finalSmash && f.pressed(&IS::ultimate)) {
+    startFinalSmash(f);
+    return true;
+  }
   if (f.pressed(&IS::special)) {
-    if (f.finalSmash) {
-      startFinalSmash(f);
-      return true;
-    }
     int sp = specialFor(f);
     if (sp >= 0) {
       startMove(f, sp);

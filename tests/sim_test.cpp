@@ -253,14 +253,65 @@ static void testFinalSmash() {
     m.orb.vel = {0, 0};
     p.run(1, key(0, 0, i % 4 == 0));
   }
-  CHECK(f.finalSmash, "breaking the orb grants the final smash (orb hp %.0f)", m.orb.hp);
+  CHECK(f.finalSmash && f.ult >= kUltMax, "breaking the orb fills the ultimate meter (orb hp %.0f, meter %.0f)",
+        m.orb.hp, f.ult);
   p.idle(30);
   p.run(1, key(0, 0, false, false, false, true));
-  CHECK(f.state == FState::Attack && f.move == FinalSmash, "special triggers the final smash");
+  CHECK(f.move != FinalSmash, "the special button does not waste the ultimate");
+  p.idle(60);
+  InputState ult;
+  ult.ultimate = true;
+  p.run(1, ult);
+  CHECK(f.state == FState::Attack && f.move == FinalSmash, "the ultimate button triggers the final smash");
+  CHECK(f.ult == 0.0f && !f.finalSmash, "the meter is spent (%.0f)", f.ult);
   CHECK(m.freezeTimer > 0, "cinematic freeze");
   int stocks = v.stocks;
   p.idle(300);
   CHECK(v.stocks < stocks, "final smash KOs a 60%% Titan (percent %.0f)", v.percent);
+}
+
+static void testUltMeter() {
+  std::printf("[ultimate meter]\n");
+  Match m(duel(0, 2, 0, false, false));
+  m.cfg.items = false;
+  skipCountdown(m);
+  Fighter& f = m.fighters[0];
+  Fighter& v = m.fighters[1];
+  f.pos = {-40, 0};
+  f.facing = 1;
+  v.pos = {10, 0};
+  Pad p{m};
+  InputState ult;
+  ult.ultimate = true;
+  p.run(1, ult);
+  CHECK(f.state != FState::Attack, "an empty meter cannot unleash the ultimate");
+  p.idle(10);
+  float before = v.percent;
+  p.run(1, key(0, 0, true));
+  p.idle(30);
+  float dealt = v.percent - before;
+  CHECK(dealt > 0.0f, "jab connects (%.1f%%)", dealt);
+  CHECK(std::fabs(f.ult - dealt * kUltPerDamageDealt) < 0.01f, "attacker meter +%.1f for %.1f%% dealt", f.ult, dealt);
+  CHECK(std::fabs(v.ult - dealt * kUltPerDamageTaken) < 0.01f, "victim meter +%.1f for %.1f%% taken", v.ult, dealt);
+  int readyEvents = 0;
+  for (int i = 0; i < 2000 && !f.finalSmash; ++i) {
+    v.pos = {10, 0};
+    v.vel = v.kbVel = {0, 0};
+    v.percent = 0.0f;
+    f.pos = {-40, 0};
+    f.facing = 1;
+    m.step({key(0, 0, i % 12 == 0), InputState{}, InputState{}, InputState{}});
+    for (const auto& e : m.events) readyEvents += e.type == EvType::UltReady && e.a == f.id;
+  }
+  CHECK(f.finalSmash && f.ult == kUltMax, "hitting fills the meter (%.0f)", f.ult);
+  CHECK(readyEvents == 1, "one UltReady event (%d)", readyEvents);
+  p.idle(40);
+  p.run(1, ult);
+  CHECK(f.state == FState::Attack && f.move == FinalSmash, "full meter + ultimate button = final smash");
+  float vUlt = v.ult;
+  p.idle(200);
+  CHECK(f.ult == 0.0f, "no meter gained from the final smash itself (%.1f)", f.ult);
+  CHECK(v.ult > vUlt, "the victim still charges its meter (%.1f -> %.1f)", vUlt, v.ult);
 }
 
 static void testTraining() {
@@ -438,6 +489,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "fs") testFinalSmash();
+  if (only.empty() || only == "ult") testUltMeter();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "battle") testBattles();

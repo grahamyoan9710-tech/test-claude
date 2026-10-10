@@ -13,6 +13,11 @@ enum class FState : uint8_t {
 };
 
 constexpr float kMaxShield = 50.0f;
+// Ultimate meter: fills up by dealing and taking damage; once full the ultimate button unleashes the final smash.
+constexpr float kUltMax = 100.0f;
+constexpr float kUltPerDamageDealt = 0.45f;
+constexpr float kUltPerDamageTaken = 0.35f;
+constexpr float kUltPerShieldHit = 0.15f;  // attacker, per damage blocked by a shield
 
 struct Fighter {
   int id = 0;          // index in Match::fighters
@@ -77,7 +82,8 @@ struct Fighter {
   int grabPartner = -1;
   int escapeTimer = 0;
   int respawnTimer = 0;
-  bool finalSmash = false;   // broke the Clash Orb: next special is the final smash
+  float ult = 0.0f;          // ultimate meter (0..kUltMax)
+  bool finalSmash = false;   // ultimate ready (full meter or Clash Orb broken): the ultimate button unleashes it
 
   // Input
   InputState in, prev;

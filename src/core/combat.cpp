@@ -122,6 +122,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
     v.hitlag = lag;
     if (attacker) attacker->hitlag = lag;
     v.vel.x = dirSign * std::min(10.0f, 1.5f + dmg * 0.35f);
+    if (attacker) gainUlt(*attacker, dmg * kUltPerShieldHit);
     emit(EvType::ShieldHit, hitPos, attacker ? attacker->id : -1, v.id, dmg, {float(dirSign), 0}, h.fx);
     if (v.shield <= 0.0f) {
       v.shield = 0.0f;
@@ -137,8 +138,10 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
   }
 
   v.percent = std::min(999.0f, v.percent + dmg);
+  gainUlt(v, dmg * kUltPerDamageTaken);
   if (attacker) {
     attacker->damageDealt += dmg;
+    gainUlt(*attacker, dmg * kUltPerDamageDealt);
     v.lastHitBy = attacker->id;
     v.lastHitFrame = frame;
   }
@@ -252,6 +255,7 @@ void Match::updateProjectiles() {
       applyHit(nullptr, v, pr.hit, pr.pos, dir, 1.0f, false);
       if (!wasShielding && pr.owner >= 0) {
         fighters[pr.owner].damageDealt += pr.hit.damage;
+        gainUlt(fighters[pr.owner], pr.hit.damage * kUltPerDamageDealt);
         v.lastHitBy = pr.owner;
         v.lastHitFrame = frame;
       }

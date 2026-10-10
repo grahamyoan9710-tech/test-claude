@@ -14,19 +14,20 @@ namespace {
 Settings g_settings;
 
 const int kDefaultKeys[2][kActionCount] = {
-    {KEY_A, KEY_D, KEY_W, KEY_S, KEY_SPACE, KEY_J, KEY_K, KEY_L, KEY_I, KEY_O},
+    {KEY_A, KEY_D, KEY_W, KEY_S, KEY_SPACE, KEY_J, KEY_K, KEY_L, KEY_I, KEY_O, KEY_U},
     {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_RIGHT_SHIFT, KEY_RIGHT_CONTROL,
-     KEY_SEMICOLON},
+     KEY_SEMICOLON, KEY_APOSTROPHE},
 };
 const char* kActionIds[kActionCount] = {"left", "right", "up", "down", "jump",
-                                        "attack", "special", "shield", "grab", "smash"};
+                                        "attack", "special", "shield", "grab", "smash", "ultimate"};
 
 int clampi(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }
 }  // namespace
 
 const char* actionName(int a) {
   static const char* names[kActionCount] = {"Gauche", "Droite", "Haut", "Bas", "Saut",
-                                            "Attaque", "Spéciale", "Bouclier", "Saisie", "Attaque smash"};
+                                            "Attaque", "Spéciale", "Bouclier", "Saisie", "Attaque smash",
+                                            "Ultime"};
   return (a >= 0 && a < kActionCount) ? names[a] : "?";
 }
 

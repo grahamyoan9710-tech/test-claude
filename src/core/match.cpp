@@ -171,8 +171,8 @@ void Match::updateOrb() {
   if (!orb.active) {
     if (--orbTimer > 0) return;
     for (const auto& f : fighters)
-      if (f.finalSmash || (f.state == FState::Attack && f.move == FinalSmash)) {
-        orbTimer = 300;  // one final smash at a time
+      if (f.state == FState::Attack && f.move == FinalSmash) {
+        orbTimer = 300;  // not during a final smash
         return;
       }
     orb = Orb{};
@@ -215,12 +215,21 @@ void Match::hitOrb(int attacker, float damage, Vec2 from, HitFx fx) {
   if (orb.hp > 0.0f) return;
   orb.active = false;
   orbTimer = rng.irange(60 * 25, 60 * 45);
-  if (attacker >= 0) fighters[attacker].finalSmash = true;
   emit(EvType::OrbBreak, orb.pos, attacker);
+  if (attacker >= 0) gainUlt(fighters[attacker], kUltMax);  // the orb fills the ultimate meter
+}
+
+void Match::gainUlt(Fighter& f, float amount) {
+  if (f.finalSmash || amount <= 0.0f || (f.state == FState::Attack && f.move == FinalSmash)) return;
+  f.ult = std::min(kUltMax, f.ult + amount);
+  if (f.ult < kUltMax) return;
+  f.finalSmash = true;
+  emit(EvType::UltReady, f.center(), f.id);
 }
 
 void Match::startFinalSmash(Fighter& f) {
   f.finalSmash = false;
+  f.ult = 0.0f;
   startMove(f, FinalSmash);
   freezeTimer = 30;
   freezeOwner = f.id;
@@ -247,6 +256,7 @@ void Match::resetPositions() {
     f.airJumps = f.def->airJumps;
     f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
     f.finalSmash = false;
+    f.ult = 0.0f;
     setState(f, FState::Air);
   }
   freezeTimer = 0;

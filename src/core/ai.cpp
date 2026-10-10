@@ -223,7 +223,7 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
   const CharacterDef& d = *f.def;
   if (f.finalSmash && (t.center() - f.center()).len() < 320.0f && t.state != FState::Respawn &&
       (f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run || f.state == FState::Air)) {
-    tap(in, &IS::special);
+    tap(in, &IS::ultimate);
     return;
   }
   float dx = t.pos.x - f.pos.x;

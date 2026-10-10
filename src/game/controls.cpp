@@ -44,6 +44,7 @@ InputState readDevice(int d) {
     in.shield = down(kActShield, KEY_KP_3);
     in.grab = down(kActGrab, KEY_KP_5);
     in.smash = down(kActSmash, KEY_KP_4);
+    in.ultimate = down(kActUltimate, KEY_KP_6);
   } else if (d >= kPad1 && d < kDeviceCount) {
     int g = d - kPad1;
     if (!IsGamepadAvailable(g)) return in;
