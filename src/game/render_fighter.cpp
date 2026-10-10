@@ -1056,6 +1056,19 @@ float tagY(const Match& m, int id) {
 }
 }  // namespace
 
+void drawFighterTags(const Match& m) {
+  if (!settings().playerTags || m.freezeTimer > 0) return;  // no tags during an ultimate cinematic
+  for (const auto& f : m.fighters) {
+    if (!f.active() || f.state == FState::Grabbed) continue;
+    Color pc = slotColor(f);
+    char tag[8];
+    std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
+    float ty = tagY(m, f.id);
+    DrawTriangle({f.pos.x - 8, ty + 20}, {f.pos.x, ty + 29}, {f.pos.x + 8, ty + 20}, pc);
+    drawTextCentered(tag, f.pos.x, ty, 20, pc, true, FontKind::Title);
+  }
+}
+
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) {
   if (!f.active()) return;
   const CharacterDef& d = *f.def;
@@ -1138,15 +1151,6 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       Vec2 sp{c.x + std::cos(a) * H * 0.3f, c.y - H * 0.55f + std::sin(a) * H * 0.08f};
       DrawPoly(V(sp), 5, 7, a * 50.0f, {255, 230, 80, 255});
     }
-  }
-  // Player tag
-  if (f.state != FState::Grabbed && settings().playerTags) {
-    Color pc = slotColor(f);
-    char tag[8];
-    std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-    float ty = tagY(m, f.id);
-    DrawTriangle({f.pos.x - 8, ty + 20}, {f.pos.x, ty + 29}, {f.pos.x + 8, ty + 20}, pc);
-    drawTextCentered(tag, f.pos.x, ty, 20, pc, true, FontKind::Title);
   }
   if (debugBoxes) {
     Rect hr = f.hurtbox();

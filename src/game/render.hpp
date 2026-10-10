@@ -39,6 +39,7 @@ void drawCharacter(const CharacterDef& def, int palette, const Pose& pose, Vec2 
 Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb,
                bool weaponTip = false);
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
+void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
 
 // ---- World (render_world.cpp) -----------------------------------------------

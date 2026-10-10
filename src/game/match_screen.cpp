@@ -339,6 +339,7 @@ void MatchScreen::draw() {
     DrawRectangle(-5000, -5000, 10000, 10000, withAlpha(BLACK, 0.6f * k));
     drawFighter(m_.fighters[star], m_, time_, debug_);
   }
+  drawFighterTags(m_);
   drawProjectiles(m_, time_);
   fx_.drawWorld();
   if (debug_) {
