@@ -17,7 +17,8 @@ class Fx {
   std::array<float, 4> hudShake{};
 
  private:
-  enum class PK : uint8_t { Spark, Dot, Smoke, Ring, Star, Shard };
+  // Mote: glowing ancient-tech speck (drawn additively); Hex: expanding hexagon outline.
+  enum class PK : uint8_t { Spark, Dot, Smoke, Ring, Star, Shard, Mote, Hex };
   struct Particle {
     Vec2 pos, vel;
     float life = 0, maxLife = 1;
@@ -31,12 +32,15 @@ class Fx {
     Color color;
     int t = 0;
   };
-  void add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity = 0.0f);
+  void add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity = 0.0f,
+           float drag = 0.92f);
   void burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, float size);
   void dust(Vec2 feet, int count, float spread);
+  void motes(Vec2 pos, int count, float radius, float speed, float rise);
 
   std::vector<Particle> parts_;
   std::vector<KoBeam> kos_;
+  std::array<int, 4> fsWave_{-1, -1, -1, -1};  // last final smash shock wave burst, per fighter
   float shake_ = 0.0f;
   float flash_ = 0.0f;
   Color flashCol_ = WHITE;

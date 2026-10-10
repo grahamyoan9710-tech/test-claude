@@ -5,6 +5,9 @@
 #include "game/common.hpp"
 
 // ---- Fighters (render_fighter.cpp) ----------------------------------------
+// Ancient-tech glow (TotK Zonai teal-green): runes on outfits, ultimate aura.
+constexpr Color kZonaiGlow = {72, 228, 190, 255};
+
 // Pose in fighter-local pixels, relative to the body center, facing right.
 struct Pose {
   float rot = 0.0f;       // whole body rotation (radians, + = forward flip)
@@ -12,6 +15,7 @@ struct Pose {
   float lean = 0.0f;      // torso lean (+ = forward)
   float crouch = 0.0f;    // 0..1, lowers the hips
   float squash = 1.0f;    // vertical scale
+  float sx = 1.0f;        // horizontal scale (squash & stretch)
   Vec2 handF, handB;      // hand targets
   Vec2 footF, footB;      // foot targets
   bool weapon = false;    // draw the weapon
@@ -22,12 +26,19 @@ struct Pose {
   Vec2 trailPos;          // hitbox position for the swoosh
   float trailRadius = 0.0f;
   HitFx trailFx = HitFx::Normal;
+  Limb trailLimb = Limb::None;
+  Vec2 flow, flowTip;     // drag on scarves, capes and tails (secondary motion, ~[-1.5, 1.5])
+  float glow = 0.0f;      // extra glow of the ancient-tech runes (ultimate ready)
+  bool ghost = false;     // afterimage: flat tinted silhouette
 };
 
 Pose restPose(const CharacterDef& def, float time);
 Pose computePose(const Fighter& f, const Match& m, float time);
 void drawCharacter(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing,
                    float scale, float alpha, Color flashColor, float flash, float time);
+// Where the rig really puts a limb end (IK reach applied) / the weapon tip, in world space.
+Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb,
+               bool weaponTip = false);
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
 

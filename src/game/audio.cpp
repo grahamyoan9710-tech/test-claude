@@ -152,6 +152,50 @@ Wave makeSfx(Sfx s) {
         for (int k = 0; k <= i; ++k) v += std::sin(kTau * notes[k] * t);
         return 0.18f * v * std::exp(-std::max(0.0f, t - 0.45f) * 4.0f);
       });
+    case Sfx::UltReady:
+      // Ancient mechanism waking up: a low swell, then rising glassy bells over a shimmer.
+      return synth(1.5f, [=](float t) mutable {
+        const float notes[5] = {587.33f, 880.0f, 1174.66f, 1479.98f, 1760.0f};  // D A D F# A
+        float bells = 0.0f;
+        for (int k = 0; k < 5; ++k) {
+          float u = t - 0.12f - k * 0.075f;
+          if (u < 0.0f) break;
+          float env = std::exp(-u * 3.0f) * std::min(1.0f, u * 400.0f);
+          bells += env * (std::sin(kTau * notes[k] * u) +
+                          0.3f * std::sin(kTau * notes[k] * 2.76f * u) * std::exp(-u * 7.0f) +
+                          0.15f * std::sin(kTau * notes[k] * 5.4f * u) * std::exp(-u * 14.0f));
+        }
+        float swell = std::sin(sweep(t, 70.0f, 150.0f, 1.5f)) * std::sin(std::min(1.0f, t / 0.5f) * 1.5708f) *
+                      std::exp(-std::max(0.0f, t - 0.35f) * 3.5f);
+        float n = nz();
+        float hp = n - lp;
+        lp = n;
+        float shimmer = hp * (0.6f + 0.4f * std::sin(kTau * 9.0f * t)) * std::min(1.0f, t * 3.0f) * std::exp(-t * 2.2f);
+        return 0.13f * bells + 0.45f * swell + 0.07f * shimmer;
+      });
+    case Sfx::UltUnleash:
+      // SUPER CLASH: a rising charge (stacked fifths + noise riser), a deep impact, ringing bells.
+      return synth(2.1f, [=](float t) mutable {
+        float charge = 0.0f;
+        if (t < 0.6f) {
+          float env = std::min(1.0f, t / 0.15f) * (1.0f - std::max(0.0f, t - 0.5f) / 0.1f);
+          float ph = sweep(t, 80.0f, 520.0f, 0.6f);
+          charge = env * (std::sin(ph) + 0.5f * std::sin(ph * 1.5f) + 0.3f * std::sin(ph * 2.0f) +
+                          0.2f * std::sin(ph * 3.0f)) * (0.7f + 0.3f * std::sin(kTau * (8.0f + 30.0f * t) * t));
+        }
+        lp += (nz() - lp) * (0.05f + 0.5f * std::min(1.0f, t / 0.6f));
+        float riser = t < 0.6f ? lp * (t / 0.6f) : 0.0f;
+        float u = t - 0.58f;
+        float boom = 0.0f, bells = 0.0f;
+        if (u > 0.0f) {
+          lp2 += (nz() - lp2) * 0.12f;
+          boom = std::sin(sweep(u, 130.0f, 32.0f, 1.0f)) * std::exp(-u * 3.2f) + 1.2f * lp2 * std::exp(-u * 5.0f);
+          const float notes[3] = {587.33f, 880.0f, 1318.5f};
+          for (int k = 0; k < 3; ++k)
+            bells += std::sin(kTau * notes[k] * u) * std::exp(-u * (2.0f + k)) * std::min(1.0f, u * 300.0f);
+        }
+        return 0.2f * charge + 0.35f * riser + 0.75f * boom + 0.12f * bells;
+      });
     case Sfx::Count: break;
   }
   return synth(0.01f, [](float) { return 0.0f; });
@@ -273,7 +317,7 @@ int Audio::exportAll(const char* dir) {
   static const char* names[] = {"hit_light", "hit_medium", "hit_heavy", "hit_fire", "hit_electric", "hit_slash",
                                 "swing", "jump", "air_jump", "land", "shield_hit", "shield_break", "ko", "crowd",
                                 "projectile", "grab", "counter", "ledge", "menu_move", "menu_select", "menu_back",
-                                "beep", "go", "game_set"};
+                                "beep", "go", "game_set", "ult_ready", "ult_unleash"};
   static_assert(sizeof(names) / sizeof(names[0]) == int(Sfx::Count), "one name per sound");
   int written = 0;
   for (int i = 0; i < int(Sfx::Count); ++i) {

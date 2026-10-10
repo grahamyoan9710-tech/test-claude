@@ -1,5 +1,8 @@
 #include "game/fx.hpp"
 
+#include "game/render.hpp"
+#include "game/ui.hpp"
+
 namespace {
 Color fxColor(HitFx fx) {
   switch (fx) {
@@ -13,7 +16,7 @@ Color fxColor(HitFx fx) {
 }
 }  // namespace
 
-void Fx::add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity) {
+void Fx::add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity, float drag) {
   if (parts_.size() > 1500) return;
   Particle p;
   p.kind = kind;
@@ -25,7 +28,8 @@ void Fx::add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, C
   p.color = c;
   p.gravity = gravity;
   p.rot = rng_.range(0, 360);
-  p.rotVel = rng_.range(-12, 12);
+  p.rotVel = kind == PK::Hex ? rng_.range(-1.5f, 1.5f) : rng_.range(-12, 12);
+  p.drag = drag;
   parts_.push_back(p);
 }
 
@@ -46,6 +50,16 @@ void Fx::dust(Vec2 feet, int count, float spread) {
   }
 }
 
+void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise) {
+  for (int i = 0; i < count; ++i) {
+    float a = rng_.range(0, 2 * kPi);
+    Vec2 dir{std::cos(a), std::sin(a)};
+    add(PK::Mote, pos + dir * rng_.range(0.0f, radius), dir * (speed * rng_.range(0.35f, 1.0f)) + Vec2{0.0f, -rise},
+        rng_.range(30, 55), rng_.range(2.0f, 3.5f), 0.6f, i % 4 ? kZonaiGlow : mixColor(kZonaiGlow, WHITE, 0.6f),
+        -0.03f, 0.94f);
+  }
+}
+
 void Fx::onEvents(const Match& m) {
   Audio& au = *audio_;
   for (const auto& e : m.events) {
@@ -53,21 +67,27 @@ void Fx::onEvents(const Match& m) {
       case EvType::Hit: {
         float kb = e.strength;
         Color c = fxColor(e.fx);
+        Vec2 pos = e.pos;
+        if (e.b >= 0 && e.b < int(m.fighters.size())) {  // huge hitboxes (final smash): sparks on the victim
+          const Fighter& v = m.fighters[e.b];
+          Vec2 d = pos - v.center();
+          if (d.len() > v.height() * 0.6f) pos = v.center() + d.norm() * (v.height() * 0.3f);
+        }
         int n = 6 + int(kb / 9.0f);
         for (int i = 0; i < n; ++i) {
           float a = rng_.range(0, 2 * kPi);
           Vec2 v = Vec2{std::cos(a), std::sin(a)} * rng_.range(4.0f, 9.0f + kb * 0.06f) + e.dir * 3.0f;
-          add(PK::Spark, e.pos, v, rng_.range(10, 18), rng_.range(2.0f, 4.0f), 0.0f, i % 3 ? c : WHITE);
+          add(PK::Spark, pos, v, rng_.range(10, 18), rng_.range(2.0f, 4.0f), 0.0f, i % 3 ? c : WHITE);
         }
-        add(PK::Ring, e.pos, {}, 14, 8, 30 + kb * 0.4f, withAlpha(c, 0.9f));
+        add(PK::Ring, pos, {}, 14, 8, 30 + kb * 0.4f, withAlpha(c, 0.9f));
         if (kb > 100.0f) {
-          add(PK::Star, e.pos, {}, 16, 30 + kb * 0.1f, 50 + kb * 0.2f, WHITE);
+          add(PK::Star, pos, {}, 16, std::min(30.0f + kb * 0.1f, 44.0f), std::min(50.0f + kb * 0.2f, 76.0f), WHITE);
           flash_ = std::max(flash_, 0.18f);
           flashCol_ = WHITE;
         }
         if (e.fx == HitFx::Fire)
           for (int i = 0; i < 6; ++i)
-            add(PK::Smoke, e.pos, {rng_.range(-2, 2), rng_.range(-3, -1)}, 24, 6, 16, {255, 120, 40, 200});
+            add(PK::Smoke, pos, {rng_.range(-2, 2), rng_.range(-3, -1)}, 24, 6, 16, {255, 120, 40, 200});
         shake_ = std::max(shake_, std::min(18.0f, kb / 11.0f));
         if (e.b >= 0) hudShake[e.b & 3] = std::min(9.0f, 2.0f + kb / 14.0f);
         Sfx s = kb < 40 ? Sfx::HitLight : kb < 100 ? Sfx::HitMedium : Sfx::HitHeavy;
@@ -176,17 +196,26 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::GameSet, 0.8f, 1.25f);
         au.play(Sfx::Crowd, 0.8f, 1.1f);
         break;
-      case EvType::FinalSmash: {
-        Color c = ColorFromHSV(rng_.range(0, 360), 0.5f, 1.0f);
-        flash_ = std::max(flash_, 0.6f);
-        flashCol_ = c;
+      case EvType::FinalSmash:  // SUPER CLASH: the ancient power is unleashed
+        flash_ = std::max(flash_, 0.55f);
+        flashCol_ = mixColor(kZonaiGlow, WHITE, 0.55f);
         shake_ = std::max(shake_, 10.0f);
-        add(PK::Ring, e.pos, {}, 40, 20, 400, WHITE);
-        au.play(Sfx::Counter, 1.0f, 0.6f);
-        au.play(Sfx::KO, 0.8f, 1.6f);
+        add(PK::Hex, e.pos, {}, 40, 30, 520, kZonaiGlow);
+        add(PK::Ring, e.pos, {}, 34, 20, 380, WHITE);
+        motes(e.pos, 40, 30, 10, 0);
+        au.play(Sfx::UltUnleash, 1.0f);
         au.play(Sfx::Crowd, 0.9f, 1.15f);
         break;
-      }
+      case EvType::UltReady:  // meter full: runes light up
+        add(PK::Hex, e.pos, {}, 30, 16, 150, kZonaiGlow);
+        add(PK::Hex, e.pos, {}, 42, 10, 105, mixColor(kZonaiGlow, WHITE, 0.5f));
+        add(PK::Ring, e.pos, {}, 22, 10, 90, withAlpha(mixColor(kZonaiGlow, WHITE, 0.6f), 0.9f));
+        motes(e.pos, 26, 20, 5.5f, 2.5f);
+        flash_ = std::max(flash_, 0.1f);
+        flashCol_ = kZonaiGlow;
+        shake_ = std::max(shake_, 3.0f);
+        au.play(Sfx::UltReady, 0.95f);
+        break;
     }
   }
 }
@@ -210,10 +239,28 @@ void Fx::update(const Match& m) {
       Color c = sp > 16.0f ? Color{255, 170, 90, 220} : Color{230, 230, 235, 200};
       add(PK::Smoke, f.center(), f.kbVel * -0.05f, 26, 8, 20 + sp, c);
     }
-    if (f.finalSmash && m.frame % 3 == 0) {
-      float a = rng_.range(0, 2 * kPi);
-      Vec2 o = Vec2{std::cos(a), std::sin(a)} * (f.height() * rng_.range(0.3f, 0.7f));
-      add(PK::Star, f.center() + o, {0, -1.5f}, 24, 4, 1, ColorFromHSV(rng_.range(0, 360), 0.6f, 1.0f));
+    const float H = f.height();
+    if (f.finalSmash && m.frame % 3 == 0)  // ultimate ready: motes rising around the body
+      add(PK::Mote, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.0f, 0.9f) * H},
+          {rng_.range(-0.3f, 0.3f), rng_.range(-1.6f, -0.8f)}, rng_.range(30, 50), rng_.range(1.8f, 3.2f), 0.4f,
+          m.frame % 4 ? kZonaiGlow : mixColor(kZonaiGlow, WHITE, 0.6f), -0.02f, 0.99f);
+    if (f.state == FState::Attack && f.move == FinalSmash) {
+      if (f.moveFrame < 34) {  // gathering: energy flows in
+        for (int i = 0; i < 2; ++i) {
+          float a = rng_.range(0, 2 * kPi);
+          Vec2 dir{std::cos(a), std::sin(a)};
+          add(PK::Mote, f.center() + dir * (1.6f * H), dir * -7.0f, 15, rng_.range(2.0f, 3.2f), 1.0f, kZonaiGlow, 0.0f, 1.0f);
+        }
+      }
+      int& wave = fsWave_[f.id & 3];  // once per shock wave, even if hit-stop holds the frame
+      for (const auto& h : f.def->moves[FinalSmash].hitboxes)
+        if (h.start == f.moveFrame && wave != h.start) {
+          wave = h.start;
+          motes(f.center(), 24, 20, 13, 0);
+          add(PK::Hex, f.center(), {}, 26, 20, h.radius * 1.1f, mixColor(kZonaiGlow, WHITE, 0.4f));
+        }
+    } else {
+      fsWave_[f.id & 3] = -1;
     }
     if (f.charging && m.frame % 3 == 0) {
       float a = rng_.range(0, 2 * kPi);
@@ -234,10 +281,13 @@ void Fx::update(const Match& m) {
 }
 
 void Fx::drawWorld() const {
+  bool glows = false;
   for (const auto& p : parts_) {
     float k = p.life / p.maxLife;  // 1 -> 0
     float size = lerpf(p.size1, p.size, k);
     switch (p.kind) {
+      case PK::Mote: glows = true; break;
+      case PK::Hex: DrawPolyLinesEx(V(p.pos), 6, size, p.rot, 1.5f + 3.0f * k, withAlpha(p.color, k)); break;
       case PK::Spark: {
         Vec2 tail = p.pos - p.vel * 2.2f;
         DrawLineEx(V(tail), V(p.pos), size, withAlpha(p.color, k));
@@ -247,6 +297,16 @@ void Fx::drawWorld() const {
       case PK::Smoke: DrawCircleV(V(p.pos), size, withAlpha(p.color, k * 0.6f * p.color.a / 255.0f)); break;
       case PK::Ring: DrawRing(V(p.pos), std::max(0.0f, size - 4.0f), size, 0, 360, 36, withAlpha(p.color, k)); break;
       case PK::Star: {
+        if (size > 14.0f) {  // impact twinkle: two thin crossed diamonds around a soft core
+          DrawCircleV(V(p.pos), size * 0.32f, withAlpha(p.color, k * 0.55f));
+          for (int i = 0; i < 2; ++i) {
+            float a = deg2rad(p.rot + i * 90.0f), len = size * (i ? 0.65f : 1.0f);
+            Vec2 d{std::cos(a), std::sin(a)}, n{-d.y * size * 0.13f, d.x * size * 0.13f};
+            Vector2 q[4] = {V(p.pos + d * len), V(p.pos + n), V(p.pos - d * len), V(p.pos - n)};
+            DrawTriangleFan(q, 4, withAlpha(p.color, k));
+          }
+          break;
+        }
         DrawPoly(V(p.pos), 4, size, p.rot, withAlpha(p.color, k * 0.9f));
         DrawPoly(V(p.pos), 4, size * 0.6f, p.rot + 45, withAlpha(p.color, k));
         break;
@@ -254,6 +314,18 @@ void Fx::drawWorld() const {
       case PK::Shard: DrawPoly(V(p.pos), 3, size, p.rot, withAlpha(p.color, k)); break;
     }
   }
+  if (!glows) return;
+  BeginBlendMode(BLEND_ADDITIVE);  // motes add light
+  for (const auto& p : parts_) {
+    if (p.kind != PK::Mote) continue;
+    float k = p.life / p.maxLife;
+    float a = std::min(1.0f, (1.0f - k) * 8.0f) * std::min(1.0f, k * 2.5f);
+    float size = lerpf(p.size1, p.size, k);
+    Vector2 pos = V(p.pos + Vec2{std::sin(p.life * 0.15f + p.rot) * 2.5f, 0.0f});
+    DrawCircleV(pos, size * 3.0f, withAlpha(p.color, 0.2f * a));
+    DrawPoly(pos, 4, size, p.rot + p.life * 3.0f, withAlpha(p.color, 0.95f * a));
+  }
+  ui::frameBlend();
 }
 
 void Fx::drawScreen(const Camera2D& cam) const {

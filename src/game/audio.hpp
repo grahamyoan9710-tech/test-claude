@@ -5,6 +5,7 @@ enum class Sfx : int {
   HitLight, HitMedium, HitHeavy, HitFire, HitElectric, HitSlash,
   Swing, Jump, AirJump, Land, ShieldHit, ShieldBreak, KO, Crowd, Projectile,
   Grab, Counter, Ledge, MenuMove, MenuSelect, MenuBack, Beep, Go, GameSet,
+  UltReady, UltUnleash,  // ultimate meter full / SUPER CLASH
   Count
 };
 
