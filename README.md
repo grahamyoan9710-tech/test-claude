@@ -11,11 +11,12 @@ les arènes et les effets restent lisses. Les sons et la musique sont synthétis
 ressources sont deux polices libres et la base de manettes SDL, intégrées directement dans l'exécutable :
 il n'y a aucun fichier à installer à côté.
 
-La direction artistique des arènes s'inspire de *Zelda: Tears of the Kingdom* : îles célestes, ruines
-Zonaï aux runes turquoise, profondeurs éclairées par des racines lumineuses. Tout est dessiné par le code
-(aucune image ni logo repris d'un jeu ou d'un manga).
+Les trois arènes d'origine s'inspirent de *Zelda: Tears of the Kingdom* (îles célestes, ruines Zonaï aux
+runes turquoise, profondeurs éclairées par des racines lumineuses) et **huit autres viennent des animes** :
+deux par série, de Las Noches à la Vallée de la Fin. Tout est dessiné par le code (aucune image ni logo
+repris d'un jeu ou d'un manga).
 
-| Menu principal | Sélection des 15 combattants |
+| Menu principal | Sélection des 17 combattants |
 |---|---|
 | ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
 | **Combat : Kenpachi, Sasuke, Naruto et le Chasseur** | **Cut-in d'ultime : Bijūdama (Naruto)** |
@@ -26,11 +27,24 @@ Zonaï aux runes turquoise, profondeurs éclairées par des racines lumineuses. 
 | ![Impact frame](docs/impact.jpg) | ![Entraînement](docs/entrainement.jpg) |
 | **Paramètres (pixel art)** | **Résultats** |
 | ![Paramètres](docs/parametres.jpg) | ![Résultats](docs/resultats.jpg) |
+| **Choix de l'arène : 11 arènes** | **Vallée de la Fin : Naruto contre Sasuke sur les statues** |
+| ![Choix de l'arène](docs/arene.jpg) | ![Vallée de la Fin](docs/vallee.jpg) |
 
-**Chaque ultime est unique** (45 en tout) : Vasto Lorde, Violet imaginaire, Amaterasu, Kendō, Sanctuaire
-démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du Chaos, Dragon de lumière...
+**Les huit arènes des animes** : Las Noches, le Seireitei, le repaire du Taureau Noir, la Tour des
+Grimoires, Shibuya, le lycée Jujutsu, Konoha et la Vallée de la Fin.
 
-![Neuf des 45 ultimes](docs/ultimes.jpg)
+![Les huit arènes des animes](docs/arenes.jpg)
+
+**Les animations** (planche de développement `--screen anim`) : la marche et la course suivent le sol,
+Naruto court en ninja, les coups engagent tout le corps.
+
+![Animations de Naruto](docs/animations.jpg)
+
+**Chaque ultime est unique** (51 en tout) : Getsuga Tenshō, Vasto Lorde, Gran Rey Cero, Cero Metralleta,
+Violet imaginaire, Amaterasu, Kendō, Sanctuaire démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du
+Chaos, Dragon de lumière...
+
+![Neuf des ultimes](docs/ultimes.jpg)
 
 ## Le jeu
 
@@ -40,16 +54,18 @@ démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du Chaos, Dragon de lum
 - **Entraînement** : vies infinies face à un **mannequin** (immobile, qui saute, qui se protège, ou
   piloté par l'ordinateur), réinitialisation des positions, **compteur de combos** et dégâts du combo,
   affichage des zones de coup. Tout se règle dans le menu pause.
-- **15 combattants** inspirés de séries cultes (hommages de fans, dessinés par le code), chacun avec ses
+- **17 combattants** inspirés de séries cultes (hommages de fans, dessinés par le code), chacun avec ses
   stats, 4 attaques spéciales, **2 armes à ramasser** et **3 ultimes** : un à mains nues et un par arme.
   | | Univers | Spéciales | Ultime | Arme 1 → son ultime | Arme 2 → son ultime |
   |---|---|---|---|---|---|
   | **ASTA** | Black Clover | Lame anti-magie, Météore noir, Ouragan noir, Renvoi anti-magie (renvoie les projectiles) | Black Divider | Épée pourfendeuse → Black Meteorite (monte avec sa victime et retombe comme un météore) | Épée habitante → Union démoniaque (transformation : aile et bras du diable) |
   | **YUNO** | Black Clover | Lames de vent, Tempête tranchante (tornade qui aspire), Envol de Sylphe, Tourbillon | Tempête de Zéphyr | Grimoire à quatre trèfles → Pluie de lames (sur tous les adversaires) | Lance de l'esprit → Lance de Zéphyr (aspire tout sur son passage) |
-  | **ICHIGO** | Bleach | Getsuga Tenshō, Shunpo, Tsukiyomi, Cero (rayon) | Mugetsu (cheveux longs du Getsuga final) | Zangetsu (Shikai) → Getsuga Tenshō géant | Tensa Zangetsu (Bankai) → Vasto Lorde : il se transforme, attrape l'adversaire et lui tire un méga Cero à bout portant |
+  | **ICHIGO** | Bleach | Getsuga Tenshō, Shunpo, Tsukiyomi, Cero (rayon) | Getsuga Tenshō (un croissant géant, au Shikai) | Zangetsu (Shikai) → Getsuga Jūjishō (deux Getsuga en croix) | Tensa Zangetsu (Bankai) → Vasto Lorde : il se transforme, attrape l'adversaire et lui tire un méga Cero à bout portant |
   | **BYAKUYA** | Bleach | Senbonzakura (nuée de pétales), Senka (attaque dans le dos), Shunpo céleste, Danku | Senbonzakura Kageyoshi (immobilise tout le monde dans la tempête) | Senbonzakura (Shikai) → Gōkei (une sphère de lames autour de chaque adversaire) | Kageyoshi (Bankai) → Shūkei : Hakuteiken (ailes de lumière) |
   | **KENPACHI** | Bleach | Taille du démon (à charger), Assaut sauvage (super armure), Saut du démon, Garde ouverte (contre) | Kendō : il apparaît devant l'adversaire, le frappe puis le pourfend à deux mains | Nozarashi (Shikai) → Taille de Nozarashi (fend l'arène) | Bankai → Démon rouge (transformation : peau rouge, cornes, super armure) |
   | **ULQUIORRA** | Bleach | Cero (rayon), Sonído, Sonído céleste, Bala | Cero Oscuras | Murciélago (Resurrección) → Lanza del Relámpago (javelot qui explose) | Segunda Etapa → transformation : corps noir, ailes de chauve-souris, queue |
+  | **GRIMMJOW** | Bleach | Cero, Desgarrón (griffes de reiatsu), Sonído griffu, Garra de la Pantera | Gran Rey Cero | Pantera (zanpakutō) → « Kishire, Pantera » (libération : cheveux longs, oreilles, queue, griffes) | Griffes de Pantera → Desgarrón (cinq griffes géantes) |
+  | **STARRK** | Bleach | Cero (rayon), Los Lobos (loups qui explosent), Sonído, Rafale de ceros | Cero Metralleta | Los Lobos (la meute) → Los Lobos (toute la meute) | Lilynette → Resurrección : Los Lobos (libération : manteau de fourrure, deux pistolets) |
   | **NARUTO** | Naruto | Rasengan (à charger), Multi-clonage (un clone court sur l'ennemi), Clone tremplin, Substitution (contre) | Barrage Uzumaki (les clones l'envoient en l'air) | Mode Ermite → Rasenshuriken | Chakra de Kurama → Bijūdama (le renard à neuf queues apparaît) |
   | **SASUKE** | Naruto | Katon : boule de feu, Chidori, Garuda, Chidori Nagashi | Kirin (le dragon de foudre tombe sur l'ennemi le plus proche) | Arc de Susanoo → Flèche d'Indra (Susanoo violet) | Mangekyō Sharingan → Amaterasu (flammes noires collées à chaque adversaire) |
   | **KAKASHI** | Naruto | Suiton : dragon aqueux, Raikiri, Shunshin, Ninken : crocs (saisie) | Raikiri | Sharingan → Kamui (un vortex sur l'ennemi le plus proche) | Mangekyō double → Shuriken du Susanoo (Susanoo bleu) |
@@ -90,15 +106,34 @@ démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du Chaos, Dragon de lum
   (de loin pour les ultimes qui visent, face à la cible pour les rayons).
 - **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
   de l'arène. Celui qui la brise **remplit d'un coup sa barre d'ulti**.
-- **3 arènes** : **Profondeurs** (abîme, racines lumineuses et cristaux), **Sanctuaire** (temple Zonaï en
-  ruine au soleil couchant) et **Îles Célestes** (îles flottantes, cascades, plateforme mobile).
-- **Animations** : transitions fluides entre les poses, élan et accompagnement des coups, postures propres
-  aux spéciales (bander un arc, mudras, bras levé, doigt pointé, taille à deux mains...), traînées des
-  attaques, étirements au saut et tassements à l'atterrissage, capes, écharpes et cheveux qui suivent
-  le mouvement, respiration et clignements d'yeux.
-- Effets : étincelles, traînées d'éjection, rayon de K.O., tremblement d'écran, bulles quand un
-  combattant est hors-champ, caméra dynamique, compte à rebours, « GAME ! », écran de résultats,
-  transitions animées entre les écrans.
+- **11 arènes**, chacune avec sa disposition :
+  - *Zelda* : **Profondeurs** (abîme, racines lumineuses et cristaux), **Sanctuaire** (temple Zonaï en
+    ruine au soleil couchant) et **Îles Célestes** (îles flottantes, cascades, plateforme mobile) ;
+  - *Bleach* : **Las Noches** (le palais des Espada sous la lune du Hueco Mundo, du sable qui coule des
+    corniches) et le **Seireitei** (murs blancs et toits de tuiles, la tour Senzaikyū, le Sōkyoku,
+    papillons de l'enfer) ;
+  - *Black Clover* : le **repaire du Taureau Noir** (un balai magique fait des allers-retours) et la
+    **Tour des Grimoires** au crépuscule (des grimoires flottent en montant et descendant) ;
+  - *Jujutsu Kaisen* : **Shibuya** sous le voile (néons, écran géant, un train passe sur le viaduc) et
+    le **lycée Jujutsu** en automne (pagode, torii, érables, passerelles en escalier) ;
+  - *Naruto* : **Konoha** (le mont des Hokage, la tour du Hokage, des branches comme plateformes) et la
+    **Vallée de la Fin** sous la pluie (on se bat sur les têtes des statues de Hashirama et Madara, la
+    cascade entre les deux).
+- **Animations** : la marche et la course sont réglées sur la distance parcourue (le pied posé ne glisse
+  pas), avec une vraie foulée, le talon qui remonte, le genou qui monte, un rebond à chaque pas et les
+  bras qui balancent ; Naruto, Sasuke et Kakashi courent en ninja (bras en arrière), les colosses
+  chargent comme des taureaux. Les coups engagent tout le corps : épaules et hanches qui tournent, pas en
+  avant, poing libre ramené à la hanche, bras écartés pour l'équilibre des coups de pied ; les smashs
+  s'arment beaucoup plus loin. Les ultimes commencent par une concentration d'énergie (jambes écartées,
+  poings aux hanches, cri), et la caméra se resserre sur l'ultime et ses victimes. Une victime éjectée
+  se plie d'abord autour du coup avant de tournoyer. Et toujours : transitions fluides entre les poses,
+  postures propres aux spéciales, traînées des attaques, étirements et tassements, capes et cheveux qui
+  suivent le mouvement, respiration et clignements d'yeux.
+- Effets : **compteur de combos** au-dessus de la victime (« 5 COUPS ! » et les dégâts du combo), la
+  victime s'illumine de l'élément du coup (feu, foudre, ténèbres...), les coups lourds **fissurent le
+  sol** et soulèvent des débris, les éjections mortelles crépitent d'éclairs ; étincelles, traînées
+  d'éjection, rayon de K.O., tremblement d'écran, bulles quand un combattant est hors-champ, caméra
+  dynamique, compte à rebours, « GAME ! », écran de résultats, transitions animées entre les écrans.
 
 ## Paramètres
 
@@ -182,9 +217,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-5.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-6.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-5.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-6.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -227,11 +262,13 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFETCHCONTENT_SOURCE_DIR_RAYLIB=
 
 ```
 super_clash --demo            # match de démonstration entre 4 ordinateurs
-super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 14)
+super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 16)
 super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
-super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 2)
-super_clash --stage 2         # arène par défaut (0, 1 ou 2)
+super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 3)
+super_clash --screen anim --tab 32   # pellicules d'animation : combattant N/4, page N%4 (allures, jabs, smashs, spéciales et ultime)
+super_clash --stage 10        # arène par défaut (0 à 10, dans l'ordre de l'écran de choix)
+super_clash --demo --record 300 480 2 dossier   # enregistre une image sur 2 de 300 à 480 (pour des GIF)
 super_clash --debug           # zones de coup visibles
 super_clash --export-audio d  # écrit tous les sons et musiques en .wav dans le dossier d
 ```
@@ -249,8 +286,9 @@ cmake --build build-core -j
 Les tests vérifient la formule de recul, les coups, les K.O., chaque commande clavier (petit/grand saut,
 smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), la barre d'ulti, l'Orbe Clash et
 l'attaque finale,
-le mode entraînement, la remontée de chaque personnage depuis le vide, des dizaines de matchs complets
-entre ordinateurs, l'équilibrage et le déterminisme. Les **45 attaques finales** (une de base et une par
+le mode entraînement, la remontée de chaque personnage depuis le vide (des deux côtés de chaque arène et
+depuis le trou de la Vallée de la Fin), des dizaines de matchs complets entre ordinateurs sur chacune des
+11 arènes, l'équilibrage et le déterminisme. Les **51 attaques finales** (une de base et une par
 arme pour chaque combattant) sont lancées une par une : chacune doit infliger des dégâts, relâcher l'adversaire qu'elle a
 attrapé et l'éjecter à 130 % (les transformations comme la Rage de Spartiate ou le Démon rouge doivent
 s'activer). Un coup porté
@@ -264,11 +302,11 @@ On peut ne lancer qu'une partie des tests : `./build-core/sim_test ults`, `cpu10
 ```
 src/core/   simulation pure (aucune dépendance)
   moves.hpp            données : hitboxes, projectiles, attaques, personnages
-  roster*.cpp          les 15 combattants, leurs attaques et leurs armes
+  roster*.cpp          les 17 combattants, leurs attaques et leurs armes
   roster_kit.hpp       outils communs pour écrire les attaques (saisies, éjections, ciné d'ulti)
-  roster_ultimates.cpp les 45 attaques finales et les transformations
+  roster_ultimates.cpp les 51 attaques finales et les transformations
   weapons.cpp          armes qui tombent du ciel, ramassage, durée
-  stage.cpp            les arènes
+  stage.cpp            les 11 arènes (disposition, zones de K.O.)
   fighter_update.cpp   machine à états des combattants (contrôles)
   fighter_physics.cpp  déplacements, collisions, atterrissages, rebords
   combat.cpp           détection des coups, recul, bouclier, contres, saisies, projectiles
@@ -292,7 +330,10 @@ src/game/   interface raylib
   render_vfx.cpp       rayons et arrière-plans des ultimes
   render_ult.cpp       cinématiques propres à chaque attaque finale, avatars des transformations
   render_fighter.cpp   poses : chaque attaque anime le membre qui porte la hitbox
-  render_world.cpp     décors, plateformes, projectiles, aperçus des arènes
+  render_world.cpp     décors des arènes Zelda, plateformes, projectiles, aperçus et vignettes des arènes
+  render_stages.cpp    les huit arènes des animes (ciel, couches en parallaxe, plateformes, pluie...)
+  paint.cpp            outils de peinture des décors (dégradés, nuages, montagnes, couches précalculées)
+  screen_poses.cpp     planches de développement (poses, pellicules d'animation)
   render_hud.cpp       pourcentages, vies, barre d'ulti, bulles hors-champ, compte à rebours
   fx.cpp               particules, rayons de K.O., tremblements, sons
   audio.cpp            synthèse des sons et de la musique

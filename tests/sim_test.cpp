@@ -420,7 +420,7 @@ static void testWeapons() {
 
 // Every ultimate (bare-handed and with each weapon) hits, lets its victim go, and can KO at high percent.
 static void testAllUltimates() {
-  std::printf("[the 45 ultimates]\n");
+  std::printf("[every ultimate: 3 per fighter]\n");
   const int n = int(roster().size());
   for (int c = 0; c < n; ++c) {
     for (int slot = -1; slot <= 1; ++slot) {
