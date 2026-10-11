@@ -1,5 +1,5 @@
 #pragma once
-// Pixel-art characters: a fighter is drawn into a low-resolution layer (one art pixel = kArtPixel virtual
+// Pixel-art characters: a fighter is drawn into a low-resolution layer (one art pixel = artPixel() virtual
 // pixels), then a shader gives it the look of a hand-made sprite (crisp dark outline, flat colour bands,
 // no anti-aliasing) and it is put back into the frame with nearest-neighbour scaling. The stages, the
 // effects and the menus stay smooth: only the characters are pixel art.
@@ -8,7 +8,9 @@
 #include "game/common.hpp"
 
 namespace pix {
-constexpr int kArtPixel = 2;  // virtual pixels per art pixel (1280x720 -> a 640x360 layer)
+// Virtual pixels per art pixel: 1.5 with the smooth (supersampled) rendering, so that one art pixel is exactly 3x3
+// pixels of the frame (1280x720 -> an 854x480 sprite layer: detailed sprites, still pixel art); 2 otherwise.
+float artPixel();
 
 bool enabled();  // settings: "Personnages en pixel art"
 // The frame's render texture (set by the app before drawing a frame): sprites draw back into it.

@@ -147,22 +147,28 @@ void yuno(CharacterDef& c) {
 }
 
 void ichigo(CharacterDef& c) {
-  // Final Getsuga: long black hair, then Mugetsu swallows the world.
-  const int fg = addLook(c, Form::FinalGetsuga);
-  MoveDef mug = beamUlt("MUGETSU", 104, beamOf(44, 76, {30, -10}, 1100, 240, F::Dark), 20, 6, PoseHint::Overhead,
-                        UltFx::Mugetsu);
-  mug.formIndex = fg;
-  mug.formFrame = 20;
-  setUlt(c, -1, mug);
-
+  // Shikai: Zangetsu grows into a giant blade of reiatsu, then one huge Getsuga Tensho.
   MoveDef gts = cine("GETSUGA TENSHŌ", 96, {}, PoseHint::Overhead, UltFx::GiantGetsuga);
-  gts.projectileFrame = 50;
-  gts.projectile = proj({70, -14}, {15, 0}, 0, 70, 80, 25, 94, 108, F::Reiatsu, PV::GiantGetsuga);
+  gts.projectileFrame = 54;
+  gts.projectile = proj({70, -14}, {15, 0}, 0, 70, 74, 21, 92, 104, F::Reiatsu, PV::GiantGetsuga);
   gts.projectile.piercing = true;
   gts.projectile.ignoreGround = true;
-  gts.projectile.grow = 0.7f;
+  gts.projectile.grow = 0.6f;
   gts.projectile.hit.impact = true;
-  setUlt(c, 0, gts);
+  setUlt(c, -1, gts);
+
+  // Zangetsu: the hollow mask, two Getsuga crossing (Getsuga Jujisho).
+  const int mask = addLook(c, Form::HollowMask);
+  MoveDef cross = cine("GETSUGA JŪJISHŌ", 100, {}, PoseHint::Overhead, UltFx::GetsugaJujisho);
+  cross.formIndex = mask;
+  cross.formFrame = 22;
+  cross.projectileFrame = 58;
+  cross.projectile = proj({70, -14}, {14, 0}, 0, 70, 82, 23, 94, 106, F::Dark, PV::GetsugaCross);
+  cross.projectile.piercing = true;
+  cross.projectile.ignoreGround = true;
+  cross.projectile.grow = 0.5f;
+  cross.projectile.hit.impact = true;
+  setUlt(c, 0, cross);
 
   // Tensa Zangetsu: the hollow takes over, catches the opponent and fires a cero point-blank.
   const int vl = addLook(c, Form::VastoLorde);
@@ -544,6 +550,70 @@ void kakashi(CharacterDef& c) {
   ks.projectile.explode = imp(hb(0, 0, 0, 0, 160, 22, 60, 94, 108, L::None, 0, F::Dark));
   setUlt(c, 1, ks);
 }
+void grimmjow(CharacterDef& c) {
+  // Gran Rey Cero: his blood in the cero, a blast of blue light across the stage.
+  setUlt(c, -1, beamUlt("GRAN REY CERO", 100, beamOf(46, 78, {30, -14}, 1100, 230, F::Claw), 21, 6, PoseHint::Point,
+                        UltFx::GranReyCero));
+
+  // Pantera: "Kishire, Pantera". The release (12 s): long hair, ears, tail, claws; the darts and the claws grow.
+  const int pt = addForm(c, Form::Pantera, 12, F::Claw, 1.3f, 0.8f, false);
+  MoveDef darts = c.moves[DSpecial];
+  darts.projectile.count = 7;
+  darts.projectile.spreadDeg = 8;
+  darts.projectile.radius *= 1.3f;
+  darts.projectile.hit.radius = darts.projectile.radius;
+  darts.projectile.hit.damage *= 1.25f;
+  MoveDef claws = c.weapons[1].moves[0].second;
+  claws.name = "Desgarrón";
+  c.forms[pt].moves = {{DSpecial, darts}, {SSpecial, claws}};
+  setUlt(c, 0, awaken("KISHIRE, PANTERA", pt, UltFx::PanteraRelease, PoseHint::Roar, F::Claw, 230, 14));
+
+  // Claws: Desgarron. He leaps on the nearest opponent, rakes it again and again, then ten claws of light.
+  setUlt(c, 1, ambush("DESGARRÓN", 100, UltFx::DesgarronClaws, PoseHint::Throw, F::Claw, L::ArmFront, 34, {60, -6}, 5, 5, 3.0f,
+                      hb(72, 78, 70, -10, 130, 22, 45, 95, 110, L::ArmFront, 0, F::Claw)));
+}
+
+void starrk(CharacterDef& c) {
+  // Cero Metralleta: released for a moment, a thousand ceros from both pistols, then a great one.
+  const int gun = addLook(c, Form::LosLobos);
+  MoveDef cm = cine("CERO METRALLETA", 104, {}, PoseHint::Cast, UltFx::CeroMetralleta);
+  cm.formIndex = gun;
+  cm.formFrame = 22;
+  cm.projectileFrame = 36;
+  cm.projectileRepeat = 23;
+  cm.projectileEvery = 2;
+  cm.projectile = proj({40, -14}, {19, 0}, 0, 50, 14, 1.4f, 10, 4, F::Wolf, PV::StarrkCero);
+  cm.projectile.jitter = {0, 70};
+  cm.projectile.piercing = true;
+  ProjectileDef big = proj({50, -14}, {16, 0}, 0, 60, 60, 20, 92, 106, F::Wolf, PV::StarrkCero);
+  big.piercing = true;
+  big.ignoreGround = true;
+  big.hit.impact = true;
+  cm.shots = {{86, big}};
+  setUlt(c, -1, cm);
+
+  // The pack: the wolves of Los Lobos hunt every opponent, bite and explode, then the whole pack at once.
+  MoveDef ll = cine("LOS LOBOS", 104, {}, PoseHint::Point, UltFx::LosLobos);
+  ll.projectileFrame = 40;
+  ll.projectileRepeat = 3;
+  ll.projectileEvery = 10;
+  ll.projectile = strike(42, 14, 10, 5, 26, 18, F::Wolf, PV::CeroWolf);
+  ProjectileDef pack = strike(84, 16, 12, 20, 92, 104, F::Wolf, PV::CeroWolf);
+  pack.hit.impact = true;
+  ll.shots = {{86, pack}};
+  setUlt(c, 0, ll);
+
+  // Lilynette: "Kick 'em, Los Lobos". The release (12 s): fur coat, two pistols; the bursts and the pack grow.
+  const int lob = addForm(c, Form::LosLobos, 12, F::Wolf, 1.3f, 0.8f, false);
+  MoveDef rapid = c.moves[DSpecial];
+  rapid.name = "Cero Metralleta";
+  rapid.projectileRepeat = 11;
+  rapid.projectileEvery = 2;
+  rapid.projectile.hit.damage *= 1.2f;
+  MoveDef wolves = c.weapons[0].moves[0].second;
+  c.forms[lob].moves = {{DSpecial, rapid}, {SSpecial, wolves}};
+  setUlt(c, 1, awaken("RESURRECCIÓN : LOS LOBOS", lob, UltFx::StarrkRelease, PoseHint::Raise, F::Wolf, 220, 14));
+}
 }  // namespace
 
 void addUltimates(CharacterDef& c) {
@@ -563,6 +633,8 @@ void addUltimates(CharacterDef& c) {
     case Hero::Naruto: naruto(c); break;
     case Hero::Sasuke: sasuke(c); break;
     case Hero::Kakashi: kakashi(c); break;
+    case Hero::Grimmjow: grimmjow(c); break;
+    case Hero::Starrk: starrk(c); break;
     case Hero::Count: break;
   }
 }

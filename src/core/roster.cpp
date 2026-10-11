@@ -1,4 +1,4 @@
-// The fifteen fighters of Super Clash Bros.: fan-made homages to Black Clover, Bleach, Naruto, Jujutsu
+// The seventeen fighters of Super Clash Bros.: fan-made homages to Black Clover, Bleach, Naruto, Jujutsu
 // Kaisen, Zelda: Tears of the Kingdom, God of War and Monster Hunter. Each one has its normals, four
 // specials, three ultimates (bare-handed and with each of its two weapons) and two weapons that drop
 // during a match.
@@ -166,20 +166,20 @@ CharacterDef makeIchigo() {
   c.baseWeapon = WeaponVisual::Zangetsu;
   c.palettes = {pal({32, 32, 38}, {236, 236, 240}, {200, 50, 40}, {242, 206, 170}, {240, 128, 40}, {120, 80, 50}),
                 pal({240, 240, 244}, {32, 32, 38}, {200, 30, 30}, {232, 228, 226}, {240, 128, 40}, {230, 200, 40})};
-  stats(c, 46, 104, 102, 4.2f, 9.2f, 5.2f, 0.64f, 10.2f, 15.0f, 15.5f, 10.2f, 14.2f, 4);
+  stats(c, 46, 104, 100, 4.1f, 8.9f, 5.1f, 0.64f, 10.2f, 15.0f, 15.4f, 10.2f, 14.0f, 4);
   c.weaponLength = 88;
-  const float S = 1.08f, P = 0.98f;
+  const float S = 1.08f, P = 0.86f;  // v6: toned down, he was far too strong
   buildSwordNormals(c, S, P, F::Reiatsu);
   auto& m = c.moves;
 
-  m[NSpecial] = mv("Getsuga Tenshō", 50, {});
-  m[NSpecial].projectileFrame = 18;
-  m[NSpecial].projectile = proj({52, -10}, {13, 0}, 0, 40, 30, 11, 45, 80, F::Reiatsu, PV::Getsuga);
+  m[NSpecial] = mv("Getsuga Tenshō", 58, {});  // long end lag: no spamming it
+  m[NSpecial].projectileFrame = 20;
+  m[NSpecial].projectile = proj({52, -10}, {12, 0}, 0, 34, 28, 9.5f, 40, 72, F::Reiatsu, PV::Getsuga);
   m[NSpecial].projectile.piercing = true;
-  m[NSpecial].projectile.grow = 0.5f;
+  m[NSpecial].projectile.grow = 0.3f;
   m[NSpecial].pose = PoseHint::Overhead;
 
-  m[SSpecial] = mv("Shunpo", 40, {hb(12, 16, 56, -6, 30, 10, 40, 50, 78, L::Weapon, 0, F::Slash)});
+  m[SSpecial] = mv("Shunpo", 44, {hb(12, 16, 56, -6, 30, 8.5f, 40, 48, 74, L::Weapon, 0, F::Slash)});
   m[SSpecial].intangibleStart = 4;
   m[SSpecial].intangibleEnd = 12;
   m[SSpecial].vel = {ve(4, VelMode::SetX, 20, 0), ve(4, VelMode::SetY, 0, 0, 0, true), ve(12, VelMode::Scale, 0.15f, 1.0f)};
@@ -195,40 +195,40 @@ CharacterDef makeIchigo() {
   m[USpecial].pose = PoseHint::Uppercut;
 
   BeamDef cero;
-  cero.start = 22;
-  cero.end = 34;
+  cero.start = 26;
+  cero.end = 38;
   cero.from = {36, -14};
-  cero.length = 250;
-  cero.width = 44;
+  cero.length = 230;
+  cero.width = 40;
   cero.fx = F::Blood;
-  m[DSpecial] = mv("Cero", 54, beamHits(cero, 7, 30, 50, 80, 3));
+  m[DSpecial] = mv("Cero", 60, beamHits(cero, 6, 30, 46, 74, 3));
   m[DSpecial].beam = cero;
   m[DSpecial].gravityMul = 0.3f;
   m[DSpecial].pose = PoseHint::Cast;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  c.weapons[0] = weapon("Zangetsu (Shikai)", "Getsuga Tenshō géant", WeaponVisual::Zangetsu, F::Reiatsu, 1.25f, 1.1f,
-                        1.15f);
+  c.weapons[0] = weapon("Zangetsu (Shikai)", "Getsuga Tenshō géant", WeaponVisual::Zangetsu, F::Reiatsu, 1.15f, 1.06f,
+                        1.12f);
   MoveDef huge = m[NSpecial];
   huge.name = "Getsuga Tenshō !";
-  huge.projectile.radius *= 1.45f;
+  huge.projectile.radius *= 1.4f;
   huge.projectile.hit.radius = huge.projectile.radius;
-  huge.projectile.hit.damage *= 1.35f;
-  huge.projectile.grow = 0.9f;
+  huge.projectile.hit.damage *= 1.25f;
+  huge.projectile.grow = 0.6f;
   huge.projectile.hit.impact = true;
   c.weapons[0].moves = {{NSpecial, huge}};
   c.weapons[1] = weapon("Tensa Zangetsu (Bankai)", "Vitesse du Bankai : Getsuga noir", WeaponVisual::TensaZangetsu,
-                        F::Dark, 1.15f, 1.1f, 1.05f);
+                        F::Dark, 1.1f, 1.05f, 1.05f);
   MoveDef black = m[NSpecial];
   black.name = "Getsuga noir";
-  black.projectile.velocity.x = 17;
+  black.projectile.velocity.x = 16;
   black.projectile.hit.fx = F::Dark;
-  black.projectile.hit.damage *= 1.2f;
-  black.projectileFrame = 12;
-  black.duration = 38;
+  black.projectile.hit.damage *= 1.1f;
+  black.projectileFrame = 14;
+  black.duration = 46;
   MoveDef flash = m[SSpecial];
   flash.name = "Shunpo du Bankai";
-  flash.hitboxes[0].damage *= 1.3f;
+  flash.hitboxes[0].damage *= 1.2f;
   flash.hitboxes[0].fx = F::Dark;
   flash.hitboxes[0].impact = true;
   c.weapons[1].moves = {{NSpecial, black}, {SSpecial, flash}};
@@ -383,8 +383,8 @@ CharacterDef makeGanondorf() {
   c.series = "Zelda: Tears of the Kingdom";
   c.hero = Hero::Ganondorf;
   c.style = BodyStyle::Brute;
-  c.palettes = {pal({46, 42, 50}, {120, 30, 36}, {216, 176, 80}, {124, 104, 96}, {196, 58, 40}, {236, 200, 80}),
-                pal({72, 32, 42}, {30, 24, 30}, {200, 60, 60}, {112, 98, 102}, {150, 40, 40}, {255, 90, 60})};
+  c.palettes = {pal({46, 42, 50}, {120, 30, 36}, {216, 176, 80}, {150, 112, 92}, {196, 58, 40}, {236, 200, 80}),
+                pal({72, 32, 42}, {30, 24, 30}, {200, 60, 60}, {138, 108, 100}, {150, 40, 40}, {255, 90, 60})};
   stats(c, 64, 128, 132, 3.2f, 7.2f, 4.5f, 0.68f, 11.2f, 15.8f, 15.2f, 10.0f, 13.8f, 6);
   c.groundAccel = 0.95f;
   c.friction = 0.7f;
@@ -793,6 +793,159 @@ CharacterDef makeUlquiorra() {
   return c;
 }
 
+// Grimmjow: a brawler with claws of reiatsu; his katana Pantera stays at his side until he picks it up.
+CharacterDef makeGrimmjow() {
+  CharacterDef c;
+  c.name = "GRIMMJOW";
+  c.title = "Le 6e Espada";
+  c.series = "Bleach";
+  c.hero = Hero::Grimmjow;
+  c.style = BodyStyle::Brawler;
+  c.baseWeapon = WeaponVisual::Pantera;
+  c.palettes = {pal({240, 238, 232}, {34, 34, 40}, {60, 196, 220}, {236, 200, 172}, {104, 196, 232}, {50, 170, 230}),
+                pal({40, 40, 48}, {206, 204, 212}, {230, 70, 70}, {236, 200, 172}, {104, 196, 232}, {50, 170, 230})};
+  stats(c, 46, 106, 102, 4.5f, 10.0f, 5.6f, 0.66f, 10.6f, 15.8f, 15.8f, 10.4f, 14.6f, 3);
+  c.groundAccel = 1.5f;
+  c.weaponLength = 72;
+  const float S = 1.04f, P = 1.08f;
+  buildBrawlerNormals(c, S, P, F::Claw);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Cero", 44, {});
+  m[NSpecial].projectileFrame = 16;
+  m[NSpecial].projectile = proj({40, -12}, {12, 0}, 0, 36, 18, 9, 40, 70, F::Blood, PV::Cero);
+  m[NSpecial].pose = PoseHint::Point;
+
+  m[SSpecial] = mv("Desgarrón", 46, {});
+  m[SSpecial].projectileFrame = 12;
+  m[SSpecial].projectile = proj({40, -8}, {9, 0}, 0, 22, 30, 2.6f, 14, 10, F::Claw, PV::Desgarron);
+  m[SSpecial].projectile.piercing = true;
+  m[SSpecial].projectile.rehit = 5;
+  m[SSpecial].projectile.explodeRadius = 52;
+  m[SSpecial].projectile.explode = hb(0, 0, 0, 0, 52, 7, 45, 50, 80, L::None, 0, F::Claw);
+  m[SSpecial].pose = PoseHint::Throw;
+
+  m[USpecial] = mv("Sonído griffu", 44, {hb(4, 7, 30, -30, 30, 9, 80, 50, 72, L::ArmFront, 0, F::Claw),
+                                         hb(7, 14, 18, -62, 26, 6, 85, 40, 60, L::ArmFront, 1, F::Claw)});
+  m[USpecial].vel = {ve(4, VelMode::Set, 1.5f, -17.4f, 3.2f)};
+  m[USpecial].gravityMul = 0.5f;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::Uppercut;
+
+  m[DSpecial] = mv("Garra de la Pantera", 48, {});
+  m[DSpecial].projectileFrame = 18;
+  m[DSpecial].projectile = proj({34, -10}, {15, 0}, 0, 26, 9, 3.4f, 16, 34, F::Claw, PV::PanteraDart);
+  m[DSpecial].projectile.count = 5;
+  m[DSpecial].projectile.spreadDeg = 9;
+  m[DSpecial].pose = PoseHint::Cast;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  c.weapons[0] = weapon("Pantera (zanpakutō)", "Il dégaine : l'ultime libère la panthère", WeaponVisual::Pantera, F::Claw,
+                        1.2f, 1.08f, 1.15f);
+  MoveDef rush = mv("Charge de Pantera", 46, {imp(hb(10, 22, 44, -6, 30, 11, 40, 55, 82, L::Weapon, 0, F::Claw))});
+  rush.vel = {ve(10, VelMode::SetX, 14, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(24, VelMode::Scale, 0.2f, 1.0f)};
+  rush.gravityMul = 0.3f;
+  rush.frictionMul = 0.1f;
+  rush.pose = PoseHint::Thrust;
+  sc(rush, S, P);
+  c.weapons[0].moves = {{SSpecial, rush}};
+  c.weapons[1] = weapon("Griffes de Pantera", "Desgarrón : cinq griffes géantes", WeaponVisual::PanteraClaws, F::Claw, 1.25f,
+                        1.12f, 1.2f, 15);
+  MoveDef big = m[SSpecial];
+  big.name = "Desgarrón géant";
+  big.projectile.radius *= 1.6f;
+  big.projectile.hit.radius = big.projectile.radius;
+  big.projectile.hit.damage *= 1.3f;
+  big.projectile.lifetime = 30;
+  big.projectile.explodeRadius *= 1.4f;
+  big.projectile.explode.radius = big.projectile.explodeRadius;
+  big.projectile.explode.damage *= 1.3f;
+  big.projectile.explode.impact = true;
+  c.weapons[1].moves = {{SSpecial, big}};
+  return c;
+}
+
+// Starrk: the lazy Primera, ceros and wolves of cero; Lilynette lets him release Los Lobos.
+CharacterDef makeStarrk() {
+  CharacterDef c;
+  c.name = "STARRK";
+  c.title = "Le 1er Espada";
+  c.series = "Bleach";
+  c.hero = Hero::Starrk;
+  c.style = BodyStyle::Ninja;
+  c.palettes = {pal({238, 236, 230}, {36, 36, 42}, {120, 180, 255}, {232, 198, 170}, {86, 62, 48}, {120, 140, 170}),
+                pal({70, 72, 82}, {230, 228, 220}, {170, 210, 255}, {232, 198, 170}, {86, 62, 48}, {120, 140, 170})};
+  stats(c, 46, 112, 98, 4.0f, 8.8f, 5.3f, 0.56f, 9.6f, 14.4f, 15.2f, 10.0f, 13.8f, 4);
+  c.airJumps = 2;
+  c.airAccel = 0.5f;
+  const float S = 1.06f, P = 1.1f;
+  buildBrawlerNormals(c, S, P, F::Wolf);
+  auto& m = c.moves;
+
+  BeamDef cero;
+  cero.start = 20;
+  cero.end = 32;
+  cero.from = {34, -14};
+  cero.length = 280;
+  cero.width = 44;
+  cero.fx = F::Wolf;
+  m[NSpecial] = mv("Cero", 52, beamHits(cero, 9, 28, 45, 82, 2));
+  m[NSpecial].beam = cero;
+  m[NSpecial].gravityMul = 0.3f;
+  m[NSpecial].pose = PoseHint::Point;
+
+  m[SSpecial] = mv("Los Lobos", 46, {});
+  m[SSpecial].projectileFrame = 14;
+  m[SSpecial].projectileRepeat = 1;
+  m[SSpecial].projectileEvery = 9;
+  m[SSpecial].projectile = proj({30, 30}, {8.5f, 0}, 0, 60, 16, 3, 10, 10, F::Wolf, PV::CeroWolf);
+  m[SSpecial].projectile.explodeRadius = 48;
+  m[SSpecial].projectile.explode = hb(0, 0, 0, 0, 48, 7, 45, 45, 72, L::None, 0, F::Wolf);
+  m[SSpecial].pose = PoseHint::Point;
+
+  m[USpecial] = mv("Sonído", 38, {hb(20, 24, 0, -6, 38, 7, 80, 55, 70, L::Body, 0, F::Wolf)});
+  m[USpecial].teleportFrame = 18;
+  m[USpecial].teleportDist = 270;
+  m[USpecial].intangibleStart = 6;
+  m[USpecial].intangibleEnd = 20;
+  m[USpecial].vel = {ve(2, VelMode::Set, 0, 0)};
+  m[USpecial].gravityMul = 0.0f;
+  m[USpecial].allowDrift = false;
+  m[USpecial].helplessAfter = true;
+
+  m[DSpecial] = mv("Rafale de ceros", 52, {});
+  m[DSpecial].projectileFrame = 14;
+  m[DSpecial].projectileRepeat = 6;
+  m[DSpecial].projectileEvery = 3;
+  m[DSpecial].projectile = proj({36, -12}, {17, 0}, 0, 24, 9, 1.7f, 8, 14, F::Wolf, PV::StarrkCero);
+  m[DSpecial].projectile.jitter = {0, 14};
+  m[DSpecial].gravityMul = 0.4f;
+  m[DSpecial].pose = PoseHint::Cast;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  c.weapons[0] = weapon("Los Lobos (la meute)", "Trois loups de cero à la fois", WeaponVisual::LobosPack, F::Wolf, 1.2f, 1.08f,
+                        1.0f, 15);
+  MoveDef pack = m[SSpecial];
+  pack.name = "La meute";
+  pack.projectileRepeat = 2;
+  pack.projectileEvery = 7;
+  pack.projectile.explodeRadius *= 1.3f;
+  pack.projectile.explode.radius = pack.projectile.explodeRadius;
+  pack.projectile.explode.damage *= 1.2f;
+  c.weapons[0].moves = {{SSpecial, pack}};
+  c.weapons[1] = weapon("Lilynette", "L'autre moitié de son âme : l'ultime le libère", WeaponVisual::Lilynette, F::Wolf, 1.25f,
+                        1.1f, 1.0f, 15);
+  MoveDef twin = m[NSpecial];
+  twin.name = "Cero de Lilynette";
+  twin.beam.width *= 1.4f;
+  for (auto& h : twin.hitboxes) {
+    h.radius *= 1.3f;
+    h.damage *= 1.2f;
+  }
+  c.weapons[1].moves = {{NSpecial, twin}};
+  return c;
+}
+
 // ---------------------------------------------------------------------------------------------
 // Naruto
 // ---------------------------------------------------------------------------------------------
@@ -1083,9 +1236,10 @@ CharacterDef makeHunter() {
 
 const std::vector<CharacterDef>& roster() {
   static const std::vector<CharacterDef> r = [] {
-    std::vector<CharacterDef> v = {makeAsta(),   makeYuno(),      makeIchigo(),  makeByakuya(), makeKenpachi(),
-                                   makeUlquiorra(), makeNaruto(), makeSasuke(),  makeKakashi(), makeGojo(),
-                                   makeSukuna(), makeLink(),      makeGanondorf(), makeKratos(), makeHunter()};
+    std::vector<CharacterDef> v = {makeAsta(),      makeYuno(),     makeIchigo(),   makeByakuya(),   makeKenpachi(),
+                                   makeUlquiorra(), makeGrimmjow(), makeStarrk(),   makeNaruto(),    makeSasuke(),
+                                   makeKakashi(),   makeGojo(),     makeSukuna(),   makeLink(),      makeGanondorf(),
+                                   makeKratos(),    makeHunter()};
     for (auto& c : v) addUltimates(c);  // roster_ultimates.cpp
     return v;
   }();

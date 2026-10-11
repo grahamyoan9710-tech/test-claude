@@ -670,6 +670,8 @@ Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
     case Hero::Kratos: stance({0.16f, 0.02f}, {0.03f, 0.05f}, 0.13f, -0.12f, 0.06f, 0.1f); break;
     case Hero::Gojo: stance({0.04f, 0.09f}, {-0.05f, 0.09f}, 0.07f, -0.07f, -0.1f, 0.0f); break;
     case Hero::Sukuna: stance({0.1f, 0.08f}, {-0.06f, 0.08f}, 0.1f, -0.09f, 0.04f, 0.04f); break;
+    case Hero::Grimmjow: stance({0.05f, 0.11f}, {-0.03f, 0.11f}, 0.12f, -0.11f, 0.1f, 0.06f); break;  // hands in his pockets
+    case Hero::Starrk: stance({0.07f, 0.14f}, {-0.03f, 0.14f}, 0.07f, -0.06f, -0.08f, 0.0f); break;  // lazy, leaning back
     default: break;
   }
   const WeaponVisual v = carriedWeapon(d, held);

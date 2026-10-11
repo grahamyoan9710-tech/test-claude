@@ -23,10 +23,16 @@ Rectangle fieldRect(int col, int row, bool training) {
     default: return {x + 20, kCardY + 316, kCardW - 48, 36};
   }
 }
+// The roster: one strip of tall tiles, or two rows of wide tiles when there are many fighters.
 Rectangle rosterRect(int i) {
   const int n = std::max(1, int(roster().size()));
-  const float pitch = std::min(188.0f, 1150.0f / n), w = pitch - 8.0f;
-  return {(kScreenW - pitch * n) * 0.5f + 8.0f + i * pitch, 112, w, 132};
+  if (n <= 12) {
+    const float pitch = std::min(188.0f, 1150.0f / n), w = pitch - 8.0f;
+    return {(kScreenW - pitch * n) * 0.5f + 8.0f + i * pitch, 112, w, 132};
+  }
+  const int perRow = (n + 1) / 2, row = i / perRow, col = i % perRow, inRow = row == 0 ? perRow : n - perRow;
+  const float pitch = std::min(150.0f, 1200.0f / perRow), w = pitch - 8.0f;
+  return {(kScreenW - pitch * inRow) * 0.5f + 4.0f + col * pitch, 104.0f + row * 76.0f, w, 70.0f};
 }
 // Tile tint per universe (the fighters of one series sit side by side).
 Color seriesColor(const std::string& series) {
@@ -221,17 +227,31 @@ void App::drawCss() {
     Rectangle rr = rosterRect(i);
     bool hov = ui::hovered(rr);
     Color pc = seriesColor(r[i].series);
+    const bool wide = rr.width > rr.height;  // two rows: the portrait on the left, the name beside it
     ui::slanted({rr.x + 5, rr.y + 6, rr.width, rr.height}, 14, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
     ui::slanted(rr, 14, withAlpha(mixColor(pc, ui::kInk, hov ? 0.4f : 0.55f), 0.95f), withAlpha(mixColor(pc, ui::kInk, 0.86f), 0.95f));
-    ui::rune({rr.x + rr.width * 0.5f + 4, rr.y + 54}, 50, i, t * 0.2f, withAlpha(ui::kCream, 0.07f), 3.0f);
-    ui::glow({rr.x + rr.width * 0.5f, rr.y + 60}, 60, withAlpha({255, 236, 196, 255}, 0.2f), 6);
-    drawPortrait(r[i], 0, {rr.x + rr.width * 0.5f, rr.y + 54}, std::min(92.0f, rr.width * 0.78f), t + i);
-    ui::slanted({rr.x, rr.y + rr.height - 30, rr.width - 4, 30}, 6, withAlpha(ui::kInk, 0.88f), withAlpha(ui::kInk, 0.88f));
-    DrawLineEx({rr.x + 6, rr.y + rr.height - 30}, {rr.x + rr.width - 6, rr.y + rr.height - 30}, 1.0f, withAlpha(ui::kGold, 0.4f));
-    float ns = 24.0f;  // long names shrink to fit the tile
-    while (ns > 14.0f && textWidth(r[i].name.c_str(), ns, FontKind::Title) > rr.width - 16.0f) ns -= 1.0f;
-    drawTextCentered(r[i].name.c_str(), rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 15 - ns * 0.58f, ns, ui::kCream,
-                     false, FontKind::Title);
+    if (wide) {
+      const Vec2 pc0{rr.x + 38.0f, rr.y + rr.height * 0.5f};
+      ui::glow({pc0.x, pc0.y}, 40, withAlpha({255, 236, 196, 255}, 0.22f), 6);
+      drawPortrait(r[i], 0, pc0, rr.height - 8.0f, t + i);
+      const float tx = rr.x + 72.0f, tw = rr.width - 80.0f;
+      float ns = 22.0f;
+      while (ns > 13.0f && textWidth(r[i].name.c_str(), ns, FontKind::Title) > tw) ns -= 1.0f;
+      drawText(r[i].name.c_str(), tx, rr.y + 12, ns, ui::kCream, FontKind::Title);
+      std::string series = r[i].series.rfind("Zelda", 0) == 0 ? "Zelda" : r[i].series;
+      if (textWidth(series.c_str(), 13) > tw) series = series == "Jujutsu Kaisen" ? "JJK" : series.substr(0, 9) + ".";
+      drawText(series.c_str(), tx, rr.y + 40, 13, withAlpha(ui::kCream, 0.6f));
+    } else {
+      ui::rune({rr.x + rr.width * 0.5f + 4, rr.y + 54}, 50, i, t * 0.2f, withAlpha(ui::kCream, 0.07f), 3.0f);
+      ui::glow({rr.x + rr.width * 0.5f, rr.y + 60}, 60, withAlpha({255, 236, 196, 255}, 0.2f), 6);
+      drawPortrait(r[i], 0, {rr.x + rr.width * 0.5f, rr.y + 54}, std::min(92.0f, rr.width * 0.78f), t + i);
+      ui::slanted({rr.x, rr.y + rr.height - 30, rr.width - 4, 30}, 6, withAlpha(ui::kInk, 0.88f), withAlpha(ui::kInk, 0.88f));
+      DrawLineEx({rr.x + 6, rr.y + rr.height - 30}, {rr.x + rr.width - 6, rr.y + rr.height - 30}, 1.0f, withAlpha(ui::kGold, 0.4f));
+      float ns = 24.0f;  // long names shrink to fit the tile
+      while (ns > 14.0f && textWidth(r[i].name.c_str(), ns, FontKind::Title) > rr.width - 16.0f) ns -= 1.0f;
+      drawTextCentered(r[i].name.c_str(), rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 15 - ns * 0.58f, ns, ui::kCream,
+                       false, FontKind::Title);
+    }
     int tags = 0;
     bool chosen = false;
     for (int s = 0; s < cardCount(training_); ++s) {
@@ -241,7 +261,8 @@ void App::drawCss() {
       bool cpu = training_ ? s == 1 : sl.type == 2;
       Color tc = cpu ? cpuColor() : portColor(s);
       chosen = true;
-      Rectangle tag{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22};
+      Rectangle tag = wide ? Rectangle{rr.x + 4 + tags * 40.0f, rr.y + rr.height - 24, 38, 22}
+                           : Rectangle{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22};
       DrawRectangleRounded(ui::grow(tag, 1.5f), 0.5f, 6, ui::kInk);
       DrawRectangleRounded(tag, 0.5f, 6, shade(tc, 0.85f));
       drawTextCentered(cpu ? "CPU" : TextFormat("J%d", s + 1), tag.x + tag.width * 0.5f, tag.y + 3, 15, WHITE, false);

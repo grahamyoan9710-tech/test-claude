@@ -21,6 +21,7 @@ struct Options {
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
+  bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
 };
 

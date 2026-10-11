@@ -50,7 +50,7 @@ void App::drawPoses() {
         f.vel = {0.0f, -2.0f};
       }
       const Pose p = computePose(f, m, time_);
-      const float scale = std::min(1.0f, 100.0f / d.height);
+      const float scale = std::min(1.12f, 112.0f / d.height);  // about the size of a close fight
       drawCharacterSprite(d, 0, p, {x0 + (c + 0.42f) * colW, base - (c == 5 ? 14.0f : 0.0f)}, 1, scale, 1.0f, WHITE,
                           0.0f, time_);
     }

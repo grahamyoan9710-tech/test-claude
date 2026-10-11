@@ -230,6 +230,52 @@ struct Painter {
       triangle(in(a), in(b), in(c), fill(litTone(k)));
     }
   }
+  // Tapered limb from a (width wa) to b (width wb), wm at fraction u of the way, the bulge leaning to the +n side
+  // of a->b by `bias` (-1..1): thighs, calves, biceps, flared trousers. Round joints; shaded like seg() (a cylinder
+  // lit by the key light), so a body reads as volumes, not sticks.
+  void taper(Vector2 a, Vector2 b, float wa, float wm, float wb, float u, float bias, Color c, bool capB = true) const {
+    const Vec2 A = W(a), E = W(b);
+    Vec2 d = E - A;
+    const float len = d.len();
+    if (len < 0.5f) {
+      circle(a, std::max(wa, wb) * 0.5f, c);
+      return;
+    }
+    d = d * (1.0f / len);
+    const Vec2 n{-d.y, d.x};
+    const float lin = lerpf(wa, wb, u) * 0.5f;
+    const float hp = std::max(lin, wm * 0.5f * (1.0f + 0.45f * bias)), hn = std::max(lin, wm * 0.5f * (1.0f - 0.45f * bias));
+    const Vec2 M = A + d * (len * u);
+    auto shape = [&](float k, float grow, Vec2 off, Color col) {
+      Vector2 q[6] = {V(A + off + n * (wa * 0.5f * k + grow)), V(M + off + n * (hp * k + grow)),
+                      V(E + off + n * (wb * 0.5f * k + grow)), V(E + off - n * (wb * 0.5f * k + grow)),
+                      V(M + off - n * (hn * k + grow)), V(A + off - n * (wa * 0.5f * k + grow))};
+      fanFill(q, 6, col);
+      disc(V(A + off), wa * 0.5f * k + grow, col);
+      if (capB) disc(V(E + off), wb * 0.5f * k + grow, col);
+    };
+    if (pass == kLine) {
+      if (!ghost) shape(1.0f, ow, {}, line());
+      return;
+    }
+    if (!shaded()) {
+      if (pass == kLit) shape(1.0f, 0.0f, {}, fill(c));
+      return;
+    }
+    Vec2 o = n * dot(n, kLight);
+    o = o * (1.0f / std::max(o.len(), 0.5f));
+    const float th = std::max(wa, std::max(wm, wb));
+    const bool rim = th > 12.0f, soft = th > 10.0f;
+    if (pass == kRim) {
+      if (rim) shape(1.0f, 0.0f, {}, fill(rimTone(c)));
+    } else if (pass == kShadow) {
+      if (rim) shape(0.86f, 0.0f, o * (th * 0.06f), fill(shadowTone(c)));
+      else shape(1.0f, 0.0f, {}, fill(shadowTone(c)));
+    } else {
+      if (soft) shape(0.72f, 0.0f, o * (th * 0.12f), fill(midTone(c)));
+      shape(0.58f, 0.0f, o * (th * 0.2f), fill(litTone(c)));
+    }
+  }
   // Decoration over an already drawn group: outline with the group, all fill layers at once.
   template <class F>
   void deco(F fn) {
@@ -312,22 +358,83 @@ Build buildFor(Hero h) {
   switch (h) {
     //                    head   torso  hipsY  shX    hipX   ua     fa     thigh  shin   chest  waist  arm    fore   leg    shinT  hand   foot
     case Hero::Asta:      return {0.158f, 0.25f, 0.12f, 0.045f, 0.04f, 0.15f, 0.15f, 0.195f, 0.195f, 0.25f, 0.20f, 0.085f, 0.078f, 0.088f, 0.08f, 0.058f, 0.062f};
-    case Hero::Yuno:      return {0.138f, 0.27f, 0.10f, 0.035f, 0.033f, 0.158f, 0.158f, 0.205f, 0.205f, 0.18f, 0.15f, 0.06f, 0.055f, 0.068f, 0.062f, 0.045f, 0.052f};
-    case Hero::Ichigo:    return {0.132f, 0.27f, 0.10f, 0.04f, 0.036f, 0.158f, 0.158f, 0.205f, 0.205f, 0.21f, 0.17f, 0.074f, 0.066f, 0.105f, 0.1f, 0.046f, 0.05f};
-    case Hero::Byakuya:   return {0.126f, 0.275f, 0.09f, 0.038f, 0.034f, 0.16f, 0.16f, 0.21f, 0.21f, 0.19f, 0.15f, 0.068f, 0.062f, 0.1f, 0.096f, 0.043f, 0.048f};
-    case Hero::Link:      return {0.15f, 0.26f, 0.11f, 0.038f, 0.035f, 0.152f, 0.152f, 0.2f, 0.2f, 0.2f, 0.16f, 0.066f, 0.062f, 0.075f, 0.07f, 0.048f, 0.056f};
+    case Hero::Yuno:      return {0.138f, 0.27f, 0.10f, 0.035f, 0.033f, 0.158f, 0.158f, 0.205f, 0.205f, 0.2f, 0.16f, 0.07f, 0.064f, 0.082f, 0.074f, 0.045f, 0.052f};
+    case Hero::Ichigo:    return {0.132f, 0.27f, 0.10f, 0.04f, 0.036f, 0.158f, 0.158f, 0.205f, 0.205f, 0.22f, 0.17f, 0.08f, 0.072f, 0.105f, 0.1f, 0.046f, 0.05f};
+    case Hero::Byakuya:   return {0.126f, 0.275f, 0.09f, 0.038f, 0.034f, 0.16f, 0.16f, 0.21f, 0.21f, 0.2f, 0.155f, 0.074f, 0.068f, 0.1f, 0.096f, 0.043f, 0.048f};
+    case Hero::Link:      return {0.15f, 0.26f, 0.11f, 0.038f, 0.035f, 0.152f, 0.152f, 0.2f, 0.2f, 0.21f, 0.165f, 0.074f, 0.068f, 0.086f, 0.078f, 0.048f, 0.056f};
     case Hero::Ganondorf: return {0.112f, 0.30f, 0.09f, 0.06f, 0.045f, 0.16f, 0.16f, 0.21f, 0.21f, 0.33f, 0.25f, 0.105f, 0.098f, 0.11f, 0.1f, 0.062f, 0.066f};
     case Hero::Kratos:    return {0.12f, 0.29f, 0.10f, 0.055f, 0.042f, 0.158f, 0.158f, 0.205f, 0.205f, 0.30f, 0.22f, 0.1f, 0.092f, 0.1f, 0.086f, 0.06f, 0.06f};
-    case Hero::Gojo:      return {0.112f, 0.255f, 0.04f, 0.034f, 0.03f, 0.165f, 0.165f, 0.235f, 0.235f, 0.165f, 0.13f, 0.056f, 0.052f, 0.064f, 0.058f, 0.042f, 0.05f};
-    case Hero::Sukuna:    return {0.135f, 0.27f, 0.10f, 0.04f, 0.036f, 0.158f, 0.158f, 0.205f, 0.205f, 0.21f, 0.17f, 0.076f, 0.07f, 0.082f, 0.076f, 0.048f, 0.054f};
+    case Hero::Gojo:      return {0.112f, 0.255f, 0.04f, 0.034f, 0.03f, 0.165f, 0.165f, 0.235f, 0.235f, 0.19f, 0.15f, 0.066f, 0.06f, 0.078f, 0.07f, 0.042f, 0.05f};
+    case Hero::Sukuna:    return {0.135f, 0.27f, 0.10f, 0.04f, 0.036f, 0.158f, 0.158f, 0.205f, 0.205f, 0.22f, 0.17f, 0.082f, 0.074f, 0.09f, 0.082f, 0.048f, 0.054f};
     case Hero::Kenpachi:  return {0.108f, 0.30f, 0.09f, 0.058f, 0.045f, 0.16f, 0.16f, 0.21f, 0.21f, 0.31f, 0.24f, 0.1f, 0.092f, 0.11f, 0.1f, 0.058f, 0.062f};
-    case Hero::Ulquiorra: return {0.128f, 0.27f, 0.09f, 0.036f, 0.032f, 0.16f, 0.16f, 0.21f, 0.21f, 0.17f, 0.14f, 0.06f, 0.055f, 0.075f, 0.07f, 0.042f, 0.048f};
+    case Hero::Ulquiorra: return {0.128f, 0.27f, 0.09f, 0.036f, 0.032f, 0.16f, 0.16f, 0.21f, 0.21f, 0.19f, 0.155f, 0.068f, 0.062f, 0.086f, 0.08f, 0.042f, 0.048f};
     case Hero::Hunter:    return {0.13f, 0.27f, 0.11f, 0.05f, 0.04f, 0.155f, 0.155f, 0.2f, 0.2f, 0.26f, 0.2f, 0.09f, 0.085f, 0.095f, 0.09f, 0.056f, 0.064f};
-    case Hero::Naruto:    return {0.16f, 0.25f, 0.12f, 0.04f, 0.036f, 0.15f, 0.15f, 0.195f, 0.195f, 0.2f, 0.17f, 0.07f, 0.066f, 0.08f, 0.074f, 0.05f, 0.056f};
-    case Hero::Sasuke:    return {0.14f, 0.27f, 0.10f, 0.038f, 0.034f, 0.158f, 0.158f, 0.205f, 0.205f, 0.19f, 0.15f, 0.064f, 0.058f, 0.085f, 0.08f, 0.045f, 0.05f};
-    case Hero::Kakashi:   return {0.13f, 0.27f, 0.10f, 0.04f, 0.035f, 0.16f, 0.16f, 0.21f, 0.21f, 0.21f, 0.17f, 0.068f, 0.062f, 0.078f, 0.072f, 0.047f, 0.052f};
+    case Hero::Naruto:    return {0.16f, 0.25f, 0.12f, 0.04f, 0.036f, 0.15f, 0.15f, 0.195f, 0.195f, 0.21f, 0.17f, 0.076f, 0.07f, 0.088f, 0.08f, 0.05f, 0.056f};
+    case Hero::Sasuke:    return {0.14f, 0.27f, 0.10f, 0.038f, 0.034f, 0.158f, 0.158f, 0.205f, 0.205f, 0.2f, 0.155f, 0.072f, 0.065f, 0.09f, 0.084f, 0.045f, 0.05f};
+    case Hero::Kakashi:   return {0.13f, 0.27f, 0.10f, 0.04f, 0.035f, 0.16f, 0.16f, 0.21f, 0.21f, 0.22f, 0.17f, 0.075f, 0.068f, 0.088f, 0.08f, 0.047f, 0.052f};
+    case Hero::Grimmjow:  return {0.13f, 0.27f, 0.10f, 0.044f, 0.038f, 0.158f, 0.158f, 0.205f, 0.205f, 0.23f, 0.17f, 0.082f, 0.074f, 0.1f, 0.094f, 0.05f, 0.054f};
+    case Hero::Starrk:    return {0.12f, 0.275f, 0.08f, 0.04f, 0.035f, 0.16f, 0.16f, 0.215f, 0.215f, 0.21f, 0.165f, 0.074f, 0.068f, 0.098f, 0.092f, 0.046f, 0.05f};
     default:              return {0.14f, 0.27f, 0.10f, 0.035f, 0.035f, 0.155f, 0.155f, 0.205f, 0.205f, 0.2f, 0.17f, 0.07f, 0.065f, 0.075f, 0.07f, 0.05f, 0.055f};
   }
+}
+
+// ---- Cuts: how flesh and clothes fill out the skeleton (multiples of the build's thicknesses) -------
+struct Cut {
+  float thighA = 1.2f, thighM = 1.16f, thighB = 0.86f;               // hip, middle, knee
+  float shinA = 0.92f, shinM = 1.08f, shinB = 0.64f, shinU = 0.32f;  // knee, calf, ankle
+  float calf = 0.8f;                                                 // calf bulging at the back
+  float upperA = 1.16f, upperM = 1.1f, upperB = 0.84f, bicep = 0.5f; // shoulder, middle, elbow
+  float foreA = 0.94f, foreM = 1.08f, foreB = 0.72f;                 // elbow, forearm, wrist
+  float chest = 1.0f, waist = 1.0f, hips = 1.0f;                     // torso
+};
+Cut cutFor(Hero h, Form form = Form::None) {
+  Cut c;
+  auto hakama = [&] {  // wide trousers flaring down to the ankles
+    c.thighA = 1.26f; c.thighM = 1.24f; c.thighB = 1.08f;
+    c.shinA = 1.12f; c.shinM = 1.22f; c.shinB = 1.46f; c.shinU = 0.78f; c.calf = 0.0f;
+  };
+  auto kimono = [&] {  // wide sleeves
+    c.upperA = 1.2f; c.upperM = 1.18f; c.upperB = 1.1f; c.bicep = 0.0f;
+    c.foreA = 1.1f; c.foreM = 1.16f; c.foreB = 1.18f;
+  };
+  auto muscle = [&] {  // bare, powerful arms
+    c.upperA = 1.28f; c.upperM = 1.26f; c.upperB = 0.86f; c.bicep = 0.7f;
+    c.foreA = 0.98f; c.foreM = 1.2f; c.foreB = 0.72f;
+  };
+  auto sleeve = [&] {  // jacket sleeves
+    c.upperA = 1.16f; c.upperM = 1.12f; c.upperB = 1.0f; c.bicep = 0.2f;
+    c.foreA = 1.02f; c.foreM = 1.06f; c.foreB = 0.86f;
+  };
+  switch (h) {
+    case Hero::Asta: muscle(); c.chest = 1.04f; break;
+    case Hero::Yuno: sleeve(); c.thighM = 1.2f; c.shinB = 0.78f; break;
+    case Hero::Ichigo: hakama(); kimono(); break;
+    case Hero::Byakuya: hakama(); kimono(); c.waist = 0.95f; break;
+    case Hero::Link: sleeve(); c.shinB = 0.86f; break;
+    case Hero::Ganondorf: muscle(); c.chest = 1.06f; c.shinB = 0.92f; break;
+    case Hero::Kratos: muscle(); c.chest = 1.08f; c.waist = 0.96f; c.shinB = 0.84f; break;
+    case Hero::Gojo: sleeve(); c.thighM = 1.2f; c.shinM = 1.12f; c.shinB = 0.86f; c.calf = 0.3f; break;
+    case Hero::Sukuna: hakama(); kimono(); break;
+    case Hero::Kenpachi: hakama(); muscle(); c.chest = 1.04f; break;
+    case Hero::Ulquiorra: hakama(); sleeve(); c.shinB = 1.3f; break;
+    case Hero::Hunter: muscle(); c.upperA = 1.34f; c.shinB = 0.95f; c.chest = 1.06f; break;
+    case Hero::Naruto: sleeve(); c.thighM = 1.22f; c.shinB = 0.74f; break;
+    case Hero::Sasuke: hakama(); sleeve(); c.shinB = 1.22f; break;
+    case Hero::Kakashi: sleeve(); c.thighM = 1.2f; c.shinB = 0.74f; break;
+    case Hero::Grimmjow:
+      if (form == Form::Pantera) {  // the panther: lean armoured limbs
+        muscle();
+        c.shinB = 0.7f;
+      } else {
+        hakama();
+        sleeve();
+        c.chest = 1.04f;
+      }
+      break;
+    case Hero::Starrk: hakama(); sleeve(); c.shinB = 1.3f; break;
+    default: break;
+  }
+  return c;
 }
 
 struct Rig {
@@ -495,6 +602,23 @@ Look lookFor(const CharacterDef& d, int palette) {
       L.belt = acc;   // purple rope
       L.trim = acc;
       break;
+    case Hero::Grimmjow:  // the jacket hangs open: skin underneath
+      L.top = skin;
+      L.arm = L.fore = L.foreB = pri;
+      L.thigh = L.shin = pri;
+      L.foot = {44, 44, 50, 255};
+      L.cloth = pri;   // jacket
+      L.belt = sec;    // black sash
+      L.trim = acc;    // teal
+      break;
+    case Hero::Starrk:
+      L.top = L.arm = L.fore = L.foreB = pri;
+      L.thigh = L.shin = pri;
+      L.foot = {44, 44, 50, 255};
+      L.cloth = pri;   // coat tails
+      L.belt = sec;    // black sash
+      L.trim = acc;
+      break;
     case Hero::Kakashi:
       L.top = pri;  // flak jacket
       L.arm = L.fore = L.foreB = sec;
@@ -528,11 +652,6 @@ void formLook(Look& L, Form form) {
       L.hair = {240, 128, 40, 255};
       L.accent = {200, 30, 36, 255};
       break;
-    case Form::FinalGetsuga:  // long black hair, black bandages
-      L.hair = {18, 16, 20, 255};
-      L.top = L.arm = L.fore = L.foreB = {20, 18, 24, 255};
-      L.cloth = {30, 26, 32, 255};
-      break;
     case Form::RedDemon:
       L.skin = L.hand = L.handB = L.fore = L.foreB = {196, 46, 40, 255};
       break;
@@ -546,6 +665,16 @@ void formLook(Look& L, Form form) {
       L.top = L.arm = L.fore = L.foreB = L.thigh = L.shin = {255, 190, 60, 255};
       L.cloth = {230, 140, 30, 255};
       L.foot = {255, 170, 40, 255};
+      break;
+    case Form::Pantera:  // white armoured body, claws
+      L.top = L.arm = L.fore = L.foreB = L.thigh = L.shin = {238, 238, 232, 255};
+      L.hand = L.handB = L.foot = {232, 232, 226, 255};
+      L.cloth = {238, 238, 232, 255};
+      break;
+    case Form::LosLobos:  // the fur-lined coat over the uniform
+      L.cloth = {240, 238, 232, 255};
+      L.trim = {176, 172, 168, 255};  // fur
+      L.belt = {120, 84, 56, 255};    // the bandolier
       break;
     default: break;
   }
@@ -594,12 +723,52 @@ struct Body {
   Vec2 rl(Vec2 v) const { return rotate(v * H, pose.lean); }  // torso-relative offset (fractions of H)
 
   // ---- generic pieces -------------------------------------------------------------------------
-  void limb(Vec2 a, Vec2 b, Vec2 c, float th1, float th2, Color c1, Color c2) {
-    P.seg(X(a), X(b), t(th1), c1);
-    P.seg(X(b), X(c), t(th2), c2);
+  // Which side of a->b (+1: its +n side, see Painter::taper) faces the way the fighter looks, on screen.
+  float frontSide(Vec2 a, Vec2 b) const {
+    Vec2 d = W(X(b)) - W(X(a));
+    if (d.len2() < 1e-4f) return 1.0f;
+    d = d.norm();
+    const Vec2 n{-d.y, d.x}, fwd = W(X(R.hips + Vec2{1.0f, 0.0f})) - W(X(R.hips));
+    return dot(n, fwd) >= 0.0f ? 1.0f : -1.0f;
   }
-  void foot(Vec2 f, Color c, float k = 1.0f) {
-    P.ellipse(X(f + Vec2{0.022f * H, -0.012f * H}), B.foot * 1.45f * H * s * k, B.foot * H * s * k, c);
+  // Thigh and shin with flesh (or trousers) on them: quadriceps in front, the calf behind, or a flared hakama.
+  void legShape(Vec2 hip, Vec2 knee, Vec2 ft, Color thigh, Color shin) {
+    const Cut c = cutFor(hero, pose.form);
+    const float l = B.leg, sh = B.shinTh;
+    P.taper(X(hip), X(knee), t(l * c.thighA), t(l * c.thighM), t(l * c.thighB), 0.38f, 0.45f * frontSide(hip, knee), thigh);
+    const bool flare = c.shinB > 1.0f;  // trousers: a flat hem just above the foot
+    P.taper(X(knee), X(flare ? lerpv(knee, ft, 0.9f) : ft), t(sh * c.shinA), t(sh * c.shinM), t(sh * c.shinB), c.shinU,
+            -c.calf * frontSide(knee, ft), shin, !flare);
+  }
+  // Upper arm (shoulder, biceps) and forearm.
+  void armShape(Vec2 sh, Vec2 el, Vec2 hd, Color upper, Color lower) {
+    const Cut c = cutFor(hero, pose.form);
+    P.taper(X(sh), X(el), t(B.arm * c.upperA), t(B.arm * c.upperM), t(B.arm * c.upperB), 0.4f, c.bicep * frontSide(sh, el), upper);
+    P.taper(X(el), X(hd), t(B.fore * c.foreA), t(B.fore * c.foreM), t(B.fore * c.foreB), 0.3f, 0.0f, lower);
+  }
+  // A fist along the forearm: knuckles forward, a little longer than wide.
+  void fist(Vec2 el, Vec2 hd, Color c) {
+    Vec2 d = hd - el;
+    d = d.len2() > 1e-4f ? d.norm() : Vec2{1.0f, 0.0f};
+    const Vec2 n{-d.y, d.x}, o = hd + d * (B.hand * H * 0.3f);
+    const float r = B.hand * H;
+    Vector2 q[8];
+    for (int i = 0; i < 8; ++i) {
+      const float a = i * kPi * 0.25f + kPi * 0.125f;
+      q[i] = X(o + d * (std::cos(a) * r * 1.08f) + n * (std::sin(a) * r * 0.9f));
+    }
+    P.poly(q, 8, c, true);
+  }
+  // A boot: heel, sole and toe cap. The foot stays flat on the ground, and follows the shin when it swings up.
+  void foot(Vec2 knee, Vec2 f, Color c, float k = 1.0f) {
+    const Vec2 sd = f - knee;
+    float phi = sd.len2() > 1e-4f ? std::atan2(sd.x, sd.y) : 0.0f;
+    phi = clampf(phi, -1.7f, 1.7f) * smoothstep((std::fabs(phi) - 0.3f) / 0.6f);
+    const float r = B.foot * H * k;
+    const Vec2 pts[6] = {{-0.75f, -0.9f}, {-0.95f, 0.15f}, {1.55f, 0.2f}, {1.75f, -0.2f}, {0.9f, -0.65f}, {0.2f, -1.0f}};
+    Vector2 q[6];
+    for (int i = 0; i < 6; ++i) q[i] = X(f + rotate(pts[i] * r, -phi));
+    P.poly(q, 6, c, true);
   }
   // Wide kimono sleeve hanging under the forearm.
   void sleeveFlap(Vec2 elbow, Vec2 hand, float depth, Color c) {
@@ -664,7 +833,7 @@ struct Body {
 
   void backHair() {
     const float hr = R.hr;
-    if (pose.form == Form::VastoLorde || pose.form == Form::FinalGetsuga) {  // long hair down the back
+    if (pose.form == Form::VastoLorde) {  // long hair down the back
       Vec2 a[4], b[4];
       chain(hp(-0.4f, -0.9f), {-0.4f, 1.0f}, 4.4f * hr, 3, pose, time, 0.7f, 0.9f, 0.05f, a);
       chain(hp(-1.0f, 0.1f), {-0.15f, 1.0f}, 3.8f * hr, 3, pose, time + 0.3f, 0.7f, 1.0f, 0.05f, b);
@@ -705,6 +874,23 @@ struct Body {
         });
         break;
       }
+      case Hero::Starrk: {  // wavy brown hair down to the shoulders
+        Vec2 a[4], b[4];
+        const float k = bust ? 0.6f : 1.0f;
+        chain(hp(-0.45f, -0.8f), {-0.35f, 1.0f}, 2.3f * hr * k, 3, pose, time, 0.7f, 0.8f, 0.06f, a);
+        chain(hp(-1.0f, 0.1f), {-0.1f, 1.0f}, 1.9f * hr * k, 3, pose, time + 0.4f, 0.7f, 0.9f, 0.06f, b);
+        group([&] { panel(a, b, 3, L.hair); });
+        break;
+      }
+      case Hero::Grimmjow:
+        if (pose.form == Form::Pantera) {  // released: the hair falls to the waist
+          Vec2 a[4], b[4];
+          const float k = bust ? 0.5f : 1.0f;
+          chain(hp(-0.4f, -0.9f), {-0.4f, 1.0f}, 4.2f * hr * k, 3, pose, time, 0.7f, 0.9f, 0.05f, a);
+          chain(hp(-1.0f, 0.1f), {-0.15f, 1.0f}, 3.7f * hr * k, 3, pose, time + 0.3f, 0.7f, 1.0f, 0.05f, b);
+          group([&] { panel(a, b, 3, L.hair); });
+        }
+        break;
       case Hero::Ganondorf: {  // long red braid
         Vec2 q[4];
         chain(hp(-0.9f, -0.05f), {-0.45f, 1.0f}, 2.6f * hr * (bust ? 0.5f : 1.0f), 3, pose, time, 0.6f, 0.9f, 0.05f, q);
@@ -957,6 +1143,32 @@ struct Body {
         });
         break;
       }
+      case Hero::Grimmjow: {  // light blue hair, hard spikes swept back, two locks over the forehead
+        const Vec2 hc{-0.14f, -0.2f};
+        const bool released = pose.form == Form::Pantera;
+        group([&] {
+          cap(c, 1.04f, -0.34f, 0.36f);
+          const float sp[7][3] = {{164, 14, 1.4f}, {-178, 15, 1.62f}, {-160, 14, 1.8f}, {-142, 13, 1.82f},
+                                  {-124, 12, 1.66f}, {-106, 12, 1.42f}, {-88, 12, 1.18f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, released ? 0.84f + (k[2] - 0.84f) * 0.55f : k[2], c, 0.7f);
+          strand({0.98f, -0.36f}, {0.7f, -0.6f}, {0.96f, 0.12f}, c);
+          strand({0.72f, -0.5f}, {0.42f, -0.66f}, {0.66f, 0.04f}, c);
+        });
+        break;
+      }
+      case Hero::Starrk: {  // wavy brown hair, parted, long locks framing the face
+        const Vec2 hc{-0.2f, -0.22f};
+        group([&] {
+          cap(c, 1.06f, -0.3f, 0.5f);
+          spike(hc, -172, 17, 0.86f, 1.32f, c, 0.6f);
+          spike(hc, -150, 16, 0.86f, 1.36f, c, 0.6f);
+          spike(hc, -126, 15, 0.86f, 1.26f, c, 0.6f);
+          strand({0.95f, -0.4f}, {0.62f, -0.7f}, {0.86f, 0.28f}, c);   // the lock between the eyes
+          strand({0.34f, -0.66f}, {-0.02f, -0.72f}, {0.18f, 1.05f}, c); // down to the jaw
+          strand({-0.1f, -0.5f}, {-0.5f, -0.4f}, {-0.26f, 0.95f}, c);
+        });
+        break;
+      }
       case Hero::Kakashi: {  // silver hair swept up and back, the headband tilted over one eye
         const Vec2 hc{-0.12f, -0.2f};
         group([&] {
@@ -1001,6 +1213,13 @@ struct Body {
       case Form::DemonUnion:  // one black horn
         group([&] { P.tri(X(hp(0.2f, -0.85f)), X(hp(0.5f, -0.88f)), X(hp(0.1f, -1.75f)), {20, 18, 24, 255}); });
         break;
+      case Form::Pantera:  // the mask has become a crest with the ears of a panther
+        group([&] {
+          P.tri(X(hp(-0.62f, -0.78f)), X(hp(-0.2f, -0.96f)), X(hp(-0.6f, -1.75f)), bone);
+          P.tri(X(hp(0.05f, -0.98f)), X(hp(0.48f, -0.86f)), X(hp(0.24f, -1.7f)), bone);
+          P.deco([&] { P.tri(X(hp(-0.5f, -0.9f)), X(hp(-0.3f, -0.98f)), X(hp(-0.55f, -1.45f)), {120, 220, 240, 255}, false); });
+        });
+        break;
       case Form::Segunda:  // the helmet's horns grow long
         group([&] {
           P.tri(X(hp(-0.6f, -0.8f)), X(hp(-0.2f, -0.95f)), X(hp(-1.2f, -2.2f)), bone);
@@ -1038,15 +1257,19 @@ struct Body {
         if (has(WeaponVisual::Mangekyo) || has(WeaponVisual::SusanooBow)) { e.iris = {220, 20, 30, 255}; e.glow = true; }
         break;
       case Hero::Kakashi: e.w = 0.16f; e.h = 0.2f; e.lid = 0.55f; break;
+      case Hero::Grimmjow: e.w = 0.16f; e.h = 0.2f; e.lid = 0.25f; e.brow = 0.42f; e.browTh = 0.1f; break;
+      case Hero::Starrk: e.w = 0.15f; e.h = 0.2f; e.lid = 0.55f; e.brow = -0.15f; e.browTh = 0.08f; break;
       default: break;
     }
     switch (pose.form) {  // transformed eyes
       case Form::VastoLorde: e.dark = true; e.iris = {250, 210, 60, 255}; e.glow = true; break;
-      case Form::FinalGetsuga: e.iris = {200, 30, 40, 255}; break;
+      case Form::HollowMask: e.dark = true; e.iris = {250, 210, 60, 255}; e.glow = true; e.lid = 0.1f; break;
       case Form::RedDemon: e.iris = {255, 220, 80, 255}; e.glow = true; break;
       case Form::Segunda: e.iris = {90, 255, 150, 255}; e.glow = true; break;
       case Form::KuramaAvatar: e.iris = {255, 120, 40, 255}; e.glow = true; break;
       case Form::SpartanRage: e.iris = {255, 230, 140, 255}; e.glow = true; break;
+      case Form::Pantera: e.iris = {130, 240, 255, 255}; e.glow = true; e.lid = 0.15f; break;
+      case Form::LosLobos: e.lid = 0.35f; break;
       default: break;
     }
     return e;
@@ -1093,6 +1316,34 @@ struct Body {
     }
   }
 
+  // Ichigo's Visored mask: bone white, red stripes over one eye, the teeth, black eyes with yellow irises.
+  void hollowMask(Vec2 eN, Vec2 eF, const EyeStyle& st) {
+    const Color bone = P.fill({246, 244, 238, 255}), red = P.fill({196, 26, 34, 255}), ink = P.fill({16, 12, 14, 255});
+    Vector2 q[7] = {X(hp(-0.35f, -0.62f)), X(hp(0.5f, -0.78f)), X(hp(1.08f, -0.42f)), X(hp(1.1f, 0.42f)),
+                    X(hp(0.72f, 1.02f)), X(hp(0.12f, 1.06f)), X(hp(-0.42f, 0.5f))};
+    Vector2 g[7];
+    growPoly(q, 7, P.ow * 0.8f, g);
+    fanFill(g, 7, P.line());
+    fanFill(q, 7, bone);
+    DrawLineEx(X(hp(0.32f, -0.7f)), X(hp(0.3f, 0.62f)), t(0.03f), red);  // the stripes
+    DrawLineEx(X(hp(0.1f, -0.66f)), X(hp(0.06f, 0.5f)), t(0.022f), red);
+    for (int i = 0; i < 2; ++i) {  // eye holes
+      const Vec2 e = i ? eF : eN;
+      const float k = i ? 0.82f : 1.0f;
+      fillEllipse(X(e), st.w * R.hr * s * 1.15f * k, st.h * R.hr * s * 0.85f * k, ink);
+      if (!pose.blink && !pose.hurt) {
+        fillEllipse(X(e + Vec2{0.04f * R.hr, 0.0f}), st.w * R.hr * s * 0.45f * k, st.h * R.hr * s * 0.5f * k,
+                    P.fill({250, 210, 60, 255}));
+      }
+    }
+    const Vec2 m0 = hp(0.2f, 0.72f), m1 = hp(0.98f, 0.62f);  // the teeth
+    DrawLineEx(X(m0), X(m1), t(0.012f) + 0.6f, ink);
+    for (int i = 0; i < 5; ++i) {
+      const Vec2 p = lerpv(m0, m1, (i + 0.5f) / 5.0f);
+      DrawLineEx(X(p + Vec2{0.0f, -0.07f * R.hr}), X(p + Vec2{0.0f, 0.07f * R.hr}), t(0.008f) + 0.5f, ink);
+    }
+  }
+
   void face() {
     if (!P.details()) return;
     const float hr = R.hr;
@@ -1117,6 +1368,15 @@ struct Body {
       fanFill(q, 5, P.fill({246, 244, 238, 255}));
       DrawLineEx(X(hp(0.08f, -0.55f)), X(hp(0.02f, 0.62f)), t(0.022f), P.fill({200, 30, 36, 255}));
       DrawLineEx(X(hp(0.32f, -0.58f)), X(hp(0.3f, 0.48f)), t(0.018f), P.fill({200, 30, 36, 255}));
+    }
+    if (hero == Hero::Grimmjow) {  // teal markings drawn out from the corners of the eyes
+      const Color teal = P.fill(pose.form == Form::Pantera ? Color{60, 220, 240, 255} : Color{40, 170, 160, 255});
+      DrawLineEx(X(eN + Vec2{-0.1f * hr, 0.14f * hr}), X(eN + Vec2{-0.4f * hr, 0.34f * hr}), t(0.016f) + 0.6f, teal);
+      DrawLineEx(X(eF + Vec2{0.1f * hr, 0.14f * hr}), X(eF + Vec2{0.3f * hr, 0.32f * hr}), t(0.014f) + 0.6f, teal);
+    }
+    if (hero == Hero::Starrk) {  // a goatee and a shadow of beard
+      fillEllipse(X(hp(0.5f, 0.98f)), 0.18f * hr * s, 0.12f * hr * s, P.fill(shade(L.hair, 0.9f)));
+      fillEllipse(X(hp(0.3f, 0.8f)), 0.32f * hr * s, 0.16f * hr * s, P.fill(withAlpha(shade(L.skin, 0.8f), 0.6f)));
     }
     if (hero == Hero::Naruto && has(WeaponVisual::SageScroll)) {  // sage mode: orange pigment round the eyes
       fillEllipse(X(eN + Vec2{0.0f, -0.04f * hr}), 0.26f * hr * s, 0.32f * hr * s, P.fill({236, 120, 40, 255}));
@@ -1155,6 +1415,20 @@ struct Body {
       } else {
         eye(eN, 1.0f, st, false);
         eye(eF, 0.82f, st, true);
+      }
+    }
+    if (pose.form == Form::HollowMask) hollowMask(eN, eF, st);
+    if (hero == Hero::Grimmjow) {  // what is left of his mask: the right jaw bone over his cheek, teeth bared
+      const Color bone = P.fill({246, 244, 236, 255}), ink = P.fill({30, 24, 26, 255});
+      Vector2 q[6] = {X(hp(-0.52f, 0.3f)), X(hp(-0.22f, 0.4f)), X(hp(0.26f, 0.7f)), X(hp(0.22f, 0.88f)),
+                      X(hp(-0.24f, 0.7f)), X(hp(-0.56f, 0.5f))};
+      Vector2 g[6];
+      growPoly(q, 6, P.ow * 0.8f, g);
+      fanFill(g, 6, P.line());
+      fanFill(q, 6, bone);
+      for (int i = 0; i < 3; ++i) {
+        const Vec2 a = lerpv(hp(-0.2f, 0.44f), hp(0.22f, 0.72f), (i + 0.5f) / 3.0f);
+        DrawLineEx(X(a), X(a + Vec2{0.0f, 0.1f * hr}), t(0.008f) + 0.5f, ink);
       }
     }
     if (hero == Hero::Ulquiorra) {  // green tear marks down the cheeks
@@ -1204,7 +1478,7 @@ struct Body {
     } else if (hero == Hero::Sukuna) {  // wicked smile
       DrawLineEx(X(mo + Vec2{-0.18f * hr, -0.08f * hr}), X(mo + Vec2{0.06f * hr, 0.0f}), t(0.01f) + 0.6f, dark);
       DrawLineEx(X(mo + Vec2{0.06f * hr, 0.0f}), X(mo + Vec2{0.2f * hr, -0.1f * hr}), t(0.01f) + 0.6f, dark);
-    } else if (hero == Hero::Kenpachi || hero == Hero::Naruto) {  // wide grin
+    } else if (hero == Hero::Kenpachi || hero == Hero::Naruto || hero == Hero::Grimmjow) {  // wide grin
       DrawLineEx(X(mo + Vec2{-0.22f * hr, -0.06f * hr}), X(mo + Vec2{0.2f * hr, -0.1f * hr}), t(0.03f), P.fill({248, 246, 240, 255}));
       DrawLineEx(X(mo + Vec2{-0.24f * hr, -0.04f * hr}), X(mo + Vec2{0.22f * hr, -0.06f * hr}), t(0.008f) + 0.6f, dark);
     } else if (hero != Hero::Kratos && hero != Hero::Kakashi) {
@@ -1229,6 +1503,65 @@ struct Body {
       if (hero == Hero::Gojo && !has(WeaponVisual::SixEyes))
         P.deco([&] { P.seg(X(hp(-0.98f, -0.12f)), X(hp(1.0f, -0.02f)), t(B.head * 0.42f), {30, 30, 38, 255}); });
       face();
+    });
+  }
+
+  // ---- Starrk's companions -------------------------------------------------------------------------
+  // A wolf of Los Lobos (pale blue spirit), running: `dir` = +1 forward (the way the fighter faces).
+  void spiritWolf(Vec2 c, float sz, float dir, float phase) {
+    const Color fur{150, 196, 255, 255}, pale{236, 244, 255, 255};
+    const float w = sz * s;
+    auto at = [&](float x, float y) { return c + Vec2{x * dir, y} * sz; };
+    group([&] {
+      for (int i = 0; i < 4; ++i) {  // legs, two by two out of phase
+        const float ph = phase + (i % 2) * kPi + (i < 2 ? 0.0f : 0.8f);
+        const float hx = i < 2 ? 0.5f : -0.5f;
+        const Vec2 hip = at(hx, 0.08f), paw = at(hx + std::sin(ph) * 0.34f, 0.6f - std::max(0.0f, std::cos(ph)) * 0.16f);
+        P.taper(X(hip), X(paw), w * 0.24f, w * 0.2f, w * 0.12f, 0.4f, 0.0f, fur);
+      }
+      P.taper(X(at(-0.72f, 0.0f)), X(at(0.62f, -0.06f)), w * 0.5f, w * 0.56f, w * 0.46f, 0.55f, 0.0f, fur);  // body
+      P.taper(X(at(-0.72f, -0.06f)), X(at(-1.42f, -0.34f + 0.1f * std::sin(phase * 0.5f))), w * 0.2f, w * 0.26f, w * 0.08f,
+              0.4f, 0.0f, fur);  // tail
+      P.circle(X(at(0.86f, -0.3f)), w * 0.3f, fur);
+      P.tri(X(at(1.02f, -0.42f)), X(at(1.02f, -0.18f)), X(at(1.5f, -0.24f)), fur);    // muzzle
+      P.tri(X(at(0.66f, -0.5f)), X(at(0.86f, -0.58f)), X(at(0.7f, -0.9f)), fur);      // ears
+      P.tri(X(at(0.9f, -0.56f)), X(at(1.04f, -0.5f)), X(at(0.98f, -0.86f)), fur);
+      P.deco([&] { P.circle(X(at(0.98f, -0.34f)), w * 0.06f, pale); });
+    });
+  }
+  // The pack running round him (power-up): the wolves behind him first, the ones in front last.
+  void wolfPack(bool front) {
+    if (!has(WeaponVisual::LobosPack) || P.ghost || bust) return;
+    for (int i = 0; i < 3; ++i) {
+      const float a = time * 2.2f + i * 2.0944f, depth = std::sin(a);
+      if ((depth > 0.0f) != front) continue;
+      const float sz = 0.14f * H * (0.86f + 0.14f * depth);
+      spiritWolf({std::cos(a) * 0.44f * H, 0.38f * H + depth * 0.04f * H}, sz, -std::sin(a) >= 0.0f ? 1.0f : -1.0f,
+                 time * 14.0f + i * 2.0f);
+    }
+  }
+  // Lilynette floating at his side: a small girl, short blonde hair, the broken mask with its horn over one eye.
+  void lilynette() {
+    if (!has(WeaponVisual::Lilynette) || P.ghost || bust) return;
+    const float k = 0.42f, u = H * k, w = u * s;
+    const Vec2 c = R.neck + Vec2{-0.36f * H, 0.02f * H + std::sin(time * 2.4f) * 0.03f * H};
+    auto at = [&](float x, float y) { return c + Vec2{x, y} * u; };
+    const Color skin = L.skin, hair{238, 212, 112, 255}, cloth{242, 240, 234, 255}, bone{246, 244, 236, 255};
+    const float sw = std::sin(time * 3.0f);
+    group([&] {
+      P.taper(X(at(-0.05f, 0.16f)), X(at(-0.12f + 0.04f * sw, 0.5f)), w * 0.11f, w * 0.12f, w * 0.08f, 0.4f, 0.0f, skin);
+      P.taper(X(at(0.05f, 0.16f)), X(at(0.1f - 0.04f * sw, 0.48f)), w * 0.11f, w * 0.12f, w * 0.08f, 0.4f, 0.0f, skin);
+      P.taper(X(at(0.0f, -0.12f)), X(at(0.0f, 0.22f)), w * 0.22f, w * 0.24f, w * 0.28f, 0.5f, 0.0f, cloth);
+      P.taper(X(at(-0.07f, -0.08f)), X(at(-0.18f, 0.1f)), w * 0.08f, w * 0.08f, w * 0.07f, 0.5f, 0.0f, cloth);
+      P.taper(X(at(0.07f, -0.08f)), X(at(0.2f, 0.06f + 0.03f * sw)), w * 0.08f, w * 0.08f, w * 0.07f, 0.5f, 0.0f, cloth);
+      P.circle(X(at(0.0f, -0.31f)), w * 0.19f, hair);
+      P.ellipse(X(at(0.08f, -0.26f)), w * 0.11f, w * 0.11f, skin);
+      P.tri(X(at(-0.02f, -0.44f)), X(at(0.2f, -0.4f)), X(at(0.13f, -0.27f)), hair);  // the fringe
+    });
+    group([&] {  // the broken mask on the top of her head, its horn
+      P.quad(X(at(-0.12f, -0.44f)), X(at(0.0f, -0.48f)), X(at(0.02f, -0.37f)), X(at(-0.12f, -0.34f)), bone);
+      P.tri(X(at(-0.1f, -0.44f)), X(at(-0.01f, -0.47f)), X(at(-0.1f, -0.66f)), bone);
+      P.deco([&] { P.circle(X(at(0.12f, -0.28f)), w * 0.03f, {255, 120, 180, 255}); });
     });
   }
 
@@ -1311,6 +1644,35 @@ struct Body {
         group([&] { panel(a, b, 3, L.cloth); });
         break;
       }
+      case Hero::Starrk: {
+        wolfPack(false);
+        lilynette();
+        if (pose.form == Form::LosLobos) {  // the long coat lined with fur, down to the calves
+          Vec2 a[4], b[4];
+          chain(R.neck + rl({-0.08f, 0.0f}), {-0.4f, 1.0f}, 0.66f * H, 3, pose, time, 0.8f, 1.1f, 0.04f, a);
+          chain(R.neck + rl({0.03f, 0.04f}), {-0.08f, 1.0f}, 0.6f * H, 3, pose, time + 0.5f, 0.8f, 1.0f, 0.04f, b);
+          group([&] {
+            panel(a, b, 3, L.cloth);
+            for (int i = 0; i <= 4; ++i) P.circle(X(lerpv(a[3], b[3], i / 4.0f)), t(0.03f), L.trim);  // fur hem
+          });
+        } else {  // the tails of the Arrancar coat
+          Vec2 a[4], b[4];
+          chain(R.hips + rl({-0.06f, -0.04f}), {-0.3f, 1.0f}, 0.36f * H, 3, pose, time, 0.8f, 1.0f, 0.04f, a);
+          chain(R.hips + rl({0.02f, -0.03f}), {-0.05f, 1.0f}, 0.32f * H, 3, pose, time + 0.5f, 0.8f, 0.9f, 0.04f, b);
+          group([&] { panel(a, b, 3, L.cloth); });
+        }
+        break;
+      }
+      case Hero::Grimmjow:
+        if (pose.form == Form::Pantera) {  // the long tail of the panther
+          Vec2 q[5];
+          chain(R.hips + rl({-0.07f, 0.02f}), {-1.0f, 0.2f}, 0.62f * H, 4, pose, time, 0.3f, 1.3f, 0.12f, q);
+          group([&] {
+            ribbon(q, 4, 0.04f, 0.022f, L.cloth);
+            P.deco([&] { P.circle(X(q[4]), t(0.022f), L.hair); });
+          });
+        }
+        break;
       case Hero::Sasuke: {  // the big purple rope, knotted in a bow at the back
         Vec2 q[3], r[3];
         const Vec2 k0 = R.hips + rl({-0.08f, -0.03f});
@@ -1355,7 +1717,8 @@ struct Body {
     const Vec2 hip = front ? R.hipF : R.hipB, knee = front ? R.kneeF : R.kneeB, ft = front ? R.footF : R.footB;
     auto tn = [&](Color c) { return front ? c : backTone(c); };
     group([&] {
-      limb(hip, knee, ft, B.leg, B.shinTh, tn(L.thigh), tn(L.shin));
+      foot(knee, ft, tn(L.foot), hero == Hero::Ganondorf || hero == Hero::Kratos ? 1.05f : 1.0f);
+      legShape(hip, knee, ft, tn(L.thigh), tn(L.shin));
       const Vec2 boot0 = lerpv(knee, ft, 0.42f);
       switch (hero) {
         case Hero::Asta: case Hero::Yuno: case Hero::Gojo:
@@ -1384,6 +1747,19 @@ struct Body {
           // hakama flaring at the bottom
           P.deco([&] { P.seg(X(lerpv(knee, ft, 0.55f)), X(lerpv(knee, ft, 0.8f)), t(B.shinTh * 1.18f), tn(L.shin)); });
           break;
+        case Hero::Grimmjow:
+          if (pose.form == Form::Pantera) {  // armour plates and claws on the toes
+            P.deco([&] {
+              P.circle(X(knee), t(0.036f), tn(shade(L.shin, 1.05f)));
+              P.seg(X(lerpv(knee, ft, 0.45f)), X(lerpv(knee, ft, 0.6f)), t(B.shinTh * 0.9f), tn(shade(L.shin, 0.9f)));
+            });
+          } else {
+            P.deco([&] { P.seg(X(lerpv(knee, ft, 0.55f)), X(lerpv(knee, ft, 0.8f)), t(B.shinTh * 1.18f), tn(L.shin)); });
+          }
+          break;
+        case Hero::Starrk:
+          P.deco([&] { P.seg(X(lerpv(knee, ft, 0.55f)), X(lerpv(knee, ft, 0.8f)), t(B.shinTh * 1.18f), tn(L.shin)); });
+          break;
         case Hero::Hunter:  // greaves and knee guards
           P.deco([&] {
             P.seg(X(lerpv(knee, ft, 0.12f)), X(lerpv(knee, ft, 0.85f)), t(B.shinTh * 1.16f), tn(shade(L.shin, 1.1f)));
@@ -1391,15 +1767,17 @@ struct Body {
             P.seg(X(lerpv(hip, knee, 0.55f)), X(lerpv(hip, knee, 0.7f)), t(B.leg * 1.08f), tn(L.belt));
           });
           break;
-        case Hero::Naruto: case Hero::Kakashi:  // bandaged shins, a kunai holster on the thigh
+        case Hero::Naruto: case Hero::Kakashi:  // bandaged shins, a kunai holster strapped to the thigh
           P.deco([&] {
             P.seg(X(lerpv(knee, ft, 0.62f)), X(lerpv(knee, ft, 0.88f)), t(B.shinTh * 1.1f), tn({226, 222, 214, 255}));
-            if (front) P.seg(X(lerpv(hip, knee, 0.45f)), X(lerpv(hip, knee, 0.62f)), t(B.leg * 1.12f), tn({226, 222, 214, 255}));
+            if (front) {
+              P.seg(X(lerpv(hip, knee, 0.5f)), X(lerpv(hip, knee, 0.56f)), t(B.leg * 1.26f), tn({226, 222, 214, 255}));
+              P.seg(X(lerpv(hip, knee, 0.42f)), X(lerpv(hip, knee, 0.66f)), t(B.leg * 0.55f), tn({46, 48, 56, 255}));
+            }
           });
           break;
         default: break;
       }
-      foot(ft, tn(L.foot), hero == Hero::Ganondorf || hero == Hero::Kratos ? 1.05f : 1.0f);
     });
   }
 
@@ -1409,7 +1787,7 @@ struct Body {
     group([&] {
       Color upper = L.arm, lower = front ? L.fore : L.foreB, hand = front ? L.hand : L.handB;
       if (hero == Hero::Link && !front) lower = L.arm;
-      limb(sh, el, hd, B.arm, B.fore, tn(upper), tn(lower));
+      armShape(sh, el, hd, tn(upper), tn(lower));
       switch (hero) {
         case Hero::Asta:  // wrapped forearms
           P.deco([&] { P.seg(X(lerpv(el, hd, 0.35f)), X(lerpv(el, hd, 0.8f)), t(B.fore * 1.06f), tn({226, 218, 200, 255})); });
@@ -1461,12 +1839,37 @@ struct Body {
         case Hero::Sasuke:  // arm guards
           P.deco([&] { P.seg(X(lerpv(el, hd, 0.5f)), X(lerpv(el, hd, 0.9f)), t(B.fore * 1.12f), tn(L.cloth)); });
           break;
+        case Hero::Grimmjow:
+          if (pose.form == Form::Pantera) {  // the blades of Garra de la Pantera along the forearm
+            Vec2 d = (hd - el).norm(), n{-d.y, d.x};
+            if (n.y > 0.0f) n = n * -1.0f;  // on top of the arm
+            for (int i = 0; i < 3; ++i) {
+              const Vec2 b0 = lerpv(el, hd, 0.25f + i * 0.2f) + n * (B.fore * 0.4f * H);
+              P.tri(X(b0), X(b0 + d * (0.05f * H)), X(b0 - d * (0.05f * H) + n * (0.07f * H)), tn({236, 236, 230, 255}));
+            }
+          } else {  // the sleeve ends in a black cuff
+            P.deco([&] { P.seg(X(lerpv(el, hd, 0.8f)), X(lerpv(el, hd, 0.9f)), t(B.fore * 1.15f), tn(L.belt)); });
+          }
+          break;
+        case Hero::Starrk:
+          if (pose.form == Form::LosLobos)  // fur cuffs
+            P.deco([&] { P.seg(X(lerpv(el, hd, 0.74f)), X(lerpv(el, hd, 0.9f)), t(B.fore * 1.45f), tn(L.trim)); });
+          else
+            P.deco([&] { P.seg(X(lerpv(el, hd, 0.82f)), X(lerpv(el, hd, 0.9f)), t(B.fore * 1.12f), tn(L.belt)); });
+          break;
         case Hero::Kakashi:  // the red swirl on the shoulder, metal plates on the gloves
           P.deco([&] { P.circle(X(sh + rl({0.0f, 0.03f})), t(0.022f), tn({200, 50, 44, 255})); });
           break;
         default: break;
       }
-      P.circle(X(hd), t(B.hand), tn(hand));
+      fist(el, hd, tn(hand));
+      if (hero == Hero::Grimmjow && pose.form == Form::Pantera) {  // claws
+        const Vec2 d = (hd - el).norm(), n{-d.y, d.x};
+        for (int i = -1; i <= 1; ++i) {
+          const Vec2 b0 = hd + d * (B.hand * H * 1.1f) + n * (i * B.hand * H * 0.45f);
+          P.tri(X(b0 - n * (0.008f * H)), X(b0 + n * (0.008f * H)), X(b0 + d * (0.045f * H) + n * (i * 0.01f * H)), tn({60, 60, 70, 255}));
+        }
+      }
       if (hero == Hero::Kakashi && P.details())
         disc(X(hd + rl({0.0f, -0.006f})), t(B.hand * 0.45f), P.fill(tn(L.trim)));
       if (hero == Hero::Sukuna && P.details()) {  // black bands round the wrists
@@ -1486,11 +1889,25 @@ struct Body {
   }
 
   // ---- torso ---------------------------------------------------------------------------------------
+  // Shoulders, chest, a narrower waist and the hips: one shaded volume made of two convex pieces.
+  void torsoShape(Color c) {
+    const Cut cu = cutFor(hero, pose.form);
+    const float cw = B.chest * 0.5f * cu.chest, ww = B.waist * 0.5f * cu.waist;
+    const float hw = std::max(B.waist * 0.52f * cu.hips, B.hipX + B.leg * 0.5f);
+    const Vec2 waist = lerpv(R.chest, R.hips, 0.5f);
+    const Vec2 up[8] = {R.neck + rl({-cw * 0.5f, -0.01f}), R.neck + rl({-cw * 0.98f, 0.045f}), R.chest + rl({-cw * 0.94f, 0.0f}),
+                        waist + rl({-ww, 0.0f}),           waist + rl({ww * 1.05f, 0.0f}),      R.chest + rl({cw * 1.05f, -0.005f}),
+                        R.neck + rl({cw, 0.045f}),         R.neck + rl({cw * 0.5f, -0.01f})};
+    Vector2 q[8];
+    for (int i = 0; i < 8; ++i) q[i] = X(up[i]);
+    P.poly(q, 8, c, true);
+    const Vec2 lo[4] = {waist + rl({-ww, 0.0f}), R.hips + rl({-hw, 0.045f}), R.hips + rl({hw, 0.045f}), waist + rl({ww * 1.05f, 0.0f})};
+    for (int i = 0; i < 4; ++i) q[i] = X(lo[i]);
+    P.poly(q, 4, c, true);
+  }
   void torso() {
     group([&] {
-      const Vec2 top = R.neck + rl({0.0f, 0.03f});
-      P.seg(X(R.hips), X(R.chest), t(B.waist), L.top);
-      P.seg(X(R.chest), X(top), t(B.chest), L.top);
+      torsoShape(L.top);
       const Vec2 belt0 = R.hips + rl({-B.waist * 0.5f, -0.02f}), belt1 = R.hips + rl({B.waist * 0.5f, -0.02f});
       switch (hero) {
         case Hero::Asta:
@@ -1619,9 +2036,62 @@ struct Body {
             P.seg(X(R.neck + rl({-0.06f, 0.0f})), X(R.neck + rl({0.06f, 0.02f})), t(0.05f), L.cloth);  // scarf
           });
           break;
+        case Hero::Grimmjow:
+          P.deco([&] { P.seg(X(belt0), X(belt1), t(0.05f), pose.form == Form::Pantera ? shade(L.top, 0.85f) : L.belt); });
+          if (P.details()) {  // chest and abs (bare under the open jacket, or the plates of the armour), the hollow hole
+            const Color m = P.fill(shadowTone(L.top));
+            DrawLineEx(X(R.chest + rl({0.0f, -0.01f})), X(R.chest + rl({0.12f, 0.0f})), t(0.01f), m);
+            for (int i = 0; i < 2; ++i)
+              DrawLineEx(X(R.chest + rl({0.03f, 0.05f + i * 0.04f})), X(R.chest + rl({0.1f, 0.05f + i * 0.04f})), t(0.008f), m);
+            fillEllipse(X(lerpv(R.chest, R.hips, 0.6f) + rl({0.05f, 0.0f})), t(0.026f), t(0.03f), P.fill({18, 14, 18, 255}));
+          }
+          break;
+        case Hero::Starrk:
+          P.deco([&] { P.seg(X(belt0), X(belt1), t(0.045f), L.belt); });
+          if (P.details())  // the edge of the jacket
+            DrawLineEx(X(R.neck + rl({0.07f, 0.04f})), X(R.hips + rl({0.07f, -0.02f})), t(0.009f), P.fill(shade(L.top, 0.72f)));
+          break;
         default: break;
       }
     });
+    if (hero == Hero::Grimmjow && pose.form != Form::Pantera) {  // the white jacket hanging open, collar turned up
+      const Cut cu = cutFor(hero, pose.form);
+      const float cw = B.chest * 0.5f * cu.chest, ww = B.waist * 0.5f * cu.waist;
+      const Vec2 waist = lerpv(R.chest, R.hips, 0.5f);
+      group([&] {
+        P.quad(X(R.neck + rl({-0.02f, -0.01f})), X(R.neck + rl({-cw, 0.045f})), X(waist + rl({-ww * 1.04f, 0.03f})),
+               X(waist + rl({-0.03f, 0.03f})), L.cloth, true);
+        P.quad(X(R.neck + rl({cw * 0.55f, 0.01f})), X(R.neck + rl({cw * 1.02f, 0.045f})), X(waist + rl({ww * 1.08f, 0.03f})),
+               X(waist + rl({ww * 0.82f, 0.03f})), L.cloth, true);
+        P.seg(X(R.neck + rl({-0.05f, 0.0f})), X(lerpv(R.neck, R.head, 0.42f) + rl({-0.02f, 0.0f})), t(0.055f), L.cloth);
+      });
+    }
+    if (hero == Hero::Starrk) {
+      group([&] {  // the high collar folded down, the jaw of his old mask worn as a necklace
+        P.seg(X(R.neck + rl({-0.05f, 0.0f})), X(lerpv(R.neck, R.head, 0.38f) + rl({-0.02f, 0.0f})), t(0.06f), L.top);
+        if (pose.form == Form::LosLobos)
+          for (int i = 0; i < 5; ++i)  // a thick ruff of fur
+            P.circle(X(R.neck + rl({-0.1f + i * 0.05f, 0.02f + 0.012f * (i % 2)})), t(0.04f), L.trim);
+      });
+      group([&] {
+        const Vec2 j0 = R.neck + rl({-0.02f, 0.05f}), j1 = R.neck + rl({0.1f, 0.06f});
+        P.quad(X(j0 + rl({0.0f, -0.012f})), X(j1 + rl({0.0f, -0.012f})), X(j1 + rl({-0.01f, 0.03f})), X(j0 + rl({0.01f, 0.025f})),
+               {246, 244, 236, 255});
+        if (P.details())
+          for (int i = 0; i < 4; ++i) {
+            const Vec2 a = lerpv(j0, j1, (i + 0.5f) / 4.0f);
+            DrawLineEx(X(a + rl({0.0f, -0.006f})), X(a + rl({0.0f, 0.016f})), t(0.006f) + 0.5f, P.fill({40, 34, 34, 255}));
+          }
+      });
+      if (pose.form == Form::LosLobos)
+        group([&] {  // the bandolier across his chest
+          const Vec2 a = R.shF + rl({0.0f, -0.01f}), b = R.hips + rl({-0.09f, -0.02f});
+          P.seg(X(a), X(b), t(0.03f), L.belt);
+          P.deco([&] {
+            for (int i = 1; i < 5; ++i) P.circle(X(lerpv(a, b, i / 5.0f)), t(0.014f), {226, 196, 110, 255});
+          });
+        });
+    }
   }
 
   // Garments over the hips, after the legs.
@@ -1680,6 +2150,9 @@ struct Body {
       case Hero::Ulquiorra:  // front of the coat
         group([&] { skirt(B.waist * 0.5f, 0.14f, 0.02f, L.top); });
         break;
+      case Hero::Starrk:  // the front of his jacket
+        group([&] { skirt(B.waist * 0.55f, 0.13f, 0.03f, L.top); });
+        break;
       default: break;
     }
   }
@@ -1694,6 +2167,17 @@ struct Body {
   }
   void frontWeaponDraw() {
     const WeaponVisual v = frontWeapon(d, pose);
+    if (v == WeaponVisual::None && pose.form == Form::LosLobos) {  // released: a pistol in each hand, aimed along the arm
+      const float sc = s * H / 100.0f;
+      WeaponStyle st = wstyle();
+      st.single = true;
+      for (int h = 0; h < 2; ++h) {
+        const Vec2 el = h ? R.elbowB : R.elbowF, hd = h ? R.handB : R.handF;
+        const Vec2 wd = (W(X(hd + (hd - el).norm() * 10.0f)) - W(X(hd))).norm();
+        drawWeaponStyled(WeaponVisual::LobosPistol, W(X(hd)), wd, sc, P.alpha, time, st);
+      }
+      return;
+    }
     if (v == WeaponVisual::None) return;
     const float len = frontWeaponLength(d, pose);
     const float sc = len / std::max(1.0f, weaponVisualLength(v)) * s;
@@ -1759,9 +2243,8 @@ struct Body {
           const float ph = time * 4.0f + i * 2.4f + h;
           for (int j = 1; j <= 5; ++j) {
             float u = j / 5.0f;
-            Vec2 q = c + Vec2{std::sin(ph + u * 5.0f) * 0.04f * H * u + (i ? 0.02f : -0.02f) * H, -0.17f * H * u};
-            DrawLineEx(X(prev), X(q), t(0.022f * (1.0f - u * 0.7f)), withAlpha({110, 8, 30, 255}, 0.55f * k));
-            DrawLineEx(X(prev), X(q), t(0.008f * (1.0f - u * 0.6f)) + 0.5f, withAlpha({255, 90, 110, 255}, 0.75f * k));
+            Vec2 q = c + Vec2{std::sin(ph + u * 5.0f) * 0.03f * H * u + (i ? 0.015f : -0.015f) * H, -0.11f * H * u};
+            DrawLineEx(X(prev), X(q), t(0.02f * (1.0f - u * 0.7f)), withAlpha({110, 8, 30, 255}, 0.4f * k * (1.0f - u)));
             prev = q;
           }
         }
@@ -1828,6 +2311,19 @@ struct Body {
         float ph = std::fmod(time * 1.6f + i * 0.143f, 1.0f);
         Vec2 q = R.hips + Vec2{(i - 3) * 0.05f * H + std::sin(time * 6.0f + i) * 0.02f * H, -ph * 0.7f * H};
         disc(X(q), t(0.04f * (1.0f - ph)) + 0.5f, withAlpha({255, 190, 50, 255}, 0.55f * (1.0f - ph) * k));
+      }
+    }
+    // Grimmjow's claws of reiatsu, on both hands
+    if (has(WeaponVisual::PanteraClaws)) {
+      for (int h = 0; h < 2; ++h) {
+        const Vec2 el = h ? R.elbowB : R.elbowF, hd = h ? R.handB : R.handF;
+        const Vec2 d = (hd - el).norm(), n{-d.y, d.x};
+        for (int i = 0; i < 4; ++i) {
+          const Vec2 b0 = hd + d * (B.hand * H) + n * ((i - 1.5f) * B.hand * H * 0.42f);
+          const Vec2 tip = b0 + d * (0.13f * H) + n * ((i - 1.5f) * 0.012f * H);
+          DrawLineEx(X(b0), X(tip), t(0.024f), withAlpha({60, 214, 240, 255}, 0.4f * k));
+          DrawLineEx(X(b0), X(tip), t(0.01f) + 0.6f, withAlpha({220, 252, 255, 255}, 0.95f * k));
+        }
       }
     }
     // Sukuna with a finger: red aura flickering
@@ -1897,6 +2393,7 @@ struct Body {
     frontWeaponDraw();
     arm(true);
     energy();
+    if (hero == Hero::Starrk) wolfPack(true);
   }
 };
 
@@ -1987,6 +2484,15 @@ void drawBust(Body& b, float R) {
         break;
       case Hero::Sasuke:
         ln({-0.05f, 0.22f}, {0.1f, 0.6f}, 0.16f, L.skin);
+        break;
+      case Hero::Grimmjow:  // the open jacket, collar up
+        ln({-0.86f, 0.5f}, {-0.3f, 0.24f}, 0.26f, L.cloth);
+        ln({0.86f, 0.5f}, {0.32f, 0.26f}, 0.22f, L.cloth);
+        ln({-0.36f, 0.22f}, {-0.3f, 0.02f}, 0.12f, L.cloth);
+        break;
+      case Hero::Starrk:  // high collar, the jaw bone necklace
+        ln({-0.34f, 0.22f}, {0.34f, 0.22f}, 0.28f, L.top);
+        ln({-0.2f, 0.42f}, {0.26f, 0.42f}, 0.09f, {246, 244, 236, 255});
         break;
       case Hero::Kakashi:
         ln({-0.3f, 0.2f}, {0.3f, 0.2f}, 0.3f, L.cloth);

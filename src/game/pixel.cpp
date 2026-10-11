@@ -11,7 +11,10 @@
 
 namespace pix {
 namespace {
-constexpr int kW = kScreenW / kArtPixel, kH = kScreenH / kArtPixel;
+// The layer is allocated for the finest art pixel; coarser ones use its top-left part.
+constexpr int kW = (kScreenW * 2 + 2) / 3, kH = (kScreenH * 2 + 2) / 3;
+int layerW() { return std::min(kW, int(std::ceil(kScreenW / artPixel()))); }
+int layerH() { return std::min(kH, int(std::ceil(kScreenH / artPixel()))); }
 
 const RenderTexture2D* g_frame = nullptr;
 RenderTexture2D g_raw{}, g_out{};
@@ -21,9 +24,10 @@ bool g_ready = false;
 float g_artUnit = 0.0f;
 
 // The sprite look, on the low-resolution layer (premultiplied colours):
-// - a one-pixel ink outline around the body (the classic dark sprite outline),
+// - a one-pixel ink outline around the body (the classic dark sprite outline), faintly tinted by what it wraps,
 // - flat colour bands: the soft gradients of the HD drawing are quantised,
-// - a pixel of highlight on the edges facing the key light (upper left), a pixel of shade on the others.
+// - a pixel of highlight on the edges facing the key light (upper left), a pixel of shade on the opposite ones:
+//   the silhouette reads as a volume.
 const char* kFrag = R"(#version 330
 in vec2 fragTexCoord;
 in vec4 fragColor;
@@ -35,14 +39,22 @@ out vec4 finalColor;
 vec4 at(vec2 o) { return texture(texture0, fragTexCoord + o * texel); }
 void main() {
   vec4 c = at(vec2(0.0));
-  float l = at(vec2(-1.0, 0.0)).a, r = at(vec2(1.0, 0.0)).a, u = at(vec2(0.0, 1.0)).a, d = at(vec2(0.0, -1.0)).a;
-  float n = max(max(l, r), max(u, d));
+  vec4 L = at(vec2(-1.0, 0.0)), R = at(vec2(1.0, 0.0)), U = at(vec2(0.0, 1.0)), D = at(vec2(0.0, -1.0));
+  float n = max(max(L.a, R.a), max(U.a, D.a));
   if (c.a < 0.5) {
-    finalColor = n >= 0.5 ? vec4(ink, 1.0) : c;
+    if (n >= 0.5) {
+      vec4 s = L + R + U + D;
+      vec3 wrap = s.a > 0.0 ? s.rgb / s.a : vec3(0.0);
+      finalColor = vec4(mix(ink, wrap * 0.4, 0.2), 1.0);
+    } else {
+      finalColor = c;
+    }
     return;
   }
   vec3 rgb = c.rgb / c.a;
-  rgb = floor(rgb * 20.0 + 0.5) / 20.0;
+  float lit = step(at(light).a, 0.5), dark = step(at(-light).a, 0.5);
+  rgb = rgb * (1.0 + 0.2 * lit * (1.0 - dark)) * (1.0 - 0.18 * dark * (1.0 - lit));
+  rgb = floor(clamp(rgb, 0.0, 1.0) * 20.0 + 0.5) / 20.0;
   finalColor = vec4(rgb, 1.0);
 }
 )";
@@ -66,11 +78,14 @@ void premultipliedBlend() {
   BeginBlendMode(BLEND_CUSTOM_SEPARATE);
 }
 
-// Sub-rectangle of the layer, as a source rectangle of a render texture (stored upside down).
-Rectangle layerSrc(int x, int y, int w, int h) { return {float(x), float(kH - y - h), float(w), -float(h)}; }
+// Sub-rectangle of the layer (drawn in a viewport `lh` texels high), as a source rectangle of a render texture
+// (stored upside down).
+Rectangle layerSrc(int x, int y, int w, int h, int lh) { return {float(x), float(lh - y - h), float(w), -float(h)}; }
 }  // namespace
 
 bool enabled() { return settings().pixelArt; }
+
+float artPixel() { return g_renderScale >= 1.5f ? 1.5f : 2.0f; }
 
 float artUnit() { return g_artUnit; }
 
@@ -85,7 +100,8 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw) {
   rlDrawRenderBatchActive();
   const Matrix mv = rlGetMatrixModelview(), proj = rlGetMatrixProjection();
   // Bounds in layer pixels (the current transform gives frame pixels).
-  const float k = 1.0f / (g_renderScale * kArtPixel);
+  const int LW = layerW(), LH = layerH();
+  const float k = 1.0f / (g_renderScale * artPixel());
   float x0 = 1e9f, y0 = 1e9f, x1 = -1e9f, y1 = -1e9f;
   for (Vector2 p : {Vector2{b.x, b.y}, Vector2{b.right(), b.y}, Vector2{b.x, b.bottom()}, Vector2{b.right(), b.bottom()}}) {
     const Vector2 q = Vector2Transform(p, mv);
@@ -95,14 +111,14 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw) {
     y1 = std::max(y1, q.y * k);
   }
   const int ix0 = std::max(0, int(std::floor(x0)) - 2), iy0 = std::max(0, int(std::floor(y0)) - 2);
-  const int ix1 = std::min(kW, int(std::ceil(x1)) + 2), iy1 = std::min(kH, int(std::ceil(y1)) + 2);
+  const int ix1 = std::min(LW, int(std::ceil(x1)) + 2), iy1 = std::min(LH, int(std::ceil(y1)) + 2);
   if (ix1 <= ix0 || iy1 <= iy0) return;  // off screen
   const int w = ix1 - ix0, h = iy1 - iy0;
 
   // 1. The character, in the low-resolution layer.
   rlEnableFramebuffer(g_raw.id);
-  rlViewport(0, 0, kW, kH);
-  rlSetMatrixProjection(MatrixOrtho(0, kW, kH, 0, 0, 1));
+  rlViewport(0, 0, LW, LH);
+  rlSetMatrixProjection(MatrixOrtho(0, LW, LH, 0, 0, 1));
   rlSetMatrixModelview(MatrixMultiply(mv, MatrixScale(k, k, 1.0f)));
   rlClearColor(0, 0, 0, 0);
   rlClearScreenBuffers();
@@ -119,24 +135,24 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw) {
   rlSetMatrixModelview(MatrixIdentity());
   premultipliedBlend();
   BeginShaderMode(g_shader);
-  const float texel[2] = {1.0f / kW, 1.0f / kH}, light[2] = {-1.0f, -1.0f};
+  const float texel[2] = {1.0f / kW, 1.0f / kH}, light[2] = {-1.0f, 1.0f};  // up-left (the layer is upside down)
   const float ink[3] = {kInk.r / 255.0f, kInk.g / 255.0f, kInk.b / 255.0f};
   SetShaderValue(g_shader, g_texelLoc, texel, SHADER_UNIFORM_VEC2);
   SetShaderValue(g_shader, g_inkLoc, ink, SHADER_UNIFORM_VEC3);
   SetShaderValue(g_shader, g_lightLoc, light, SHADER_UNIFORM_VEC2);
-  DrawTexturePro(g_raw.texture, layerSrc(ix0, iy0, w, h), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,
+  DrawTexturePro(g_raw.texture, layerSrc(ix0, iy0, w, h, LH), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,
                  WHITE);
   EndShaderMode();
   rlDrawRenderBatchActive();
 
-  // 3. Back into the frame, each art pixel a square of kArtPixel virtual pixels.
+  // 3. Back into the frame, each art pixel a square of artPixel() virtual pixels.
   rlEnableFramebuffer(g_frame->id);
   rlViewport(0, 0, g_frame->texture.width, g_frame->texture.height);
   rlSetMatrixProjection(proj);
-  const float s = g_renderScale * kArtPixel;
+  const float s = g_renderScale * artPixel();
   rlSetMatrixModelview(MatrixScale(s, s, 1.0f));
   const unsigned char a = (unsigned char)clampf(alpha * 255.0f, 0.0f, 255.0f);
-  DrawTexturePro(g_out.texture, layerSrc(ix0, iy0, w, h), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,
+  DrawTexturePro(g_out.texture, layerSrc(ix0, iy0, w, h, LH), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,
                  {a, a, a, a});
   rlDrawRenderBatchActive();
   rlSetMatrixModelview(mv);

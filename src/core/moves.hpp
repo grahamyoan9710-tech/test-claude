@@ -28,6 +28,8 @@ enum class HitFx : uint8_t {
   Hollow,     // green-black hollow energy (Ulquiorra: Cero Oscuras, Luz de la Luna)
   Berserk,    // Kenpachi's wild yellow reiatsu
   Water,      // water jutsu (Kakashi)
+  Wolf,       // pale blue ceros and spectral wolves (Starrk)
+  Claw,       // cyan claw slashes (Grimmjow)
   Count
 };
 
@@ -112,6 +114,11 @@ enum class ProjVisual : uint8_t {
   ZephyrSpear,  // Yuno: giant wind spear
   IceAxe,       // Kratos: Leviathan axe wrapped in frost (ultimate)
   MaxBlue,      // Gojo: maximum output blue (huge vortex)
+  GetsugaCross, // Ichigo: Getsuga Jujisho, two black crescents crossing (hollow mask)
+  Desgarron,    // Grimmjow: five claws of cyan reiatsu raking forward
+  PanteraDart,  // Grimmjow: Garra de la Pantera, a forearm blade fired like a missile
+  CeroWolf,     // Starrk: a wolf of blue cero running (or leaping on its prey)
+  StarrkCero,   // Starrk: a small blue cero (Cero Metralleta)
   Count
 };
 
@@ -188,7 +195,7 @@ enum class UltFx : uint8_t {
   None,
   BlackMeteorite, BlackDivider, DemonUnion,          // Asta
   SpiritStorm, WindBladeShower, ZephyrSpear,         // Yuno
-  Mugetsu, GiantGetsuga, VastoLordeCero,             // Ichigo
+  GetsugaJujisho, GiantGetsuga, VastoLordeCero,      // Ichigo
   Kageyoshi, Gokei, Hakuteiken,                      // Byakuya
   LightDragon, MasterSwordBeam, LightArrowRain,      // Link
   DemonDragon, DemonKingRampage, GloomPillars,       // Ganondorf
@@ -201,6 +208,8 @@ enum class UltFx : uint8_t {
   UzumakiBarrage, Rasenshuriken, KuramaBijudama,     // Naruto
   Kirin, IndraArrow, Amaterasu,                      // Sasuke
   Raikiri, Kamui, KamuiShuriken,                     // Kakashi
+  GranReyCero, PanteraRelease, DesgarronClaws,       // Grimmjow
+  CeroMetralleta, LosLobos, StarrkRelease,           // Starrk
   Count
 };
 
@@ -211,12 +220,14 @@ enum class Form : uint8_t {
   SpartanRage,   // Kratos: red-hot, glowing tattoos, fists of fire
   DemonUnion,    // Asta: black skin markings, demon horn and black wing
   VastoLorde,    // Ichigo: white hollow body, horns, long orange hair, black sclera
-  FinalGetsuga,  // Ichigo: Mugetsu form, long black hair, black bandages
+  HollowMask,    // Ichigo: the Visored hollow mask over his face
   RedDemon,      // Kenpachi: bankai, red skin, horns, burning red aura
   Segunda,       // Ulquiorra: Segunda Etapa, black body, huge bat wings, tail
   KuramaAvatar,  // Naruto: golden chakra cloak with the giant fox around him
   SusanooPurple, // Sasuke: purple Susanoo around him
   SusanooBlue,   // Kakashi: blue Susanoo around him
+  Pantera,       // Grimmjow: Resurreccion, long hair, panther ears and tail, white armour, claws
+  LosLobos,      // Starrk: Resurreccion, fur-lined coat, a pistol in each hand
   Count
 };
 
@@ -312,6 +323,7 @@ struct Palette {
 enum class Hero : uint8_t {
   Asta, Yuno, Ichigo, Byakuya, Link, Ganondorf, Kratos, Gojo, Sukuna,
   Kenpachi, Ulquiorra, Hunter, Naruto, Sasuke, Kakashi,
+  Starrk, Grimmjow,
   Count
 };
 
@@ -356,6 +368,11 @@ enum class WeaponVisual : uint8_t {
   KakashiKunai,    // Kakashi: kunai
   SharinganEye,    // Kakashi: Sharingan (kamui)
   DoubleMangekyo,  // Kakashi: double Mangekyo (Susanoo)
+  Pantera,         // Grimmjow: his katana, teal grip
+  PanteraClaws,    // Grimmjow: claws of cyan reiatsu on both hands (power-up)
+  LobosPack,       // Starrk: spectral wolves running round him (power-up)
+  Lilynette,       // Starrk: Lilynette, the other half of his soul, floating at his side (power-up)
+  LobosPistol,     // Starrk: a pistol of Los Lobos (drawn in both hands while released)
   Count
 };
 

@@ -210,7 +210,7 @@ BeamStyle beamStyle(HitFx fx) {
   switch (fx) {
     case HitFx::Blood:  // Cero: crimson blast, black rim
       return {{190, 10, 30, 255}, {222, 26, 46, 255}, {255, 236, 236, 255}, {26, 0, 6, 255}, false, false};
-    case HitFx::Dark:  // Mugetsu: pure darkness edged with red
+    case HitFx::Dark:  // pure darkness edged with red
       return {{235, 24, 44, 255}, {6, 3, 8, 255}, {34, 0, 10, 255}, {255, 60, 70, 255}, true, false};
     case HitFx::Light:  // Seal of light: gold and white
       return {{255, 186, 70, 255}, {255, 214, 120, 255}, {255, 255, 246, 255}, {255, 248, 200, 255}, false, false};
@@ -220,6 +220,10 @@ BeamStyle beamStyle(HitFx fx) {
       return {{60, 230, 120, 255}, {6, 12, 8, 255}, {30, 80, 46, 255}, {120, 255, 170, 255}, true, false};
     case HitFx::Fire:  // Wyvern's Fire
       return {{255, 90, 20, 255}, {255, 140, 40, 255}, {255, 248, 210, 255}, {255, 200, 90, 255}, false, true};
+    case HitFx::Wolf:  // Starrk's cero: pale blue, white heart
+      return {{60, 120, 255, 255}, {120, 176, 255, 255}, {246, 250, 255, 255}, {200, 226, 255, 255}, false, false};
+    case HitFx::Claw:  // Gran Rey Cero: cyan, his blood swirling in it
+      return {{20, 170, 230, 255}, {70, 220, 250, 255}, {240, 255, 255, 255}, {170, 250, 255, 255}, false, false};
     default: {
       const Color c = hitFxColor(fx), g = hitFxGlow(fx);
       return {c, c, WHITE, g, false, false};
@@ -516,57 +520,6 @@ void petalFront(const Fighter& f, float k, float t) {
     polyline(pts, 20, 1.0f, 9.0f, A({255, 150, 200, 255}, 0.0f), A({255, 190, 220, 255}, 0.35f * k));
   }
   vfx::additive(false);
-}
-
-// ICHIGO: Mugetsu. Darkness swallows the world, black flames edged with red.
-void mugetsuBack(const Fighter& f, float k, int mf, float t, const Rect& v) {
-  const Vec2 c = f.center();
-  const float R = 120.0f + 2600.0f * smoothstep(mf / 46.0f);
-  const Color ink{4, 2, 6, 255};
-  fillView(v, A({20, 0, 4, 255}, 0.5f * k), A({10, 0, 2, 255}, 0.5f * k));
-  vfx::additive(true);
-  vfx::softRing(c, R + 30.0f, 120.0f, A({220, 20, 40, 255}, 0.5f * k));
-  vfx::additive(false);
-  vfx::glow(c, R, A(ink, 0.97f * k), A(ink, 0.97f * k), 48);
-  // Ragged black flames on the edge of the darkness
-  rlBegin(RL_TRIANGLES);
-  for (int i = 0; i < 40; ++i) {
-    const float a = i * 2.0f * kPi / 40.0f, a1 = (i + 1) * 2.0f * kPi / 40.0f;
-    const float l = 60.0f + 140.0f * hash01(i * 13 + int(t * 12.0f));
-    const Color col = A(ink, 0.97f * k);
-    rlColor4ub(col.r, col.g, col.b, col.a);
-    rlVertex2f(c.x + std::cos(a) * R, c.y + std::sin(a) * R);
-    rlVertex2f(c.x + std::cos(a1) * R, c.y + std::sin(a1) * R);
-    rlVertex2f(c.x + std::cos((a + a1) * 0.5f) * (R + l), c.y + std::sin((a + a1) * 0.5f) * (R + l));
-  }
-  rlEnd();
-  vfx::additive(true);  // faint red cracks in the void
-  for (int i = 0; i < 7; ++i) {
-    const float a = hash01(i * 17 + 5) * 2.0f * kPi;
-    vfx::bolt(c + dirOf(a) * 160.0f, c + dirOf(a) * std::min(R, 1500.0f), 60.0f, 9, i * 31u + uint32_t(t * 4.0f), 3.0f,
-              A({200, 20, 40, 255}, 0.4f * k));
-  }
-  vfx::additive(false);
-}
-
-void mugetsuFront(const Fighter& f, float k, float t, const Rect& v) {
-  const Vec2 c = f.center();
-  const float H = f.height();
-  fillView(v, A({0, 0, 0, 255}, 0.45f * k), A({0, 0, 0, 255}, 0.55f * k));  // the stage sinks into the dark too
-  for (int i = 0; i < 12; ++i) {  // black flames rising from him
-    const float x = (hash01(i * 7 + 1) - 0.5f) * H * 0.9f;
-    const float h = H * (0.9f + 0.9f * hash01(i * 7 + 2)) * (0.8f + 0.2f * std::sin(t * 9.0f + i));
-    const Vec2 b = c + Vec2{x, H * 0.45f}, tip = b + Vec2{std::sin(t * 4.0f + i) * 22.0f, -h};
-    vfx::additive(true);
-    vfx::wedge(b, tip, 34.0f, 2.0f, A({255, 30, 50, 255}, 0.45f * k), A({255, 30, 50, 255}, 0.0f));
-    vfx::additive(false);
-    vfx::wedge(b, tip, 24.0f, 1.0f, A({4, 2, 6, 255}, 0.9f * k), A({4, 2, 6, 255}, 0.2f * k));
-  }
-  for (int i = 0; i < 40; ++i) {  // ash
-    const float u = std::fmod(t * 0.3f + hash01(i * 3 + 9), 1.0f);
-    const Vec2 p{v.x + hash01(i * 5 + 1) * v.w + std::sin(t + i) * 20.0f, v.bottom() - u * v.h};
-    DrawPoly(V(p), 4, 3.0f + 3.0f * hash01(i), t * 90.0f + i * 20.0f, A(i % 3 ? Color{20, 6, 10, 255} : Color{230, 40, 50, 255}, k));
-  }
 }
 
 // ASTA: the black storm of anti-magic, the five-leaf clover.
@@ -868,7 +821,6 @@ void drawUltimateBackdrop(const Match& m, float time) {
       case UltFx::InfiniteVoid: voidBack(f, k, time, v); break;
       case UltFx::MalevolentShrine: shrineBack(f, k, time, v); break;
       case UltFx::Kageyoshi: case UltFx::Gokei: petalBack(f, k, time, v); break;
-      case UltFx::Mugetsu: mugetsuBack(f, k, mf, time, v); break;
       case UltFx::BlackDivider: stormBack(f, k, time, v, m.frame); break;
       case UltFx::SpiritStorm: case UltFx::WindBladeShower: case UltFx::ZephyrSpear: windBack(f, k, time, v); break;
       case UltFx::LightDragon: case UltFx::MasterSwordBeam:
@@ -891,7 +843,6 @@ void drawUltimateFront(const Match& m, float time) {
     switch (fx) {
       case UltFx::MalevolentShrine: shrineFront(m, f, k, mf, v); break;
       case UltFx::Kageyoshi: case UltFx::Gokei: petalFront(f, k, time); break;
-      case UltFx::Mugetsu: mugetsuFront(f, k, time, v); break;
       case UltFx::BlackDivider: stormFront(f, k, time); break;
       case UltFx::SpiritStorm: case UltFx::ZephyrSpear: windFront(f, k, time, v); break;
       case UltFx::WindBladeShower:

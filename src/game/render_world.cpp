@@ -1176,6 +1176,97 @@ void shotGetsuga(const Shot& s, bool dark, float time) {
   vfx::additive(false);
 }
 
+// Getsuga Jujisho: two black crescents edged with red, crossing in an X, flying as one.
+void shotGetsugaCross(const Shot& s, float time) {
+  const float R = s.r * 2.1f, th = R * 0.46f;
+  for (float tilt : {-0.62f, 0.62f}) {
+    const Vec2 d = rotate(s.d, tilt);
+    vfx::additive(true);
+    for (int i = 3; i >= 1; --i)
+      crescentAt(s.c - s.d * (i * s.r * 0.55f), d, R, th, 1.25f, Ap({200, 20, 40, 255}, 0.0f), Ap({230, 20, 40, 255}, 0.28f * s.k / i));
+    crescentAt(s.c + s.d * 5.0f, d, R * 1.06f, th * 1.2f, 1.32f, Ap({255, 40, 60, 255}, 0.2f * s.k), Ap({255, 70, 80, 255}, s.k));
+    vfx::additive(false);
+    crescentAt(s.c, d, R, th, 1.25f, Ap({6, 2, 6, 255}, 0.97f * s.k), Ap({24, 4, 10, 255}, s.k));
+  }
+  vfx::additive(true);  // where the two blades cross: a hot red core
+  vfx::glow(s.c, s.r * 0.9f, Ap({255, 60, 70, 255}, 0.7f * s.k), Ap({255, 20, 40, 255}, 0.0f));
+  vfx::glow(s.c, s.r * 0.35f, Ap(WHITE, 0.8f * s.k), Ap({255, 140, 140, 255}, 0.0f));
+  for (int i = 0; i < 4; ++i) {  // red sparks torn off the edges
+    const float a = std::atan2(s.d.y, s.d.x) + kPi + (hash01(s.seed + i) - 0.5f) * 1.6f;
+    const Vec2 p0 = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * (0.6f + 0.6f * std::fmod(time * 3.0f + i * 0.25f, 1.0f)));
+    vfx::streak(p0, p0 - s.d * (s.r * 0.8f), 3.0f, 0.0f, Ap({255, 80, 90, 255}, 0.7f * s.k), Ap({255, 80, 90, 255}, 0.0f));
+  }
+  vfx::additive(false);
+}
+
+// Desgarron: five claws of cyan reiatsu raking forward, the middle ones leading.
+void shotDesgarron(const Shot& s) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.4f, Ap({60, 214, 240, 255}, 0.22f * s.k), Ap({60, 214, 240, 255}, 0.0f));
+  for (int i = 0; i < 5; ++i) {
+    const float o = (i - 2) * s.r * 0.34f, lag = std::fabs(i - 2.0f) * s.r * 0.14f;
+    const Vec2 tip = s.c + s.n * o + s.d * (s.r * 0.85f - lag);
+    const Vec2 mid = tip - s.d * (s.r * 0.55f) + s.n * (o * 0.08f), tail = tip - s.d * (s.r * 2.0f) + s.n * (o * 0.3f);
+    vfx::streak(tail, mid, 0.0f, s.r * 0.17f, Ap({60, 214, 240, 255}, 0.0f), Ap({120, 240, 255, 255}, 0.9f * s.k));
+    vfx::streak(tip, mid, 0.0f, s.r * 0.17f, Ap({200, 250, 255, 255}, s.k), Ap({120, 240, 255, 255}, 0.9f * s.k));
+    vfx::streak(tail + s.d * (s.r * 0.8f), tip, 0.0f, s.r * 0.05f, Ap(WHITE, 0.0f), Ap(WHITE, s.k));
+  }
+  vfx::additive(false);
+}
+
+// Garra de la Pantera: a bone blade flying point first, a cyan wake behind it.
+void shotPanteraDart(const Shot& s) {
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 3.6f), s.c, 0.0f, s.r * 0.9f, Ap({60, 214, 240, 255}, 0.0f), Ap({120, 240, 255, 255}, 0.7f * s.k));
+  vfx::additive(false);
+  vfx::wedge(s.c - s.d * (s.r * 1.5f), s.c + s.d * (s.r * 1.5f), s.r * 0.6f, 0.0f, Ap({220, 222, 214, 255}, s.k),
+             Ap(WHITE, s.k));
+  vfx::wedge(s.c - s.d * (s.r * 1.2f), s.c + s.d * (s.r * 1.0f), s.r * 0.22f, 0.0f, Ap({150, 230, 245, 255}, s.k),
+             Ap(WHITE, s.k));
+}
+
+// A wolf of Los Lobos: a spirit of pale blue cero running on the ground, or leaping on its prey from above.
+void shotCeroWolf(const Match& m, const Projectile& p, const Shot& s, float time) {
+  const bool strike = p.vel.len2() < 0.5f;
+  float dir = s.d.x >= 0.0f ? 1.0f : -1.0f;
+  if (strike && p.owner >= 0 && p.owner < int(m.fighters.size())) dir = m.fighters[p.owner].pos.x <= p.pos.x ? 1.0f : -1.0f;
+  const float sz = s.r * (strike ? 1.3f : 1.6f);
+  Vec2 c = s.c;
+  float tilt = 0.0f;
+  if (strike) {  // the leap: from up behind, jaws first
+    const float u = clampf((p.age - p.armDelay) / 7.0f, 0.0f, 1.0f);
+    c = s.c + Vec2{-dir * sz * 1.6f * (1.0f - u), -sz * 2.2f * (1.0f - u)};
+    tilt = 0.55f * dir * (1.0f - u * 0.5f);
+  }
+  auto at = [&](float x, float y) { return c + rotate(Vec2{x * dir, y} * sz, tilt); };
+  const Color fur = Ap({140, 190, 255, 255}, 0.75f * s.k), core = Ap({235, 244, 255, 255}, s.k);
+  vfx::additive(true);
+  vfx::glow(c, sz * 1.9f, Ap({110, 170, 255, 255}, 0.28f * s.k), Ap({110, 170, 255, 255}, 0.0f));
+  const float ph = time * 18.0f + float(s.seed % 7);
+  for (int i = 0; i < 4; ++i) {
+    const float hx = i < 2 ? 0.45f : -0.45f, a = ph + (i % 2) * kPi + (i < 2 ? 0.0f : 0.8f);
+    const Vec2 paw = strike ? at(hx + 0.3f, 0.5f) : at(hx + std::sin(a) * 0.36f, 0.62f - std::max(0.0f, std::cos(a)) * 0.16f);
+    vfx::wedge(at(hx, 0.08f), paw, sz * 0.17f, sz * 0.06f, fur, fur);
+  }
+  vfx::wedge(at(-0.7f, 0.0f), at(0.6f, -0.05f), sz * 0.52f, sz * 0.46f, fur, fur);
+  vfx::wedge(at(-0.7f, -0.05f), at(-1.4f, -0.32f + 0.1f * std::sin(ph * 0.5f)), sz * 0.22f, sz * 0.04f, fur, fur);
+  vfx::glow(at(0.85f, -0.3f), sz * 0.33f, fur, fur, 14);
+  vfx::tri(at(1.0f, -0.42f), at(1.0f, -0.16f), at(1.58f, strike ? -0.1f : -0.26f), fur, fur, fur);
+  vfx::tri(at(0.66f, -0.48f), at(0.86f, -0.56f), at(0.7f, -0.92f), fur, fur, fur);
+  vfx::tri(at(0.9f, -0.54f), at(1.04f, -0.48f), at(0.98f, -0.88f), fur, fur, fur);
+  vfx::glow(at(0.98f, -0.34f), sz * 0.09f, core, core, 8);
+  vfx::additive(false);
+}
+
+// Cero Metralleta: one of a thousand small blue ceros.
+void shotStarrkCero(const Shot& s) {
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 3.2f), s.c, 0.0f, s.r * 1.2f, Ap({90, 150, 255, 255}, 0.0f), Ap({130, 185, 255, 255}, 0.6f * s.k));
+  vfx::glow(s.c, s.r * 1.9f, Ap({110, 170, 255, 255}, 0.55f * s.k), Ap({110, 170, 255, 255}, 0.0f));
+  vfx::glow(s.c, s.r * 0.7f, Ap(WHITE, s.k), Ap({200, 225, 255, 255}, 0.0f));
+  vfx::additive(false);
+}
+
 void shotCero(const Shot& s, float time) {
   vfx::glow(s.c, s.r * 1.9f, Ap({20, 0, 6, 255}, 0.7f * s.k), Ap({20, 0, 6, 255}, 0.0f));
   vfx::additive(true);
@@ -1934,6 +2025,11 @@ void drawProjectiles(const Match& m, float time) {
       case ProjVisual::KamuiVortex: shotKamuiVortex(s, time); continue;
       case ProjVisual::KamuiShuriken: shotKamuiShuriken(s, time); continue;
       case ProjVisual::GiantGetsuga: shotGetsuga(s, false, time); continue;
+      case ProjVisual::GetsugaCross: shotGetsugaCross(s, time); continue;
+      case ProjVisual::Desgarron: shotDesgarron(s); continue;
+      case ProjVisual::PanteraDart: shotPanteraDart(s); continue;
+      case ProjVisual::CeroWolf: shotCeroWolf(m, p, s, time); continue;
+      case ProjVisual::StarrkCero: shotStarrkCero(s); continue;
       case ProjVisual::LightPillar: shotLightPillar(s, time); continue;
       case ProjVisual::GloomPillar: shotGloomPillar(s, time); continue;
       case ProjVisual::PetalSphere: shotPetalSphere(s, time); continue;

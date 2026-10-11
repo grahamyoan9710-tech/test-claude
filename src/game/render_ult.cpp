@@ -197,14 +197,114 @@ void windRain(const Ctx& x) {  // a sky full of falling wind blades
   vfx::additive(false);
 }
 
+// A blade of reiatsu along the fighter's own blade (Ichigo's giant Zangetsu): it grows, then follows his swing.
+// Dark: a black blade edged with red (the hollow's reiatsu).
+void spiritBlade(const Ctx& x, float len, float width, Color glow, Color core, float k, bool dark) {
+  if (k <= 0.01f) return;
+  const Pose p = computePose(x.f, x.m, x.t);
+  const Vec2 hand = limbWorld(*x.f.def, p, x.f.pos, x.f.facing, 1.0f, Limb::ArmFront);
+  Vec2 d = p.weaponDir.norm();
+  d.x *= x.fc;
+  const Vec2 n{-d.y, d.x};
+  // A cleaver: the back of the blade is cut short at the tip, like Zangetsu.
+  const Vec2 b0 = hand + d * 8.0f - n * (width * 0.5f), b1 = hand + d * 8.0f + n * (width * 0.5f);
+  const Vec2 t0 = hand + d * (len - width * 0.8f) - n * (width * 0.5f), t1 = hand + d * len + n * (width * 0.5f);
+  vfx::additive(true);
+  vfx::glow(lerpv(hand, hand + d * len, 0.55f), len * 0.62f, A(glow, 0.32f * k), A(glow, 0.0f));
+  if (!dark) vfx::quad(b0, b1, t1, t0, A(glow, 0.5f * k), A(glow, 0.5f * k), A(core, 0.85f * k), A(core, 0.85f * k));
+  vfx::additive(false);
+  if (dark) vfx::quad(b0, b1, t1, t0, A({8, 2, 6, 255}, 0.9f * k), A({8, 2, 6, 255}, 0.9f * k), A({20, 4, 8, 255}, 0.9f * k),
+                      A({20, 4, 8, 255}, 0.9f * k));
+  vfx::additive(true);
+  vfx::wedge(b1, t1, 7.0f, 4.0f, A(dark ? Color{255, 50, 60, 255} : WHITE, 0.95f * k), A(dark ? Color{255, 90, 90, 255} : WHITE, 0.95f * k));
+  vfx::wedge(t0, t1, 5.0f, 5.0f, A(dark ? Color{255, 50, 60, 255} : WHITE, 0.8f * k), A(dark ? Color{255, 50, 60, 255} : WHITE, 0.8f * k));
+  vfx::wedge(b0, t0, 3.0f, 3.0f, A(core, 0.5f * k), A(core, 0.5f * k));
+  vfx::additive(false);
+}
+
+// Reiatsu streaming into the fighter from all around.
+void converge(const Ctx& x, Vec2 at, Color col, int n, float r0) {
+  vfx::additive(true);
+  for (int i = 0; i < n; ++i) {
+    const float a = hash01(i * 7 + 3) * 2.0f * kPi;
+    const float u = std::fmod(x.t * (0.9f + 0.6f * hash01(i * 7 + 4)) + hash01(i * 7 + 5), 1.0f);
+    const float r = r0 * (1.0f - u) + 20.0f;
+    vfx::streak(at + dirOf(a) * (r + 70.0f), at + dirOf(a) * r, 0.0f, 4.0f, A(col, 0.0f), A(col, 0.7f * x.k * u));
+  }
+  vfx::additive(false);
+}
+
 void giantGetsuga(const Ctx& x, bool front) {
-  if (front) return;
+  const MoveDef& mv = x.f.moveDef(FinalSmash);
+  const int fire = mv.projectileFrame;
+  if (front) {  // Zangetsu becomes a blade of reiatsu as tall as a building, then the swing
+    const float grow = smoothstep(float(x.mf - 24) / 20.0f);
+    const float fade = clampf(float(fire + 8 - x.mf) / 8.0f, 0.0f, 1.0f);
+    spiritBlade(x, 90.0f + 380.0f * grow, 30.0f + 46.0f * grow, {90, 170, 255, 255}, {225, 240, 255, 255}, x.k * fade * grow, false);
+    if (x.mf < fire) converge(x, x.c + Vec2{0.0f, -80.0f}, {170, 215, 255, 255}, 24, 520.0f);
+    if (x.mf >= fire && x.mf < fire + 10) {  // the release
+      const float u = (x.mf - fire) / 10.0f;
+      vfx::additive(true);
+      vfx::glow(x.c + Vec2{x.fc * 90.0f, -10.0f}, 160.0f + 260.0f * u, A({200, 230, 255, 255}, 0.7f * (1.0f - u) * x.k),
+                A({90, 170, 255, 255}, 0.0f));
+      vfx::additive(false);
+    }
+    return;
+  }
   sky(x.v, {4, 10, 30, 255}, {20, 40, 90, 255}, x.k);
   moon(x.c + Vec2{x.fc * 260.0f, -330.0f}, 150.0f, {220, 236, 255, 255}, {6, 14, 40, 255}, 0.42f * x.fc, x.k);
   vfx::additive(true);
   vfx::streak(x.c + Vec2{0.0f, 200.0f}, x.c + Vec2{0.0f, -900.0f}, 120.0f, 40.0f, A({90, 170, 255, 255}, 0.45f * x.k),
               A({90, 170, 255, 255}, 0.0f));
+  vfx::softRing(x.c, 140.0f + 30.0f * std::sin(x.t * 6.0f), 26.0f, A({120, 190, 255, 255}, 0.4f * x.k));
   vfx::additive(false);
+}
+
+// Getsuga Jujisho: the hollow mask, black reiatsu edged with red, two blades of darkness crossing.
+void getsugaJujisho(const Ctx& x, bool front) {
+  const MoveDef& mv = x.f.moveDef(FinalSmash);
+  const int fire = mv.projectileFrame;
+  if (front) {
+    const float grow = smoothstep(float(x.mf - 26) / 18.0f);
+    const float fade = clampf(float(fire + 6 - x.mf) / 6.0f, 0.0f, 1.0f);
+    spiritBlade(x, 80.0f + 300.0f * grow, 26.0f + 34.0f * grow, {255, 40, 60, 255}, {255, 120, 120, 255}, x.k * fade * grow, true);
+    if (x.mf >= fire - 10 && x.mf < fire + 8) {  // the two cuts of the cross, drawn in the air
+      const float u = clampf(float(x.mf - fire + 10) / 8.0f, 0.0f, 1.0f), out = clampf(float(fire + 8 - x.mf) / 8.0f, 0.0f, 1.0f);
+      const Vec2 o = x.c + Vec2{x.fc * 110.0f, -10.0f};
+      for (int sgn = -1; sgn <= 1; sgn += 2) {
+        const Vec2 a = o + Vec2{-x.fc * 90.0f, sgn * -130.0f}, b = o + Vec2{x.fc * 90.0f, sgn * 130.0f};
+        const Vec2 e = lerpv(a, b, u);
+        vfx::wedge(a, e, 10.0f, 30.0f, A({6, 2, 6, 255}, 0.95f * out * x.k), A({6, 2, 6, 255}, 0.95f * out * x.k));
+        vfx::additive(true);
+        vfx::wedge(a, e, 18.0f, 44.0f, A({255, 40, 60, 255}, 0.0f), A({255, 40, 60, 255}, 0.6f * out * x.k));
+        vfx::additive(false);
+      }
+    }
+    return;
+  }
+  sky(x.v, {6, 0, 2, 255}, {54, 4, 12, 255}, x.k);
+  const Vec2 mc = x.c + Vec2{x.fc * 280.0f, -340.0f};  // a black moon with a red corona
+  vfx::additive(true);
+  vfx::glow(mc, 330.0f, A({200, 20, 40, 255}, 0.35f * x.k), A({200, 20, 40, 255}, 0.0f));
+  vfx::additive(false);
+  glowE(mc, 140.0f, 140.0f, A({4, 0, 2, 255}, x.k), A({4, 0, 2, 255}, x.k), 36);
+  // the mask, faint and huge, behind him
+  const Vec2 h = x.c + Vec2{-x.fc * 30.0f, -230.0f};
+  const Color bone = A({240, 236, 228, 255}, 0.14f * x.k), red = A({200, 20, 30, 255}, 0.28f * x.k);
+  glowE(h, 210.0f, 250.0f, bone, bone);
+  vfx::wedge(h + Vec2{x.fc * 40.0f, -220.0f}, h + Vec2{x.fc * 50.0f, 200.0f}, 22.0f, 10.0f, red, red);
+  vfx::wedge(h + Vec2{x.fc * 100.0f, -200.0f}, h + Vec2{x.fc * 105.0f, 160.0f}, 16.0f, 8.0f, red, red);
+  for (int s = -1; s <= 1; s += 2)
+    glowE(h + Vec2{s * 80.0f, -10.0f}, 46.0f, 30.0f, A({0, 0, 0, 255}, 0.5f * x.k), A({0, 0, 0, 255}, 0.5f * x.k));
+  for (int i = 0; i < 14; ++i) {  // black flames of reiatsu rising from him
+    const float xo = (hash01(i * 7 + 1) - 0.5f) * 160.0f;
+    const float ht = 160.0f + 160.0f * hash01(i * 7 + 2) * (0.8f + 0.2f * std::sin(x.t * 9.0f + i));
+    const Vec2 b = x.c + Vec2{xo, 60.0f}, tip = b + Vec2{std::sin(x.t * 4.0f + i) * 26.0f, -ht};
+    vfx::additive(true);
+    vfx::wedge(b, tip, 30.0f, 2.0f, A({255, 30, 50, 255}, 0.4f * x.k), A({255, 30, 50, 255}, 0.0f));
+    vfx::additive(false);
+    vfx::wedge(b, tip, 20.0f, 1.0f, A({4, 2, 6, 255}, 0.85f * x.k), A({4, 2, 6, 255}, 0.15f * x.k));
+  }
 }
 
 void vastoLorde(const Ctx& x, bool front) {
@@ -625,6 +725,160 @@ void kamui(const Ctx& x, bool front) {
   sharingan(x.c + Vec2{-x.fc * 200.0f, -280.0f}, 170.0f, -x.t * 1.2f, 0.85f * x.k, true);
 }
 
+// ---- Grimmjow ---------------------------------------------------------------------------------------------------
+// Las Noches: the white dome of the Espada's palace standing on the dunes of Hueco Mundo.
+void lasNoches(const Ctx& x) {
+  huecoMundo(x);
+  const float base = x.f.pos.y + 150.0f;
+  const Vec2 dc{x.c.x - x.fc * 460.0f, base};
+  const Color wall = A({222, 224, 216, 255}, 0.7f * x.k), shade2 = A({170, 172, 166, 255}, 0.7f * x.k);
+  glowE(dc, 560.0f, 330.0f, wall, wall, 40);
+  glowE(dc + Vec2{x.fc * 120.0f, 40.0f}, 420.0f, 250.0f, shade2, A(shade2, 0.0f), 32);
+  for (int i = 0; i < 3; ++i) {  // its towers
+    const Vec2 b = dc + Vec2{(i - 1) * 260.0f, -200.0f + std::fabs(i - 1.0f) * 80.0f};
+    vfx::wedge(b, b + Vec2{0.0f, -320.0f + std::fabs(i - 1.0f) * 90.0f}, 46.0f, 30.0f, wall, wall);
+  }
+}
+
+void granReyCero(const Ctx& x, bool front) {
+  if (front) {  // a drop of his blood falls into the cero, which swells, cyan and white
+    if (x.mf >= 26 && x.mf < 48) {
+      const Vec2 hand = x.c + Vec2{x.fc * 34.0f, -14.0f};
+      const float g = (x.mf - 26) / 22.0f;
+      vfx::additive(true);
+      vfx::glow(hand, 20.0f + 70.0f * g, A({60, 214, 240, 255}, 0.7f * x.k), A({60, 214, 240, 255}, 0.0f));
+      vfx::glow(hand, 8.0f + 26.0f * g, A(WHITE, x.k), A({170, 250, 255, 255}, 0.0f));
+      vfx::additive(false);
+      if (g < 0.55f) vfx::glow(hand + Vec2{0.0f, -60.0f + 110.0f * g}, 6.0f, A({210, 20, 30, 255}, x.k), A({210, 20, 30, 255}, x.k), 10);
+    }
+    return;
+  }
+  lasNoches(x);
+}
+
+// Rake marks of a giant claw across the sky (five parallel cuts), drawn as they sweep.
+void clawRake(Vec2 c, Vec2 dir, float len, float gap, float u, float k, Color col) {
+  const Vec2 n{-dir.y, dir.x};
+  vfx::additive(true);
+  for (int i = 0; i < 5; ++i) {
+    const Vec2 a = c - dir * len + n * ((i - 2) * gap), b = c + dir * len + n * ((i - 2) * gap);
+    const Vec2 e = lerpv(a, b, u);
+    vfx::streak(a, e, 2.0f, 26.0f, A(col, 0.0f), A(col, 0.8f * k));
+    vfx::streak(a, e, 0.0f, 8.0f, A(WHITE, 0.0f), A(WHITE, k));
+  }
+  vfx::additive(false);
+}
+
+void panteraRelease(const Ctx& x, bool front) {
+  if (front) {  // "Kishire, Pantera": the claws tear the air open
+    if (x.mf >= 30 && x.mf < 52) {
+      const float u = clampf((x.mf - 30) / 6.0f, 0.0f, 1.0f), out = clampf((52 - x.mf) / 12.0f, 0.0f, 1.0f);
+      clawRake(x.c + Vec2{x.fc * 40.0f, -60.0f}, Vec2{x.fc * 0.7f, 1.0f}.norm(), 340.0f, 60.0f, u, out * x.k, {60, 214, 240, 255});
+    }
+    return;
+  }
+  sky(x.v, {2, 10, 20, 255}, {10, 44, 64, 255}, x.k);
+  const Vec2 h = x.c + Vec2{-x.fc * 40.0f, -250.0f};  // a panther of light roaring behind him
+  const Color col = A({60, 214, 240, 255}, 0.35f * x.k);
+  vfx::additive(true);
+  glowE(h, 230.0f, 170.0f, col, A(col, 0.0f));
+  for (int sgn = -1; sgn <= 1; sgn += 2) {
+    vfx::tri(h + Vec2{sgn * 90.0f, -90.0f}, h + Vec2{sgn * 170.0f, -60.0f}, h + Vec2{sgn * 160.0f, -230.0f}, col, col, A(col, 0.0f));
+    vfx::glow(h + Vec2{sgn * 70.0f, -10.0f}, 26.0f, A(WHITE, 0.9f * x.k), A({120, 240, 255, 255}, 0.0f), 12);
+  }
+  vfx::tri(h + Vec2{-80.0f, 70.0f}, h + Vec2{80.0f, 70.0f}, h + Vec2{0.0f, 160.0f}, col, col, A(col, 0.0f));  // the jaw
+  vfx::additive(false);
+  flashes(x.v, x.m.frame, x.k, {120, 240, 255, 255}, 29, 6);
+}
+
+void desgarronClaws(const Ctx& x, bool front) {
+  if (!front) {
+    sky(x.v, {0, 6, 14, 255}, {8, 30, 50, 255}, x.k);
+    speedLines(x.v, x.c, x.t, x.k, {120, 240, 255, 255}, 40);
+    return;
+  }
+  const MoveDef& mv = x.f.moveDef(FinalSmash);
+  const int fin = mv.hitboxes.empty() ? 72 : mv.hitboxes.back().start;
+  if (x.mf >= fin - 4 && x.mf < fin + 14) {  // ten claws of light across the victim
+    const float u = clampf((x.mf - fin + 4) / 8.0f, 0.0f, 1.0f), out = clampf((fin + 14 - x.mf) / 10.0f, 0.0f, 1.0f);
+    const Vec2 c0 = x.c + Vec2{mv.holdAt.x * x.fc, mv.holdAt.y};
+    clawRake(c0, Vec2{x.fc * 0.8f, 1.0f}.norm(), 320.0f, 44.0f, u, out * x.k, {60, 214, 240, 255});
+    clawRake(c0, Vec2{-x.fc * 0.8f, 1.0f}.norm(), 320.0f, 44.0f, clampf(u * 1.4f - 0.4f, 0.0f, 1.0f), out * x.k, {60, 214, 240, 255});
+  }
+}
+
+// ---- Starrk ------------------------------------------------------------------------------------------------------
+void ceroMetralleta(const Ctx& x, bool front) {
+  if (front) return;
+  sky(x.v, {4, 8, 24, 255}, {24, 40, 80, 255}, x.k);
+  vfx::additive(true);  // a wall of a thousand small ceros lighting up behind him
+  for (int i = 0; i < 105; ++i) {
+    const float gx = (i % 15 - 7) * 52.0f + (vfx::hash01(i * 3) - 0.5f) * 24.0f;
+    const float gy = (i / 15 - 3) * 52.0f + (vfx::hash01(i * 3 + 1) - 0.5f) * 24.0f;
+    const Vec2 p = x.c + Vec2{-x.fc * 80.0f + gx, -70.0f + gy};
+    const float on = smoothstep((x.mf - 22 - vfx::hash01(i * 3 + 2) * 14.0f) / 6.0f) * (0.75f + 0.25f * std::sin(x.t * 20.0f + i));
+    if (on <= 0.01f) continue;
+    vfx::glow(p, 10.0f * on, A({120, 180, 255, 255}, 0.8f * on * x.k), A({120, 180, 255, 255}, 0.0f), 8);
+    vfx::glow(p, 3.5f * on, A(WHITE, on * x.k), A(WHITE, 0.0f), 6);
+  }
+  vfx::additive(false);
+}
+
+// A wolf howling at the moon: a black silhouette on the ridge.
+void howlingWolf(Vec2 b, float sz, float side, Color ink) {
+  glowE(b, sz * 0.9f, sz * 0.36f, ink, ink, 16);
+  vfx::wedge(b + Vec2{side * sz * 0.5f, -sz * 0.1f}, b + Vec2{side * sz * 0.9f, -sz * 1.0f}, sz * 0.36f, sz * 0.2f, ink, ink);
+  vfx::wedge(b + Vec2{side * sz * 0.86f, -sz * 0.98f}, b + Vec2{side * sz * 1.05f, -sz * 1.45f}, sz * 0.18f, sz * 0.05f, ink, ink);
+  vfx::tri(b + Vec2{side * sz * 0.7f, -sz * 1.0f}, b + Vec2{side * sz * 0.82f, -sz * 0.95f}, b + Vec2{side * sz * 0.66f, -sz * 1.3f},
+           ink, ink, ink);
+  vfx::wedge(b + Vec2{-side * sz * 0.8f, 0.0f}, b + Vec2{-side * sz * 1.4f, -sz * 0.2f}, sz * 0.18f, sz * 0.04f, ink, ink);
+  for (int i = 0; i < 4; ++i)
+    vfx::wedge(b + Vec2{(i < 2 ? 0.5f : -0.5f) * sz + (i % 2) * 8.0f, 0.0f}, b + Vec2{(i < 2 ? 0.5f : -0.5f) * sz, sz * 0.7f},
+               sz * 0.14f, sz * 0.1f, ink, ink);
+}
+
+void losLobos(const Ctx& x, bool front) {
+  if (front) return;
+  sky(x.v, {4, 6, 18, 255}, {30, 40, 70, 255}, x.k);
+  moon(x.c + Vec2{x.fc * 240.0f, -360.0f}, 170.0f, {230, 236, 250, 255}, {4, 6, 18, 255}, 3.0f, x.k);
+  const Color ink = A({6, 8, 16, 255}, 0.95f * x.k);
+  const float ridge = x.f.pos.y + 90.0f;
+  vfx::quad({x.v.x, ridge + 30.0f}, {x.v.right(), ridge - 40.0f}, {x.v.right(), x.v.bottom()}, {x.v.x, x.v.bottom()}, ink, ink, ink, ink);
+  for (int i = 0; i < 5; ++i) {
+    const float wx = x.v.x + x.v.w * (0.12f + 0.19f * i);
+    const float wy = ridge + 30.0f - 70.0f * (wx - x.v.x) / x.v.w;
+    howlingWolf({wx, wy - 26.0f}, 40.0f + 10.0f * vfx::hash01(i * 5 + 1), i % 2 ? 1.0f : -1.0f, ink);
+  }
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i)  // mist over the ridge
+    glowE({x.v.x + x.v.w * (0.2f + 0.3f * i) + std::sin(x.t * 0.5f + i) * 60.0f, ridge}, 420.0f, 60.0f,
+          A({140, 170, 230, 255}, 0.18f * x.k), A({140, 170, 230, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void starrkRelease(const Ctx& x, bool front) {
+  if (front) return;
+  sky(x.v, {24, 30, 46, 255}, {110, 122, 146, 255}, x.k);
+  const Vec2 l = x.c + Vec2{-x.fc * 170.0f, -130.0f};  // Lilynette turns into light that flows into his hands
+  const float u = smoothstep((x.mf - 18) / 30.0f);
+  vfx::additive(true);
+  glowE(l, 30.0f + 30.0f * (1.0f - u), 60.0f * (1.0f - u) + 12.0f, A(WHITE, 0.7f * (1.0f - u) * x.k), A(WHITE, 0.0f));
+  for (int sIdx = 0; sIdx < 5; ++sIdx) {
+    Vec2 pts[12];
+    for (int i = 0; i < 12; ++i) {
+      const float v = i / 11.0f * u;
+      pts[i] = lerpv(l, x.c + Vec2{x.fc * 30.0f, -10.0f}, v) + Vec2{0.0f, std::sin(v * 9.0f + sIdx * 1.3f + x.t * 4.0f) * 26.0f};
+    }
+    polyline(pts, 12, 10.0f, 3.0f, A({200, 225, 255, 255}, 0.0f), A({230, 240, 255, 255}, 0.7f * x.k));
+  }
+  for (int i = 0; i < 8; ++i) {  // the spirits of the pack circling
+    const float a = x.t * 0.8f + i * kPi / 4.0f;
+    vfx::glow(x.c + Vec2{std::cos(a) * 330.0f, std::sin(a) * 120.0f - 60.0f}, 34.0f, A({150, 196, 255, 255}, 0.4f * x.k),
+              A({150, 196, 255, 255}, 0.0f), 14);
+  }
+  vfx::additive(false);
+}
+
 void susanooSky(const Ctx& x, bool front, Color top, Color bottom) {
   if (front) return;
   sky(x.v, top, bottom, x.k);
@@ -638,6 +892,7 @@ bool drawUltCinematic(const Match& m, const Fighter& f, UltFx fx, float k, int m
     case UltFx::DemonUnion: demonUnion(x, front); return true;
     case UltFx::WindBladeShower: if (front) windRain(x); return false;  // + Yuno's spirit storm
     case UltFx::GiantGetsuga: giantGetsuga(x, front); return true;
+    case UltFx::GetsugaJujisho: getsugaJujisho(x, front); return true;
     case UltFx::VastoLordeCero: vastoLorde(x, front); return true;
     case UltFx::Hakuteiken: hakuteiken(x, front); return true;
     case UltFx::LightDragon: if (front) lightDragon(x); return false;  // + Link's seal
@@ -668,6 +923,12 @@ bool drawUltCinematic(const Match& m, const Fighter& f, UltFx fx, float k, int m
     case UltFx::Raikiri: raikiri(x, front); return true;
     case UltFx::Kamui: kamui(x, front); return true;
     case UltFx::KamuiShuriken: susanooSky(x, front, {4, 10, 30, 255}, {20, 40, 90, 255}); return true;
+    case UltFx::GranReyCero: granReyCero(x, front); return true;
+    case UltFx::PanteraRelease: panteraRelease(x, front); return true;
+    case UltFx::DesgarronClaws: desgarronClaws(x, front); return true;
+    case UltFx::CeroMetralleta: ceroMetralleta(x, front); return true;
+    case UltFx::LosLobos: losLobos(x, front); return true;
+    case UltFx::StarrkRelease: starrkRelease(x, front); return true;
     default: return false;
   }
 }
@@ -741,6 +1002,18 @@ void drawFormAvatar(const Fighter& f, float time, bool front) {
       if (front) break;
       const Vec2 back = c + Vec2{-fc * H * 0.12f, -H * 0.25f};
       wing(back, -fc, H * 1.2f, time, A({10, 10, 12, 255}, 0.95f), A({220, 220, 230, 255}, 0.4f), 5);
+      break;
+    }
+    case Form::Pantera: {  // crackling cyan reiatsu around the panther
+      if (!front) break;
+      const uint32_t fs = uint32_t(time * 12.0f) * 97u + uint32_t(f.id) * 13u;
+      vfx::additive(true);
+      for (int i = 0; i < 3; ++i) {
+        const float a = vfx::hash01(fs + i) * 2.0f * kPi;
+        const Vec2 p0 = c + dirOf(a) * (H * 0.3f);
+        vfx::bolt(p0, p0 + dirOf(a + 0.5f) * (H * 0.3f), 8.0f, 4, fs + i * 7u, 2.0f, A({120, 240, 255, 255}, 0.7f));
+      }
+      vfx::additive(false);
       break;
     }
     case Form::SpartanRage: case Form::RedDemon: {  // burning aura

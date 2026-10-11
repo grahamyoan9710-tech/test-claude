@@ -797,6 +797,79 @@ void kuramaFlame(const WP& p) {
   discW(c + Vec2{r * 0.3f, -r * 0.1f}, r * 0.12f, p.col({200, 30, 20, 255}));
 }
 
+// ---- Bleach (3): Grimmjow and Starrk ------------------------------------------------------------------
+// Pantera: a plain katana, a teal grip and a square guard.
+void pantera(const WP& p) {
+  const Color steel{212, 218, 230, 255}, silver{170, 176, 188, 255};
+  p.dot({-13, 0}, 2.2f, silver);
+  handle(p, -12, 3, 4.2f, {22, 112, 132, 255}, {170, 240, 250, 255}, 3.3f, true);
+  p.poly({{3, -5.4f}, {6.2f, -5.4f}, {6.2f, 5.4f}, {3, 5.4f}}, silver);
+  p.poly({{6, -1.6f}, {40, -2.0f}, {40, 2.3f}, {6, 2.4f}}, steel);
+  p.poly({{40, -2.0f}, {72, -3.4f}, {74, -3.0f}, {68, 0.6f}, {40, 2.3f}}, steel);
+  if (p.details()) {
+    p.stroke({7, 1.4f}, {40, 1.3f}, 0.9f, {252, 253, 255, 255});
+    p.stroke({40, 1.3f}, {68, -0.2f}, 0.9f, {252, 253, 255, 255});
+    p.stroke({7, -1.0f}, {40, -1.3f}, 0.8f, {150, 156, 172, 255});
+    p.paint({{3.4f, -4.6f}, {5.8f, -4.6f}, {5.8f, -2.4f}, {3.4f, -2.4f}}, {230, 236, 244, 255});
+  }
+}
+
+// Grimmjow's claws as an item: a bone gauntlet and four claws of cyan reiatsu.
+void panteraClaws(const WP& p) {
+  p.halo({0, 0}, {32, 0}, 18.0f, {60, 214, 240, 255}, 1.2f);
+  p.poly({{-2, -6}, {10, -7}, {14, -2}, {14, 4}, {8, 7}, {-2, 6}}, {236, 236, 230, 255});
+  for (int i = 0; i < 4; ++i) {
+    const float b = -4.5f + i * 3.0f;
+    p.poly({{12, b - 1.1f}, {31, b * 1.35f}, {12, b + 1.1f}}, {120, 240, 255, 255});
+  }
+  if (p.details()) p.stroke({0, -3}, {10, -4}, 1.0f, {180, 180, 172, 255});
+}
+
+// The pack of Los Lobos as an item: the head of a spectral wolf, eyes of white light.
+void lobosHead(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  const Color fur = p.col({120, 176, 255, 230}), pale = p.col({214, 232, 255, 255});
+  discW(c, r * 2.3f, p.col({110, 170, 255, 50}));
+  discW(c, r * 0.95f, fur);
+  triW(V(c + Vec2{r * 0.4f, -r * 0.45f}), V(c + Vec2{r * 0.4f, r * 0.45f}), V(c + Vec2{r * 1.7f, r * 0.15f}), fur);  // snout
+  triW(V(c + Vec2{-r * 0.6f, -r * 0.5f}), V(c + Vec2{-r * 0.05f, -r * 0.8f}), V(c + Vec2{-r * 0.5f, -r * 1.7f}), fur);
+  triW(V(c + Vec2{-r * 0.1f, -r * 0.7f}), V(c + Vec2{r * 0.4f, -r * 0.6f}), V(c + Vec2{r * 0.15f, -r * 1.6f}), fur);
+  if (p.ghost) return;
+  discW(c + Vec2{r * 0.25f, -r * 0.15f}, r * 0.18f, pale);
+  discW(c + Vec2{r * 1.55f, r * 0.12f}, r * 0.14f, p.col({30, 40, 70, 255}));
+}
+
+// Lilynette as an item: her broken mask, one horn, a pink eye shining in the hole.
+void lilynetteMask(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  const Color bone = p.col({244, 242, 234, 255});
+  discW(c, r * 2.1f, p.col({200, 225, 255, 50}));
+  triW(V(c + Vec2{-r, -r * 0.2f}), V(c + Vec2{r * 0.6f, -r * 0.9f}), V(c + Vec2{r * 0.4f, r}), bone);
+  triW(V(c + Vec2{-r, -r * 0.2f}), V(c + Vec2{r * 0.4f, r}), V(c + Vec2{-r * 0.6f, r * 0.8f}), bone);
+  triW(V(c + Vec2{-r * 0.2f, -r * 0.6f}), V(c + Vec2{r * 0.4f, -r * 0.8f}), V(c + Vec2{-r * 0.3f, -r * 2.0f}), bone);  // horn
+  if (p.ghost) return;
+  discW(c + Vec2{-r * 0.1f, 0.0f}, r * 0.32f, p.col({30, 20, 30, 255}));
+  discW(c + Vec2{-r * 0.05f, 0.0f}, r * 0.16f, p.col({255, 130, 190, 255}));
+}
+
+// A pistol of Los Lobos: a long-barrelled revolver, steel and white grip, cero light at the muzzle.
+void lobosPistol(const WP& p) {
+  const Color steel{176, 182, 196, 255}, dark{70, 74, 86, 255}, grip{236, 234, 226, 255};
+  p.poly({{-3, -1}, {4, -1}, {3, 10}, {-4, 9}}, grip);
+  p.poly({{-2, -4}, {9, -4}, {9, 2}, {-2, 2}}, steel);
+  p.poly({{9, -3.4f}, {27, -3.0f}, {27, -0.4f}, {9, 0.2f}}, steel);
+  p.poly({{3, 1}, {8, 1}, {6, 5}}, dark);  // trigger guard
+  if (p.details()) {
+    p.stroke({10, -2.6f}, {26, -2.3f}, 0.8f, {236, 240, 250, 255});
+    p.spot({4, -1}, 2.0f, dark);
+    p.spot({28, -1.7f}, 1.6f + 0.4f * std::sin(p.time * 12.0f), {170, 210, 255, 255});
+  }
+}
+
 void sageScroll(const WP& p) {
   const Color paper{236, 220, 180, 255}, wood{150, 60, 40, 255};
   p.seg({2, 0}, {28, 0}, 9.0f, paper);
@@ -868,6 +941,11 @@ void drawVisual(WeaponVisual v, const WP& p, const WeaponStyle& st) {
     case WeaponVisual::DoubleMangekyo: eyeOrb(p, 2); break;
     case WeaponVisual::KuramaChakra: kuramaFlame(p); break;
     case WeaponVisual::SusanooBow: bowOfLight(p, st.pull, 3); break;
+    case WeaponVisual::Pantera: pantera(p); break;
+    case WeaponVisual::PanteraClaws: panteraClaws(p); break;
+    case WeaponVisual::LobosPack: lobosHead(p); break;
+    case WeaponVisual::Lilynette: lilynetteMask(p); break;
+    case WeaponVisual::LobosPistol: lobosPistol(p); break;
     default: break;
   }
 }
@@ -976,6 +1054,9 @@ float weaponVisualLength(WeaponVisual v) {
     case WeaponVisual::KakashiKunai: return 28.0f;
     case WeaponVisual::SageScroll: return 30.0f;
     case WeaponVisual::SusanooBow: return 40.0f;
+    case WeaponVisual::Pantera: return 74.0f;
+    case WeaponVisual::PanteraClaws: return 31.0f;
+    case WeaponVisual::LobosPistol: return 27.0f;
     default: return 30.0f;
   }
 }
@@ -1023,7 +1104,8 @@ bool isHandWeapon(WeaponVisual v) {
     case WeaponVisual::SixEyes: case WeaponVisual::CursedFinger: case WeaponVisual::GuardianShield:
     case WeaponVisual::BowOfLight: case WeaponVisual::SegundaCore: case WeaponVisual::SageScroll:
     case WeaponVisual::KuramaChakra: case WeaponVisual::SusanooBow: case WeaponVisual::Mangekyo:
-    case WeaponVisual::SharinganEye: case WeaponVisual::DoubleMangekyo:
+    case WeaponVisual::SharinganEye: case WeaponVisual::DoubleMangekyo: case WeaponVisual::PanteraClaws:
+    case WeaponVisual::LobosPack: case WeaponVisual::Lilynette:
       return false;
     default: return true;
   }

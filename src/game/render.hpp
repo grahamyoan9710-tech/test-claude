@@ -116,6 +116,8 @@ inline HitFx heroElement(Hero h) {
     case Hero::Naruto: return HitFx::Chakra;
     case Hero::Sasuke: return HitFx::Lightning;
     case Hero::Kakashi: return HitFx::Lightning;
+    case Hero::Starrk: return HitFx::Wolf;
+    case Hero::Grimmjow: return HitFx::Claw;
     default: return HitFx::Normal;
   }
 }

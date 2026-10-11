@@ -131,6 +131,8 @@ inline Color hitFxColor(HitFx fx) {
     case HitFx::Hollow: return {70, 220, 130, 255};
     case HitFx::Berserk: return {240, 214, 70, 255};
     case HitFx::Water: return {70, 160, 240, 255};
+    case HitFx::Wolf: return {110, 170, 255, 255};
+    case HitFx::Claw: return {60, 214, 240, 255};
     default: return {255, 234, 190, 255};
   }
 }
@@ -143,6 +145,8 @@ inline Color hitFxGlow(HitFx fx) {
     case HitFx::Dark: return {220, 180, 255, 255};
     case HitFx::BlackFlame: return {200, 60, 120, 255};
     case HitFx::Lightning: return {230, 244, 255, 255};
+    case HitFx::Wolf: return {214, 232, 255, 255};
+    case HitFx::Claw: return {210, 252, 255, 255};
     default: return mixColor(hitFxColor(fx), WHITE, 0.55f);
   }
 }

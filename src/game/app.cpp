@@ -268,7 +268,7 @@ void App::run() {
       if (frame != frames_) continue;
       Image img = LoadImageFromTexture(target_.texture);
       ImageFlipVertical(&img);
-      if (img.width != kScreenW) ImageResize(&img, kScreenW, kScreenH);
+      if (img.width != kScreenW && !opt_.fullRes) ImageResize(&img, kScreenW, kScreenH);
       ExportImage(img, path.c_str());
       UnloadImage(img);
     }

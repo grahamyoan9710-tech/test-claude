@@ -294,7 +294,7 @@ static void testUltMeter() {
   CHECK(std::fabs(f.ult - dealt * kUltPerDamageDealt) < 0.01f, "attacker meter +%.1f for %.1f%% dealt", f.ult, dealt);
   CHECK(std::fabs(v.ult - dealt * kUltPerDamageTaken) < 0.01f, "victim meter +%.1f for %.1f%% taken", v.ult, dealt);
   int readyEvents = 0;
-  for (int i = 0; i < 2000 && !f.finalSmash; ++i) {
+  for (int i = 0; i < 4000 && !f.finalSmash; ++i) {
     v.pos = {10, 0};
     v.vel = v.kbVel = {0, 0};
     v.percent = 0.0f;
