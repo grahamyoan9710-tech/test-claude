@@ -22,7 +22,7 @@ CharacterDef makeAsta() {
                 pal({236, 232, 220}, {60, 58, 66}, {200, 48, 52}, {238, 198, 162}, {226, 226, 214}, {80, 150, 70})};
   stats(c, 46, 98, 102, 4.3f, 9.2f, 5.3f, 0.66f, 10.5f, 15.5f, 16.0f, 10.5f, 14.5f, 3);
   c.weaponLength = 84;
-  const float S = 1.05f, P = 0.95f;
+  const float S = 1.05f, P = 0.9f;
   buildSwordNormals(c, S, P, F::AntiMagic);
   auto& m = c.moves;
 
@@ -325,7 +325,7 @@ CharacterDef makeLink() {
                 pal({70, 128, 70}, {120, 88, 58}, {222, 184, 90}, {244, 210, 176}, {214, 164, 92}, {70, 130, 200})};
   stats(c, 44, 98, 98, 4.2f, 8.9f, 5.1f, 0.62f, 10.2f, 15.0f, 15.2f, 10.0f, 14.2f, 4);
   c.weaponLength = 64;
-  const float S = 1.0f, P = 0.92f;
+  const float S = 1.0f, P = 0.88f;
   buildSwordNormals(c, S, P, F::Light);
   auto& m = c.moves;
 
@@ -875,21 +875,21 @@ CharacterDef makeStarrk() {
   c.style = BodyStyle::Ninja;
   c.palettes = {pal({238, 236, 230}, {36, 36, 42}, {120, 180, 255}, {232, 198, 170}, {86, 62, 48}, {120, 140, 170}),
                 pal({70, 72, 82}, {230, 228, 220}, {170, 210, 255}, {232, 198, 170}, {86, 62, 48}, {120, 140, 170})};
-  stats(c, 46, 112, 98, 4.0f, 8.8f, 5.3f, 0.56f, 9.6f, 14.4f, 15.2f, 10.0f, 13.8f, 4);
+  stats(c, 46, 112, 106, 4.0f, 8.9f, 5.3f, 0.62f, 10.0f, 14.8f, 15.4f, 10.0f, 13.8f, 4);
   c.airJumps = 2;
   c.airAccel = 0.5f;
-  const float S = 1.06f, P = 1.1f;
+  const float S = 1.08f, P = 1.2f;
   buildBrawlerNormals(c, S, P, F::Wolf);
   auto& m = c.moves;
 
   BeamDef cero;
-  cero.start = 20;
-  cero.end = 32;
+  cero.start = 16;
+  cero.end = 28;
   cero.from = {34, -14};
-  cero.length = 280;
-  cero.width = 44;
+  cero.length = 300;
+  cero.width = 46;
   cero.fx = F::Wolf;
-  m[NSpecial] = mv("Cero", 52, beamHits(cero, 9, 28, 45, 82, 2));
+  m[NSpecial] = mv("Cero", 46, beamHits(cero, 11, 30, 50, 86, 2));
   m[NSpecial].beam = cero;
   m[NSpecial].gravityMul = 0.3f;
   m[NSpecial].pose = PoseHint::Point;
@@ -900,7 +900,7 @@ CharacterDef makeStarrk() {
   m[SSpecial].projectileEvery = 9;
   m[SSpecial].projectile = proj({30, 30}, {8.5f, 0}, 0, 60, 16, 3, 10, 10, F::Wolf, PV::CeroWolf);
   m[SSpecial].projectile.explodeRadius = 48;
-  m[SSpecial].projectile.explode = hb(0, 0, 0, 0, 48, 7, 45, 45, 72, L::None, 0, F::Wolf);
+  m[SSpecial].projectile.explode = hb(0, 0, 0, 0, 48, 9, 45, 48, 76, L::None, 0, F::Wolf);
   m[SSpecial].pose = PoseHint::Point;
 
   m[USpecial] = mv("Sonído", 38, {hb(20, 24, 0, -6, 38, 7, 80, 55, 70, L::Body, 0, F::Wolf)});
