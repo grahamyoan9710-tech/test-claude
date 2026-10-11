@@ -56,6 +56,13 @@ ASTUCES
 - Donnez et recevez des coups pour remplir votre barre d'ulti (ou brisez
   l'Orbe Clash qui flotte au-dessus de l'arène) : appuyez alors sur ULTIME
   pour déclencher l'attaque finale SUPER CLASH !
+- Des armes tombent du ciel : chacune appartient à un combattant (son
+  portrait flotte au-dessus). Marchez dessus avec ce combattant pour la
+  ramasser : plus de puissance, plus d'allonge et des spéciales changées
+  pendant une vingtaine de secondes. (Réglage ARMES dans la sélection.)
+- 9 combattants : Asta et Yuno (Black Clover), Ichigo et Byakuya (Bleach),
+  Link et Ganondorf (Zelda TOTK), Kratos (God of War), Gojo et Sukuna
+  (Jujutsu Kaisen). Projet de fan non officiel.
 - Le mode Entraînement permet de s'exercer contre un mannequin.
 
 Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
