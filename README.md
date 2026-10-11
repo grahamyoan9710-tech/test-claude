@@ -30,15 +30,29 @@ Tout est dessiné par le code (aucune image ni logo repris du jeu).
 - **Entraînement** : vies infinies face à un **mannequin** (immobile, qui saute, qui se protège, ou
   piloté par l'ordinateur), réinitialisation des positions, **compteur de combos** et dégâts du combo,
   affichage des zones de coup. Tout se règle dans le menu pause.
-- **6 combattants** avec chacun ses stats (poids, vitesse, gravité, sauts) et ses 4 attaques spéciales :
-  | | Style | Spéciales |
-  |---|---|---|
-  | **BLAZE** | Polyvalent, poings de feu | Boule de feu rebondissante, Poing comète, Uppercut solaire, Tornade |
-  | **VOLT** | Rapide et léger | Éclair, Charge foudre (à charger), Zip (dans 8 directions), Tonnerre |
-  | **TITAN** | Poids lourd | Poing titan (à charger), Charge bélier (super armure), Forteresse, Séisme |
-  | **ARIA** | Épéiste (pointe de l'épée plus forte) | Brise-garde, Lame dansante (3 coups), Envol du dauphin, Contre |
-  | **PUFFO** | Flotteur, 5 sauts en l'air | Étoile, Marteau, Tornade étoilée, Pierre (super armure) |
-  | **SHADE** | Ninja | 3 Shurikens, Lame éclipse (intangible), Disparition (téléportation), Contre-ombre |
+- **9 combattants** inspirés de séries cultes (hommages de fans, dessinés par le code), chacun avec ses stats,
+  4 attaques spéciales, une attaque ultime et **2 armes à ramasser** :
+  | | Univers | Spéciales | Ultime | Armes |
+  |---|---|---|---|---|
+  | **ASTA** | Black Clover | Lame anti-magie, Météore noir, Ouragan noir, Renvoi anti-magie (renvoie les projectiles) | Black Divider | Épée pourfendeuse, Épée habitante |
+  | **YUNO** | Black Clover | Lames de vent, Tempête tranchante (tornade qui aspire), Envol de Sylphe, Tourbillon | Tempête de Zéphyr | Grimoire à quatre trèfles, Lance de l'esprit |
+  | **ICHIGO** | Bleach | Getsuga Tenshō, Shunpo, Tsukiyomi, Cero (rayon) | Mugetsu | Zangetsu (Shikai), Tensa Zangetsu (Bankai) |
+  | **BYAKUYA** | Bleach | Senbonzakura (nuée de pétales), Senka (attaque dans le dos), Shunpo céleste, Danku | Senbonzakura Kageyoshi | Senbonzakura (Shikai), Kageyoshi (Bankai) |
+  | **LINK** | Zelda: Tears of the Kingdom | Arc, Bombe Zonaï, Ascension, Emprise (saisie à distance) | Sceau de lumière | Épée de légende, Arc de lumière |
+  | **GANONDORF** | Zelda: Tears of the Kingdom | Sphère de malice, Ruée du Roi Démon, Ascension maudite, Fléau de malice | Bête du Fléau | Épée du Roi Démon, Lances de malice |
+  | **KRATOS** | God of War | Rage spartiate, Charge du bouclier, Bond de Sparte, Parade du bouclier | Rage de Sparte | Hache Léviathan (revient dans la main), Lames du Chaos |
+  | **GOJO** | Jujutsu Kaisen | Rouge (explose), Bleu (attire), Téléportation, Infini (renvoie les projectiles) | Sphère de l'Infini puis Violet | Technique : Violet, Six Yeux |
+  | **SUKUNA** | Jujutsu Kaisen | Démantèlement, Clivage, Envol maudit, Fûga (flèche de feu qui explose) | Sanctuaire démoniaque | Kamutoke, Doigt de Sukuna |
+- **Les armes** : de temps en temps, une arme tombe du ciel dans un rayon de lumière, au-dessus d'une
+  plateforme. Chaque arme appartient à **un combattant** (son portrait flotte au-dessus) : lui seul peut
+  la ramasser, **en marchant dessus**. Pendant une vingtaine de secondes (anneau autour du portrait dans
+  le HUD), il frappe plus fort et plus loin, ses coups prennent l'élément de l'arme et certaines spéciales
+  changent (la hache de Kratos se lance et revient, l'Épée de légende tire un rayon, le Bankai d'Ichigo
+  lance un Getsuga noir...). Un K.O. fait perdre l'arme. Les ordinateurs vont chercher les leurs.
+  Réglage : **ARMES : OUI/NON** dans la sélection des combattants ou dans Paramètres → Jeu.
+- **Effets à la Dragon Ball FighterZ** : « impact frames » (l'écran passe en noir et blanc façon manga
+  sur les coups signature), cut-in avec le portrait et le nom de l'ultime, rayons, ondes de choc,
+  arrière-plans des extensions de territoire, gerbes d'étincelles propres à chaque élément.
 - **Mécaniques à la Smash** : formule de recul de Smash (dépend du %, du poids et des dégâts), arrêt sur
   image à l'impact (*hitlag*), influence directionnelle (*DI*), petits/grands sauts, chute rapide,
   bouclier qui s'use (et se brise !), roulades, esquives au sol et en l'air, saisies + 4 projections,
@@ -214,7 +228,8 @@ entre ordinateurs, l'équilibrage et le déterminisme.
 ```
 src/core/   simulation pure (aucune dépendance)
   moves.hpp            données : hitboxes, projectiles, attaques, personnages
-  roster*.cpp          les 6 combattants et leurs attaques
+  roster*.cpp          les 9 combattants, leurs attaques et leurs armes
+  weapons.cpp          armes qui tombent du ciel, ramassage, durée
   stage.cpp            les arènes
   fighter_update.cpp   machine à états des combattants (contrôles)
   fighter_physics.cpp  déplacements, collisions, atterrissages, rebords
@@ -233,6 +248,9 @@ src/game/   interface raylib
   settings.cpp         paramètres enregistrés et noms des touches
   fonts.cpp            polices intégrées
   render_body.cpp      dessin des personnages (squelette + IK)
+  render_weapons.cpp   dessin des armes (en main et posées au sol)
+  render_items.cpp     armes posées sur l'arène
+  render_vfx.cpp       rayons et arrière-plans des ultimes
   render_fighter.cpp   poses : chaque attaque anime le membre qui porte la hitbox
   render_world.cpp     décors, plateformes, projectiles, aperçus des arènes
   render_hud.cpp       pourcentages, vies, barre d'ulti, bulles hors-champ, compte à rebours
@@ -252,3 +270,8 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 - Base de manettes **SDL_GameControllerDB** — licence zlib (`assets/gamecontrollerdb-LICENSE.txt`).
 - Direction artistique inspirée de *The Legend of Zelda: Tears of the Kingdom* (Nintendo) ; aucun élément
   du jeu n'est repris, tout est dessiné par le code.
+- **Projet de fan, non officiel et non commercial.** Les combattants rendent hommage à *Black Clover*
+  (Yūki Tabata / Shūeisha), *Bleach* (Tite Kubo / Shūeisha), *The Legend of Zelda: Tears of the Kingdom*
+  (Nintendo), *God of War* (Santa Monica Studio / Sony Interactive Entertainment) et *Jujutsu Kaisen*
+  (Gege Akutami / Shūeisha) ; ces noms et personnages appartiennent à leurs ayants droit. Tout est dessiné
+  par le code : aucune image, aucun son et aucun modèle de ces œuvres n'est utilisé.
