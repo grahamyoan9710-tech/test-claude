@@ -282,6 +282,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
     v.hitlag = lag;
     if (attacker) attacker->hitlag = lag;
     v.flash = 8;
+    v.flashFx = h.fx;
     emit(EvType::Hit, hitPos, attacker ? attacker->id : -1, v.id, dmg * 0.5f, {float(dirSign), 0}, h.fx);
     return;
   }
@@ -316,6 +317,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
   v.hitlag = lag;
   if (attacker && !throwHit) attacker->hitlag = lag;
   v.flash = 10;
+  v.flashFx = h.fx;
   emit(EvType::Hit, hitPos, attacker ? attacker->id : -1, v.id, kb, dir, h.fx);
   events.back().impact = h.impact;
 }

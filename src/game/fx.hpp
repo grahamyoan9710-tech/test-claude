@@ -47,6 +47,7 @@ class Fx {
     Fireball,  // ball of an explosion: color (hot) -> orange -> color2 (smoke)
     Debris,    // chunk of rock / metal, falls
     Shock,     // flat shock wave along the ground, half width size -> size1
+    Crack,     // cracks running down the face of a platform from pos (its top edge): reach size
   };
   struct Particle {
     Vec2 pos, vel;
@@ -80,6 +81,7 @@ class Fx {
   void dust(Vec2 feet, int count, float spread);
   void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kZonaiGlow);
   void hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big);
+  void groundImpact(const Match& m, Vec2 feet, float strength);  // cracks, rubble and dust where a blow hits the ground
   void elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy);
   void explosion(Vec2 pos, float r, HitFx fx);
   void startImpact(const Match& m, Vec2 pos, Vec2 dir, int attacker, int victim, HitFx fx, int len, bool ko);

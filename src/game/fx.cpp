@@ -149,6 +149,25 @@ void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
   elementBurst(pos, dir, fx, heavy);
 }
 
+void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
+  for (const auto& p : m.platforms) {  // the solid ground right under the feet, if any
+    const Rect& r = p.rect;
+    if (!p.solid || feet.x < r.left() + 6.0f || feet.x > r.right() - 6.0f || feet.y < r.top() - 30.0f || feet.y > r.top() + 40.0f)
+      continue;
+    const Vec2 at{feet.x, r.top()};
+    const float k = clampf(strength / 160.0f, 0.5f, 1.6f);
+    Particle& c = add(PK::Crack, at, {}, 150, 34.0f + 34.0f * k, 0.0f, {32, 24, 30, 255});
+    c.seed = uint32_t(feet.x * 13.0f) * 2654435761u + uint32_t(strength);
+    for (int i = 0; i < int(4 + 5 * k); ++i)  // rubble thrown up
+      add(PK::Debris, at + Vec2{rng_.range(-14.0f, 14.0f), -4.0f}, {rng_.range(-4.5f, 4.5f), -rng_.range(3.0f, 7.5f) * k}, rng_.range(30, 46),
+          rng_.range(2.5f, 5.0f), 2.0f, i % 2 ? Color{120, 110, 104, 255} : Color{84, 76, 74, 255}, 0.4f, 0.98f).rotVel =
+          rng_.range(-12.0f, 12.0f);
+    add(PK::Shock, at, {}, 18, 70.0f * k, 14.0f, {240, 232, 220, 200});
+    dust(at, 6, 4.0f * k);
+    return;
+  }
+}
+
 void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
   const int n = std::min(22, int(4 + heavy * 10));
   const Color c = hitFxColor(fx), g = hitFxGlow(fx);
@@ -450,6 +469,7 @@ void Fx::onEvents(const Match& m) {
         }
         const bool big = e.impact || kb >= 140.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
+        if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf) groundImpact(m, m.fighters[e.b].pos, kb);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
           const Fighter& v = m.fighters[e.b];
           Combo& c = combos_[e.b & 3];
@@ -967,6 +987,12 @@ void Fx::update(const Match& m) {
       Color c = sp > 16.0f ? Color{255, 170, 90, 220} : Color{230, 230, 235, 200};
       add(PK::Smoke, f.center(), f.kbVel * -0.05f, 26, 8, 20 + sp, c);
     }
+    if (f.state == FState::Hitstun && sp > 21.0f && m.frame % 3 == 0) {  // a launch that kills crackles
+      Particle& z = add(PK::Zap, f.center() + rdir() * 10.0f, {}, 8, 34.0f + sp, 3.0f, {255, 110, 60, 255});
+      z.rot = std::atan2(-f.kbVel.y, -f.kbVel.x) + rng_.range(-0.6f, 0.6f);
+      z.color2 = {255, 240, 200, 255};
+      z.seed = uint32_t(m.frame) * 31u + uint32_t(f.id);
+    }
     const AuraLook look = auraLook(f.def->hero);
     if (f.finalSmash && m.frame % 2 == 0) {  // ki: sparks shooting up through the aura
       add(PK::Spark, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.1f, 0.8f) * H},
@@ -990,6 +1016,32 @@ void Fx::update(const Match& m) {
 
 // ---- Drawing ---------------------------------------------------------------------------
 void Fx::drawBack(const Match& m, float time) const {
+  for (const auto& p : parts_) {  // cracks in the ground, under everything that moves
+    if (p.kind != PK::Crack) continue;
+    const float a = clampf(p.life / 40.0f, 0.0f, 1.0f), grow = clampf((p.maxLife - p.life) / 5.0f, 0.0f, 1.0f);
+    const Color dark = withAlpha(p.color, 0.9f * a), lit = withAlpha({255, 240, 214, 255}, 0.3f * a);
+    vfx::glow(p.pos + Vec2{0.0f, 3.0f}, p.size * 0.42f, withAlpha(p.color, 0.55f * a), withAlpha(p.color, 0.0f), 16);
+    const int branches = 4 + int(p.seed % 3u);
+    for (int b = 0; b < branches; ++b) {
+      float ang = kPi * (0.12f + 0.76f * (b + 0.5f) / branches) + (vfx::hash01(p.seed + b * 7u) - 0.5f) * 0.35f;
+      Vec2 q = p.pos;
+      const float len = p.size * (0.6f + 0.5f * vfx::hash01(p.seed + b * 13u)) * grow;
+      for (int k = 0; k < 4; ++k) {
+        const float seg = len / 4.0f, w = 3.2f - 0.7f * k;
+        const Vec2 n = q + Vec2{std::cos(ang), std::sin(ang)} * seg;
+        DrawLineEx(V(q + Vec2{0.0f, 1.5f}), V(n + Vec2{0.0f, 1.5f}), w, lit);
+        DrawLineEx(V(q), V(n), w, dark);
+        if (k == 1 && vfx::hash01(p.seed + b * 31u) > 0.5f) {  // a fork
+          const float fa = ang + (vfx::hash01(p.seed + b * 37u) > 0.5f ? 0.6f : -0.6f);
+          DrawLineEx(V(n), V(n + Vec2{std::cos(fa), std::sin(fa)} * seg * 0.8f), w * 0.6f, dark);
+        }
+        q = n;
+        ang += (vfx::hash01(p.seed + b * 17u + k * 5u) - 0.5f) * 0.7f;
+        ang = clampf(ang, kPi * 0.08f, kPi * 0.92f);  // always down into the platform
+      }
+    }
+    DrawEllipse(int(p.pos.x), int(p.pos.y + 1), p.size * 0.32f, 3.0f, withAlpha(p.color, 0.8f * a));  // the dent
+  }
   // Pillars of light from the sky
   if (!pillars_.empty()) {
     vfx::additive(true);
@@ -1158,6 +1210,7 @@ void Fx::drawWorld() const {
         break;
       }
       case PK::Debris: DrawPoly(V(p.pos), 5, size, p.rot, withAlpha(p.color, std::min(1.0f, k * 3.0f))); break;
+      case PK::Crack: break;  // drawn in drawBack, under the fighters
       case PK::Shock: {  // flat ellipse expanding along the ground
         const float rx = lerpf(p.size1, p.size, k), ry = rx * 0.22f;
         Vec2 prev{};

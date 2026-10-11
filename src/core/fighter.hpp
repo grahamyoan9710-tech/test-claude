@@ -108,6 +108,7 @@ struct Fighter {
 
   // Visual helpers (read by the renderer)
   int flash = 0;
+  HitFx flashFx = HitFx::Normal;  // element of the blow that made it flash
   int airJumpFrame = -1000;  // frame of the last air jump (for the flip)
   float spin = 0.0f;
 

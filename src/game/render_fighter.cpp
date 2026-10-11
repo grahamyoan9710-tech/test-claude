@@ -1533,7 +1533,8 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     if (mv->teleportFrame >= 0 && f.moveFrame >= mv->intangibleStart && f.moveFrame < mv->teleportFrame)
       alpha = 0.12f;
   }
-  Color flashCol = WHITE;
+  // A blow lights the victim up in its element (fire orange, lightning blue, darkness violet...).
+  Color flashCol = f.flashFx == HitFx::Normal ? WHITE : mixColor(hitFxGlow(f.flashFx), WHITE, 0.3f);
   float flash = f.flash > 0 ? f.flash / 12.0f : 0.0f;
   if (const MoveDef* mv = f.currentMove()) {
     if (f.charging) {
