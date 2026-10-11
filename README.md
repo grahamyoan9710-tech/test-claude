@@ -61,9 +61,9 @@ Tout est dessiné par le code (aucune image ni logo repris du jeu).
   et mobiles.
 - **La barre d'ulti** : sous forme de cellules d'énergie Zonaï au-dessus de chaque carte de dégâts, elle
   se remplit **en frappant** (0,45 point par % infligé) **et en prenant des coups** (0,35 point par %
-  reçu). Pleine, le combattant s'entoure d'une aura turquoise, la carte affiche « ULTI PRÊTE ! » avec le
-  bouton à presser, et la touche **Ultime** déclenche l'attaque finale **SUPER CLASH** (cinématique,
-  ondes de choc dévastatrices). Les ordinateurs s'en servent aussi.
+  reçu). Pleine, le combattant s'entoure d'une aura de son élément, la carte affiche « ULTI PRÊTE ! » avec
+  le bouton à presser, et la touche **Ultime** déclenche **l'ultime du combattant** (cut-in avec son nom,
+  extension de territoire, rayon ou tempête selon le personnage). Les ordinateurs s'en servent aussi.
 - **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
   de l'arène. Celui qui la brise **remplit d'un coup sa barre d'ulti**.
 - **3 arènes** : **Profondeurs** (abîme, racines lumineuses et cristaux), **Sanctuaire** (temple Zonaï en
@@ -84,7 +84,7 @@ Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquemen
 - **Affichage** : plein écran, qualité graphique (*Haute* = contours lissés, rendu en double
   résolution ; *Normale* pour les petites machines), secousses de l'écran, noms au-dessus des joueurs,
   compteur d'images (FPS), zones de coup.
-- **Jeu** : nombre de vies, Orbe Clash, niveau des ordinateurs par défaut, tout réinitialiser.
+- **Jeu** : nombre de vies, Orbe Clash, armes, niveau des ordinateurs par défaut, tout réinitialiser.
 - **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
   est échangée). Quand une manette est utilisée, l'onglet montre **ses boutons, réassignables eux
   aussi** : deux boutons par action (saut, attaque, spéciale, bouclier, saisie, attaque smash, ultime),
@@ -156,9 +156,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-3.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-4.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-3.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-4.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -201,6 +201,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFETCHCONTENT_SOURCE_DIR_RAYLIB=
 
 ```
 super_clash --demo            # match de démonstration entre 4 ordinateurs
+super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 8)
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
 super_clash --stage 2         # arène par défaut (0, 1 ou 2)
 super_clash --debug           # zones de coup visibles

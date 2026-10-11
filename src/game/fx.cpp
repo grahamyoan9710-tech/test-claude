@@ -97,12 +97,11 @@ void Fx::dust(Vec2 feet, int count, float spread) {
   }
 }
 
-void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise) {
+void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise, Color col) {
   for (int i = 0; i < count; ++i) {
     Vec2 dir = rdir();
     add(PK::Mote, pos + dir * rng_.range(0.0f, radius), dir * (speed * rng_.range(0.35f, 1.0f)) + Vec2{0.0f, -rise},
-        rng_.range(30, 55), rng_.range(2.0f, 3.5f), 0.6f, i % 4 ? kZonaiGlow : mixColor(kZonaiGlow, WHITE, 0.6f),
-        -0.03f, 0.94f);
+        rng_.range(30, 55), rng_.range(2.0f, 3.5f), 0.6f, i % 4 ? col : mixColor(col, WHITE, 0.6f), -0.03f, 0.94f);
   }
 }
 
@@ -510,17 +509,17 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::GameSet, 0.8f, 1.25f);
         au.play(Sfx::Crowd, 0.8f, 1.1f);
         break;
-      case EvType::FinalSmash: {  // SUPER CLASH: the ancient power is unleashed
+      case EvType::FinalSmash: {  // the ultimate is unleashed, in the hero's element
+        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kZonaiGlow;
         flash_ = std::max(flash_, 0.55f);
-        flashCol_ = mixColor(kZonaiGlow, WHITE, 0.55f);
+        flashCol_ = mixColor(el, WHITE, 0.55f);
         shake_ = std::max(shake_, 10.0f);
-        add(PK::Hex, e.pos, {}, 40, 30, 520, kZonaiGlow);
+        add(PK::Hex, e.pos, {}, 40, 30, 520, el);
         add(PK::Ring, e.pos, {}, 34, 20, 380, WHITE);
-        motes(e.pos, 40, 30, 10, 0);
+        motes(e.pos, 40, 30, 10, 0, el);
         if (e.a >= 0 && e.a < nf) {
-          const HitFx el = heroElement(m.fighters[e.a].def->hero);
-          add(PK::Flash, e.pos, {}, 18, 60, 420, hitFxGlow(el));
-          Particle& b = add(PK::Burst, e.pos, {}, 20, 120, 640, hitFxGlow(el));
+          add(PK::Flash, e.pos, {}, 18, 60, 420, el);
+          Particle& b = add(PK::Burst, e.pos, {}, 20, 120, 640, el);
           b.rot = rng_.range(0, 2 * kPi);
         }
         au.play(Sfx::UltUnleash, 1.0f);
@@ -529,16 +528,18 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::Crowd, 0.9f, 1.15f);
         break;
       }
-      case EvType::UltReady:  // meter full: runes light up
-        add(PK::Hex, e.pos, {}, 30, 16, 150, kZonaiGlow);
-        add(PK::Hex, e.pos, {}, 42, 10, 105, mixColor(kZonaiGlow, WHITE, 0.5f));
-        add(PK::Ring, e.pos, {}, 22, 10, 90, withAlpha(mixColor(kZonaiGlow, WHITE, 0.6f), 0.9f));
-        motes(e.pos, 26, 20, 5.5f, 2.5f);
+      case EvType::UltReady: {  // meter full: runes light up in the hero's element
+        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kZonaiGlow;
+        add(PK::Hex, e.pos, {}, 30, 16, 150, el);
+        add(PK::Hex, e.pos, {}, 42, 10, 105, mixColor(el, WHITE, 0.5f));
+        add(PK::Ring, e.pos, {}, 22, 10, 90, withAlpha(mixColor(el, WHITE, 0.6f), 0.9f));
+        motes(e.pos, 26, 20, 5.5f, 2.5f, el);
         flash_ = std::max(flash_, 0.1f);
-        flashCol_ = kZonaiGlow;
+        flashCol_ = el;
         shake_ = std::max(shake_, 3.0f);
         au.play(Sfx::UltReady, 0.95f);
         break;
+      }
       case EvType::SuperFlash:
         flash_ = std::max(flash_, 0.25f);
         flashCol_ = WHITE;
@@ -758,10 +759,11 @@ void Fx::update(const Match& m) {
     const float H = f.height();
     const int id = f.id & 3;
     if (f.state == FState::Attack && f.move == FinalSmash) {
+      const Color el = hitFxGlow(heroElement(f.def->hero));
       if (f.moveFrame < 34 && f.hitlag == 0) {  // gathering: energy flows in
         for (int i = 0; i < 2; ++i) {
           Vec2 dir = rdir();
-          add(PK::Mote, f.center() + dir * (1.6f * H), dir * -7.0f, 15, rng_.range(2.0f, 3.2f), 1.0f, kZonaiGlow, 0.0f, 1.0f);
+          add(PK::Mote, f.center() + dir * (1.6f * H), dir * -7.0f, 15, rng_.range(2.0f, 3.2f), 1.0f, el, 0.0f, 1.0f);
         }
       }
       // Once per shock wave, on impact: the wave's own hit-stop holds the frame.
@@ -769,8 +771,8 @@ void Fx::update(const Match& m) {
       for (const auto& h : f.def->moves[FinalSmash].hitboxes)
         if (h.start == f.moveFrame && wave != h.start) {
           wave = h.start;
-          motes(f.center(), 24, 20, 13, 0);
-          add(PK::Hex, f.center(), {}, 26, 20, h.radius * 1.1f, mixColor(kZonaiGlow, WHITE, 0.4f));
+          motes(f.center(), 24, 20, 13, 0, el);
+          add(PK::Hex, f.center(), {}, 26, 20, h.radius * 1.1f, mixColor(el, WHITE, 0.4f));
         }
     } else {
       fsWave_[id] = -1;
@@ -809,7 +811,7 @@ void Fx::update(const Match& m) {
           look.dark ? (m.frame % 4 ? look.outer : look.inner) : look.inner, 0.0f, 0.97f);
       if (m.frame % 6 == 0)
         add(PK::Mote, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.0f, 0.9f) * H},
-            {rng_.range(-0.3f, 0.3f), rng_.range(-1.6f, -0.8f)}, rng_.range(30, 50), rng_.range(1.8f, 3.2f), 0.4f, kZonaiGlow,
+            {rng_.range(-0.3f, 0.3f), rng_.range(-1.6f, -0.8f)}, rng_.range(30, 50), rng_.range(1.8f, 3.2f), 0.4f, look.inner,
             -0.02f, 0.99f);
     }
     if (f.charging && m.frame % 2 == 0) {  // gathering power: sparks converge

@@ -26,7 +26,7 @@ const RowInfo kRows[3][6] = {
      {"Compteur d'images (FPS)", "Affiche le nombre d'images par seconde en haut à gauche."},
      {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
-     {"Orbe Clash", "L'orbe flottante qui donne l'attaque finale SUPER CLASH."},
+     {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
      {"Armes", "Des armes tombent du ciel : chaque combattant ramasse les siennes en marchant dessus."},
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 9)."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},

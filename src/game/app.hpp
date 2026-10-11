@@ -11,6 +11,7 @@
 
 struct Options {
   bool demo = false;             // start straight into a CPU match
+  std::vector<int> fighters;     // --fighters: the demo's line-up (roster indices)
   bool training = false;         // with --screen css: training character select
   int stage = -1;
   int tab = 0;                   // with --screen settings: tab to open

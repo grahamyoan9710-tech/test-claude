@@ -1,6 +1,7 @@
 // Super Clash Bros. - a platform fighter inspired by Super Smash Bros.
 //
-// Usage: super_clash [--demo] [--stage N] [--screen title|menu|css|stage|results|settings|training]
+// Usage: super_clash [--demo] [--fighters A,B,..] [--stage N]
+//                    [--screen title|menu|css|stage|results|settings|training]
 //                    [--tab N] [--training] [--pause-at FRAME]
 //                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
 //                    [--shot FRAME FILE.png]... [--quit-after FRAMES] [--debug]
@@ -16,6 +17,13 @@ int main(int argc, char** argv) {
   for (int i = 1; i < argc; ++i) {
     auto is = [&](const char* s) { return std::strcmp(argv[i], s) == 0; };
     if (is("--demo")) opt.demo = true;
+    else if (is("--fighters") && i + 1 < argc) {  // demo line-up: roster indices, comma separated
+      for (const char* c = argv[++i]; *c;) {
+        opt.fighters.push_back(std::atoi(c));
+        while (*c && *c != ',') ++c;
+        if (*c == ',') ++c;
+      }
+    }
     else if (is("--debug")) opt.debug = true;
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);
     else if (is("--screen") && i + 1 < argc) opt.screen = argv[++i];

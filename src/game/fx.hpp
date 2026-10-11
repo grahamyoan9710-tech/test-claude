@@ -78,7 +78,7 @@ class Fx {
                 float drag = 0.92f);
   void burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, float size);
   void dust(Vec2 feet, int count, float spread);
-  void motes(Vec2 pos, int count, float radius, float speed, float rise);
+  void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kZonaiGlow);
   void hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big);
   void elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy);
   void explosion(Vec2 pos, float r, HitFx fx);

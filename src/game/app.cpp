@@ -137,7 +137,12 @@ void App::run() {
   for (auto& s : slots_) s.level = settings().cpuLevel;
 
   if (opt_.demo) {
-    for (int i = 0; i < 4; ++i) slots_[i] = {2, kKeyboard1, (i * 2 + 1) % int(roster().size()), 9 - i};
+    const int n = int(roster().size());
+    for (int i = 0; i < 4; ++i) slots_[i] = {2, kKeyboard1, (i * 2 + 1) % n, 9 - i};
+    if (!opt_.fighters.empty())
+      for (int i = 0; i < 4; ++i)
+        slots_[i] = {i < int(opt_.fighters.size()) ? 2 : 0, kKeyboard1,
+                     i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, n - 1) : 0, 9 - i};
     if (opt_.stage < 0) stage_ = 1;
     startMatch();
     transition_ = -1;

@@ -851,7 +851,7 @@ void stepAnim(Anim& a, const Fighter& f, const Match& m) {
     g.feet = f.pos;
     g.facing = f.facing;
     g.life = 12;
-    g.tint = fs ? kZonaiGlow : dodge ? Color{170, 225, 255, 255} : mixColor(slotColor(f), WHITE, 0.45f);
+    g.tint = fs ? hitFxGlow(heroElement(f.def->hero)) : dodge ? Color{170, 225, 255, 255} : mixColor(slotColor(f), WHITE, 0.45f);
   }
 }
 
@@ -936,10 +936,9 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
               withAlpha({44, 24, 18, 255}, 0.32f * k * alpha));
 }
 
-// Ultimate ready: soft teal glow, a turning hexagon and a tilted rune ring orbiting the
-// body (its front half passes in front of the fighter).
-void drawUltAura(Vec2 c, float H, float t, bool front, float k) {
-  const Color z = kZonaiGlow;
+// Ultimate ready: soft glow of the hero's element, a turning hexagon and a tilted rune ring
+// orbiting the body (its front half passes in front of the fighter).
+void drawUltAura(Vec2 c, float H, float t, bool front, float k, Color z) {
   if (!front) {
     additive(true);
     DrawCircleGradient(int(c.x), int(c.y), 0.95f * H, withAlpha(z, (0.26f + 0.08f * std::sin(t * 5.0f)) * k),
@@ -969,13 +968,14 @@ void drawUltAura(Vec2 c, float H, float t, bool front, float k) {
   }
 }
 
-// SUPER CLASH: light pillar, magic circle and converging energy behind; core and shock waves in front.
+// Ultimate: light pillar, magic circle and converging energy behind; core and shock waves in
+// front, all in the hero's element.
 void drawFinalSmashFx(const Fighter& f, Vec2 c, float t, bool front) {
-  const MoveDef& mv = f.def->moves[FinalSmash];
+  const MoveDef& mv = f.moveDef(FinalSmash);
   const float H = f.height();
   const int ft = f.moveFrame;
-  const Color z = kZonaiGlow;
-  const Color sig = fxColor(mv.hitboxes.empty() ? HitFx::Magic : mv.hitboxes[0].fx);
+  const Color z = hitFxGlow(heroElement(f.def->hero));
+  const Color sig = hitFxColor(mv.hitboxes.empty() ? heroElement(f.def->hero) : mv.hitboxes[0].fx);
   if (!front) {
     float pil = clampf(ft / 8.0f, 0.0f, 1.0f) * clampf((40 - ft) / 8.0f, 0.0f, 1.0f);
     additive(true);
@@ -1127,8 +1127,8 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     flashCol = {30, 30, 50, 255};
     flash = 0.35f;
   }
-  if (f.finalSmash || usingFs) {  // ancient power: teal pulse
-    flashCol = mixColor(kZonaiGlow, WHITE, 0.3f);
+  if (f.finalSmash || usingFs) {  // power pulsing in the hero's element
+    flashCol = mixColor(hitFxGlow(heroElement(f.def->hero)), WHITE, 0.3f);
     flash = std::max(flash, (usingFs ? 0.1f : 0.05f) + 0.04f * std::sin(at * 6.0f));
   }
   Vec2 feet = f.pos;
@@ -1150,13 +1150,14 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
   }
   const float ultK = f.finalSmash ? alpha : 0.0f;
-  if (ultK > 0.0f) drawUltAura(c, H, at, false, ultK);
+  const Color ultCol = hitFxGlow(heroElement(d.hero));
+  if (ultK > 0.0f) drawUltAura(c, H, at, false, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, false);
 
   drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, alpha, flashCol, flash, at);
 
   drawSmear(anim, pose, alpha);
-  if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK);
+  if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, true);
   if (f.state == FState::Shield || f.state == FState::ShieldStun) {
     float r = H * 0.62f * (0.35f + 0.65f * f.shield / kMaxShield);

@@ -55,7 +55,7 @@ ASTUCES
 - Direction + attaque en même temps = attaque smash (maintenez pour charger).
 - Donnez et recevez des coups pour remplir votre barre d'ulti (ou brisez
   l'Orbe Clash qui flotte au-dessus de l'arène) : appuyez alors sur ULTIME
-  pour déclencher l'attaque finale SUPER CLASH !
+  pour déclencher l'ultime de votre combattant !
 - Des armes tombent du ciel : chacune appartient à un combattant (son
   portrait flotte au-dessus). Marchez dessus avec ce combattant pour la
   ramasser : plus de puissance, plus d'allonge et des spéciales changées
