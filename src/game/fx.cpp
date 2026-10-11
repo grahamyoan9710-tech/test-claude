@@ -309,16 +309,18 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
 }
 
 void Fx::explosion(Vec2 pos, float r, HitFx fx) {
-  const bool cursed = fx == HitFx::Cursed;
-  const Color hot = cursed ? Color{255, 150, 190, 255} : Color{255, 238, 170, 255};
-  const Color mid = cursed ? Color{220, 40, 90, 255} : Color{255, 120, 30, 255};
+  // Fire and plain blasts burn orange; the other elements explode in their own colours.
+  const bool fiery = fx == HitFx::Fire || fx == HitFx::Normal || fx == HitFx::Slash;
+  const bool elemental = !fiery;
+  const Color hot = fx == HitFx::Cursed ? Color{255, 150, 190, 255} : fiery ? Color{255, 238, 170, 255} : hitFxGlow(fx);
+  const Color mid = fx == HitFx::Cursed ? Color{220, 40, 90, 255} : fiery ? Color{255, 120, 30, 255} : hitFxColor(fx);
   add(PK::Flash, pos, {}, 12, r * 0.6f, r * 2.0f, hot);
   Particle& b = add(PK::Burst, pos, {}, 11, r * 0.9f, r * 2.4f, hot);
   b.rot = rng_.range(0, 2 * kPi);
   for (int i = 0; i < 7; ++i) {
     Particle& p = add(PK::Fireball, pos + rdir() * rng_.range(0.0f, r * 0.35f), rdir() * 1.6f + Vec2{0.0f, -0.6f},
                       rng_.range(22, 34), r * 0.25f, r * rng_.range(0.6f, 0.9f), hot, -0.02f, 0.93f);
-    p.color2 = cursed ? Color{50, 10, 50, 255} : Color{56, 46, 44, 255};
+    p.color2 = elemental ? shade(mid, 0.3f) : Color{56, 46, 44, 255};
   }
   add(PK::Ring, pos, {}, 16, r * 0.3f, r * 1.9f, withAlpha(WHITE, 0.9f));
   add(PK::Ring, pos, {}, 24, r * 0.2f, r * 2.6f, withAlpha(mid, 0.7f));
@@ -326,7 +328,7 @@ void Fx::explosion(Vec2 pos, float r, HitFx fx) {
   for (int i = 0; i < 10; ++i) {
     Vec2 v = rdir() * rng_.range(4.0f, 11.0f);
     v.y = -std::fabs(v.y) - 2.0f;
-    add(PK::Debris, pos, v, rng_.range(30, 46), rng_.range(3.0f, 6.0f), 0.0f, cursed ? Color{80, 30, 70, 255} : Color{86, 74, 66, 255},
+    add(PK::Debris, pos, v, rng_.range(30, 46), rng_.range(3.0f, 6.0f), 0.0f, elemental ? shade(mid, 0.45f) : Color{86, 74, 66, 255},
         0.45f, 0.98f);
   }
   for (int i = 0; i < 14; ++i)

@@ -101,7 +101,7 @@ inline std::string upperFr(std::string s) {
       ++i;
     } else if (c == 0xC5 && i + 1 < s.size()) {
       unsigned char d = (unsigned char)s[i + 1];
-      if (d == 0x8D || d == 0x93) s[i + 1] = char(d - 1);  // ō, œ
+      if (d == 0x8D || d == 0x93 || d == 0xAB) s[i + 1] = char(d - 1);  // ō, œ, ū
       ++i;
     }
   }

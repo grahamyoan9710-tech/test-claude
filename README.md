@@ -5,53 +5,75 @@ on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l
 
 ![Écran titre](docs/titre.jpg)
 
-Les personnages sont dessinés et animés par le code (squelette + cinématique inverse), les sons et la
-musique sont synthétisés au lancement. Les seules ressources sont deux polices libres et la base de
-manettes SDL, intégrées directement dans l'exécutable : il n'y a aucun fichier à installer à côté.
+Les personnages sont dessinés et animés par le code (squelette + cinématique inverse) puis affichés en
+**pixel art**, comme des sprites faits à la main (contour sombre d'un pixel, aplats francs) ; les menus,
+les arènes et les effets restent lisses. Les sons et la musique sont synthétisés au lancement. Les seules
+ressources sont deux polices libres et la base de manettes SDL, intégrées directement dans l'exécutable :
+il n'y a aucun fichier à installer à côté.
 
-La direction artistique s'inspire de *Zelda: Tears of the Kingdom* : îles célestes, ruines Zonaï aux
-runes turquoise, profondeurs éclairées par des racines lumineuses, personnages en ombrage « peint ».
-Tout est dessiné par le code (aucune image ni logo repris du jeu).
+La direction artistique des arènes s'inspire de *Zelda: Tears of the Kingdom* : îles célestes, ruines
+Zonaï aux runes turquoise, profondeurs éclairées par des racines lumineuses. Tout est dessiné par le code
+(aucune image ni logo repris d'un jeu ou d'un manga).
 
-| Menu principal | Sélection des 9 combattants (icônes manette) |
+| Menu principal | Sélection des 15 combattants |
 |---|---|
 | ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
-| **Choix de l'arène** | **Combat : la hache de Kratos tombe du ciel** |
-| ![Arène](docs/arene.jpg) | ![Combat](docs/combat.jpg) |
-| **Cut-in d'ultime : Sphère de l'Infini (Gojo)** | **Ultime : Sanctuaire démoniaque (Sukuna)** |
-| ![Cut-in](docs/cutin.jpg) | ![Ultime](docs/attaque_finale.jpg) |
+| **Combat : Kenpachi, Sasuke, Naruto et le Chasseur** | **Cut-in d'ultime : Bijūdama (Naruto)** |
+| ![Combat](docs/combat.jpg) | ![Cut-in](docs/cutin.jpg) |
+| **Ultime de Tensa Zangetsu : Vasto Lorde et son Cero** | **Transformation : Segunda Etapa (Ulquiorra)** |
+| ![Ultime](docs/attaque_finale.jpg) | ![Transformation](docs/transformation.jpg) |
 | **« Impact frame » façon manga** | **Entraînement** |
 | ![Impact frame](docs/impact.jpg) | ![Entraînement](docs/entrainement.jpg) |
-| **Paramètres (schéma de la manette)** | **Résultats** |
+| **Paramètres (pixel art)** | **Résultats** |
 | ![Paramètres](docs/parametres.jpg) | ![Résultats](docs/resultats.jpg) |
+
+**Chaque ultime est unique** (45 en tout) : Vasto Lorde, Violet imaginaire, Amaterasu, Kendō, Sanctuaire
+démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du Chaos, Dragon de lumière...
+
+![Neuf des 45 ultimes](docs/ultimes.jpg)
 
 ## Le jeu
 
 - **Combat** : de 2 à 4 combattants, humains (2 sur le clavier + manettes) et/ou **ordinateurs de
-  niveau 1 à 9**, de 1 à 5 vies.
+  niveau 1 à 10** (le **niveau 10** joue comme un niveau 9 parfait et **frappe deux fois plus fort**),
+  de 1 à 5 vies.
 - **Entraînement** : vies infinies face à un **mannequin** (immobile, qui saute, qui se protège, ou
   piloté par l'ordinateur), réinitialisation des positions, **compteur de combos** et dégâts du combo,
   affichage des zones de coup. Tout se règle dans le menu pause.
-- **9 combattants** inspirés de séries cultes (hommages de fans, dessinés par le code), chacun avec ses stats,
-  4 attaques spéciales, une attaque ultime et **2 armes à ramasser** :
-  | | Univers | Spéciales | Ultime | Armes |
-  |---|---|---|---|---|
-  | **ASTA** | Black Clover | Lame anti-magie, Météore noir, Ouragan noir, Renvoi anti-magie (renvoie les projectiles) | Black Divider | Épée pourfendeuse, Épée habitante |
-  | **YUNO** | Black Clover | Lames de vent, Tempête tranchante (tornade qui aspire), Envol de Sylphe, Tourbillon | Tempête de Zéphyr | Grimoire à quatre trèfles, Lance de l'esprit |
-  | **ICHIGO** | Bleach | Getsuga Tenshō, Shunpo, Tsukiyomi, Cero (rayon) | Mugetsu | Zangetsu (Shikai), Tensa Zangetsu (Bankai) |
-  | **BYAKUYA** | Bleach | Senbonzakura (nuée de pétales), Senka (attaque dans le dos), Shunpo céleste, Danku | Senbonzakura Kageyoshi | Senbonzakura (Shikai), Kageyoshi (Bankai) |
-  | **LINK** | Zelda: Tears of the Kingdom | Arc, Bombe Zonaï, Ascension, Emprise (saisie à distance) | Sceau de lumière | Épée de légende, Arc de lumière |
-  | **GANONDORF** | Zelda: Tears of the Kingdom | Sphère de malice, Ruée du Roi Démon, Ascension maudite, Fléau de malice | Bête du Fléau | Épée du Roi Démon, Lances de malice |
-  | **KRATOS** | God of War | Rage spartiate, Charge du bouclier, Bond de Sparte, Parade du bouclier | Rage de Sparte | Hache Léviathan (revient dans la main), Lames du Chaos |
-  | **GOJO** | Jujutsu Kaisen | Rouge (explose), Bleu (attire), Téléportation, Infini (renvoie les projectiles) | Sphère de l'Infini puis Violet | Technique : Violet, Six Yeux |
-  | **SUKUNA** | Jujutsu Kaisen | Démantèlement, Clivage, Envol maudit, Fûga (flèche de feu qui explose) | Sanctuaire démoniaque | Kamutoke, Doigt de Sukuna |
+- **15 combattants** inspirés de séries cultes (hommages de fans, dessinés par le code), chacun avec ses
+  stats, 4 attaques spéciales, **2 armes à ramasser** et **3 ultimes** : un à mains nues et un par arme.
+  | | Univers | Spéciales | Ultime | Arme 1 → son ultime | Arme 2 → son ultime |
+  |---|---|---|---|---|---|
+  | **ASTA** | Black Clover | Lame anti-magie, Météore noir, Ouragan noir, Renvoi anti-magie (renvoie les projectiles) | Black Divider | Épée pourfendeuse → Black Meteorite (monte avec sa victime et retombe comme un météore) | Épée habitante → Union démoniaque (transformation : aile et bras du diable) |
+  | **YUNO** | Black Clover | Lames de vent, Tempête tranchante (tornade qui aspire), Envol de Sylphe, Tourbillon | Tempête de Zéphyr | Grimoire à quatre trèfles → Pluie de lames (sur tous les adversaires) | Lance de l'esprit → Lance de Zéphyr (aspire tout sur son passage) |
+  | **ICHIGO** | Bleach | Getsuga Tenshō, Shunpo, Tsukiyomi, Cero (rayon) | Mugetsu (cheveux longs du Getsuga final) | Zangetsu (Shikai) → Getsuga Tenshō géant | Tensa Zangetsu (Bankai) → Vasto Lorde : il se transforme, attrape l'adversaire et lui tire un méga Cero à bout portant |
+  | **BYAKUYA** | Bleach | Senbonzakura (nuée de pétales), Senka (attaque dans le dos), Shunpo céleste, Danku | Senbonzakura Kageyoshi (immobilise tout le monde dans la tempête) | Senbonzakura (Shikai) → Gōkei (une sphère de lames autour de chaque adversaire) | Kageyoshi (Bankai) → Shūkei : Hakuteiken (ailes de lumière) |
+  | **KENPACHI** | Bleach | Taille du démon (à charger), Assaut sauvage (super armure), Saut du démon, Garde ouverte (contre) | Kendō : il apparaît devant l'adversaire, le frappe puis le pourfend à deux mains | Nozarashi (Shikai) → Taille de Nozarashi (fend l'arène) | Bankai → Démon rouge (transformation : peau rouge, cornes, super armure) |
+  | **ULQUIORRA** | Bleach | Cero (rayon), Sonído, Sonído céleste, Bala | Cero Oscuras | Murciélago (Resurrección) → Lanza del Relámpago (javelot qui explose) | Segunda Etapa → transformation : corps noir, ailes de chauve-souris, queue |
+  | **NARUTO** | Naruto | Rasengan (à charger), Multi-clonage (un clone court sur l'ennemi), Clone tremplin, Substitution (contre) | Barrage Uzumaki (les clones l'envoient en l'air) | Mode Ermite → Rasenshuriken | Chakra de Kurama → Bijūdama (le renard à neuf queues apparaît) |
+  | **SASUKE** | Naruto | Katon : boule de feu, Chidori, Garuda, Chidori Nagashi | Kirin (le dragon de foudre tombe sur l'ennemi le plus proche) | Arc de Susanoo → Flèche d'Indra (Susanoo violet) | Mangekyō Sharingan → Amaterasu (flammes noires collées à chaque adversaire) |
+  | **KAKASHI** | Naruto | Suiton : dragon aqueux, Raikiri, Shunshin, Ninken : crocs (saisie) | Raikiri | Sharingan → Kamui (un vortex sur l'ennemi le plus proche) | Mangekyō double → Shuriken du Susanoo (Susanoo bleu) |
+  | **GOJO** | Jujutsu Kaisen | Rouge (explose), Bleu (attire), Téléportation, Infini (renvoie les projectiles) | Bleu : puissance maximale (un vortex sur l'ennemi le plus proche) | Technique : Violet → Violet imaginaire (le rouge et le bleu fusionnent) | Six Yeux → Extension du territoire : Sphère de l'Infini |
+  | **SUKUNA** | Jujutsu Kaisen | Démantèlement, Clivage, Envol maudit, Fûga (flèche de feu qui explose) | Sanctuaire démoniaque | Kamutoke → la foudre frappe chaque adversaire | Doigt de Sukuna → Fûga (« Ouverture » : l'arène brûle) |
+  | **LINK** | Zelda: Tears of the Kingdom | Arc, Bombe Zonaï, Ascension, Emprise (saisie à distance) | Dragon de lumière | Épée de légende → rafale puis rayon de l'épée | Arc de lumière → Pluie de lumière (piliers sur chaque adversaire) |
+  | **GANONDORF** | Zelda: Tears of the Kingdom | Sphère de malice, Ruée du Roi Démon, Ascension maudite, Fléau de malice | Dragon démoniaque | Épée du Roi Démon → Rage du Roi Démon | Lances de malice → Piliers de malice (sous chaque adversaire) |
+  | **KRATOS** | God of War | Rage spartiate, Charge du bouclier, Bond de Sparte, Parade du bouclier | Rage de Sparte (transformation : poings de feu, super armure) | Hache Léviathan → Fimbulwinter (tout le monde gèle, puis la glace éclate) | Lames du Chaos → Fouet du Chaos (les chaînes attrapent de loin, combo de fouet) |
+  | **HUNTER** | Monster Hunter | Taille chargée, Coup d'épaule (super armure), Griffe-grappin, Bombe-tonneau G | Taille chargée vraie | Lame chargée → Décharge amplifiée (fioles qui explosent en chaîne) | Lancecanon → Feu du Wyvern |
 - **Les armes** : de temps en temps, une arme tombe du ciel dans un rayon de lumière, au-dessus d'une
   plateforme. Chaque arme appartient à **un combattant** (son portrait flotte au-dessus) : lui seul peut
   la ramasser, **en marchant dessus**. Pendant une vingtaine de secondes (anneau autour du portrait dans
-  le HUD), il frappe plus fort et plus loin, ses coups prennent l'élément de l'arme et certaines spéciales
-  changent (la hache de Kratos se lance et revient, l'Épée de légende tire un rayon, le Bankai d'Ichigo
-  lance un Getsuga noir...). Un K.O. fait perdre l'arme. Les ordinateurs vont chercher les leurs.
-  Réglage : **ARMES : OUI/NON** dans la sélection des combattants ou dans Paramètres → Jeu.
+  le HUD), il frappe plus fort et plus loin, ses coups prennent l'élément de l'arme, certaines spéciales
+  changent (la hache de Kratos se lance et revient, l'Épée de légende tire un rayon, Amaterasu remplace la
+  boule de feu de Sasuke...) et **son ultime devient celui de l'arme**. Un K.O. fait perdre l'arme. Les
+  ordinateurs vont chercher les leurs. Réglage : **ARMES : OUI/NON** dans la sélection des combattants ou
+  dans Paramètres → Jeu.
+- **Les ultimes** : chacun a sa cinématique (cut-in avec son nom, décor plein écran : Hueco Mundo, le
+  Sanctuaire démoniaque, le crâne de reiatsu de Kenpachi, un wyvern, le Mangekyō...). Certains
+  **attrapent** la victime (elle est tenue pendant le combo puis éjectée), d'autres **frappent chaque
+  adversaire** où qu'il soit (après un avertissement au sol), apparaissent **devant l'ennemi le plus
+  proche**, ou **transforment** le combattant pour une dizaine de secondes (Rage de Sparte, Union
+  démoniaque, Démon rouge, Segunda Etapa). Les ultimes traversent les boucliers et ne peuvent pas être
+  contrés.
 - **Effets à la Dragon Ball FighterZ** : « impact frames » (l'écran passe en noir et blanc façon manga
   sur les coups signature), cut-in avec le portrait et le nom de l'ultime, rayons, ondes de choc,
   arrière-plans des extensions de territoire, gerbes d'étincelles propres à chaque élément.
@@ -60,17 +82,18 @@ Tout est dessiné par le code (aucune image ni logo repris du jeu).
   bouclier qui s'use (et se brise !), roulades, esquives au sol et en l'air, saisies + 4 projections,
   rebords (accroche, remontée, attaque, roulade, saut), retombée en culbute + *tech*, chute libre après
   la remontée, attaques smash à charger, super armure, contres, projectiles, plateformes traversables
-  et mobiles.
+  et mobiles. Les zones de coup des épées suivent la lame.
 - **La barre d'ulti** : sous forme de cellules d'énergie Zonaï au-dessus de chaque carte de dégâts, elle
   se remplit **en frappant** (0,45 point par % infligé) **et en prenant des coups** (0,35 point par %
   reçu). Pleine, le combattant s'entoure d'une aura de son élément, la carte affiche « ULTI PRÊTE ! » avec
-  le bouton à presser, et la touche **Ultime** déclenche **l'ultime du combattant** (cut-in avec son nom,
-  extension de territoire, rayon ou tempête selon le personnage). Les ordinateurs s'en servent aussi.
+  le bouton à presser, et la touche **Ultime** déclenche l'ultime. Les ordinateurs s'en servent aussi
+  (de loin pour les ultimes qui visent, face à la cible pour les rayons).
 - **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
   de l'arène. Celui qui la brise **remplit d'un coup sa barre d'ulti**.
 - **3 arènes** : **Profondeurs** (abîme, racines lumineuses et cristaux), **Sanctuaire** (temple Zonaï en
   ruine au soleil couchant) et **Îles Célestes** (îles flottantes, cascades, plateforme mobile).
-- **Animations** : transitions fluides entre les poses, élan et accompagnement des coups, traînées des
+- **Animations** : transitions fluides entre les poses, élan et accompagnement des coups, postures propres
+  aux spéciales (bander un arc, mudras, bras levé, doigt pointé, taille à deux mains...), traînées des
   attaques, étirements au saut et tassements à l'atterrissage, capes, écharpes et cheveux qui suivent
   le mouvement, respiration et clignements d'yeux.
 - Effets : étincelles, traînées d'éjection, rayon de K.O., tremblement d'écran, bulles quand un
@@ -85,8 +108,9 @@ Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquemen
 - **Audio** : volume général, musique, effets sonores (et un bouton pour tester).
 - **Affichage** : plein écran, qualité graphique (*Haute* = contours lissés, rendu en double
   résolution ; *Normale* pour les petites machines), secousses de l'écran, noms au-dessus des joueurs,
-  compteur d'images (FPS), zones de coup.
-- **Jeu** : nombre de vies, Orbe Clash, armes, niveau des ordinateurs par défaut, tout réinitialiser.
+  compteur d'images (FPS), zones de coup, **personnages en pixel art** (OUI par défaut ; NON = dessin
+  lisse).
+- **Jeu** : nombre de vies, Orbe Clash, armes, niveau des ordinateurs par défaut (1 à 10), tout réinitialiser.
 - **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
   est échangée). Quand une manette est utilisée, l'onglet montre **ses boutons, réassignables eux
   aussi** : deux boutons par action (saut, attaque, spéciale, bouclier, saisie, attaque smash, ultime),
@@ -158,9 +182,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-4.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-5.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-4.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-5.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -203,7 +227,8 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFETCHCONTENT_SOURCE_DIR_RAYLIB=
 
 ```
 super_clash --demo            # match de démonstration entre 4 ordinateurs
-super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 8)
+super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 14)
+super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
 super_clash --stage 2         # arène par défaut (0, 1 ou 2)
 super_clash --debug           # zones de coup visibles
@@ -224,21 +249,30 @@ Les tests vérifient la formule de recul, les coups, les K.O., chaque commande c
 smash/tilt, aériennes, bouclier, roulade, saisie, rebord, plateformes), la barre d'ulti, l'Orbe Clash et
 l'attaque finale,
 le mode entraînement, la remontée de chaque personnage depuis le vide, des dizaines de matchs complets
-entre ordinateurs, l'équilibrage et le déterminisme.
+entre ordinateurs, l'équilibrage et le déterminisme. Les **45 attaques finales** (une de base et une par
+arme pour chaque combattant) sont lancées une par une : chacune doit infliger des dégâts, relâcher l'adversaire qu'elle a
+attrapé et l'éjecter à 130 % (les transformations comme la Rage de Spartiate ou le Démon rouge doivent
+s'activer). Un coup porté
+par l'ordinateur de niveau 10 doit faire exactement deux fois les dégâts du même coup au niveau 9.
+
+On peut ne lancer qu'une partie des tests : `./build-core/sim_test ults`, `cpu10`, `weapons`,
+`recovery`, `balance`, `det`…
 
 ## Architecture
 
 ```
 src/core/   simulation pure (aucune dépendance)
   moves.hpp            données : hitboxes, projectiles, attaques, personnages
-  roster*.cpp          les 9 combattants, leurs attaques et leurs armes
+  roster*.cpp          les 15 combattants, leurs attaques et leurs armes
+  roster_kit.hpp       outils communs pour écrire les attaques (saisies, éjections, ciné d'ulti)
+  roster_ultimates.cpp les 45 attaques finales et les transformations
   weapons.cpp          armes qui tombent du ciel, ramassage, durée
   stage.cpp            les arènes
   fighter_update.cpp   machine à états des combattants (contrôles)
   fighter_physics.cpp  déplacements, collisions, atterrissages, rebords
   combat.cpp           détection des coups, recul, bouclier, contres, saisies, projectiles
   match.cpp            déroulement du match, K.O., réapparition, barre d'ulti, Orbe Clash, entraînement
-  ai.cpp               ordinateur (niveaux 1 à 9) et mannequins
+  ai.cpp               ordinateur (niveaux 1 à 10) et mannequins
 src/game/   interface raylib
   app.cpp              boucle principale, rendu suréchantillonné, transitions
   screen_title.cpp     écran titre et menu principal
@@ -250,10 +284,12 @@ src/game/   interface raylib
   ui.cpp               kit d'interface : fonds animés, tuiles, curseurs, titres en relief, boutons de manette
   settings.cpp         paramètres enregistrés et noms des touches
   fonts.cpp            polices intégrées
+  pixel.cpp            rendu pixel art des personnages (petite texture, contour, palette réduite)
   render_body.cpp      dessin des personnages (squelette + IK)
   render_weapons.cpp   dessin des armes (en main et posées au sol)
   render_items.cpp     armes posées sur l'arène
   render_vfx.cpp       rayons et arrière-plans des ultimes
+  render_ult.cpp       cinématiques propres à chaque attaque finale, avatars des transformations
   render_fighter.cpp   poses : chaque attaque anime le membre qui porte la hitbox
   render_world.cpp     décors, plateformes, projectiles, aperçus des arènes
   render_hud.cpp       pourcentages, vies, barre d'ulti, bulles hors-champ, compte à rebours
@@ -275,6 +311,6 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
   du jeu n'est repris, tout est dessiné par le code.
 - **Projet de fan, non officiel et non commercial.** Les combattants rendent hommage à *Black Clover*
   (Yūki Tabata / Shūeisha), *Bleach* (Tite Kubo / Shūeisha), *The Legend of Zelda: Tears of the Kingdom*
-  (Nintendo), *God of War* (Santa Monica Studio / Sony Interactive Entertainment) et *Jujutsu Kaisen*
-  (Gege Akutami / Shūeisha) ; ces noms et personnages appartiennent à leurs ayants droit. Tout est dessiné
+  (Nintendo), *God of War* (Santa Monica Studio / Sony Interactive Entertainment), *Jujutsu Kaisen*
+  (Gege Akutami / Shūeisha), *Naruto* (Masashi Kishimoto / Shūeisha) et *Monster Hunter* (Capcom) ; ces noms et personnages appartiennent à leurs ayants droit. Tout est dessiné
   par le code : aucune image, aucun son et aucun modèle de ces œuvres n'est utilisé.

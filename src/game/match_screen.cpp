@@ -328,7 +328,7 @@ MatchScreen::Result MatchScreen::update() {
   if (ultShow_ >= -1 && !ultFired_ && m_.started() && m_.fighters.size() >= 2) {
     Fighter& f = m_.fighters[0];
     Fighter& v = m_.fighters[1];
-    if (m_.frame % 30 == 0 && f.grounded && v.grounded) {  // both standing: face off, then the ultimate
+    if (m_.frame > 260 && m_.frame % 30 == 0 && f.grounded && v.grounded) {  // after "GO!", both standing
       if (ultShow_ >= 0 && f.weapon != ultShow_) m_.equipWeapon(f, ultShow_);
       f.pos = {-170.0f, 0.0f};
       f.facing = 1;

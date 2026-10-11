@@ -14,7 +14,7 @@ struct RowInfo {
   const char* label;
   const char* help;
 };
-const RowInfo kRows[3][6] = {
+const RowInfo kRows[3][7] = {
     {{"Volume général", "Volume de tout le jeu."},
      {"Musique", "Volume des musiques des menus et des combats."},
      {"Effets sonores", "Coups, sauts, K.O., cris de la foule..."},
@@ -24,20 +24,21 @@ const RowInfo kRows[3][6] = {
      {"Secousses de l'écran", "Tremblements de la caméra lors des gros coups et des K.O."},
      {"Noms au-dessus des joueurs", "Affiche J1, J2... ou CPU au-dessus de chaque combattant."},
      {"Compteur d'images (FPS)", "Affiche le nombre d'images par seconde en haut à gauche."},
-     {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."}},
+     {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."},
+     {"Personnages en pixel art", "Les combattants sont dessinés comme des sprites en pixel art (les menus restent lisses)."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
      {"Armes", "Des armes tombent du ciel : chaque combattant ramasse les siennes en marchant dessus."},
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 10 : le niveau 10 frappe deux fois plus fort)."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},
 };
-const int kRowCounts[4] = {4, 6, 5, kActionCount + 1};  // controls: the actions + the reset buttons
+const int kRowCounts[4] = {4, 7, 5, kActionCount + 1};  // controls: the actions + the reset buttons
 
 Rectangle tabRect(int i) { return {72.0f + i * 252.0f, 136, 236, 50}; }
-Rectangle rowRect(int row) { return {kPanel.x + 20, kPanel.y + 20 + row * 60.0f, kPanel.width - 40, 52}; }
+Rectangle rowRect(int row) { return {kPanel.x + 20, kPanel.y + 16 + row * 53.0f, kPanel.width - 40, 47}; }
 Rectangle widgetRect(int row) {
   Rectangle r = rowRect(row);
-  return {r.x + 640, r.y + 9, 440, 34};
+  return {r.x + 640, r.y + 6.5f, 440, 34};
 }
 Rectangle sliderRect(int row) {
   Rectangle w = widgetRect(row);
@@ -306,6 +307,7 @@ void App::changeSetting(int row, int delta) {
       if (row == 3) s.playerTags = !s.playerTags;
       if (row == 4) s.showFps = !s.showFps;
       if (row == 5) s.showHitboxes = !s.showHitboxes;
+      if (row == 6) s.pixelArt = !s.pixelArt;
       break;
     case 2:
       if (row == 0) s.stocks = 1 + (s.stocks - 1 + delta + 5) % 5;
@@ -567,7 +569,7 @@ void App::drawSettings() {
         ui::diamond({rr.x + 13, rr.y + rr.height * 0.5f}, 5, ui::kGold);
         help = kRows[setTab_][r].help;
       }
-      drawText(kRows[setTab_][r].label, rr.x + 26, rr.y + 12, 24, foc ? ui::kCream : Color{196, 206, 198, 255});
+      drawText(kRows[setTab_][r].label, rr.x + 26, rr.y + 9, 24, foc ? ui::kCream : Color{196, 206, 198, 255});
       Rectangle w = widgetRect(r);
       switch (widgetFor(setTab_, r)) {
         case Widget::Slider: {
@@ -577,7 +579,11 @@ void App::drawSettings() {
           break;
         }
         case Widget::Toggle: {
-          bool on = setTab_ == 1 ? (r == 0 ? s.fullscreen : r == 3 ? s.playerTags : r == 4 ? s.showFps : s.showHitboxes)
+          bool on = setTab_ == 1 ? (r == 0   ? s.fullscreen
+                                    : r == 3 ? s.playerTags
+                                    : r == 4 ? s.showFps
+                                    : r == 6 ? s.pixelArt
+                                             : s.showHitboxes)
                                  : r == 2 ? s.weapons : s.items;
           ui::toggle({w.x + w.width - 120, w.y, 120, w.height}, on, foc, t);
           break;
