@@ -373,6 +373,36 @@ void MatchScreen::updateCamera(bool snap) {
   float w = maxX - minX, h = maxY - minY;
   float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
+  // An ultimate: the camera tightens on its user and on the fighters it is dealing with.
+  int ultUser = -1;
+  for (const auto& f : m_.fighters)
+    if (f.active() && f.state == FState::Attack && f.move == FinalSmash) ultUser = f.id;
+  if (ultUser >= 0) {
+    const Fighter& u = m_.fighters[ultUser];
+    auto clampIn = [&](Vec2 c) {
+      return Vec2{clampf(c.x, blast.left() + 250.0f, blast.right() - 250.0f), clampf(c.y, blast.top() + 250.0f, blast.bottom() - 150.0f)};
+    };
+    const Vec2 uc = clampIn(u.center());
+    float x0 = uc.x - 150.0f, x1 = uc.x + 150.0f, y0 = uc.y - 160.0f, y1 = uc.y + 120.0f;
+    for (const auto& o : m_.fighters) {
+      if (o.id == ultUser || !o.active()) continue;
+      const float d = (o.center() - u.center()).len();
+      const bool involved = (o.state == FState::Captured && o.captor == ultUser) ||
+                            (o.state == FState::Hitstun && o.lastHitBy == ultUser && d < 760.0f) || d < 380.0f;
+      if (!involved) continue;
+      const Vec2 c = clampIn(o.center());
+      x0 = std::min(x0, c.x - 130.0f);
+      x1 = std::max(x1, c.x + 130.0f);
+      y0 = std::min(y0, c.y - 150.0f);
+      y1 = std::max(y1, c.y + 110.0f);
+    }
+    const float uz = clampf(std::min(kScreenW / (x1 - x0), (kScreenH - 140.0f) / (y1 - y0)), 0.62f, 1.4f);
+    const Vec2 ut{(x0 + x1) * 0.5f, (y0 + y1) * 0.5f + 30.0f / uz};
+    const float dur = float(std::max(1, u.moveDef(FinalSmash).duration)), t = float(u.moveFrame);
+    const float k = smoothstep(t / 18.0f) * (1.0f - smoothstep((t - (dur - 24.0f)) / 24.0f));
+    target = lerpv(target, ut, k);
+    zoom = lerpf(zoom, std::max(zoom, uz), k);
+  }
   if (m_.freezeTimer > 0 && m_.freezeOwner >= 0) {  // final smash close-up
     target = m_.fighters[m_.freezeOwner].center();
     zoom = 1.45f;
@@ -388,9 +418,9 @@ void MatchScreen::updateCamera(bool snap) {
     camPos_ = target;
     camZoom_ = zoom;
   } else {
-    float speed = m_.freezeTimer > 0 ? 0.2f : 0.08f;
+    const float speed = m_.freezeTimer > 0 ? 0.2f : ultUser >= 0 ? 0.12f : 0.08f;  // keeps up with an ultimate
     camPos_ += (target - camPos_) * speed;
-    camZoom_ += (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : 0.05f);
+    camZoom_ += (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : ultUser >= 0 ? 0.08f : 0.05f);
   }
 }
 

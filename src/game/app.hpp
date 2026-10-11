@@ -17,6 +17,8 @@ struct Options {
   int tab = 0;                   // with --screen settings: tab to open
   std::string screen;            // title | menu | css | stage | results | settings | poses | anim
   std::vector<std::pair<int, std::string>> shots;  // frame -> screenshot path
+  int recordFrom = -1, recordTo = -1, recordEvery = 1;  // --record: a run of frames saved as DIR/f_NNNNN.png
+  std::string recordDir;
   int quitAfter = -1;
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic

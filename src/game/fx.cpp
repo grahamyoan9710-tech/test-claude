@@ -450,6 +450,21 @@ void Fx::onEvents(const Match& m) {
         }
         const bool big = e.impact || kb >= 140.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
+        if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
+          const Fighter& v = m.fighters[e.b];
+          Combo& c = combos_[e.b & 3];
+          const int atk = e.a >= 0 ? e.a : v.lastHitBy;
+          if (!(c.live && c.attacker == atk && stunnedAt_[e.b & 3] >= m.frame - 2)) {
+            c = Combo{};
+            c.attacker = atk;
+            c.base = calmPercent_[e.b & 3];
+            c.live = true;
+            if (atk >= 0 && atk < nf) c.color = hitFxGlow(heroElement(m.fighters[atk].def->hero));
+          }
+          if (c.lastHit != m.frame) ++c.hits;  // (several hitboxes landing on one frame count once)
+          c.lastHit = m.frame;
+          c.since = 0;
+        }
         if (kb > 100.0f) {
           flash_ = std::max(flash_, 0.12f);
           flashCol_ = WHITE;
@@ -883,6 +898,22 @@ void Fx::update(const Match& m) {
   pillars_.erase(std::remove_if(pillars_.begin(), pillars_.end(),
                                 [](const Pillar& p) { return (p.landT >= 0 && p.t - p.landT > 40) || p.t > 600; }),
                  pillars_.end());
+  for (const auto& f : m.fighters) {  // combos: who is stunned, the counters follow their victims
+    const int i = f.id & 3;
+    const bool stunned = f.active() && (f.state == FState::Hitstun || f.state == FState::Grabbed ||
+                                        f.state == FState::Captured || f.hitlag > 0);
+    if (stunned) stunnedAt_[i] = m.frame;
+    else calmPercent_[i] = f.percent;
+    Combo& c = combos_[i];
+    if (!c.live && c.hits == 0) continue;
+    ++c.since;
+    if (f.active()) {
+      c.pos = f.center() - Vec2{0.0f, f.height() * 0.85f};
+      c.damage = std::max(0.0f, f.percent - c.base);
+    }
+    if (c.live && (!stunned || !f.active())) c.live = false;  // it got away: the counter lingers, then fades
+    if (!c.live && c.since > 70) c = Combo{};
+  }
   for (auto& t : texts_) ++t.t;
   texts_.erase(std::remove_if(texts_.begin(), texts_.end(), [](const FloatText& t) { return t.t > 100; }), texts_.end());
 
@@ -1192,6 +1223,24 @@ void Fx::drawScreen(const Camera2D& cam) const {
     wedge(0.55f, 0.8f, withAlpha(mixColor(k.color, WHITE, 0.5f), 0.85f * a));
     wedge(0.2f, 0.6f, withAlpha(WHITE, a));
     DrawCircleV(V(o), width * 0.9f, withAlpha(WHITE, a * 0.8f));
+  }
+  for (const auto& c : combos_) {  // "4 COUPS !" over the victim of a combo, popping on every hit
+    if (c.hits < 3) continue;
+    const float fade = c.live ? 1.0f : clampf((70 - c.since) / 25.0f, 0.0f, 1.0f);
+    if (fade <= 0.0f) continue;
+    const Vector2 sp = GetWorldToScreen2D(V(c.pos), cam);
+    const float pop = c.since < 8 ? 1.0f + 0.45f * (1.0f - c.since / 8.0f) : 1.0f;
+    const float size = std::min(52.0f, 34.0f + 2.0f * c.hits) * pop;
+    const char* num = TextFormat("%d", c.hits);
+    const float nw = textWidth(num, size, FontKind::Title), lw = textWidth("COUPS !", size * 0.5f, FontKind::Title);
+    const float x = clampf(sp.x - (nw + 8 + lw) * 0.5f, 10.0f, kScreenW - nw - lw - 18.0f);
+    const float y = clampf(sp.y - size - (c.live ? 0.0f : (1.0f - fade) * 20.0f), 70.0f, kScreenH - 170.0f);
+    const Color col = withAlpha(mixColor(c.color, WHITE, 0.25f), fade), ink = withAlpha(kOutline, fade);
+    drawTextOutlined(num, x, y, size, col, ink, 3.5f, FontKind::Title);
+    drawTextOutlined("COUPS !", x + nw + 8, y + size * 0.42f, size * 0.5f, withAlpha(WHITE, fade), ink, 2.5f, FontKind::Title);
+    if (c.damage >= 1.0f)
+      drawTextOutlined(TextFormat("+%d %%", int(c.damage)), x + nw + 8, y + size * 0.42f + size * 0.5f, size * 0.36f,
+                       withAlpha(mixColor(c.color, WHITE, 0.6f), fade), ink, 2.0f);
   }
   for (const auto& t : texts_) {  // weapon names
     const Vector2 sp = GetWorldToScreen2D(V(t.pos), cam);

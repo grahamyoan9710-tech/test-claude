@@ -191,7 +191,7 @@ void App::run() {
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
     // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once.
-    const bool testRun = !opt_.shots.empty() || opt_.quitAfter > 0;
+    const bool testRun = !opt_.shots.empty() || !opt_.recordDir.empty() || opt_.quitAfter > 0;
     if (!testRun && settings().highQuality && !autoQualityDone_ && frames_ > 120) {
       const float dt = GetFrameTime();
       slowTime_ = dt > 1.0f / 45.0f ? slowTime_ + dt : std::max(0.0f, slowTime_ - dt * 0.5f);
@@ -268,14 +268,18 @@ void App::run() {
     EndTextureMode();
     pix::setFrameTarget(nullptr);
 
-    for (const auto& [frame, path] : opt_.shots) {
-      if (frame != frames_) continue;
+    auto saveFrame = [&](const std::string& path) {
       Image img = LoadImageFromTexture(target_.texture);
       ImageFlipVertical(&img);
       if (img.width != kScreenW && !opt_.fullRes) ImageResize(&img, kScreenW, kScreenH);
       ExportImage(img, path.c_str());
       UnloadImage(img);
-    }
+    };
+    for (const auto& [frame, path] : opt_.shots)
+      if (frame == frames_) saveFrame(path);
+    if (!opt_.recordDir.empty() && frames_ >= opt_.recordFrom && frames_ <= opt_.recordTo &&
+        (frames_ - opt_.recordFrom) % opt_.recordEvery == 0)
+      saveFrame(opt_.recordDir + TextFormat("/f_%05d.png", frames_));
     if (opt_.quitAfter > 0 && frames_ >= opt_.quitAfter) quit_ = true;
     if (opt_.pauseAt == frames_ && match_) match_->forcePause();
 

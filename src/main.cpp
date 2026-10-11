@@ -4,7 +4,7 @@
 //                    [--screen title|menu|css|stage|results|settings|training]
 //                    [--tab N] [--training] [--pause-at FRAME]
 //                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
-//                    [--shot FRAME FILE.png]... [--fullres] [--quit-after FRAMES] [--debug]
+//                    [--shot FRAME FILE.png]... [--record FROM TO EVERY DIR] [--fullres] [--quit-after FRAMES] [--debug]
 //                    [--ult SLOT]   (with --demo: the first fighter unleashes its ultimate, SLOT -1/0/1)
 //                    [--export-audio DIR]
 #include <cstdio>
@@ -46,6 +46,11 @@ int main(int argc, char** argv) {
     } else if (is("--shot") && i + 2 < argc) {
       int frame = std::atoi(argv[++i]);
       opt.shots.push_back({frame, argv[++i]});
+    } else if (is("--record") && i + 4 < argc) {  // FROM TO EVERY DIR
+      opt.recordFrom = std::atoi(argv[++i]);
+      opt.recordTo = std::atoi(argv[++i]);
+      opt.recordEvery = std::max(1, std::atoi(argv[++i]));
+      opt.recordDir = argv[++i];
     }
   }
   App app(opt);

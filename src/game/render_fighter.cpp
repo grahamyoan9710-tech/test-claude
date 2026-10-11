@@ -730,7 +730,8 @@ Pose finalSmashPose(const Fighter& f, Pose p) {
     Vec2 hF, hB, fF, fB;
     float crouch, lean, squash;
   };
-  const Key gather{{0.10f, -0.02f}, {0.06f, 0.0f}, {0.12f, 0.36f}, {-0.06f, 0.4f}, 0.75f, 0.25f, 0.9f};
+  // Gather: the anime power-up, feet planted wide, fists clenched at the hips, chest out, a shout.
+  const Key gather{{0.13f, 0.06f}, {-0.11f, 0.07f}, {0.18f, 0.5f}, {-0.16f, 0.5f}, 0.62f, -0.16f, 0.94f};
   const Key raise{{0.2f, -0.52f}, {-0.18f, -0.5f}, {0.06f, 0.48f}, {-0.05f, 0.5f}, 0.0f, -0.15f, 1.08f};
   const Key curl{{0.12f, -0.1f}, {0.03f, -0.06f}, {0.12f, 0.34f}, {-0.08f, 0.38f}, 0.55f, 0.15f, 0.92f};
   const Key star{{0.42f, -0.3f}, {-0.4f, -0.28f}, {0.22f, 0.46f}, {-0.2f, 0.46f}, 0.0f, -0.08f, 1.06f};
@@ -764,6 +765,8 @@ Pose finalSmashPose(const Fighter& f, Pose p) {
   p.squash = k.squash;
   p.sx = 2.0f - k.squash;
   p.glow = 1.4f;
+  p.shout = p.shout || (t >= 4.0f && t < 30.0f);
+  if (t < 28.0f) p.shift.x += std::sin(t * 2.3f) * 0.006f * H * std::min(1.0f, t / 6.0f);  // trembling with power
   return p;
 }
 }  // namespace
@@ -893,26 +896,37 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.lean = -0.1f + std::sin(tt * 3.0f) * 0.08f;
       break;
     }
-    case FState::Hitstun:
+    case FState::Hitstun: {
       p.hurt = true;
+      const Vec2 kb{f.kbVel.x * float(f.facing), f.kbVel.y};  // the flight, facing right
+      const float kl = kb.len();
+      const Vec2 dir = kl > 0.5f ? kb * (1.0f / kl) : Vec2{-1.0f, 0.0f};
       if (f.tumble) {
-        float w = std::sin(tt * 16.0f);
-        p.rot = f.spin;
-        p.crouch = 0.2f;
-        p.handF = {0.25f * H, -0.3f * H + w * 0.05f * H};
-        p.handB = {-0.25f * H, -0.25f * H - w * 0.05f * H};
-        p.footF = {0.18f * H, 0.45f * H - w * 0.04f * H};
-        p.footB = {-0.15f * H, 0.40f * H + w * 0.04f * H};
-      } else {  // flinch: head snaps back, arms fly up, then it recovers
-        float k = 1.0f - clampf(sf / 14.0f, 0.0f, 1.0f);
-        p.lean = -0.35f - 0.15f * k;
-        p.handF = {-0.02f * H, -0.18f * H - 0.06f * H * k};
-        p.handB = {-0.14f * H, -0.10f * H - 0.04f * H * k};
-        p.footF.x += 0.03f * H * k;
+        // Launched: first folded around the blow with the limbs trailing after the flight, then the tumble.
+        const float fold = 1.0f - smoothstep((sf - 4.0f) / 14.0f);
+        const float w = std::sin(tt * 16.0f);
+        const Vec2 tr = dir * (-1.0f);
+        p.rot = f.spin * (1.0f - fold);
+        p.crouch = 0.2f + 0.2f * fold;
+        p.lean = clampf(-dir.x * 0.6f, -0.6f, 0.6f) * fold;
+        p.squash = 1.0f + 0.08f * fold * std::fabs(dir.y);
+        p.handF = lerpv({0.25f * H, -0.3f * H + w * 0.05f * H}, Vec2{0.12f * H, -0.1f * H} + tr * (0.24f * H), fold);
+        p.handB = lerpv({-0.25f * H, -0.25f * H - w * 0.05f * H}, Vec2{-0.08f * H, -0.08f * H} + tr * (0.22f * H), fold);
+        p.footF = lerpv({0.18f * H, 0.45f * H - w * 0.04f * H}, Vec2{0.05f * H, 0.42f * H} + tr * (0.13f * H), fold);
+        p.footB = lerpv({-0.15f * H, 0.40f * H + w * 0.04f * H}, Vec2{-0.05f * H, 0.45f * H} + tr * (0.1f * H), fold);
+      } else {  // flinch: the head snaps away from the blow, the arms fly up, then it recovers
+        const float k = 1.0f - clampf(sf / 14.0f, 0.0f, 1.0f);
+        const float away = dir.x <= 0.2f ? 1.0f : -1.0f;  // hit from the front: bent back; from behind: forward
+        p.lean = away * (-0.35f - 0.15f * k);
+        p.twist = 0.35f * k * away;
+        p.handF = {-0.02f * H * away, -0.18f * H - 0.06f * H * k};
+        p.handB = {-0.14f * H * away, -0.10f * H - 0.04f * H * k};
+        p.footF.x += 0.03f * H * k * away;
         p.squash = 1.0f - 0.06f * k;
         p.sx = 1.0f + 0.05f * k;
       }
       break;
+    }
     case FState::Knockdown: {
       float bounce = sf < 10 ? std::sin(sf / 10.0f * kPi) * 0.06f * H : 0.0f;  // bounces on the floor
       p.rot = -kPi * 0.5f;

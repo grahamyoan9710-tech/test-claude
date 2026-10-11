@@ -92,6 +92,16 @@ class Fx {
   std::vector<KoBeam> kos_;
   std::vector<Pillar> pillars_;
   std::vector<FloatText> texts_;
+  struct Combo {  // hits chained on a fighter that never got out of hitstun in between
+    int attacker = -1, hits = 0, lastHit = -1000, since = 0;
+    bool live = false;
+    float base = 0.0f, damage = 0.0f;  // percent before the first hit, damage dealt since
+    Vec2 pos;
+    Color color = WHITE;
+  };
+  std::array<Combo, 4> combos_{};
+  std::array<int, 4> stunnedAt_{-10, -10, -10, -10};  // last frame each fighter was seen stunned
+  std::array<float, 4> calmPercent_{};                // its percent the last time it was not
   std::array<int, 4> fsWave_{-1, -1, -1, -1};  // last final smash shock wave burst, per fighter
   std::array<int, 4> beamMark_{-1, -1, -1, -1};  // beam whose start was already heard, per fighter
   Impact impact_;
