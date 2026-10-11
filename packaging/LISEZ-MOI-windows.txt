@@ -30,7 +30,8 @@ Joueur 2 (clavier) : flèches pour se déplacer
                      3 bouclier, 4 smash, 5 saisie, 6 ultime)
 Échap ou P         : pause            F11 : plein écran
 
-MANETTES (Xbox, PlayStation, Switch Pro, 8BitDo... reconnues automatiquement)
+MANETTES (Xbox, PlayStation, Switch Pro, 8BitDo... reconnues automatiquement,
+boutons modifiables dans Paramètres > Commandes avec la manette en main)
 --------
 Stick gauche ou croix = se déplacer   A = attaque       B = spéciale
 X ou Y = saut                         LB = saisie       RB = ULTIME

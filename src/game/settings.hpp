@@ -27,9 +27,14 @@ struct Settings {
   int cpuLevel = 5;
   // Keyboard bindings for "Clavier 1" and "Clavier 2"
   std::array<std::array<int, kActionCount>, 2> keys{};
+  // Gamepad bindings, shared by every pad: up to two buttons per action (PadButton values, -1 = none).
+  // Only the actions from kActJump on: moving (stick / d-pad), the smash stick and Start stay fixed.
+  std::array<std::array<int, 2>, kActionCount> pad{};
 
   Settings();
   void resetKeys(int keyboard);
+  void resetPad();
+  bool padIsDefault() const;
 };
 
 Settings& settings();
@@ -40,3 +45,4 @@ float shakeScale();
 // Human readable key name, following the keyboard layout when possible (AZERTY shows "Z", not "W").
 std::string keyName(int key);
 bool keyBindable(int key);
+bool padBindable(int button);  // face buttons, shoulders, triggers, Back and stick clicks (not Start / d-pad)

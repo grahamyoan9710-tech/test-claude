@@ -151,6 +151,8 @@ class App {
   int setRow_ = -1;   // -1 = tab bar
   int setCol_ = 0;    // keyboard column in the controls tab
   bool waitingKey_ = false;
+  bool waitingPad_ = false;  // rebinding a gamepad button (Commandes tab, gamepad mode)
+  bool bindPadButton(int action, int slot, int button);
   int dragSlider_ = -1;
   Screen settingsReturn_ = Screen::MainMenu;
 

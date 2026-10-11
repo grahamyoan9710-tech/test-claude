@@ -74,14 +74,18 @@ float keycapWidth(const char* label, float h);
 // ---- Button prompts ---------------------------------------------------------------
 // Gamepad buttons drawn like on a controller of the family (procedural: crisp at any size).
 // Face buttons by position: A = bottom, B = right, X = left, Y = top (a Nintendo "B" is A here).
-enum class Btn : int { None, A, B, X, Y, LB, RB, LT, RT, Start, LStick, RStick, DPad, DPadUD, DPadLR, DPadDown, Move, Back };
+enum class Btn : int { None, A, B, X, Y, LB, RB, LT, RT, Start, LStick, RStick, DPad, DPadUD, DPadLR, DPadDown, Move, Back, L3, R3 };
 float padGlyph(Btn b, float x, float y, float h, PadFamily family);  // returns its width
 float padGlyphWidth(Btn b, float h, PadFamily family);
 // Key cap or gamepad button, following the prompt mode (last used device). Returns its width.
 float prompt(const char* key, Btn pad, float x, float y, float h, bool lit = false);
 float promptWidth(const char* key, Btn pad, float h);
-// Button of a KeyAction on the gamepad (kActUltimate -> RB...).
+// Glyph of a PadButton (controls.hpp; -1 -> None).
+Btn btnFor(int padButton);
+// Button of a KeyAction on the gamepad, following the bindings (kActUltimate -> RB by default...).
 Btn padButtonFor(int action);
+// The same for one device (a pad without triggers may use other buttons).
+Btn deviceButtonFor(int device, int action);
 // Prompt of one player's device, whatever the prompt mode: the key cap of the key bound to the action
 // on CLAVIER 1/2, or the button of that gamepad (its own family). E.g. the ULTIME button on the HUD:
 // actionPrompt(devices[port], kActUltimate, x, y, 24). Returns its width.

@@ -72,13 +72,16 @@ Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquemen
   compteur d'images (FPS), zones de coup.
 - **Jeu** : nombre de vies, Orbe Clash, niveau des ordinateurs par défaut, tout réinitialiser.
 - **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
-  est échangée) ; quand une manette est utilisée, l'onglet montre le schéma de la manette.
+  est échangée). Quand une manette est utilisée, l'onglet montre **ses boutons, réassignables eux
+  aussi** : deux boutons par action (saut, attaque, spéciale, bouclier, saisie, attaque smash, ultime),
+  `A` sur une case puis le bouton voulu, `X` pour vider une case. Se déplacer (stick gauche / croix),
+  l'attaque smash au stick droit et `Start` (pause) ne changent pas, pas plus que les boutons des menus.
 
 Si l'ordinateur n'arrive pas à suivre en qualité *Haute*, le jeu passe tout seul en *Normale*.
 
 ## Contrôles
 
-Touches par défaut (modifiables dans **Paramètres → Commandes**) :
+Touches et boutons par défaut (modifiables dans **Paramètres → Commandes**) :
 
 | Action | Clavier 1 | Clavier 2 | Manette (Xbox / PlayStation / Switch) |
 |---|---|---|---|

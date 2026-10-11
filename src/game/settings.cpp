@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "game/controls.hpp"
 #include "raylib.h"
 
 #ifdef CLASH_HAS_GLFW
@@ -18,6 +19,9 @@ const int kDefaultKeys[2][kActionCount] = {
     {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_RIGHT_SHIFT, KEY_RIGHT_CONTROL,
      KEY_SEMICOLON, KEY_APOSTROPHE},
 };
+const int kDefaultPad[kActionCount][2] = {
+    {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1},  // directions: stick / d-pad
+    {kPadX, kPadY}, {kPadA, -1}, {kPadB, -1}, {kPadLT, kPadRT}, {kPadLB, -1}, {-1, -1}, {kPadRB, -1}};
 const char* kActionIds[kActionCount] = {"left", "right", "up", "down", "jump",
                                         "attack", "special", "shield", "grab", "smash", "ultimate"};
 
@@ -34,6 +38,27 @@ const char* actionName(int a) {
 Settings::Settings() {
   resetKeys(0);
   resetKeys(1);
+  resetPad();
+}
+
+void Settings::resetPad() {
+  for (int a = 0; a < kActionCount; ++a) pad[a] = {kDefaultPad[a][0], kDefaultPad[a][1]};
+}
+
+bool Settings::padIsDefault() const {
+  for (int a = 0; a < kActionCount; ++a)
+    if (pad[a][0] != kDefaultPad[a][0] || pad[a][1] != kDefaultPad[a][1]) return false;
+  return true;
+}
+
+bool padBindable(int b) {
+  switch (b) {
+    case kPadA: case kPadB: case kPadX: case kPadY: case kPadLB: case kPadRB: case kPadLT: case kPadRT:
+    case kPadBack: case kPadL3: case kPadR3:
+      return true;
+    default:
+      return false;
+  }
 }
 
 void Settings::resetKeys(int kb) {
@@ -78,7 +103,12 @@ void loadSettings() {
       else if (k == "stocks") s.stocks = clampi(value, 1, 5);
       else if (k == "items") s.items = value != 0;
       else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, 9);
-      else {
+      else if (k.rfind("pad", 0) == 0) {  // pad1.jump=..., pad2.jump=... (-1: none)
+        for (int sl = 0; sl < 2; ++sl)
+          for (int a = kActJump; a < kActionCount; ++a)
+            if (k == std::string("pad") + char('1' + sl) + "." + kActionIds[a] && (value == -1 || padBindable(value)))
+              s.pad[a][sl] = value;
+      } else {
         for (int kb = 0; kb < 2; ++kb)
           for (int a = 0; a < kActionCount; ++a)
             if (k == std::string("kb") + char('1' + kb) + "." + kActionIds[a] && keyBindable(value)) {
@@ -133,6 +163,9 @@ bool saveSettings() {
   for (int kb = 0; kb < 2; ++kb)
     for (int a = 0; a < kActionCount; ++a)
       put((std::string("kb") + char('1' + kb) + "." + kActionIds[a]).c_str(), s.keys[kb][a]);
+  for (int sl = 0; sl < 2; ++sl)
+    for (int a = kActJump; a < kActionCount; ++a)
+      put((std::string("pad") + char('1' + sl) + "." + kActionIds[a]).c_str(), s.pad[a][sl]);
   std::string path = settingsPath();
   return SaveFileText(path.c_str(), const_cast<char*>(out.c_str()));
 }

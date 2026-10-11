@@ -1,5 +1,6 @@
 #include "game/ui.hpp"
 
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -577,12 +578,13 @@ void shoulder(Btn b, float x, float y, float h, PadFamily f) {
   centred(shoulderText(b, f), {x + w * 0.5f, y + h * (trigger ? 0.56f : 0.47f)}, h * 0.52f, kInk);
 }
 
-void stickGlyph(Vector2 c, float r, const char* letter) {
+// pressed: the stick click (L3 / R3), drawn pushed in with a darker cap.
+void stickGlyph(Vector2 c, float r, const char* letter, bool pressed = false) {
   DrawCircleV({c.x, c.y + r * 0.16f}, r, shade(kPlastic, 0.45f));
   DrawCircleV(c, r, kPlastic);
-  DrawCircleV(c, r * 0.8f, kLight);
+  DrawCircleV(c, r * 0.8f, pressed ? shade(kLight, 0.82f) : kLight);
   DrawRing(c, r * 0.6f, r * 0.68f, 0, 360, 36, shade(kLight, 0.78f));
-  centred(letter, {c.x, c.y + r * 0.03f}, r * 1.05f, kInk);
+  centred(letter, {c.x, c.y + r * 0.03f}, std::strlen(letter) > 1 ? r * 0.78f : r * 1.05f, kInk);
 }
 
 // lit: arrows drawn dark (1 up, 2 down, 4 left, 8 right); the others are faded.
@@ -662,6 +664,8 @@ float padGlyph(Btn b, float x, float y, float h, PadFamily f) {
     case Btn::Back: startGlyph(x, y, h, f, true); break;
     case Btn::LStick: stickGlyph(c, r, "L"); break;
     case Btn::RStick: stickGlyph(c, r, "R"); break;
+    case Btn::L3: stickGlyph(c, r, f == PadFamily::PlayStation ? "L3" : "LS", true); break;
+    case Btn::R3: stickGlyph(c, r, f == PadFamily::PlayStation ? "R3" : "RS", true); break;
     case Btn::DPad: dpadGlyph(c, h, 15); break;
     case Btn::DPadUD: dpadGlyph(c, h, 3); break;
     case Btn::DPadLR: dpadGlyph(c, h, 12); break;
@@ -686,17 +690,25 @@ float prompt(const char* key, Btn pad, float x, float y, float h, bool lit) {
   return padGlyph(pad, x, y, h, f);
 }
 
+Btn btnFor(int b) {
+  static const Btn kMap[kPadButtonCount] = {Btn::A,  Btn::B,  Btn::X,     Btn::Y,  Btn::LB, Btn::RB,
+                                            Btn::LT, Btn::RT, Btn::Back,  Btn::Start, Btn::L3, Btn::R3,
+                                            Btn::DPad, Btn::DPad, Btn::DPad, Btn::DPad};
+  return b >= 0 && b < kPadButtonCount ? kMap[b] : Btn::None;
+}
+
+namespace {
+// Fallbacks when no button is bound: moving and smash attacks always have their stick.
+Btn boundOr(int button, int action) {
+  if (button >= 0) return btnFor(button);
+  return action < kActJump ? Btn::LStick : action == kActSmash ? Btn::RStick : Btn::None;
+}
+}  // namespace
+
 Btn padButtonFor(int action) {
-  switch (action) {
-    case kActJump: return Btn::X;
-    case kActAttack: return Btn::A;
-    case kActSpecial: return Btn::B;
-    case kActShield: return Btn::RT;
-    case kActGrab: return Btn::LB;
-    case kActSmash: return Btn::RStick;
-    case kActUltimate: return Btn::RB;
-    default: return Btn::LStick;  // directions
-  }
+  if (action < kActJump || action >= kActionCount) return Btn::LStick;  // directions
+  const auto& b = settings().pad[action];
+  return boundOr(b[0] >= 0 ? b[0] : b[1], action);
 }
 
 namespace {
@@ -707,14 +719,11 @@ PadFamily deviceFamily(int device) {
 std::string actionKey(int device, int action) { return keyName(settings().keys[device][action]); }
 }  // namespace
 
-// Pads without triggers shield with RB and unleash the ultimate with Back.
 Btn deviceButtonFor(int device, int action) {
   const int p = device - kPad1;
-  if (padConnected(p) && !padHasTriggers(p)) {
-    if (action == kActShield) return Btn::RB;
-    if (action == kActUltimate) return Btn::Back;
-  }
-  return padButtonFor(action);
+  if (!padConnected(p) || action < kActJump || action >= kActionCount) return padButtonFor(action);
+  const int b0 = padBinding(p, action, 0);
+  return boundOr(b0 >= 0 ? b0 : padBinding(p, action, 1), action);
 }
 
 float actionPromptWidth(int device, int action, float h) {

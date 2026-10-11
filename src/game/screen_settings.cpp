@@ -1,6 +1,4 @@
 // Settings screen: audio, display, rules and keyboard bindings.
-#include <cstring>
-
 #include "game/app.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
@@ -60,41 +58,28 @@ int* volumeFor(int row) {
 }
 
 // ---- Gamepad controls ------------------------------------------------------------------
-// Gamepad button + action, the same for every pad.
-struct PadAction {
-  ui::Btn btn, btn2;
-  const char* label;
-};
-const PadAction kPadActions[] = {
-    {ui::Btn::Move, ui::Btn::None, "Se déplacer"}, {ui::Btn::A, ui::Btn::None, "Attaque"},
-    {ui::Btn::B, ui::Btn::None, "Spéciale"},       {ui::Btn::X, ui::Btn::Y, "Saut"},
-    {ui::Btn::LT, ui::Btn::RT, "Bouclier"},        {ui::Btn::LB, ui::Btn::None, "Saisie"},
-    {ui::Btn::RB, ui::Btn::None, "Ultime"},        {ui::Btn::RStick, ui::Btn::None, "Attaque smash"},
-    {ui::Btn::Start, ui::Btn::None, "Pause"}};
+// The game actions a pad can rebind (Saut ... Ultime), two buttons each, then the reset button.
+constexpr int kPadActionRows = kActionCount - kActJump;
+constexpr int kPadRows = kPadActionRows + 1;
+int padAction(int row) { return kActJump + row; }
+Rectangle padCellRect(int row, int col) { return {kPanel.x + 262 + col * 150.0f, kPanel.y + 76 + row * 34.0f, 136, 30}; }
+Rectangle padResetRect() { return {kPanel.x + 262, kPanel.y + 84 + kPadActionRows * 34.0f, 286, 32}; }
 
-// A connected pad of that family without triggers (SNES-style: RB shields, Back = ultimate)?
-bool triggerless(PadFamily f) {
+// The pad the tab shows: the first connected one of that family (-1: none, the saved bindings).
+int shownPad(PadFamily f) {
   for (int p = 0; p < kMaxPads; ++p)
-    if (padConnected(p) && padFamily(p) == f) return !padHasTriggers(p);
-  return false;
+    if (padConnected(p) && padFamily(p) == f) return p;
+  return -1;
 }
-// Button of an action on such a pad.
-PadAction forPad(PadAction a, bool noTriggers) {
-  if (!noTriggers) return a;
-  if (a.btn == ui::Btn::LT) return {ui::Btn::RB, ui::Btn::None, a.label};
-  if (a.btn == ui::Btn::RB) return {ui::Btn::Back, ui::Btn::None, a.label};
-  return a;
+int boundButton(int pad, int action, int slot) {
+  return pad >= 0 ? padBinding(pad, action, slot) : settings().pad[action][slot];
 }
-bool isUltimate(const char* label) { return std::strcmp(label, "Ultime") == 0; }
 
 // Draws one or two glyphs (vertically centred on cy), returns the width.
 float glyphs(ui::Btn a, ui::Btn b, float x, float cy, float h, PadFamily f) {
   float w = ui::padGlyph(a, x, cy - h * 0.5f, h, f);
   if (b != ui::Btn::None) w += 6 + ui::padGlyph(b, x + w + 6, cy - h * 0.5f, h, f);
   return w;
-}
-float glyphsWidth(ui::Btn a, ui::Btn b, float h, PadFamily f) {
-  return ui::padGlyphWidth(a, h, f) + (b != ui::Btn::None ? 6 + ui::padGlyphWidth(b, h, f) : 0.0f);
 }
 
 void ellipse(Vector2 c, float rx, float ry, float rot, Color col) {
@@ -116,29 +101,17 @@ PadLayout layoutFor(PadFamily f) {
   return {{-122, -24}, {62, 38}, {-62, 38}, {122, -24}, {34, -46}, {-34, -46}};
 }
 
-// A labelled controller: every action next to its button (gamepad prompt mode).
-void drawPadControls(PadFamily f) {
-  const Vector2 c{640, 418};
+// The controller of the family, centred on c, with button `hl` circled (the cell being edited).
+void drawController(PadFamily f, Vector2 at0, float scale, int hl, float t) {
+  rlPushMatrix();
+  rlTranslatef(at0.x, at0.y, 0);
+  rlScalef(scale, scale, 1);
+  const Vector2 c{0, 0};
   const PadLayout L = layoutFor(f);
   auto at = [&](Vector2 v) { return Vector2{c.x + v.x, c.y + v.y}; };
   const Color body = f == PadFamily::PlayStation ? Color{214, 216, 222, 255}
                      : f == PadFamily::Nintendo  ? Color{58, 62, 68, 255}
                                                  : Color{70, 78, 84, 255};
-  // Title: the pad in use (or the family)
-  const char* model = f == PadFamily::PlayStation ? "Manette PlayStation"
-                      : f == PadFamily::Nintendo  ? "Manette Nintendo"
-                                                  : "Manette Xbox";
-  for (int p = 0; p < kMaxPads; ++p)
-    if (padConnected(p) && padFamily(p) == f) {
-      model = padModel(p);
-      break;
-    }
-  std::string title = model;
-  for (char& ch : title)
-    if (ch >= 'a' && ch <= 'z') ch = char(ch - 'a' + 'A');
-  drawText(title.c_str(), kPanel.x + 30, kPanel.y + 18, 28, ui::kGold, FontKind::Title);
-
-  // Body: outline, then plastic
   auto shapes = [&](float g, Vector2 o, Color col) {
     DrawRectangleRounded({c.x - 180 - g + o.x, c.y - 94 - g + o.y, 360 + 2 * g, 126 + 2 * g}, 0.62f, 16, col);
     ellipse({c.x - 130 + o.x, c.y + 44 + o.y}, 58 + g, 84 + g, 0.38f, col);
@@ -160,100 +133,147 @@ void drawPadControls(PadFamily f) {
   }
   for (Vector2 v : {L.lstick, L.rstick, L.dpad}) DrawCircleV(at(v), 32, well);
   DrawCircleV(at(L.face), 48, well);
-  DrawCircleV(at(L.select), 9, ui::kInk);
 
-  // Callouts: glyph + action on both sides, a thin line to the button (drawn under the buttons)
-  const float d = 27;  // face buttons around the cluster centre
-  struct Callout {
-    ui::Btn btn, btn2;
-    Vector2 to;
-    const char* label;
-  };
-  const bool psSticks = f == PadFamily::PlayStation;  // d-pad above the left stick
-  const bool noTrig = triggerless(f);
-  const Callout left[4] = {
-      noTrig ? Callout{ui::Btn::Back, ui::Btn::None, L.select, "Ultime"}
-             : Callout{ui::Btn::LT, ui::Btn::None, {-124, -150}, "Bouclier"},
-      {ui::Btn::LB, ui::Btn::None, {-124, -115}, "Saisie"},
-      psSticks ? Callout{ui::Btn::DPad, ui::Btn::None, L.dpad, "Se déplacer"}
-               : Callout{ui::Btn::LStick, ui::Btn::None, L.lstick, "Se déplacer"},
-      psSticks ? Callout{ui::Btn::LStick, ui::Btn::None, L.lstick, "Se déplacer"}
-               : Callout{ui::Btn::DPad, ui::Btn::None, L.dpad, "Se déplacer"}};
-  const Callout right[6] = {noTrig ? Callout{ui::Btn::RB, ui::Btn::None, {124, -115}, "Bouclier"}
-                                   : Callout{ui::Btn::RT, ui::Btn::None, {124, -150}, "Bouclier"},
-                            noTrig ? Callout{ui::Btn::None, ui::Btn::None, {}, nullptr}
-                                   : Callout{ui::Btn::RB, ui::Btn::None, {124, -115}, "Ultime"},
-                            {ui::Btn::Y, ui::Btn::X, {L.face.x, L.face.y - d}, "Saut"},
-                            {ui::Btn::B, ui::Btn::None, {L.face.x + d, L.face.y}, "Spéciale"},
-                            {ui::Btn::A, ui::Btn::None, {L.face.x, L.face.y + d}, "Attaque"},
-                            {ui::Btn::RStick, ui::Btn::None, L.rstick, "Attaque smash"}};
-  const float gh = 28;
-  const Color line = withAlpha(ui::kGold, 0.55f);
-  auto leader = [&](Vector2 from, Vector2 to) {
-    DrawLineEx(from, at(to), 2, line);
-    DrawCircleV(from, 3, line);
-  };
-  auto leftY = [&](int i) { return c.y - 140 + i * 58.0f + (i >= 2 ? 22.0f : 0.0f); };
-  auto rightY = [&](int i) { return c.y - 140 + i * 44.0f; };
-  const float leftX = c.x - 236, rightX = c.x + 236;
-  for (int i = 0; i < 4; ++i) leader({leftX + 8, leftY(i)}, left[i].to);
-  for (int i = 0; i < 6; ++i)
-    if (right[i].label) leader({rightX - 8, rightY(i)}, right[i].to);
-  const float sw = ui::padGlyphWidth(ui::Btn::Start, gh, f) + 10 + textWidth("Pause", 21);
-  const Vector2 sp{at(L.start).x - sw * 0.5f, c.y - 186};  // Pause, above the middle
-  leader({at(L.start).x, sp.y + 18}, L.start);
-
-  // Buttons
-  const float sh = 26;
+  // Buttons, and where each one is (for the highlight)
+  Vector2 pos[kPadButtonCount] = {};
+  const float sh = 26, d = 27, fh = 28;
   for (int side = -1; side <= 1; side += 2) {
     const ui::Btn trig = side < 0 ? ui::Btn::LT : ui::Btn::RT, bump = side < 0 ? ui::Btn::LB : ui::Btn::RB;
-    if (!noTrig) ui::padGlyph(trig, c.x + side * 124 - ui::padGlyphWidth(trig, sh, f) * 0.5f, c.y - 164, sh, f);
+    ui::padGlyph(trig, c.x + side * 124 - ui::padGlyphWidth(trig, sh, f) * 0.5f, c.y - 164, sh, f);
     ui::padGlyph(bump, c.x + side * 124 - ui::padGlyphWidth(bump, sh, f) * 0.5f, c.y - 128, sh, f);
+    pos[side < 0 ? kPadLT : kPadRT] = {c.x + side * 124, c.y - 164 + sh * 0.5f};
+    pos[side < 0 ? kPadLB : kPadRB] = {c.x + side * 124, c.y - 128 + sh * 0.5f};
   }
-  ui::padGlyph(ui::Btn::Start, at(L.start).x - ui::padGlyphWidth(ui::Btn::Start, 24, f) * 0.5f, at(L.start).y - 12, 24, f);
-  ui::padGlyph(ui::Btn::LStick, at(L.lstick).x - 20, at(L.lstick).y - 20, 40, f);
-  ui::padGlyph(ui::Btn::RStick, at(L.rstick).x - 20, at(L.rstick).y - 20, 40, f);
-  ui::padGlyph(ui::Btn::DPad, at(L.dpad).x - 23, at(L.dpad).y - 23, 46, f);
+  auto centred = [&](ui::Btn b, Vector2 p, float h) { ui::padGlyph(b, p.x - ui::padGlyphWidth(b, h, f) * 0.5f, p.y - h * 0.5f, h, f); };
+  centred(ui::Btn::Start, at(L.start), 24);
+  centred(ui::Btn::Back, at(L.select), 24);
+  centred(ui::Btn::LStick, at(L.lstick), 40);
+  centred(ui::Btn::RStick, at(L.rstick), 40);
+  centred(ui::Btn::DPad, at(L.dpad), 46);
   const Vector2 fc = at(L.face);
-  const float fh = 28;
-  ui::padGlyph(ui::Btn::Y, fc.x - fh * 0.5f, fc.y - d - fh * 0.5f, fh, f);
-  ui::padGlyph(ui::Btn::X, fc.x - d - fh * 0.5f, fc.y - fh * 0.5f, fh, f);
-  ui::padGlyph(ui::Btn::B, fc.x + d - fh * 0.5f, fc.y - fh * 0.5f, fh, f);
-  ui::padGlyph(ui::Btn::A, fc.x - fh * 0.5f, fc.y + d - fh * 0.5f, fh, f);
-
-  // Labels
-  for (int i = 0; i < 4; ++i) {
-    const Callout& co = left[i];
-    const float tw = textWidth(co.label, 21);
-    drawText(co.label, leftX - tw, leftY(i) - 13, 21, isUltimate(co.label) ? ui::kGold : ui::kCream);
-    glyphs(co.btn, co.btn2, leftX - tw - 10 - glyphsWidth(co.btn, co.btn2, gh, f), leftY(i), gh, f);
+  pos[kPadY] = {fc.x, fc.y - d};
+  pos[kPadX] = {fc.x - d, fc.y};
+  pos[kPadB] = {fc.x + d, fc.y};
+  pos[kPadA] = {fc.x, fc.y + d};
+  for (int b : {kPadY, kPadX, kPadB, kPadA}) centred(ui::btnFor(b), pos[b], fh);
+  pos[kPadStart] = at(L.start);
+  pos[kPadBack] = at(L.select);
+  pos[kPadL3] = at(L.lstick);
+  pos[kPadR3] = at(L.rstick);
+  if (hl >= 0 && hl < kPadButtonCount) {
+    const float pulse = 0.5f + 0.5f * std::sin(t * 7.0f);
+    const float r = (hl == kPadL3 || hl == kPadR3) ? 26.0f : (hl >= kPadLB && hl <= kPadRT) ? 24.0f : 18.0f;
+    ui::glow(pos[hl], r * 2.2f, withAlpha(ui::kGold, 0.35f + 0.2f * pulse), 6);
+    DrawRing(pos[hl], r + 2 + 2 * pulse, r + 5 + 2 * pulse, 0, 360, 40, ui::kGold);
   }
-  for (int i = 0; i < 6; ++i) {
-    const Callout& co = right[i];
-    if (!co.label) continue;
-    const float w = glyphs(co.btn, co.btn2, rightX, rightY(i), gh, f);
-    drawText(co.label, rightX + w + 10, rightY(i) - 13, 21, isUltimate(co.label) ? ui::kGold : ui::kCream);
-  }
-  ui::padGlyph(ui::Btn::Start, sp.x, sp.y - gh * 0.5f, gh, f);
-  drawText("Pause", sp.x + ui::padGlyphWidth(ui::Btn::Start, gh, f) + 10, sp.y - 13, 21, ui::kCream);
+  rlPopMatrix();
+}
 
+// Gamepad prompt mode: the bindings table (2 buttons per action) next to the controller.
+void drawPadBindings(PadFamily f, int row, int col, bool waiting, float t) {
+  const int pad = shownPad(f);
+  std::string title = pad >= 0 ? padModel(pad)
+                      : f == PadFamily::PlayStation ? "Manette PlayStation"
+                      : f == PadFamily::Nintendo    ? "Manette Nintendo"
+                                                    : "Manette Xbox";
+  for (char& ch : title)
+    if (ch >= 'a' && ch <= 'z') ch = char(ch - 'a' + 'A');
+  drawText(title.c_str(), kPanel.x + 30, kPanel.y + 16, 28, ui::kGold, FontKind::Title);
+
+  drawText("ACTION", kPanel.x + 46, kPanel.y + 52, 17, ui::kMuted);
+  for (int c = 0; c < 2; ++c) {
+    Rectangle k = padCellRect(0, c);
+    drawTextCentered(c == 0 ? "BOUTON 1" : "BOUTON 2", k.x + k.width * 0.5f, kPanel.y + 51, 17, ui::kMuted, false);
+  }
+  int hl = -1;
+  for (int r = 0; r < kPadActionRows; ++r) {
+    const int a = padAction(r);
+    const bool rowFoc = r == row;
+    const Rectangle k0 = padCellRect(r, 0);
+    if (rowFoc) {
+      DrawRectangleRounded({kPanel.x + 24, k0.y - 2, 540, k0.height + 4}, 0.4f, 8, withAlpha(ui::kTeal, 0.14f));
+      ui::diamond({kPanel.x + 34, k0.y + k0.height * 0.5f}, 4, ui::kGold);
+    }
+    drawText(actionName(a), kPanel.x + 46, k0.y + 4, 19,
+             a == kActUltimate ? ui::kGold : rowFoc ? ui::kCream : Color{196, 206, 198, 255});
+    for (int c = 0; c < 2; ++c) {
+      const Rectangle k = padCellRect(r, c);
+      const bool foc = rowFoc && c == col, wait = foc && waiting;
+      DrawRectangleRounded({k.x, k.y + 3, k.width, k.height}, 0.4f, 8, {8, 12, 14, 255});
+      DrawRectangleRounded(k, 0.4f, 8, wait ? mixColor(ui::kGold, WHITE, 0.3f) : foc ? Color{52, 80, 82, 255}
+                                                                             : Color{34, 50, 54, 255});
+      if (!wait) DrawRectangleRoundedLinesEx(ui::grow(k, -1), 0.4f, 8, 1.0f, withAlpha(ui::kStone, foc ? 0.6f : 0.35f));
+      const int b = boundButton(pad, a, c);
+      if (wait) {
+        drawTextCentered(int(t * 3) % 2 ? "..." : "", k.x + k.width * 0.5f, k.y + 4, 17, ui::kInk, false);
+      } else if (b >= 0) {
+        const ui::Btn g = ui::btnFor(b);
+        ui::padGlyph(g, k.x + k.width * 0.5f - ui::padGlyphWidth(g, 24, f) * 0.5f, k.y + 3, 24, f);
+      } else {
+        drawTextCentered("—", k.x + k.width * 0.5f, k.y + 4, 17, ui::kMuted, false);
+      }
+      if (foc) {
+        hl = b;
+        if (!wait) ui::focusFrame(k, t, 0.4f);
+      }
+    }
+  }
+  const Rectangle rb = padResetRect();
+  const bool resetFoc = row == kPadActionRows;
+  DrawRectangleRounded(rb, 0.5f, 10, resetFoc ? mixColor(kTabColors[3], ui::kCream, 0.12f) : shade(kTabColors[3], 0.7f));
+  DrawRectangleRoundedLinesEx(ui::grow(rb, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
+  drawTextCentered("RÉINITIALISER", rb.x + rb.width * 0.5f, rb.y + 7, 17, ui::kCream);
+  if (resetFoc) ui::focusFrame(rb, t, 0.5f);
+
+  // What never changes
+  float x = kPanel.x + 30, y = kPanel.y + kPanel.height - 72;
+  drawText("Toujours :", x, y - 11, 18, ui::kMuted);
+  x += textWidth("Toujours :", 18) + 12;
+  const struct { ui::Btn b; const char* label; } fixed[3] = {
+      {ui::Btn::Move, "Se déplacer"}, {ui::Btn::RStick, "Attaque smash"}, {ui::Btn::Start, "Pause"}};
+  for (const auto& fx : fixed) {
+    x += glyphs(fx.b, ui::Btn::None, x, y, 24, f) + 8;
+    drawText(fx.label, x, y - 11, 18, ui::kCream);
+    x += textWidth(fx.label, 18) + 22;
+  }
   // Menus
-  float x = kPanel.x + 30, y = kPanel.y + kPanel.height - 34;
+  x = kPanel.x + 30;
+  y = kPanel.y + kPanel.height - 34;
   drawText("Menus :", x, y - 11, 18, ui::kMuted);
   x += textWidth("Menus :", 18) + 14;
-  const PadAction menu[4] = {{ui::Btn::A, ui::Btn::None, "Valider"}, {ui::Btn::B, ui::Btn::None, "Retour"},
-                             {ui::Btn::X, ui::Btn::None, "Valeur précédente"}, {ui::Btn::Start, ui::Btn::None, "Commencer"}};
-  for (const PadAction& m : menu) {
-    x += glyphs(m.btn, m.btn2, x, y, 24, f) + 8;
+  const struct { ui::Btn b; const char* label; } menu[4] = {
+      {ui::Btn::A, "Valider"}, {ui::Btn::B, "Retour"}, {ui::Btn::X, "Valeur précédente"}, {ui::Btn::Start, "Commencer"}};
+  for (const auto& m : menu) {
+    x += glyphs(m.b, ui::Btn::None, x, y, 24, f) + 8;
     drawText(m.label, x, y - 11, 18, ui::kCream);
     x += textWidth(m.label, 18) + 24;
   }
+  drawController(f, {kPanel.x + 868, kPanel.y + 238}, 0.82f, hl, t);
 }
 }  // namespace
 
 int App::settingsRowCount() const {
-  if (setTab_ == 3 && padPrompts()) return 0;  // the controller layout: nothing to select
+  if (setTab_ == 3 && padPrompts()) return kPadRows;  // gamepad bindings
   return kRowCounts[setTab_];
+}
+
+// Gives `button` to an action's slot; an action that used it gets this slot's old button.
+bool App::bindPadButton(int action, int slot, int button) {
+  auto& P = settings().pad;
+  const int old = P[action][slot];
+  if (old == button) return true;
+  for (int a = kActJump; a < kActionCount; ++a)
+    for (int sl = 0; sl < 2; ++sl) {
+      if ((a == action && sl == slot) || P[a][sl] != button) continue;
+      if (old < 0 && a != action && a != kActSmash && P[a][1 - sl] < 0) {  // it would lose its only button
+        toast(TextFormat("C'est le seul bouton de « %s »", actionName(a)));
+        return false;
+      }
+      P[a][sl] = old;
+    }
+  P[action][slot] = button;
+  saveSettings();
+  return true;
 }
 
 void App::changeSetting(int row, int delta) {
@@ -296,7 +316,25 @@ void App::changeSetting(int row, int delta) {
 void App::updateSettings(const MenuNav& nav) {
   Settings& s = settings();
   const int rows = settingsRowCount();
-  setRow_ = std::min(setRow_, rows - 1);  // the gamepad layout of the Commandes tab has no rows
+  setRow_ = std::min(setRow_, rows - 1);  // the Commandes tab has fewer rows in gamepad mode
+  const bool padTable = setTab_ == 3 && padPrompts();
+
+  if (waitingPad_) {  // rebinding a gamepad button: the next button pressed on any pad
+    if (!padTable || IsKeyPressed(KEY_ESCAPE) || padAnyPressed(kPadStart) || setRow_ < 0 ||
+        setRow_ >= kPadActionRows) {
+      waitingPad_ = false;
+      audio_.play(Sfx::MenuBack);
+      return;
+    }
+    for (int p = 0; p < kMaxPads; ++p)
+      for (int b = 0; b < kPadButtonCount; ++b)
+        if (padBindable(b) && padPressed(p, b)) {
+          waitingPad_ = false;
+          audio_.play(bindPadButton(padAction(setRow_), setCol_, b) ? Sfx::MenuSelect : Sfx::MenuBack);
+          return;
+        }
+    return;
+  }
 
   if (waitingKey_) {  // rebinding a key
     if (padAnyPressed(kPadB) || setRow_ < 0 || setRow_ >= kActionCount) {
@@ -340,7 +378,29 @@ void App::updateSettings(const MenuNav& nav) {
       changeSetting(setRow_, d);
     }
   }
-  if (nav.confirm && !waitingKey_) {
+  if (padTable && nav.prev && setRow_ >= 0 && setRow_ < kPadActionRows) {  // clear a slot
+    const int a = padAction(setRow_);
+    auto& slots = s.pad[a];
+    if (slots[setCol_] >= 0 && (a == kActSmash || slots[1 - setCol_] >= 0)) {
+      slots[setCol_] = -1;
+      saveSettings();
+      audio_.play(Sfx::MenuBack);
+    } else if (slots[setCol_] >= 0) {
+      toast(TextFormat("« %s » a besoin d'au moins un bouton", actionName(a)));
+    }
+  }
+  if (nav.confirm && !waitingKey_ && padTable) {
+    if (setRow_ < 0) {
+      setRow_ = 0;
+    } else if (setRow_ < kPadActionRows) {
+      waitingPad_ = true;
+    } else {
+      s.resetPad();
+      saveSettings();
+      toast("Boutons de la manette réinitialisés");
+    }
+    audio_.play(Sfx::MenuSelect);
+  } else if (nav.confirm && !waitingKey_) {
     if (setRow_ < 0) {
       setRow_ = 0;
     } else if (setTab_ == 3) {
@@ -386,7 +446,24 @@ void App::updateSettings(const MenuNav& nav) {
         else changeSetting(r, 1);
       }
     }
-  } else if (!padPrompts()) {  // keyboard table (the gamepad view has nothing to click)
+  } else if (padTable) {  // gamepad bindings
+    for (int r = 0; r < kPadActionRows; ++r)
+      for (int c = 0; c < 2; ++c) {
+        if (ui::hovered(padCellRect(r, c)) && ui::mouseMoved()) setRow_ = r, setCol_ = c;
+        if (ui::clicked(padCellRect(r, c))) {
+          setRow_ = r;
+          setCol_ = c;
+          waitingPad_ = true;
+          audio_.play(Sfx::MenuSelect);
+        }
+      }
+    if (ui::clicked(padResetRect())) {
+      setRow_ = kPadActionRows;
+      s.resetPad();
+      saveSettings();
+      toast("Boutons de la manette réinitialisés");
+    }
+  } else {  // keyboard table
     for (int r = 0; r < kActionCount; ++r)
       for (int c = 0; c < 2; ++c) {
         if (ui::hovered(keyRect(r, c)) && ui::mouseMoved()) setRow_ = r, setCol_ = c;
@@ -501,7 +578,7 @@ void App::drawSettings() {
       }
     }
   } else if (padPrompts()) {
-    drawPadControls(promptFamily());
+    drawPadBindings(promptFamily(), setRow_, setCol_, waitingPad_, t);
   } else {
     // Keyboard bindings table
     drawText("ACTION", kPanel.x + 46, kPanel.y + 16, 18, ui::kMuted);
@@ -546,12 +623,20 @@ void App::drawSettings() {
     DrawRectangleRounded(box, 0.06f, 8, withAlpha(ui::kInk, 0.5f));
     DrawRectangleRoundedLinesEx(box, 0.06f, 8, 1.0f, withAlpha(ui::kGold, 0.3f));
     drawText("MANETTE", box.x + 18, box.y + 10, 26, ui::kGold, FontKind::Title);
-    const bool noTrig = triggerless(f);
-    for (int i = 0; i < int(sizeof(kPadActions) / sizeof(kPadActions[0])); ++i) {
-      const PadAction a = forPad(kPadActions[i], noTrig);
+    const int pad = shownPad(f);
+    for (int i = 0; i < kPadActionRows + 2; ++i) {  // moving, the bindings, pause
       const float y = box.y + 62 + i * 33.0f;
-      glyphs(a.btn, a.btn2, box.x + 18, y, 24, f);
-      drawText(a.label, box.x + 128, y - 11, 17, isUltimate(a.label) ? ui::kGold : ui::kCream);
+      const int a = i == 0 ? kActLeft : i <= kPadActionRows ? padAction(i - 1) : -1;
+      ui::Btn b0 = a < 0 ? ui::Btn::Start : a == kActLeft ? ui::Btn::Move : ui::Btn::None, b1 = ui::Btn::None;
+      if (a >= kActJump) {
+        const int x0 = boundButton(pad, a, 0), x1 = boundButton(pad, a, 1);
+        b0 = x0 >= 0 ? ui::btnFor(x0) : a == kActSmash ? ui::Btn::RStick : ui::Btn::None;
+        b1 = x1 >= 0 ? ui::btnFor(x1) : (a == kActSmash && x0 >= 0) ? ui::Btn::RStick : ui::Btn::None;
+        if (b0 == ui::Btn::None) std::swap(b0, b1);
+      }
+      glyphs(b0, b1, box.x + 18, y, 24, f);
+      drawText(a < 0 ? "Pause" : a == kActLeft ? "Se déplacer" : actionName(a), box.x + 128, y - 11, 17,
+               a == kActUltimate ? ui::kGold : ui::kCream);
     }
     drawText("Clavier 2 : le pavé numérique marche", box.x + 18, box.y + box.height - 46, 15, ui::kMuted);
     drawText("aussi (0 à 6).", box.x + 18, box.y + box.height - 27, 15, ui::kMuted);
@@ -564,6 +649,16 @@ void App::drawSettings() {
     drawText(help, kPanel.x + 62, y + 2, 18, {214, 220, 208, 255});
   }
 
+  if (waitingPad_) {
+    DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.65f));
+    Rectangle m{kScreenW * 0.5f - 330, kScreenH * 0.5f - 90, 660, 170};
+    ui::panel(m, {24, 38, 42, 255}, ui::kGold, 0.12f);
+    drawTextCentered(TextFormat("Nouveau bouton : %s", actionName(padAction(std::clamp(setRow_, 0, kPadActionRows - 1)))),
+                     m.x + m.width * 0.5f, m.y + 28, 34, ui::kCream, true, FontKind::Title);
+    drawTextCentered(setCol_ == 0 ? "Bouton 1" : "Bouton 2", m.x + m.width * 0.5f, m.y + 76, 20, ui::kGold);
+    drawTextCentered("Appuyez sur un bouton de la manette  —  START pour annuler", m.x + m.width * 0.5f, m.y + 112,
+                     19, ui::kMuted, false);
+  }
   if (waitingKey_) {
     DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.65f));
     Rectangle m{kScreenW * 0.5f - 330, kScreenH * 0.5f - 90, 660, 170};
@@ -575,9 +670,10 @@ void App::drawSettings() {
                      ui::kMuted, false);
   }
   using ui::Btn;
-  if (setTab_ == 3 && padPrompts())
-    ui::footer({{"GAUCHE/DROITE", Btn::DPadLR, "Onglet"}, {"ÉCHAP", Btn::B, "Retour"}},
-               "Touches du clavier : appuyez sur une touche.");
+  if (setTab_ == 3 && padPrompts() && setRow_ >= 0)
+    ui::footer({{"FLÈCHES", Btn::DPad, "Naviguer"}, {"ENTRÉE", Btn::A, "Changer"}, {"K", Btn::X, "Effacer"},
+                {"ÉCHAP", Btn::B, "Retour"}},
+               setRow_ < kPadActionRows ? "Un bouton déjà utilisé est échangé." : "Boutons d'origine.");
   else if (setRow_ < 0)
     ui::footer({{"GAUCHE/DROITE", Btn::DPadLR, "Onglet"}, {"BAS", Btn::DPadDown, "Réglages"}, {"ÉCHAP", Btn::B, "Retour"}});
   else if (setTab_ == 3)

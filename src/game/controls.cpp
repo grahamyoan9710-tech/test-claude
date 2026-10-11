@@ -342,17 +342,20 @@ InputState readDevice(int d) {
     if (p.down[kPadUp]) in.stick.y = -1;
     if (p.down[kPadDown]) in.stick.y = 1;
     in.cstick = p.cstick;
-    in.attack = p.down[kPadA];
-    in.special = p.down[kPadB];
-    in.jump = p.down[kPadX] || p.down[kPadY];
-    in.grab = p.down[kPadLB];
-    if (padHasTriggers(d - kPad1)) {
-      in.ultimate = p.down[kPadRB];
-      in.shield = p.down[kPadLT] || p.down[kPadRT];
-    } else {  // no triggers (SNES-style pads)
-      in.ultimate = p.down[kPadBack];
-      in.shield = p.down[kPadRB];
-    }
+    auto held = [&](int action) {
+      for (int sl = 0; sl < 2; ++sl) {
+        const int b = padBinding(d - kPad1, action, sl);
+        if (b >= 0 && p.down[b]) return true;
+      }
+      return false;
+    };
+    in.attack = held(kActAttack);
+    in.special = held(kActSpecial);
+    in.jump = held(kActJump);
+    in.grab = held(kActGrab);
+    in.shield = held(kActShield);
+    in.smash = held(kActSmash);
+    in.ultimate = held(kActUltimate);
   }
   return in;
 }
@@ -389,6 +392,16 @@ bool padAnyPressed(int b) {
   return false;
 }
 PadFamily padFamily(int p) { return padConnected(p) ? g_pads[p].family : PadFamily::Xbox; }
+int padBinding(int p, int action, int slot) {
+  if (action < kActJump || action >= kActionCount || slot < 0 || slot > 1) return -1;
+  const Settings& s = settings();
+  if (s.padIsDefault() && !padHasTriggers(p)) {  // SNES-style pads: RB shields, Back = ultimate
+    if (action == kActShield) return slot == 0 ? kPadRB : -1;
+    if (action == kActUltimate) return slot == 0 ? kPadBack : -1;
+  }
+  return s.pad[action][slot];
+}
+
 bool padHasTriggers(int p) {
   if (!padConnected(p)) return true;
   const Pad& pad = g_pads[p];
