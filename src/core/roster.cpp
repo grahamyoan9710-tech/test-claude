@@ -94,7 +94,7 @@ CharacterDef makeYuno() {
   c.groundAccel = 1.4f;
   c.airAccel = 0.55f;
   c.airJumps = 2;
-  const float S = 0.97f, P = 1.14f;
+  const float S = 0.97f, P = 1.1f;
   buildBrawlerNormals(c, S, P, F::Wind);
   auto& m = c.moves;
 
@@ -168,7 +168,7 @@ CharacterDef makeIchigo() {
                 pal({240, 240, 244}, {32, 32, 38}, {200, 30, 30}, {232, 228, 226}, {240, 128, 40}, {230, 200, 40})};
   stats(c, 46, 104, 100, 4.1f, 8.9f, 5.1f, 0.64f, 10.2f, 15.0f, 15.4f, 10.2f, 14.0f, 4);
   c.weaponLength = 88;
-  const float S = 1.08f, P = 0.86f;  // v6: toned down, he was far too strong
+  const float S = 1.08f, P = 1.06f;  // v6: toned down, he was far too strong
   buildSwordNormals(c, S, P, F::Reiatsu);
   auto& m = c.moves;
 
@@ -195,13 +195,13 @@ CharacterDef makeIchigo() {
   m[USpecial].pose = PoseHint::Uppercut;
 
   BeamDef cero;
-  cero.start = 26;
-  cero.end = 38;
+  cero.start = 22;
+  cero.end = 34;
   cero.from = {36, -14};
   cero.length = 230;
   cero.width = 40;
   cero.fx = F::Blood;
-  m[DSpecial] = mv("Cero", 60, beamHits(cero, 6, 30, 46, 74, 3));
+  m[DSpecial] = mv("Cero", 56, beamHits(cero, 7, 30, 46, 74, 3));
   m[DSpecial].beam = cero;
   m[DSpecial].gravityMul = 0.3f;
   m[DSpecial].pose = PoseHint::Cast;
@@ -325,7 +325,7 @@ CharacterDef makeLink() {
                 pal({70, 128, 70}, {120, 88, 58}, {222, 184, 90}, {244, 210, 176}, {214, 164, 92}, {70, 130, 200})};
   stats(c, 44, 98, 98, 4.2f, 8.9f, 5.1f, 0.62f, 10.2f, 15.0f, 15.2f, 10.0f, 14.2f, 4);
   c.weaponLength = 64;
-  const float S = 1.0f, P = 0.88f;
+  const float S = 1.0f, P = 0.92f;
   buildSwordNormals(c, S, P, F::Light);
   auto& m = c.moves;
 
@@ -389,7 +389,7 @@ CharacterDef makeGanondorf() {
   c.groundAccel = 0.95f;
   c.friction = 0.7f;
   c.airAccel = 0.36f;
-  const float S = 1.25f, P = 1.42f;
+  const float S = 1.25f, P = 1.5f;
   buildBrawlerNormals(c, S, P, F::Gloom);
   auto& m = c.moves;
 
@@ -469,7 +469,7 @@ CharacterDef makeKratos() {
                 pal({160, 130, 60}, {80, 60, 44}, {196, 40, 36}, {214, 210, 202}, {196, 196, 196}, {200, 160, 80})};
   stats(c, 56, 114, 118, 3.6f, 8.0f, 4.8f, 0.66f, 11.0f, 15.5f, 15.6f, 10.2f, 14.0f, 5);
   c.groundAccel = 1.1f;
-  const float S = 1.14f, P = 1.38f;
+  const float S = 1.14f, P = 1.34f;
   buildBrawlerNormals(c, S, P, F::Fire);
   auto& m = c.moves;
 
@@ -735,7 +735,7 @@ CharacterDef makeUlquiorra() {
   stats(c, 44, 106, 86, 4.2f, 9.0f, 5.4f, 0.5f, 8.8f, 13.6f, 14.6f, 9.6f, 13.2f, 3);
   c.airJumps = 2;
   c.airAccel = 0.5f;
-  const float S = 1.0f, P = 1.32f;
+  const float S = 1.0f, P = 1.39f;
   buildBrawlerNormals(c, S, P, F::Hollow);
   auto& m = c.moves;
 
@@ -961,7 +961,7 @@ CharacterDef makeNaruto() {
   stats(c, 44, 96, 92, 4.5f, 9.8f, 5.6f, 0.6f, 10.0f, 15.0f, 15.6f, 10.4f, 14.6f, 3);
   c.groundAccel = 1.5f;
   c.airJumps = 2;
-  const float S = 0.98f, P = 1.12f;
+  const float S = 0.98f, P = 1.07f;
   buildBrawlerNormals(c, S, P, F::Chakra);
   auto& m = c.moves;
 
@@ -1027,7 +1027,7 @@ CharacterDef makeSasuke() {
   stats(c, 44, 102, 90, 4.4f, 9.7f, 5.4f, 0.6f, 9.8f, 14.8f, 15.2f, 10.0f, 14.2f, 3);
   c.groundAccel = 1.45f;
   c.weaponLength = 70;
-  const float S = 1.0f, P = 0.9f;
+  const float S = 1.0f, P = 0.82f;
   buildSwordNormals(c, S, P, F::Lightning);
   auto& m = c.moves;
 
@@ -1177,7 +1177,7 @@ CharacterDef makeHunter() {
   stats(c, 52, 108, 120, 3.6f, 8.2f, 4.8f, 0.66f, 10.8f, 15.4f, 15.2f, 10.0f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 100;
-  const float S = 1.08f, P = 1.06f;
+  const float S = 1.08f, P = 1.11f;
   buildSwordNormals(c, S, P, F::Slash);
   auto& m = c.moves;
 

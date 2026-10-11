@@ -77,8 +77,10 @@ void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx) {
                                   hb(16, 22, 0, 48, 18, 8.0f, 361, 20, 80, L::LegFront)}, 16);
 
   for (int id : {Jab, Jab2, Jab3, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir,
-                 FAir, BAir, UAir, DAir})
-    scale(m[id], S, P * 1.1f);  // bare hands: shorter reach, a little more damage
+                 FAir, BAir, UAir, DAir}) {
+    scale(m[id], S, P * 1.14f);  // bare hands: shorter reach, more damage
+    for (auto& h : m[id].hitboxes) h.radius *= 1.04f;  // fists and feet land a little more easily
+  }
   buildCommonMoves(c, S, P);
 }
 
@@ -164,8 +166,14 @@ void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
   for (auto& h : m[DAir].hitboxes) h.reach1 = std::min(h.reach1, 0.85f);
 
   for (int id : {Jab, Jab2, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir, FAir,
-                 BAir, UAir, DAir})
-    scale(m[id], S, P * 0.9f);  // blades reach further: a little less damage
+                 BAir, UAir, DAir}) {
+    scale(m[id], S, P * 0.88f);  // blades reach further and sweep wide: less damage, less launching power
+    for (auto& h : m[id].hitboxes) {
+      h.radius *= 0.95f;
+      h.baseKB *= 0.92f;
+      h.growth *= 0.94f;
+    }
+  }
   buildCommonMoves(c, S, P);
 }
 

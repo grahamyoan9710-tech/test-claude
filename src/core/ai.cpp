@@ -514,7 +514,7 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
     if (adx < close + 20.0f && dn.melee && !dn.projectile) return use({0, 1});
     if (s.dash && std::fabs(adx - s.landX) < 45.0f) return use({float(toward), 0});
     if (dn.grab && adx < dn.reach + 10.0f && adx > close * 0.6f) return use({0, 1});
-    if (dn.beam && adx < dn.reach && f.facing == toward) return use({0, 1});
+    if (dn.beam && adx > close * 0.8f && adx < dn.reach && f.facing == toward && rng_.chance(0.6f)) return use({0, 1});
     if (n.beam && adx > close && adx < n.reach - 20.0f && f.facing == toward && rng_.chance(0.6f)) return use({0, 0});
     if (s.beam && adx > close && adx < s.reach - 20.0f && f.facing == toward && rng_.chance(0.6f)) return use({float(toward), 0});
     if (adx > mid && adx < 520.0f && canShoot) {
