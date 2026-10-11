@@ -196,6 +196,135 @@ Wave makeSfx(Sfx s) {
         }
         return 0.2f * charge + 0.35f * riser + 0.75f * boom + 0.12f * bells;
       });
+    case Sfx::WindGust:
+      // Whoosh: band-passed noise whose band opens and closes with the gust.
+      return synth(0.55f, [=](float t) mutable {
+        const float env = std::pow(std::sin(3.14159f * t / 0.55f), 2.0f);
+        const float k = 0.03f + 0.22f * env;
+        lp += (nz() - lp) * k;
+        lp2 += (lp - lp2) * k * 0.5f;
+        return 2.6f * (lp - lp2) * env;
+      });
+    case Sfx::IceCrack:
+      // Brittle crack: a sharp click, glassy partials and a few crackles.
+      return synth(0.45f, [=](float t) mutable {
+        const float click = nz() * std::exp(-t * 160.0f);
+        float glass = 0.0f;
+        const float fr[4] = {2380.0f, 3710.0f, 5120.0f, 6650.0f};
+        for (int k = 0; k < 4; ++k) glass += std::sin(kTau * fr[k] * t) * std::exp(-t * (9.0f + k * 4.0f));
+        const float crackle = (nz() > 0.96f ? nz() : 0.0f) * std::exp(-t * 7.0f);
+        return 0.9f * click + 0.16f * glass + 0.5f * crackle;
+      });
+    case Sfx::PetalSwish:
+      // Silky swish: high-passed noise sweeping by, with a faint metallic shimmer of a thousand blades.
+      return synth(0.42f, [=](float t) mutable {
+        const float env = std::sin(3.14159f * std::min(1.0f, t / 0.42f));
+        const float n = nz();
+        const float hp = n - lp;
+        lp += (n - lp) * 0.35f;
+        const float shimmer = std::sin(kTau * (3400.0f + 600.0f * std::sin(kTau * 7.0f * t)) * t) * std::exp(-t * 6.0f);
+        return (0.7f * hp + 0.12f * shimmer) * env;
+      });
+    case Sfx::HitHoly:
+      // Sacred light: a soft thump and a bright bell chord.
+      return synth(0.7f, [=](float t) mutable {
+        const float thump = std::sin(sweep(t, 220.0f, 70.0f, 0.2f)) * std::exp(-t * 18.0f);
+        const float notes[3] = {1318.5f, 1975.5f, 2637.0f};
+        float bell = 0.0f;
+        for (int k = 0; k < 3; ++k) bell += std::sin(kTau * notes[k] * t) * std::exp(-t * (5.0f + 2.0f * k));
+        lp += (nz() - lp) * 0.6f;
+        return 0.6f * thump + 0.18f * bell + 0.25f * lp * std::exp(-t * 30.0f);
+      });
+    case Sfx::HitGloom:
+      // Malice: a low, rough thud with a growling tail.
+      return synth(0.6f, [=](float t) mutable {
+        lp += (nz() - lp) * 0.07f;
+        const float growl = std::sin(sweep(t, 140.0f, 38.0f, 0.6f) + 2.0f * lp) * std::exp(-t * 5.0f);
+        lp2 += (nz() - lp2) * 0.4f;
+        return 0.8f * growl + 0.5f * lp2 * std::exp(-t * 22.0f);
+      });
+    case Sfx::BeamHum:
+      // Sustained energy hum (detuned saws, a little buzz).
+      return synth(1.2f, [=](float t) mutable {
+        const float env = std::min(1.0f, t / 0.08f) * std::min(1.0f, (1.2f - t) / 0.3f);
+        auto saw = [](float ph) { return 2.0f * (ph - std::floor(ph)) - 1.0f; };
+        const float v = saw(82.0f * t) + saw(82.7f * t) + 0.6f * saw(164.3f * t) + 0.3f * saw(246.0f * t);
+        lp += (v - lp) * 0.18f;
+        return 0.28f * lp * env * (0.85f + 0.15f * std::sin(kTau * 13.0f * t));
+      });
+    case Sfx::BeamBlast:
+      // The beam fires: a roaring burst of noise over a falling tone.
+      return synth(1.0f, [=](float t) mutable {
+        lp += (nz() - lp) * (0.5f - 0.35f * std::min(1.0f, t / 0.6f));
+        const float roar = lp * std::exp(-t * 3.2f) * std::min(1.0f, t / 0.015f);
+        const float tone = std::sin(sweep(t, 520.0f, 70.0f, 1.0f)) * std::exp(-t * 4.0f);
+        return 1.1f * roar + 0.45f * tone;
+      });
+    case Sfx::Explosion:
+      // Deep boom, crunchy crackle, rumbling tail.
+      return synth(1.3f, [=](float t) mutable {
+        lp += (nz() - lp) * 0.06f;
+        lp2 += (nz() - lp2) * 0.45f;
+        const float boom = std::sin(sweep(t, 110.0f, 28.0f, 1.3f)) * std::exp(-t * 3.0f);
+        const float crackle = (nz() > 0.9f ? nz() : 0.0f) * std::exp(-t * 6.0f);
+        return 0.9f * boom + 2.0f * lp * std::exp(-t * 2.4f) + 0.45f * lp2 * std::exp(-t * 14.0f) + 0.3f * crackle;
+      });
+    case Sfx::ImpactBoom:
+      // Impact frames: a dry crack and a huge sub thump.
+      return synth(0.9f, [=](float t) mutable {
+        lp2 += (nz() - lp2) * 0.7f;
+        const float crack = lp2 * std::exp(-t * 60.0f);
+        const float sub = std::sin(sweep(t, 75.0f, 26.0f, 0.9f)) * std::exp(-t * 4.0f) * std::min(1.0f, t / 0.004f);
+        lp += (nz() - lp) * 0.05f;
+        return 0.9f * crack + 1.1f * sub + 0.8f * lp * std::exp(-t * 5.0f);
+      });
+    case Sfx::CutIn:
+      // Super cut-in: a metallic "shing" over a fast whoosh.
+      return synth(0.55f, [=](float t) mutable {
+        float shing = 0.0f;
+        const float fr[3] = {3150.0f, 4470.0f, 6020.0f};
+        for (int k = 0; k < 3; ++k) shing += std::sin(kTau * fr[k] * t) * std::exp(-t * (8.0f + k * 3.0f));
+        const float env = std::sin(3.14159f * std::min(1.0f, t / 0.3f));
+        lp += (nz() - lp) * (0.1f + 0.3f * env);
+        return 0.22f * shing * std::min(1.0f, t / 0.003f) + 1.2f * lp * env * (t < 0.3f ? 1.0f : 0.0f);
+      });
+    case Sfx::DomainDrone:
+      // Domain expansion: an ominous swelling drone (fifths beating slowly) and a breath of noise.
+      return synth(2.6f, [=](float t) mutable {
+        const float env = std::min(1.0f, t / 0.5f) * std::min(1.0f, (2.6f - t) / 1.0f);
+        auto saw = [](float ph) { return 2.0f * (ph - std::floor(ph)) - 1.0f; };
+        const float v = saw(55.0f * t) + saw(55.6f * t) + 0.7f * saw(82.4f * t) + 0.4f * saw(110.3f * t);
+        lp += (v - lp) * 0.06f;
+        lp2 += (nz() - lp2) * 0.02f;
+        return env * (0.42f * lp + 1.2f * lp2 * (0.6f + 0.4f * std::sin(kTau * 0.7f * t)));
+      });
+    case Sfx::WeaponPickup:
+      // Bright chime arpeggio (E6 G#6 B6 E7).
+      return synth(0.8f, [](float t) {
+        const float notes[4] = {1318.5f, 1661.2f, 1975.5f, 2637.0f};
+        float v = 0.0f;
+        for (int k = 0; k < 4; ++k) {
+          const float u = t - k * 0.06f;
+          if (u < 0.0f) break;
+          v += (std::sin(kTau * notes[k] * u) + 0.25f * std::sin(kTau * notes[k] * 2.0f * u)) * std::exp(-u * 6.0f) *
+               std::min(1.0f, u * 500.0f);
+        }
+        return 0.22f * v;
+      });
+    case Sfx::WeaponBreak:
+      // Metal shattering: inharmonic partials and a burst of noise.
+      return synth(0.8f, [=](float t) mutable {
+        float v = 0.0f;
+        for (int k = 0; k < 6; ++k) v += std::sin(kTau * (820.0f + k * 613.0f) * t) * std::exp(-t * (6.0f + 2.0f * k));
+        lp += (nz() - lp) * 0.5f;
+        return 0.17f * v + 0.6f * lp * std::exp(-t * 9.0f) + 0.4f * std::sin(sweep(t, 200.0f, 60.0f, 0.3f)) * std::exp(-t * 14.0f);
+      });
+    case Sfx::Reflect:
+      // "Ping": a bright rising tone.
+      return synth(0.4f, [](float t) {
+        return (0.45f * std::sin(sweep(t, 1500.0f, 2600.0f, 0.12f)) + 0.2f * std::sin(kTau * 3900.0f * t)) *
+               std::exp(-t * 9.0f);
+      });
     case Sfx::Count: break;
   }
   return synth(0.01f, [](float) { return 0.0f; });
@@ -317,7 +446,10 @@ int Audio::exportAll(const char* dir) {
   static const char* names[] = {"hit_light", "hit_medium", "hit_heavy", "hit_fire", "hit_electric", "hit_slash",
                                 "swing", "jump", "air_jump", "land", "shield_hit", "shield_break", "ko", "crowd",
                                 "projectile", "grab", "counter", "ledge", "menu_move", "menu_select", "menu_back",
-                                "beep", "go", "game_set", "ult_ready", "ult_unleash"};
+                                "beep", "go", "game_set", "ult_ready", "ult_unleash",
+                                "wind_gust", "ice_crack", "petal_swish", "hit_holy", "hit_gloom",
+                                "beam_hum", "beam_blast", "explosion", "impact_boom", "cut_in", "domain_drone",
+                                "weapon_pickup", "weapon_break", "reflect"};
   static_assert(sizeof(names) / sizeof(names[0]) == int(Sfx::Count), "one name per sound");
   int written = 0;
   for (int i = 0; i < int(Sfx::Count); ++i) {

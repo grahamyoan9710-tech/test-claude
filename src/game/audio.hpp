@@ -6,6 +6,10 @@ enum class Sfx : int {
   Swing, Jump, AirJump, Land, ShieldHit, ShieldBreak, KO, Crowd, Projectile,
   Grab, Counter, Ledge, MenuMove, MenuSelect, MenuBack, Beep, Go, GameSet,
   UltReady, UltUnleash,  // ultimate meter full / SUPER CLASH
+  // Elements and big effects
+  WindGust, IceCrack, PetalSwish, HitHoly, HitGloom,
+  BeamHum, BeamBlast, Explosion, ImpactBoom, CutIn, DomainDrone,
+  WeaponPickup, WeaponBreak, Reflect,
   Count
 };
 

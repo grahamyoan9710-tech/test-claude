@@ -28,6 +28,131 @@ void maskHeld(InputState& in, InputState& held) {
     else if (held.*b) in.*b = false;
   }
 }
+
+// Anime impact frame: the scene becomes a stark manga panel for a few frames, black and white
+// alternating, the fighters involved as flat silhouettes, jagged speed lines bursting from the hit.
+void drawImpactFrame(const Match& m, const Fx::Impact& im, const Camera2D& cam, float time) {
+  const bool calm = shakeScale() <= 0.0f;  // no screen shake wanted: a single dark frame, no strobe
+  if (calm && im.t > 0) return;
+  const bool dark = im.t % 2 == 0;
+  const Color paper = dark ? Color{8, 6, 10, 255} : Color{246, 242, 232, 255};
+  const Color ink = dark ? Color{250, 250, 252, 255} : Color{10, 8, 12, 255};
+  DrawRectangle(0, 0, kScreenW, kScreenH, calm ? withAlpha(paper, 0.8f) : paper);
+  const Vector2 sp = GetWorldToScreen2D(V(im.pos), cam);
+  const Vec2 o{clampf(sp.x, 30.0f, kScreenW - 30.0f), clampf(sp.y, 30.0f, kScreenH - 30.0f)};
+  const uint32_t seed = im.seed + uint32_t(im.t) * 7919u;
+  for (int i = 0; i < 64; ++i) {  // jagged speed lines
+    const float a = (i + vfx::hash01(seed + i * 3u) * 0.8f) * 2.0f * kPi / 64.0f;
+    const Vec2 d{std::cos(a), std::sin(a)}, n{-d.y, d.x};
+    const float r0 = 80.0f + vfx::hash01(seed + i * 5u) * 170.0f;
+    const float w = 2.0f + vfx::hash01(seed + i * 7u) * vfx::hash01(seed + i * 11u) * 30.0f;
+    const Vec2 p1 = o + d * (r0 + 140.0f) + n * ((vfx::hash01(seed + i * 13u) - 0.5f) * 26.0f);
+    const Vec2 p2 = o + d * (r0 + 420.0f) - n * ((vfx::hash01(seed + i * 17u) - 0.5f) * 30.0f);
+    vfx::wedge(o + d * r0, p1, 0.0f, w * 0.4f, ink, ink);
+    vfx::wedge(p1, p2, w * 0.4f, w * 0.75f, ink, ink);
+    vfx::wedge(p2, o + d * 1700.0f, w * 0.75f, w * 1.3f, ink, ink);
+  }
+  vfx::burst(o, 14, 26.0f, 170.0f, 0.42f, im.t * 0.4f, ink, ink, seed);  // the blow itself
+  vfx::glow(o, 50.0f, ink, ink, 24);
+  vfx::glow(o, 24.0f, paper, paper, 16);
+  beginWorld(cam);
+  for (const auto& f : m.fighters) {
+    if (!((im.mask >> f.id) & 1u) || !f.active()) continue;
+    drawCharacter(*f.def, f.palette, computePose(f, m, time), f.pos, f.facing, 1.0f, 1.0f, ink, 1.0f, time);
+  }
+  if (im.attacker >= 0 && im.attacker < int(m.fighters.size())) {  // its projectiles and beam are in the shot
+    for (const auto& p : m.projectiles)
+      if (p.owner == im.attacker) vfx::glow(p.pos, p.radius * 1.15f, ink, ink);
+    const Fighter& f = m.fighters[im.attacker];
+    const MoveDef* mv = f.currentMove();
+    if (mv && mv->beam.start >= 0 && f.moveFrame >= mv->beam.start && f.moveFrame < mv->beam.end) {
+      const BeamDef& b = mv->beam;
+      const Vec2 dir{std::cos(deg2rad(b.angle)) * f.facing, -std::sin(deg2rad(b.angle))};
+      const Vec2 a = f.center() + Vec2{b.from.x * f.facing, b.from.y};
+      vfx::wedge(a, a + dir * b.length, b.width * 0.9f, b.width, ink, ink);
+    }
+  }
+  endWorld();
+  DrawRectangleLinesEx({8, 8, kScreenW - 16.0f, kScreenH - 16.0f}, 7, ink);  // panel border
+}
+
+// Ultimate cut-in (during the final smash freeze): the screen darkens, a diagonal band slashes
+// across with the fighter's portrait and the move's name, speed lines in the fighter's colours.
+void drawUltCutIn(const Match& m, float time) {
+  if (m.freezeTimer <= 0 || m.freezeOwner < 0 || m.freezeOwner >= int(m.fighters.size())) return;
+  const Fighter& f = m.fighters[m.freezeOwner];
+  const int t = 30 - m.freezeTimer;  // 0 .. 29
+  const HitFx el = heroElement(f.def->hero);
+  const bool black = el == HitFx::AntiMagic;
+  const Color c = black ? Color{60, 58, 70, 255} : hitFxColor(el);
+  const Color g = black ? Color{235, 235, 245, 255} : hitFxGlow(el);
+  const Color deep = black ? Color{6, 6, 10, 255} : shade(hitFxColor(el), 0.3f);
+  const float tin = std::min(1.0f, (t + 1) / 6.0f), tout = clampf((t - 23) / 6.0f, 0.0f, 1.0f);
+  const float ein = 1.0f - (1.0f - tin) * (1.0f - tin) * (1.0f - tin), eout = tout * tout;
+  const float env = ein * (1.0f - eout);
+  const float slide = (1.0f - ein) * -1800.0f + eout * 1800.0f;
+  constexpr float kAngle = -9.0f, kBand = 240.0f;
+
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.55f * env));
+  rlPushMatrix();
+  rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
+  rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
+  vfx::additive(!black);
+  for (int i = 0; i < 48; ++i) {  // speed lines racing along the band
+    const float y = (vfx::hash01(i * 7 + 1) - 0.5f) * 980.0f;
+    const float ph = std::fmod(time * (2.2f + 2.4f * vfx::hash01(i * 7 + 2)) + vfx::hash01(i * 7 + 3), 1.0f);
+    const float x = -1200.0f + ph * 2400.0f, len = 200.0f + 380.0f * vfx::hash01(i * 7 + 4);
+    const float w = 2.0f + 6.0f * vfx::hash01(i * 7 + 5);
+    const Color col = i % 3 == 0 ? WHITE : i % 3 == 1 ? c : g;
+    vfx::streak({x - len, y}, {x, y}, w * 0.2f, w, withAlpha(col, 0.0f), withAlpha(col, 0.75f * env));
+  }
+  vfx::additive(false);
+  const float L = -1100.0f + slide, R = 1100.0f + slide, top = -kBand * 0.5f, bot = kBand * 0.5f;
+  vfx::quad({L, top}, {R, top}, {R, bot}, {L, bot}, withAlpha(c, 0.97f), withAlpha(deep, 0.97f), withAlpha(deep, 0.97f),
+            withAlpha(c, 0.97f));
+  vfx::additive(true);
+  for (int i = 0; i < 10; ++i) {  // light streaming inside the band
+    const float y = top + 12.0f + vfx::hash01(i * 13 + 5) * (kBand - 24.0f);
+    const float ph = std::fmod(time * 4.0f + vfx::hash01(i * 13 + 6), 1.0f);
+    const float x = L + ph * (R - L);
+    vfx::streak({x - 420.0f, y}, {x, y}, 1.0f, 5.0f, withAlpha(g, 0.0f), withAlpha(g, 0.5f));
+  }
+  vfx::glow({-380.0f + slide, 0.0f}, 300.0f, withAlpha(g, 0.7f), withAlpha(g, 0.0f), 32);  // light behind the portrait
+  vfx::burst({-380.0f + slide, 0.0f}, 16, 40.0f, 420.0f, 0.16f, time * 1.5f, withAlpha(g, 0.45f), withAlpha(g, 0.0f));
+  vfx::additive(false);
+  DrawRectangleRec({L, top - 10.0f, R - L, 7.0f}, WHITE);  // hard white edges
+  DrawRectangleRec({L, bot + 3.0f, R - L, 7.0f}, WHITE);
+  DrawRectangleRec({L, top - 19.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
+  DrawRectangleRec({L, bot + 16.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
+  rlPopMatrix();
+
+  // The portrait breaks out of the band
+  const float rad = deg2rad(kAngle);
+  const Vec2 pc = Vec2{kScreenW * 0.5f, kScreenH * 0.5f} + rotate({-380.0f + slide, 0.0f}, rad);
+  drawPortrait(*f.def, f.palette, pc + Vec2{0.0f, 20.0f}, 360.0f, time);
+
+  // The move's name, slammed in
+  if (t >= 2) {
+    const std::string& name = f.moveDef(FinalSmash).name;
+    const float slam = 1.0f + 0.6f * std::max(0.0f, 1.0f - (t - 2) / 4.0f);
+    float size = 96.0f;
+    const float w0 = textWidth(name.c_str(), size, FontKind::Title);
+    if (w0 > 640.0f) size *= 640.0f / w0;
+    size *= slam;
+    const float w = textWidth(name.c_str(), size, FontKind::Title);
+    rlPushMatrix();
+    rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
+    rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
+    const float cx = 250.0f + slide;
+    drawTextOutlined(f.def->name.c_str(), cx - w * 0.5f + 6.0f, top + 14.0f, 30, withAlpha(g, env), withAlpha(BLACK, env), 3.0f,
+                     FontKind::Title);
+    drawText(name.c_str(), cx - w * 0.5f + 7.0f, -size * 0.42f + 8.0f, size, withAlpha(BLACK, 0.6f * env), FontKind::Title);
+    drawTextOutlined(name.c_str(), cx - w * 0.5f, -size * 0.42f, size, withAlpha(WHITE, env), withAlpha(deep, env),
+                     std::max(3.5f, size * 0.06f), FontKind::Title);
+    rlPopMatrix();
+  }
+  if (t < 3) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(WHITE, 0.55f * (3 - t) / 3.0f));  // opening flash
+}
 }  // namespace
 
 MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug)
@@ -238,8 +363,16 @@ void MatchScreen::updateCamera(bool snap) {
 Camera2D MatchScreen::camera() {
   Camera2D cam{};
   cam.offset = {kScreenW * 0.5f + shake_.x, kScreenH * 0.5f + shake_.y};
-  cam.target = V(camPos_);
-  cam.zoom = camZoom_;
+  Vec2 target = camPos_;
+  float zoom = camZoom_;
+  if (const float k = fx_.zoomPunch(); k > 0.0f) {  // impact: the camera punches in on the blow
+    Vec2 to = fx_.punchFocus() - camPos_;
+    if (to.len() > 260.0f) to = to.norm() * 260.0f;
+    target = camPos_ + to * (k / (1.0f + k) + 0.3f * k);
+    zoom *= 1.0f + k;
+  }
+  cam.target = V(target);
+  cam.zoom = zoom;
   return cam;
 }
 
@@ -322,12 +455,14 @@ void MatchScreen::drawPause() {
 
 void MatchScreen::draw() {
   Camera2D cam = camera();
-  drawBackground(m_.stage(), camPos_, camZoom_, time_);
+  drawBackground(m_.stage(), W(cam.target), cam.zoom, time_);
   beginWorld(cam);
+  drawUltimateBackdrop(m_, time_);  // an ultimate's domain replaces the sky; the stage stays readable
   drawPlatforms(m_, time_);
-  drawUltimateBackdrop(m_, time_);
+  drawUltimateFront(m_, time_);
   drawOrb(m_, time_);
   drawItems(m_, time_);
+  fx_.drawBack(m_, time_);  // ki auras, pillars of light: behind the fighters
   // Grabbed fighters and victims are drawn last so they stay visible;
   // during a final smash cinematic the scene darkens behind its user.
   const int star = m_.freezeTimer > 0 ? m_.freezeOwner : -1;
@@ -353,10 +488,12 @@ void MatchScreen::draw() {
   }
   endWorld();
   fx_.drawScreen(cam);
+  if (const Fx::Impact* im = fx_.impact()) drawImpactFrame(m_, *im, cam, time_);
   drawOffscreenBubbles(m_, cam, time_);
   drawHud(m_, fx_.hudShake, time_, &devices_);
   if (!paused_) drawCountdown(m_);  // (an unplugged gamepad can pause before "GO !")
   if (training()) drawTrainingPanel();
+  drawUltCutIn(m_, time_);
 
   if (m_.finished) {
     float k = std::min(1.0f, endTimer_ / 14.0f);

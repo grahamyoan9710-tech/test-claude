@@ -52,6 +52,48 @@ void drawItems(const Match& m, float time);
 // ---- Big effects (render_vfx.cpp) -------------------------------------------------
 void drawBeams(const Match& m, float time);              // beams of the moves being performed (world space)
 void drawUltimateBackdrop(const Match& m, float time);   // domain / cinematic behind the fighters (world space)
+// The domain's foreground layer (petal storm, slashes, embers...): after the platforms, before the fighters.
+void drawUltimateFront(const Match& m, float time);
+
+// Signature element of each hero (auras, cut-ins, domains).
+inline HitFx heroElement(Hero h) {
+  switch (h) {
+    case Hero::Asta: return HitFx::AntiMagic;
+    case Hero::Yuno: return HitFx::Wind;
+    case Hero::Ichigo: return HitFx::Reiatsu;
+    case Hero::Byakuya: return HitFx::Petal;
+    case Hero::Link: return HitFx::Light;
+    case Hero::Ganondorf: return HitFx::Gloom;
+    case Hero::Kratos: return HitFx::Fire;
+    case Hero::Gojo: return HitFx::Cursed;
+    case Hero::Sukuna: return HitFx::Blood;
+    default: return HitFx::Normal;
+  }
+}
+
+// ---- VFX drawing kit (render_vfx.cpp): soft gradients made of a few big triangles ------
+// (software GL pays for every pixel and every tiny triangle: prefer these over many small shapes)
+namespace vfx {
+float hash01(uint32_t i);                                 // deterministic noise in [0, 1]
+void additive(bool on);                                   // additive blending on / back to the frame's blending
+void tri(Vec2 a, Vec2 b, Vec2 c, Color ca, Color cb, Color cc);
+void quad(Vec2 a, Vec2 b, Vec2 c, Vec2 d, Color ca, Color cb, Color cc, Color cd);
+void glow(Vec2 c, float r, Color in, Color out, int seg = 0);   // radial gradient disc
+void ring(Vec2 c, float r0, float r1, Color in, Color out, int seg = 0);  // annulus, r0 colour `in` -> r1 `out`
+// Soft ring: transparent inside and outside, `col` at its middle radius.
+void softRing(Vec2 c, float r, float thick, Color col, int seg = 0);
+// Tapered streak from a (width w0) to b (width w1): opaque core, transparent edges.
+void streak(Vec2 a, Vec2 b, float w0, float w1, Color c0, Color c1);
+// Hard-edged tapered stroke (a filled wedge / quad).
+void wedge(Vec2 a, Vec2 b, float w0, float w1, Color c0, Color c1);
+// Jagged lightning from a to b; `core` (if not blank) is drawn thinner on top.
+void bolt(Vec2 a, Vec2 b, float jag, int segs, uint32_t seed, float w, Color col, Color core = BLANK);
+// Crescent (convex side along fwd): outer radius r, thickness at the middle `thick`, half span in radians.
+void crescent(Vec2 c, Vec2 fwd, float r, float thick, float span, Color body, Color edge);
+// Star burst: `rays` spikes from r0 to r1, `width` radians wide at their base.
+void burst(Vec2 c, int rays, float r0, float r1, float width, float rot, Color in, Color out, uint32_t seed = 0);
+Rect viewRect(float margin = 0.0f);                       // world rectangle on screen (inside beginWorld)
+}  // namespace vfx
 
 // ---- World (render_world.cpp) -----------------------------------------------
 void drawBackground(const StageDef& stage, Vec2 camTarget, float camZoom, float time);

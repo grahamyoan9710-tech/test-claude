@@ -1069,8 +1069,442 @@ void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, 
   }
 }
 
+// ---- Projectiles -------------------------------------------------------------------------
+namespace {
+using vfx::hash01;
+inline Color Ap(Color c, float a) { return withAlpha(c, a); }
+
+struct Shot {  // a projectile seen by the renderer
+  Vec2 c, d, n;    // centre, direction of flight, normal
+  float r, k;      // radius, visibility (spawn pop and vanish fade)
+  float age;
+  uint32_t seed;
+};
+
+// Crescent whose leading edge passes through `apex`.
+void crescentAt(Vec2 apex, Vec2 d, float R, float thick, float span, Color body, Color edge) {
+  vfx::crescent(apex - d * R, d, R, thick, span, body, edge);
+}
+
+void shotBlackSlash(const Shot& s, float time) {
+  const float R = s.r * 2.0f;
+  for (int i = 3; i >= 1; --i)  // dark after-images
+    crescentAt(s.c - s.d * (i * s.r * 0.55f), s.d, R, R * 0.5f, 1.2f, Ap({20, 18, 26, 255}, 0.0f),
+               Ap({20, 18, 26, 255}, 0.3f * s.k / i));
+  crescentAt(s.c + s.d * 4.0f, s.d, R * 1.04f, R * 0.6f, 1.26f, Ap({210, 210, 225, 255}, 0.2f * s.k), Ap({240, 240, 250, 255}, 0.95f * s.k));
+  crescentAt(s.c, s.d, R, R * 0.52f, 1.2f, Ap({8, 6, 12, 255}, 0.97f * s.k), Ap({28, 24, 34, 255}, s.k));
+  const float base = std::atan2(s.d.y, s.d.x);
+  const uint32_t fs = s.seed + uint32_t(time * 30.0f) * 131u;
+  for (int i = 0; i < 3; ++i) {  // white crackle running across the black blade
+    const float a0 = base + (i - 1) * 0.6f, a1 = a0 + (hash01(fs + i) - 0.5f) * 0.6f;
+    const Vec2 o = s.c - s.d * R;
+    vfx::bolt(o + Vec2{std::cos(a0), std::sin(a0)} * (R * 0.62f), o + Vec2{std::cos(a1), std::sin(a1)} * (R * 1.08f),
+              R * 0.06f, 4, fs + i * 17u, std::max(1.5f, R * 0.035f), Ap({245, 245, 255, 255}, 0.9f * s.k));
+  }
+  for (int i = 0; i < 2; ++i) {  // black lightning leaping off the edge
+    const float a = base + (hash01(fs + 40 + i) - 0.5f) * 2.2f;
+    const Vec2 p0 = s.c - s.d * (R * 0.2f) + Vec2{std::cos(a), std::sin(a)} * (R * 0.7f);
+    vfx::bolt(p0, p0 + Vec2{std::cos(a), std::sin(a)} * (R * 0.5f), R * 0.1f, 4, fs + 90 + i, std::max(2.0f, R * 0.05f),
+              Ap({8, 6, 12, 255}, 0.9f * s.k), Ap({200, 200, 215, 255}, 0.6f * s.k));
+  }
+}
+
+void shotWindBlade(const Shot& s) {
+  const Color g{120, 232, 170, 255};
+  const float R = s.r * 2.6f;
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 6.0f), s.c, 0.0f, s.r * 1.4f, Ap(g, 0.0f), Ap(g, 0.45f * s.k));
+  crescentAt(s.c, s.d, R, R * 0.3f, 1.05f, Ap(g, 0.15f * s.k), Ap({230, 255, 240, 255}, 0.95f * s.k));
+  crescentAt(s.c - s.d * (s.r * 0.9f), s.d, R * 0.9f, R * 0.22f, 1.0f, Ap(g, 0.0f), Ap(g, 0.5f * s.k));
+  vfx::additive(false);
+}
+
+void shotTornado(const Shot& s, float time) {
+  const float bottom = s.c.y + s.r * 1.3f, top = s.c.y - s.r * 2.6f;
+  const Color g{170, 250, 210, 255};
+  vfx::additive(true);
+  vfx::quad({s.c.x - s.r * 0.3f, bottom}, {s.c.x + s.r * 0.3f, bottom}, {s.c.x + s.r * 1.5f, top}, {s.c.x - s.r * 1.5f, top},
+            Ap(g, 0.25f * s.k), Ap(g, 0.25f * s.k), Ap(g, 0.05f * s.k), Ap(g, 0.05f * s.k));
+  for (int i = 0; i <= 8; ++i) {  // spinning rings, wider towards the top
+    const float u = i / 8.0f;
+    const float y = lerpf(bottom, top, u);
+    const float rx = s.r * (0.3f + 1.25f * u), ry = rx * 0.24f;
+    const float x = s.c.x + std::sin(time * 7.0f + i * 0.9f) * s.r * 0.22f * (0.3f + u);
+    const float spin = time * 14.0f + i;
+    Vec2 prev{};
+    for (int k = 0; k <= 14; ++k) {
+      const float a = spin + k * 2.0f * kPi / 14.0f;
+      const Vec2 q{x + std::cos(a) * rx, y + std::sin(a) * ry};
+      const float front = std::sin(a) > 0.0f ? 1.0f : 0.4f;
+      if (k > 0) vfx::wedge(prev, q, 2.5f, 2.5f, Ap(WHITE, 0.55f * front * s.k), Ap(g, 0.55f * front * s.k));
+      prev = q;
+    }
+  }
+  vfx::additive(false);
+  for (int i = 0; i < 6; ++i) {  // debris whirled around
+    const float a = time * 9.0f + i * 1.05f;
+    const float u = hash01(i * 7 + 1);
+    const Vec2 q{s.c.x + std::cos(a) * s.r * (0.5f + u), lerpf(bottom, top, u) + std::sin(a) * s.r * 0.2f};
+    DrawPoly(V(q), 4, 3.0f, a * 60.0f, Ap(i % 2 ? Color{90, 200, 110, 255} : Color{150, 130, 100, 255}, s.k));
+  }
+}
+
+void shotGetsuga(const Shot& s, bool dark, float time) {
+  const float R = s.r * 2.3f, th = R * 0.5f;
+  if (dark) {  // black Getsuga with a red outline
+    vfx::additive(true);
+    for (int i = 3; i >= 1; --i)
+      crescentAt(s.c - s.d * (i * s.r * 0.6f), s.d, R, th, 1.3f, Ap({200, 20, 40, 255}, 0.0f), Ap({220, 20, 40, 255}, 0.3f * s.k / i));
+    crescentAt(s.c + s.d * 5.0f, s.d, R * 1.06f, th * 1.2f, 1.36f, Ap({255, 40, 60, 255}, 0.2f * s.k), Ap({255, 60, 70, 255}, s.k));
+    vfx::additive(false);
+    crescentAt(s.c, s.d, R, th, 1.3f, Ap({6, 2, 6, 255}, 0.97f * s.k), Ap({20, 4, 10, 255}, s.k));
+    return;
+  }
+  const Color b{90, 170, 255, 255};
+  vfx::additive(true);
+  vfx::glow(s.c - s.d * (R * 0.3f), R * 1.1f, Ap(b, 0.25f * s.k), Ap(b, 0.0f));
+  for (int i = 3; i >= 1; --i)
+    crescentAt(s.c - s.d * (i * s.r * 0.6f), s.d, R, th, 1.3f, Ap(b, 0.0f), Ap(b, 0.35f * s.k / i));
+  crescentAt(s.c, s.d, R, th, 1.3f, Ap(b, 0.2f * s.k), Ap({200, 230, 255, 255}, s.k));
+  crescentAt(s.c, s.d, R * 0.98f, th * 0.35f, 1.22f, Ap(WHITE, 0.4f * s.k), Ap(WHITE, s.k));
+  for (int i = 0; i < 5; ++i) {  // energy streaming off the tips
+    const float a = std::atan2(s.d.y, s.d.x) + (i - 2) * 0.55f;
+    const Vec2 p0 = s.c - s.d * R + Vec2{std::cos(a), std::sin(a)} * (R * 0.95f);
+    const float l = R * (0.5f + 0.4f * std::sin(time * 30.0f + i));
+    vfx::streak(p0 - s.d * l, p0, 0.0f, 4.0f, Ap(b, 0.0f), Ap({220, 240, 255, 255}, 0.7f * s.k));
+  }
+  vfx::additive(false);
+}
+
+void shotCero(const Shot& s, float time) {
+  vfx::glow(s.c, s.r * 1.9f, Ap({20, 0, 6, 255}, 0.7f * s.k), Ap({20, 0, 6, 255}, 0.0f));
+  vfx::additive(true);
+  vfx::burst(s.c, 10, s.r * 0.5f, s.r * 2.2f, 0.3f, time * 8.0f, Ap({255, 60, 70, 255}, 0.8f * s.k), Ap({255, 30, 40, 255}, 0.0f), s.seed);
+  vfx::glow(s.c, s.r * 1.2f, Ap({255, 40, 60, 255}, 0.9f * s.k), Ap({200, 10, 30, 255}, 0.0f));
+  vfx::glow(s.c, s.r * 0.6f, Ap(WHITE, s.k), Ap({255, 180, 180, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void petalShape(Vec2 p, Vec2 d, float len, float w, Color col) {
+  const Vec2 n{-d.y, d.x};
+  vfx::quad(p - d * len, p + n * w, p + d * len, p - n * w, col, col, withAlpha(WHITE, col.a / 255.0f), col);
+}
+
+void shotPetals(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.5f, Ap({255, 140, 190, 255}, 0.28f * s.k), Ap({255, 140, 190, 255}, 0.0f));
+  vfx::additive(false);
+  for (int i = 0; i < 28; ++i) {  // a swarm of blade petals swirling as it drifts
+    const float sp = 2.0f + 2.5f * hash01(i * 5 + 1);
+    const float a = hash01(i * 5 + 2) * 2.0f * kPi + time * sp;
+    const float rad = s.r * (0.25f + 0.85f * std::sqrt(hash01(i * 5 + 3)));
+    const Vec2 p = s.c + Vec2{std::cos(a) * rad, std::sin(a) * rad * 0.8f} - s.d * (hash01(i * 5 + 4) * s.r * 0.9f);
+    const Vec2 tang = Vec2{-std::sin(a), std::cos(a) * 0.8f}.norm();
+    const Color col = i % 4 == 0 ? Color{255, 238, 246, 255} : i % 4 == 1 ? Color{232, 92, 146, 255} : Color{255, 158, 196, 255};
+    petalShape(p, tang, 5.0f + 3.0f * hash01(i), 2.0f + 1.5f * hash01(i + 9), Ap(col, s.k));
+  }
+}
+
+void shotArrow(const Shot& s, bool light, float time) {
+  const Vec2 tip = s.c + s.d * (s.r * 1.3f), tail = s.c - s.d * (s.r * 5.0f);
+  if (light) {  // arrow of light: a blazing line with a long trail
+    vfx::additive(true);
+    vfx::streak(s.c - s.d * (s.r * 16.0f), tip, 0.0f, s.r * 1.5f, Ap({255, 200, 90, 255}, 0.0f), Ap({255, 220, 120, 255}, 0.6f * s.k));
+    vfx::streak(tail, tip, 2.0f, 6.0f, Ap(WHITE, 0.7f * s.k), Ap(WHITE, s.k));
+    vfx::glow(tip, s.r * 1.6f, Ap({255, 240, 190, 255}, 0.8f * s.k), Ap({255, 210, 110, 255}, 0.0f));
+    vfx::burst(tip, 6, s.r * 0.2f, s.r * 2.4f, 0.25f, time * 6.0f, Ap(WHITE, 0.8f * s.k), Ap({255, 220, 140, 255}, 0.0f), s.seed);
+    vfx::additive(false);
+    return;
+  }
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 12.0f), tail, 0.0f, 3.0f, Ap(WHITE, 0.0f), Ap(WHITE, 0.3f * s.k));
+  vfx::additive(false);
+  vfx::wedge(tail, tip - s.d * 4.0f, 3.0f, 3.0f, Ap({120, 84, 50, 255}, s.k), Ap({140, 100, 60, 255}, s.k));  // shaft
+  vfx::tri(tip + s.d * 6.0f, tip - s.d * 4.0f + s.n * 4.5f, tip - s.d * 4.0f - s.n * 4.5f, Ap({220, 226, 236, 255}, s.k),
+           Ap({150, 156, 170, 255}, s.k), Ap({150, 156, 170, 255}, s.k));  // head
+  for (int side = -1; side <= 1; side += 2)  // fletching
+    vfx::tri(tail, tail + s.d * 9.0f, tail - s.d * 2.0f + s.n * (side * 6.0f), Ap({240, 236, 226, 255}, s.k),
+             Ap({240, 236, 226, 255}, s.k), Ap({200, 60, 50, 255}, s.k));
+}
+
+void shotBomb(const Projectile& p, const Shot& s, float time) {
+  const float spin = p.age * 0.25f, r = s.r * 1.15f;
+  const float urgency = 1.0f - p.life / float(std::max(1, p.maxLife));
+  const float blink = 0.5f + 0.5f * std::sin(p.age * (0.35f + urgency * 1.4f));
+  vfx::additive(true);
+  vfx::glow(s.c, r * 2.2f, Ap(kZonaiGlow, (0.15f + 0.35f * blink) * s.k), Ap(kZonaiGlow, 0.0f));
+  vfx::additive(false);
+  DrawCircleV(V(s.c), r + 2.0f, Ap({30, 34, 36, 255}, s.k));
+  vfx::glow(s.c, r, Ap({244, 238, 220, 255}, s.k), Ap({196, 188, 168, 255}, s.k), 20);  // shell
+  DrawRing(V(s.c), r * 0.62f, r * 0.74f, 0, 360, 24, Ap(mixColor(kZonaiGlow, {30, 120, 110, 255}, 1.0f - blink), s.k));
+  DrawPoly(V(s.c), 6, r * 0.42f, spin * 57.3f, Ap(mixColor({40, 140, 120, 255}, kZonaiGlow, blink), s.k));
+  DrawPoly(V(s.c), 6, r * 0.2f, spin * 57.3f + 30.0f, Ap(mixColor(kZonaiGlow, WHITE, blink), s.k));
+  const Vec2 fd{std::cos(spin - 1.2f), std::sin(spin - 1.2f)};  // fuse with a spark at its tip
+  const Vec2 f0 = s.c + fd * (r * 0.9f), f1 = s.c + fd * (r * 1.3f);
+  DrawLineEx(V(f0), V(f1), 3.0f, Ap({60, 50, 40, 255}, s.k));
+  vfx::additive(true);
+  vfx::glow(f1, 7.0f + 2.0f * std::sin(time * 50.0f), Ap({255, 230, 140, 255}, s.k), Ap({255, 160, 60, 255}, 0.0f), 10);
+  vfx::additive(false);
+}
+
+void shotSwordBeam(const Shot& s, float time) {
+  const float len = s.r * 3.2f, w = s.r * 0.95f;
+  const Vec2 tip = s.c + s.d * (len * 0.55f), hilt = s.c - s.d * (len * 0.45f);
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (len * 2.6f), hilt, 0.0f, w * 1.4f, Ap({255, 214, 110, 255}, 0.0f), Ap({255, 214, 110, 255}, 0.4f * s.k));
+  vfx::glow(s.c, len * 0.8f, Ap({255, 220, 130, 255}, 0.3f * s.k), Ap({255, 220, 130, 255}, 0.0f));
+  const Color body = Ap({255, 236, 170, 255}, 0.9f * s.k), core = Ap(WHITE, s.k);
+  vfx::tri(tip, s.c + s.n * (w * 0.5f), s.c - s.n * (w * 0.5f), core, body, body);
+  vfx::tri(hilt, s.c + s.n * (w * 0.5f), s.c - s.n * (w * 0.5f), Ap({255, 200, 90, 255}, 0.3f * s.k), body, body);
+  vfx::wedge(hilt, tip, 2.0f, 2.0f, core, core);
+  vfx::burst(tip, 4, 2.0f, s.r * (1.4f + 0.3f * std::sin(time * 40.0f)), 0.3f, kPi * 0.25f, core, Ap(WHITE, 0.0f));
+  vfx::additive(false);
+}
+
+void shotDarkOrb(const Shot& s, float time) {
+  const Color red{220, 30, 60, 255};
+  vfx::glow(s.c, s.r * 2.1f, Ap({24, 0, 8, 255}, 0.65f * s.k), Ap({24, 0, 8, 255}, 0.0f));  // smoke halo
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.5f, Ap(red, 0.55f * s.k), Ap(red, 0.0f));
+  for (int i = 0; i < 3; ++i) {  // tendrils of malice winding around
+    Vec2 prev{};
+    for (int k = 0; k <= 10; ++k) {
+      const float a = time * 4.0f + i * 2.1f + k * 0.28f;
+      const float rr = s.r * (1.35f - k * 0.04f);
+      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * rr;
+      if (k > 0) vfx::wedge(prev, q, 1.0f + k * 0.4f, 1.0f + (k + 1) * 0.4f, Ap(red, 0.0f), Ap({255, 90, 110, 255}, 0.7f * s.k));
+      prev = q;
+    }
+  }
+  vfx::additive(false);
+  vfx::glow(s.c, s.r, Ap({6, 0, 4, 255}, 0.97f * s.k), Ap({40, 0, 12, 255}, 0.97f * s.k), 24);
+  vfx::softRing(s.c, s.r * 0.98f, s.r * 0.25f, Ap({255, 60, 80, 255}, 0.8f * s.k));
+  vfx::additive(true);
+  const uint32_t fs = s.seed + uint32_t(time * 20.0f) * 37u;
+  for (int i = 0; i < 3; ++i) {  // crackling
+    const float a = hash01(fs + i) * 2.0f * kPi;
+    const Vec2 d{std::cos(a), std::sin(a)};
+    vfx::bolt(s.c + d * (s.r * 0.6f), s.c + d * (s.r * 1.6f), s.r * 0.15f, 4, fs + i * 7u, 2.0f, Ap({255, 80, 100, 255}, 0.9f * s.k));
+  }
+  vfx::glow(s.c, s.r * 0.35f, Ap({255, 120, 120, 255}, 0.7f * s.k), Ap(red, 0.0f));  // smouldering heart
+  vfx::additive(false);
+}
+
+void shotGloomSpear(const Shot& s) {
+  const float len = s.r * 5.5f;
+  const Vec2 tip = s.c + s.d * (len * 0.45f), tail = s.c - s.d * (len * 0.55f);
+  vfx::additive(true);
+  vfx::streak(tail - s.d * len, tip, 0.0f, s.r * 1.4f, Ap({220, 20, 50, 255}, 0.0f), Ap({255, 50, 80, 255}, 0.5f * s.k));
+  vfx::additive(false);
+  vfx::wedge(tail, tip - s.d * (s.r * 1.2f), s.r * 0.35f, s.r * 0.45f, Ap({24, 4, 10, 255}, s.k), Ap({40, 6, 14, 255}, s.k));
+  vfx::tri(tip, tip - s.d * (s.r * 1.6f) + s.n * (s.r * 0.6f), tip - s.d * (s.r * 1.6f) - s.n * (s.r * 0.6f), Ap({255, 70, 90, 255}, s.k),
+           Ap({30, 4, 10, 255}, s.k), Ap({30, 4, 10, 255}, s.k));
+  vfx::additive(true);
+  vfx::wedge(tail, tip, 1.5f, 2.5f, Ap({255, 60, 80, 255}, 0.2f * s.k), Ap({255, 120, 130, 255}, 0.8f * s.k));
+  vfx::additive(false);
+}
+
+void shotAxe(const Projectile& p, const Shot& s) {
+  const float dirSign = p.returning ? -1.0f : 1.0f;
+  const float spin = p.age * 0.55f * dirSign;
+  const Color frost{150, 225, 255, 255};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.0f, Ap(frost, 0.3f * s.k), Ap(frost, 0.0f));
+  for (int g = 1; g <= 3; ++g) {  // frost arcs left by the spinning blade
+    const float a = spin - g * 0.45f * dirSign;
+    const Vec2 u{std::cos(a), std::sin(a)};
+    vfx::wedge(s.c, s.c + u * (s.r * 1.6f), 2.0f, s.r * 0.9f, Ap(frost, 0.0f), Ap(frost, 0.32f * s.k / g));
+  }
+  vfx::additive(false);
+  const Vec2 u{std::cos(spin), std::sin(spin)}, n{-u.y, u.x};
+  const Vec2 head = s.c + u * (s.r * 0.9f), butt = s.c - u * (s.r * 1.2f);
+  vfx::wedge(butt, head, 5.0f, 5.0f, Ap({92, 64, 44, 255}, s.k), Ap({120, 86, 58, 255}, s.k));  // haft
+  DrawCircleV(V(butt), 3.5f, Ap({200, 210, 220, 255}, s.k));
+  const Vec2 b0 = head - u * (s.r * 0.3f), b1 = head + u * (s.r * 0.35f);  // the blade
+  vfx::quad(b0, b1, b1 + n * (s.r * 1.15f) + u * (s.r * 0.25f), b0 + n * (s.r * 1.05f) - u * (s.r * 0.3f),
+            Ap({90, 110, 130, 255}, s.k), Ap({110, 130, 150, 255}, s.k), Ap({230, 245, 255, 255}, s.k), Ap({210, 230, 250, 255}, s.k));
+  DrawLineEx(V(b1 + n * (s.r * 1.15f) + u * (s.r * 0.25f)), V(b0 + n * (s.r * 1.05f) - u * (s.r * 0.3f)), 2.5f, Ap(WHITE, s.k));
+  vfx::additive(true);
+  vfx::glow(head + n * (s.r * 0.5f), s.r * 0.35f, Ap({120, 200, 255, 255}, 0.8f * s.k), Ap(frost, 0.0f), 10);  // rune
+  vfx::additive(false);
+}
+
+void shotChainBlade(const Match& m, const Projectile& p, const Shot& s, float time) {
+  if (p.owner >= 0 && p.owner < int(m.fighters.size())) {  // the chain back to the hand
+    const Vec2 h = m.fighters[p.owner].center();
+    const Vec2 dd = s.c - h;
+    const int links = std::clamp(int(dd.len() / 12.0f), 1, 60);
+    for (int i = 0; i < links; ++i) {
+      const float t = (i + 0.5f) / links;
+      const Vec2 q = h + dd * t + Vec2{0.0f, std::sin(t * kPi) * 14.0f};
+      DrawCircleV(V(q), 3.2f, Ap({70, 60, 56, 255}, s.k));
+      DrawCircleV(V(q), 1.6f, Ap({255, 140, 50, 255}, s.k));
+    }
+  }
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.8f, Ap({255, 110, 30, 255}, 0.5f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  vfx::additive(false);
+  const float spin = time * 20.0f;
+  const Vec2 u{std::cos(spin), std::sin(spin)};
+  vfx::wedge(s.c - u * s.r, s.c + u * (s.r * 1.4f), s.r * 0.5f, 1.0f, Ap({200, 60, 30, 255}, s.k), Ap({255, 220, 160, 255}, s.k));
+}
+
+void shotBlueOrb(const Shot& s, float time) {
+  const Color b{90, 160, 255, 255};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.6f, Ap(b, 0.35f * s.k), Ap(b, 0.0f));
+  for (int arm = 0; arm < 5; ++arm) {  // vortex arms spiralling inwards
+    Vec2 prev{};
+    for (int k = 0; k <= 10; ++k) {
+      const float u = k / 10.0f;
+      const float a = -time * 6.0f + arm * 2.0f * kPi / 5.0f + u * 3.0f;
+      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * (2.8f - 2.4f * u));
+      if (k > 0) vfx::wedge(prev, q, 1.0f + 4.0f * u, 1.0f + 4.0f * u, Ap(b, 0.6f * u * s.k), Ap({200, 230, 255, 255}, 0.7f * u * s.k));
+      prev = q;
+    }
+  }
+  for (int i = 0; i < 2; ++i) {  // space folding in
+    const float ph = std::fmod(time * 2.0f + i * 0.5f, 1.0f);
+    vfx::softRing(s.c, s.r * (2.6f - 2.0f * ph), 6.0f, Ap({170, 210, 255, 255}, 0.5f * ph * s.k));
+  }
+  vfx::glow(s.c, s.r * 0.9f, Ap({210, 235, 255, 255}, 0.95f * s.k), Ap(b, 0.0f));
+  vfx::glow(s.c, s.r * 0.4f, Ap(WHITE, s.k), Ap(WHITE, 0.0f));
+  vfx::additive(false);
+}
+
+void shotRedOrb(const Shot& s, float time) {
+  const Color r{255, 50, 70, 255};
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 5.0f), s.c, 0.0f, s.r * 1.6f, Ap(r, 0.0f), Ap(r, 0.5f * s.k));
+  vfx::glow(s.c, s.r * 2.4f, Ap(r, 0.4f * s.k), Ap(r, 0.0f));
+  vfx::burst(s.c, 8, s.r * 0.6f, s.r * 2.2f, 0.35f, time * -9.0f, Ap({255, 150, 160, 255}, 0.8f * s.k), Ap(r, 0.0f), s.seed);
+  for (int i = 0; i < 2; ++i) {  // pushing space away
+    const float ph = std::fmod(time * 3.0f + i * 0.5f, 1.0f);
+    vfx::softRing(s.c, s.r * (0.8f + 1.8f * ph), 5.0f, Ap({255, 120, 130, 255}, 0.6f * (1.0f - ph) * s.k));
+  }
+  vfx::glow(s.c, s.r * 0.9f, Ap({255, 220, 220, 255}, s.k), Ap(r, 0.0f));
+  vfx::additive(false);
+}
+
+void shotPurpleOrb(const Shot& s, float time) {
+  const Color v{170, 80, 255, 255};
+  // The erased trail: a band of nothingness behind it
+  vfx::streak(s.c - s.d * (s.r * 3.4f), s.c, s.r * 1.0f, s.r * 1.9f, Ap({8, 0, 14, 255}, 0.0f), Ap({8, 0, 14, 255}, 0.55f * s.k));
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.0f, Ap(v, 0.4f * s.k), Ap(v, 0.0f));
+  vfx::additive(false);
+  vfx::glow(s.c, s.r * 0.95f, Ap({20, 0, 30, 255}, 0.97f * s.k), Ap({60, 10, 90, 255}, 0.97f * s.k), 36);  // devouring core
+  vfx::additive(true);
+  for (int i = 0; i < 2; ++i) {  // blue and red, still swirling into one another
+    const Color col = i ? Color{255, 70, 100, 255} : Color{80, 150, 255, 255};
+    const float a0 = time * 5.0f + i * kPi;
+    Vec2 prev{};
+    for (int k = 0; k <= 16; ++k) {
+      const float a = a0 + k * kPi / 16.0f;
+      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * 1.02f);
+      if (k > 0) vfx::wedge(prev, q, s.r * 0.12f, s.r * 0.12f, Ap(col, 0.8f * s.k), Ap(col, 0.8f * s.k));
+      prev = q;
+    }
+  }
+  vfx::softRing(s.c, s.r, s.r * 0.35f, Ap({220, 160, 255, 255}, 0.9f * s.k));
+  vfx::softRing(s.c, s.r * 0.98f, 4.0f, Ap(WHITE, s.k));
+  const uint32_t fs = s.seed + uint32_t(time * 30.0f) * 53u;
+  for (int i = 0; i < 6; ++i) {  // crackling energy
+    const float a = hash01(fs + i * 3u) * 2.0f * kPi;
+    const Vec2 d{std::cos(a), std::sin(a)};
+    vfx::bolt(s.c + d * (s.r * 0.9f), s.c + d * (s.r * (1.4f + 0.5f * hash01(fs + i * 5u))), s.r * 0.12f, 5, fs + i * 11u,
+              std::max(2.0f, s.r * 0.04f), Ap({200, 140, 255, 255}, 0.9f * s.k), Ap(WHITE, s.k));
+  }
+  for (int i = 0; i < 2; ++i) {  // space caving in around it
+    const float ph = std::fmod(time * 2.5f + i * 0.5f, 1.0f);
+    vfx::softRing(s.c, s.r * (2.2f - 1.0f * ph), s.r * 0.1f, Ap(v, 0.45f * ph * s.k));
+  }
+  vfx::additive(false);
+}
+
+void shotDismantle(const Projectile& p, const Shot& s) {
+  // Invisible cuts: only thin slashes flashing in the air along its path give it away.
+  vfx::additive(true);
+  for (int k = 0; k < 6; ++k) {
+    const uint32_t sd = s.seed * 31u + uint32_t(p.age - k) * 7919u;
+    const Vec2 q = s.c - p.vel * (k * 1.3f) + s.n * ((hash01(sd + 1) - 0.5f) * s.r * 2.0f);
+    const float a = hash01(sd + 2) * kPi, len = 22.0f + hash01(sd + 3) * 46.0f;
+    const Vec2 d{std::cos(a), std::sin(a)};
+    const float al = (1.0f - k / 6.0f) * s.k;
+    vfx::wedge(q, q + d * len * 0.5f, 2.6f, 0.0f, Ap(WHITE, al), Ap(WHITE, al));
+    vfx::wedge(q, q - d * len * 0.5f, 2.6f, 0.0f, Ap(WHITE, al), Ap(WHITE, al));
+    vfx::streak(q - d * len * 0.5f, q + d * len * 0.5f, 6.0f, 6.0f, Ap({255, 60, 70, 255}, 0.3f * al), Ap({255, 60, 70, 255}, 0.3f * al));
+  }
+  vfx::additive(false);
+}
+
+void shotFireArrow(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.4f, Ap({255, 110, 30, 255}, 0.4f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  for (int i = 0; i < 6; ++i) {  // flames licking back from the head
+    const float l = s.r * (3.0f + 2.5f * hash01(s.seed + i) + std::sin(time * 30.0f + i * 1.7f));
+    const Vec2 tail = s.c - s.d * l + s.n * (std::sin(time * 25.0f + i * 2.3f) * s.r * 0.55f);
+    vfx::streak(s.c + s.d * (s.r * 0.4f), tail, s.r * 1.1f, 0.0f, Ap(i % 2 ? Color{255, 140, 40, 255} : Color{255, 70, 20, 255}, 0.7f * s.k),
+                Ap({255, 40, 10, 255}, 0.0f));
+  }
+  vfx::streak(s.c - s.d * (s.r * 2.5f), s.c + s.d * (s.r * 1.4f), 2.0f, 6.0f, Ap({255, 240, 190, 255}, 0.6f * s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c + s.d * (s.r * 0.8f), s.r * 0.9f, Ap({255, 250, 220, 255}, s.k), Ap({255, 200, 120, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotLightning(const Shot& s, float time) {
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 101u;  // a new bolt every frame
+  const Vec2 a = s.c - s.d * (s.r * 8.0f), b = s.c + s.d * s.r;
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap({150, 190, 255, 255}, 0.45f * s.k), Ap({150, 190, 255, 255}, 0.0f));
+  vfx::bolt(a, b, s.r * 0.7f, 10, fs, 14.0f, Ap({120, 120, 255, 255}, 0.35f * s.k));
+  vfx::bolt(a, b, s.r * 0.7f, 10, fs, 6.0f, Ap({190, 220, 255, 255}, 0.9f * s.k), Ap(WHITE, s.k));
+  for (int i = 0; i < 3; ++i) {  // forks
+    const float t = 0.2f + 0.6f * hash01(fs + i * 3u);
+    const Vec2 p0 = lerpv(a, b, t) + s.n * ((hash01(fs + i * 5u) - 0.5f) * s.r);
+    const float side = hash01(fs + i * 7u) < 0.5f ? -1.0f : 1.0f;
+    const Vec2 p1 = p0 + s.n * (side * s.r * (1.2f + hash01(fs + i * 9u))) - s.d * (s.r * 0.8f);
+    vfx::bolt(p0, p1, s.r * 0.3f, 4, fs + i * 13u, 3.0f, Ap({190, 220, 255, 255}, 0.8f * s.k), Ap(WHITE, 0.9f * s.k));
+  }
+  vfx::glow(b, s.r * 0.9f, Ap(WHITE, s.k), Ap({190, 220, 255, 255}, 0.0f));
+  vfx::additive(false);
+}
+}  // namespace
+
 void drawProjectiles(const Match& m, float time) {
-  for (const auto& p : m.projectiles) {
+  for (size_t i = 0; i < m.projectiles.size(); ++i) {
+    const Projectile& p = m.projectiles[i];
+    Shot s;
+    s.c = p.pos;
+    s.d = p.vel.len2() > 0.01f ? p.vel.norm() : Vec2{1.0f, 0.0f};
+    s.n = {-s.d.y, s.d.x};
+    s.r = p.radius;
+    s.k = std::min(1.0f, p.life / 8.0f) * std::min(1.0f, (p.age + 1) / 3.0f);
+    s.age = float(p.age);
+    s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
+    switch (p.visual) {
+      case ProjVisual::BlackSlash: shotBlackSlash(s, time); continue;
+      case ProjVisual::WindBlade: shotWindBlade(s); continue;
+      case ProjVisual::Tornado: shotTornado(s, time); continue;
+      case ProjVisual::Getsuga: shotGetsuga(s, p.hit.fx == HitFx::Dark, time); continue;
+      case ProjVisual::Cero: shotCero(s, time); continue;
+      case ProjVisual::Petals: shotPetals(s, time); continue;
+      case ProjVisual::Arrow: shotArrow(s, false, time); continue;
+      case ProjVisual::LightArrow: shotArrow(s, true, time); continue;
+      case ProjVisual::Bomb: shotBomb(p, s, time); continue;
+      case ProjVisual::SwordBeam: shotSwordBeam(s, time); continue;
+      case ProjVisual::DarkOrb: shotDarkOrb(s, time); continue;
+      case ProjVisual::GloomSpear: shotGloomSpear(s); continue;
+      case ProjVisual::Axe: shotAxe(p, s); continue;
+      case ProjVisual::ChainBlade: shotChainBlade(m, p, s, time); continue;
+      case ProjVisual::BlueOrb: shotBlueOrb(s, time); continue;
+      case ProjVisual::RedOrb: shotRedOrb(s, time); continue;
+      case ProjVisual::PurpleOrb: shotPurpleOrb(s, time); continue;
+      case ProjVisual::Dismantle: shotDismantle(p, s); continue;
+      case ProjVisual::FireArrow: shotFireArrow(s, time); continue;
+      case ProjVisual::Lightning: shotLightning(s, time); continue;
+      default: break;
+    }
     Vector2 c = V(p.pos);
     float r = p.radius;
     float fade = std::min(1.0f, p.life / 10.0f);
@@ -1105,6 +1539,7 @@ void drawProjectiles(const Match& m, float time) {
         star(c, r * 1.25f, r * 0.55f, time * 6.0f, withAlpha({255, 170, 40, 255}, fade));
         star(c, r * 0.95f, r * 0.42f, time * 6.0f, withAlpha({255, 235, 90, 255}, fade));
         break;
+      default: break;
     }
   }
 }
