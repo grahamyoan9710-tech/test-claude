@@ -154,10 +154,10 @@ void Match::resolveHits() {
         continue;
       }
       v.captor = -1;  // released by the launcher
-    } else if (ph.h.capture) {
+    } else if (ph.h.capture && v.state != FState::Shield && v.state != FState::ShieldStun) {
       captureFighter(a, v, ph.h, ph.pos, ph.mul);
       continue;
-    }
+    }  // (a shield stops the catch: the blow lands on the shield below)
     if (!ult && tryCounter(v, &a)) continue;  // ultimates cannot be countered
     int dir = ph.h.reverse ? -a.facing : a.facing;
     applyHit(&a, v, ph.h, ph.pos, dir, ph.mul, false, ult);
@@ -239,11 +239,13 @@ int Match::nearestOpponent(const Fighter& f) const {
 }
 
 void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hitPos, int dirSign,
-                     float damageMul, bool throwHit, bool unblockable) {
+                     float damageMul, bool throwHit, bool ult) {
   const float dmg = h.damage * damageMul;
-  const bool shielding = (v.state == FState::Shield || v.state == FState::ShieldStun) && !throwHit && !unblockable;
+  const bool shielding = (v.state == FState::Shield || v.state == FState::ShieldStun) && !throwHit;
   if (shielding) {
-    v.shield -= dmg * 1.1f;
+    // A shield blocks an ultimate too, but pays for it: about half the damage of each blow (a whole
+    // ultimate nearly empties it); an ordinary blow costs 110 % of its damage.
+    v.shield -= ult ? dmg * 0.7f : dmg * 1.1f;
     int lag = hitlagFor(dmg, 0.0f);
     v.hitlag = lag;
     if (attacker) attacker->hitlag = lag;
@@ -276,7 +278,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
 
   const MoveDef* vm = v.currentMove();
   const bool moveArmor = vm && vm->armorStart >= 0 && v.moveFrame >= vm->armorStart && v.moveFrame < vm->armorEnd;
-  const bool formArmor = vf && vf->superArmor && kb < 95.0f && !unblockable;  // only big blows make it flinch
+  const bool formArmor = vf && vf->superArmor && kb < 95.0f && !ult;  // only big blows (and ultimates) make it flinch
   if (!throwHit && (moveArmor || formArmor)) {
     int lag = hitlagFor(dmg, 0.0f);
     v.hitlag = lag;
@@ -536,7 +538,7 @@ void Match::updateProjectiles() {
       }
       int dir = pr.vel.x >= 0.0f ? 1 : -1;
       if (pr.stuckTo >= 0 || std::fabs(pr.vel.x) < 0.5f) dir = v.center().x >= pr.pos.x ? 1 : -1;
-      const bool wasShielding = !pr.ult && (v.state == FState::Shield || v.state == FState::ShieldStun);
+      const bool wasShielding = v.state == FState::Shield || v.state == FState::ShieldStun;
       if (v.state == FState::Captured) v.captor = -1;  // the user's own shot launches it out of the hold
       applyHit(nullptr, v, pr.hit, pr.pos, dir, 1.0f, false, pr.ult);
       creditProjectile(pr.owner, v, pr.hit.damage, wasShielding);

@@ -88,8 +88,10 @@ Chaos, Dragon de lumière...
   **attrapent** la victime (elle est tenue pendant le combo puis éjectée), d'autres **frappent chaque
   adversaire** où qu'il soit (après un avertissement au sol), apparaissent **devant l'ennemi le plus
   proche**, ou **transforment** le combattant pour une dizaine de secondes (Rage de Sparte, Union
-  démoniaque, Démon rouge, Segunda Etapa). Les ultimes traversent les boucliers et ne peuvent pas être
-  contrés.
+  démoniaque, Démon rouge, Segunda Etapa). **Les ultimes se bloquent au bouclier** : une prise ratée ne
+  capture personne, mais chaque coup bloqué use le bouclier (70 % de ses dégâts), qui ressort presque vide
+  d'un ultime entier. Ils ne peuvent pas être contrés. Les ordinateurs bloquent aussi, plus souvent à haut
+  niveau.
 - **Effets à la Dragon Ball FighterZ** : « impact frames » (l'écran passe en noir et blanc façon manga
   sur les coups signature), cut-in avec le portrait et le nom de l'ultime, rayons, ondes de choc,
   arrière-plans des extensions de territoire, gerbes d'étincelles propres à chaque élément.
@@ -217,9 +219,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-6.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-6.2-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-6.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-6.2-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -291,7 +293,7 @@ depuis le trou de la Vallée de la Fin), des dizaines de matchs complets entre o
 11 arènes, l'équilibrage et le déterminisme. Les **51 attaques finales** (une de base et une par
 arme pour chaque combattant) sont lancées une par une : chacune doit infliger des dégâts, relâcher l'adversaire qu'elle a
 attrapé et l'éjecter à 130 % (les transformations comme la Rage de Spartiate ou le Démon rouge doivent
-s'activer). Un coup porté
+s'activer), puis contre un bouclier : aucune capture, aucun dégât tant que le bouclier tient. Un coup porté
 par l'ordinateur de niveau 10 doit faire exactement deux fois les dégâts du même coup au niveau 9.
 
 On peut ne lancer qu'une partie des tests : `./build-core/sim_test ults`, `cpu10`, `weapons`,

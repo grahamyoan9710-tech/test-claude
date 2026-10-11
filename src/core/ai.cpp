@@ -387,15 +387,32 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
     in.cstick = chargeDir_;
     return;
   }
-  // Shielding: keep it up, punish when the threat is over.
+  // Shielding: keep it up, punish when the threat is over (never in the middle of an ultimate).
   if (shieldHold_ > 0) {
     --shieldHold_;
     in.shield = true;
-    if (!isThreat(t, f) && adx < 70.0f && t.state == FState::Attack && rng_.chance(skill_)) {
+    if (!isThreat(t, f) && adx < 70.0f && t.state == FState::Attack && t.move != FinalSmash && rng_.chance(skill_)) {
       tap(in, &IS::attack);  // shield + attack = grab out of shield
       shieldHold_ = 0;
     }
     return;
+  }
+  // An opponent unleashes an ultimate: shield it or not, decided once (the better the CPU, the more often).
+  if (f.grounded && (f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run ||
+                     f.state == FState::Crouch || f.state == FState::Landing)) {
+    for (const auto& o : m.fighters) {
+      if (o.id == f.id || !o.active() || o.state != FState::Attack || o.move != FinalSmash) continue;
+      const int key = o.id * 1000003 + (m.frame - o.moveFrame);  // this ultimate (its first frame)
+      if (key != ultKey_) {
+        ultKey_ = key;
+        ultBlock_ = rng_.chance(0.2f + 0.5f * skill_);
+      }
+      if (ultBlock_ && m.freezeTimer == 0 && (isThreat(o, f) || (o.center() - f.center()).len() < 420.0f)) {
+        shieldHold_ = rng_.irange(36, 64);
+        in.shield = true;
+        return;
+      }
+    }
   }
   if (f.grounded && (f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run ||
                      f.state == FState::Crouch)) {

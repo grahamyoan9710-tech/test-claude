@@ -389,7 +389,7 @@ CharacterDef makeGanondorf() {
   c.groundAccel = 0.95f;
   c.friction = 0.7f;
   c.airAccel = 0.36f;
-  const float S = 1.25f, P = 1.5f;
+  const float S = 1.25f, P = 1.56f;
   buildBrawlerNormals(c, S, P, F::Gloom);
   auto& m = c.moves;
 

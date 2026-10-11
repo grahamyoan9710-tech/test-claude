@@ -476,6 +476,60 @@ static void testAllUltimates() {
   }
 }
 
+static std::string TextFormatShield(float shield) {
+  char buf[64];
+  std::snprintf(buf, sizeof buf, "shield left %2.0f%%", 100.0f * shield / kMaxShield);
+  return buf;
+}
+
+// Ultimates can be blocked: a fighter holding its shield is never caught, takes no damage while the shield
+// holds, and the shield pays for it (it is left low, or breaks under the heaviest ones).
+static void testUltimatesBlocked() {
+  std::printf("[ultimates against a shield]\n");
+  const int n = int(roster().size());
+  int broken = 0, total = 0;
+  for (int c = 0; c < n; ++c)
+    for (int slot = -1; slot <= 1; ++slot) {
+      MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
+      cfg.items = false;
+      cfg.weapons = false;
+      Match m(cfg);
+      skipCountdown(m);
+      Fighter& f = m.fighters[0];
+      Fighter& v = m.fighters[1];
+      f.pos = {-120, 0};
+      f.facing = 1;
+      v.pos = {40, 0};
+      v.percent = 30.0f;
+      if (slot >= 0) m.equipWeapon(f, slot);
+      std::array<InputState, 4> in{};
+      in[1].shield = true;
+      for (int i = 0; i < 10; ++i) m.step(in);
+      f.ult = kUltMax;
+      f.finalSmash = true;
+      in[0].ultimate = true;
+      m.step(in);
+      in[0].ultimate = false;
+      const std::string name = f.moveDef(FinalSmash).name;
+      bool caught = false, broke = false;
+      float hurtWhileShielded = 0.0f, last = v.percent;
+      for (int i = 0; i < 360 && f.state == FState::Attack && f.move == FinalSmash; ++i) {
+        m.step(in);
+        caught = caught || (v.state == FState::Captured && !broke);
+        broke = broke || v.state == FState::ShieldBreak;
+        if (!broke) hurtWhileShielded += std::max(0.0f, v.percent - last);
+        last = v.percent;
+      }
+      ++total;
+      broken += broke;
+      CHECK(!caught, "%s: a shield stops the catch", name.c_str());
+      CHECK(hurtWhileShielded < 0.01f, "%s: no damage through the shield (%.1f%%)", name.c_str(), hurtWhileShielded);
+      std::printf("  %-10s %-32s %s\n", roster()[c].name.c_str(), name.c_str(),
+                  broke ? "breaks the shield" : TextFormatShield(v.shield).c_str());
+    }
+  std::printf("  %d/%d ultimates blocked without breaking the shield\n", total - broken, total);
+}
+
 // Level 10 CPUs hit twice as hard as level 9.
 static void testLevel10() {
   std::printf("[cpu level 10]\n");
@@ -722,6 +776,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "ult") testUltMeter();
   if (only.empty() || only == "ult") testUltEdgeCases();
   if (only.empty() || only == "ults") testAllUltimates();
+  if (only.empty() || only == "ults" || only == "block") testUltimatesBlocked();
   if (only.empty() || only == "cpu10") testLevel10();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();

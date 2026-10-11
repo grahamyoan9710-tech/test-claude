@@ -165,9 +165,9 @@ class Match {
   // combat.cpp
   void resolveHits();
   void updateProjectiles();
-  // unblockable: ultimates go through shields.
+  // ult: a blow of an ultimate (it goes through super armor; a shield blocks it but takes heavy damage).
   void applyHit(Fighter* attacker, Fighter& victim, const HitboxDef& h, Vec2 hitPos, int dirSign,
-                float damageMul, bool throwHit, bool unblockable = false);
+                float damageMul, bool throwHit, bool ult = false);
   void spawnProjectiles(Fighter& f, const ProjectileDef& p);
   bool tryCounter(Fighter& victim, Fighter* attacker);
   // Cinematic ultimates: catches the victim / lands a hit on a held victim (no knockback).
