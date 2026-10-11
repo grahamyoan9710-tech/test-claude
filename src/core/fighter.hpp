@@ -9,6 +9,7 @@ enum class FState : uint8_t {
   Shield, ShieldStun, Roll, SpotDodge, AirDodge,
   Hitstun, Knockdown, GetUp, Helpless,
   LedgeHang, LedgeClimb, Holding, Grabbed, ShieldBreak,
+  Captured,  // held by an opponent's cinematic ultimate (see HitboxDef::capture)
   Dead, Respawn
 };
 
@@ -85,6 +86,11 @@ struct Fighter {
   float ult = 0.0f;          // ultimate meter (0..kUltMax)
   int weapon = -1;           // weapon picked up (index in def->weapons), -1 = none
   int weaponTimer = 0;       // frames left with it
+  int form = -1;             // transformation (index in def->forms), -1 = none
+  int formTimer = 0;         // frames left (0 with a form = until the move that started it ends)
+  int formMove = -1;         // the move that started a move-long form
+  int captor = -1;           // Captured: the fighter whose ultimate holds this one
+  Vec2 capturePos;           // Captured with holdInPlace: where it was caught
   bool finalSmash = false;   // ultimate ready (full meter or Clash Orb broken): the ultimate button unleashes it
 
   // Input
@@ -112,12 +118,31 @@ struct Fighter {
     return {pos.x - def->width * 0.5f, pos.y - h, def->width, h};
   }
   const WeaponDef* weaponDef() const { return weapon >= 0 ? &def->weapons[weapon & 1] : nullptr; }
-  // A move as this fighter performs it: the held weapon may replace it.
+  const FormDef* formDef() const {
+    return form >= 0 && form < int(def->forms.size()) ? &def->forms[form] : nullptr;
+  }
+  Form formKind() const { return formDef() ? formDef()->form : Form::None; }
+  // A move as this fighter performs it: a transformation, then the held weapon may replace it.
   const MoveDef& moveDef(int id) const {
+    if (const FormDef* fd = formDef())
+      for (const auto& [mid, m] : fd->moves)
+        if (mid == id) return m;
     if (const WeaponDef* w = weaponDef())
       for (const auto& [mid, m] : w->moves)
         if (mid == id) return m;
     return def->moves[id];
+  }
+  // Blade length (grip to tip) of the weapon in hand: swing hitboxes ride it, the renderer draws it.
+  float bladeLength() const {
+    const WeaponDef* w = weaponDef();
+    if (w && w->blade > 0.0f) return w->blade;
+    return def->weaponLength * (w ? w->reachMul : 1.0f);
+  }
+  float damageMul() const {
+    float m = 1.0f;
+    if (const WeaponDef* w = weaponDef()) m *= w->damageMul;
+    if (const FormDef* fd = formDef()) m *= fd->damageMul;
+    return m;
   }
   const MoveDef* currentMove() const {
     return (state == FState::Attack && move >= 0) ? &moveDef(move) : nullptr;

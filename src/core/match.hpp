@@ -145,6 +145,7 @@ class Match {
   void airJump(Fighter& f);
   void updateLedge(Fighter& f);
   void updateGrabbed(Fighter& f);
+  void updateCaptured(Fighter& f);
   void releaseGrab(Fighter& f, bool escaped);
   // fighter_physics.cpp
   void moveFighter(Fighter& f);

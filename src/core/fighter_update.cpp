@@ -438,6 +438,9 @@ void Match::updateFighter(Fighter& f) {
     case FState::Grabbed:
       updateGrabbed(f);
       return;
+    case FState::Captured:
+      updateCaptured(f);
+      return;
     case FState::ShieldBreak:
       if (f.grounded) {
         groundFriction(f);
@@ -652,6 +655,28 @@ void Match::updateGrabbed(Fighter& f) {
               f.pressed(&IS::shield) || f.flickX() || f.flickY();
   f.escapeTimer -= mash ? 6 : 1;
   if (f.escapeTimer <= 0 && g->state == FState::Holding) releaseGrab(f, true);
+}
+
+// Held by an opponent's cinematic ultimate: pulled to the hold point (or frozen where it was caught).
+void Match::updateCaptured(Fighter& f) {
+  Fighter* c = f.captor >= 0 && f.captor < int(fighters.size()) ? &fighters[f.captor] : nullptr;
+  const MoveDef* m = c ? c->currentMove() : nullptr;
+  if (!c || !c->active() || !m || c->move != FinalSmash) {
+    f.captor = -1;
+    setState(f, f.grounded ? FState::Idle : FState::Air);
+    return;
+  }
+  f.vel = f.kbVel = {0, 0};
+  if (m->holdInPlace) {
+    f.pos = f.capturePos;
+  } else {
+    const Vec2 hold = c->center() + Vec2{m->holdAt.x * c->facing, m->holdAt.y};
+    const Vec2 feet = hold + Vec2{0.0f, f.height() * 0.5f};
+    f.pos += (feet - f.pos) * 0.35f;
+    f.facing = c->pos.x > f.pos.x ? 1 : -1;
+  }
+  f.grounded = false;
+  f.groundPlat = -1;
 }
 
 void Match::releaseGrab(Fighter& f, bool escaped) {

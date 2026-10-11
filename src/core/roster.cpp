@@ -1,6 +1,7 @@
-// The nine fighters of Super Clash Bros.: fan-made homages to Black Clover, Bleach, Zelda: Tears of
-// the Kingdom, God of War and Jujutsu Kaisen. Each one has its normals, four specials, an ultimate
-// and two weapons that drop during a match.
+// The fifteen fighters of Super Clash Bros.: fan-made homages to Black Clover, Bleach, Naruto, Jujutsu
+// Kaisen, Zelda: Tears of the Kingdom, God of War and Monster Hunter. Each one has its normals, four
+// specials, three ultimates (bare-handed and with each of its two weapons) and two weapons that drop
+// during a match.
 #include "core/moves.hpp"
 
 namespace {
@@ -833,10 +834,452 @@ CharacterDef makeSukuna() {
                         F::Blood, 1.35f, 1.2f, 1.0f, 15);
   return c;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Bleach (2)
+// ---------------------------------------------------------------------------------------------
+CharacterDef makeKenpachi() {
+  CharacterDef c;
+  c.name = "KENPACHI";
+  c.title = "Le démon du combat";
+  c.series = "Bleach";
+  c.hero = Hero::Kenpachi;
+  c.style = BodyStyle::Brute;
+  c.baseWeapon = WeaponVisual::KenpachiSword;
+  c.palettes = {pal({236, 236, 240}, {32, 32, 38}, {230, 200, 60}, {222, 188, 156}, {30, 30, 36}, {60, 50, 40}),
+                pal({40, 40, 48}, {200, 200, 210}, {220, 70, 50}, {222, 188, 156}, {30, 30, 36}, {60, 50, 40})};
+  stats(c, 54, 124, 128, 3.7f, 8.4f, 4.8f, 0.68f, 11.0f, 15.6f, 15.4f, 10.2f, 13.8f, 5);
+  c.groundAccel = 1.0f;
+  c.weaponLength = 96;
+  const float S = 1.18f, P = 1.28f;
+  buildSwordNormals(c, S, P, F::Berserk);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Taille du démon", 56, {imp(hb(22, 26, 70, -16, 40, 15, 361, 40, 100, L::Weapon, 0, F::Berserk))});
+  m[NSpecial].chargeFrame = 10;
+  m[NSpecial].maxCharge = 60;
+  m[NSpecial].chargeDamageMul = 0.8f;
+  m[NSpecial].pose = PoseHint::TwoHanded;
+
+  std::vector<HitboxDef> rush;
+  multi(rush, 10, 3, 5, 44, -6, 30, 3.0f, L::Weapon, F::Berserk);
+  rush.push_back(imp(hb(26, 30, 56, -8, 36, 9, 40, 60, 84, L::Weapon, 3, F::Berserk)));
+  m[SSpecial] = mv("Assaut sauvage", 54, rush);
+  m[SSpecial].armorStart = 6;
+  m[SSpecial].armorEnd = 30;
+  m[SSpecial].vel = {ve(10, VelMode::SetX, 11.5f, 0), ve(32, VelMode::Scale, 0.2f, 1.0f)};
+  m[SSpecial].gravityMul = 0.5f;
+  m[SSpecial].frictionMul = 0.12f;
+  m[SSpecial].pose = PoseHint::Rush;
+
+  m[USpecial] = mv("Saut du démon", 48, {hb(5, 9, 30, -30, 30, 9, 80, 55, 72, L::Weapon, 0, F::Berserk),
+                                         hb(9, 16, 20, -66, 28, 6, 85, 45, 64, L::Weapon, 1, F::Berserk)});
+  m[USpecial].vel = {ve(5, VelMode::Set, 1.5f, -15.8f, 3.2f)};
+  m[USpecial].gravityMul = 0.5f;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::Uppercut;
+
+  m[DSpecial] = mv("Garde ouverte", 52, {imp(hb(24, 28, 64, -10, 50, 15, 361, 65, 100, L::Weapon, 0, F::Berserk))});
+  m[DSpecial].counterStart = 4;
+  m[DSpecial].counterEnd = 24;
+  m[DSpecial].gravityMul = 0.3f;
+  m[DSpecial].pose = PoseHint::TwoHanded;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  m[FinalSmash] = ultimate("KENDŌ", 100, storm(34, 4, 6, 160, 240, 4, F::Berserk, 22, 300, 60), PoseHint::TwoHanded);
+
+  c.weapons[0] = weapon("Nozarashi (Shikai)", "Couperet géant : tranche tout", WeaponVisual::Nozarashi, F::Berserk, 1.3f,
+                        1.12f, 1.4f);
+  MoveDef cleave = m[NSpecial];
+  cleave.name = "Nozarashi : Taille";
+  for (auto& h : cleave.hitboxes) {
+    h.radius *= 1.3f;
+    h.offset.x *= 1.25f;
+    h.damage *= 1.2f;
+  }
+  c.weapons[0].moves = {{NSpecial, cleave}};
+  c.weapons[1] = weapon("Bankai", "Le démon rouge se réveille", WeaponVisual::RedBankai, F::Blood, 1.35f, 1.15f, 1.3f, 15);
+  MoveDef red = m[SSpecial];
+  red.name = "Ruée du démon rouge";
+  for (auto& h : red.hitboxes) h.fx = F::Blood;
+  red.vel = {ve(8, VelMode::SetX, 14.0f, 0), ve(30, VelMode::Scale, 0.2f, 1.0f)};
+  c.weapons[1].moves = {{SSpecial, red}};
+  return c;
+}
+
+CharacterDef makeUlquiorra() {
+  CharacterDef c;
+  c.name = "ULQUIORRA";
+  c.title = "Le 4e Espada";
+  c.series = "Bleach";
+  c.hero = Hero::Ulquiorra;
+  c.style = BodyStyle::Ninja;
+  c.palettes = {pal({236, 236, 232}, {40, 40, 44}, {90, 200, 120}, {232, 232, 228}, {24, 24, 30}, {60, 200, 110}),
+                pal({40, 40, 46}, {200, 200, 196}, {120, 230, 160}, {232, 232, 228}, {24, 24, 30}, {60, 200, 110})};
+  stats(c, 44, 106, 86, 4.2f, 9.0f, 5.4f, 0.5f, 8.8f, 13.6f, 14.6f, 9.6f, 13.2f, 3);
+  c.airJumps = 2;
+  c.airAccel = 0.5f;
+  const float S = 1.0f, P = 1.0f;
+  buildBrawlerNormals(c, S, P, F::Hollow);
+  auto& m = c.moves;
+
+  BeamDef cero;
+  cero.start = 18;
+  cero.end = 30;
+  cero.from = {32, -14};
+  cero.length = 270;
+  cero.width = 34;
+  cero.fx = F::Hollow;
+  m[NSpecial] = mv("Cero", 48, beamHits(cero, 9, 25, 45, 80, 2));
+  m[NSpecial].beam = cero;
+  m[NSpecial].gravityMul = 0.3f;
+  m[NSpecial].pose = PoseHint::Point;
+
+  m[SSpecial] = mv("Sonído", 40, {imp(hb(14, 18, 46, -8, 30, 10, 45, 50, 78, L::ArmFront, 0, F::Hollow))});
+  m[SSpecial].teleportFrame = 8;
+  m[SSpecial].teleportDist = 150;
+  m[SSpecial].teleportForward = true;
+  m[SSpecial].intangibleStart = 4;
+  m[SSpecial].intangibleEnd = 12;
+  m[SSpecial].vel = {ve(2, VelMode::Set, 0, 0)};
+  m[SSpecial].gravityMul = 0.2f;
+  m[SSpecial].pose = PoseHint::Thrust;
+
+  m[USpecial] = mv("Sonído céleste", 38, {hb(20, 24, 0, -6, 38, 7, 80, 55, 70, L::Body, 0, F::Hollow)});
+  m[USpecial].teleportFrame = 18;
+  m[USpecial].teleportDist = 270;
+  m[USpecial].intangibleStart = 6;
+  m[USpecial].intangibleEnd = 20;
+  m[USpecial].vel = {ve(2, VelMode::Set, 0, 0)};
+  m[USpecial].gravityMul = 0.0f;
+  m[USpecial].allowDrift = false;
+  m[USpecial].helplessAfter = true;
+
+  m[DSpecial] = mv("Bala", 30, {});
+  m[DSpecial].projectileFrame = 8;
+  m[DSpecial].projectile = proj({34, -10}, {17, 0}, 0, 26, 10, 3.5f, 14, 30, F::Hollow, PV::CeroOscuras);
+  m[DSpecial].projectile.count = 2;
+  m[DSpecial].projectile.spreadDeg = 6;
+  m[DSpecial].pose = PoseHint::Point;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  m[FinalSmash] = ultimate("CERO OSCURAS", 100, {}, PoseHint::Point);
+
+  c.weapons[0] = weapon("Murciélago (Resurrección)", "Lances de lumière verte", WeaponVisual::LuzDeLaLuna, F::Hollow,
+                        1.2f, 1.08f, 1.15f);
+  MoveDef luz = mv("Luz de la Luna", 40, {});
+  luz.projectileFrame = 14;
+  luz.projectile = proj({40, -14}, {16, 0}, 0, 40, 14, 10, 40, 74, F::Hollow, PV::LuzDeLaLuna);
+  luz.projectile.piercing = true;
+  luz.pose = PoseHint::Throw;
+  sc(luz, S, P);
+  c.weapons[0].moves = {{NSpecial, luz}};
+  c.weapons[1] = weapon("Segunda Etapa", "La forme ultime de l'Espada", WeaponVisual::SegundaCore, F::Hollow, 1.35f, 1.18f,
+                        1.2f, 15);
+  return c;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Naruto
+// ---------------------------------------------------------------------------------------------
+CharacterDef makeNaruto() {
+  CharacterDef c;
+  c.name = "NARUTO";
+  c.title = "Le ninja de Konoha";
+  c.series = "Naruto";
+  c.hero = Hero::Naruto;
+  c.style = BodyStyle::Speedster;
+  c.palettes = {pal({240, 128, 30}, {30, 34, 46}, {60, 100, 200}, {244, 208, 170}, {250, 210, 70}, {70, 140, 230}),
+                pal({30, 34, 46}, {240, 128, 30}, {200, 60, 40}, {244, 208, 170}, {250, 210, 70}, {70, 140, 230})};
+  stats(c, 44, 96, 92, 4.5f, 9.8f, 5.6f, 0.6f, 10.0f, 15.0f, 15.6f, 10.4f, 14.6f, 3);
+  c.groundAccel = 1.5f;
+  c.airJumps = 2;
+  const float S = 0.98f, P = 1.0f;
+  buildBrawlerNormals(c, S, P, F::Chakra);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Rasengan", 46, {imp(hb(18, 23, 44, -6, 28, 11, 40, 50, 86, L::ArmFront, 0, F::Chakra))});
+  m[NSpecial].chargeFrame = 10;
+  m[NSpecial].maxCharge = 50;
+  m[NSpecial].chargeDamageMul = 0.7f;
+  m[NSpecial].vel = {ve(16, VelMode::SetX, 6.0f, 0)};
+  m[NSpecial].pose = PoseHint::Cast;
+
+  m[SSpecial] = mv("Multi-clonage", 40, {});
+  m[SSpecial].projectileFrame = 10;
+  m[SSpecial].projectile = proj({30, 0}, {9, 0}, 0, 40, 24, 7, 40, 60, F::Chakra, PV::ShadowClone);
+  m[SSpecial].pose = PoseHint::HandSign;
+
+  m[USpecial] = mv("Clone tremplin", 44, {hb(6, 12, 0, 40, 30, 6, 80, 50, 60, L::Body, 0, F::Chakra)});
+  m[USpecial].vel = {ve(6, VelMode::Set, 1.5f, -17.8f, 3.5f)};
+  m[USpecial].gravityMul = 0.5f;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::Uppercut;
+
+  m[DSpecial] = mv("Substitution", 50, {imp(hb(30, 34, 40, -6, 34, 10, 50, 55, 85, L::LegFront, 0, F::Chakra))});
+  m[DSpecial].counterStart = 3;
+  m[DSpecial].counterEnd = 22;
+  m[DSpecial].teleportFrame = 23;
+  m[DSpecial].teleportDist = 110;
+  m[DSpecial].teleportForward = true;
+  m[DSpecial].turnAfterTeleport = true;
+  m[DSpecial].gravityMul = 0.3f;
+  m[DSpecial].pose = PoseHint::HandSign;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  m[FinalSmash] = ultimate("BARRAGE UZUMAKI", 100, storm(34, 6, 5, 120, 160, 3, F::Chakra, 18, 200, 60), PoseHint::HandSign);
+
+  c.weapons[0] = weapon("Mode Ermite", "Rasengan géant (Ōdama)", WeaponVisual::SageScroll, F::Chakra, 1.25f, 1.1f, 1.1f);
+  MoveDef odama = m[NSpecial];
+  odama.name = "Ōdama Rasengan";
+  for (auto& h : odama.hitboxes) {
+    h.radius *= 1.5f;
+    h.offset.x *= 1.2f;
+    h.damage *= 1.3f;
+  }
+  c.weapons[0].moves = {{NSpecial, odama}};
+  c.weapons[1] = weapon("Chakra de Kurama", "Le manteau de chakra du renard", WeaponVisual::KuramaChakra, F::Chakra, 1.3f,
+                        1.15f, 1.2f, 15);
+  MoveDef clones = m[SSpecial];
+  clones.name = "Clones de Kurama";
+  clones.projectile.count = 2;
+  clones.projectile.spreadDeg = 8;
+  clones.projectile.hit.damage *= 1.25f;
+  c.weapons[1].moves = {{SSpecial, clones}};
+  return c;
+}
+
+CharacterDef makeSasuke() {
+  CharacterDef c;
+  c.name = "SASUKE";
+  c.title = "Le dernier Uchiha";
+  c.series = "Naruto";
+  c.hero = Hero::Sasuke;
+  c.style = BodyStyle::Ninja;
+  c.baseWeapon = WeaponVisual::Kusanagi;
+  c.palettes = {pal({228, 228, 236}, {60, 50, 100}, {130, 90, 200}, {240, 214, 190}, {30, 30, 44}, {200, 30, 40}),
+                pal({30, 30, 40}, {200, 196, 210}, {90, 140, 230}, {240, 214, 190}, {30, 30, 44}, {200, 30, 40})};
+  stats(c, 44, 102, 90, 4.4f, 9.7f, 5.4f, 0.6f, 9.8f, 14.8f, 15.2f, 10.0f, 14.2f, 3);
+  c.groundAccel = 1.45f;
+  c.weaponLength = 70;
+  const float S = 1.0f, P = 1.05f;
+  buildSwordNormals(c, S, P, F::Lightning);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Katon : Boule de feu", 48, {});
+  m[NSpecial].projectileFrame = 18;
+  m[NSpecial].projectile = proj({40, -16}, {7.5f, 0}, 0, 64, 24, 10, 40, 72, F::Fire, PV::GreatFireball);
+  m[NSpecial].projectile.grow = 0.15f;
+  m[NSpecial].pose = PoseHint::HandSign;
+
+  std::vector<HitboxDef> chidori;
+  multi(chidori, 10, 3, 4, 40, -6, 28, 2.5f, L::ArmBack, F::Lightning);
+  chidori.push_back(imp(hb(22, 26, 46, -6, 32, 9, 40, 58, 84, L::ArmBack, 3, F::Lightning)));
+  m[SSpecial] = mv("Chidori", 48, chidori);
+  m[SSpecial].vel = {ve(10, VelMode::SetX, 15, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(26, VelMode::Scale, 0.2f, 1.0f)};
+  m[SSpecial].gravityMul = 0.3f;
+  m[SSpecial].frictionMul = 0.1f;
+  m[SSpecial].pose = PoseHint::Rush;
+
+  std::vector<HitboxDef> hawk;
+  multi(hawk, 6, 3, 5, 0, -40, 32, 2.5f, L::Body, F::Wind, 0, 85);
+  hawk.push_back(hb(21, 25, 0, -50, 36, 5, 80, 55, 90, L::Body, 3, F::Wind));
+  m[USpecial] = mv("Garuda", 48, hawk);
+  m[USpecial].vel = {ve(4, VelMode::Set, 1.5f, -16.5f, 4.0f)};
+  m[USpecial].gravityMul = 0.45f;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::Raise;
+
+  std::vector<HitboxDef> flow;
+  multi(flow, 8, 3, 5, 0, -6, 54, 2.5f, L::Body, F::Lightning);
+  flow.push_back(imp(hb(25, 29, 0, -6, 62, 7, 70, 60, 92, L::Body, 3, F::Lightning)));
+  m[DSpecial] = mv("Chidori Nagashi", 46, flow);
+  m[DSpecial].armorStart = 6;
+  m[DSpecial].armorEnd = 28;
+  m[DSpecial].gravityMul = 0.3f;
+  m[DSpecial].pose = PoseHint::Roar;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  m[FinalSmash] = ultimate("KIRIN", 100, {}, PoseHint::Raise);
+
+  c.weapons[0] = weapon("Arc de Susanoo", "Flèches de flammes violettes", WeaponVisual::SusanooBow, F::Dark, 1.2f, 1.08f,
+                        1.0f);
+  MoveDef arrow = mv("Flèche de Susanoo", 40, {});
+  arrow.projectileFrame = 18;
+  arrow.projectile = proj({36, -14}, {19, 0}, 0, 48, 14, 12, 40, 78, F::Dark, PV::IndraArrow);
+  arrow.projectile.piercing = true;
+  arrow.pose = PoseHint::Bow;
+  sc(arrow, S, P);
+  c.weapons[0].moves = {{NSpecial, arrow}};
+  c.weapons[1] = weapon("Mangekyō Sharingan", "Amaterasu : des flammes noires sur l'ennemi", WeaponVisual::Mangekyo,
+                        F::BlackFlame, 1.25f, 1.1f, 1.0f, 15);
+  MoveDef ama = mv("Amaterasu", 50, {});
+  ama.projectileFrame = 20;
+  ama.projectile = proj({0, 0}, {0, 0}, 0, 70, 30, 2.2f, 8, 6, F::BlackFlame, PV::BlackFlames);
+  ama.projectile.target = ProjTarget::Nearest;
+  ama.projectile.armDelay = 22;
+  ama.projectile.piercing = true;
+  ama.projectile.rehit = 8;
+  ama.projectile.ignoreGround = true;
+  ama.pose = PoseHint::HandSign;
+  c.weapons[1].moves = {{NSpecial, ama}};
+  return c;
+}
+
+CharacterDef makeKakashi() {
+  CharacterDef c;
+  c.name = "KAKASHI";
+  c.title = "Le ninja copieur";
+  c.series = "Naruto";
+  c.hero = Hero::Kakashi;
+  c.style = BodyStyle::Ninja;
+  c.baseWeapon = WeaponVisual::KakashiKunai;
+  c.palettes = {pal({70, 100, 70}, {40, 48, 70}, {200, 200, 210}, {236, 212, 188}, {214, 216, 222}, {40, 40, 44}),
+                pal({40, 48, 70}, {90, 90, 96}, {120, 170, 230}, {236, 212, 188}, {214, 216, 222}, {40, 40, 44})};
+  stats(c, 44, 104, 96, 4.3f, 9.5f, 5.3f, 0.6f, 10.0f, 15.0f, 15.2f, 10.0f, 14.2f, 3);
+  c.groundAccel = 1.4f;
+  const float S = 1.02f, P = 1.04f;
+  buildBrawlerNormals(c, S, P, F::Lightning);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Suiton : Dragon aqueux", 50, {});
+  m[NSpecial].projectileFrame = 22;
+  m[NSpecial].projectile = proj({44, -10}, {7.5f, 0}, 0, 56, 28, 2.6f, 10, 8, F::Water, PV::WaterDragon);
+  m[NSpecial].projectile.piercing = true;
+  m[NSpecial].projectile.rehit = 8;
+  m[NSpecial].pose = PoseHint::HandSign;
+
+  m[SSpecial] = mv("Raikiri", 52, {imp(hb(22, 28, 50, -6, 30, 14, 40, 60, 90, L::ArmFront, 0, F::Lightning))});
+  m[SSpecial].vel = {ve(14, VelMode::SetX, 17, 0), ve(14, VelMode::SetY, 0, -1, 0, true), ve(30, VelMode::Scale, 0.2f, 1.0f)};
+  m[SSpecial].gravityMul = 0.3f;
+  m[SSpecial].frictionMul = 0.1f;
+  m[SSpecial].pose = PoseHint::Rush;
+
+  m[USpecial] = mv("Shunshin", 38, {hb(20, 24, 0, -6, 38, 7, 80, 55, 70, L::Body, 0, F::Wind)});
+  m[USpecial].teleportFrame = 18;
+  m[USpecial].teleportDist = 260;
+  m[USpecial].intangibleStart = 6;
+  m[USpecial].intangibleEnd = 20;
+  m[USpecial].vel = {ve(2, VelMode::Set, 0, 0)};
+  m[USpecial].gravityMul = 0.0f;
+  m[USpecial].allowDrift = false;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::HandSign;
+
+  m[DSpecial] = mv("Ninken : Crocs", 46, {hb(12, 20, 96, 30, 34, 0, 0, 0, 0, L::ArmFront)});
+  m[DSpecial].isGrab = true;
+  m[DSpecial].pose = PoseHint::Kneel;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  m[FinalSmash] = ultimate("RAIKIRI", 100, storm(34, 3, 6, 80, 100, 4, F::Lightning, 24, 140, 45), PoseHint::Rush);
+
+  c.weapons[0] = weapon("Sharingan (Kamui)", "Kamui : un vortex sur l'ennemi", WeaponVisual::SharinganEye, F::Dark, 1.2f,
+                        1.08f, 1.0f);
+  MoveDef kamui = mv("Kamui", 52, {});
+  kamui.projectileFrame = 22;
+  kamui.projectile = proj({0, 0}, {0, 0}, 0, 50, 34, 2.4f, 8, 6, F::Dark, PV::KamuiVortex);
+  kamui.projectile.target = ProjTarget::Nearest;
+  kamui.projectile.armDelay = 20;
+  kamui.projectile.piercing = true;
+  kamui.projectile.rehit = 8;
+  kamui.projectile.pull = 1.6f;
+  kamui.projectile.pullRadius = 110;
+  kamui.projectile.ignoreGround = true;
+  kamui.pose = PoseHint::Point;
+  c.weapons[0].moves = {{NSpecial, kamui}};
+  c.weapons[1] = weapon("Mangekyō double", "Le Susanoo de Kakashi", WeaponVisual::DoubleMangekyo, F::Dark, 1.3f, 1.12f,
+                        1.1f, 15);
+  MoveDef shuri = mv("Shuriken Kamui", 44, {});
+  shuri.projectileFrame = 16;
+  shuri.projectile = proj({40, -14}, {13, 0}, 0, 44, 22, 3, 12, 20, F::Dark, PV::KamuiShuriken);
+  shuri.projectile.piercing = true;
+  shuri.projectile.rehit = 7;
+  shuri.pose = PoseHint::Throw;
+  sc(shuri, S, P);
+  c.weapons[1].moves = {{NSpecial, shuri}};
+  return c;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Monster Hunter
+// ---------------------------------------------------------------------------------------------
+CharacterDef makeHunter() {
+  CharacterDef c;
+  c.name = "HUNTER";
+  c.title = "Le chasseur de monstres";
+  c.series = "Monster Hunter";
+  c.hero = Hero::Hunter;
+  c.style = BodyStyle::Knight;
+  c.baseWeapon = WeaponVisual::GreatSword;
+  c.palettes = {pal({176, 60, 44}, {84, 70, 60}, {226, 190, 96}, {236, 200, 170}, {120, 80, 50}, {70, 110, 70}),
+                pal({70, 110, 150}, {84, 70, 60}, {200, 220, 230}, {236, 200, 170}, {50, 40, 34}, {70, 110, 70})};
+  stats(c, 52, 108, 120, 3.6f, 8.2f, 4.8f, 0.66f, 10.8f, 15.4f, 15.2f, 10.0f, 13.8f, 5);
+  c.groundAccel = 1.0f;
+  c.weaponLength = 100;
+  const float S = 1.08f, P = 1.24f;
+  buildSwordNormals(c, S, P, F::Slash);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Taille chargée", 60, {imp(hb(26, 30, 72, -10, 42, 15, 361, 42, 100, L::Weapon, 0, F::Slash))});
+  m[NSpecial].chargeFrame = 12;
+  m[NSpecial].maxCharge = 70;
+  m[NSpecial].chargeDamageMul = 0.9f;
+  m[NSpecial].pose = PoseHint::TwoHanded;
+
+  m[SSpecial] = mv("Coup d'épaule", 44, {hb(8, 18, 36, -8, 30, 9, 40, 60, 70, L::Body, 0, F::Normal)});
+  m[SSpecial].armorStart = 4;
+  m[SSpecial].armorEnd = 18;
+  m[SSpecial].vel = {ve(8, VelMode::SetX, 11, 0), ve(20, VelMode::Scale, 0.2f, 1.0f)};
+  m[SSpecial].gravityMul = 0.5f;
+  m[SSpecial].frictionMul = 0.12f;
+  m[SSpecial].pose = PoseHint::Rush;
+
+  m[USpecial] = mv("Griffe-grappin", 46, {hb(8, 16, 20, -60, 28, 7, 85, 50, 66, L::ArmFront, 0, F::Normal)});
+  m[USpecial].vel = {ve(6, VelMode::Set, 2.0f, -17.0f, 3.5f)};
+  m[USpecial].gravityMul = 0.5f;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::Raise;
+
+  m[DSpecial] = mv("Bombe-tonneau G", 40, {});
+  m[DSpecial].projectileFrame = 14;
+  m[DSpecial].projectile = proj({34, 20}, {1.0f, -2.0f}, 0.5f, 120, 18, 2, 10, 10, F::Fire, PV::BarrelBomb);
+  m[DSpecial].projectile.explodeRadius = 105;
+  m[DSpecial].projectile.explode = hb(0, 0, 0, 0, 105, 16, 60, 60, 92, L::None, 0, F::Fire);
+  m[DSpecial].projectile.explode.impact = true;
+  m[DSpecial].pose = PoseHint::Kneel;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  m[FinalSmash] = ultimate("TAILLE CHARGÉE VRAIE", 100, storm(34, 2, 10, 140, 160, 6, F::Slash, 26, 240, 50),
+                           PoseHint::TwoHanded);
+
+  c.weapons[0] = weapon("Lame chargée", "Décharge élémentaire explosive", WeaponVisual::ChargeBlade, F::Electric, 1.2f,
+                        1.1f, 1.0f);
+  MoveDef ued = mv("Décharge élémentaire", 54, {imp(hb(22, 26, 60, 10, 40, 12, 60, 50, 85, L::Weapon, 0, F::Electric))});
+  ued.projectileFrame = 24;
+  ued.projectile = proj({90, 30}, {0, 0}, 0, 2, 10, 0, 0, 0, F::Electric, PV::Phial);
+  ued.projectile.explodeRadius = 90;
+  ued.projectile.explode = hb(0, 0, 0, 0, 90, 10, 60, 55, 85, L::None, 0, F::Electric);
+  ued.projectile.ignoreGround = true;
+  ued.pose = PoseHint::Overhead;
+  sc(ued, S, P);
+  c.weapons[0].moves = {{NSpecial, ued}};
+  c.weapons[1] = weapon("Lancecanon", "Tir explosif à bout portant", WeaponVisual::Gunlance, F::Fire, 1.2f, 1.1f, 1.05f);
+  MoveDef shell = mv("Tir de lancecanon", 40, {});
+  shell.projectileFrame = 14;
+  shell.projectile = proj({70, -6}, {4, 0}, 0, 6, 24, 0, 0, 0, F::Fire, PV::GunlanceShell);
+  shell.projectile.explodeRadius = 80;
+  shell.projectile.explode = hb(0, 0, 0, 0, 80, 11, 45, 55, 82, L::None, 0, F::Fire);
+  shell.pose = PoseHint::Thrust;
+  sc(shell, S, P);
+  c.weapons[1].moves = {{NSpecial, shell}};
+  return c;
+}
 }  // namespace
 
 const std::vector<CharacterDef>& roster() {
-  static const std::vector<CharacterDef> r = {makeAsta(),   makeYuno(),   makeIchigo(), makeByakuya(), makeLink(),
-                                              makeGanondorf(), makeKratos(), makeGojo(), makeSukuna()};
+  static const std::vector<CharacterDef> r = {
+      makeAsta(),   makeYuno(),      makeIchigo(),    makeByakuya(), makeKenpachi(),  makeUlquiorra(),
+      makeNaruto(), makeSasuke(),    makeKakashi(),   makeGojo(),    makeSukuna(),    makeLink(),
+      makeGanondorf(), makeKratos(), makeHunter()};
   return r;
 }

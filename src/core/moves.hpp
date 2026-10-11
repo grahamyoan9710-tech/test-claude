@@ -22,6 +22,12 @@ enum class HitFx : uint8_t {
   Ice,        // frost (Leviathan axe)
   Cursed,     // blue / purple cursed energy (Gojo)
   Blood,      // crimson slashes (Sukuna)
+  Chakra,     // orange / blue chakra swirls (Naruto)
+  Lightning,  // crackling blue-white lightning (Chidori, Raikiri, Kirin)
+  BlackFlame, // Amaterasu's black flames (Sasuke)
+  Hollow,     // green-black hollow energy (Ulquiorra: Cero Oscuras, Luz de la Luna)
+  Berserk,    // Kenpachi's wild yellow reiatsu
+  Water,      // water jutsu (Kakashi)
   Count
 };
 
@@ -38,7 +44,23 @@ struct HitboxDef {
   HitFx fx = HitFx::Normal;
   bool reverse = false;    // launches behind the attacker (back hits)
   bool impact = false;     // signature hit: anime "impact frames" when it connects
+  // Blade swing: the hitbox rides the weapon instead of sitting at `offset`. The blade turns around
+  // the shoulder (kShoulder, scaled by the fighter's height) from angle a0 to a1 (degrees, 0 = forward,
+  // 90 = up, as if facing right) during [start, end) and hits along it from reach0 to reach1 (fractions
+  // of the blade, measured from the grip). The renderer draws the blade at the very same angle.
+  bool swing = false;
+  float a0 = 0.0f, a1 = 0.0f;
+  float reach0 = 0.0f, reach1 = 1.0f;
+  // Cinematic ultimates: `capture` catches the victim instead of launching it. A captured fighter is
+  // held by the move (see MoveDef::holdAt); every later hitbox of the move then connects with it, without
+  // knockback, until a `launch` hitbox (or the end of the move) releases it with its knockback.
+  bool capture = false;
+  bool launch = false;
 };
+
+// Shoulder pivot of blade swings, as a fraction of the fighter's height (from its center, facing right).
+constexpr float kShoulderX = 0.03f, kShoulderY = -0.17f;
+constexpr float kGripDist = 0.28f;  // shoulder -> hand distance along the blade, fraction of the height
 
 enum class ProjVisual : uint8_t {
   Fireball, Bolt, Shuriken, Star,
@@ -62,7 +84,42 @@ enum class ProjVisual : uint8_t {
   Dismantle,    // Sukuna: invisible cutting lines
   FireArrow,    // Sukuna: Fuga
   Lightning,    // Sukuna: Kamutoke
+  ReiatsuWave,  // Kenpachi: wild yellow slash wave
+  CeroOscuras,  // Ulquiorra: black-green blast
+  LuzDeLaLuna,  // Ulquiorra: green light spear
+  Lanza,        // Ulquiorra: Lanza del Relampago (huge green lightning javelin)
+  BarrelBomb,   // Hunter: large barrel bomb
+  Phial,        // Hunter: charge blade phial burst
+  GunlanceShell,// Hunter: gunlance shelling (fire burst)
+  Rasengan,     // Naruto: spinning chakra sphere
+  Rasenshuriken,// Naruto: wind shuriken with a white ring of micro-blades
+  ShadowClone,  // Naruto: a running shadow clone
+  Bijudama,     // Naruto: tailed beast bomb (black-purple sphere)
+  GreatFireball,// Sasuke / Kakashi: Katon great fireball (orange, big)
+  ChidoriSpear, // Sasuke: thrown lightning spear
+  KirinBolt,    // Sasuke: the lightning dragon diving from the sky
+  IndraArrow,   // Sasuke: Susanoo's arrow
+  BlackFlames,  // Sasuke: Amaterasu (sticks to its target)
+  Kunai,        // Kakashi: thrown kunai
+  WaterDragon,  // Kakashi: Suiton water dragon
+  KamuiVortex,  // Kakashi: dimensional vortex (sticks to its target)
+  KamuiShuriken,// Kakashi: Susanoo's giant shuriken
+  GiantGetsuga, // Ichigo: ultimate Getsuga Tensho
+  LightPillar,  // Link: arrow of light falling from the sky
+  GloomPillar,  // Ganondorf: gloom erupting from the ground
+  PetalSphere,  // Byakuya: Gokei, a sphere of blades around the target
+  WindRain,     // Yuno: wind blades raining from the sky
+  ZephyrSpear,  // Yuno: giant wind spear
+  IceAxe,       // Kratos: Leviathan axe wrapped in frost (ultimate)
+  MaxBlue,      // Gojo: maximum output blue (huge vortex)
   Count
+};
+
+// How a projectile picks its spawn point.
+enum class ProjTarget : uint8_t {
+  Self,     // from the fighter (spawnOffset is facing-relative)
+  Nearest,  // on the nearest opponent (spawnOffset relative to its center, not mirrored)
+  All       // one on each opponent
 };
 
 struct ProjectileDef {
@@ -84,6 +141,10 @@ struct ProjectileDef {
   float grow = 0.0f;       // radius growth per frame
   float explodeRadius = 0; // explodes when it ends (hit, ground, timeout): area damage
   HitboxDef explode;       // damage / knockback of the explosion
+  ProjTarget target = ProjTarget::Self;
+  bool follow = false;     // stays on its target while it lives (black flames, vortices, petal spheres)
+  int armDelay = 0;        // harmless for its first frames (the warning before a strike from the sky)
+  bool ignoreGround = false;  // flies through the stage (strikes from the sky, eruptions)
 };
 
 // A beam drawn from the fighter during a move (the damage comes from the move's hitboxes, see beamHits).
@@ -109,7 +170,48 @@ enum class PoseHint : uint8_t {
   Stomp,      // slam into the ground
   Roar,       // arms wide, chest out
   Rush,       // body-first dash
-  Raise       // one arm raised to the sky (summon, orb above)
+  Raise,      // one arm raised to the sky (summon, orb above)
+  Point,      // one finger pointed forward (Ulquiorra's cero)
+  TwoHanded,  // both hands on the hilt above the head (Kenpachi's kendo, great sword charge)
+  Kneel       // crouched low, gathering power
+};
+
+// The cinematic of an ultimate (the renderer draws it: domain, summon, transformation...).
+enum class UltFx : uint8_t {
+  None,
+  BlackMeteorite, BlackDivider, DemonUnion,          // Asta
+  SpiritStorm, WindBladeShower, ZephyrSpear,         // Yuno
+  Mugetsu, GiantGetsuga, VastoLordeCero,             // Ichigo
+  Kageyoshi, Gokei, Hakuteiken,                      // Byakuya
+  LightDragon, MasterSwordBeam, LightArrowRain,      // Link
+  DemonDragon, DemonKingRampage, GloomPillars,       // Ganondorf
+  SpartanRage, Fimbulwinter, ChaosWhip,              // Kratos
+  MaxBlue, ImaginaryPurple, InfiniteVoid,            // Gojo
+  MalevolentShrine, KamutokeStrike, FugaBlast,       // Sukuna
+  Kendo, NozarashiCleave, RedDemon,                  // Kenpachi
+  CeroOscuras, LanzaRelampago, SegundaEtapa,         // Ulquiorra
+  TrueChargedSlash, AmpedDischarge, WyvernFire,      // Hunter
+  UzumakiBarrage, Rasenshuriken, KuramaBijudama,     // Naruto
+  Kirin, IndraArrow, Amaterasu,                      // Sasuke
+  Raikiri, Kamui, KamuiShuriken,                     // Kakashi
+  Count
+};
+
+// Transformations (Spartan Rage, Bankai, Vasto Lorde...): the renderer draws the form, the moves and
+// stats change while it lasts.
+enum class Form : uint8_t {
+  None,
+  SpartanRage,   // Kratos: red-hot, glowing tattoos, fists of fire
+  DemonUnion,    // Asta: black skin markings, demon horn and black wing
+  VastoLorde,    // Ichigo: white hollow body, horns, long orange hair, black sclera
+  FinalGetsuga,  // Ichigo: Mugetsu form, long black hair, black bandages
+  RedDemon,      // Kenpachi: bankai, red skin, horns, burning red aura
+  Segunda,       // Ulquiorra: Segunda Etapa, black body, huge bat wings, tail
+  KuramaAvatar,  // Naruto: golden chakra cloak with the giant fox around him
+  SusanooPurple, // Sasuke: purple Susanoo around him
+  SusanooBlue,   // Kakashi: blue Susanoo around him
+  DemonDragon,   // Ganondorf: (summon) the demon dragon behind him
+  Count
 };
 
 enum class VelMode : uint8_t { Set, SetX, SetY, Add, Scale, StickDir };
@@ -174,6 +276,13 @@ struct MoveDef {
   int comboStart = 0, comboEnd = 0; // window to buffer the follow-up
   int comboAt = 0;                  // frame where the follow-up begins
   bool comboOnSpecial = false;      // follow-up uses special instead of attack
+  // Cinematic ultimates
+  UltFx ultFx = UltFx::None;        // the cinematic the renderer draws while the move runs
+  Vec2 holdAt;                      // captured fighters are pulled there (from the center, facing right)
+  bool holdInPlace = false;         // ... or frozen where they were caught (domains)
+  bool teleportToTarget = false;    // teleportFrame: appears right in front of the nearest opponent
+  int formIndex = -1;               // transformation started at formFrame (index in CharacterDef::forms)
+  int formFrame = -1;
   // Grabs / throws
   bool isGrab = false;              // hitboxes are grab boxes
   int throwFrame = -1;              // apply hitboxes[0] to the held fighter
@@ -191,7 +300,11 @@ struct Palette {
 };
 
 // Who the fighter is (drives the procedural drawing: silhouette, outfit, hair, accessories).
-enum class Hero : uint8_t { Asta, Yuno, Ichigo, Byakuya, Link, Ganondorf, Kratos, Gojo, Sukuna, Count };
+enum class Hero : uint8_t {
+  Asta, Yuno, Ichigo, Byakuya, Link, Ganondorf, Kratos, Gojo, Sukuna,
+  Kenpachi, Ulquiorra, Hunter, Naruto, Sasuke, Kakashi,
+  Count
+};
 
 // Drawn weapons: the fighters' own blades and the weapons that drop during a match.
 enum class WeaponVisual : uint8_t {
@@ -218,6 +331,22 @@ enum class WeaponVisual : uint8_t {
   CursedFinger,    // Sukuna's finger (power-up)
   ShieldAndSword,  // Link's base kit (sword + shield)
   GuardianShield,  // Kratos's base kit
+  KenpachiSword,   // Kenpachi: long notched, chipped katana with a bare grip
+  Nozarashi,       // Kenpachi's shikai: giant cleaver-axe
+  RedBankai,       // Kenpachi's bankai: huge crimson cleaver dripping red reiatsu
+  LuzDeLaLuna,     // Ulquiorra: green light spear (Murcielago, resurreccion)
+  SegundaCore,     // Ulquiorra: segunda etapa (black-green crystal of power)
+  GreatSword,      // Hunter: huge bone-and-steel great sword
+  ChargeBlade,     // Hunter: charge blade (sword + shield with glowing phials)
+  Gunlance,        // Hunter: gunlance (lance with a shell chamber + big shield)
+  SageScroll,      // Naruto: toad sage scroll (sage mode)
+  KuramaChakra,    // Naruto: Kurama's golden chakra
+  Kusanagi,        // Sasuke: straight Kusanagi sword
+  SusanooBow,      // Sasuke: purple flame bow of the Susanoo
+  Mangekyo,        // Sasuke: eternal Mangekyo Sharingan (amaterasu)
+  KakashiKunai,    // Kakashi: kunai
+  SharinganEye,    // Kakashi: Sharingan (kamui)
+  DoubleMangekyo,  // Kakashi: double Mangekyo (Susanoo)
   Count
 };
 
@@ -229,9 +358,20 @@ struct WeaponDef {
   HitFx fx = HitFx::Normal;   // element of the fighter's attacks while held
   float damageMul = 1.2f;     // every hit
   float kbMul = 1.1f;         // knockback growth
-  float reachMul = 1.0f;      // hand / weapon hitboxes reach further
+  float reachMul = 1.0f;      // hand / weapon hitboxes reach further (and the blade is that much longer)
+  float blade = 0.0f;         // > 0: blade length (grip to tip) while held, else the fighter's blade * reachMul
   int duration = 60 * 18;     // frames before it vanishes
-  std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while held
+  std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while held (its ultimate included)
+};
+
+// A transformation: started by a move (MoveDef::formIndex), lasts `duration` frames (0 = until that move ends).
+struct FormDef {
+  Form form = Form::None;
+  int duration = 0;
+  float damageMul = 1.0f;     // every hit
+  float kbTakenMul = 1.0f;    // knockback received
+  bool superArmor = false;    // weak hits do not make it flinch
+  std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while transformed
 };
 
 struct CharacterDef {
@@ -250,9 +390,10 @@ struct CharacterDef {
   float jumpVel = 14.0f, shortHopVel = 9.5f, airJumpVel = 13.0f;
   int airJumps = 1;
   int jumpSquat = 4;
-  float weaponLength = 0.0f;  // drawn weapon (sword, hammer, kunai)
+  float weaponLength = 0.0f;  // blade from grip to tip (sword, cleaver, kunai): swing hitboxes ride it
   std::array<MoveDef, MOVE_COUNT> moves;
   std::array<WeaponDef, 2> weapons;
+  std::vector<FormDef> forms;
 };
 
 const std::vector<CharacterDef>& roster();
