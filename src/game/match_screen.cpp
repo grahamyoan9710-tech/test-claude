@@ -175,8 +175,10 @@ std::vector<std::string> MatchScreen::pauseItems() const {
   for (const auto& f : m_.fighters)
     if (f.cpu) dummy = f.id;
   std::string mode = dummy >= 0 ? dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel) : "-";
+  const Fighter& me = m_.fighters[0];
+  std::string weapon = upperFr("ARME : " + me.def->weapons[dropSlot_ & 1].name);
   return {"REPRENDRE", "RÉINITIALISER LES POSITIONS", "MANNEQUIN : " + mode,
-          std::string("ZONES DE COUP : ") + (debug_ ? "OUI" : "NON"), "QUITTER L'ENTRAÎNEMENT"};
+          std::string("ZONES DE COUP : ") + (debug_ ? "OUI" : "NON"), weapon, "QUITTER L'ENTRAÎNEMENT"};
 }
 
 MatchScreen::Result MatchScreen::updatePause() {
@@ -218,6 +220,11 @@ MatchScreen::Result MatchScreen::updatePause() {
       audio_.play(Sfx::MenuMove);
       return Result::Running;
     }
+    if (pauseSel_ == 4 && (nav.left || nav.right)) {  // which weapon
+      dropSlot_ ^= 1;
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
   }
   if (!activate) return Result::Running;
   audio_.play(Sfx::MenuSelect);
@@ -229,6 +236,10 @@ MatchScreen::Result MatchScreen::updatePause() {
     m_.resetPositions();
     std::fill(combo_.begin(), combo_.end(), 0);
     std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
+    resume();
+  } else if (training() && pauseSel_ == 4) {  // the weapon falls in front of the player
+    m_.loseWeapon(m_.fighters[0], false);
+    m_.dropWeaponFor(0, dropSlot_);
     resume();
   }
   return Result::Running;
@@ -429,7 +440,7 @@ void MatchScreen::drawPause() {
     }
     drawTextCentered(items[i].c_str(), r.x + r.width * 0.5f, r.y + r.height * 0.5f - 12, 24,
                      sel ? ui::kCream : ui::kMuted, true);
-    if (sel && training() && (i == 2 || i == 3)) {
+    if (sel && training() && (i == 2 || i == 3 || i == 4)) {
       ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, ui::kGold);
       ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
     }

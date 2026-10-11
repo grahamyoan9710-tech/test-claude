@@ -52,6 +52,7 @@ class MatchScreen {
   Vec2 shake_;
   bool paused_ = false;
   int pauseSel_ = 0;
+  int dropSlot_ = 0;  // training: which of the player's two weapons the pause menu drops
   std::array<bool, 4> padLost_{};      // the player's gamepad got unplugged (auto pause)
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;

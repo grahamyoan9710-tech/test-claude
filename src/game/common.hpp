@@ -89,6 +89,25 @@ inline void drawTextCentered(const char* text, float cx, float y, float size, Co
 }
 
 // Percent colour, white -> yellow -> orange -> red -> dark red.
+// Upper case for French UTF-8 text (é -> É, ç -> Ç, ō -> Ō...).
+inline std::string upperFr(std::string s) {
+  for (size_t i = 0; i < s.size(); ++i) {
+    unsigned char c = (unsigned char)s[i];
+    if (c >= 'a' && c <= 'z') {
+      s[i] = char(c - 32);
+    } else if (c == 0xC3 && i + 1 < s.size()) {
+      unsigned char d = (unsigned char)s[i + 1];
+      if (d >= 0xA0 && d <= 0xBE && d != 0xB7) s[i + 1] = char(d - 0x20);
+      ++i;
+    } else if (c == 0xC5 && i + 1 < s.size()) {
+      unsigned char d = (unsigned char)s[i + 1];
+      if (d == 0x8D || d == 0x93) s[i + 1] = char(d - 1);  // ō, œ
+      ++i;
+    }
+  }
+  return s;
+}
+
 // Signature colours of each element: the main tint and its bright glow.
 inline Color hitFxColor(HitFx fx) {
   switch (fx) {
