@@ -1269,12 +1269,12 @@ struct Body {
         Vec2 a[4], b[4], q[4];
         chain(R.neck + rl({-0.06f, 0.02f}), {-0.3f, 1.0f}, 0.66f * H, 3, pose, time, 0.8f, 1.0f, 0.03f, a);
         chain(R.neck + rl({0.02f, 0.05f}), {-0.02f, 1.0f}, 0.6f * H, 3, pose, time + 0.5f, 0.8f, 0.9f, 0.03f, b);
-        chain(R.neck + rl({-0.04f, -0.02f}), {-1.0f, 0.35f}, 0.62f * H, 3, pose, time + 0.2f, 0.32f, 1.2f, 0.14f, q);
+        chain(R.neck + rl({-0.04f, -0.02f}), {-0.8f, 1.0f}, 0.5f * H, 3, pose, time + 0.2f, 0.5f, 1.2f, 0.14f, q);
         group([&] {
           panel(a, b, 3, L.cloth);
           if (P.details()) DrawLineEx(X(a[3]), X(b[3]), t(0.02f), P.fill(shade(L.cloth, 0.75f)));
         });
-        group([&] { ribbon(q, 3, 0.05f, 0.036f, L.trim); });
+        group([&] { ribbon(q, 3, 0.075f, 0.05f, L.trim); });  // wide and soft: cloth, not a blade
         break;
       }
       case Hero::Ganondorf: {  // big dark red cape

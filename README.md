@@ -230,6 +230,7 @@ super_clash --demo            # match de démonstration entre 4 ordinateurs
 super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 14)
 super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
+super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 2)
 super_clash --stage 2         # arène par défaut (0, 1 ou 2)
 super_clash --debug           # zones de coup visibles
 super_clash --export-audio d  # écrit tous les sons et musiques en .wav dans le dossier d

@@ -44,7 +44,8 @@ struct Pose {
   Form form = Form::None;  // transformation (Vasto Lorde, Segunda Etapa...)
 };
 
-Pose restPose(const CharacterDef& def, float time);
+// Standing guard; `held` is the weapon picked up during the match (carried in hand), if any.
+Pose restPose(const CharacterDef& def, float time, WeaponVisual held = WeaponVisual::None);
 Pose computePose(const Fighter& f, const Match& m, float time);
 void drawCharacter(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing,
                    float scale, float alpha, Color flashColor, float flash, float time);

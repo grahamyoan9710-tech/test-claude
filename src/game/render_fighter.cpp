@@ -66,15 +66,75 @@ void additive(bool on) {
   else ui::frameBlend();
 }
 
+// ---- Carrying a weapon --------------------------------------------------------
+// Outside of attacks the blade never points at the ground in front like a walking stick: big blades
+// rest on the shoulder, swords and katanas are held up in guard, spears and axes stand upright.
+enum class Carry { None, Shoulder, Guard, Upright, Haft, Kunai };
+Carry carryOf(WeaponVisual v) {
+  switch (v) {
+    case WeaponVisual::AstaSword: case WeaponVisual::DemonSlayer: case WeaponVisual::DemonKingSword:
+    case WeaponVisual::KenpachiSword: case WeaponVisual::Nozarashi: case WeaponVisual::RedBankai:
+    case WeaponVisual::GreatSword:
+      return Carry::Shoulder;
+    case WeaponVisual::WindSpear: case WeaponVisual::GloomSpear: case WeaponVisual::Kamutoke:
+    case WeaponVisual::LuzDeLaLuna: case WeaponVisual::Gunlance:
+      return Carry::Upright;
+    case WeaponVisual::LeviathanAxe: return Carry::Haft;
+    case WeaponVisual::KakashiKunai: return Carry::Kunai;
+    default: return isHandWeapon(v) ? Carry::Guard : Carry::None;
+  }
+}
+// The weapon in hand outside of attacks: a picked-up one, else the fighter's own blade if it keeps it drawn.
+WeaponVisual carriedWeapon(const CharacterDef& d, WeaponVisual held) {
+  if (isHandWeapon(held)) return held;
+  switch (d.hero) {
+    case Hero::Asta: case Hero::Ichigo: case Hero::Byakuya: case Hero::Link: case Hero::Kenpachi: case Hero::Hunter:
+      return d.baseWeapon;
+    default: return WeaponVisual::None;
+  }
+}
+WeaponVisual heldVisual(const Fighter& f) { return f.weaponDef() ? f.weaponDef()->visual : WeaponVisual::None; }
+enum class Gait { Stand, Walk, Run, Air };
+// Sets the front hand and the blade for the way the fighter moves (the other states keep the standing blade).
+void carryWeapon(Pose& p, WeaponVisual v, float H, Gait g, float bob = 0.0f) {
+  const Carry c = carryOf(v);
+  if (c == Carry::None) return;
+  p.weapon = true;
+  auto at = [&](float x, float y) { return Vec2{x * H, y * H + bob}; };
+  switch (c) {
+    case Carry::Shoulder:  // the flat of the blade on the shoulder, the tip up behind the head
+      p.handF = g == Gait::Run ? at(0.12f, -0.07f) : at(0.13f, -0.05f);
+      p.weaponDir = g == Gait::Run ? Vec2{-1.0f, -0.3f} : Vec2{-1.0f, -0.38f};
+      break;
+    case Carry::Guard:  // blade up at the opponent; trailing behind when running
+      if (g == Gait::Stand) p.handF = at(0.19f, -0.03f), p.weaponDir = {1.0f, -0.8f};
+      if (g == Gait::Run) p.weaponDir = {-1.0f, -0.12f};
+      break;
+    case Carry::Upright:  // spear standing by the side; levelled forward in a charge
+      if (g == Gait::Stand) p.handF = at(0.17f, 0.0f), p.weaponDir = {0.2f, -1.0f};
+      if (g == Gait::Run) p.handF = at(0.14f, -0.05f), p.weaponDir = {1.0f, -0.4f};
+      break;
+    case Carry::Haft:  // axe in a low fist, the head up by the shoulder
+      if (g == Gait::Stand) p.handF = at(0.17f, 0.05f), p.weaponDir = {0.55f, -1.0f};
+      if (g == Gait::Run) p.weaponDir = {0.3f, -1.0f};
+      break;
+    case Carry::Kunai:
+      if (g == Gait::Stand) p.handF = at(0.18f, -0.06f), p.weaponDir = {1.0f, -0.25f};
+      break;
+    case Carry::None: break;
+  }
+}
+
 // flip: the air-jump somersault (never for attacks: the striking limb must stay on its hitbox).
 Pose airPose(const Fighter& f, const Match& m, float time, bool flip = true) {
   const float H = f.height();
-  Pose p = restPose(*f.def, time);
+  Pose p = restPose(*f.def, time, heldVisual(f));
   float k = smoothstep((f.vel.y + 3.0f) / 6.0f);  // rising -> falling, no pop at the apex
   p.footF = lerpv({0.10f * H, 0.34f * H}, {0.08f * H, 0.46f * H}, k);
   p.footB = lerpv({-0.08f * H, 0.42f * H}, {-0.10f * H + std::sin(time * 8.0f) * 0.02f * H, 0.50f * H}, k);
   p.handF = lerpv({0.22f * H, -0.10f * H}, {0.24f * H, -0.17f * H}, k);
   p.handB = lerpv({-0.16f * H, -0.08f * H}, {-0.19f * H, -0.15f * H}, k);
+  carryWeapon(p, carriedWeapon(*f.def, heldVisual(f)), H, Gait::Air);
   float st = f.vel.y < 0.0f ? std::min(0.12f, -f.vel.y * 0.009f) : std::min(0.05f, f.vel.y * 0.004f);
   p.squash = 1.0f + st;  // stretched along the vertical speed
   p.sx = 1.0f - st * 0.6f;
@@ -337,6 +397,9 @@ void applyMove(Pose& p, const Fighter& f, float time) {
   const float H = f.height();
   const int t = f.moveFrame;
   const Vec2 shoulder{0.03f * H, -0.17f * H};
+  // Blade swings start from and settle back into the guard the fighter stands in.
+  const float guard = p.weapon ? std::atan2(p.weaponDir.y, p.weaponDir.x) : -0.5f;
+  auto toward = [](float a, float b, float k) { return a + wrapPi(b - a) * k; };
 
   if (m.isGrab || m.throwFrame >= 0) {
     float k = m.isGrab ? smoothstep(t / 6.0f) : smoothstep(float(t) / std::max(1, m.throwFrame));
@@ -446,15 +509,15 @@ void applyMove(Pose& p, const Fighter& f, float time) {
       case Limb::Weapon: {
         p.weapon = true;
         if (s.hb->swing) {  // the blade sits exactly where its hitbox is (core/swing.hpp)
-          const float rest = 0.6f, A0 = -deg2rad(s.hb->a0), A1 = -deg2rad(s.hb->a1);
+          const float A0 = -deg2rad(s.hb->a0), A1 = -deg2rad(s.hb->a1);
           const float way = A1 >= A0 ? 1.0f : -1.0f;  // sweep direction (screen angles)
-          float a = rest;
+          float a = guard;
           switch (s.phase) {
-            case Phase::Wind: a = lerpf(rest, A0 - 0.45f * way, f.charging ? 1.0f : easeOut(s.k)); break;
+            case Phase::Wind: a = toward(guard, A0 - 0.45f * way, f.charging ? 1.0f : easeOut(s.k)); break;
             case Phase::Strike: a = lerpf(A0 - 0.45f * way, A0, s.k); break;
             case Phase::Active: a = -deg2rad(swingAngle(*s.hb, float(t))); break;
             case Phase::Follow:
-              a = lerpf(A1 + 0.3f * way * std::sin(kPi * std::min(1.0f, s.k * 1.8f)), rest, smoothstep(s.k));
+              a = toward(A1 + 0.3f * way * std::sin(kPi * std::min(1.0f, s.k * 1.8f)), guard, smoothstep(s.k));
               break;
             case Phase::None: break;
           }
@@ -466,15 +529,14 @@ void applyMove(Pose& p, const Fighter& f, float time) {
         float tgt = std::atan2(rel.y, rel.x);
         // The swing goes from the wind-up angle to a little past the target: the blade
         // sweeps through the hitbox during the active frames.
-        float rest = 0.6f;
         float wind = tgt - 2.0f, end = tgt + 0.3f;
-        float a = rest;
+        float a = guard;
         switch (s.phase) {
-          case Phase::Wind: a = lerpf(rest, wind, f.charging ? 1.0f : easeOut(s.k)); break;
+          case Phase::Wind: a = toward(guard, wind, f.charging ? 1.0f : easeOut(s.k)); break;
           case Phase::Strike: a = lerpf(wind, end, 0.6f * s.k); break;
           case Phase::Active: a = lerpf(wind, end, 0.6f + 0.4f * smoothstep(s.k)); break;
           case Phase::Follow:
-            a = lerpf(end, rest, smoothstep(s.k)) + 0.35f * std::sin(kPi * std::min(1.0f, s.k * 1.6f)) * (1.0f - s.k);
+            a = toward(end, guard, smoothstep(s.k)) + 0.35f * std::sin(kPi * std::min(1.0f, s.k * 1.6f)) * (1.0f - s.k);
             break;
           case Phase::None: break;
         }
@@ -577,7 +639,7 @@ Pose finalSmashPose(const Fighter& f, Pose p) {
 }
 }  // namespace
 
-Pose restPose(const CharacterDef& d, float time) {
+Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
   const float H = d.height;
   Pose p;
   const float br = std::sin(time * 2.6f);  // breathing
@@ -598,22 +660,29 @@ Pose restPose(const CharacterDef& d, float time) {
     p.lean += lean;
     p.crouch += crouch;
   };
-  auto blade = [&](Vec2 dir) {
-    p.weapon = true;
-    p.weaponDir = rotate(dir.norm(), br * 0.03f);
-  };
   switch (d.hero) {  // each hero's guard
-    case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); blade({1.0f, 0.62f}); break;
+    case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); break;
     case Hero::Yuno: stance({0.11f, 0.07f}, {-0.05f, 0.07f}, 0.08f, -0.07f, -0.02f, 0.0f); break;
-    case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); blade({1.0f, 0.42f}); break;
-    case Hero::Byakuya: stance({0.12f, 0.07f}, {-0.03f, 0.08f}, 0.08f, -0.07f, -0.06f, 0.0f); blade({0.4f, 1.0f}); break;
-    case Hero::Link: stance({0.17f, 0.05f}, {0.17f, -0.07f}, 0.12f, -0.12f, 0.04f, 0.1f); blade({1.0f, 0.28f}); break;
+    case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); break;
+    case Hero::Byakuya: stance({0.12f, 0.07f}, {-0.03f, 0.08f}, 0.08f, -0.07f, -0.06f, 0.0f); break;
+    case Hero::Link: stance({0.17f, 0.05f}, {0.17f, -0.07f}, 0.12f, -0.12f, 0.04f, 0.1f); break;
     case Hero::Ganondorf: stance({0.17f, 0.05f}, {-0.12f, 0.05f}, 0.12f, -0.13f, 0.0f, 0.06f); break;
     case Hero::Kratos: stance({0.16f, 0.02f}, {0.03f, 0.05f}, 0.13f, -0.12f, 0.06f, 0.1f); break;
     case Hero::Gojo: stance({0.04f, 0.09f}, {-0.05f, 0.09f}, 0.07f, -0.07f, -0.1f, 0.0f); break;
     case Hero::Sukuna: stance({0.1f, 0.08f}, {-0.06f, 0.08f}, 0.1f, -0.09f, 0.04f, 0.04f); break;
     default: break;
   }
+  const WeaponVisual v = carriedWeapon(d, held);
+  carryWeapon(p, v, H, Gait::Stand, bob);
+  if (v == d.baseWeapon) {
+    switch (d.hero) {  // personal touches
+      case Hero::Ichigo: p.handF = {0.21f * H, -0.05f * H + bob}; p.weaponDir = {1.0f, -0.62f}; break;  // pointed at the foe
+      case Hero::Byakuya: p.weaponDir = {0.5f, -1.0f}; break;  // upright, composed
+      case Hero::Link: p.weaponDir = {1.0f, -0.5f}; break;
+      default: break;
+    }
+  }
+  if (p.weapon) p.weaponDir = rotate(p.weaponDir.norm(), br * 0.03f);
   float bl = std::fmod(time + d.height, 3.7f);
   p.blink = bl < 0.12f || (std::fmod(time * 0.37f + d.height, 3.0f) < 0.4f && bl > 0.3f && bl < 0.4f);  // sometimes twice
   return p;
@@ -623,7 +692,8 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
   const CharacterDef& d = *f.def;
   const float H = d.height;
   const float tt = time + f.id * 1.7f;
-  Pose p = restPose(d, tt);
+  const WeaponVisual carried = carriedWeapon(d, heldVisual(f));
+  Pose p = restPose(d, tt, heldVisual(f));
   const float sf = float(f.stateFrame);
   switch (f.state) {
     case FState::Walk: {
@@ -634,6 +704,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.handB.x += 0.07f * H * std::sin(ph);
       p.shift.y = -std::fabs(std::cos(ph)) * 0.015f * H;  // up when a foot passes under the body
       p.lean = 0.1f;
+      carryWeapon(p, carried, H, Gait::Walk);
       break;
     }
     case FState::Run: {
@@ -656,6 +727,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
         p.squash -= 0.06f * k;
         p.sx += 0.06f * k;
       }
+      carryWeapon(p, carried, H, Gait::Run);
       break;
     }
     case FState::Crouch: {
@@ -868,7 +940,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
     p.heldFx = w->fx;
     if (isHandWeapon(w->visual) && !p.weapon) {
       p.weapon = true;
-      p.weaponDir = Vec2{1.0f, 0.5f}.norm();
+      p.weaponDir = Vec2{1.0f, -0.45f}.norm();
     }
   }
   p.bladeLen = f.bladeLength();
