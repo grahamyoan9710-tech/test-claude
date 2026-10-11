@@ -13,13 +13,15 @@ La direction artistique s'inspire de *Zelda: Tears of the Kingdom* : îles céle
 runes turquoise, profondeurs éclairées par des racines lumineuses, personnages en ombrage « peint ».
 Tout est dessiné par le code (aucune image ni logo repris du jeu).
 
-| Menu principal | Sélection des combattants (icônes manette) |
+| Menu principal | Sélection des 9 combattants (icônes manette) |
 |---|---|
 | ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
-| **Choix de l'arène** | **Combat** |
+| **Choix de l'arène** | **Combat : la hache de Kratos tombe du ciel** |
 | ![Arène](docs/arene.jpg) | ![Combat](docs/combat.jpg) |
-| **Ulti : attaque finale SUPER CLASH** | **Entraînement** |
-| ![Attaque finale](docs/attaque_finale.jpg) | ![Entraînement](docs/entrainement.jpg) |
+| **Cut-in d'ultime : Sphère de l'Infini (Gojo)** | **Ultime : Sanctuaire démoniaque (Sukuna)** |
+| ![Cut-in](docs/cutin.jpg) | ![Ultime](docs/attaque_finale.jpg) |
+| **« Impact frame » façon manga** | **Entraînement** |
+| ![Impact frame](docs/impact.jpg) | ![Entraînement](docs/entrainement.jpg) |
 | **Paramètres (schéma de la manette)** | **Résultats** |
 | ![Paramètres](docs/parametres.jpg) | ![Résultats](docs/resultats.jpg) |
 
