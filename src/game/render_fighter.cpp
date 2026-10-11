@@ -125,15 +125,113 @@ void carryWeapon(Pose& p, WeaponVisual v, float H, Gait g, float bob = 0.0f) {
   }
 }
 
+// ---- Gaits ----------------------------------------------------------------------
+// Walking and running cycles are driven by the distance covered, not by time: a planted foot slides back
+// under the body exactly as fast as the ground goes by (no skating), and the legs slow down with the body.
+float wrap01(float v) { return v - std::floor(v); }
+Vec2 catmullRom(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, float t) {
+  const float t2 = t * t, t3 = t2 * t;
+  return (p1 * 2.0f + (p2 - p0) * t + (p0 * 2.0f - p1 * 5.0f + p2 * 4.0f - p3) * t2 + (p1 * 3.0f - p0 - p2 * 3.0f + p3) * t3) * 0.5f;
+}
+// A foot along the gait cycle (u in [0, 1)): planted for u < duty (from +S/2 back to -S/2), then the swing
+// through the five keys (x, lift) spaced evenly in time. Returns the foot target (feet on the ground: y = H/2).
+Vec2 gaitFoot(float u, float duty, float S, const Vec2 (&keys)[5], float H) {
+  if (u < duty) return {S * (0.5f - u / duty), 0.5f * H};
+  const float v = (u - duty) / (1.0f - duty) * 4.0f;
+  const int i = std::min(3, int(v));
+  const Vec2 k0 = keys[std::max(0, i - 1)], k1 = keys[i], k2 = keys[i + 1], k3 = keys[std::min(4, i + 2)];
+  const Vec2 q = catmullRom(k0, k1, k2, k3, v - i);
+  return {q.x, 0.5f * H - std::max(0.0f, q.y)};
+}
+enum class RunStyle { Normal, Ninja, Heavy };
+RunStyle runStyle(Hero h) {
+  switch (h) {
+    case Hero::Naruto: case Hero::Sasuke: case Hero::Kakashi: return RunStyle::Ninja;  // arms swept back
+    case Hero::Ganondorf: case Hero::Kratos: case Hero::Kenpachi: case Hero::Hunter: return RunStyle::Heavy;
+    default: return RunStyle::Normal;
+  }
+}
+
+void walkPose(Pose& p, const Fighter& f, float H) {
+  const float D = 0.76f * H, duty = 0.6f, S = duty * D;  // one cycle (two steps), the stance stroke
+  const float u = wrap01(f.pos.x * float(f.facing) / D);
+  const Vec2 keys[5] = {{-S * 0.5f, 0.0f}, {-S * 0.22f, 0.07f * H}, {S * 0.14f, 0.08f * H}, {S * 0.5f + 0.02f * H, 0.035f * H},
+                        {S * 0.5f, 0.0f}};
+  p.footF = gaitFoot(u, duty, S, keys, H);
+  p.footB = gaitFoot(wrap01(u + 0.5f), duty, S, keys, H);
+  const float c = std::cos(2.0f * kPi * u), c2 = std::cos(4.0f * kPi * u);
+  p.shift.y = 0.018f * H * c2;  // lowest with both feet down, highest passing over the planted foot
+  p.lean = 0.09f + 0.02f * c2;
+  p.twist = 0.32f * c;          // shoulders against the hips
+  p.handF.x -= 0.1f * H * c;    // arms swing against the legs, a little higher in front
+  p.handB.x += 0.1f * H * c;
+  p.handF.y -= 0.025f * H * std::max(0.0f, -c);
+  p.handB.y -= 0.025f * H * std::max(0.0f, c);
+}
+
+void runPose(Pose& p, const Fighter& f, float H, float sf) {
+  const RunStyle st = runStyle(f.def->hero);
+  const float D = (st == RunStyle::Heavy ? 1.15f : 1.32f) * H, duty = st == RunStyle::Heavy ? 0.42f : 0.36f, S = duty * D;
+  const float u = wrap01(f.pos.x * float(f.facing) / D);
+  const float kick = st == RunStyle::Heavy ? 0.16f : 0.25f;  // how high the heel comes up behind
+  const Vec2 keys[5] = {{-S * 0.5f, 0.0f}, {-S * 0.5f - 0.05f * H, kick * H}, {0.03f * H, 0.27f * H},
+                        {S * 0.5f + 0.08f * H, 0.12f * H}, {S * 0.5f, 0.0f}};
+  p.footF = gaitFoot(u, duty, S, keys, H);
+  p.footB = gaitFoot(wrap01(u + 0.5f), duty, S, keys, H);
+  // Bounce: squashed over the planted foot, up in the air between the steps.
+  const float half = wrap01(u * 2.0f);  // the same for both steps
+  const float bob = half < duty * 2.0f ? 0.035f * H * std::sin(kPi * half / (duty * 2.0f))
+                                       : -0.045f * H * std::sin(kPi * (half - duty * 2.0f) / (1.0f - duty * 2.0f));
+  const float heavy = st == RunStyle::Heavy ? 1.4f : 1.0f;
+  p.shift.y = bob * heavy;
+  p.squash = 1.0f - bob / H * 1.2f;
+  p.sx = 1.0f + bob / H * 0.8f;
+  const float c = std::cos(2.0f * kPi * u);
+  switch (st) {
+    case RunStyle::Ninja:  // leaning far over, both arms swept straight back
+      p.lean = 0.6f;
+      p.twist = 0.12f * c;
+      p.handF = {-0.27f * H + 0.02f * H * c, 0.03f * H};
+      p.handB = {-0.24f * H - 0.02f * H * c, -0.01f * H};
+      break;
+    case RunStyle::Heavy:  // a charging bull: shoulders rolling, arms swinging wide
+      p.lean = 0.3f;
+      p.twist = 0.45f * c;
+      p.handF = {0.1f * H - 0.19f * H * c, -0.02f * H - 0.07f * H * std::max(0.0f, -c)};
+      p.handB = {0.02f * H + 0.19f * H * c, 0.02f * H - 0.07f * H * std::max(0.0f, c)};
+      break;
+    case RunStyle::Normal:  // arms pumping, elbows bent, against the legs
+      p.lean = 0.36f;
+      p.twist = 0.5f * c;
+      p.handF = {0.08f * H - 0.17f * H * c, -0.07f * H - 0.07f * H * std::max(0.0f, -c)};
+      p.handB = {0.02f * H + 0.17f * H * c, -0.03f * H - 0.07f * H * std::max(0.0f, c)};
+      break;
+  }
+  if (sf < 8) {  // dash start: a lunge, the first step pushed hard
+    const float k = 1.0f - sf / 8.0f;
+    p.lean += 0.25f * k;
+    p.shift.x += 0.05f * H * k;
+    p.squash -= 0.07f * k;
+    p.sx += 0.07f * k;
+  }
+}
+
 // flip: the air-jump somersault (never for attacks: the striking limb must stay on its hitbox).
 Pose airPose(const Fighter& f, const Match& m, float time, bool flip = true) {
   const float H = f.height();
   Pose p = restPose(*f.def, time, heldVisual(f));
   float k = smoothstep((f.vel.y + 3.0f) / 6.0f);  // rising -> falling, no pop at the apex
-  p.footF = lerpv({0.10f * H, 0.34f * H}, {0.08f * H, 0.46f * H}, k);
-  p.footB = lerpv({-0.08f * H, 0.42f * H}, {-0.10f * H + std::sin(time * 8.0f) * 0.02f * H, 0.50f * H}, k);
-  p.handF = lerpv({0.22f * H, -0.10f * H}, {0.24f * H, -0.17f * H}, k);
-  p.handB = lerpv({-0.16f * H, -0.08f * H}, {-0.19f * H, -0.15f * H}, k);
+  const float fast = clampf((f.vel.y - 4.0f) / 6.0f, 0.0f, 1.0f);  // falling fast: arms flung up
+  const float sw = std::sin(time * 9.0f);
+  // Rising: the front knee driven up, arms pulled back; falling: legs reaching down, arms out for balance.
+  p.footF = lerpv({0.12f * H, 0.29f * H}, {0.09f * H + 0.015f * H * sw, 0.47f * H}, k);
+  p.footB = lerpv({-0.06f * H, 0.41f * H}, {-0.11f * H - 0.015f * H * sw, 0.5f * H}, k);
+  p.handF = lerpv({0.16f * H, -0.06f * H}, {0.25f * H, -0.18f * H - 0.06f * H * fast}, k);
+  p.handB = lerpv({-0.2f * H, -0.02f * H}, {-0.21f * H, -0.17f * H - 0.07f * H * fast}, k);
+  p.handF.y += 0.02f * H * sw * fast;
+  p.handB.y -= 0.02f * H * sw * fast;
+  p.lean += clampf(f.vel.x * float(f.facing) * 0.025f, -0.12f, 0.18f) - 0.06f * fast;  // into the drift
+  p.twist = 0.25f * (1.0f - k);
   carryWeapon(p, carriedWeapon(*f.def, heldVisual(f)), H, Gait::Air);
   float st = f.vel.y < 0.0f ? std::min(0.12f, -f.vel.y * 0.009f) : std::min(0.05f, f.vel.y * 0.004f);
   p.squash = 1.0f + st;  // stretched along the vertical speed
@@ -183,11 +281,13 @@ Strike limbPhase(const MoveDef& m, Limb limb, int t, bool charging) {
     return s;
   }
   if (last && (!next || t - last->end < (next->start - last->end) / 2)) {
-    int rec = std::max(6, std::min(16, (next ? next->start : m.duration) - last->end - 2));
+    // Follow-through: pushed a little past the target, then snapped back (quick at first, settling in).
+    int rec = std::max(5, std::min(12, (next ? next->start : m.duration) - last->end - 2));
     s.phase = Phase::Follow;
     s.hb = last;
     s.k = clampf(float(t - last->end) / rec, 0.0f, 1.0f);
-    s.e = (1.0f - smoothstep(s.k)) + 0.2f * std::sin(kPi * std::min(1.0f, s.k * 2.0f)) * (1.0f - s.k);
+    const float back = clampf((s.k - 0.15f) / 0.85f, 0.0f, 1.0f);
+    s.e = (1.0f - easeOut(back) * (0.6f + 0.4f * back)) + 0.16f * std::sin(kPi * std::min(1.0f, s.k * 3.0f)) * (1.0f - s.k);
     return s;
   }
   if (!next) return s;
@@ -558,11 +658,40 @@ void applyMove(Pose& p, const Fighter& f, float time) {
     case Phase::Follow: drive = 1.0f - smoothstep(pr.k); break;
     default: break;
   }
-  p.lean -= 0.22f * pr.antic * dirX;
-  p.crouch += 0.18f * pr.antic;
+  const bool smash = f.move == FSmash || f.move == USmash || f.move == DSmash;
+  const float coil = pr.antic * (smash ? 1.7f : 1.0f);  // smashes wind up much further
+  p.lean -= 0.22f * coil * dirX;
+  p.crouch += 0.18f * coil;
   if (!hb->swing) {
     p.squash *= 1.0f - 0.06f * pr.antic;
     p.sx *= 1.0f + 0.05f * pr.antic;
+  }
+  // The whole body throws the blow: the shoulders turn into it, the free arm pulls back the other way,
+  // the front foot steps in on a blow straight ahead, the arms balance a kick.
+  switch (hb->limb) {
+    case Limb::ArmFront:  // a jab: the front shoulder reaches, the other fist goes back to the hip
+      p.twist += 0.5f * coil - 0.8f * drive;
+      p.handB = lerpv(p.handB, {-0.11f * H, 0.03f * H}, 0.85f * drive);
+      break;
+    case Limb::ArmBack:  // a cross: hips and back shoulder turn through, the lead hand guards the chin
+      p.twist += -0.45f * coil + 1.0f * drive;
+      p.handF = lerpv(p.handF, {0.1f * H, -0.13f * H}, 0.85f * drive);
+      break;
+    case Limb::LegFront: case Limb::LegBack:  // a kick: arms thrown out for balance
+      p.handF = lerpv(p.handF, {0.17f * H, -0.2f * H}, 0.75f * drive);
+      p.handB = lerpv(p.handB, {-0.21f * H, -0.13f * H}, 0.75f * drive);
+      p.twist += (hb->limb == Limb::LegBack ? 0.7f : -0.25f) * drive + 0.3f * coil;
+      break;
+    case Limb::Weapon:  // a swing turns the shoulders with it; the free hand balances behind
+      p.twist += 0.45f * coil - 0.65f * drive;
+      if (!p.twoHanded) p.handB = lerpv(p.handB, {-0.17f * H, -0.03f * H}, 0.7f * drive);
+      break;
+    default: break;
+  }
+  const bool ahead = target.x > 0.15f * H && std::fabs(target.y) < 0.38f * H;
+  if (f.grounded && ahead && hb->limb != Limb::LegFront && hb->limb != Limb::LegBack) {  // step into it
+    p.footF.x += 0.1f * H * drive - 0.04f * H * coil;
+    p.footB.x -= 0.035f * H * drive - 0.02f * H * coil;
   }
   if (hb->swing) {  // no squash & stretch: it would move the blade off its hitbox
     p.lean += 0.12f * drive;
@@ -699,37 +828,13 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
   const float sf = float(f.stateFrame);
   switch (f.state) {
     case FState::Walk: {
-      float ph = tt * 10.0f;
-      p.footF = {0.12f * H * std::sin(ph), 0.5f * H - std::max(0.0f, -std::cos(ph)) * 0.06f * H};
-      p.footB = {-0.12f * H * std::sin(ph), 0.5f * H - std::max(0.0f, std::cos(ph)) * 0.06f * H};
-      p.handF.x -= 0.07f * H * std::sin(ph);
-      p.handB.x += 0.07f * H * std::sin(ph);
-      p.shift.y = -std::fabs(std::cos(ph)) * 0.015f * H;  // up when a foot passes under the body
-      p.lean = 0.1f;
+      walkPose(p, f, H);
       carryWeapon(p, carried, H, Gait::Walk);
       break;
     }
     case FState::Run: {
-      float ph = sf * 0.42f;
-      float s1 = std::sin(ph), c1 = std::cos(ph);
-      p.lean = 0.38f;
-      p.footF = {0.21f * H * s1, 0.5f * H - std::max(0.0f, -c1) * 0.16f * H};
-      p.footB = {-0.21f * H * s1, 0.5f * H - std::max(0.0f, c1) * 0.16f * H};
-      // arms pump against the legs, elbows bent
-      p.handF = {0.10f * H - 0.15f * H * s1, -0.06f * H - std::max(0.0f, -s1) * 0.06f * H};
-      p.handB = {0.04f * H + 0.15f * H * s1, -0.02f * H - std::max(0.0f, s1) * 0.06f * H};
-      float up = std::fabs(c1);  // a leg passes under the body: highest point
-      p.shift.y = -up * 0.04f * H;
-      p.squash = 0.97f + 0.05f * up;
-      p.sx = 1.02f - 0.03f * up;
-      if (sf < 8) {  // dash start: lunge
-        float k = 1.0f - sf / 8.0f;
-        p.lean += 0.2f * k;
-        p.shift.x += 0.04f * H * k;
-        p.squash -= 0.06f * k;
-        p.sx += 0.06f * k;
-      }
-      carryWeapon(p, carried, H, Gait::Run);
+      runPose(p, f, H, sf);
+      if (runStyle(d.hero) != RunStyle::Ninja || isHandWeapon(heldVisual(f))) carryWeapon(p, carried, H, Gait::Run);
       break;
     }
     case FState::Crouch: {
@@ -954,13 +1059,13 @@ namespace {
 // ---- Animation memory ---------------------------------------------------------
 // Per fighter: the pose shown last frame. On a state change the new pose is reached through
 // critically damped offsets (inertial blending); strikes snap exactly on their hitboxes.
-constexpr int kChan = 16;
+constexpr int kChan = 17;
 constexpr int kTrail = 7;
 
 void packPose(const Pose& p, float* v) {
   const float c[kChan] = {p.rot, p.shift.x, p.shift.y, p.lean, p.crouch, p.squash, p.sx, p.handF.x, p.handF.y,
                           p.handB.x, p.handB.y, p.footF.x, p.footF.y, p.footB.x, p.footB.y,
-                          std::atan2(p.weaponDir.y, p.weaponDir.x)};
+                          std::atan2(p.weaponDir.y, p.weaponDir.x), p.twist};
   std::copy(c, c + kChan, v);
 }
 void unpackPose(Pose& p, const float* v) {
@@ -975,12 +1080,13 @@ void unpackPose(Pose& p, const float* v) {
   p.footF = {v[11], v[12]};
   p.footB = {v[13], v[14]};
   p.weaponDir = {std::cos(v[15]), std::sin(v[15])};
+  p.twist = v[16];
 }
 bool isAngle(int i) { return i == 0 || i == 15; }
 // Per-frame jump above which a channel counts as a discontinuity to blend over.
 float jumpLimit(int i, float H) {
   if (isAngle(i)) return 0.9f;
-  if (i == 3 || i == 4) return 0.25f;
+  if (i == 3 || i == 4 || i == 16) return 0.25f;
   if (i == 5 || i == 6) return 0.1f;
   return 0.1f * H;
 }

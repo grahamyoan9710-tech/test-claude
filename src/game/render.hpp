@@ -12,6 +12,7 @@ struct Pose {
   float rot = 0.0f;       // whole body rotation (radians, + = forward flip)
   Vec2 shift;             // body center offset
   float lean = 0.0f;      // torso lean (+ = forward)
+  float twist = 0.0f;     // shoulders turned: > 0 the back shoulder comes forward (a cross), < 0 the front one
   float crouch = 0.0f;    // 0..1, lowers the hips
   float squash = 1.0f;    // vertical scale
   float sx = 1.0f;        // horizontal scale (squash & stretch)

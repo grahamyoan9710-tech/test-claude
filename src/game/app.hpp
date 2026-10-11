@@ -15,7 +15,7 @@ struct Options {
   bool training = false;         // with --screen css: training character select
   int stage = -1;
   int tab = 0;                   // with --screen settings: tab to open
-  std::string screen;            // title | menu | css | stage | results | settings | poses
+  std::string screen;            // title | menu | css | stage | results | settings | poses | anim
   std::vector<std::pair<int, std::string>> shots;  // frame -> screenshot path
   int quitAfter = -1;
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
@@ -75,7 +75,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { Title, MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses };
+enum class Screen { Title, MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -122,7 +122,8 @@ class App {
   // screens (screen_settings.cpp)
   void updateSettings(const MenuNav& nav);
   void drawSettings();
-  void drawPoses();  // development sheet (--screen poses)
+  void drawPoses();      // development sheet (--screen poses)
+  void drawAnimSheet();  // development filmstrips (--screen anim)
   int settingsRowCount() const;
   void changeSetting(int row, int delta);
 

@@ -1,5 +1,6 @@
-// Development sheet (--screen poses --tab PAGE): every fighter at rest, with each of its weapons,
-// walking, running and jumping, to check how the characters stand and hold their weapons.
+// Development sheets. --screen poses --tab PAGE: every fighter at rest, with each of its weapons, walking,
+// running and jumping, to check how the characters stand and hold their weapons. --screen anim --tab N:
+// filmstrips of one fighter (N / 4) through its gaits and moves (page N % 4), to judge the animation.
 #include <algorithm>
 #include <cmath>
 
@@ -56,4 +57,96 @@ void App::drawPoses() {
     }
   }
   drawText(TextFormat("page %d/%d", page + 1, pages), 12, kScreenH - 26, 16, ui::kMuted);
+}
+
+namespace {
+// One filmstrip: `label`, then kCols poses sampled along the action.
+struct Strip {
+  const char* label;
+  int move;      // MoveId, or -1 for a gait
+  int gait = 0;  // 0 walk, 1 run, 2 jump arc
+};
+}  // namespace
+
+void App::drawAnimSheet() {
+  constexpr int kCols = 10, kRows = 5;
+  const auto& r = roster();
+  const int ci = std::clamp(setTab_ / 4, 0, int(r.size()) - 1), page = setTab_ % 4;
+  const CharacterDef& d = r[ci];
+  static const Strip pages[4][kRows] = {
+      {{"Marche", -1, 0}, {"Course", -1, 1}, {"Saut", -1, 2}, {"Attaque course", DashAttack}, {"Tilt avant", FTilt}},
+      {{"Jab 1", Jab}, {"Jab 2", Jab2}, {"Jab 3", Jab3}, {"Tilt haut", UTilt}, {"Tilt bas", DTilt}},
+      {{"Smash avant", FSmash}, {"Smash haut", USmash}, {"Smash bas", DSmash}, {"Aérien avant", FAir}, {"Aérien arrière", BAir}},
+      {{"Spécial", NSpecial}, {"Spécial côté", SSpecial}, {"Spécial haut", USpecial}, {"Spécial bas", DSpecial},
+       {"Ultime", FinalSmash}},
+  };
+  ClearBackground({58, 72, 84, 255});
+  drawText(TextFormat("%s  —  page %d/4", d.name.c_str(), page + 1), 12, 6, 22, ui::kCream);
+  const float x0 = 150.0f, colW = 112.0f, y0 = 34.0f, rowH = 136.0f;
+  for (int row = 0; row < kRows; ++row) {
+    const Strip& st = pages[page][row];
+    const float base = y0 + (row + 1) * rowH - 14.0f;
+    if (row % 2 == 0) DrawRectangle(0, int(base - rowH + 14), kScreenW, int(rowH), {64, 79, 92, 255});
+    DrawLine(0, int(base), kScreenW, int(base), {40, 50, 60, 255});
+    MatchConfig cfg;
+    cfg.items = false;
+    cfg.weapons = false;
+    cfg.slots[0] = {true, ci, true, 5};
+    cfg.slots[1] = {true, ci == 0 ? 1 : 0, true, 5};
+    const MoveDef* mvd = st.move >= 0 ? &d.moves[st.move] : nullptr;
+    const bool exists = !mvd || mvd->duration > 0;
+    drawText(st.label, 10, base - 74, 18, ui::kCream);
+    if (mvd && exists) drawText(TextFormat("%d images", mvd->duration), 10, base - 50, 15, ui::kMuted);
+    if (!exists) {
+      drawText("(aucun)", 10, base - 50, 15, ui::kMuted);
+      continue;
+    }
+    for (int c = 0; c < kCols; ++c) {
+      Match m(cfg);
+      Fighter& f = m.fighters[0];
+      f.facing = 1;
+      f.grounded = true;
+      float when = time_;
+      float lift = 0.0f;
+      bool active = false;
+      if (!mvd) {
+        if (st.gait == 0) {  // one cycle of each gait (driven by the distance covered)
+          f.state = FState::Walk;
+          f.pos.x = c / float(kCols) * 0.76f * d.height;
+        } else if (st.gait == 1) {
+          f.state = FState::Run;
+          f.stateFrame = 20;
+          f.pos.x = c / float(kCols) * 1.32f * d.height;
+        } else if (c < 2) {
+          f.state = FState::JumpSquat;
+          f.timer = d.jumpSquat;
+          f.stateFrame = c == 0 ? 0 : std::max(0, d.jumpSquat - 1);
+        } else if (c < 8) {
+          f.state = FState::Air;
+          f.grounded = false;
+          f.vel = {0.0f, -12.0f + (c - 2) * 4.4f};
+          lift = 70.0f * std::sin((c - 1) / 7.0f * kPi);
+        } else {
+          f.state = FState::Landing;
+          f.timer = 8;
+          f.stateFrame = (c - 8) * 4;
+        }
+      } else {
+        const bool air = st.move >= NAir && st.move <= DAir;
+        f.state = FState::Attack;
+        f.move = st.move;
+        f.moveFrame = int(std::round(c / float(kCols - 1) * float(mvd->duration - 1)));
+        f.stateFrame = f.moveFrame;
+        f.grounded = !air;
+        if (air) lift = 30.0f;
+        for (const auto& h : mvd->hitboxes) active = active || (f.moveFrame >= h.start && f.moveFrame < h.end);
+      }
+      const Pose p = computePose(f, m, when);
+      const float scale = std::min(0.92f, 92.0f / d.height);
+      const float cx = x0 + (c + 0.5f) * colW;
+      if (active) DrawRectangle(int(cx - colW * 0.5f + 2), int(base - rowH + 18), int(colW - 4), 4, {230, 80, 70, 255});
+      drawCharacterSprite(d, 0, p, {cx, base - lift}, 1, scale, 1.0f, WHITE, 0.0f, time_);
+      if (mvd) drawText(TextFormat("%d", f.moveFrame), cx - colW * 0.45f, base - 16, 13, ui::kMuted);
+    }
+  }
 }

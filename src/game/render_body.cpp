@@ -453,10 +453,12 @@ Rig solveRig(const CharacterDef& d, const Pose& pose) {
   r.neck = r.hips + rotate({0.0f, -b.torso * H}, pose.lean);
   r.chest = lerpv(r.hips, r.neck, 0.62f);
   r.head = r.neck + rotate({0.01f * H, -r.hr * 1.02f}, pose.lean * 1.15f);
-  r.shF = r.neck + rotate({b.shX * H, 0.045f * H}, pose.lean);
-  r.shB = r.neck + rotate({-b.shX * H, 0.045f * H}, pose.lean);
-  r.hipF = r.hips + Vec2{b.hipX * H, 0.0f};
-  r.hipB = r.hips + Vec2{-b.hipX * H, 0.0f};
+  // Twist: the shoulders turn (one comes forward, the other goes back), the hips follow a little.
+  const float tw = clampf(pose.twist, -1.2f, 1.2f);
+  r.shF = r.neck + rotate({(b.shX - 0.045f * tw) * H, 0.045f * H}, pose.lean);
+  r.shB = r.neck + rotate({(-b.shX + 0.065f * tw) * H, 0.045f * H}, pose.lean);
+  r.hipF = r.hips + Vec2{(b.hipX - 0.012f * tw) * H, 0.0f};
+  r.hipB = r.hips + Vec2{(-b.hipX + 0.018f * tw) * H, 0.0f};
   r.elbowF = ik(r.shF, pose.handF, b.ua * H, b.fa * H, 1.0f, r.handF);
   r.elbowB = ik(r.shB, pose.handB, b.ua * H, b.fa * H, 1.0f, r.handB);
   r.kneeF = ik(r.hipF, pose.footF, b.thigh * H, b.shin * H, -1.0f, r.footF);

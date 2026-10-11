@@ -163,6 +163,9 @@ void App::run() {
   } else if (opt_.screen == "poses") {
     setTab_ = std::max(0, opt_.tab);
     enterScreen(Screen::Poses);
+  } else if (opt_.screen == "anim") {
+    setTab_ = std::max(0, opt_.tab);
+    enterScreen(Screen::Anim);
   } else if (opt_.screen == "training") {
     training_ = true;
     startMatch();
@@ -221,7 +224,7 @@ void App::run() {
         case Screen::StageSelect: updateStage(nav); break;
         case Screen::Results: updateResults(nav); break;
         case Screen::Settings: updateSettings(nav); break;
-        case Screen::Poses:
+        case Screen::Poses: case Screen::Anim:
           if (nav.back) quit_ = true;
           break;
         case Screen::Match: {
@@ -248,6 +251,7 @@ void App::run() {
       case Screen::Results: drawResults(); break;
       case Screen::Settings: drawSettings(); break;
       case Screen::Poses: drawPoses(); break;
+      case Screen::Anim: drawAnimSheet(); break;
       case Screen::Match: if (match_) match_->draw(); break;
     }
     if (toastTimer_ > 0) {
