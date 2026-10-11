@@ -103,10 +103,10 @@ void loadSettings() {
       else if (k == "stocks") s.stocks = clampi(value, 1, 5);
       else if (k == "items") s.items = value != 0;
       else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, 9);
-      else if (k.rfind("pad", 0) == 0) {  // pad1.jump=..., pad2.jump=... (-1: none)
+      else if (k.rfind("pad.", 0) == 0) {  // pad.jump=... and pad.jump.2=... (every pad; -1: none)
         for (int sl = 0; sl < 2; ++sl)
           for (int a = kActJump; a < kActionCount; ++a)
-            if (k == std::string("pad") + char('1' + sl) + "." + kActionIds[a] && (value == -1 || padBindable(value)))
+            if (k == std::string("pad.") + kActionIds[a] + (sl ? ".2" : "") && (value == -1 || padBindable(value)))
               s.pad[a][sl] = value;
       } else {
         for (int kb = 0; kb < 2; ++kb)
@@ -165,7 +165,7 @@ bool saveSettings() {
       put((std::string("kb") + char('1' + kb) + "." + kActionIds[a]).c_str(), s.keys[kb][a]);
   for (int sl = 0; sl < 2; ++sl)
     for (int a = kActJump; a < kActionCount; ++a)
-      put((std::string("pad") + char('1' + sl) + "." + kActionIds[a]).c_str(), s.pad[a][sl]);
+      put((std::string("pad.") + kActionIds[a] + (sl ? ".2" : "")).c_str(), s.pad[a][sl]);
   std::string path = settingsPath();
   return SaveFileText(path.c_str(), const_cast<char*>(out.c_str()));
 }

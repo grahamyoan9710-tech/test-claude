@@ -74,6 +74,15 @@ int shownPad(PadFamily f) {
 int boundButton(int pad, int action, int slot) {
   return pad >= 0 ? padBinding(pad, action, slot) : settings().pad[action][slot];
 }
+// A pad without triggers shows RB / Back while the bindings are the defaults: an edit starts from that.
+void materializePadFallback() {
+  Settings& s = settings();
+  const int pad = shownPad(promptFamily());
+  if (pad >= 0 && s.padIsDefault() && !padHasTriggers(pad)) {
+    s.pad[kActShield] = {kPadRB, -1};
+    s.pad[kActUltimate] = {kPadBack, -1};
+  }
+}
 
 // Draws one or two glyphs (vertically centred on cy), returns the width.
 float glyphs(ui::Btn a, ui::Btn b, float x, float cy, float h, PadFamily f) {
@@ -259,6 +268,7 @@ int App::settingsRowCount() const {
 
 // Gives `button` to an action's slot; an action that used it gets this slot's old button.
 bool App::bindPadButton(int action, int slot, int button) {
+  materializePadFallback();
   auto& P = settings().pad;
   const int old = P[action][slot];
   if (old == button) return true;
@@ -315,6 +325,18 @@ void App::changeSetting(int row, int delta) {
 
 void App::updateSettings(const MenuNav& nav) {
   Settings& s = settings();
+  // Keyboard table <-> gamepad table: the press that switches only brings the focus to the top,
+  // it never activates the row under it (e.g. RÉINITIALISER) and ends any capture.
+  bool switched = false;
+  if (padPrompts() != lastPadPrompts_) {
+    lastPadPrompts_ = padPrompts();
+    if (setTab_ == 3) {
+      setRow_ = std::min(setRow_, 0);
+      if (waitingKey_ || waitingPad_) audio_.play(Sfx::MenuBack);
+      waitingKey_ = waitingPad_ = false;
+      switched = true;
+    }
+  }
   const int rows = settingsRowCount();
   setRow_ = std::min(setRow_, rows - 1);  // the Commandes tab has fewer rows in gamepad mode
   const bool padTable = setTab_ == 3 && padPrompts();
@@ -337,7 +359,7 @@ void App::updateSettings(const MenuNav& nav) {
   }
 
   if (waitingKey_) {  // rebinding a key
-    if (padAnyPressed(kPadB) || setRow_ < 0 || setRow_ >= kActionCount) {
+    if (padTable || padAnyPressed(kPadB) || setRow_ < 0 || setRow_ >= kActionCount) {
       waitingKey_ = false;
       audio_.play(Sfx::MenuBack);
       return;
@@ -378,7 +400,8 @@ void App::updateSettings(const MenuNav& nav) {
       changeSetting(setRow_, d);
     }
   }
-  if (padTable && nav.prev && setRow_ >= 0 && setRow_ < kPadActionRows) {  // clear a slot
+  if (!switched && padTable && nav.prev && setRow_ >= 0 && setRow_ < kPadActionRows) {  // clear a slot
+    materializePadFallback();
     const int a = padAction(setRow_);
     auto& slots = s.pad[a];
     if (slots[setCol_] >= 0 && (a == kActSmash || slots[1 - setCol_] >= 0)) {
@@ -389,7 +412,8 @@ void App::updateSettings(const MenuNav& nav) {
       toast(TextFormat("« %s » a besoin d'au moins un bouton", actionName(a)));
     }
   }
-  if (nav.confirm && !waitingKey_ && padTable) {
+  if (switched) {
+  } else if (nav.confirm && !waitingKey_ && padTable) {
     if (setRow_ < 0) {
       setRow_ = 0;
     } else if (setRow_ < kPadActionRows) {
@@ -656,8 +680,15 @@ void App::drawSettings() {
     drawTextCentered(TextFormat("Nouveau bouton : %s", actionName(padAction(std::clamp(setRow_, 0, kPadActionRows - 1)))),
                      m.x + m.width * 0.5f, m.y + 28, 34, ui::kCream, true, FontKind::Title);
     drawTextCentered(setCol_ == 0 ? "Bouton 1" : "Bouton 2", m.x + m.width * 0.5f, m.y + 76, 20, ui::kGold);
-    drawTextCentered("Appuyez sur un bouton de la manette  —  START pour annuler", m.x + m.width * 0.5f, m.y + 112,
-                     19, ui::kMuted, false);
+    const char* a = "Appuyez sur un bouton de la manette  —  ";
+    const char* b = " pour annuler";
+    const PadFamily f = promptFamily();
+    const float gw = ui::padGlyphWidth(ui::Btn::Start, 24, f);
+    float x = m.x + m.width * 0.5f - (textWidth(a, 19) + 6 + gw + textWidth(b, 19)) * 0.5f;
+    drawText(a, x, m.y + 112, 19, ui::kMuted);
+    x += textWidth(a, 19) + 3;
+    ui::padGlyph(ui::Btn::Start, x, m.y + 110, 24, f);
+    drawText(b, x + gw + 3, m.y + 112, 19, ui::kMuted);
   }
   if (waitingKey_) {
     DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.65f));
@@ -670,7 +701,11 @@ void App::drawSettings() {
                      ui::kMuted, false);
   }
   using ui::Btn;
-  if (setTab_ == 3 && padPrompts() && setRow_ >= 0)
+  if (waitingPad_)
+    ui::footer({{"ÉCHAP", Btn::Start, "Annuler"}}, "Appuyez sur le nouveau bouton.");
+  else if (waitingKey_)
+    ui::footer({{"ÉCHAP", Btn::B, "Annuler"}}, "Appuyez sur la nouvelle touche.");
+  else if (setTab_ == 3 && padPrompts() && setRow_ >= 0)
     ui::footer({{"FLÈCHES", Btn::DPad, "Naviguer"}, {"ENTRÉE", Btn::A, "Changer"}, {"K", Btn::X, "Effacer"},
                 {"ÉCHAP", Btn::B, "Retour"}},
                setRow_ < kPadActionRows ? "Un bouton déjà utilisé est échangé." : "Boutons d'origine.");

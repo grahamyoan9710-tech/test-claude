@@ -49,6 +49,7 @@ void App::goTo(Screen s, bool instant) {
 
 void App::enterScreen(Screen s) {
   if (s == Screen::CharSelect && screen_ != Screen::StageSelect) padLeft_ = {};  // a fresh visit
+  if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
   screen_ = s;
   screenFrames_ = 0;
   if (s != Screen::Match) {

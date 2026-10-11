@@ -584,7 +584,7 @@ void stickGlyph(Vector2 c, float r, const char* letter, bool pressed = false) {
   DrawCircleV(c, r, kPlastic);
   DrawCircleV(c, r * 0.8f, pressed ? shade(kLight, 0.82f) : kLight);
   DrawRing(c, r * 0.6f, r * 0.68f, 0, 360, 36, shade(kLight, 0.78f));
-  centred(letter, {c.x, c.y + r * 0.03f}, std::strlen(letter) > 1 ? r * 0.78f : r * 1.05f, kInk);
+  centred(letter, {c.x, c.y + r * 0.03f}, std::strlen(letter) > 1 ? r * 0.9f : r * 1.05f, kInk);
 }
 
 // lit: arrows drawn dark (1 up, 2 down, 4 left, 8 right); the others are faded.
