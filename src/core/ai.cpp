@@ -17,6 +17,43 @@ bool sideSpecialTravels(const CharacterDef& d) {
   return false;
 }
 
+// What a special move is good for (the held weapon may replace it).
+struct SpecialUse {
+  bool projectile = false, dash = false, counter = false, grab = false, beam = false, melee = false;
+  float reach = 0.0f;
+  float landX = 0.0f;  // dashes: distance at which the finishing hit lands
+};
+SpecialUse specialUse(const Fighter& f, int id) {
+  const MoveDef& m = f.moveDef(id);
+  SpecialUse u;
+  if (!m.exists()) return u;
+  u.projectile = m.projectileFrame >= 0;
+  u.counter = m.counterStart >= 0;
+  u.grab = m.isGrab;
+  u.beam = m.beam.start >= 0;
+  int f0 = -1, fStop = 1000;
+  float vx = 0.0f;
+  for (const auto& e : m.vel) {
+    if (e.mode == VelMode::SetX && e.v.x > 8.0f && f0 < 0) {
+      u.dash = true;
+      f0 = e.frame;
+      vx = e.v.x;
+    } else if (f0 >= 0 && (e.mode == VelMode::Scale || e.mode == VelMode::Set) && e.frame > f0) {
+      fStop = std::min(fStop, e.frame);
+    }
+  }
+  const HitboxDef* fin = m.hitboxes.empty() ? nullptr : &m.hitboxes.back();
+  if (u.dash && fin) u.landX = vx * float(std::max(0, std::min(fin->start, fStop) - f0)) + fin->offset.x;
+  if (m.teleportForward) {
+    u.dash = true;
+    u.landX = m.teleportDist - (fin ? fin->offset.x : 0.0f);
+  }
+  u.melee = !m.hitboxes.empty() && !u.counter && !u.grab;
+  u.reach = moveReach(m);
+  if (u.beam) u.reach = m.beam.from.x + m.beam.length;
+  return u;
+}
+
 // Is fighter t about to hit fighter f?
 bool isThreat(const Fighter& t, const Fighter& f) {
   const MoveDef* m = t.currentMove();
@@ -283,6 +320,11 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
       if (rel.len() < 160.0f && dot(rel, p.vel) > 0.0f) threat = true;
     }
     if (threat && rng_.chance(0.15f * skill_ + 0.03f)) {
+      if (specialUse(f, DSpecial).counter && rng_.chance(0.35f + 0.3f * skill_)) {
+        in.stick = {0, 1};
+        tap(in, &IS::special);
+        return;
+      }
       if (rng_.chance(0.75f)) {
         shieldHold_ = rng_.irange(8, 20);
         in.shield = true;
@@ -356,6 +398,25 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
       chargeHold_ = rng_.irange(0, 6);
     }
     return;
+  }
+
+  // Specials: dashes, beams, ranged grabs, area attacks and the odd projectile
+  if (std::fabs(dy) < 70.0f && rng_.chance(0.16f + 0.1f * skill_)) {
+    const SpecialUse n = specialUse(f, NSpecial), s = specialUse(f, SSpecial), dn = specialUse(f, DSpecial);
+    auto use = [&](Vec2 stick) {
+      in.stick = stick;
+      if (f.facing != toward && stick.x == 0.0f) in.stick.x = 0.3f * toward;
+      tap(in, &IS::special);
+    };
+    if (adx < close && n.melee) return use({0, 0});
+    if (adx < close + 20.0f && dn.melee && !dn.projectile) return use({0, 1});
+    if (s.dash && std::fabs(adx - s.landX) < 45.0f) return use({float(toward), 0});
+    if (dn.grab && adx < dn.reach + 10.0f && adx > close * 0.6f) return use({0, 1});
+    if (dn.beam && adx < dn.reach && f.facing == toward) return use({0, 1});
+    if (adx > mid && adx < 520.0f) {
+      if (s.projectile && rng_.chance(0.5f)) return use({float(toward), 0});
+      if (dn.projectile && rng_.chance(0.5f)) return use({0, 1});
+    }
   }
 
   if (std::fabs(dy) < 60.0f) {

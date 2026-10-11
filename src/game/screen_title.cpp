@@ -99,15 +99,19 @@ void App::drawTitle() {
   // Ancient stone disc and fighters (they run in from the sides)
   ui::stoneDisc({kScreenW * 0.5f, 614}, 600, 34, t);
   const auto& r = roster();
-  for (int i = 0; i < int(r.size()); ++i) {
-    float enter = easeOut((f - 26.0f - i * 5.0f) / 28.0f);
-    float side = i < 3 ? -1.0f : 1.0f;
-    float x = 205.0f + i * 174.0f + side * (1.0f - enter) * 760.0f;
+  const int n = int(r.size());
+  const float gap = std::min(174.0f, 1000.0f / std::max(1, n - 1));
+  for (int i = 0; i < n; ++i) {
+    float enter = easeOut((f - 26.0f - i * 4.0f) / 28.0f);
+    const bool left = i < n / 2;
+    float side = left ? -1.0f : 1.0f;
+    float x = kScreenW * 0.5f + (i - (n - 1) * 0.5f) * gap + side * (1.0f - enter) * 760.0f;
     float hop = std::max(0.0f, std::sin(t * 2.4f + i * 1.3f)) * 9.0f;
-    int facing = i < 3 ? 1 : -1;
-    DrawEllipse(int(x), 610, 46.0f - hop, 9.0f, withAlpha(ui::kInk, 0.3f));
+    int facing = left ? 1 : -1;
+    DrawEllipse(int(x), 610, 40.0f - hop, 8.0f, withAlpha(ui::kInk, 0.3f));
     Pose p = restPose(r[i], t + i);
-    drawCharacter(r[i], 0, p, {x, 608 - hop}, facing, 1.3f, 1.0f, WHITE, 0.0f, t + i);
+    drawCharacter(r[i], 0, p, {x, 608 - hop}, facing, std::min(1.3f, 150.0f / r[i].height * (n > 6 ? 1.0f : 1.15f)),
+                  1.0f, WHITE, 0.0f, t + i);
   }
 
   // Logo: slams in, then breathes
@@ -263,9 +267,9 @@ void App::drawMainMenu() {
 
     if (i == 0) {
       ui::glow({rr.x + rr.width * 0.5f, rr.y + rr.height * 0.45f}, 230, withAlpha({255, 226, 170, 255}, sel ? 0.3f : 0.16f), 10);
-      const int show[4] = {0, 3, 2, 5};
+      const int show[4] = {0, 2, 6, 7};
       for (int k = 0; k < 4; ++k) {
-        const CharacterDef& d = r[show[k]];
+        const CharacterDef& d = r[show[k] % int(r.size())];
         Pose p = restPose(d, t + k);
         float hop = sel ? std::max(0.0f, std::sin(t * 5.0f + k * 1.6f)) * 10.0f : 0.0f;
         float scale = 170.0f / d.height * (d.style == BodyStyle::Brute ? 1.1f : 1.0f);

@@ -24,6 +24,7 @@ struct Settings {
   // Rules
   int stocks = 3;
   bool items = true;
+  bool weapons = true;  // weapons drop during matches
   int cpuLevel = 5;
   // Keyboard bindings for "Clavier 1" and "Clavier 2"
   std::array<std::array<int, kActionCount>, 2> keys{};

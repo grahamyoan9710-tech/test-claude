@@ -14,7 +14,8 @@ float cardX(int col, bool training) {
 }
 Rectangle cardRect(int col, bool training) { return {cardX(col, training), kCardY, kCardW, kCardH}; }
 Rectangle fieldRect(int col, int row, bool training) {
-  if (row < 0) return col == 0 ? Rectangle{690, 40, 250, 44} : Rectangle{956, 40, 280, 44};
+  if (row < 0) return col == 0 ? Rectangle{652, 40, 176, 44} : col == 1 ? Rectangle{840, 40, 226, 44}
+                                                                       : Rectangle{1078, 40, 178, 44};
   float x = cardX(col, training);
   switch (row) {
     case 0: return {x + 24, kCardY + 54, kCardW - 48, 36};
@@ -22,7 +23,20 @@ Rectangle fieldRect(int col, int row, bool training) {
     default: return {x + 20, kCardY + 316, kCardW - 48, 36};
   }
 }
-Rectangle rosterRect(int i) { return {82.0f + i * 188.0f, 112, 176, 132}; }
+Rectangle rosterRect(int i) {
+  const int n = std::max(1, int(roster().size()));
+  const float pitch = std::min(188.0f, 1150.0f / n), w = pitch - 8.0f;
+  return {(kScreenW - pitch * n) * 0.5f + 8.0f + i * pitch, 112, w, 132};
+}
+// Tile tint per universe (the fighters of one series sit side by side).
+Color seriesColor(const std::string& series) {
+  if (series == "Black Clover") return {64, 120, 72, 255};
+  if (series == "Bleach") return {200, 108, 44, 255};
+  if (series.rfind("Zelda", 0) == 0) return {52, 136, 132, 255};
+  if (series == "God of War") return {168, 44, 38, 255};
+  if (series == "Jujutsu Kaisen") return {98, 72, 176, 255};
+  return {120, 120, 130, 255};
+}
 Rectangle readyRect() { return {0, 632, float(kScreenW), 38}; }
 Rectangle bigPreviewRect() { return {60, 116, 768, 432}; }
 Rectangle stageCardRect(int i) { return {866.0f - i * 10.0f, 116.0f + i * 150.0f, 360, 134}; }
@@ -64,7 +78,8 @@ void App::changeField(int col, int row, int delta, int by) {
   audio_.play(Sfx::MenuMove);
   if (row < 0) {
     if (col == 0) settings().stocks = 1 + (settings().stocks - 1 + delta + 5) % 5;
-    else settings().items = !settings().items;
+    else if (col == 1) settings().items = !settings().items;
+    else settings().weapons = !settings().weapons;
     saveSettings();
     return;
   }
@@ -135,7 +150,7 @@ void App::updateCss(const MenuNav& nav) {
     if (nav.left) cssCol_ = (cssCol_ + cols - 1) % cols;
     if (nav.right) cssCol_ = (cssCol_ + 1) % cols;
   } else if (nav.left || nav.right) {
-    rulesCol_ = 1 - rulesCol_;
+    rulesCol_ = (rulesCol_ + (nav.left ? 2 : 1)) % 3;
   }
   if (nav.up || nav.down || nav.left || nav.right) audio_.play(Sfx::MenuMove, 0.6f);
   const int fieldCol = cssRow_ < 0 ? rulesCol_ : cssCol_;
@@ -147,7 +162,7 @@ void App::updateCss(const MenuNav& nav) {
 
   // Mouse: fields, roster tiles, ready banner
   for (int row = minRow; row <= 2; ++row)
-    for (int col = 0; col < (row < 0 ? 2 : cols); ++col) {
+    for (int col = 0; col < (row < 0 ? 3 : cols); ++col) {
       if (!ui::hovered(fieldRect(col, row, training_))) continue;
       if (ui::mouseMoved()) {
         cssRow_ = row;
@@ -193,6 +208,7 @@ void App::drawCss() {
     ui::selector(fieldRect(0, -1, false), TextFormat("VIES : %d", s.stocks), cssRow_ < 0 && rulesCol_ == 0, t);
     ui::selector(fieldRect(1, -1, false), s.items ? "ORBE CLASH : OUI" : "ORBE CLASH : NON",
                  cssRow_ < 0 && rulesCol_ == 1, t);
+    ui::selector(fieldRect(2, -1, false), s.weapons ? "ARMES : OUI" : "ARMES : NON", cssRow_ < 0 && rulesCol_ == 2, t);
   } else {
     Rectangle info{820, 42, 410, 40};
     ui::panel(info, withAlpha(ui::kInk, 0.85f), withAlpha(ui::kGold, 0.7f), 0.5f);
@@ -204,16 +220,18 @@ void App::drawCss() {
   for (int i = 0; i < int(r.size()); ++i) {
     Rectangle rr = rosterRect(i);
     bool hov = ui::hovered(rr);
-    Color pc = C(r[i].palettes[0].primary);
+    Color pc = seriesColor(r[i].series);
     ui::slanted({rr.x + 5, rr.y + 6, rr.width, rr.height}, 14, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
     ui::slanted(rr, 14, withAlpha(mixColor(pc, ui::kInk, hov ? 0.4f : 0.55f), 0.95f), withAlpha(mixColor(pc, ui::kInk, 0.86f), 0.95f));
     ui::rune({rr.x + rr.width * 0.5f + 4, rr.y + 54}, 50, i, t * 0.2f, withAlpha(ui::kCream, 0.07f), 3.0f);
     ui::glow({rr.x + rr.width * 0.5f, rr.y + 60}, 60, withAlpha({255, 236, 196, 255}, 0.2f), 6);
-    drawPortrait(r[i], 0, {rr.x + rr.width * 0.5f, rr.y + 54}, 92, t + i);
+    drawPortrait(r[i], 0, {rr.x + rr.width * 0.5f, rr.y + 54}, std::min(92.0f, rr.width * 0.78f), t + i);
     ui::slanted({rr.x, rr.y + rr.height - 30, rr.width - 4, 30}, 6, withAlpha(ui::kInk, 0.88f), withAlpha(ui::kInk, 0.88f));
     DrawLineEx({rr.x + 6, rr.y + rr.height - 30}, {rr.x + rr.width - 6, rr.y + rr.height - 30}, 1.0f, withAlpha(ui::kGold, 0.4f));
-    drawTextCentered(r[i].name.c_str(), rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 29, 24, ui::kCream, false,
-                     FontKind::Title);
+    float ns = 24.0f;  // long names shrink to fit the tile
+    while (ns > 14.0f && textWidth(r[i].name.c_str(), ns, FontKind::Title) > rr.width - 16.0f) ns -= 1.0f;
+    drawTextCentered(r[i].name.c_str(), rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 15 - ns * 0.58f, ns, ui::kCream,
+                     false, FontKind::Title);
     int tags = 0;
     bool chosen = false;
     for (int s = 0; s < cardCount(training_); ++s) {
@@ -223,7 +241,7 @@ void App::drawCss() {
       bool cpu = training_ ? s == 1 : sl.type == 2;
       Color tc = cpu ? cpuColor() : portColor(s);
       chosen = true;
-      Rectangle tag{rr.x + 16 + tags * 44.0f, rr.y + 6, 40, 22};
+      Rectangle tag{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22};
       DrawRectangleRounded(ui::grow(tag, 1.5f), 0.5f, 6, ui::kInk);
       DrawRectangleRounded(tag, 0.5f, 6, shade(tc, 0.85f));
       drawTextCentered(cpu ? "CPU" : TextFormat("J%d", s + 1), tag.x + tag.width * 0.5f, tag.y + 3, 15, WHITE, false);

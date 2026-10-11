@@ -87,6 +87,19 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
     DrawRing({x + 50, y + 46}, 37, 38.5f, 0, 360, 36, withAlpha(ui::kGold, 0.5f));
     drawPortrait(*f.def, f.palette, {x + 50, y + 44}, 62, time + f.id);
+    if (const WeaponDef* w = f.weaponDef()) {  // held weapon: badge on the portrait, ring = time left
+      const Vector2 b{x + 80, y + 72};
+      const Color c = hitFxColor(w->fx), g = hitFxGlow(w->fx);
+      const float left = clampf(float(f.weaponTimer) / float(std::max(1, w->duration)), 0.0f, 1.0f);
+      const bool blink = left < 0.2f && int(time * 8.0f) % 2 == 0;
+      ui::glow(b, 26, withAlpha(g, 0.35f), 4);
+      DrawCircleV(b, 16, ui::kInk);
+      DrawCircleV(b, 13.5f, mixColor(c, ui::kInk, 0.55f));
+      DrawRing(b, 13.5f, 16.5f, -90, -90 + 360 * left, 32, blink ? WHITE : g);
+      const float len = std::max(12.0f, weaponVisualLength(w->visual)) * 0.26f;
+      const Vec2 dir = Vec2{0.7f, -0.7f}.norm();
+      drawWeaponVisual(w->visual, W(b) - dir * (len * 0.5f), dir, 0.26f, 1.0f, time);
+    }
 
     char label[16];
     std::snprintf(label, sizeof label, f.cpu ? "CPU" : "J%d", f.port + 1);

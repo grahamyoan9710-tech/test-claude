@@ -102,6 +102,7 @@ void loadSettings() {
       else if (k == "player_tags") s.playerTags = value != 0;
       else if (k == "stocks") s.stocks = clampi(value, 1, 5);
       else if (k == "items") s.items = value != 0;
+      else if (k == "weapons") s.weapons = value != 0;
       else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, 9);
       else if (k.rfind("pad.", 0) == 0) {  // pad.jump=... and pad.jump.2=... (every pad; -1: none)
         for (int sl = 0; sl < 2; ++sl)
@@ -159,6 +160,7 @@ bool saveSettings() {
   put("player_tags", s.playerTags);
   put("stocks", s.stocks);
   put("items", s.items);
+  put("weapons", s.weapons);
   put("cpu_level", s.cpuLevel);
   for (int kb = 0; kb < 2; ++kb)
     for (int a = 0; a < kActionCount; ++a)

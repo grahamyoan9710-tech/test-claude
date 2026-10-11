@@ -84,6 +84,7 @@ void App::startMatch() {
   cfg.stage = stage_;
   cfg.stocks = st.stocks;
   cfg.items = training_ ? false : st.items;
+  cfg.weapons = st.weapons;
   cfg.training = training_;
   cfg.seed = uint32_t(frames_) * 2654435761u + 12345u;
   std::array<int, 4> devices{};

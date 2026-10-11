@@ -139,7 +139,7 @@ CharacterDef makeAsta() {
                 pal({236, 232, 220}, {60, 58, 66}, {200, 48, 52}, {238, 198, 162}, {226, 226, 214}, {80, 150, 70})};
   stats(c, 46, 98, 102, 4.3f, 9.2f, 5.3f, 0.66f, 10.5f, 15.5f, 16.0f, 10.5f, 14.5f, 3);
   c.weaponLength = 84;
-  const float S = 1.05f, P = 1.12f;
+  const float S = 1.05f, P = 1.28f;
   buildSwordNormals(c, S, P, F::AntiMagic);
   auto& m = c.moves;
 
@@ -221,7 +221,7 @@ CharacterDef makeYuno() {
   c.groundAccel = 1.4f;
   c.airAccel = 0.55f;
   c.airJumps = 2;
-  const float S = 0.97f, P = 0.92f;
+  const float S = 0.97f, P = 0.93f;
   buildBrawlerNormals(c, S, P, F::Wind);
   auto& m = c.moves;
 
@@ -388,13 +388,13 @@ CharacterDef makeByakuya() {
   stats(c, 44, 106, 92, 4.4f, 9.8f, 5.2f, 0.6f, 10.0f, 15.0f, 15.0f, 10.0f, 14.0f, 3);
   c.groundAccel = 1.4f;
   c.weaponLength = 72;
-  const float S = 1.02f, P = 1.0f;
+  const float S = 1.02f, P = 1.12f;
   buildSwordNormals(c, S, P, F::Petal);
   auto& m = c.moves;
 
   m[NSpecial] = mv("Senbonzakura", 46, {});
   m[NSpecial].projectileFrame = 16;
-  m[NSpecial].projectile = proj({44, -12}, {5.5f, 0}, 0, 72, 32, 1.6f, 8, 6, F::Petal, PV::Petals);
+  m[NSpecial].projectile = proj({44, -12}, {5.5f, 0}, 0, 72, 32, 2.0f, 8, 6, F::Petal, PV::Petals);
   m[NSpecial].projectile.piercing = true;
   m[NSpecial].projectile.rehit = 6;
   m[NSpecial].pose = PoseHint::Raise;
@@ -468,7 +468,7 @@ CharacterDef makeLink() {
                 pal({70, 128, 70}, {120, 88, 58}, {222, 184, 90}, {244, 210, 176}, {214, 164, 92}, {70, 130, 200})};
   stats(c, 44, 98, 98, 4.2f, 8.9f, 5.1f, 0.62f, 10.2f, 15.0f, 15.2f, 10.0f, 14.2f, 4);
   c.weaponLength = 64;
-  const float S = 1.0f, P = 1.02f;
+  const float S = 1.0f, P = 1.12f;
   buildSwordNormals(c, S, P, F::Light);
   auto& m = c.moves;
 
@@ -542,7 +542,7 @@ CharacterDef makeGanondorf() {
   c.groundAccel = 0.95f;
   c.friction = 0.7f;
   c.airAccel = 0.36f;
-  const float S = 1.25f, P = 1.32f;
+  const float S = 1.25f, P = 1.27f;
   buildBrawlerNormals(c, S, P, F::Gloom);
   auto& m = c.moves;
 
@@ -707,7 +707,7 @@ CharacterDef makeGojo() {
                 pal({236, 236, 240}, {44, 48, 64}, {180, 110, 255}, {244, 222, 206}, {244, 244, 252}, {120, 210, 255})};
   stats(c, 44, 114, 90, 4.4f, 9.4f, 5.4f, 0.58f, 9.6f, 14.5f, 15.4f, 10.0f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.04f, P = 1.0f;
+  const float S = 1.04f, P = 1.03f;
   buildBrawlerNormals(c, S, P, F::Cursed);
   auto& m = c.moves;
 
@@ -778,13 +778,13 @@ CharacterDef makeSukuna() {
                 pal({36, 36, 44}, {120, 30, 40}, {220, 60, 60}, {242, 212, 190}, {240, 150, 170}, {220, 40, 40})};
   stats(c, 46, 104, 100, 4.3f, 9.4f, 5.3f, 0.64f, 10.4f, 15.5f, 15.6f, 10.3f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.0f, P = 1.04f;
+  const float S = 1.0f, P = 0.88f;
   buildBrawlerNormals(c, S, P, F::Blood);
   auto& m = c.moves;
 
   m[NSpecial] = mv("Démantèlement", 30, {});
   m[NSpecial].projectileFrame = 8;
-  m[NSpecial].projectile = proj({30, -8}, {16, 0}, 0, 24, 14, 4, 12, 40, F::Blood, PV::Dismantle);
+  m[NSpecial].projectile = proj({30, -8}, {16, 0}, 0, 24, 14, 3.4f, 12, 40, F::Blood, PV::Dismantle);
   m[NSpecial].projectile.count = 2;
   m[NSpecial].projectile.spreadDeg = 10;
   m[NSpecial].projectile.piercing = true;
