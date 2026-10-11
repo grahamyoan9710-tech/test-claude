@@ -86,6 +86,9 @@ if(CLASH_BUILD_GAME)
     src/game/render_body.cpp
     src/game/render_world.cpp
     src/game/render_hud.cpp
+    src/game/render_weapons.cpp
+    src/game/render_items.cpp
+    src/game/render_vfx.cpp
     src/game/fx.cpp
     ${CLASH_EXTRA_SOURCES}
   )

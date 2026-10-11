@@ -325,7 +325,9 @@ void MatchScreen::draw() {
   drawBackground(m_.stage(), camPos_, camZoom_, time_);
   beginWorld(cam);
   drawPlatforms(m_, time_);
+  drawUltimateBackdrop(m_, time_);
   drawOrb(m_, time_);
+  drawItems(m_, time_);
   // Grabbed fighters and victims are drawn last so they stay visible;
   // during a final smash cinematic the scene darkens behind its user.
   const int star = m_.freezeTimer > 0 ? m_.freezeOwner : -1;
@@ -339,6 +341,7 @@ void MatchScreen::draw() {
     DrawRectangle(-5000, -5000, 10000, 10000, withAlpha(BLACK, 0.6f * k));
     drawFighter(m_.fighters[star], m_, time_, debug_);
   }
+  drawBeams(m_, time_);
   drawFighterTags(m_);
   drawProjectiles(m_, time_);
   fx_.drawWorld();

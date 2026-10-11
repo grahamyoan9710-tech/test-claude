@@ -42,6 +42,17 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
 void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
 
+// ---- Weapons (render_weapons.cpp) ---------------------------------------------
+// A weapon held at `grip`, pointing along `dir` (unit), at `scale` (1 = a 100 px fighter).
+void drawWeaponVisual(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time);
+float weaponVisualLength(WeaponVisual v);  // grip to tip, at scale 1
+// Weapons lying on the stage (render_items.cpp)
+void drawItems(const Match& m, float time);
+
+// ---- Big effects (render_vfx.cpp) -------------------------------------------------
+void drawBeams(const Match& m, float time);              // beams of the moves being performed (world space)
+void drawUltimateBackdrop(const Match& m, float time);   // domain / cinematic behind the fighters (world space)
+
 // ---- World (render_world.cpp) -----------------------------------------------
 void drawBackground(const StageDef& stage, Vec2 camTarget, float camZoom, float time);
 void drawPlatforms(const Match& m, float time);

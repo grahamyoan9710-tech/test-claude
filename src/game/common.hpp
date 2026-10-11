@@ -89,6 +89,37 @@ inline void drawTextCentered(const char* text, float cx, float y, float size, Co
 }
 
 // Percent colour, white -> yellow -> orange -> red -> dark red.
+// Signature colours of each element: the main tint and its bright glow.
+inline Color hitFxColor(HitFx fx) {
+  switch (fx) {
+    case HitFx::Fire: return {255, 140, 40, 255};
+    case HitFx::Electric: return {120, 230, 255, 255};
+    case HitFx::Slash: return {210, 230, 255, 255};
+    case HitFx::Dark: return {150, 70, 220, 255};
+    case HitFx::Magic: return {255, 130, 220, 255};
+    case HitFx::AntiMagic: return {28, 24, 34, 255};
+    case HitFx::Wind: return {120, 232, 170, 255};
+    case HitFx::Reiatsu: return {90, 170, 255, 255};
+    case HitFx::Petal: return {255, 150, 190, 255};
+    case HitFx::Light: return {255, 214, 110, 255};
+    case HitFx::Gloom: return {176, 24, 52, 255};
+    case HitFx::Ice: return {140, 220, 255, 255};
+    case HitFx::Cursed: return {110, 130, 255, 255};
+    case HitFx::Blood: return {214, 30, 44, 255};
+    default: return {255, 234, 190, 255};
+  }
+}
+inline Color hitFxGlow(HitFx fx) {
+  switch (fx) {
+    case HitFx::AntiMagic: return {246, 246, 250, 255};
+    case HitFx::Gloom: return {255, 90, 110, 255};
+    case HitFx::Blood: return {255, 150, 150, 255};
+    case HitFx::Cursed: return {200, 170, 255, 255};
+    case HitFx::Dark: return {220, 180, 255, 255};
+    default: return mixColor(hitFxColor(fx), WHITE, 0.55f);
+  }
+}
+
 inline Color percentColor(float p) {
   if (p < 50) return mixColor(WHITE, {255, 240, 120, 255}, p / 50.0f);
   if (p < 100) return mixColor({255, 240, 120, 255}, {255, 150, 40, 255}, (p - 50) / 50.0f);
