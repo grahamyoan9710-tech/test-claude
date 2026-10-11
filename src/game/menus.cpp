@@ -297,7 +297,7 @@ void App::drawCss() {
       ui::stoneDisc({base.x, base.y + 2}, 74, 11, t + col, false);
       Pose p = restPose(d, t + col);
       float hop = foc1 ? std::max(0.0f, std::sin(t * 5.0f)) * 6.0f : 0.0f;
-      drawCharacter(d, pal, p, {base.x, base.y - hop}, 1, 128.0f / d.height, 1.0f, WHITE, 0.0f, t + col);
+      drawCharacterSprite(d, pal, p, {base.x, base.y - hop}, 1, 128.0f / d.height, 1.0f, WHITE, 0.0f, t + col);
       drawTextCentered(d.name.c_str(), base.x, f1.y + 146, 34, ui::kCream, true, FontKind::Title);
       drawTextCentered(d.title.c_str(), base.x, f1.y + 184, 15, ui::kMuted, false);
       if (foc1) {

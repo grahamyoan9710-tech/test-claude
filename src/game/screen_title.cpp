@@ -110,7 +110,7 @@ void App::drawTitle() {
     int facing = left ? 1 : -1;
     DrawEllipse(int(x), 610, 40.0f - hop, 8.0f, withAlpha(ui::kInk, 0.3f));
     Pose p = restPose(r[i], t + i);
-    drawCharacter(r[i], 0, p, {x, 608 - hop}, facing, std::min(1.3f, 150.0f / r[i].height * (n > 6 ? 1.0f : 1.15f)),
+    drawCharacterSprite(r[i], 0, p, {x, 608 - hop}, facing, std::min(1.3f, 150.0f / r[i].height * (n > 6 ? 1.0f : 1.15f)),
                   1.0f, WHITE, 0.0f, t + i);
   }
 
@@ -274,7 +274,7 @@ void App::drawMainMenu() {
         float hop = sel ? std::max(0.0f, std::sin(t * 5.0f + k * 1.6f)) * 10.0f : 0.0f;
         float scale = 170.0f / d.height * (d.style == BodyStyle::Brute ? 1.1f : 1.0f);
         float x = rr.x + 120 + k * 140;
-        drawCharacter(d, 0, p, {x, rr.y + rr.height - 132 - hop}, k < 2 ? 1 : -1, scale, 1.0f, WHITE, 0.0f, t + k);
+        drawCharacterSprite(d, 0, p, {x, rr.y + rr.height - 132 - hop}, k < 2 ? 1 : -1, scale, 1.0f, WHITE, 0.0f, t + k);
       }
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 6.0f : 0.0f;
       ui::drawSprite(ui::Sprite::Combat, rr.x + 36, rr.y + rr.height - 118 - bounce, 92);

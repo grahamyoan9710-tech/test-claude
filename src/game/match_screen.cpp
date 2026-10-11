@@ -58,7 +58,7 @@ void drawImpactFrame(const Match& m, const Fx::Impact& im, const Camera2D& cam, 
   beginWorld(cam);
   for (const auto& f : m.fighters) {
     if (!((im.mask >> f.id) & 1u) || !f.active()) continue;
-    drawCharacter(*f.def, f.palette, computePose(f, m, time), f.pos, f.facing, 1.0f, 1.0f, ink, 1.0f, time);
+    drawCharacterSprite(*f.def, f.palette, computePose(f, m, time), f.pos, f.facing, 1.0f, 1.0f, ink, 1.0f, time);
   }
   if (im.attacker >= 0 && im.attacker < int(m.fighters.size())) {  // its projectiles and beam are in the shot
     for (const auto& p : m.projectiles)

@@ -159,8 +159,8 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
     DrawCircleV(b, 39, withAlpha({235, 240, 250, 255}, 0.9f));
     float scale = 52.0f / f.def->height;
     Pose pose = computePose(f, m, time);
-    drawCharacter(*f.def, f.palette, pose, {b.x, b.y + f.def->height * scale * 0.5f}, f.facing, scale, 1.0f, WHITE,
-                  f.flash > 0 ? 0.5f : 0.0f, time);
+    drawCharacterSprite(*f.def, f.palette, pose, {b.x, b.y + f.def->height * scale * 0.5f}, f.facing, scale, 1.0f, WHITE,
+                        f.flash > 0 ? 0.5f : 0.0f, time);
     float dist = (W(sp) - W(b)).len();
     if (dist > 200.0f) drawTextCentered(TextFormat("%dm", int(dist / 30.0f)), b.x, b.y + 46, 14, WHITE);
   }

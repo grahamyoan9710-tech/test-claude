@@ -125,6 +125,12 @@ inline Color hitFxColor(HitFx fx) {
     case HitFx::Ice: return {140, 220, 255, 255};
     case HitFx::Cursed: return {110, 130, 255, 255};
     case HitFx::Blood: return {214, 30, 44, 255};
+    case HitFx::Chakra: return {255, 150, 40, 255};
+    case HitFx::Lightning: return {150, 200, 255, 255};
+    case HitFx::BlackFlame: return {22, 12, 26, 255};
+    case HitFx::Hollow: return {70, 220, 130, 255};
+    case HitFx::Berserk: return {240, 214, 70, 255};
+    case HitFx::Water: return {70, 160, 240, 255};
     default: return {255, 234, 190, 255};
   }
 }
@@ -135,6 +141,8 @@ inline Color hitFxGlow(HitFx fx) {
     case HitFx::Blood: return {255, 150, 150, 255};
     case HitFx::Cursed: return {200, 170, 255, 255};
     case HitFx::Dark: return {220, 180, 255, 255};
+    case HitFx::BlackFlame: return {200, 60, 120, 255};
+    case HitFx::Lightning: return {230, 244, 255, 255};
     default: return mixColor(hitFxColor(fx), WHITE, 0.55f);
   }
 }

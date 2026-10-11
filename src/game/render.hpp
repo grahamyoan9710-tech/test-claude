@@ -47,6 +47,9 @@ Pose restPose(const CharacterDef& def, float time);
 Pose computePose(const Fighter& f, const Match& m, float time);
 void drawCharacter(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing,
                    float scale, float alpha, Color flashColor, float flash, float time);
+// The same as a pixel-art sprite when the characters are drawn in pixel art (see pixel.hpp).
+void drawCharacterSprite(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing, float scale,
+                         float alpha, Color flashColor, float flash, float time);
 // Where the rig really puts a limb end (IK reach applied) / the weapon tip, in world space.
 Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb,
                bool weaponTip = false);
@@ -100,6 +103,12 @@ inline HitFx heroElement(Hero h) {
     case Hero::Kratos: return HitFx::Fire;
     case Hero::Gojo: return HitFx::Cursed;
     case Hero::Sukuna: return HitFx::Blood;
+    case Hero::Kenpachi: return HitFx::Berserk;
+    case Hero::Ulquiorra: return HitFx::Hollow;
+    case Hero::Hunter: return HitFx::Slash;
+    case Hero::Naruto: return HitFx::Chakra;
+    case Hero::Sasuke: return HitFx::Lightning;
+    case Hero::Kakashi: return HitFx::Lightning;
     default: return HitFx::Normal;
   }
 }

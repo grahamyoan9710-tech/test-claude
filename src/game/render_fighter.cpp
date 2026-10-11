@@ -7,6 +7,7 @@
 
 #include "core/swing.hpp"
 #include "game/render.hpp"
+#include "game/pixel.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
@@ -1170,16 +1171,26 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       DrawCircleV({feet.x + std::cos(a) * 55.0f, feet.y + 6 + std::sin(a) * 10.0f}, 4, withAlpha(WHITE, 0.9f));
     }
   }
-  for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
-    const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
-    if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
-  }
   const float ultK = f.finalSmash ? alpha : 0.0f;
   const Color ultCol = hitFxGlow(heroElement(d.hero));
   if (ultK > 0.0f) drawUltAura(c, H, at, false, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, false);
 
-  drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, alpha, flashCol, flash, at);
+  // The character and its afterimages: one pixel-art sprite (big enough for the longest weapons).
+  const float rx = std::max(H * 1.7f, 200.0f);
+  Rect box{feet.x - rx, feet.y - H * 2.3f, rx * 2.0f, H * 2.9f};
+  for (const Ghost& g : anim.ghosts) {
+    if (g.life <= 0) continue;
+    const float l = std::min(box.x, g.feet.x - rx), t = std::min(box.y, g.feet.y - H * 2.3f);
+    box = {l, t, std::max(box.right(), g.feet.x + rx) - l, std::max(box.bottom(), g.feet.y + H * 0.6f) - t};
+  }
+  pix::sprite(box, alpha, [&](float a) {
+    for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
+      const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
+      if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
+    }
+    drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, a, flashCol, flash, at);
+  });
 
   drawSmear(anim, pose, alpha);
   if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK, ultCol);

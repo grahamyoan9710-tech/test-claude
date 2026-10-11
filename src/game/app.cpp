@@ -1,6 +1,7 @@
 // Application shell: window, main loop, screen flow and transitions.
 #include "game/app.hpp"
 
+#include "game/pixel.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -226,6 +227,7 @@ void App::run() {
     }
 
     BeginTextureMode(target_);
+    pix::setFrameTarget(&target_);
     rlScalef(g_renderScale, g_renderScale, 1.0f);
     ClearBackground(BLACK);
     // Standard alpha blending for colours, but the frame itself stays opaque: overlapping
@@ -252,6 +254,7 @@ void App::run() {
     if (transition_ >= 0) ui::wipe(transition_ / float(kHalfTransition * 2));
     EndBlendMode();
     EndTextureMode();
+    pix::setFrameTarget(nullptr);
 
     for (const auto& [frame, path] : opt_.shots) {
       if (frame != frames_) continue;
@@ -277,6 +280,7 @@ void App::run() {
   }
   saveSettings();
   match_.reset();
+  pix::unload();
   UnloadRenderTexture(target_);
   ui::unloadSprites();
   unloadFonts();
