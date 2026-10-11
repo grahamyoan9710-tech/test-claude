@@ -87,6 +87,8 @@ if(CLASH_BUILD_GAME)
     src/game/render_fighter.cpp
     src/game/render_body.cpp
     src/game/render_world.cpp
+    src/game/render_stages.cpp
+    src/game/paint.cpp
     src/game/render_hud.cpp
     src/game/render_weapons.cpp
     src/game/render_items.cpp

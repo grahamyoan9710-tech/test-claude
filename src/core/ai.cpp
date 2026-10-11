@@ -134,6 +134,20 @@ int nearestLedge(const Match& m, Vec2 p) {
   }
   return best;
 }
+// The closest ledge in direction dir (-1 / 1) from p, or -1.
+int ledgeToward(const Match& m, Vec2 p, float dir) {
+  int best = -1;
+  float bd = 1e9f;
+  for (int l = 0; l < m.ledgeCount(); ++l) {
+    if (!m.ledgeValid(l) || (m.ledgePoint(l).x - p.x) * dir <= 0.0f) continue;
+    float d = (m.ledgePoint(l) - p).len2();
+    if (d < bd) {
+      bd = d;
+      best = l;
+    }
+  }
+  return best;
+}
 }  // namespace
 
 CpuBrain::CpuBrain(int level, uint32_t seed)
@@ -215,6 +229,8 @@ InputState CpuBrain::think(const Match& m, int self) {
       break;
   }
   waitTimer_ = -1;
+  if (f.grounded) crossTimer_ = 0;
+  else if (crossTimer_ > 0) --crossTimer_;
 
   if (!f.grounded && recover(m, f, in)) {
     last_ = in;
@@ -247,7 +263,8 @@ InputState CpuBrain::think(const Match& m, int self) {
 
 bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
   if (m.groundBelow(f.pos, 1500.0f)) return false;
-  int l = nearestLedge(m, f.pos);
+  int l = crossTimer_ > 0 ? ledgeToward(m, f.pos, crossDir_) : -1;  // flying over a gap: the far side
+  if (l < 0) l = nearestLedge(m, f.pos);
   if (l < 0) return false;
   Vec2 L = m.ledgePoint(l);
   int toStage = (l % 2 == 0) ? 1 : -1;
@@ -266,6 +283,21 @@ bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
   float below = f.pos.y - L.y;  // > 0 : feet under the ledge
   float dist = std::fabs(f.pos.x - L.x);
   bool falling = f.vel.y > -1.0f;
+  // Under the stage (feet below its underside, body not clear of its side): get out from under it first,
+  // or the jump and the special only bump into the underside.
+  const Rect& plat = m.platforms[l / 2].rect;
+  const float clearance = (L.x - f.pos.x) * toStage - f.def->width * 0.5f;  // > 0: clear of the side
+  if (f.pos.y > plat.bottom() && clearance < 6.0f) {
+    in.stick = {float(-toStage), 0.0f};
+    if (f.pos.y < plat.bottom() + 220.0f) return true;  // still time to drift out
+    if (falling && f.airJumps > 0) {
+      tap(in, &IS::jump);
+    } else if (falling) {
+      in.stick = Vec2{float(-toStage), -1.0f}.norm();
+      tap(in, &IS::special);
+    }
+    return true;
+  }
   if (falling && below > -80.0f && f.airJumps > 0) {
     tap(in, &IS::jump);
   } else if (falling && f.airJumps == 0 && dist > 260.0f && below < 120.0f && !f.sideSpecialUsed &&
@@ -414,8 +446,13 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
     // stop at the edge, unless the target waits across a gap: then jump over it
     float ahead = f.pos.x + in.stick.x * 40.0f;
     if (in.stick.x != 0.0f && !m.groundBelow({ahead, f.pos.y}, 30.0f)) {
-      if (targetGrounded && signf(dx) == in.stick.x && adx < 600.0f) tap(in, &IS::jump);
-      else in.stick.x = 0.0f;
+      if (targetGrounded && signf(dx) == in.stick.x && adx < 600.0f) {
+        tap(in, &IS::jump);
+        crossDir_ = in.stick.x;
+        crossTimer_ = 150;
+      } else {
+        in.stick.x = 0.0f;
+      }
     }
   }
 

@@ -526,6 +526,7 @@ void Match::updateMove(Fighter& f) {
   if (m.intangibleStart >= 0 && t == std::max(1, m.intangibleStart))  // t starts at 1
     f.intangible = m.intangibleEnd - t;
   if (m.teleportFrame == t) {
+    const Vec2 from = f.pos;
     const int target = m.teleportToTarget ? nearestOpponent(f) : -1;
     if (target >= 0) {  // right in front of the nearest opponent, on the side it came from, facing it
       const Fighter& o = fighters[target];
@@ -542,9 +543,9 @@ void Match::updateMove(Fighter& f) {
     if (m.turnAfterTeleport) f.facing = -f.facing;
     f.grounded = false;
     f.vel = {0, 0};
-    for (const auto& p : platforms) {  // never end up inside the stage
+    for (const auto& p : platforms) {  // never end up inside the stage: out on top, unless coming from below it
       if (p.solid && p.rect.contains({f.pos.x, f.pos.y - 1.0f})) {
-        if (f.pos.y - p.rect.top() < p.rect.h * 0.6f) f.pos.y = p.rect.top();
+        if (from.y <= p.rect.bottom() || f.pos.y - p.rect.top() < p.rect.h * 0.6f) f.pos.y = p.rect.top();
         else f.pos.y = p.rect.bottom() + f.height() + 1.0f;
       }
     }

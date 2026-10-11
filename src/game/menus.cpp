@@ -41,11 +41,46 @@ Color seriesColor(const std::string& series) {
   if (series.rfind("Zelda", 0) == 0) return {52, 136, 132, 255};
   if (series == "God of War") return {168, 44, 38, 255};
   if (series == "Jujutsu Kaisen") return {98, 72, 176, 255};
+  if (series == "Naruto") return {226, 140, 36, 255};
   return {120, 120, 130, 255};
 }
 Rectangle readyRect() { return {0, 632, float(kScreenW), 38}; }
-Rectangle bigPreviewRect() { return {60, 116, 768, 432}; }
-Rectangle stageCardRect(int i) { return {866.0f - i * 10.0f, 116.0f + i * 150.0f, 360, 134}; }
+// Stage select: a big live preview, its sheet on the right, every stage below in rows of thumbnails.
+constexpr int kStageCols = 6;
+Rectangle bigPreviewRect() { return {40, 108, 576, 324}; }
+Rectangle stageCardRect(int i) {
+  const int n = int(stageList().size()), row = i / kStageCols, col = i % kStageCols;
+  const int inRow = std::min(kStageCols, n - row * kStageCols);
+  constexpr float w = 190, h = 96, gap = 12;
+  return {(kScreenW - (inRow * w + (inRow - 1) * gap)) * 0.5f + col * (w + gap), 450.0f + row * (h + 10), w, h};
+}
+
+// Draws `text` wrapped to `width`, line after line; returns the y under the last line.
+float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col) {
+  std::string line, word;
+  auto flush = [&] {
+    if (line.empty()) return;
+    drawTextOutlined(line.c_str(), x, y, size, col, ui::kInk, 2.0f);
+    y += size * 1.3f;
+    line.clear();
+  };
+  for (size_t i = 0; i <= text.size(); ++i) {
+    if (i < text.size() && text[i] != ' ') {
+      word += text[i];
+      continue;
+    }
+    const std::string next = line.empty() ? word : line + " " + word;
+    if (!line.empty() && textWidth(next.c_str(), size) > width) {
+      flush();
+      line = word;
+    } else {
+      line = next;
+    }
+    word.clear();
+  }
+  flush();
+  return y;
+}
 
 // Input device selector: "MANETTE 2" with, under it, the model of the gamepad (or "non branchée").
 void deviceSelector(Rectangle r, int device, bool focused, float t) {
@@ -374,10 +409,14 @@ void App::drawCss() {
 // Stage select
 // ---------------------------------------------------------------------------
 void App::updateStage(const MenuNav& nav) {
-  const int n = int(stageList().size());
+  const int n = int(stageList().size()), rows = (n + kStageCols - 1) / kStageCols;
   int before = stage_;
-  if (nav.left || nav.up) stage_ = (stage_ + n - 1) % n;
-  if (nav.right || nav.down) stage_ = (stage_ + 1) % n;
+  if (nav.left) stage_ = (stage_ + n - 1) % n;
+  if (nav.right) stage_ = (stage_ + 1) % n;
+  if (nav.up || nav.down) {  // same column in the other row (the last row may be shorter)
+    const int row = (stage_ / kStageCols + (nav.down ? 1 : rows - 1)) % rows;
+    stage_ = std::min(n - 1, row * kStageCols + stage_ % kStageCols);
+  }
   bool go = nav.confirm || nav.start || ui::clicked(bigPreviewRect());
   for (int i = 0; i < n; ++i) {
     if (!ui::hovered(stageCardRect(i))) continue;
@@ -400,46 +439,72 @@ void App::updateStage(const MenuNav& nav) {
 void App::drawStage() {
   const float t = time_;
   const auto& stages = stageList();
-  ui::stageBackdrop(stage_, t, 0.76f);
+  const StageDef& cur = stages[stage_];
+  ui::stageBackdrop(stage_, t, 0.8f);
   ui::header("ARÈNE", nullptr, {66, 112, 132, 255}, t);
 
+  // The chosen stage, live.
   Rectangle big = bigPreviewRect();
   DrawRectangleRounded({big.x + 8, big.y + 10, big.width, big.height}, 0.04f, 8, withAlpha(BLACK, 0.45f));
-  drawStagePreview(stages[stage_], big, t);
+  drawStagePreview(cur, big, t);
   DrawRectangleRoundedLinesEx(ui::grow(big, 3), 0.04f, 8, 3, ui::kGold);
   DrawRectangleRoundedLinesEx(ui::grow(big, -5), 0.03f, 8, 1, withAlpha(ui::kGold, 0.4f));
   ui::corners(ui::grow(big, 9), 0, 30, 3, ui::kGold);
-  const Rectangle rib{big.x - 10, big.y + big.height - 64, 460, 54};
-  ui::slanted(rib, 22, withAlpha({34, 56, 60, 255}, 0.95f), withAlpha(ui::kInk, 0.95f));
-  ui::slantedOutline(rib, 22, 1.5f, ui::kGold);
-  drawTextOutlined(stages[stage_].name.c_str(), big.x + 20, big.y + big.height - 58, 38, ui::kCream, ui::kInk, 3.5f,
-                   FontKind::Title);
+
+  // Its sheet: series, name, a line about it, the platforms, the rules of the match.
+  const float px = big.x + big.width + 32, pw = kScreenW - 40 - px;
+  const Color sc = seriesColor(cur.series);
+  const std::string series = upperFr(cur.series);
+  const float chipW = textWidth(series.c_str(), 17) + 26;
+  DrawRectangleRounded({px, big.y + 6, chipW, 28}, 0.5f, 8, withAlpha(sc, 0.9f));
+  DrawRectangleRoundedLinesEx({px, big.y + 6, chipW, 28}, 0.5f, 8, 1.5f, withAlpha(mixColor(sc, WHITE, 0.5f), 0.9f));
+  drawText(series.c_str(), px + 13, big.y + 11, 17, ui::kCream);
+  float nameSize = 46.0f;
+  nameSize = std::min(nameSize, nameSize * pw / std::max(1.0f, textWidth(cur.name.c_str(), nameSize, FontKind::Title)));
+  drawTextOutlined(cur.name.c_str(), px, big.y + 46, nameSize, ui::kCream, ui::kInk, 3.5f, FontKind::Title);
+  float y = big.y + 46 + nameSize * 1.25f;
+  DrawRectangleGradientH(int(px), int(y), int(pw * 0.8f), 2, withAlpha(ui::kGold, 0.8f), withAlpha(ui::kGold, 0.0f));
+  y = drawWrapped(cur.blurb, px, y + 14, pw, 21, ui::kCream) + 10;
+  int solids = 0, plats = 0, moving = 0;
+  for (const Platform& p : cur.platforms) {
+    if (p.solid) ++solids;
+    else ++plats;
+    if (p.period > 0) ++moving;
+  }
+  std::string layout = solids > 1 ? TextFormat("%d sols", solids) : std::string("1 sol");
+  if (plats > 0) layout += TextFormat(", %d plateforme%s", plats, plats > 1 ? "s" : "");
+  if (moving > 0) layout += moving == plats ? (plats > 1 ? " mobiles" : " mobile") : TextFormat(" dont %d mobile%s", moving, moving > 1 ? "s" : "");
+  ui::diamond({px + 5, y + 11}, 4, ui::kGold);
+  drawTextOutlined(layout.c_str(), px + 18, y, 19, ui::kMuted, ui::kInk, 2.0f);
   const Settings& s = settings();
   std::string info = training_ ? "Entraînement  •  vies infinies"
                                : TextFormat("%d combattants  •  %d vie%s  •  orbe %s", activeSlots(), s.stocks,
                                             s.stocks > 1 ? "s" : "", s.items ? "activée" : "désactivée");
-  ui::diamond({big.x + 10, big.y + big.height + 28}, 4, ui::kGold);
-  drawTextOutlined(info.c_str(), big.x + 22, big.y + big.height + 16, 20, ui::kCream, ui::kInk, 2.0f);
+  ui::diamond({px + 5, big.y + big.height - 12}, 4, ui::kGold);
+  drawTextOutlined(info.c_str(), px + 18, big.y + big.height - 23, 19, ui::kCream, ui::kInk, 2.0f);
 
+  // Every stage: a still each, the series as a coloured edge.
   for (int i = 0; i < int(stages.size()); ++i) {
     Rectangle rr = stageCardRect(i);
-    bool sel = i == stage_;
+    const bool sel = i == stage_;
     if (sel) rr = ui::grow(rr, 4);
-    DrawRectangleRounded({rr.x + 6, rr.y + 8, rr.width, rr.height}, 0.08f, 8, withAlpha(BLACK, 0.4f));
-    drawStagePreview(stages[i], rr, t);
-    if (!sel) DrawRectangleRounded(rr, 0.08f, 8, withAlpha(ui::kInk, 0.45f));
-    DrawRectangle(int(rr.x), int(rr.y + rr.height - 34), int(rr.width), 34, withAlpha(ui::kInk, 0.85f));
-    DrawLineEx({rr.x, rr.y + rr.height - 34}, {rr.x + rr.width, rr.y + rr.height - 34}, 1.0f,
-               withAlpha(ui::kGold, sel ? 0.7f : 0.3f));
-    drawText(stages[i].name.c_str(), rr.x + 14, rr.y + rr.height - 31, 26, sel ? ui::kGold : ui::kCream,
-             FontKind::Title);
+    DrawRectangleRounded({rr.x + 5, rr.y + 7, rr.width, rr.height}, 0.08f, 8, withAlpha(BLACK, 0.4f));
+    drawStageThumb(i, stages[i], stageCardRect(i));
+    if (sel) drawStageThumb(i, stages[i], stageCardRect(i));
+    if (!sel) DrawRectangleRec(stageCardRect(i), withAlpha(ui::kInk, 0.4f));
+    const Rectangle base = stageCardRect(i);
+    DrawRectangle(int(base.x), int(base.y + base.height - 26), int(base.width), 26, withAlpha(ui::kInk, 0.88f));
+    DrawRectangle(int(base.x), int(base.y + base.height - 26), 5, 26, seriesColor(stages[i].series));
+    float ns = 17.0f;
+    ns = std::min(ns, ns * (base.width - 20) / std::max(1.0f, textWidth(stages[i].name.c_str(), ns)));
+    drawText(stages[i].name.c_str(), base.x + 12, base.y + base.height - 13 - ns * 0.62f, ns, sel ? ui::kGold : ui::kCream);
     if (sel) {
       const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
-      DrawRectangleRoundedLinesEx(ui::grow(rr, 6 + pulse * 2), 0.08f, 8, 5, withAlpha(ui::kTeal, 0.14f + 0.14f * pulse));
+      DrawRectangleRoundedLinesEx(ui::grow(rr, 4 + pulse * 2), 0.08f, 8, 4, withAlpha(ui::kTeal, 0.14f + 0.14f * pulse));
       DrawRectangleRoundedLinesEx(rr, 0.08f, 8, 3.0f, ui::kGold);
-      ui::corners(ui::grow(rr, 7 + pulse * 2), 0, 18, 3, ui::kGold);
+      ui::corners(ui::grow(rr, 6 + pulse * 2), 0, 14, 3, ui::kGold);
     } else {
-      DrawRectangleRoundedLinesEx(rr, 0.08f, 8, 1.5f, withAlpha(ui::kStone, 0.6f));
+      DrawRectangleRoundedLinesEx(base, 0.08f, 8, 1.5f, withAlpha(ui::kStone, 0.6f));
     }
   }
   ui::footer({{"FLÈCHES", ui::Btn::Move, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Combattre !"}, {"ÉCHAP", ui::Btn::B, "Retour"}});

@@ -148,11 +148,15 @@ Rect viewRect(float margin = 0.0f);                       // world rectangle on 
 
 // ---- World (render_world.cpp) -----------------------------------------------
 void drawBackground(const StageDef& stage, Vec2 camTarget, float camZoom, float time);
+// Over the whole scene, in screen space (rain, drifting petals...) after the world is drawn.
+void drawStageForeground(const StageDef& stage, Vec2 camTarget, float time);
 void drawPlatforms(const Match& m, float time);
 void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, float time);
 void drawProjectiles(const Match& m, float time);
 void drawOrb(const Match& m, float time);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);
+// A still of stage `index` in `area`, rendered once and kept (the stage select's thumbnails).
+void drawStageThumb(int index, const StageDef& stage, Rectangle area);
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------
 // devices (indexed by port, optional): shows each human's ultimate button once the meter is full.

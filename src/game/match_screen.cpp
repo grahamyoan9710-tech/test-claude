@@ -521,6 +521,7 @@ void MatchScreen::draw() {
       if (m_.ledgeValid(l)) DrawCircleV(V(m_.ledgePoint(l)), 6, ORANGE);
   }
   endWorld();
+  drawStageForeground(m_.stage(), W(cam.target), time_);
   fx_.drawScreen(cam);
   if (const Fx::Impact* im = fx_.impact()) drawImpactFrame(m_, *im, cam, time_);
   drawOffscreenBubbles(m_, cam, time_);

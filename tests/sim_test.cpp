@@ -1,4 +1,5 @@
 // Headless tests for the simulation: physics, combat, recovery and full CPU matches.
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <string>
@@ -561,6 +562,50 @@ static void testRecovery() {
   }
 }
 
+// Every stage, every fighter: thrown off either side (and into the Valley of the End's gap), it gets back.
+static void testRecoveryStages() {
+  std::printf("[recovery on every stage]\n");
+  const int nChars = int(roster().size());
+  int tries = 0, saved = 0;
+  for (int st = 1; st < int(stageList().size()); ++st) {
+    const StageDef& sd = stageList()[st];
+    float outer = 0.0f;
+    bool gap = false;
+    for (const Platform& p : sd.platforms)
+      if (p.solid) {
+        outer = std::max({outer, std::fabs(p.base.left()), std::fabs(p.base.right())});
+        gap = gap || (p.base.left() > 0.0f);  // a solid entirely on the right: there is a hole in the middle
+      }
+    for (int c = 0; c < nChars; ++c)
+      for (int from = -1; from <= (gap ? 2 : 1); from += (gap ? 1 : 2)) {
+        if (from == 0) continue;
+        Match m(duel(st, c, 0, true, false));
+        skipCountdown(m);
+        CpuBrain brain(9, 77 + c * 3 + st);
+        Fighter& f = m.fighters[0];
+        const bool inGap = from == 2;
+        m.fighters[1].pos = {inGap ? 300.0f : -from * 260.0f, 0};
+        m.fighters[1].grounded = true;
+        f.pos = inGap ? Vec2{0.0f, 120.0f} : Vec2{from * (outer + 260.0f), 60.0f};
+        f.grounded = false;
+        f.airJumps = 0;  // worst case: only the special can save us
+        f.state = FState::Air;
+        bool safe = false;
+        for (int i = 0; i < 600 && f.stocks == 3; ++i) {
+          std::array<InputState, 4> in{};
+          in[0] = brain.think(m, 0);
+          m.step(in);
+          if (f.state == FState::LedgeHang || (f.grounded && f.groundPlat >= 0 && m.platforms[f.groundPlat].solid)) safe = true;
+        }
+        ++tries;
+        saved += safe && f.stocks == 3;
+        CHECK(safe && f.stocks == 3, "%s failed to recover on %s from %s (pos %.0f,%.0f state %d)", roster()[c].name.c_str(),
+              sd.name.c_str(), inGap ? "the gap" : from < 0 ? "the left" : "the right", f.pos.x, f.pos.y, int(f.state));
+      }
+  }
+  std::printf("  %d/%d recoveries\n", saved, tries);
+}
+
 struct BattleResult {
   int frames = 0;
   int winner = -1;
@@ -681,6 +726,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();
   if (only.empty() || only == "recovery") testRecovery();
+  if (only.empty() || only == "recovery") testRecoveryStages();
   if (only.empty() || only == "battle") testBattles();
   if (only.empty() || only == "balance") testBalance();
   if (only.empty() || only == "det") testDeterminism();
