@@ -103,8 +103,11 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
 
     char label[16];
     std::snprintf(label, sizeof label, f.cpu ? "CPU" : "J%d", f.port + 1);
-    drawTextOutlined(f.def->name.c_str(), x + 94, y + 9, 22, ui::kCream, ui::kInk, 2.5f, FontKind::Title);
     float lw = textWidth(label, 15) + 16;
+    float ns = 22.0f;  // long names shrink to leave room for the player label
+    while (ns > 13.0f && textWidth(f.def->name.c_str(), ns, FontKind::Title) > pw - 94 - lw - 20) ns -= 1.0f;
+    drawTextOutlined(f.def->name.c_str(), x + 94, y + 9 + (22 - ns) * 0.5f, ns, ui::kCream, ui::kInk, 2.5f,
+                     FontKind::Title);
     DrawRectangleRounded({x + pw - lw - 11.5f, y + 9.5f, lw + 3, 23}, 0.5f, 6, ui::kInk);
     DrawRectangleRounded({x + pw - lw - 10, y + 11, lw, 20}, 0.5f, 6, shade(pc, 0.85f));
     drawText(label, x + pw - lw - 2, y + 12, 15, WHITE);

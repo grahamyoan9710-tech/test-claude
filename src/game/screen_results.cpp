@@ -65,7 +65,10 @@ void App::drawResults() {
     drawTextOutlined(TextFormat("%d", i + 1), x + 26, y + 16, 50, i < 3 ? medals[i] : ui::kCream, ui::kInk, 4.0f,
                      FontKind::Title);
     drawPortrait(r[row.charIndex], row.palette, {x + 104, y + 40}, 64, t + i);
-    drawTextOutlined(r[row.charIndex].name.c_str(), x + 146, y + 12, 30, ui::kCream, ui::kInk, 3.0f, FontKind::Title);
+    float ns = 30.0f;  // long names shrink before the K.O. column
+    while (ns > 16.0f && textWidth(r[row.charIndex].name.c_str(), ns, FontKind::Title) > 140.0f) ns -= 1.0f;
+    drawTextOutlined(r[row.charIndex].name.c_str(), x + 146, y + 12 + (30 - ns) * 0.5f, ns, ui::kCream, ui::kInk, 3.0f,
+                     FontKind::Title);
     drawText(row.cpu ? "Ordinateur" : TextFormat("Joueur %d", row.port + 1), x + 148, y + 50, 16, ui::kMuted);
     drawTextCentered(TextFormat("%d", row.kos), x + 330, y + 22, 38, ui::kCream, true, FontKind::Title);
     drawTextCentered(TextFormat("%d", row.falls), x + 430, y + 22, 38, ui::kCream, true, FontKind::Title);
