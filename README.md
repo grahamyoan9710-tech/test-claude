@@ -13,14 +13,14 @@ La direction artistique s'inspire de *Zelda: Tears of the Kingdom* : îles céle
 runes turquoise, profondeurs éclairées par des racines lumineuses, personnages en ombrage « peint ».
 Tout est dessiné par le code (aucune image ni logo repris du jeu).
 
-| Menu principal | Sélection des combattants |
+| Menu principal | Sélection des combattants (icônes manette) |
 |---|---|
 | ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
 | **Choix de l'arène** | **Combat** |
 | ![Arène](docs/arene.jpg) | ![Combat](docs/combat.jpg) |
-| **Attaque finale SUPER CLASH** | **Entraînement** |
+| **Ulti : attaque finale SUPER CLASH** | **Entraînement** |
 | ![Attaque finale](docs/attaque_finale.jpg) | ![Entraînement](docs/entrainement.jpg) |
-| **Paramètres** | **Résultats** |
+| **Paramètres (schéma de la manette)** | **Résultats** |
 | ![Paramètres](docs/parametres.jpg) | ![Résultats](docs/resultats.jpg) |
 
 ## Le jeu
