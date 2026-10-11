@@ -2,9 +2,38 @@
 #include <algorithm>
 
 #include "core/match.hpp"
+#include "core/swing.hpp"
 
 namespace {
 constexpr float kLaunchScale = 0.15f;  // knockback units -> px/frame
+
+// Does the hitbox touch the circle / rectangle this frame? hp = contact point (world). Swing hitboxes
+// sweep the blade from its angle on the previous frame to this frame's (no tunnelling through thin
+// targets); the tip is tested first.
+template <class Test>
+bool hitboxTouches(const Fighter& a, const HitboxDef& x, Test touches, Vec2& hp) {
+  if (!x.swing) {
+    hp = a.center() + Vec2{x.offset.x * a.facing, x.offset.y};
+    return touches(hp, x.radius);
+  }
+  const float H = a.height(), L = a.bladeLength(), t = float(a.moveFrame);
+  const float ang1 = swingAngle(x, t), ang0 = swingAngle(x, t - 1.0f);
+  const int sub = std::fabs(ang1 - ang0) > 30.0f ? 3 : 2;
+  for (int k = sub; k >= 0; --k) {
+    const BladeSeg s = swingSegment(x, ang0 + (ang1 - ang0) * float(k) / sub, H, L);
+    const Vec2 p0 = a.center() + Vec2{s.a.x * a.facing, s.a.y};
+    const Vec2 p1 = a.center() + Vec2{s.b.x * a.facing, s.b.y};
+    const int n = std::max(1, int((p1 - p0).len() / std::max(6.0f, x.radius * 0.8f)));
+    for (int i = n; i >= 0; --i) {
+      const Vec2 p = lerpv(p0, p1, float(i) / n);
+      if (touches(p, x.radius)) {
+        hp = p;
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 int hitlagFor(float dmg, float kb) {
   int lag = int(clampf(dmg * 0.45f + 4.0f, 4.0f, 18.0f));
@@ -74,8 +103,9 @@ void Match::resolveHits() {
         int key = 63 * 64 + h.group;
         if (std::find(a.hitList.begin(), a.hitList.end(), key) != a.hitList.end()) continue;
         const HitboxDef x = worldBox(h);
-        Vec2 hp = a.center() + Vec2{x.offset.x * a.facing, x.offset.y};
-        if ((hp - orb.pos).len() > x.radius + orb.radius) continue;
+        Vec2 hp;
+        auto touchOrb = [&](Vec2 c, float r) { return (c - orb.pos).len() <= r + orb.radius; };
+        if (!hitboxTouches(a, x, touchOrb, hp)) continue;
         a.hitList.push_back(key);
         a.hitlag = std::max(a.hitlag, 4);
         hitOrb(a.id, h.damage * mul, a.center(), h.fx);
@@ -94,8 +124,9 @@ void Match::resolveHits() {
         int key = v.id * 64 + h.group;
         if (std::find(a.hitList.begin(), a.hitList.end(), key) != a.hitList.end()) continue;
         const HitboxDef x = worldBox(h);
-        Vec2 hp = a.center() + Vec2{x.offset.x * a.facing, x.offset.y};
-        if (!circleRect(hp, x.radius, hurt)) continue;
+        Vec2 hp;
+        auto touchHurt = [&](Vec2 c, float r) { return circleRect(c, r, hurt); };
+        if (!hitboxTouches(a, x, touchHurt, hp)) continue;
         if (m->isGrab) grabs.push_back({a.id, v.id});
         else hits.push_back({a.id, v.id, x, hp, mul});
         a.hitList.push_back(key);

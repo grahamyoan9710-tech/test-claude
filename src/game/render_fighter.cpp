@@ -5,6 +5,7 @@
 // cloth drag, smears and afterimages. That memory is render-only: it never feeds the simulation.
 #include <cstdio>
 
+#include "core/swing.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -274,6 +275,23 @@ void applyMove(Pose& p, const Fighter& f, float time) {
       }
       case Limb::Weapon: {
         p.weapon = true;
+        if (s.hb->swing) {  // the blade sits exactly where its hitbox is (core/swing.hpp)
+          const float rest = 0.6f, A0 = -deg2rad(s.hb->a0), A1 = -deg2rad(s.hb->a1);
+          const float way = A1 >= A0 ? 1.0f : -1.0f;  // sweep direction (screen angles)
+          float a = rest;
+          switch (s.phase) {
+            case Phase::Wind: a = lerpf(rest, A0 - 0.45f * way, f.charging ? 1.0f : easeOut(s.k)); break;
+            case Phase::Strike: a = lerpf(A0 - 0.45f * way, A0, s.k); break;
+            case Phase::Active: a = -deg2rad(swingAngle(*s.hb, float(t))); break;
+            case Phase::Follow:
+              a = lerpf(A1 + 0.3f * way * std::sin(kPi * std::min(1.0f, s.k * 1.8f)), rest, smoothstep(s.k));
+              break;
+            case Phase::None: break;
+          }
+          p.weaponDir = {std::cos(a), std::sin(a)};
+          p.handF = swingGrip(-rad2deg(a), H);
+          break;
+        }
         Vec2 rel = target - shoulder;
         float tgt = std::atan2(rel.y, rel.x);
         // The swing goes from the wind-up angle to a little past the target: the blade
@@ -310,9 +328,13 @@ void applyMove(Pose& p, const Fighter& f, float time) {
   }
   p.lean -= 0.22f * pr.antic * dirX;
   p.crouch += 0.18f * pr.antic;
-  p.squash *= 1.0f - 0.06f * pr.antic;
-  p.sx *= 1.0f + 0.05f * pr.antic;
-  if (std::fabs(target.x) > std::fabs(target.y)) {
+  if (!hb->swing) {
+    p.squash *= 1.0f - 0.06f * pr.antic;
+    p.sx *= 1.0f + 0.05f * pr.antic;
+  }
+  if (hb->swing) {  // no squash & stretch: it would move the blade off its hitbox
+    p.lean += 0.12f * drive;
+  } else if (std::fabs(target.x) > std::fabs(target.y)) {
     if (hb->limb != Limb::Weapon) p.lean += 0.15f * drive * dirX;
     p.sx *= 1.0f + 0.07f * drive;
     p.squash *= 1.0f - 0.04f * drive;
@@ -607,7 +629,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.handB = {0.28f * H, 0.02f * H};
       p.lean = 0.15f + std::sin(tt * 4.0f) * 0.02f;
       break;
-    case FState::Grabbed: {
+    case FState::Grabbed: case FState::Captured: {
       float w = std::sin(tt * 25.0f);
       p.hurt = true;
       p.lean = -0.2f + w * 0.04f;
@@ -644,6 +666,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.weaponDir = Vec2{1.0f, 0.5f}.norm();
     }
   }
+  p.bladeLen = f.bladeLength();
   return p;
 }
 
@@ -783,8 +806,10 @@ void stepAnim(Anim& a, const Fighter& f, const Match& m) {
     a.tip.x = -a.tip.x;
     a.tipV.x = -a.tipV.x;
   }
-  if (p.trail >= 1.0f)  // strikes stay exactly on their hitboxes
+  if (p.trail >= 1.0f) {  // strikes stay exactly on their hitboxes (no jelly either)
     for (int i = 0; i < kChan; ++i) a.off[i] = a.offV[i] = 0.0f;
+    a.jig = a.jigV = 0.0f;
+  }
   for (int i = 0; i < kChan; ++i) {
     if (!frozen) decay(a.off[i], a.offV[i], a.omega);
     float prev = a.shown[i];
@@ -1181,8 +1206,17 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     if (const MoveDef* mv = f.currentMove()) {
       for (const auto& h : mv->hitboxes) {
         if (f.moveFrame < h.start || f.moveFrame >= h.end) continue;
+        const Color col = withAlpha(mv->isGrab ? PURPLE : h.capture ? ORANGE : RED, 0.45f);
+        if (h.swing) {  // a capsule along the blade, where it is drawn
+          const BladeSeg sg = swingSegment(h, swingAngle(h, float(f.moveFrame)), f.height(), f.bladeLength());
+          const Vec2 a0 = c + Vec2{sg.a.x * f.facing, sg.a.y}, a1 = c + Vec2{sg.b.x * f.facing, sg.b.y};
+          DrawLineEx(V(a0), V(a1), h.radius * 2.0f, col);
+          DrawCircleV(V(a0), h.radius, col);
+          DrawCircleV(V(a1), h.radius, col);
+          continue;
+        }
         Vec2 hp = c + Vec2{h.offset.x * f.facing, h.offset.y};
-        DrawCircleV(V(hp), h.radius, withAlpha(mv->isGrab ? PURPLE : RED, 0.45f));
+        DrawCircleV(V(hp), h.radius, col);
       }
     }
   }

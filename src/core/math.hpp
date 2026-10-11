@@ -8,6 +8,7 @@
 constexpr float kPi = 3.14159265358979f;
 
 inline float deg2rad(float d) { return d * kPi / 180.0f; }
+inline float rad2deg(float r) { return r * 180.0f / kPi; }
 inline float clampf(float v, float lo, float hi) { return std::max(lo, std::min(hi, v)); }
 inline float lerpf(float a, float b, float t) { return a + (b - a) * t; }
 inline float signf(float v) { return v > 0.0f ? 1.0f : (v < 0.0f ? -1.0f : 0.0f); }

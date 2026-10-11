@@ -101,43 +101,67 @@ std::vector<HitboxDef> beamHits(const BeamDef& b, float dmg, float angle, float 
   return out;
 }
 
+// A blade swing hitbox (see HitboxDef::swing): sweeps from a0 to a1 degrees, hits from reach0 to reach1
+// of the blade. Damage / knockback as hb().
+HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1, float radius, float dmg, float angle,
+             float bkb, float kbg, int group, HitFx fx) {
+  HitboxDef h = hb(start, end, 0, 0, radius, dmg, angle, bkb, kbg, Limb::Weapon, group, fx);
+  h.swing = true;
+  h.a0 = a0;
+  h.a1 = a1;
+  h.reach0 = reach0;
+  h.reach1 = reach1;
+  return h;
+}
+
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
-  using L = Limb;
   const HitFx sl = HitFx::Slash;
   auto& m = c.moves;
-  // Each sword swing has a strong "tip" (listed first = priority) and a weaker base.
-  m[Jab] = mv("Estoc", 20, {hb(4, 6, 78, -8, 16, 4.0f, 361, 10, 40, L::Weapon, 0, sl),
-                            hb(4, 6, 44, -8, 16, 3.0f, 361, 8, 30, L::Weapon, 0, sl)});
+  // Every swing rides the blade: a strong tip (listed first = priority) and a weaker base, both
+  // sweeping the same arc (degrees: 0 = forward, 90 = up, -90 = down).
+  auto pair = [&](int s0, int e0, float a0, float a1, float rTip, float dTip, float rBase, float dBase, float ang,
+                  float bkb, float kbg, int group, HitFx fx, float tipBkb = -1.0f, float tipKbg = -1.0f) {
+    return std::vector<HitboxDef>{
+        sw(s0, e0, a0, a1, 0.55f, 1.0f, rTip, dTip, ang, tipBkb < 0 ? bkb : tipBkb, tipKbg < 0 ? kbg : tipKbg, group, fx),
+        sw(s0, e0, a0, a1, 0.0f, 0.55f, rBase, dBase, ang, bkb, kbg, group, fx)};
+  };
+  auto join = [](std::vector<HitboxDef> a, const std::vector<HitboxDef>& b) {
+    a.insert(a.end(), b.begin(), b.end());
+    return a;
+  };
+  m[Jab] = mv("Estoc", 20, pair(4, 7, 12, -4, 16, 4.0f, 16, 3.0f, 361, 8, 35, 0, sl, 10, 40));
   m[Jab].nextMove = Jab2; m[Jab].comboStart = 4; m[Jab].comboEnd = 18; m[Jab].comboAt = 10;
-  m[Jab2] = mv("Revers", 30, {hb(4, 7, 76, -14, 18, 5.0f, 361, 40, 90, L::Weapon, 0, sl),
-                              hb(4, 7, 42, -14, 18, 4.0f, 361, 35, 80, L::Weapon, 0, sl)});
-  m[FTilt] = mv("Taille", 32, {hb(7, 10, 84, -10, 18, 12.0f, 361, 25, 90, L::Weapon, 0, sl),
-                               hb(7, 10, 48, -10, 20, 9.0f, 361, 25, 80, L::Weapon, 0, sl)});
-  m[UTilt] = mv("Arc céleste", 30, {hb(6, 12, 20, -82, 22, 7.5f, 95, 35, 105, L::Weapon, 0, sl),
-                                    hb(6, 12, 48, -50, 20, 7.0f, 95, 35, 100, L::Weapon, 0, sl)});
-  m[DTilt] = mv("Fauche", 22, {hb(6, 8, 80, 40, 16, 9.0f, 30, 20, 60, L::Weapon, 0, sl),
-                               hb(6, 8, 44, 40, 16, 7.0f, 30, 20, 50, L::Weapon, 0, sl)});
-  m[DashAttack] = mv("Charge lame", 38, {hb(8, 13, 70, -4, 24, 11.0f, 55, 50, 75, L::Weapon, 0, sl)});
+  m[Jab2] = mv("Revers", 30, pair(4, 7, 70, -25, 18, 5.0f, 18, 4.0f, 361, 35, 80, 0, sl, 40, 90));
+  m[FTilt] = mv("Taille", 32, pair(7, 10, 105, -35, 18, 12.0f, 20, 9.0f, 361, 25, 80, 0, sl, 25, 90));
+  m[UTilt] = mv("Arc céleste", 30, pair(6, 12, 15, 165, 22, 7.5f, 20, 7.0f, 95, 35, 100, 0, sl, 35, 105));
+  m[DTilt] = mv("Fauche", 22, pair(6, 9, -75, -25, 16, 9.0f, 16, 7.0f, 30, 20, 50, 0, sl, 20, 60));
+  m[DashAttack] = mv("Charge lame", 38, pair(8, 13, 25, -5, 22, 11.0f, 22, 9.0f, 55, 45, 70, 0, sl, 50, 75));
   m[DashAttack].vel = {{2, VelMode::SetX, {9.5f, 0}}};
   m[DashAttack].frictionMul = 0.25f;
 
-  m[FSmash] = mv("Smash epee", 50, {hb(12, 15, 92, 0, 18, 19.0f, 361, 32, 100, L::Weapon, 0, smashFx),
-                                    hb(12, 15, 50, -10, 24, 14.0f, 361, 30, 92, L::Weapon, 0, smashFx)});
+  m[FSmash] = mv("Smash épée", 50, pair(12, 16, 125, -45, 18, 19.0f, 24, 14.0f, 361, 30, 92, 0, smashFx, 32, 100));
   m[FSmash].chargeFrame = 6;
-  m[USmash] = mv("Pic céleste", 44, {hb(13, 17, 4, -102, 18, 17.0f, 90, 30, 98, L::Weapon, 0, smashFx),
-                                     hb(13, 17, 4, -60, 22, 13.0f, 90, 30, 92, L::Weapon, 0, smashFx)});
+  m[USmash] = mv("Pic céleste", 44, pair(13, 18, 40, 140, 18, 17.0f, 22, 13.0f, 90, 30, 92, 0, smashFx, 30, 98));
   m[USmash].chargeFrame = 6;
-  m[DSmash] = mv("Moulinet bas", 48, {hb(6, 8, 74, 42, 18, 12.0f, 25, 30, 90, L::Weapon, 0, sl),
-                                      rev(hb(18, 20, -78, 42, 18, 15.0f, 25, 32, 95, L::Weapon, 1, smashFx))});
+  {
+    std::vector<HitboxDef> d = pair(6, 9, -20, -55, 18, 12.0f, 18, 10.0f, 25, 30, 90, 0, sl);
+    std::vector<HitboxDef> back = pair(18, 21, -150, -125, 18, 15.0f, 18, 12.0f, 25, 32, 95, 1, smashFx);
+    for (auto& h : back) h.reverse = true;
+    m[DSmash] = mv("Moulinet bas", 48, join(d, back));
+  }
   m[DSmash].chargeFrame = 3;
 
-  m[NAir] = mv("Double taille", 40, {hb(5, 8, 66, -10, 26, 5.0f, 70, 25, 40, L::Weapon, 0, sl),
-                                     hb(14, 18, 66, -4, 28, 9.0f, 361, 30, 95, L::Weapon, 1, sl)}, 8);
-  m[FAir] = mv("Croissant", 36, {hb(5, 9, 72, -14, 26, 11.0f, 361, 30, 92, L::Weapon, 0, sl)}, 8);
-  m[BAir] = mv("Revers aerien", 36, {rev(hb(7, 10, -72, -6, 26, 12.5f, 361, 30, 98, L::Weapon, 0, sl))}, 10);
-  m[UAir] = mv("Lune montante", 36, {hb(5, 10, 0, -80, 30, 11.0f, 85, 30, 95, L::Weapon, 0, sl)}, 8);
-  m[DAir] = mv("Lame plongeante", 46, {hb(14, 17, 14, 70, 22, 14.0f, 270, 20, 90, L::Weapon, 0, sl),
-                                       hb(14, 17, 46, 40, 22, 11.0f, 361, 30, 80, L::Weapon, 0, sl)}, 16);
+  m[NAir] = mv("Double taille", 40, join(pair(5, 8, 95, -30, 24, 5.0f, 24, 4.0f, 70, 25, 40, 0, sl),
+                                          pair(14, 18, -60, 75, 26, 9.0f, 26, 7.0f, 361, 30, 95, 1, sl)), 8);
+  m[FAir] = mv("Croissant", 36, pair(5, 9, 115, -50, 24, 11.0f, 24, 9.0f, 361, 30, 92, 0, sl), 8);
+  {
+    std::vector<HitboxDef> b = pair(7, 10, 145, 215, 24, 12.5f, 24, 10.0f, 361, 30, 98, 0, sl);
+    for (auto& h : b) h.reverse = true;
+    m[BAir] = mv("Revers aérien", 36, b, 10);
+  }
+  m[UAir] = mv("Lune montante", 36, pair(5, 10, 165, 15, 28, 11.0f, 26, 9.0f, 85, 30, 95, 0, sl), 8);
+  m[DAir] = mv("Lame plongeante", 46, pair(14, 17, -55, -95, 22, 14.0f, 22, 11.0f, 270, 20, 80, 0, sl, 20, 90), 16);
+  for (auto& h : m[DAir].hitboxes) h.reach1 = std::min(h.reach1, 0.85f);
 
   for (int id : {Jab, Jab2, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir, FAir,
                  BAir, UAir, DAir})

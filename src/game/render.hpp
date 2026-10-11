@@ -40,6 +40,7 @@ struct Pose {
   float charge = 0.0f;     // energy gathered in the hands (casts, hand signs, raised arm)
   HitFx chargeFx = HitFx::Normal;
   bool shout = false;      // roaring / shouting face
+  float bladeLen = 0.0f;   // > 0: the blade in hand is drawn this long (grip to tip, px at scale 1) = its hitbox
 };
 
 Pose restPose(const CharacterDef& def, float time);

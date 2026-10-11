@@ -405,6 +405,9 @@ MoveDef mv(const char* name, int duration, std::vector<HitboxDef> boxes, int lan
 // Generic normal attacks, scaled by body size (S) and power (P).
 void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx);
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx = HitFx::Slash);
+// A blade swing hitbox: sweeps from a0 to a1 degrees, hits from reach0 to reach1 of the blade.
+HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1, float radius, float dmg, float angle,
+             float bkb, float kbg, int group = 0, HitFx fx = HitFx::Slash);
 void buildCommonMoves(CharacterDef& c, float S, float P);  // grabs, throws, ledge/getup
 // Hitboxes along a beam (circles of radius width/2), all in one group per `hits` (multi-hit beams).
 std::vector<HitboxDef> beamHits(const BeamDef& b, float dmg, float angle, float bkb, float kbg, int hits = 1,

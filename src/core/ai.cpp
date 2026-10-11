@@ -1,11 +1,22 @@
 #include "core/ai.hpp"
+#include "core/swing.hpp"
 
 namespace {
 using IS = InputState;
 
-float moveReach(const MoveDef& m) {
+// How far in front of its center a move hits (blade swings: the furthest point of the sweep).
+float moveReach(const Fighter& f, const MoveDef& m) {
   float r = 0.0f;
-  for (const auto& h : m.hitboxes) r = std::max(r, std::fabs(h.offset.x) + h.radius);
+  for (const auto& h : m.hitboxes) {
+    if (!h.swing) {
+      r = std::max(r, std::fabs(h.offset.x) + h.radius);
+      continue;
+    }
+    for (int k = 0; k <= 8; ++k) {
+      const BladeSeg s = swingSegment(h, h.a0 + (h.a1 - h.a0) * k / 8.0f, f.height(), f.bladeLength());
+      r = std::max(r, std::max(std::fabs(s.a.x), std::fabs(s.b.x)) + h.radius);
+    }
+  }
   return r;
 }
 
@@ -49,7 +60,7 @@ SpecialUse specialUse(const Fighter& f, int id) {
     u.landX = m.teleportDist - (fin ? fin->offset.x : 0.0f);
   }
   u.melee = !m.hitboxes.empty() && !u.counter && !u.grab;
-  u.reach = moveReach(m);
+  u.reach = moveReach(f, m);
   if (u.beam) u.reach = m.beam.from.x + m.beam.length;
   return u;
 }
@@ -61,7 +72,7 @@ bool isThreat(const Fighter& t, const Fighter& f) {
   int lastEnd = 0;
   for (const auto& h : m->hitboxes) lastEnd = std::max(lastEnd, h.end);
   if (t.moveFrame >= lastEnd) return false;
-  float reach = moveReach(*m) + 30.0f;
+  float reach = moveReach(t, *m) + 30.0f;
   Vec2 d = f.center() - t.center();
   return std::fabs(d.x) < reach && std::fabs(d.y) < reach;
 }
@@ -214,6 +225,9 @@ bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
   if (f.state == FState::Helpless || f.state == FState::AirDodge) return true;
   if (f.state == FState::Attack) {
     in.stick = (goal - f.center()).norm();  // steer teleports / zips
+    const MoveDef* mv = f.currentMove();
+    if (mv && mv->teleportFrame < 0 && in.stick.y > 0.5f)  // never fast-fall into the void mid-attack
+      in.stick = Vec2{in.stick.x, 0.5f}.norm() * 0.6f;
     in.special = last_.special;              // keep charging-type specials short
     return true;
   }
@@ -353,7 +367,9 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
       float safeX = targetGrounded ? t.pos.x : nearestPlatformX(m, f.pos);
       in.stick.x = signf(safeX - f.pos.x);
     }
-    if (f.vel.y > 0 && dy > 40.0f && rng_.chance(0.3f * skill_)) in.stick.y = 1.0f;  // fast fall
+    if (f.vel.y > 0 && dy > 40.0f && m.groundBelow(f.pos, 1500.0f) &&
+        m.groundBelow({f.pos.x + f.vel.x * 20.0f, f.pos.y}, 1500.0f) && rng_.chance(0.3f * skill_))
+      in.stick.y = 1.0f;  // fast fall (never over the void, nor drifting into it)
   } else {
     // stop at the edge, unless the target waits across a gap: then jump over it
     float ahead = f.pos.x + in.stick.x * 40.0f;
@@ -369,16 +385,18 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
 
   bool killRange = t.percent > 110.0f - level_ * 3.0f;
   // Spacing depends on the fighter's reach (swords hit from further away).
-  const float close = std::max(70.0f, moveReach(d.moves[FTilt]) * 0.75f);
+  const float close = std::max(70.0f, moveReach(f, f.moveDef(FTilt)) * 0.75f);
   const float mid = close + 60.0f;
   const bool tShield = t.state == FState::Shield || t.state == FState::ShieldStun;
 
   if (!f.grounded) {
     if (f.state != FState::Air) return;
-    if (adx < 110.0f && std::fabs(dy) < 110.0f) {
+    const bool overGround =
+        m.groundBelow(f.pos, 1500.0f) && m.groundBelow({f.pos.x + f.vel.x * 20.0f, f.pos.y}, 1500.0f);
+    if (adx < 110.0f && std::fabs(dy) < 110.0f && (overGround || f.airJumps > 0)) {
       Vec2 dir{0, 0};
       if (dy < -40.0f && adx < 60.0f) dir = {0, -1};
-      else if (dy > 40.0f && adx < 60.0f) dir = {0, 1};
+      else if (dy > 40.0f && adx < 60.0f) dir = overGround ? Vec2{0, 1} : Vec2{float(toward), 0};
       else if (adx > 30.0f) dir = {float(toward), 0};
       if (dir.len() < 0.1f) tap(in, &IS::attack);
       else tapCStick(in, dir);

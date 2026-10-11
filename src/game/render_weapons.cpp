@@ -789,6 +789,7 @@ WeaponVisual frontWeapon(const CharacterDef& def, const Pose& pose) {
 float frontWeaponLength(const CharacterDef& def, const Pose& pose) {
   const WeaponVisual v = frontWeapon(def, pose);
   if (v == WeaponVisual::None) return 0.0f;
+  if (pose.bladeLen > 0.0f) return pose.bladeLen;  // the fighter's blade: exactly what its swings hit with
   if (v == def.baseWeapon && def.weaponLength > 0.0f) return def.weaponLength;
   return weaponVisualLength(v) * def.height / 100.0f;
 }
