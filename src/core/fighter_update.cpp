@@ -222,6 +222,12 @@ void Match::updateFighter(Fighter& f) {
     return;
   }
   f.stateFrame++;
+  if (f.form >= 0) {  // transformations wear off (never in the middle of a move they change)
+    const bool moveLong = f.formTimer <= 0 && f.formMove >= 0;
+    if (!moveLong && f.formTimer > 0) --f.formTimer;
+    const bool over = moveLong ? !(f.state == FState::Attack && f.move == f.formMove) : f.formTimer <= 0;
+    if (over && f.state != FState::Attack) endForm(f);
+  }
   if (f.intangible > 0) f.intangible--;
   if (f.invincible > 0) f.invincible--;
   if (f.ledgeCooldown > 0) f.ledgeCooldown--;
@@ -509,13 +515,30 @@ void Match::updateMove(Fighter& f) {
     }
     if (f.vel.y < -0.5f) f.grounded = false;
   }
-  if (m.projectileFrame == t) spawnProjectiles(f, m.projectile);
+  if (m.projectileFrame >= 0 && t >= m.projectileFrame) {
+    const int k = t - m.projectileFrame;
+    if (k == 0 || (m.projectileEvery > 0 && k % m.projectileEvery == 0 && k / m.projectileEvery <= m.projectileRepeat))
+      spawnProjectiles(f, m.projectile);
+  }
+  for (const auto& sh : m.shots)
+    if (sh.frame == t) spawnProjectiles(f, sh.def);
+  if (m.formIndex >= 0 && m.formFrame == t) startForm(f, m.formIndex);
   if (m.intangibleStart >= 0 && t == std::max(1, m.intangibleStart))  // t starts at 1
     f.intangible = m.intangibleEnd - t;
   if (m.teleportFrame == t) {
-    Vec2 dir = m.teleportForward ? Vec2{float(f.facing), 0.0f} : in.stick.len() > 0.3f ? in.stick.norm() : Vec2{0, -1};
-    if (std::fabs(dir.x) > 0.2f) f.facing = dir.x > 0 ? 1 : -1;
-    f.pos += dir * m.teleportDist;
+    const int target = m.teleportToTarget ? nearestOpponent(f) : -1;
+    if (target >= 0) {  // right in front of the nearest opponent, on the side it came from, facing it
+      const Fighter& o = fighters[target];
+      const int side = f.pos.x <= o.pos.x ? -1 : 1;
+      f.pos = {o.pos.x + side * (o.width() * 0.5f + f.width() * 0.5f + 14.0f), o.pos.y};
+      f.facing = -side;
+    } else {
+      Vec2 dir = m.teleportForward || m.teleportToTarget ? Vec2{float(f.facing), 0.0f}
+                 : in.stick.len() > 0.3f                 ? in.stick.norm()
+                                                         : Vec2{0, -1};
+      if (std::fabs(dir.x) > 0.2f) f.facing = dir.x > 0 ? 1 : -1;
+      f.pos += dir * m.teleportDist;
+    }
     if (m.turnAfterTeleport) f.facing = -f.facing;
     f.grounded = false;
     f.vel = {0, 0};

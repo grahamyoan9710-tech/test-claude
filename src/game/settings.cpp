@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "core/fighter.hpp"
 #include "game/controls.hpp"
 #include "raylib.h"
 
@@ -103,7 +104,7 @@ void loadSettings() {
       else if (k == "stocks") s.stocks = clampi(value, 1, 5);
       else if (k == "items") s.items = value != 0;
       else if (k == "weapons") s.weapons = value != 0;
-      else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, 9);
+      else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, kMaxCpuLevel);
       else if (k.rfind("pad.", 0) == 0) {  // pad.jump=... and pad.jump.2=... (every pad; -1: none)
         for (int sl = 0; sl < 2; ++sl)
           for (int a = kActJump; a < kActionCount; ++a)

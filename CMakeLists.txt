@@ -16,6 +16,7 @@ option(CLASH_PORTABLE "Self-contained executable (static C++ runtime) for distri
 add_library(clash_core STATIC
   src/core/roster_normals.cpp
   src/core/roster.cpp
+  src/core/roster_ultimates.cpp
   src/core/stage.cpp
   src/core/match.cpp
   src/core/weapons.cpp

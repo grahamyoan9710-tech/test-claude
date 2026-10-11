@@ -145,6 +145,13 @@ struct ProjectileDef {
   bool follow = false;     // stays on its target while it lives (black flames, vortices, petal spheres)
   int armDelay = 0;        // harmless for its first frames (the warning before a strike from the sky)
   bool ignoreGround = false;  // flies through the stage (strikes from the sky, eruptions)
+  Vec2 jitter;             // random spawn offset in [-jitter, +jitter] (rains, eruptions)
+};
+
+// One more projectile fired by a move at a given frame (cinematic ultimates: a rain, then its finisher).
+struct ProjShot {
+  int frame = 0;
+  ProjectileDef def;
 };
 
 // A beam drawn from the fighter during a move (the damage comes from the move's hitboxes, see beamHits).
@@ -210,7 +217,6 @@ enum class Form : uint8_t {
   KuramaAvatar,  // Naruto: golden chakra cloak with the giant fox around him
   SusanooPurple, // Sasuke: purple Susanoo around him
   SusanooBlue,   // Kakashi: blue Susanoo around him
-  DemonDragon,   // Ganondorf: (summon) the demon dragon behind him
   Count
 };
 
@@ -252,7 +258,10 @@ struct MoveDef {
   float chargeDamageMul = 0.4f;     // damage * (1 + mul * chargeRatio)
   // Projectile
   int projectileFrame = -1;
+  int projectileRepeat = 0;         // fired again `projectileRepeat` times, every `projectileEvery` frames
+  int projectileEvery = 0;
   ProjectileDef projectile;
+  std::vector<ProjShot> shots;      // more projectiles, of other kinds
   // Defensive windows
   int intangibleStart = -1, intangibleEnd = -1;
   int armorStart = -1, armorEnd = -1;
@@ -368,6 +377,7 @@ struct WeaponDef {
 struct FormDef {
   Form form = Form::None;
   int duration = 0;
+  HitFx fx = HitFx::Normal;   // element of the base attacks while transformed (Normal = unchanged)
   float damageMul = 1.0f;     // every hit
   float kbTakenMul = 1.0f;    // knockback received
   bool superArmor = false;    // weak hits do not make it flinch

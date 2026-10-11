@@ -28,7 +28,7 @@ const RowInfo kRows[3][6] = {
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
      {"Armes", "Des armes tombent du ciel : chaque combattant ramasse les siennes en marchant dessus."},
-     {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 9)."},
+     {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 10 : le niveau 10 frappe deux fois plus fort)."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},
 };
 const int kRowCounts[4] = {4, 6, 5, kActionCount + 1};  // controls: the actions + the reset buttons
@@ -311,7 +311,7 @@ void App::changeSetting(int row, int delta) {
       if (row == 0) s.stocks = 1 + (s.stocks - 1 + delta + 5) % 5;
       if (row == 1) s.items = !s.items;
       if (row == 2) s.weapons = !s.weapons;
-      if (row == 3) s.cpuLevel = 1 + (s.cpuLevel - 1 + delta + 9) % 9;
+      if (row == 3) s.cpuLevel = 1 + (s.cpuLevel - 1 + delta + kMaxCpuLevel) % kMaxCpuLevel;
       if (row == 4) {
         s = Settings();
         toast("Paramètres par défaut rétablis");

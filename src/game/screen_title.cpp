@@ -278,7 +278,7 @@ void App::drawMainMenu() {
       }
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 6.0f : 0.0f;
       ui::drawSprite(ui::Sprite::Combat, rr.x + 36, rr.y + rr.height - 118 - bounce, 92);
-      drawTextOutlined("Jusqu'à 4 joueurs  •  Ordinateurs niveaux 1 à 9", rr.x + 40, rr.y + rr.height - 30, 18,
+      drawTextOutlined("Jusqu'à 4 joueurs  •  Ordinateurs niveaux 1 à 10", rr.x + 40, rr.y + rr.height - 30, 18,
                        ui::kCream, ui::kInk, 2.0f);
     } else {
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 4.0f : 0.0f;

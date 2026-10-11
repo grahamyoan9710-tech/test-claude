@@ -110,7 +110,7 @@ void App::changeField(int col, int row, int delta, int by) {
       break;
     default:
       if (s.type == 1) s.device = (s.device + delta + kDeviceCount) % kDeviceCount;
-      else if (s.type == 2) s.level = 1 + (s.level - 1 + delta + 9) % 9;
+      else if (s.type == 2) s.level = 1 + (s.level - 1 + delta + kMaxCpuLevel) % kMaxCpuLevel;
       break;
   }
 }
@@ -318,7 +318,7 @@ void App::drawCss() {
     if (type == 1) {
       deviceSelector(f2, s.device, foc2, t);
     } else if (type == 2 && !training_) {
-      ui::selector(f2, TextFormat("NIVEAU %d", s.level), foc2, t);
+      ui::selector(f2, s.level >= kMaxCpuLevel ? "NIVEAU 10 : PUISSANCE x2" : TextFormat("NIVEAU %d", s.level), foc2, t);
     } else {
       DrawRectangleRounded(f2, 0.5f, 10, withAlpha(ui::kInk, 0.5f));
       if (training_) drawTextCentered("Réglable en pause", f2.x + f2.width * 0.5f, f2.y + 9, 16, ui::kMuted, false);

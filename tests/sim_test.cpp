@@ -417,6 +417,88 @@ static void testWeapons() {
   CHECK(boosted > base * 1.1f, "weapon damage bonus (%.1f vs %.1f)", boosted, base);
 }
 
+// Every ultimate (bare-handed and with each weapon) hits, lets its victim go, and can KO at high percent.
+static void testAllUltimates() {
+  std::printf("[the 45 ultimates]\n");
+  const int n = int(roster().size());
+  for (int c = 0; c < n; ++c) {
+    for (int slot = -1; slot <= 1; ++slot) {
+      for (int pass = 0; pass < 2; ++pass) {  // 0: at 30%, how much damage; 1: at 130%, does it KO
+        MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
+        cfg.items = false;
+        cfg.weapons = false;
+        Match m(cfg);
+        skipCountdown(m);
+        Fighter& f = m.fighters[0];
+        Fighter& v = m.fighters[1];
+        f.pos = {-120, 0};
+        f.facing = 1;
+        v.pos = {40, 0};
+        v.percent = pass == 0 ? 30.0f : 130.0f;
+        if (slot >= 0) m.equipWeapon(f, slot);
+        Pad p{m};
+        p.idle(10);
+        f.ult = kUltMax;
+        f.finalSmash = true;
+        InputState ult;
+        ult.ultimate = true;
+        p.run(1, ult);
+        const std::string name = f.moveDef(FinalSmash).name;
+        CHECK(f.move == FinalSmash, "%s/%d: ultimate starts", roster()[c].name.c_str(), slot);
+        const float before = v.percent;
+        int stocks = v.stocks, captured = 0, maxCaptured = 0;
+        bool sawForm = false;
+        float peak = before;
+        for (int i = 0; i < 360; ++i) {
+          p.idle(1);
+          if (v.stocks == stocks) peak = std::max(peak, v.percent);
+          captured = v.state == FState::Captured ? captured + 1 : 0;
+          maxCaptured = std::max(maxCaptured, captured);
+          sawForm = sawForm || f.form >= 0;
+          if (!sane(m)) break;
+        }
+        CHECK(sane(m), "%s: sane", name.c_str());
+        CHECK(v.state != FState::Captured, "%s: the victim is released (state %d)", name.c_str(), int(v.state));
+        CHECK(maxCaptured < 140, "%s: held %d frames", name.c_str(), maxCaptured);
+        if (pass == 0) {
+          const float dealt = peak - before;
+          CHECK(dealt >= 10.0f || v.stocks < stocks, "%s: deals damage (%.1f%%)", name.c_str(), dealt);
+          std::printf("  %-10s %-32s %5.1f%%%s%s%s\n", roster()[c].name.c_str(), name.c_str(), dealt,
+                      v.stocks < stocks ? "  KO at 30%" : "", maxCaptured ? "  (capture)" : "",
+                      sawForm ? "  (transformation)" : "");
+        } else {
+          CHECK(v.stocks < stocks || sawForm, "%s: KOs at 130%% (%.0f%%, pos %.0f,%.0f)", name.c_str(), v.percent, v.pos.x,
+                v.pos.y);
+        }
+      }
+    }
+  }
+}
+
+// Level 10 CPUs hit twice as hard as level 9.
+static void testLevel10() {
+  std::printf("[cpu level 10]\n");
+  float dealt[2] = {0, 0};
+  for (int pass = 0; pass < 2; ++pass) {
+    MatchConfig cfg = duel(0, 0, 0, true, false);
+    cfg.slots[0].level = pass == 0 ? 9 : 10;
+    cfg.items = false;
+    Match m(cfg);
+    skipCountdown(m);
+    m.fighters[0].pos = {-40, 0};
+    m.fighters[0].facing = 1;
+    m.fighters[1].pos = {20, 0};
+    std::array<InputState, 4> in{};
+    in[0].attack = true;
+    m.step(in);
+    in[0].attack = false;
+    for (int i = 0; i < 25; ++i) m.step(in);
+    dealt[pass] = m.fighters[1].percent;
+  }
+  CHECK(dealt[0] > 0.0f && std::fabs(dealt[1] - 2.0f * dealt[0]) < 0.01f, "level 10 jab %.1f%% vs level 9 %.1f%%", dealt[1],
+        dealt[0]);
+}
+
 static void testTraining() {
   std::printf("[training mode]\n");
   MatchConfig cfg = duel(0, 2, 0, false, true);
@@ -594,6 +676,8 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();
   if (only.empty() || only == "ult") testUltEdgeCases();
+  if (only.empty() || only == "ults") testAllUltimates();
+  if (only.empty() || only == "cpu10") testLevel10();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();
   if (only.empty() || only == "recovery") testRecovery();

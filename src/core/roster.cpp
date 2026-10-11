@@ -2,128 +2,10 @@
 // Kaisen, Zelda: Tears of the Kingdom, God of War and Monster Hunter. Each one has its normals, four
 // specials, three ultimates (bare-handed and with each of its two weapons) and two weapons that drop
 // during a match.
-#include "core/moves.hpp"
+#include "core/roster_kit.hpp"
 
 namespace {
-using L = Limb;
-using F = HitFx;
-using PV = ProjVisual;
-
-void sc(MoveDef& m, float S, float P) {
-  for (auto& h : m.hitboxes) {
-    h.offset = h.offset * S;
-    h.radius *= S;
-    h.damage *= P;
-  }
-  m.projectile.spawnOffset = m.projectile.spawnOffset * S;
-  m.projectile.hit.damage *= P;
-  m.projectile.explode.damage *= P;
-  m.beam.from = m.beam.from * S;
-  m.beam.length *= S;
-  m.beam.width *= S;
-}
-
-VelEvent ve(int frame, VelMode mode, float x, float y, float stickX = 0.0f, bool airOnly = false) {
-  VelEvent e;
-  e.frame = frame;
-  e.mode = mode;
-  e.v = {x, y};
-  e.stickX = stickX;
-  e.airOnly = airOnly;
-  return e;
-}
-
-ProjectileDef proj(Vec2 spawn, Vec2 vel, float grav, int life, float radius, float dmg, float bkb, float kbg, F fx,
-                   PV vis) {
-  ProjectileDef p;
-  p.spawnOffset = spawn;
-  p.velocity = vel;
-  p.gravity = grav;
-  p.lifetime = life;
-  p.radius = radius;
-  p.hit = hb(0, 0, 0, 0, radius, dmg, 361, bkb, kbg, L::None, 0, fx);
-  p.visual = vis;
-  return p;
-}
-
-Palette pal(Color3 a, Color3 b, Color3 c, Color3 skin, Color3 hair, Color3 eyes) {
-  Palette p;
-  p.primary = a;
-  p.secondary = b;
-  p.accent = c;
-  p.skin = skin;
-  p.hair = hair;
-  p.eyes = eyes;
-  return p;
-}
-
-HitboxDef imp(HitboxDef h) {
-  h.impact = true;
-  return h;
-}
-
-// n light hits every `every` frames (groups g0, g0+1...): the caller adds the finisher.
-void multi(std::vector<HitboxDef>& v, int start, int n, int every, float ox, float oy, float r, float dmg, L limb,
-           F fx, int g0 = 0, float angle = 361.0f) {
-  for (int k = 0; k < n; ++k)
-    v.push_back(hb(start + k * every, start + k * every + 3, ox, oy, r, dmg, angle, 18, 6, limb, g0 + k, fx));
-}
-
-// Ultimates: invulnerable, hanging in the air; the cinematic freeze covers the first 30 frames.
-MoveDef ultimate(const char* name, int duration, std::vector<HitboxDef> boxes, PoseHint pose) {
-  MoveDef m = mv(name, duration, std::move(boxes));
-  m.intangibleStart = 0;
-  m.intangibleEnd = duration;
-  m.vel = {ve(1, VelMode::Set, 0.0f, -3.0f), ve(22, VelMode::Set, 0.0f, 0.0f)};
-  m.gravityMul = 0.0f;
-  m.allowDrift = false;
-  m.pose = pose;
-  return m;
-}
-
-// Area storm around the user: light hits every `every` frames, then a launching finisher.
-std::vector<HitboxDef> storm(int start, int hits, int every, float r0, float r1, float dmg, F fx, float finalDmg,
-                             float finalR, float angle = 75.0f) {
-  std::vector<HitboxDef> v;
-  for (int k = 0; k < hits; ++k) {
-    float r = r0 + (r1 - r0) * float(k) / std::max(1, hits - 1);
-    v.push_back(hb(start + k * every, start + k * every + 3, 0, -10, r, dmg, 361, 10, 0, L::None, k, fx));
-  }
-  const int f = start + hits * every + 2;
-  v.push_back(imp(hb(f, f + 6, 0, -10, finalR, finalDmg, angle, 92, 106, L::None, hits, fx)));
-  return v;
-}
-
-WeaponDef weapon(const char* name, const char* desc, WeaponVisual vis, F fx, float dmg, float kb, float reach,
-                 int seconds = 18) {
-  WeaponDef w;
-  w.name = name;
-  w.desc = desc;
-  w.visual = vis;
-  w.fx = fx;
-  w.damageMul = dmg;
-  w.kbMul = kb;
-  w.reachMul = reach;
-  w.duration = seconds * 60;
-  return w;
-}
-
-void stats(CharacterDef& c, float w, float h, float weight, float walk, float run, float air, float grav,
-           float maxFall, float fastFall, float jump, float shortHop, float airJump, int squat) {
-  c.width = w;
-  c.height = h;
-  c.weight = weight;
-  c.walkSpeed = walk;
-  c.runSpeed = run;
-  c.airSpeed = air;
-  c.gravity = grav;
-  c.maxFall = maxFall;
-  c.fastFall = fastFall;
-  c.jumpVel = jump;
-  c.shortHopVel = shortHop;
-  c.airJumpVel = airJump;
-  c.jumpSquat = squat;
-}
+using namespace kit;
 
 // ---------------------------------------------------------------------------------------------
 // Black Clover
@@ -175,16 +57,6 @@ CharacterDef makeAsta() {
   m[DSpecial].reflects = true;
   m[DSpecial].gravityMul = 0.3f;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  std::vector<HitboxDef> ub;
-  multi(ub, 34, 5, 4, 30, -6, 74, 4.0f, L::Weapon, F::AntiMagic, 0, 0);
-  m[FinalSmash] = ultimate("BLACK DIVIDER", 100, ub, PoseHint::Thrust);
-  m[FinalSmash].vel = {ve(1, VelMode::Set, 0, -2), ve(22, VelMode::Set, 0, 0), ve(34, VelMode::SetX, 15, 0),
-                       ve(52, VelMode::Set, 0, 0)};
-  m[FinalSmash].projectileFrame = 60;
-  m[FinalSmash].projectile = proj({60, -10}, {17, 0}, 0, 60, 90, 24, 92, 108, F::AntiMagic, PV::BlackSlash);
-  m[FinalSmash].projectile.piercing = true;
-  m[FinalSmash].projectile.hit.impact = true;
 
   c.weapons[0] = weapon("Épée pourfendeuse", "Lame géante : frappe plus fort et plus loin", WeaponVisual::DemonSlayer,
                         F::AntiMagic, 1.3f, 1.12f, 1.25f);
@@ -257,9 +129,6 @@ CharacterDef makeYuno() {
   m[DSpecial].gravityMul = 0.4f;
   m[DSpecial].pose = PoseHint::Spin;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("TEMPÊTE DE ZÉPHYR", 100, storm(34, 6, 6, 200, 360, 3, F::Wind, 18, 430, 80),
-                           PoseHint::Raise);
 
   c.weapons[0] = weapon("Grimoire à quatre trèfles", "Cinq lames de vent d'un coup", WeaponVisual::Grimoire, F::Wind,
                         1.2f, 1.1f, 1.0f);
@@ -337,16 +206,6 @@ CharacterDef makeIchigo() {
   m[DSpecial].gravityMul = 0.3f;
   m[DSpecial].pose = PoseHint::Cast;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  BeamDef mugetsu;
-  mugetsu.start = 44;
-  mugetsu.end = 76;
-  mugetsu.from = {30, -10};
-  mugetsu.length = 1100;
-  mugetsu.width = 240;
-  mugetsu.fx = F::Dark;
-  m[FinalSmash] = ultimate("MUGETSU", 104, beamHits(mugetsu, 20, 30, 95, 110, 6), PoseHint::Overhead);
-  m[FinalSmash].beam = mugetsu;
 
   c.weapons[0] = weapon("Zangetsu (Shikai)", "Getsuga Tenshō géant", WeaponVisual::Zangetsu, F::Reiatsu, 1.25f, 1.1f,
                         1.15f);
@@ -429,9 +288,6 @@ CharacterDef makeByakuya() {
   m[DSpecial].pose = PoseHint::HandSign;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("SENBONZAKURA KAGEYOSHI", 104, storm(34, 9, 5, 300, 380, 2.2f, F::Petal, 16, 400, 70),
-                           PoseHint::HandSign);
-
   c.weapons[0] = weapon("Senbonzakura (Shikai)", "La nuée de pétales grossit", WeaponVisual::Senbonzakura, F::Petal,
                         1.2f, 1.08f, 1.2f);
   MoveDef swarm = m[NSpecial];
@@ -497,16 +353,6 @@ CharacterDef makeLink() {
   m[DSpecial].isGrab = true;
   m[DSpecial].pose = PoseHint::Cast;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  BeamDef seal;
-  seal.start = 40;
-  seal.end = 68;
-  seal.from = {24, -20};
-  seal.length = 1100;
-  seal.width = 170;
-  seal.fx = F::Light;
-  m[FinalSmash] = ultimate("SCEAU DE LUMIÈRE", 100, beamHits(seal, 19, 35, 92, 108, 5), PoseHint::Overhead);
-  m[FinalSmash].beam = seal;
 
   c.weapons[0] = weapon("Épée de légende", "L'épée tire un rayon de lumière", WeaponVisual::MasterSword, F::Light, 1.25f,
                         1.1f, 1.2f);
@@ -584,16 +430,6 @@ CharacterDef makeGanondorf() {
   m[Extra1].pose = PoseHint::Stomp;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial, Extra1}) sc(m[id], S, P);
 
-  BeamDef breath;
-  breath.start = 46;
-  breath.end = 80;
-  breath.from = {30, -20};
-  breath.length = 1000;
-  breath.width = 260;
-  breath.fx = F::Gloom;
-  m[FinalSmash] = ultimate("BÊTE DU FLÉAU", 104, beamHits(breath, 21, 35, 95, 110, 6), PoseHint::Roar);
-  m[FinalSmash].beam = breath;
-
   c.weapons[0] = weapon("Épée du Roi Démon", "Lame de malice à grande portée", WeaponVisual::DemonKingSword, F::Gloom,
                         1.3f, 1.12f, 1.5f);
   MoveDef blade = mv("Lame de malice", 52, {imp(hb(10, 22, 70, -6, 38, 15, 40, 60, 88, L::ArmFront, 0, F::Gloom))});
@@ -663,13 +499,6 @@ CharacterDef makeKratos() {
   m[DSpecial].reflects = true;
   m[DSpecial].gravityMul = 0.3f;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  std::vector<HitboxDef> rage;
-  multi(rage, 34, 9, 4, 40, -6, 60, 3.0f, L::ArmFront, F::Fire);
-  rage.push_back(imp(hb(74, 80, 40, 0, 150, 20, 50, 95, 110, L::Body, 9, F::Fire)));
-  m[FinalSmash] = ultimate("RAGE DE SPARTE", 100, rage, PoseHint::Rush);
-  m[FinalSmash].vel = {ve(1, VelMode::Set, 0, -2), ve(22, VelMode::Set, 0, 0), ve(34, VelMode::SetX, 9, 0),
-                       ve(70, VelMode::Set, 0, 0)};
 
   c.weapons[0] = weapon("Hache Léviathan", "La hache gèle et revient dans la main", WeaponVisual::LeviathanAxe, F::Ice,
                         1.25f, 1.12f, 1.35f);
@@ -746,13 +575,6 @@ CharacterDef makeGojo() {
   m[DSpecial].pose = PoseHint::HandSign;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("SPHÈRE DE L'INFINI", 104,
-                           {hb(34, 38, 0, 0, 620, 6, 90, 10, 0, L::None, 0, F::Cursed)}, PoseHint::HandSign);
-  m[FinalSmash].projectileFrame = 56;
-  m[FinalSmash].projectile = proj({40, -10}, {14, 0}, 0, 80, 110, 28, 95, 110, F::Cursed, PV::PurpleOrb);
-  m[FinalSmash].projectile.piercing = true;
-  m[FinalSmash].projectile.hit.impact = true;
-
   c.weapons[0] = weapon("Technique : Violet", "Le Rouge devient un Violet qui efface tout", WeaponVisual::HollowPurple,
                         F::Cursed, 1.1f, 1.05f, 1.0f);
   MoveDef purple = mv("Violet", 52, {});
@@ -815,10 +637,6 @@ CharacterDef makeSukuna() {
   m[DSpecial].projectile.explode.impact = true;
   m[DSpecial].pose = PoseHint::Bow;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("SANCTUAIRE DÉMONIAQUE", 110, storm(34, 11, 4, 480, 540, 1.8f, F::Blood, 16, 560, 70),
-                           PoseHint::HandSign);
-  m[FinalSmash].hitboxes.back().fx = F::Fire;
 
   c.weapons[0] = weapon("Kamutoke", "La foudre remplace le Démantèlement", WeaponVisual::Kamutoke, F::Electric, 1.15f,
                         1.08f, 1.1f);
@@ -885,8 +703,6 @@ CharacterDef makeKenpachi() {
   m[DSpecial].gravityMul = 0.3f;
   m[DSpecial].pose = PoseHint::TwoHanded;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("KENDŌ", 100, storm(34, 4, 6, 160, 240, 4, F::Berserk, 22, 300, 60), PoseHint::TwoHanded);
 
   c.weapons[0] = weapon("Nozarashi (Shikai)", "Couperet géant : tranche tout", WeaponVisual::Nozarashi, F::Berserk, 1.3f,
                         1.12f, 1.4f);
@@ -963,8 +779,6 @@ CharacterDef makeUlquiorra() {
   m[DSpecial].pose = PoseHint::Point;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("CERO OSCURAS", 100, {}, PoseHint::Point);
-
   c.weapons[0] = weapon("Murciélago (Resurrección)", "Lances de lumière verte", WeaponVisual::LuzDeLaLuna, F::Hollow,
                         1.2f, 1.08f, 1.15f);
   MoveDef luz = mv("Luz de la Luna", 40, {});
@@ -1026,8 +840,6 @@ CharacterDef makeNaruto() {
   m[DSpecial].gravityMul = 0.3f;
   m[DSpecial].pose = PoseHint::HandSign;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("BARRAGE UZUMAKI", 100, storm(34, 6, 5, 120, 160, 3, F::Chakra, 18, 200, 60), PoseHint::HandSign);
 
   c.weapons[0] = weapon("Mode Ermite", "Rasengan géant (Ōdama)", WeaponVisual::SageScroll, F::Chakra, 1.25f, 1.1f, 1.1f);
   MoveDef odama = m[NSpecial];
@@ -1100,8 +912,6 @@ CharacterDef makeSasuke() {
   m[DSpecial].pose = PoseHint::Roar;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("KIRIN", 100, {}, PoseHint::Raise);
-
   c.weapons[0] = weapon("Arc de Susanoo", "Flèches de flammes violettes", WeaponVisual::SusanooBow, F::Dark, 1.2f, 1.08f,
                         1.0f);
   MoveDef arrow = mv("Flèche de Susanoo", 40, {});
@@ -1170,8 +980,6 @@ CharacterDef makeKakashi() {
   m[DSpecial].isGrab = true;
   m[DSpecial].pose = PoseHint::Kneel;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("RAIKIRI", 100, storm(34, 3, 6, 80, 100, 4, F::Lightning, 24, 140, 45), PoseHint::Rush);
 
   c.weapons[0] = weapon("Sharingan (Kamui)", "Kamui : un vortex sur l'ennemi", WeaponVisual::SharinganEye, F::Dark, 1.2f,
                         1.08f, 1.0f);
@@ -1249,9 +1057,6 @@ CharacterDef makeHunter() {
   m[DSpecial].pose = PoseHint::Kneel;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("TAILLE CHARGÉE VRAIE", 100, storm(34, 2, 10, 140, 160, 6, F::Slash, 26, 240, 50),
-                           PoseHint::TwoHanded);
-
   c.weapons[0] = weapon("Lame chargée", "Décharge élémentaire explosive", WeaponVisual::ChargeBlade, F::Electric, 1.2f,
                         1.1f, 1.0f);
   MoveDef ued = mv("Décharge élémentaire", 54, {imp(hb(22, 26, 60, 10, 40, 12, 60, 50, 85, L::Weapon, 0, F::Electric))});
@@ -1277,9 +1082,12 @@ CharacterDef makeHunter() {
 }  // namespace
 
 const std::vector<CharacterDef>& roster() {
-  static const std::vector<CharacterDef> r = {
-      makeAsta(),   makeYuno(),      makeIchigo(),    makeByakuya(), makeKenpachi(),  makeUlquiorra(),
-      makeNaruto(), makeSasuke(),    makeKakashi(),   makeGojo(),    makeSukuna(),    makeLink(),
-      makeGanondorf(), makeKratos(), makeHunter()};
+  static const std::vector<CharacterDef> r = [] {
+    std::vector<CharacterDef> v = {makeAsta(),   makeYuno(),      makeIchigo(),  makeByakuya(), makeKenpachi(),
+                                   makeUlquiorra(), makeNaruto(), makeSasuke(),  makeKakashi(), makeGojo(),
+                                   makeSukuna(), makeLink(),      makeGanondorf(), makeKratos(), makeHunter()};
+    for (auto& c : v) addUltimates(c);  // roster_ultimates.cpp
+    return v;
+  }();
   return r;
 }

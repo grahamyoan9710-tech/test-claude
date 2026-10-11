@@ -106,7 +106,7 @@ int nearestLedge(const Match& m, Vec2 p) {
 }  // namespace
 
 CpuBrain::CpuBrain(int level, uint32_t seed)
-    : level_(std::clamp(level, 1, 9)), skill_(std::clamp(level, 1, 9) / 9.0f), rng_(seed * 2654435761u + 7u) {}
+    : level_(std::clamp(level, 1, kMaxCpuLevel)), skill_(std::clamp(level, 1, 9) / 9.0f), rng_(seed * 2654435761u + 7u) {}
 
 InputState CpuBrain::think(const Match& m, int self) {
   InputState in;

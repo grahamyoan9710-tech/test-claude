@@ -28,7 +28,10 @@ enum class EvType : uint8_t {
   WeaponSpawn, WeaponPickup, WeaponBreak, WeaponLand,  // b = weapon slot, strength = character
   SuperFlash,  // a = fighter, b = move id: freeze + cut-in
   Explosion,   // strength = radius
-  Reflect
+  Reflect,
+  Transform,   // a = fighter, b = form index: a transformation begins
+  FormEnd,     // a = fighter: it wears off
+  Capture      // a = attacker, b = victim: caught by a cinematic ultimate
 };
 
 // A weapon lying on the stage (or falling on it).
@@ -85,6 +88,13 @@ struct Projectile {
   HitboxDef explode;
   int age = 0;
   float spawnRadius = 10.0f;
+  bool follow = false;      // sticks to the first fighter it hits (stuckTo) for the rest of its life
+  int stuckTo = -1;
+  Vec2 stickOffset;         // from the victim's center
+  int armDelay = 0;         // harmless and motionless while age < armDelay
+  bool ignoreGround = false;
+  bool ult = false;         // fired by an ultimate: cannot be blocked, countered or reflected
+  bool armed() const { return age >= armDelay; }
 };
 
 class Match {
@@ -155,10 +165,15 @@ class Match {
   // combat.cpp
   void resolveHits();
   void updateProjectiles();
+  // unblockable: ultimates go through shields.
   void applyHit(Fighter* attacker, Fighter& victim, const HitboxDef& h, Vec2 hitPos, int dirSign,
-                float damageMul, bool throwHit);
+                float damageMul, bool throwHit, bool unblockable = false);
   void spawnProjectiles(Fighter& f, const ProjectileDef& p);
   bool tryCounter(Fighter& victim, Fighter* attacker);
+  // Cinematic ultimates: catches the victim / lands a hit on a held victim (no knockback).
+  void captureFighter(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 hitPos, float damageMul);
+  void holdHit(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 hitPos, float damageMul);
+  int nearestOpponent(const Fighter& f) const;  // -1 if nobody can be targeted
   // match.cpp
   void checkBlastZones();
   void koFighter(Fighter& f);
@@ -167,6 +182,8 @@ class Match {
   void updateOrb();
   void hitOrb(int attacker, float damage, Vec2 from, HitFx fx);
   void startFinalSmash(Fighter& f);
+  void startForm(Fighter& f, int form);
+  void endForm(Fighter& f);
   // weapons.cpp
   void updateItems();
   void spawnWeapon(int character, int slot, Vec2 pos);

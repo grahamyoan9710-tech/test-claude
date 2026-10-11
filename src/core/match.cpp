@@ -120,6 +120,8 @@ void Match::koFighter(Fighter& f) {
   emit(EvType::KO, p, f.id, f.lastHitBy, f.lastKnockback, dir);
   if (f.grabPartner >= 0) releaseGrab(f, false);
   loseWeapon(f, false);
+  if (f.form >= 0) endForm(f);
+  f.captor = -1;
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;
@@ -251,6 +253,22 @@ void Match::startFinalSmash(Fighter& f) {
   emit(EvType::FinalSmash, f.center(), f.id, -1, 0.0f, {}, fx);
 }
 
+void Match::startForm(Fighter& f, int form) {
+  if (form < 0 || form >= int(f.def->forms.size())) return;
+  f.form = form;
+  f.formTimer = f.def->forms[form].duration;
+  f.formMove = f.formTimer > 0 ? -1 : f.move;
+  emit(EvType::Transform, f.center(), f.id, form, 0.0f, {}, f.def->forms[form].fx);
+}
+
+void Match::endForm(Fighter& f) {
+  if (f.form < 0) return;
+  f.form = -1;
+  f.formTimer = 0;
+  f.formMove = -1;
+  emit(EvType::FormEnd, f.center(), f.id);
+}
+
 void Match::resetPositions() {
   projectiles.clear();
   items.clear();
@@ -272,7 +290,9 @@ void Match::resetPositions() {
     f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
     f.finalSmash = false;
     f.ult = 0.0f;
+    f.captor = -1;
     loseWeapon(f, false);
+    if (f.form >= 0) endForm(f);
     setState(f, FState::Air);
   }
   freezeTimer = 0;
