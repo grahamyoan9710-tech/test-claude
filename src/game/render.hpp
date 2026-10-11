@@ -41,6 +41,7 @@ struct Pose {
   HitFx chargeFx = HitFx::Normal;
   bool shout = false;      // roaring / shouting face
   float bladeLen = 0.0f;   // > 0: the blade in hand is drawn this long (grip to tip, px at scale 1) = its hitbox
+  Form form = Form::None;  // transformation (Vasto Lorde, Segunda Etapa...)
 };
 
 Pose restPose(const CharacterDef& def, float time);
@@ -90,6 +91,11 @@ void drawBeams(const Match& m, float time);              // beams of the moves b
 void drawUltimateBackdrop(const Match& m, float time);   // domain / cinematic behind the fighters (world space)
 // The domain's foreground layer (petal storm, slashes, embers...): after the platforms, before the fighters.
 void drawUltimateFront(const Match& m, float time);
+// v5 cinematics (render_ult.cpp): draws the backdrop (front = false) or the foreground layer of an ultimate.
+// Returns true when it replaces the hero's classic domain.
+bool drawUltCinematic(const Match& m, const Fighter& f, UltFx fx, float k, int mf, float time, const Rect& view, bool front);
+// Transformations: Susanoo, Kurama's cloak, wings... behind (front = false) and over the fighter.
+void drawFormAvatar(const Fighter& f, float time, bool front);
 
 // Signature element of each hero (auras, cut-ins, domains).
 inline HitFx heroElement(Hero h) {

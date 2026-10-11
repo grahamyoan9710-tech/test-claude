@@ -748,6 +748,55 @@ void kunai(const WP& p) {
 }
 
 // Eyes and chakra worn as power-ups (drawn by the body: see render_body.cpp).
+// Sharingan / Mangekyo as an item: a glowing red eye in a dark orb.
+void eyeOrb(const WP& p, int pattern) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  discW(c, r * 2.0f, p.col({200, 20, 30, 50}));
+  discW(c, r * 1.15f, p.col({16, 4, 6, 255}));
+  discW(c, r, p.col({210, 20, 30, 255}));
+  if (p.ghost) return;
+  const float rot = p.time * 2.0f;
+  if (pattern == 0) {  // three tomoe
+    for (int i = 0; i < 3; ++i) {
+      const float a = rot + i * 2.0f * kPi / 3.0f;
+      discW(c + Vec2{std::cos(a), std::sin(a)} * (r * 0.55f), r * 0.17f, p.col({10, 2, 4, 255}));
+    }
+  } else {  // the blades of the Mangekyo
+    for (int i = 0; i < 3; ++i) {
+      const float a = rot + i * 2.0f * kPi / 3.0f;
+      Vec2 prev = c;
+      for (int j = 1; j <= 5; ++j) {
+        const float u = j / 5.0f;
+        const Vec2 q = c + Vec2{std::cos(a + u * 1.5f), std::sin(a + u * 1.5f)} * (r * 0.9f * u);
+        DrawLineEx(V(prev), V(q), std::max(1.0f, r * 0.22f * (1.0f - u * 0.7f)), p.col({10, 2, 4, 255}));
+        prev = q;
+      }
+    }
+  }
+  discW(c, r * 0.18f, p.col({10, 2, 4, 255}));
+  if (pattern == 2) discW(c + Vec2{r * 0.9f, -r * 0.9f}, r * 0.35f, p.col({210, 20, 30, 255}));  // the second eye
+}
+
+// Kurama's chakra as an item: a flame of golden chakra with two fox ears.
+void kuramaFlame(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  discW(c, r * 2.2f, p.col({255, 170, 40, 60}));
+  for (int i = 0; i < 5; ++i) {
+    const float ph = hash(p.time * 1.5f + i * 0.2f);
+    discW(c + Vec2{std::sin(p.time * 5.0f + i) * r * 0.3f, -ph * r * 1.6f}, r * (0.8f - 0.5f * ph), p.col({255, 190, 60, 200}));
+  }
+  discW(c, r, p.col({255, 200, 70, 255}));
+  for (int s2 = -1; s2 <= 1; s2 += 2)
+    triW(V(c + Vec2{s2 * r * 0.3f, -r * 0.6f}), V(c + Vec2{s2 * r * 0.9f, -r * 0.4f}), V(c + Vec2{s2 * r * 0.8f, -r * 1.5f}),
+         p.col({255, 170, 40, 255}));
+  discW(c + Vec2{-r * 0.3f, -r * 0.1f}, r * 0.12f, p.col({200, 30, 20, 255}));
+  discW(c + Vec2{r * 0.3f, -r * 0.1f}, r * 0.12f, p.col({200, 30, 20, 255}));
+}
+
 void sageScroll(const WP& p) {
   const Color paper{236, 220, 180, 255}, wood{150, 60, 40, 255};
   p.seg({2, 0}, {28, 0}, 9.0f, paper);
@@ -814,6 +863,10 @@ void drawVisual(WeaponVisual v, const WP& p, const WeaponStyle& st) {
     case WeaponVisual::Kusanagi: kusanagi(p); break;
     case WeaponVisual::KakashiKunai: kunai(p); break;
     case WeaponVisual::SageScroll: sageScroll(p); break;
+    case WeaponVisual::SharinganEye: eyeOrb(p, 0); break;
+    case WeaponVisual::Mangekyo: eyeOrb(p, 1); break;
+    case WeaponVisual::DoubleMangekyo: eyeOrb(p, 2); break;
+    case WeaponVisual::KuramaChakra: kuramaFlame(p); break;
     case WeaponVisual::SusanooBow: bowOfLight(p, st.pull, 3); break;
     default: break;
   }

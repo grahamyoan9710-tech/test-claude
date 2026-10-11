@@ -5,6 +5,7 @@
 //                    [--tab N] [--training] [--pause-at FRAME]
 //                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
 //                    [--shot FRAME FILE.png]... [--quit-after FRAMES] [--debug]
+//                    [--ult SLOT]   (with --demo: the first fighter unleashes its ultimate, SLOT -1/0/1)
 //                    [--export-audio DIR]
 #include <cstdio>
 #include <cstdlib>
@@ -25,6 +26,7 @@ int main(int argc, char** argv) {
       }
     }
     else if (is("--debug")) opt.debug = true;
+    else if (is("--ult") && i + 1 < argc) opt.ultShow = std::atoi(argv[++i]);
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);
     else if (is("--screen") && i + 1 < argc) opt.screen = argv[++i];
     else if (is("--tab") && i + 1 < argc) opt.tab = std::atoi(argv[++i]);

@@ -78,7 +78,7 @@ void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx) {
 
   for (int id : {Jab, Jab2, Jab3, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir,
                  FAir, BAir, UAir, DAir})
-    scale(m[id], S, P);
+    scale(m[id], S, P * 1.1f);  // bare hands: shorter reach, a little more damage
   buildCommonMoves(c, S, P);
 }
 
@@ -165,7 +165,7 @@ void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
 
   for (int id : {Jab, Jab2, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir, FAir,
                  BAir, UAir, DAir})
-    scale(m[id], S, P);
+    scale(m[id], S, P * 0.9f);  // blades reach further: a little less damage
   buildCommonMoves(c, S, P);
 }
 

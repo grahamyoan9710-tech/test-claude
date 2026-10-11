@@ -65,6 +65,37 @@ SpecialUse specialUse(const Fighter& f, int id) {
   return u;
 }
 
+// How the ultimate reaches its target: anywhere (strikes on the target, teleports), straight ahead
+// (beams, shots: the fighter must face it), or around the fighter (storms, domains, bursts).
+struct UltReach {
+  float range = 320.0f;
+  bool anywhere = false, ahead = false;
+};
+UltReach ultReach(const Fighter& f) {
+  const MoveDef& m = f.moveDef(FinalSmash);
+  UltReach u;
+  if (m.teleportToTarget) u.anywhere = true;
+  if (m.projectileFrame >= 0) {
+    if (m.projectile.target != ProjTarget::Self) {
+      u.anywhere = true;
+    } else {
+      u.ahead = true;
+      u.range = std::max(u.range, std::fabs(m.projectile.velocity.x) * float(m.projectile.lifetime) * 0.8f);
+    }
+  }
+  for (const auto& sh : m.shots)
+    if (sh.def.target != ProjTarget::Self) u.anywhere = true;
+  if (m.beam.start >= 0) {
+    u.ahead = true;
+    u.range = std::max(u.range, m.beam.from.x + m.beam.length * 0.9f);
+  }
+  float r = 0.0f;
+  for (const auto& h : m.hitboxes)
+    if (h.limb == Limb::None || h.limb == Limb::Body) r = std::max(r, std::fabs(h.offset.x) + h.radius);
+  if (!u.ahead) u.range = std::max(u.range, r * 0.85f);
+  return u;
+}
+
 // Is fighter t about to hit fighter f?
 bool isThreat(const Fighter& t, const Fighter& f) {
   const MoveDef* m = t.currentMove();
@@ -299,10 +330,19 @@ bool CpuBrain::chaseOrb(const Match& m, const Fighter& f, InputState& in) {
 
 void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputState& in) {
   const CharacterDef& d = *f.def;
-  if (f.finalSmash && (t.center() - f.center()).len() < 320.0f && t.state != FState::Respawn &&
+  if (projCooldown_ > 0) --projCooldown_;
+  if (f.finalSmash && t.state != FState::Respawn && t.state != FState::Captured &&
       (f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run || f.state == FState::Air)) {
-    tap(in, &IS::ultimate);
-    return;
+    const UltReach u = ultReach(f);
+    const Vec2 rel = t.center() - f.center();
+    const bool facing = (rel.x >= 0.0f ? 1 : -1) == f.facing;
+    bool go = u.anywhere || rel.len() < u.range;
+    if (u.ahead && !u.anywhere) go = go && facing && std::fabs(rel.y) < 140.0f && std::fabs(rel.x) < u.range;
+    if (go) {
+      tap(in, &IS::ultimate);
+      return;
+    }
+    if (u.ahead && !facing && f.grounded) in.stick.x = signf(rel.x);  // turn round first
   }
   float dx = t.pos.x - f.pos.x;
   float dy = t.center().y - f.center().y;
@@ -419,6 +459,9 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
   }
 
   // Specials: dashes, beams, ranged grabs, area attacks and the odd projectile
+  bool ownShot = false;  // one of its projectiles still flying: no new one (no spamming)
+  for (const auto& p : m.projectiles) ownShot = ownShot || p.owner == f.id;
+  const bool canShoot = projCooldown_ == 0 && !ownShot;
   if (std::fabs(dy) < 70.0f && rng_.chance(0.16f + 0.1f * skill_)) {
     const SpecialUse n = specialUse(f, NSpecial), s = specialUse(f, SSpecial), dn = specialUse(f, DSpecial);
     auto use = [&](Vec2 stick) {
@@ -426,14 +469,18 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
       if (f.facing != toward && stick.x == 0.0f) in.stick.x = 0.3f * toward;
       tap(in, &IS::special);
     };
+    auto shoot = [&](Vec2 stick) {
+      projCooldown_ = 70 + rng_.irange(0, 70) - level_ * 3;
+      use(stick);
+    };
     if (adx < close && n.melee) return use({0, 0});
     if (adx < close + 20.0f && dn.melee && !dn.projectile) return use({0, 1});
     if (s.dash && std::fabs(adx - s.landX) < 45.0f) return use({float(toward), 0});
     if (dn.grab && adx < dn.reach + 10.0f && adx > close * 0.6f) return use({0, 1});
     if (dn.beam && adx < dn.reach && f.facing == toward) return use({0, 1});
-    if (adx > mid && adx < 520.0f) {
-      if (s.projectile && rng_.chance(0.5f)) return use({float(toward), 0});
-      if (dn.projectile && rng_.chance(0.5f)) return use({0, 1});
+    if (adx > mid && adx < 520.0f && canShoot) {
+      if (s.projectile && rng_.chance(0.5f)) return shoot({float(toward), 0});
+      if (dn.projectile && rng_.chance(0.5f)) return shoot({0, 1});
     }
   }
 
@@ -474,9 +521,10 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
       } else if (rng_.chance(0.5f)) {
         tap(in, &IS::jump);
       }
-    } else if (adx > 350.0f && hasProjectile(d) && rng_.chance(0.35f)) {
+    } else if (adx > 350.0f && hasProjectile(d) && canShoot && rng_.chance(0.35f)) {
       in.stick = {0, 0};
       if (f.facing != toward) in.stick.x = 0.3f * toward;
+      projCooldown_ = 70 + rng_.irange(0, 70) - level_ * 3;
       tap(in, &IS::special);
     } else if (adx < 230.0f && rng_.chance(0.25f)) {
       tap(in, &IS::jump);

@@ -278,6 +278,11 @@ void MatchScreen::trackCombos() {
   }
 }
 
+void MatchScreen::showUltimate(int slot) {
+  ultShow_ = std::clamp(slot, -1, 1);
+  if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
+}
+
 MatchScreen::Result MatchScreen::update() {
   time_ += 1.0f / 60.0f;
   if (IsKeyPressed(KEY_F1)) debug_ = !debug_;
@@ -319,6 +324,24 @@ MatchScreen::Result MatchScreen::update() {
     }
     inputs[f.port] = readDevice(devices_[f.port]);
     maskHeld(inputs[f.port], held_[f.port]);
+  }
+  if (ultShow_ >= -1 && !ultFired_ && m_.started() && m_.fighters.size() >= 2) {
+    Fighter& f = m_.fighters[0];
+    Fighter& v = m_.fighters[1];
+    if (m_.frame % 30 == 0 && f.grounded && v.grounded) {  // both standing: face off, then the ultimate
+      if (ultShow_ >= 0 && f.weapon != ultShow_) m_.equipWeapon(f, ultShow_);
+      f.pos = {-170.0f, 0.0f};
+      f.facing = 1;
+      v.pos = {30.0f, 0.0f};
+      v.percent = 60.0f;
+      f.ult = kUltMax;
+      f.finalSmash = true;
+      inputs[f.port] = InputState{};
+      inputs[f.port].ultimate = true;
+      ultFired_ = true;
+    } else if (f.cpu) {
+      inputs[f.port] = InputState{};
+    }
   }
   m_.step(inputs);
   fx_.onEvents(m_);

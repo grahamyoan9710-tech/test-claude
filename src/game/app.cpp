@@ -146,6 +146,7 @@ void App::run() {
                      i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, n - 1) : 0, 9 - i};
     if (opt_.stage < 0) stage_ = 1;
     startMatch();
+    if (opt_.ultShow >= -1) match_->showUltimate(opt_.ultShow);
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "menu") {

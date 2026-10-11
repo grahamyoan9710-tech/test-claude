@@ -510,6 +510,47 @@ Look lookFor(const CharacterDef& d, int palette) {
   return L;
 }
 
+// Transformations change the colours of the body.
+void formLook(Look& L, Form form) {
+  switch (form) {
+    case Form::SpartanRage:  // red-hot skin
+      L.skin = mixColor(L.skin, {255, 120, 60, 255}, 0.45f);
+      L.top = L.thigh = mixColor(L.top, {255, 120, 60, 255}, 0.3f);
+      L.hand = L.handB = mixColor(L.hand, {255, 150, 70, 255}, 0.5f);
+      break;
+    case Form::DemonUnion:  // the devil's black arms
+      L.fore = L.foreB = L.hand = L.handB = {22, 20, 26, 255};
+      break;
+    case Form::VastoLorde:  // white hollow body
+      L.skin = L.hand = L.handB = {240, 238, 232, 255};
+      L.top = L.arm = L.fore = L.foreB = L.thigh = L.shin = {236, 234, 228, 255};
+      L.foot = {230, 228, 222, 255};
+      L.hair = {240, 128, 40, 255};
+      L.accent = {200, 30, 36, 255};
+      break;
+    case Form::FinalGetsuga:  // long black hair, black bandages
+      L.hair = {18, 16, 20, 255};
+      L.top = L.arm = L.fore = L.foreB = {20, 18, 24, 255};
+      L.cloth = {30, 26, 32, 255};
+      break;
+    case Form::RedDemon:
+      L.skin = L.hand = L.handB = L.fore = L.foreB = {196, 46, 40, 255};
+      break;
+    case Form::Segunda:  // black body, pale face
+      L.top = L.arm = L.fore = L.foreB = L.thigh = L.shin = {24, 26, 24, 255};
+      L.hand = L.handB = {30, 34, 30, 255};
+      L.cloth = {24, 26, 24, 255};
+      L.foot = {14, 16, 14, 255};
+      break;
+    case Form::KuramaAvatar:  // golden chakra cloak
+      L.top = L.arm = L.fore = L.foreB = L.thigh = L.shin = {255, 190, 60, 255};
+      L.cloth = {230, 140, 30, 255};
+      L.foot = {255, 170, 40, 255};
+      break;
+    default: break;
+  }
+}
+
 // ---- Faces --------------------------------------------------------------------------------------------
 struct EyeStyle {
   Color iris{70, 52, 44, 255};
@@ -623,6 +664,13 @@ struct Body {
 
   void backHair() {
     const float hr = R.hr;
+    if (pose.form == Form::VastoLorde || pose.form == Form::FinalGetsuga) {  // long hair down the back
+      Vec2 a[4], b[4];
+      chain(hp(-0.4f, -0.9f), {-0.4f, 1.0f}, 4.4f * hr, 3, pose, time, 0.7f, 0.9f, 0.05f, a);
+      chain(hp(-1.0f, 0.1f), {-0.15f, 1.0f}, 3.8f * hr, 3, pose, time + 0.3f, 0.7f, 1.0f, 0.05f, b);
+      group([&] { panel(a, b, 3, L.hair); });
+      return;
+    }
     switch (hero) {
       case Hero::Byakuya: {  // long straight black hair down the back
         Vec2 a[4], b[4];
@@ -932,6 +980,37 @@ struct Body {
     }
   }
 
+  // Horns of the transformations, over the hair.
+  void horns() {
+    const Color bone{240, 234, 222, 255};
+    switch (pose.form) {
+      case Form::VastoLorde:  // two long horns sweeping forward
+        group([&] {
+          for (int i = 0; i < 2; ++i) {
+            const float x = i ? 0.55f : 0.1f;
+            P.tri(X(hp(x - 0.18f, -0.7f)), X(hp(x + 0.16f, -0.78f)), X(hp(x + 1.3f, -2.0f)), bone);
+          }
+        });
+        break;
+      case Form::RedDemon:
+        group([&] {
+          P.tri(X(hp(0.1f, -0.85f)), X(hp(0.35f, -0.9f)), X(hp(0.3f, -1.6f)), {60, 20, 20, 255});
+          P.tri(X(hp(0.55f, -0.8f)), X(hp(0.8f, -0.78f)), X(hp(0.9f, -1.45f)), {60, 20, 20, 255});
+        });
+        break;
+      case Form::DemonUnion:  // one black horn
+        group([&] { P.tri(X(hp(0.2f, -0.85f)), X(hp(0.5f, -0.88f)), X(hp(0.1f, -1.75f)), {20, 18, 24, 255}); });
+        break;
+      case Form::Segunda:  // the helmet's horns grow long
+        group([&] {
+          P.tri(X(hp(-0.6f, -0.8f)), X(hp(-0.2f, -0.95f)), X(hp(-1.2f, -2.2f)), bone);
+          P.tri(X(hp(0.2f, -0.9f)), X(hp(0.5f, -0.85f)), X(hp(0.6f, -2.0f)), bone);
+        });
+        break;
+      default: break;
+    }
+  }
+
   // ---- face ---------------------------------------------------------------------------------------
   EyeStyle eyeStyle() const {
     EyeStyle e;
@@ -959,6 +1038,15 @@ struct Body {
         if (has(WeaponVisual::Mangekyo) || has(WeaponVisual::SusanooBow)) { e.iris = {220, 20, 30, 255}; e.glow = true; }
         break;
       case Hero::Kakashi: e.w = 0.16f; e.h = 0.2f; e.lid = 0.55f; break;
+      default: break;
+    }
+    switch (pose.form) {  // transformed eyes
+      case Form::VastoLorde: e.dark = true; e.iris = {250, 210, 60, 255}; e.glow = true; break;
+      case Form::FinalGetsuga: e.iris = {200, 30, 40, 255}; break;
+      case Form::RedDemon: e.iris = {255, 220, 80, 255}; e.glow = true; break;
+      case Form::Segunda: e.iris = {90, 255, 150, 255}; e.glow = true; break;
+      case Form::KuramaAvatar: e.iris = {255, 120, 40, 255}; e.glow = true; break;
+      case Form::SpartanRage: e.iris = {255, 230, 140, 255}; e.glow = true; break;
       default: break;
     }
     return e;
@@ -1693,6 +1781,17 @@ struct Body {
         }
       }
     }
+    // Spartan Rage: fists of fire
+    if (pose.form == Form::SpartanRage) {
+      for (int h = 0; h < 2; ++h) {
+        const Vec2 c = h ? R.handB : R.handF;
+        for (int i = 0; i < 3; ++i) {
+          const float ph = std::fmod(time * 3.0f + i * 0.33f + h * 0.5f, 1.0f);
+          disc(X(c + Vec2{std::sin(time * 9.0f + i) * 0.02f * H, -ph * 0.12f * H}), t(0.04f * (1.0f - ph)) + 0.5f,
+               withAlpha(i % 2 ? Color{255, 200, 80, 255} : Color{255, 90, 20, 255}, 0.75f * k * (1.0f - ph)));
+        }
+      }
+    }
     // Hands charged with energy (casts, signs, a raised hand)
     if (pose.charge > 0.01f) {
       const Color c = hitFxColor(pose.chargeFx), g = hitFxGlow(pose.chargeFx);
@@ -1793,6 +1892,7 @@ struct Body {
     if (gearFront) backArmGear();
     head();
     frontHair();
+    horns();
     props();
     frontWeaponDraw();
     arm(true);
@@ -1920,7 +2020,8 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
 
   const Build B = buildFor(d.hero);
   const Rig R = solveRig(d, pose);
-  const Look L = lookFor(d, palette);
+  Look L = lookFor(d, palette);
+  formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
   b.draw();
 }

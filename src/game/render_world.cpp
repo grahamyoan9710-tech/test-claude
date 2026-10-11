@@ -1469,6 +1469,392 @@ void shotLightning(const Shot& s, float time) {
   vfx::glow(b, s.r * 0.9f, Ap(WHITE, s.k), Ap({190, 220, 255, 255}, 0.0f));
   vfx::additive(false);
 }
+
+// ---- v5 shots --------------------------------------------------------------------------------------
+
+// The warning before a strike lands (armDelay): a ring on the spot, a thin line from the sky.
+void shotWarning(const Projectile& p, const Shot& s, float time, bool fromSky) {
+  const float u = std::min(1.0f, float(p.age) / std::max(1, p.armDelay));
+  const Color c = p.hit.fx == HitFx::BlackFlame ? Color{200, 40, 70, 255} : hitFxGlow(p.hit.fx);
+  vfx::additive(true);
+  const float pulse = 0.6f + 0.4f * std::sin(time * 30.0f);
+  vfx::softRing(s.c, s.r * (1.6f - 0.6f * u), 5.0f, Ap(c, (0.3f + 0.5f * u) * pulse));
+  vfx::glow(s.c, s.r * 0.6f * u, Ap(c, 0.35f * u), Ap(c, 0.0f));
+  if (fromSky) {
+    const Rect v = vfx::viewRect(40.0f);
+    vfx::streak({s.c.x, v.y}, s.c, 2.0f + 6.0f * u, 2.0f + 10.0f * u, Ap(c, 0.05f), Ap(c, 0.35f * u * pulse));
+  }
+  vfx::additive(false);
+}
+
+void shotReiatsuWave(const Shot& s, float time) {
+  const Color y{255, 226, 80, 255};
+  const float R = s.r * 2.2f, th = R * 0.55f;
+  vfx::additive(true);
+  vfx::glow(s.c - s.d * (R * 0.3f), R * 1.2f, Ap(y, 0.25f * s.k), Ap(y, 0.0f));
+  for (int i = 3; i >= 1; --i)
+    crescentAt(s.c - s.d * (i * s.r * 0.5f), s.d, R, th, 1.35f, Ap(y, 0.0f), Ap(y, 0.3f * s.k / i));
+  vfx::additive(false);
+  crescentAt(s.c, s.d, R, th, 1.35f, Ap({40, 30, 10, 255}, 0.9f * s.k), Ap({60, 46, 12, 255}, s.k));
+  vfx::additive(true);
+  crescentAt(s.c + s.d * 3.0f, s.d, R * 1.03f, th * 0.4f, 1.3f, Ap(y, 0.5f * s.k), Ap({255, 250, 200, 255}, s.k));
+  const uint32_t fs = s.seed + uint32_t(time * 24.0f) * 37u;
+  for (int i = 0; i < 7; ++i) {  // wild spikes of reiatsu
+    const float a = std::atan2(s.d.y, s.d.x) + (hash01(fs + i) - 0.5f) * 2.6f;
+    const Vec2 o = s.c - s.d * R + Vec2{std::cos(a), std::sin(a)} * (R * 0.95f);
+    vfx::wedge(o, o + Vec2{std::cos(a), std::sin(a)} * (R * (0.2f + 0.3f * hash01(fs + 9 + i))), 5.0f, 0.0f, Ap(y, 0.8f * s.k),
+               Ap(WHITE, 0.6f * s.k));
+  }
+  vfx::additive(false);
+}
+
+void shotCeroOscuras(const Shot& s, float time) {
+  const Color g{80, 240, 140, 255};
+  vfx::streak(s.c - s.d * (s.r * 4.0f), s.c, 0.0f, s.r * 1.5f, Ap({8, 14, 10, 255}, 0.0f), Ap({8, 14, 10, 255}, 0.6f * s.k));
+  vfx::glow(s.c, s.r * 1.4f, Ap({6, 10, 8, 255}, 0.95f * s.k), Ap({6, 10, 8, 255}, 0.0f));
+  vfx::additive(true);
+  vfx::burst(s.c, 8, s.r * 0.6f, s.r * 1.9f, 0.32f, time * 10.0f, Ap(g, 0.7f * s.k), Ap(g, 0.0f), s.seed);
+  vfx::softRing(s.c, s.r * 0.9f, s.r * 0.3f, Ap(g, 0.9f * s.k));
+  vfx::additive(false);
+  vfx::glow(s.c, s.r * 0.55f, Ap({0, 0, 0, 255}, s.k), Ap({10, 30, 16, 255}, s.k));
+}
+
+void spear(const Shot& s, float len, float w, Color body, Color core, Color glow) {
+  const Vec2 tip = s.c + s.d * (len * 0.45f), tail = s.c - s.d * (len * 0.55f);
+  vfx::additive(true);
+  vfx::streak(tail - s.d * (len * 0.6f), tail, 0.0f, w * 1.6f, Ap(glow, 0.0f), Ap(glow, 0.35f * s.k));
+  vfx::streak(tail, tip, w * 2.4f, w * 2.4f, Ap(glow, 0.3f * s.k), Ap(glow, 0.3f * s.k));
+  vfx::additive(false);
+  vfx::wedge(tail, tip - s.d * (w * 2.0f), w * 0.7f, w * 0.7f, Ap(body, s.k), Ap(body, s.k));
+  vfx::tri(tip, tip - s.d * (w * 3.4f) + s.n * (w * 1.4f), tip - s.d * (w * 3.4f) - s.n * (w * 1.4f), Ap(body, s.k), Ap(body, s.k),
+           Ap(body, s.k));
+  vfx::additive(true);
+  vfx::wedge(tail, tip, w * 0.25f, w * 0.1f, Ap(core, s.k), Ap(core, s.k));
+  vfx::glow(tip, w * 1.6f, Ap(core, 0.8f * s.k), Ap(glow, 0.0f));
+  vfx::additive(false);
+}
+
+void shotLuzDeLaLuna(const Shot& s) { spear(s, s.r * 7.0f, s.r * 0.45f, {90, 240, 150, 255}, {230, 255, 236, 255}, {70, 255, 140, 255}); }
+
+void shotLanza(const Shot& s, float time) {
+  spear(s, s.r * 6.0f, s.r * 0.55f, {60, 220, 120, 255}, {230, 255, 236, 255}, {70, 255, 140, 255});
+  const uint32_t fs = s.seed + uint32_t(time * 40.0f) * 71u;
+  vfx::additive(true);
+  for (int i = 0; i < 4; ++i) {  // green lightning wrapping the javelin
+    const Vec2 a = s.c - s.d * (s.r * (3.0f - i * 1.2f)), b = a + s.d * (s.r * 1.6f) + s.n * ((hash01(fs + i) - 0.5f) * s.r * 2.0f);
+    vfx::bolt(a, b, s.r * 0.4f, 5, fs + i * 7u, 2.5f, Ap({120, 255, 170, 255}, 0.9f * s.k), Ap(WHITE, s.k));
+  }
+  vfx::additive(false);
+}
+
+void shotBarrel(const Projectile& p, const Shot& s, float time) {
+  const float r = s.r, rot = p.age * 0.18f * (p.vel.x >= 0 ? 1.0f : -1.0f);
+  const Vec2 u{std::cos(rot), std::sin(rot)}, n{-u.y, u.x};
+  auto P = [&](float x, float y) { return s.c + u * (x * r) + n * (y * r); };
+  const Color wood{150, 96, 56, 255}, dark{90, 56, 34, 255}, red{200, 44, 36, 255};
+  vfx::quad(P(-1.0f, -0.8f), P(1.0f, -0.8f), P(1.0f, 0.8f), P(-1.0f, 0.8f), Ap(dark, s.k), Ap(dark, s.k), Ap(dark, s.k), Ap(dark, s.k));
+  vfx::quad(P(-0.9f, -0.72f), P(0.9f, -0.72f), P(0.9f, 0.72f), P(-0.9f, 0.72f), Ap(wood, s.k), Ap(wood, s.k), Ap(wood, s.k), Ap(wood, s.k));
+  vfx::quad(P(-0.15f, -0.72f), P(0.15f, -0.72f), P(0.15f, 0.72f), P(-0.15f, 0.72f), Ap(red, s.k), Ap(red, s.k), Ap(red, s.k), Ap(red, s.k));
+  const Vec2 fuse = P(0.0f, -0.8f) + n * (-r * 0.3f);
+  DrawLineEx(V(P(0.0f, -0.8f)), V(fuse), 2.0f, Ap({60, 50, 40, 255}, s.k));
+  vfx::additive(true);
+  vfx::glow(fuse, r * (0.35f + 0.15f * std::sin(time * 40.0f)), Ap({255, 220, 120, 255}, s.k), Ap({255, 120, 40, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotFlash(const Shot& s, Color c) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 3.0f, Ap(c, 0.8f), Ap(c, 0.0f));
+  vfx::glow(s.c, s.r * 1.2f, Ap(WHITE, 0.9f), Ap(WHITE, 0.0f));
+  vfx::additive(false);
+}
+
+void shotShell(const Shot& s, float time) {  // gunlance shelling: a cone of fire
+  vfx::additive(true);
+  for (int i = 0; i < 5; ++i) {
+    const float l = s.r * (2.0f + 1.5f * hash01(s.seed + i)) * (1.0f + 0.2f * std::sin(time * 40.0f + i));
+    const Vec2 e = s.c + s.d * l + s.n * ((i - 2) * s.r * 0.35f);
+    vfx::streak(s.c - s.d * (s.r * 0.8f), e, s.r * 0.6f, s.r * 1.1f, Ap({255, 220, 120, 255}, 0.9f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  }
+  vfx::glow(s.c, s.r * 1.4f, Ap({255, 240, 200, 255}, s.k), Ap({255, 120, 40, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotRasengan(const Shot& s, float time) {
+  const Color b{90, 170, 255, 255};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.0f, Ap(b, 0.35f * s.k), Ap(b, 0.0f));
+  for (int arm = 0; arm < 4; ++arm) {
+    Vec2 prev{};
+    for (int k = 0; k <= 8; ++k) {
+      const float u = k / 8.0f, a = time * 18.0f + arm * kPi * 0.5f + u * 2.5f;
+      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * (0.3f + 0.75f * u));
+      if (k > 0) vfx::wedge(prev, q, 3.0f * (1.0f - u) + 1.0f, 3.0f * (1.0f - u) + 1.0f, Ap({220, 240, 255, 255}, 0.8f * s.k), Ap(b, 0.6f * s.k));
+      prev = q;
+    }
+  }
+  vfx::glow(s.c, s.r * 0.5f, Ap(WHITE, s.k), Ap(b, 0.0f));
+  vfx::additive(false);
+}
+
+void shotRasenshuriken(const Shot& s, float time) {
+  shotRasengan(s, time);
+  vfx::additive(true);
+  const float rot = time * 22.0f;
+  for (int i = 0; i < 4; ++i) {  // the four great blades of wind
+    const float a = rot + i * kPi * 0.5f;
+    const Vec2 d{std::cos(a), std::sin(a)}, n{-d.y, d.x};
+    const Vec2 b0 = s.c + d * (s.r * 0.6f), tip = s.c + d * (s.r * 3.0f) + n * (s.r * 0.9f);
+    vfx::tri(b0 + n * (s.r * 0.35f), b0 - n * (s.r * 0.35f), tip, Ap(WHITE, 0.85f * s.k), Ap({200, 230, 255, 255}, 0.7f * s.k),
+             Ap(WHITE, 0.2f * s.k));
+  }
+  vfx::softRing(s.c, s.r * 2.6f, s.r * 0.25f, Ap({230, 245, 255, 255}, 0.55f * s.k));  // ring of micro-blades
+  vfx::additive(false);
+}
+
+void shotBijudama(const Shot& s, float time) {
+  const Color v{120, 60, 200, 255};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap(v, 0.4f * s.k), Ap(v, 0.0f));
+  vfx::additive(false);
+  vfx::glow(s.c, s.r, Ap({10, 0, 16, 255}, 0.97f * s.k), Ap({40, 10, 60, 255}, 0.97f * s.k), 36);
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i) {
+    const float ph = std::fmod(time * 2.0f + i / 3.0f, 1.0f);
+    vfx::softRing(s.c, s.r * (0.4f + 0.7f * ph), 4.0f, Ap({200, 150, 255, 255}, 0.6f * (1.0f - ph) * s.k));
+  }
+  vfx::softRing(s.c, s.r, s.r * 0.2f, Ap({180, 120, 255, 255}, 0.8f * s.k));
+  vfx::additive(false);
+}
+
+void shotGreatFireball(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap({255, 120, 30, 255}, 0.45f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  for (int i = 0; i < 8; ++i) {  // rolling flames
+    const float a = time * 6.0f + i * kPi / 4.0f;
+    const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * 0.55f);
+    vfx::glow(q, s.r * (0.6f + 0.15f * std::sin(time * 20.0f + i)), Ap(i % 2 ? Color{255, 170, 50, 255} : Color{255, 90, 20, 255}, 0.8f * s.k),
+              Ap({255, 60, 10, 255}, 0.0f));
+  }
+  vfx::streak(s.c - s.d * (s.r * 2.8f), s.c, 0.0f, s.r * 1.3f, Ap({255, 80, 20, 255}, 0.0f), Ap({255, 140, 40, 255}, 0.6f * s.k));
+  vfx::glow(s.c, s.r * 0.7f, Ap({255, 250, 210, 255}, s.k), Ap({255, 200, 100, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotChidori(const Shot& s, float time) {
+  spear(s, s.r * 6.0f, s.r * 0.35f, {170, 210, 255, 255}, WHITE, {120, 170, 255, 255});
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 31u;
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i)
+    vfx::bolt(s.c - s.d * (s.r * 3.0f), s.c + s.d * (s.r * 2.6f), s.r * 0.8f, 7, fs + i * 9u, 2.0f, Ap({200, 230, 255, 255}, 0.8f * s.k));
+  vfx::additive(false);
+}
+
+// Kirin: the thunder dragon falling from the storm on its target.
+void shotKirin(const Shot& s, float time) {
+  const Rect v = vfx::viewRect(40.0f);
+  const Vec2 top{s.c.x + s.r * 1.2f, v.y - 40.0f};
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 97u;
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.6f, Ap({150, 190, 255, 255}, 0.55f * s.k), Ap({150, 190, 255, 255}, 0.0f));
+  for (int k = 0; k < 3; ++k) {  // the dragon's body: braided bolts
+    vfx::bolt(top + Vec2{(k - 1) * s.r * 0.4f, 0}, s.c, s.r * 0.8f, 14, fs + k * 13u, 26.0f - k * 6.0f, Ap({120, 140, 255, 255}, 0.35f * s.k));
+    vfx::bolt(top + Vec2{(k - 1) * s.r * 0.4f, 0}, s.c, s.r * 0.8f, 14, fs + k * 13u, 8.0f, Ap({200, 230, 255, 255}, 0.9f * s.k), Ap(WHITE, s.k));
+  }
+  // the head: jaws of lightning opening on the target
+  const Vec2 h = s.c + Vec2{0.0f, -s.r * 0.8f};
+  vfx::wedge(h + Vec2{-s.r * 1.2f, -s.r * 0.6f}, h + Vec2{s.r * 0.2f, s.r * 0.6f}, 14.0f, 2.0f, Ap({200, 230, 255, 255}, s.k), Ap(WHITE, s.k));
+  vfx::wedge(h + Vec2{s.r * 1.2f, -s.r * 0.6f}, h + Vec2{-s.r * 0.2f, s.r * 0.6f}, 14.0f, 2.0f, Ap({200, 230, 255, 255}, s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c, s.r * 1.2f, Ap(WHITE, s.k), Ap({200, 230, 255, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotIndraArrow(const Shot& s, float time) {
+  const Color v{170, 90, 255, 255};
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 9.0f), s.c, 0.0f, s.r * 1.6f, Ap(v, 0.0f), Ap(v, 0.55f * s.k));
+  for (int i = 0; i < 6; ++i) {  // purple flames streaming back
+    const Vec2 tail = s.c - s.d * (s.r * (3.0f + 3.0f * hash01(s.seed + i))) + s.n * (std::sin(time * 25.0f + i * 2.0f) * s.r * 0.8f);
+    vfx::streak(s.c, tail, s.r * 0.9f, 0.0f, Ap({210, 150, 255, 255}, 0.7f * s.k), Ap(v, 0.0f));
+  }
+  vfx::additive(false);
+  spear(s, s.r * 3.0f, s.r * 0.3f, {200, 140, 255, 255}, WHITE, v);
+}
+
+void shotBlackFlames(const Projectile& p, const Shot& s, float time) {
+  const float k = s.k;
+  for (int i = 0; i < 10; ++i) {  // tongues of black fire, purple-red at the edges
+    const float x = (hash01(s.seed + i * 3u) - 0.5f) * s.r * 1.6f;
+    const float h = s.r * (1.0f + 1.2f * hash01(s.seed + i * 3u + 1)) * (0.8f + 0.3f * std::sin(time * 14.0f + i * 1.7f));
+    const Vec2 b = s.c + Vec2{x, s.r * 0.6f}, tip = b + Vec2{std::sin(time * 9.0f + i) * s.r * 0.25f, -h};
+    vfx::additive(true);
+    vfx::wedge(b, tip, s.r * 0.55f, 2.0f, Ap({200, 30, 80, 255}, 0.45f * k), Ap({200, 30, 80, 255}, 0.0f));
+    vfx::additive(false);
+    vfx::wedge(b, tip, s.r * 0.4f, 1.0f, Ap({10, 4, 12, 255}, 0.92f * k), Ap({10, 4, 12, 255}, 0.4f * k));
+  }
+  (void)p;
+}
+
+void shotKunai(const Shot& s) {
+  const Vec2 tip = s.c + s.d * (s.r * 1.6f), back = s.c - s.d * (s.r * 1.2f);
+  vfx::tri(tip, s.c + s.n * (s.r * 0.55f), s.c - s.n * (s.r * 0.55f), Ap({170, 176, 190, 255}, s.k), Ap({110, 116, 130, 255}, s.k),
+           Ap({110, 116, 130, 255}, s.k));
+  DrawLineEx(V(s.c), V(back), std::max(2.0f, s.r * 0.35f), Ap({40, 40, 46, 255}, s.k));
+  DrawRing(V(back), s.r * 0.25f, s.r * 0.4f, 0, 360, 12, Ap({150, 156, 168, 255}, s.k));
+}
+
+void shotWaterDragon(const Projectile& p, const Shot& s, float time) {
+  const Color w{70, 160, 240, 255}, foam{220, 240, 255, 255};
+  Vec2 pts[10];
+  for (int i = 0; i < 10; ++i) {
+    const float u = i / 9.0f;
+    pts[i] = s.c - s.d * (u * s.r * 5.0f) + s.n * (std::sin(time * 8.0f + u * 6.0f + p.age * 0.1f) * s.r * 0.7f * u);
+  }
+  for (int i = 9; i > 0; --i) {
+    const float w0 = s.r * (1.0f - 0.08f * i), w1 = s.r * (1.0f - 0.08f * (i - 1));
+    vfx::wedge(pts[i], pts[i - 1], w0 * 1.1f, w1 * 1.1f, Ap(shade(w, 0.7f), 0.9f * s.k), Ap(shade(w, 0.7f), 0.9f * s.k));
+    vfx::wedge(pts[i], pts[i - 1], w0 * 0.8f, w1 * 0.8f, Ap(w, 0.95f * s.k), Ap(w, 0.95f * s.k));
+  }
+  // head: jaws and eyes
+  const Vec2 h = pts[0];
+  vfx::tri(h + s.n * (s.r * 0.8f), h - s.n * (s.r * 0.8f), h + s.d * (s.r * 1.6f), Ap(w, s.k), Ap(w, s.k), Ap(foam, s.k));
+  DrawCircleV(V(h + s.d * (s.r * 0.3f) - s.n * (s.r * 0.4f)), std::max(1.5f, s.r * 0.12f), Ap(WHITE, s.k));
+  vfx::additive(true);
+  for (int i = 0; i < 6; ++i) vfx::glow(pts[i + 2] + s.n * (s.r * 0.6f), s.r * 0.25f, Ap(foam, 0.5f * s.k), Ap(foam, 0.0f));
+  vfx::additive(false);
+}
+
+void shotKamuiVortex(const Shot& s, float time) {
+  const Color g{150, 140, 170, 255};
+  vfx::glow(s.c, s.r * 1.1f, Ap({10, 8, 14, 255}, 0.85f * s.k), Ap({10, 8, 14, 255}, 0.0f));
+  vfx::additive(true);
+  for (int arm = 0; arm < 6; ++arm) {  // space twisting into the rift
+    Vec2 prev{};
+    for (int k = 0; k <= 12; ++k) {
+      const float u = k / 12.0f, a = -time * 5.0f + arm * kPi / 3.0f + u * 4.0f;
+      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a) * 0.85f} * (s.r * (1.5f - 1.35f * u));
+      if (k > 0) vfx::wedge(prev, q, 1.0f + 3.0f * u, 1.0f + 3.0f * u, Ap(g, 0.6f * u * s.k), Ap({220, 210, 240, 255}, 0.5f * u * s.k));
+      prev = q;
+    }
+  }
+  vfx::additive(false);
+  vfx::glow(s.c, s.r * 0.35f, Ap({0, 0, 0, 255}, s.k), Ap({20, 10, 30, 255}, s.k));
+}
+
+void shuriken4(const Shot& s, float time, float R, Color body, Color edge) {
+  const float rot = time * 18.0f;
+  for (int i = 0; i < 4; ++i) {
+    const float a = rot + i * kPi * 0.5f;
+    const Vec2 d{std::cos(a), std::sin(a)}, n{-d.y, d.x};
+    vfx::tri(s.c + n * (R * 0.32f), s.c - n * (R * 0.32f), s.c + d * R + n * (R * 0.25f), Ap(body, s.k), Ap(body, s.k), Ap(edge, s.k));
+  }
+  DrawCircleV(V(s.c), R * 0.22f, Ap(shade(body, 0.6f), s.k));
+}
+
+void shotKamuiShuriken(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.6f, Ap({90, 140, 255, 255}, 0.35f * s.k), Ap({90, 140, 255, 255}, 0.0f));
+  vfx::additive(false);
+  shuriken4(s, time, s.r * 1.3f, {60, 80, 140, 255}, {170, 210, 255, 255});
+}
+
+void shotLightPillar(const Shot& s, float time) {
+  const Rect v = vfx::viewRect(40.0f);
+  const Color g{255, 220, 120, 255};
+  vfx::additive(true);
+  vfx::quad({s.c.x - s.r * 0.9f, v.y}, {s.c.x + s.r * 0.9f, v.y}, {s.c.x + s.r, s.c.y + s.r}, {s.c.x - s.r, s.c.y + s.r}, Ap(g, 0.15f * s.k),
+            Ap(g, 0.15f * s.k), Ap(g, 0.7f * s.k), Ap(g, 0.7f * s.k));
+  vfx::quad({s.c.x - s.r * 0.3f, v.y}, {s.c.x + s.r * 0.3f, v.y}, {s.c.x + s.r * 0.4f, s.c.y + s.r}, {s.c.x - s.r * 0.4f, s.c.y + s.r},
+            Ap(WHITE, 0.4f * s.k), Ap(WHITE, 0.4f * s.k), Ap(WHITE, s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c + Vec2{0, s.r * 0.6f}, s.r * 1.8f, Ap(g, 0.6f * s.k), Ap(g, 0.0f));
+  vfx::burst(s.c, 10, s.r * 0.5f, s.r * 2.2f, 0.2f, time * 3.0f, Ap(WHITE, 0.6f * s.k), Ap(g, 0.0f), s.seed);
+  vfx::additive(false);
+}
+
+void shotGloomPillar(const Shot& s, float time) {
+  const Color r{200, 20, 50, 255}, ink{14, 2, 8, 255};
+  const float h = s.r * 3.4f;
+  const Vec2 base = s.c + Vec2{0, s.r * 1.2f};
+  vfx::additive(true);
+  vfx::glow(base, s.r * 1.6f, Ap(r, 0.5f * s.k), Ap(r, 0.0f));
+  vfx::additive(false);
+  for (int i = 0; i < 7; ++i) {  // a column of malice erupting
+    const float x = (i - 3) * s.r * 0.22f + std::sin(time * 8.0f + i) * s.r * 0.08f;
+    const float hh = h * (0.7f + 0.3f * hash01(s.seed + i)) * (0.85f + 0.15f * std::sin(time * 12.0f + i));
+    vfx::wedge(base + Vec2{x, 0}, base + Vec2{x * 0.6f, -hh}, s.r * 0.45f, 2.0f, Ap(ink, 0.95f * s.k), Ap(ink, 0.4f * s.k));
+    vfx::additive(true);
+    vfx::wedge(base + Vec2{x, 0}, base + Vec2{x * 0.6f, -hh}, s.r * 0.15f, 1.0f, Ap(r, 0.8f * s.k), Ap(r, 0.0f));
+    vfx::additive(false);
+  }
+}
+
+void shotPetalSphere(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.3f, Ap({255, 140, 190, 255}, 0.3f * s.k), Ap({255, 140, 190, 255}, 0.0f));
+  vfx::additive(false);
+  for (int i = 0; i < 46; ++i) {  // a sphere of blades closing in, turning on several axes
+    const float a = hash01(i * 7 + 1) * 2.0f * kPi + time * (2.0f + hash01(i * 7 + 2) * 2.0f);
+    const float b = hash01(i * 7 + 3) * kPi;
+    const float rr = s.r * (0.95f + 0.1f * std::sin(time * 6.0f + i));
+    const Vec2 q = s.c + Vec2{std::cos(a) * std::sin(b), std::cos(b) * 0.9f + std::sin(a) * std::sin(b) * 0.2f} * rr;
+    const Vec2 d = Vec2{-std::sin(a), std::cos(a) * 0.3f}.norm();
+    const Color col = i % 3 == 0 ? Color{255, 236, 244, 255} : Color{255, 150, 196, 255};
+    petalShape(q, d, 5.0f, 2.2f, Ap(col, 0.92f * s.k));
+  }
+}
+
+void shotWindRain(const Shot& s) {
+  const Color g{140, 240, 180, 255};
+  const float R = s.r * 2.2f;
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 5.0f), s.c, 0.0f, s.r * 1.0f, Ap(g, 0.0f), Ap(g, 0.4f * s.k));
+  crescentAt(s.c, s.d, R, R * 0.28f, 1.0f, Ap(g, 0.15f * s.k), Ap({230, 255, 240, 255}, 0.95f * s.k));
+  vfx::additive(false);
+}
+
+void shotZephyrSpear(const Shot& s, float time) {
+  spear(s, s.r * 5.0f, s.r * 0.4f, {150, 240, 190, 255}, WHITE, {120, 255, 180, 255});
+  vfx::additive(true);
+  for (int k = 0; k < 3; ++k) {  // wind spiralling round the spear
+    Vec2 prev{};
+    for (int i = 0; i <= 12; ++i) {
+      const float u = i / 12.0f;
+      const Vec2 q = s.c - s.d * (s.r * (3.0f - 5.0f * u)) + s.n * (std::sin(u * 10.0f - time * 20.0f + k * 2.1f) * s.r * (0.5f + 0.4f * u));
+      if (i > 0) vfx::wedge(prev, q, 2.0f, 3.0f, Ap({220, 255, 235, 255}, 0.6f * s.k), Ap({220, 255, 235, 255}, 0.6f * s.k));
+      prev = q;
+    }
+  }
+  vfx::additive(false);
+}
+
+void shotMaxBlue(const Shot& s, float time) {
+  shotBlueOrb(s, time);
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i) {  // the stage itself drawn into it
+    const float ph = std::fmod(time * 1.2f + i / 3.0f, 1.0f);
+    vfx::softRing(s.c, s.r * (4.0f - 3.0f * ph), 8.0f, Ap({120, 180, 255, 255}, 0.5f * ph * s.k));
+  }
+  vfx::additive(false);
+  for (int i = 0; i < 14; ++i) {  // debris spiralling in
+    const float u = std::fmod(time * 0.8f + hash01(i * 3 + 1), 1.0f);
+    const float a = hash01(i * 3 + 2) * 2.0f * kPi + u * 6.0f;
+    const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * 3.5f * (1.0f - u));
+    DrawPoly(V(q), 4, 4.0f + 3.0f * hash01(i), a * 90.0f, Ap({90, 80, 80, 255}, s.k));
+  }
+}
+
+// Kamutoke strike: a vertical bolt from the sky onto the spot.
+void shotSkyBolt(const Shot& s, float time) {
+  const Rect v = vfx::viewRect(40.0f);
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 101u;
+  const Vec2 a{s.c.x + (hash01(fs) - 0.5f) * s.r, v.y - 20.0f};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.0f, Ap({150, 200, 255, 255}, 0.5f * s.k), Ap({150, 200, 255, 255}, 0.0f));
+  vfx::bolt(a, s.c, s.r * 0.6f, 12, fs, 18.0f, Ap({120, 140, 255, 255}, 0.4f * s.k));
+  vfx::bolt(a, s.c, s.r * 0.6f, 12, fs, 6.0f, Ap({200, 230, 255, 255}, 0.95f * s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c, s.r * 0.9f, Ap(WHITE, s.k), Ap({200, 230, 255, 255}, 0.0f));
+  vfx::additive(false);
+}
 }  // namespace
 
 void drawProjectiles(const Match& m, float time) {
@@ -1482,6 +1868,13 @@ void drawProjectiles(const Match& m, float time) {
     s.k = std::min(1.0f, p.life / 8.0f) * std::min(1.0f, (p.age + 1) / 3.0f);
     s.age = float(p.age);
     s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
+    if (!p.armed()) {  // the warning before the strike
+      const bool sky = p.visual == ProjVisual::LightPillar || p.visual == ProjVisual::KirinBolt ||
+                       p.visual == ProjVisual::Lightning || p.visual == ProjVisual::WindRain;
+      shotWarning(p, s, time, sky);
+      continue;
+    }
+    if (p.armDelay > 0) s.k = std::min(s.k, 1.0f);
     switch (p.visual) {
       case ProjVisual::BlackSlash: shotBlackSlash(s, time); continue;
       case ProjVisual::WindBlade: shotWindBlade(s); continue;
@@ -1502,7 +1895,52 @@ void drawProjectiles(const Match& m, float time) {
       case ProjVisual::PurpleOrb: shotPurpleOrb(s, time); continue;
       case ProjVisual::Dismantle: shotDismantle(p, s); continue;
       case ProjVisual::FireArrow: shotFireArrow(s, time); continue;
-      case ProjVisual::Lightning: shotLightning(s, time); continue;
+      case ProjVisual::Lightning:
+        if (p.vel.len2() < 1.0f) shotSkyBolt(s, time);
+        else shotLightning(s, time);
+        continue;
+      case ProjVisual::ReiatsuWave: shotReiatsuWave(s, time); continue;
+      case ProjVisual::CeroOscuras: shotCeroOscuras(s, time); continue;
+      case ProjVisual::LuzDeLaLuna: shotLuzDeLaLuna(s); continue;
+      case ProjVisual::Lanza: shotLanza(s, time); continue;
+      case ProjVisual::BarrelBomb: shotBarrel(p, s, time); continue;
+      case ProjVisual::Phial: shotFlash(s, {255, 230, 90, 255}); continue;
+      case ProjVisual::GunlanceShell: shotShell(s, time); continue;
+      case ProjVisual::Rasengan: shotRasengan(s, time); continue;
+      case ProjVisual::Rasenshuriken: shotRasenshuriken(s, time); continue;
+      case ProjVisual::ShadowClone: {
+        const Fighter& o = m.fighters[std::clamp(p.owner, 0, int(m.fighters.size()) - 1)];
+        Pose pose = restPose(*o.def, time * 1.6f + float(i));
+        const float H = o.def->height, ph = std::sin(p.age * 0.45f);
+        pose.footF = {0.12f * H * ph, 0.5f * H};
+        pose.footB = {-0.12f * H * ph, 0.5f * H};
+        pose.handF = {0.2f * H, -0.05f * H};
+        pose.handB = {-0.25f * H, 0.05f * H};
+        pose.lean = 0.35f;
+        const int facing = p.vel.x >= 0.0f ? 1 : -1;
+        drawCharacterSprite(*o.def, o.palette, pose, {p.pos.x, p.pos.y + H * 0.5f}, facing, 1.0f, std::min(1.0f, s.k) * 0.92f,
+                            {255, 240, 200, 255}, 0.12f, time);
+        if (p.age < 6) shotFlash(s, {240, 240, 240, 255});
+        continue;
+      }
+      case ProjVisual::Bijudama: shotBijudama(s, time); continue;
+      case ProjVisual::GreatFireball: shotGreatFireball(s, time); continue;
+      case ProjVisual::ChidoriSpear: shotChidori(s, time); continue;
+      case ProjVisual::KirinBolt: shotKirin(s, time); continue;
+      case ProjVisual::IndraArrow: shotIndraArrow(s, time); continue;
+      case ProjVisual::BlackFlames: shotBlackFlames(p, s, time); continue;
+      case ProjVisual::Kunai: shotKunai(s); continue;
+      case ProjVisual::WaterDragon: shotWaterDragon(p, s, time); continue;
+      case ProjVisual::KamuiVortex: shotKamuiVortex(s, time); continue;
+      case ProjVisual::KamuiShuriken: shotKamuiShuriken(s, time); continue;
+      case ProjVisual::GiantGetsuga: shotGetsuga(s, false, time); continue;
+      case ProjVisual::LightPillar: shotLightPillar(s, time); continue;
+      case ProjVisual::GloomPillar: shotGloomPillar(s, time); continue;
+      case ProjVisual::PetalSphere: shotPetalSphere(s, time); continue;
+      case ProjVisual::WindRain: shotWindRain(s); continue;
+      case ProjVisual::ZephyrSpear: shotZephyrSpear(s, time); continue;
+      case ProjVisual::IceAxe: shotAxe(p, s); continue;
+      case ProjVisual::MaxBlue: shotMaxBlue(s, time); continue;
       default: break;
     }
     Vector2 c = V(p.pos);

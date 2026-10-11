@@ -166,6 +166,171 @@ Vec2 strikePath(Vec2 rest, Vec2 target, float e) {
   return pos;
 }
 
+// ---- Body language of the specials and the ultimates (MoveDef::pose) ----------------------------------
+// A hint is a "ready" pose held until the key frame of the move (the shot, the beam, the teleport, the
+// first blow, the transformation), then a "release" pose that relaxes back to rest.
+bool limbDriven(const MoveDef& m) {
+  for (const auto& h : m.hitboxes)
+    if (h.limb != Limb::None && h.limb != Limb::Body) return true;
+  return false;
+}
+int keyFrame(const MoveDef& m) {
+  int k = 1 << 20;
+  if (m.projectileFrame >= 0) k = std::min(k, m.projectileFrame);
+  for (const auto& sh : m.shots) k = std::min(k, sh.frame);
+  if (m.beam.start >= 0) k = std::min(k, m.beam.start);
+  if (m.teleportFrame >= 0) k = std::min(k, m.teleportFrame);
+  if (m.formFrame >= 0) k = std::min(k, m.formFrame);
+  for (const auto& h : m.hitboxes) k = std::min(k, h.start);
+  return k == (1 << 20) ? m.duration / 2 : k;
+}
+HitFx moveFx(const Fighter& f, const MoveDef& m) {
+  if (m.projectileFrame >= 0) return m.projectile.hit.fx;
+  if (!m.shots.empty()) return m.shots.front().def.hit.fx;
+  if (m.beam.start >= 0) return m.beam.fx;
+  if (!m.hitboxes.empty()) return m.hitboxes.front().fx;
+  return heroElement(f.def->hero);
+}
+
+void applyHint(Pose& p, const Fighter& f, const MoveDef& m, float time, bool whole) {
+  const PoseHint hint = m.pose;
+  if (hint == PoseHint::Auto) return;
+  const float H = f.height();
+  const float t = float(f.moveFrame);
+  const float key = float(keyFrame(m));
+  const bool ult = f.move == FinalSmash;
+  if (!whole && t >= key) return;  // hitbox moves: the hint only shapes the wind-up
+  const float start = ult ? 14.0f : 0.0f;
+  const float ready = smoothstep((t - start) / std::max(4.0f, key - start - 2.0f));
+  const float rel = clampf((t - key) / 14.0f, 0.0f, 1.0f);   // 0 before the key frame
+  const float relax = clampf((t - key - 18.0f) / std::max(8.0f, float(m.duration) - key - 18.0f), 0.0f, 1.0f);
+  const float on = t < key ? ready : 1.0f - smoothstep(relax);  // weight of the hint over the base pose
+  if (on <= 0.001f) return;
+  const bool armed = f.def->baseWeapon != WeaponVisual::None || (f.weaponDef() && isHandWeapon(f.weaponDef()->visual));
+  auto at = [&](float x, float y) { return Vec2{x * H, y * H}; };
+  Vec2 hF = p.handF, hB = p.handB;
+  float lean = p.lean, crouch = p.crouch;
+  const float rk = easeOut(rel);
+  switch (hint) {
+    case PoseHint::Cast:  // gather at the chest, then both palms thrust forward
+      hF = lerpv(at(0.12f, -0.12f), at(0.4f, -0.12f), rk);
+      hB = lerpv(at(0.08f, -0.08f), at(0.36f, -0.06f), rk);
+      crouch += 0.15f * (1.0f - rk);
+      lean += 0.15f * rk - 0.08f * (1.0f - rk);
+      p.charge = std::max(p.charge, t < key ? ready : 1.0f - rel);
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Overhead: case PoseHint::TwoHanded: {  // raised high in both hands, then the cleave
+      hF = lerpv(at(0.03f, -0.4f), at(0.32f, -0.04f), rk);
+      hB = lerpv(at(0.0f, -0.37f), at(0.26f, -0.02f), rk);
+      lean += -0.14f * (1.0f - rk) + 0.28f * rk;
+      crouch += 0.12f * rk + (hint == PoseHint::TwoHanded ? 0.1f : 0.0f);
+      if (armed) {
+        p.weapon = true;
+        p.twoHanded = true;
+        const float a = lerpf(-2.1f, 0.55f, rk);  // screen angle of the blade
+        p.weaponDir = {std::cos(a), std::sin(a)};
+      } else {
+        p.charge = std::max(p.charge, 0.6f * on);
+        p.chargeFx = moveFx(f, m);
+      }
+      break;
+    }
+    case PoseHint::Thrust:  // drawn back, then the lunge
+      hF = lerpv(at(-0.04f, -0.1f), at(0.44f, -0.08f), rk);
+      hB = lerpv(at(-0.12f, -0.02f), at(-0.2f, 0.0f), rk);
+      lean += -0.12f * (1.0f - rk) + 0.38f * rk;
+      crouch += 0.3f * (1.0f - rk);
+      if (armed) {
+        p.weapon = true;
+        p.weaponDir = Vec2{1.0f, 0.05f}.norm();
+      }
+      break;
+    case PoseHint::Spin:
+      p.rot += (t < key ? 0.0f : (t - key) * 0.5f) * (1.0f - relax);
+      hF = at(0.3f, -0.06f);
+      hB = at(-0.26f, -0.04f);
+      crouch += 0.3f;
+      break;
+    case PoseHint::HandSign:  // hands joined in front of the face, then one hand released forward
+      hF = lerpv(at(0.15f, -0.3f), at(0.36f, -0.16f), rk);
+      hB = lerpv(at(0.12f, -0.28f), at(0.1f, -0.22f), rk);
+      hF.y += std::sin(time * 14.0f) * 0.006f * H * (1.0f - rk);
+      crouch += 0.1f;
+      p.charge = std::max(p.charge, 0.55f * (t < key ? ready : 1.0f - rel));
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Bow: {  // the bow in the back hand, the string drawn to the cheek
+      hB = at(0.38f, -0.18f);
+      hF = lerpv(at(0.3f, -0.18f), at(0.04f, -0.2f), t < key ? ready : 0.0f);
+      if (t >= key) hF = lerpv(at(0.04f, -0.2f), at(-0.06f, -0.22f), rk);  // release: the hand flies back
+      p.bow = t < key ? ready : 0.0f;
+      lean -= 0.05f;
+      p.weapon = false;
+      break;
+    }
+    case PoseHint::Throw:  // overhand
+      hF = lerpv(at(-0.14f, -0.42f), at(0.38f, -0.04f), rk);
+      hB = lerpv(at(0.2f, -0.12f), at(-0.16f, 0.02f), rk);
+      lean += -0.16f * (1.0f - rk) + 0.22f * rk;
+      if (armed && !f.weaponDef()) p.weapon = false;
+      break;
+    case PoseHint::Uppercut:
+      hF = lerpv(at(0.16f, 0.08f), at(0.12f, -0.52f), rk);
+      crouch += 0.4f * (1.0f - rk);
+      p.squash *= 1.0f + 0.06f * rk;
+      break;
+    case PoseHint::Stomp:
+      p.footF = lerpv(at(0.12f, 0.2f), at(0.16f, 0.5f), rk);
+      hF = lerpv(at(0.16f, -0.36f), at(0.24f, 0.08f), rk);
+      hB = lerpv(at(-0.1f, -0.34f), at(-0.18f, 0.08f), rk);
+      crouch += 0.45f * rk;
+      break;
+    case PoseHint::Roar:  // arms wide, chest out
+      hF = at(0.32f, -0.28f);
+      hB = at(-0.3f, -0.26f);
+      lean -= 0.16f;
+      p.shout = true;
+      p.weapon = false;
+      break;
+    case PoseHint::Rush:
+      hF = at(0.32f, -0.05f);
+      hB = at(-0.24f, 0.02f);
+      lean += 0.36f;
+      crouch += 0.2f;
+      break;
+    case PoseHint::Raise:  // one arm raised to the sky, power gathering in the hand
+      hF = at(0.08f, -0.56f);
+      hB = at(-0.06f, 0.04f);
+      lean -= 0.06f;
+      p.charge = std::max(p.charge, t < key ? ready : 1.0f - rel * 0.6f);
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Point:  // a finger pointed at the target
+      hF = at(0.42f, -0.15f);
+      hB = at(0.0f, 0.05f);
+      lean += 0.04f;
+      p.charge = std::max(p.charge, 0.45f * (t < key ? ready : 1.0f - rel));
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Kneel:
+      crouch += 0.55f;
+      p.footF = at(0.18f, 0.5f);
+      hF = lerpv(at(0.2f, 0.18f), at(0.3f, 0.3f), rk);
+      hB = at(0.06f, 0.12f);
+      break;
+    case PoseHint::Auto: break;
+  }
+  p.handF = lerpv(p.handF, hF, on);
+  p.handB = lerpv(p.handB, hB, on);
+  p.lean = lerpf(p.lean, lean, on);
+  p.crouch = lerpf(p.crouch, crouch, on);
+}
+
 void applyMove(Pose& p, const Fighter& f, float time) {
   const CharacterDef& d = *f.def;
   const MoveDef& m = f.moveDef(f.move);
@@ -197,6 +362,10 @@ void applyMove(Pose& p, const Fighter& f, float time) {
       p.lean += 0.2f * l;
       p.sx *= 1.0f + 0.06f * l;
     }
+    return;
+  }
+  if (m.pose != PoseHint::Auto && !limbDriven(m)) {  // specials with their own body language
+    applyHint(p, f, m, time, true);
     return;
   }
   if (m.hitboxes.empty()) {  // projectile throw: wind up, thrust, follow through
@@ -358,7 +527,9 @@ void applyMove(Pose& p, const Fighter& f, float time) {
   if (pr.phase == Phase::Active) p.trail = 1.0f;
   else if (pr.phase == Phase::Strike) p.trail = 0.5f;
   else if (pr.phase == Phase::Follow) p.trail = clampf(1.0f - pr.k / 0.4f, 0.0f, 1.0f) * 0.9f;
+  applyHint(p, f, m, time, false);  // the wind-up of a special takes its body language
 }
+
 
 // SUPER CLASH: gather (curled up), rise (arms raised), then a star burst on every shock wave.
 Pose finalSmashPose(const Fighter& f, Pose p) {
@@ -650,7 +821,40 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       break;
     case FState::Attack:
       if (f.move == FinalSmash) {
-        p = finalSmashPose(f, f.grounded ? p : airPose(f, m, tt, false));
+        const MoveDef& fs = f.moveDef(FinalSmash);
+        Pose base = f.grounded ? p : airPose(f, m, tt, false);
+        if (fs.pose == PoseHint::Auto) {
+          p = finalSmashPose(f, base);
+        } else {  // each ultimate has its own body language; its blows are animated like any move
+          p = finalSmashPose(f, base);
+          if (f.moveFrame >= 20) {
+            Pose q = base;
+            applyMove(q, f, tt);
+            if (!limbDriven(fs)) applyHint(q, f, fs, tt, true);
+            const float k = smoothstep((f.moveFrame - 20) / 10.0f);
+            p.handF = lerpv(p.handF, q.handF, k);
+            p.handB = lerpv(p.handB, q.handB, k);
+            p.footF = lerpv(p.footF, q.footF, k);
+            p.footB = lerpv(p.footB, q.footB, k);
+            p.lean = lerpf(p.lean, q.lean, k);
+            p.crouch = lerpf(p.crouch, q.crouch, k);
+            p.squash = lerpf(p.squash, q.squash, k);
+            p.sx = lerpf(p.sx, q.sx, k);
+            p.rot = lerpf(p.rot, q.rot, k);
+            p.weapon = q.weapon;
+            p.weaponDir = q.weaponDir;
+            p.twoHanded = q.twoHanded;
+            p.bow = q.bow;
+            p.charge = q.charge;
+            p.chargeFx = q.chargeFx;
+            p.shout = q.shout;
+            p.trail = q.trail;
+            p.trailLimb = q.trailLimb;
+            p.trailFx = q.trailFx;
+            p.trailPos = q.trailPos;
+            p.trailRadius = q.trailRadius;
+          }
+        }
         break;
       }
       if (!f.grounded) p = airPose(f, m, tt, false);
@@ -668,6 +872,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
     }
   }
   p.bladeLen = f.bladeLength();
+  p.form = f.formKind();
   return p;
 }
 
@@ -1184,6 +1389,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     const float l = std::min(box.x, g.feet.x - rx), t = std::min(box.y, g.feet.y - H * 2.3f);
     box = {l, t, std::max(box.right(), g.feet.x + rx) - l, std::max(box.bottom(), g.feet.y + H * 0.6f) - t};
   }
+  drawFormAvatar(f, at, false);
   pix::sprite(box, alpha, [&](float a) {
     for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
       const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
@@ -1192,6 +1398,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, a, flashCol, flash, at);
   });
 
+  drawFormAvatar(f, at, true);
   drawSmear(anim, pose, alpha);
   if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, true);

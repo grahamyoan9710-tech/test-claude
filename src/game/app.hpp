@@ -21,6 +21,7 @@ struct Options {
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
+  int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
 };
 
 class MatchScreen {
@@ -32,6 +33,8 @@ class MatchScreen {
   const Match& match() const { return m_; }
   bool training() const { return m_.cfg.training; }
   void forcePause() { paused_ = true; }
+  // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
+  void showUltimate(int slot);
 
  private:
   void updateCamera(bool snap);
@@ -58,6 +61,8 @@ class MatchScreen {
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;
   bool debug_ = false;
+  int ultShow_ = -2;
+  bool ultFired_ = false;
   float time_ = 0.0f;
   // Training: combo counter per fighter
   std::vector<float> prevPercent_;

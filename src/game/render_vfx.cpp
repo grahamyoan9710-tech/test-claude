@@ -216,6 +216,10 @@ BeamStyle beamStyle(HitFx fx) {
       return {{255, 186, 70, 255}, {255, 214, 120, 255}, {255, 255, 246, 255}, {255, 248, 200, 255}, false, false};
     case HitFx::Gloom:  // malice breath: red-black smoke
       return {{200, 16, 46, 255}, {54, 2, 14, 255}, {255, 96, 116, 255}, {255, 70, 90, 255}, true, true};
+    case HitFx::Hollow:  // Cero Oscuras: black, edged with green
+      return {{60, 230, 120, 255}, {6, 12, 8, 255}, {30, 80, 46, 255}, {120, 255, 170, 255}, true, false};
+    case HitFx::Fire:  // Wyvern's Fire
+      return {{255, 90, 20, 255}, {255, 140, 40, 255}, {255, 248, 210, 255}, {255, 200, 90, 255}, false, true};
     default: {
       const Color c = hitFxColor(fx), g = hitFxGlow(fx);
       return {c, c, WHITE, g, false, false};
@@ -859,17 +863,21 @@ void drawBeams(const Match& m, float time) {
 void drawUltimateBackdrop(const Match& m, float time) {
   const Rect v = vfx::viewRect(40.0f);
   forEachUltimate(m, [&](const Fighter& f, float k, int mf) {
-    switch (f.def->hero) {
-      case Hero::Gojo: voidBack(f, k, time, v); break;
-      case Hero::Sukuna: shrineBack(f, k, time, v); break;
-      case Hero::Byakuya: petalBack(f, k, time, v); break;
-      case Hero::Ichigo: mugetsuBack(f, k, mf, time, v); break;
-      case Hero::Asta: stormBack(f, k, time, v, m.frame); break;
-      case Hero::Yuno: windBack(f, k, time, v); break;
-      case Hero::Link: sealBack(f, k, mf, time, v); break;
-      case Hero::Ganondorf: gloomBack(f, k, time, v); break;
-      case Hero::Kratos: rageBack(f, k, time, v); break;
-      default: break;
+    const UltFx fx = f.moveDef(FinalSmash).ultFx;
+    switch (fx) {
+      case UltFx::InfiniteVoid: voidBack(f, k, time, v); break;
+      case UltFx::MalevolentShrine: shrineBack(f, k, time, v); break;
+      case UltFx::Kageyoshi: case UltFx::Gokei: petalBack(f, k, time, v); break;
+      case UltFx::Mugetsu: mugetsuBack(f, k, mf, time, v); break;
+      case UltFx::BlackDivider: stormBack(f, k, time, v, m.frame); break;
+      case UltFx::SpiritStorm: case UltFx::WindBladeShower: case UltFx::ZephyrSpear: windBack(f, k, time, v); break;
+      case UltFx::LightDragon: case UltFx::MasterSwordBeam:
+        sealBack(f, k, mf, time, v);
+        drawUltCinematic(m, f, fx, k, mf, time, v, false);
+        break;
+      case UltFx::DemonDragon: gloomBack(f, k, time, v); break;
+      case UltFx::SpartanRage: case UltFx::ChaosWhip: rageBack(f, k, time, v); break;
+      default: drawUltCinematic(m, f, fx, k, mf, time, v, false); break;
     }
   });
 }
@@ -879,16 +887,29 @@ void drawUltimateFront(const Match& m, float time) {
   bool any = false;
   forEachUltimate(m, [&](const Fighter& f, float k, int mf) {
     any = true;
-    switch (f.def->hero) {
-      case Hero::Sukuna: shrineFront(m, f, k, mf, v); break;
-      case Hero::Byakuya: petalFront(f, k, time); break;
-      case Hero::Ichigo: mugetsuFront(f, k, time, v); break;
-      case Hero::Asta: stormFront(f, k, time); break;
-      case Hero::Yuno: windFront(f, k, time, v); break;
-      case Hero::Link: sealFront(f, k, time); break;
-      case Hero::Ganondorf: gloomFront(f, k, time, v); break;
-      case Hero::Kratos: rageFront(f, k, time, v); break;
-      default: break;
+    const UltFx fx = f.moveDef(FinalSmash).ultFx;
+    switch (fx) {
+      case UltFx::MalevolentShrine: shrineFront(m, f, k, mf, v); break;
+      case UltFx::Kageyoshi: case UltFx::Gokei: petalFront(f, k, time); break;
+      case UltFx::Mugetsu: mugetsuFront(f, k, time, v); break;
+      case UltFx::BlackDivider: stormFront(f, k, time); break;
+      case UltFx::SpiritStorm: case UltFx::ZephyrSpear: windFront(f, k, time, v); break;
+      case UltFx::WindBladeShower:
+        windFront(f, k, time, v);
+        drawUltCinematic(m, f, fx, k, mf, time, v, true);
+        break;
+      case UltFx::LightDragon: case UltFx::MasterSwordBeam:
+        sealFront(f, k, time);
+        drawUltCinematic(m, f, fx, k, mf, time, v, true);
+        break;
+      case UltFx::DemonDragon: case UltFx::DemonKingRampage: case UltFx::GloomPillars: gloomFront(f, k, time, v); break;
+      case UltFx::SpartanRage: rageFront(f, k, time, v); break;
+      case UltFx::ChaosWhip:
+        rageFront(f, k, time, v);
+        drawUltCinematic(m, f, fx, k, mf, time, v, true);
+        break;
+      case UltFx::InfiniteVoid: break;
+      default: drawUltCinematic(m, f, fx, k, mf, time, v, true); break;
     }
   });
   if (!any) return;

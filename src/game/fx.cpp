@@ -10,7 +10,7 @@ constexpr size_t kMaxParticles = 1400;
 bool bladeFx(HitFx fx) {
   switch (fx) {
     case HitFx::Slash: case HitFx::AntiMagic: case HitFx::Reiatsu: case HitFx::Petal: case HitFx::Blood:
-    case HitFx::Wind: case HitFx::Ice: case HitFx::Light: case HitFx::Dark:
+    case HitFx::Wind: case HitFx::Ice: case HitFx::Light: case HitFx::Dark: case HitFx::Berserk:
       return true;
     default: return false;
   }
@@ -32,6 +32,12 @@ AuraLook auraLook(Hero h) {
     case Hero::Kratos: return {{255, 76, 20, 255}, {255, 216, 120, 255}, false};
     case Hero::Gojo: return {{80, 140, 255, 255}, {226, 238, 255, 255}, false};
     case Hero::Sukuna: return {{200, 14, 36, 255}, {255, 150, 150, 255}, false};
+    case Hero::Kenpachi: return {{255, 214, 40, 255}, {255, 250, 200, 255}, false};
+    case Hero::Ulquiorra: return {{8, 20, 12, 255}, {90, 255, 150, 255}, true};
+    case Hero::Hunter: return {{255, 140, 60, 255}, {255, 236, 190, 255}, false};
+    case Hero::Naruto: return {{255, 150, 30, 255}, {255, 240, 170, 255}, false};
+    case Hero::Sasuke: return {{120, 70, 220, 255}, {220, 200, 255, 255}, false};
+    case Hero::Kakashi: return {{90, 160, 255, 255}, {230, 240, 255, 255}, false};
     default: return {{255, 220, 120, 255}, {255, 255, 230, 255}, false};
   }
 }
@@ -250,6 +256,54 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
             i % 3 ? Color{190, 16, 30, 255} : Color{120, 6, 16, 255}, 0.4f, 0.97f);
       break;
     }
+    case HitFx::Chakra:  // swirls of orange chakra, a few blue sparks
+      for (int i = 0; i < n; ++i)
+        add(PK::Wisp, pos + rdir() * rng_.range(0, 12), rdir() * rng_.range(2.0f, 6.0f), rng_.range(16, 28), 8 + 7 * heavy, 2,
+            i % 3 ? Color{255, 150, 40, 255} : Color{110, 170, 255, 255}, -0.05f);
+      for (int i = 0; i < 2; ++i) {
+        Particle& g = add(PK::Gust, pos, {}, 14, 18 + 10 * i, 50 + 40 * heavy, {255, 200, 120, 255});
+        g.rot = rng_.range(0, 360);
+      }
+      break;
+    case HitFx::Lightning:
+      for (int i = 0; i < 4 + int(heavy * 5); ++i) {
+        Particle& z = add(PK::Zap, pos, {}, rng_.range(6, 10), 40 + 80 * heavy * rng_.range(0.6f, 1.0f), 3.5f, {150, 200, 255, 255});
+        z.rot = rng_.range(0, 2 * kPi);
+        z.color2 = WHITE;
+      }
+      for (int i = 0; i < n / 2; ++i)
+        add(PK::Mote, pos, rdir() * rng_.range(3.0f, 9.0f), rng_.range(12, 20), 2.5f, 0.5f, {220, 240, 255, 255}, 0.0f, 0.9f);
+      break;
+    case HitFx::BlackFlame:
+      for (int i = 0; i < n; ++i)
+        add(PK::Smoke, pos + rdir() * rng_.range(0, 10), rdir() * rng_.range(1.0f, 4.0f) + Vec2{0, -1.2f}, rng_.range(22, 34), 9,
+            24 + heavy * 14, i % 3 ? Color{12, 6, 14, 240} : Color{170, 30, 80, 220}, -0.04f, 0.92f);
+      break;
+    case HitFx::Hollow:  // black-green blast
+      for (int i = 0; i < n; ++i)
+        add(PK::Wisp, pos + rdir() * rng_.range(0, 10), rdir() * rng_.range(2.0f, 6.0f), rng_.range(16, 26), 8 + 7 * heavy, 2,
+            i % 2 ? Color{70, 230, 130, 255} : Color{10, 30, 18, 255}, -0.03f);
+      {
+        Particle& r = add(PK::Burst, pos, {}, 10, 40 + 40 * heavy, 100 + 120 * heavy, {120, 255, 170, 255});
+        r.rot = rng_.range(0, 2 * kPi);
+      }
+      break;
+    case HitFx::Berserk:  // wild yellow reiatsu and cut marks
+      for (int i = 0; i < n; ++i)
+        add(PK::Wisp, pos + rdir() * rng_.range(0, 14), rdir() * rng_.range(2.0f, 6.0f) + Vec2{0, -1.0f}, rng_.range(18, 30),
+            9 + 8 * heavy, 2, i % 2 ? Color{255, 220, 60, 255} : Color{255, 250, 200, 255}, -0.08f, 0.93f);
+      for (int i = 0; i < 1 + int(heavy * 2); ++i) {
+        Particle& c2 = add(PK::Cut, pos + rdir() * rng_.range(0, 12), {}, 14 + heavy * 4, 60 + 60 * heavy, 5 + 4 * heavy,
+                           {255, 230, 90, 255});
+        c2.rot = std::atan2(dir.y, dir.x) + kPi * 0.5f + rng_.range(-0.6f, 0.6f);
+      }
+      break;
+    case HitFx::Water:
+      for (int i = 0; i < n * 3 / 2; ++i)
+        add(PK::Drop, pos, rdir() * rng_.range(3.0f, 9.0f) + Vec2{0, -2.5f}, rng_.range(22, 34), rng_.range(2.5f, 4.0f), 0.0f,
+            i % 3 ? Color{90, 170, 240, 255} : Color{220, 240, 255, 255}, 0.4f, 0.97f);
+      add(PK::Ring, pos, {}, 16, 10, 80 + 60 * heavy, withAlpha({160, 210, 255, 255}, 0.8f));
+      break;
     default: burst(pos, n / 3, 6.0f, {255, 240, 190, 255}, PK::Star, 20, 4); break;
   }
 }
@@ -341,6 +395,12 @@ void Fx::hitSound(HitFx fx, float kb, bool big) {
     case HitFx::Cursed: au.play(Sfx::HitGloom, 0.55f, 1.3f * p); au.play(Sfx::HitElectric, 0.25f, 1.5f * p); break;
     case HitFx::Blood: au.play(Sfx::HitSlash, 0.85f, 0.8f * p); break;
     case HitFx::Magic: au.play(Sfx::HitElectric, 0.35f, 1.4f * p); break;
+    case HitFx::Chakra: au.play(Sfx::WindGust, 0.45f, 1.5f * p); au.play(Sfx::HitHoly, 0.35f, 0.8f * p); break;
+    case HitFx::Lightning: au.play(Sfx::HitElectric, 0.8f, 1.15f * p); break;
+    case HitFx::BlackFlame: au.play(Sfx::HitFire, 0.6f, 0.6f * p); au.play(Sfx::HitGloom, 0.4f, 0.9f * p); break;
+    case HitFx::Hollow: au.play(Sfx::HitGloom, 0.6f, 1.15f * p); au.play(Sfx::BeamBlast, 0.3f, 1.4f * p); break;
+    case HitFx::Berserk: au.play(Sfx::HitSlash, 0.9f, 0.75f * p); au.play(Sfx::HitHeavy, 0.3f, 0.8f * p); break;
+    case HitFx::Water: au.play(Sfx::WindGust, 0.5f, 0.6f * p); au.play(Sfx::HitLight, 0.4f, 0.7f * p); break;
     default: break;
   }
   Sfx s = kb < 40 ? Sfx::HitLight : kb < 100 ? Sfx::HitMedium : Sfx::HitHeavy;
@@ -437,7 +497,12 @@ void Fx::onEvents(const Match& m) {
           case HitFx::AntiMagic: au.play(Sfx::HitSlash, 0.6f, 0.7f * p); au.play(Sfx::WindGust, 0.4f, 0.8f * p); break;
           case HitFx::Reiatsu: au.play(Sfx::BeamBlast, 0.5f, 1.3f * p); break;
           case HitFx::Blood: au.play(Sfx::HitSlash, 0.5f, 1.4f * p); break;
-          case HitFx::Electric: au.play(Sfx::HitElectric, 0.7f, 0.8f * p); break;
+          case HitFx::Electric: case HitFx::Lightning: au.play(Sfx::HitElectric, 0.7f, 0.8f * p); break;
+          case HitFx::Chakra: au.play(Sfx::WindGust, 0.6f, 1.4f * p); break;
+          case HitFx::Hollow: au.play(Sfx::BeamBlast, 0.5f, 1.2f * p); break;
+          case HitFx::Water: au.play(Sfx::WindGust, 0.7f, 0.6f * p); break;
+          case HitFx::BlackFlame: au.play(Sfx::HitFire, 0.5f, 0.6f * p); break;
+          case HitFx::Berserk: au.play(Sfx::BeamBlast, 0.5f, 0.9f * p); break;
           default:
             au.play(Sfx::Projectile, 0.5f, e.fx == HitFx::Fire ? 0.8f : e.fx == HitFx::Dark ? 1.4f : 1.0f);
             break;
@@ -586,6 +651,29 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::WeaponPickup, 0.9f);
         break;
       }
+      case EvType::Transform: {  // a transformation: a burst of the hero's power
+        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : WHITE;
+        add(PK::Flash, e.pos, {}, 14, 40, 260, el);
+        add(PK::Ring, e.pos, {}, 26, 16, 300, el);
+        Particle& b = add(PK::Burst, e.pos, {}, 18, 80, 420, el);
+        b.rot = rng_.range(0, 2 * kPi);
+        motes(e.pos, 30, 24, 8, 2, el);
+        shake_ = std::max(shake_, 12.0f);
+        au.play(Sfx::UltReady, 0.9f, 0.8f);
+        au.play(Sfx::BeamBlast, 0.7f, 0.7f);
+        break;
+      }
+      case EvType::FormEnd:
+        add(PK::Ring, e.pos, {}, 18, 12, 120, withAlpha(WHITE, 0.7f));
+        burst(e.pos, 12, 4, {230, 230, 230, 255}, PK::Star, 20, 4);
+        break;
+      case EvType::Capture:
+        flash_ = std::max(flash_, 0.2f);
+        flashCol_ = WHITE;
+        shake_ = std::max(shake_, 8.0f);
+        add(PK::Ring, e.pos, {}, 14, 20, 140, WHITE);
+        au.play(Sfx::Counter, 0.8f, 0.8f);
+        break;
       case EvType::WeaponBreak: {
         const auto& chars = roster();
         const int ch = std::clamp(int(e.strength), 0, int(chars.size()) - 1);
