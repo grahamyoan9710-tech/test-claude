@@ -82,7 +82,26 @@ void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx) {
   buildCommonMoves(c, S, P);
 }
 
-void buildSwordNormals(CharacterDef& c, float S, float P) {
+std::vector<HitboxDef> beamHits(const BeamDef& b, float dmg, float angle, float bkb, float kbg, int hits,
+                                int firstGroup) {
+  std::vector<HitboxDef> out;
+  const float r = b.width * 0.5f, step = std::max(10.0f, r * 1.3f);
+  const Vec2 dir{std::cos(deg2rad(b.angle)), -std::sin(deg2rad(b.angle))};
+  const int span = std::max(1, (b.end - b.start) / std::max(1, hits));
+  for (int k = 0; k < hits; ++k) {
+    const bool last = k == hits - 1;
+    const int s = b.start + k * span, e = last ? b.end : s + span;
+    for (float d = r * 0.6f; d <= b.length; d += step) {
+      HitboxDef h = hb(s, e, b.from.x + dir.x * d, b.from.y + dir.y * d, r, last ? dmg : 2.0f, last ? angle : 361.0f,
+                       last ? bkb : 8.0f, last ? kbg : 0.0f, Limb::None, firstGroup + k, b.fx);
+      h.impact = last;
+      out.push_back(h);
+    }
+  }
+  return out;
+}
+
+void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
   using L = Limb;
   const HitFx sl = HitFx::Slash;
   auto& m = c.moves;
@@ -102,14 +121,14 @@ void buildSwordNormals(CharacterDef& c, float S, float P) {
   m[DashAttack].vel = {{2, VelMode::SetX, {9.5f, 0}}};
   m[DashAttack].frictionMul = 0.25f;
 
-  m[FSmash] = mv("Smash epee", 50, {hb(12, 15, 92, 0, 18, 19.0f, 361, 32, 100, L::Weapon, 0, sl),
-                                    hb(12, 15, 50, -10, 24, 14.0f, 361, 30, 92, L::Weapon, 0, sl)});
+  m[FSmash] = mv("Smash epee", 50, {hb(12, 15, 92, 0, 18, 19.0f, 361, 32, 100, L::Weapon, 0, smashFx),
+                                    hb(12, 15, 50, -10, 24, 14.0f, 361, 30, 92, L::Weapon, 0, smashFx)});
   m[FSmash].chargeFrame = 6;
-  m[USmash] = mv("Pic céleste", 44, {hb(13, 17, 4, -102, 18, 17.0f, 90, 30, 98, L::Weapon, 0, sl),
-                                     hb(13, 17, 4, -60, 22, 13.0f, 90, 30, 92, L::Weapon, 0, sl)});
+  m[USmash] = mv("Pic céleste", 44, {hb(13, 17, 4, -102, 18, 17.0f, 90, 30, 98, L::Weapon, 0, smashFx),
+                                     hb(13, 17, 4, -60, 22, 13.0f, 90, 30, 92, L::Weapon, 0, smashFx)});
   m[USmash].chargeFrame = 6;
   m[DSmash] = mv("Moulinet bas", 48, {hb(6, 8, 74, 42, 18, 12.0f, 25, 30, 90, L::Weapon, 0, sl),
-                                      rev(hb(18, 20, -78, 42, 18, 15.0f, 25, 32, 95, L::Weapon, 1, sl))});
+                                      rev(hb(18, 20, -78, 42, 18, 15.0f, 25, 32, 95, L::Weapon, 1, smashFx))});
   m[DSmash].chargeFrame = 3;
 
   m[NAir] = mv("Double taille", 40, {hb(5, 8, 66, -10, 26, 5.0f, 70, 25, 40, L::Weapon, 0, sl),

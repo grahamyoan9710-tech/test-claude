@@ -11,7 +11,19 @@
 enum class Limb : uint8_t { None, ArmFront, ArmBack, LegFront, LegBack, Body, Head, Weapon };
 
 // Visual / audio flavour of a hit.
-enum class HitFx : uint8_t { Normal, Fire, Electric, Slash, Dark, Magic };
+enum class HitFx : uint8_t {
+  Normal, Fire, Electric, Slash, Dark, Magic,
+  AntiMagic,  // black lightning that cancels magic (Asta)
+  Wind,       // green-white gusts (Yuno)
+  Reiatsu,    // blue-white spiritual pressure (Ichigo)
+  Petal,      // cherry-blossom blades (Byakuya)
+  Light,      // golden sacred light (Link)
+  Gloom,      // red-black malice (Ganondorf)
+  Ice,        // frost (Leviathan axe)
+  Cursed,     // blue / purple cursed energy (Gojo)
+  Blood,      // crimson slashes (Sukuna)
+  Count
+};
 
 struct HitboxDef {
   int start = 0, end = 0;  // active on frames [start, end)
@@ -25,9 +37,33 @@ struct HitboxDef {
   Limb limb = Limb::ArmFront;
   HitFx fx = HitFx::Normal;
   bool reverse = false;    // launches behind the attacker (back hits)
+  bool impact = false;     // signature hit: anime "impact frames" when it connects
 };
 
-enum class ProjVisual : uint8_t { Fireball, Bolt, Shuriken, Star };
+enum class ProjVisual : uint8_t {
+  Fireball, Bolt, Shuriken, Star,
+  BlackSlash,   // Asta: black crescent of anti-magic
+  WindBlade,    // Yuno: thin green crescents
+  Tornado,      // Yuno: travelling whirlwind
+  Getsuga,      // Ichigo: huge crescent wave of reiatsu
+  Cero,         // Ichigo: red blast from the hollow mask
+  Petals,       // Byakuya: swarm of blade petals
+  Arrow,        // Link: arrow
+  LightArrow,   // Link: arrow of light
+  Bomb,         // Link: Zonai bomb
+  SwordBeam,    // Link: Master Sword beam
+  DarkOrb,      // Ganondorf: sphere of gloom
+  GloomSpear,   // Ganondorf: spear of malice
+  Axe,          // Kratos: spinning Leviathan axe (comes back)
+  ChainBlade,   // Kratos: thrown Blade of Chaos
+  BlueOrb,      // Gojo: Lapse Blue (attracts)
+  RedOrb,       // Gojo: Reversal Red (repels)
+  PurpleOrb,    // Gojo: Hollow Purple (erases)
+  Dismantle,    // Sukuna: invisible cutting lines
+  FireArrow,    // Sukuna: Fuga
+  Lightning,    // Sukuna: Kamutoke
+  Count
+};
 
 struct ProjectileDef {
   Vec2 spawnOffset;        // from center, facing right
@@ -41,6 +77,39 @@ struct ProjectileDef {
   bool bounces = false;
   bool piercing = false;   // keeps flying after a hit
   ProjVisual visual = ProjVisual::Fireball;
+  int rehit = 0;           // > 0: hits the same fighter again every `rehit` frames (swarms, vortices)
+  float pull = 0.0f;       // drags fighters within pullRadius towards it (px / frame)
+  float pullRadius = 0.0f;
+  bool boomerang = false;  // flies back to its owner after half its lifetime
+  float grow = 0.0f;       // radius growth per frame
+  float explodeRadius = 0; // explodes when it ends (hit, ground, timeout): area damage
+  HitboxDef explode;       // damage / knockback of the explosion
+};
+
+// A beam drawn from the fighter during a move (the damage comes from the move's hitboxes, see beamHits).
+struct BeamDef {
+  int start = -1, end = -1;  // drawn on frames [start, end)
+  Vec2 from;                 // from the fighter's center, facing right
+  float angle = 0.0f;        // degrees, 0 = forward, 90 = up
+  float length = 0.0f, width = 0.0f;
+  HitFx fx = HitFx::Normal;
+};
+
+// Body language of a special move (the renderer builds the pose from it).
+enum class PoseHint : uint8_t {
+  Auto,       // the limb follows the hitbox
+  Cast,       // both hands thrust forward (blasts, beams)
+  Overhead,   // big two-handed overhead swing
+  Thrust,     // lunging stab
+  Spin,       // whirling body
+  HandSign,   // hand sign in front of the face (domains, techniques)
+  Bow,        // drawing a bow
+  Throw,      // throwing overhand
+  Uppercut,   // rising blow
+  Stomp,      // slam into the ground
+  Roar,       // arms wide, chest out
+  Rush,       // body-first dash
+  Raise       // one arm raised to the sky (summon, orb above)
 };
 
 enum class VelMode : uint8_t { Set, SetX, SetY, Add, Scale, StickDir };
@@ -86,9 +155,16 @@ struct MoveDef {
   int intangibleStart = -1, intangibleEnd = -1;
   int armorStart = -1, armorEnd = -1;
   int counterStart = -1, counterEnd = -1;  // hitboxes only fire if countered
-  // Teleport (direction from the stick)
+  // Teleport (direction from the stick; horizontal-only moves keep their height)
   int teleportFrame = -1;
   float teleportDist = 0.0f;
+  bool teleportForward = false;     // straight ahead instead of the stick direction
+  bool turnAfterTeleport = false;   // faces back after it (strikes from behind)
+  // Presentation
+  int superFlash = 0;               // frames of "super freeze" when the move starts (cut-in with its name)
+  PoseHint pose = PoseHint::Auto;
+  BeamDef beam;
+  bool reflects = false;            // a counter that sends projectiles back instead of taking them
   // Flow control
   bool helplessAfter = false;
   bool endOnLand = false;
@@ -111,12 +187,60 @@ enum class BodyStyle : uint8_t { Brawler, Speedster, Brute, Knight, Puff, Ninja 
 
 struct Palette {
   Color3 primary, secondary, accent, skin;
+  Color3 hair{40, 30, 30}, eyes{70, 52, 44};
+};
+
+// Who the fighter is (drives the procedural drawing: silhouette, outfit, hair, accessories).
+enum class Hero : uint8_t { Asta, Yuno, Ichigo, Byakuya, Link, Ganondorf, Kratos, Gojo, Sukuna, Count };
+
+// Drawn weapons: the fighters' own blades and the weapons that drop during a match.
+enum class WeaponVisual : uint8_t {
+  None,
+  AstaSword,       // Asta's notched black great sword
+  DemonSlayer,     // huge black slab of a sword
+  DemonDweller,    // slender black katana
+  Grimoire,        // floating four-leaf grimoire
+  WindSpear,       // spear of green wind
+  Zangetsu,        // giant cleaver with a cloth-wrapped grip
+  TensaZangetsu,   // black bankai katana with a chain
+  Katana,          // Byakuya's sword
+  Senbonzakura,    // blade dissolving into pink petals
+  Kageyoshi,       // bankai: petal storm swords
+  MasterSword,     // blade of evil's bane
+  BowOfLight,      // golden bow
+  DemonKingSword,  // Ganondorf's gloom sword
+  GloomSpear,      // spear of malice
+  LeviathanAxe,    // frost axe with runes
+  BladesOfChaos,   // two chained fire blades
+  HollowPurple,    // purple orb above the hand
+  SixEyes,         // blindfold removed: shining blue eyes
+  Kamutoke,        // lightning bow-spear
+  CursedFinger,    // Sukuna's finger (power-up)
+  ShieldAndSword,  // Link's base kit (sword + shield)
+  GuardianShield,  // Kratos's base kit
+  Count
+};
+
+// A weapon that drops during the match: only its owner (character) can pick it up.
+struct WeaponDef {
+  std::string name;           // shown when it is picked up
+  std::string desc;           // one short French line
+  WeaponVisual visual = WeaponVisual::None;
+  HitFx fx = HitFx::Normal;   // element of the fighter's attacks while held
+  float damageMul = 1.2f;     // every hit
+  float kbMul = 1.1f;         // knockback growth
+  float reachMul = 1.0f;      // hand / weapon hitboxes reach further
+  int duration = 60 * 18;     // frames before it vanishes
+  std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while held
 };
 
 struct CharacterDef {
   std::string name;
   std::string title;
+  std::string series;             // universe the fighter comes from
+  Hero hero = Hero::Asta;
   BodyStyle style = BodyStyle::Brawler;
+  WeaponVisual baseWeapon = WeaponVisual::None;  // drawn in hand for Limb::Weapon moves
   std::array<Palette, 2> palettes;
   float width = 50, height = 100;
   float weight = 100;
@@ -128,6 +252,7 @@ struct CharacterDef {
   int jumpSquat = 4;
   float weaponLength = 0.0f;  // drawn weapon (sword, hammer, kunai)
   std::array<MoveDef, MOVE_COUNT> moves;
+  std::array<WeaponDef, 2> weapons;
 };
 
 const std::vector<CharacterDef>& roster();
@@ -138,5 +263,8 @@ HitboxDef hb(int start, int end, float ox, float oy, float radius, float dmg, fl
 MoveDef mv(const char* name, int duration, std::vector<HitboxDef> boxes, int landingLag = 6);
 // Generic normal attacks, scaled by body size (S) and power (P).
 void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx);
-void buildSwordNormals(CharacterDef& c, float S, float P);
+void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx = HitFx::Slash);
 void buildCommonMoves(CharacterDef& c, float S, float P);  // grabs, throws, ledge/getup
+// Hitboxes along a beam (circles of radius width/2), all in one group per `hits` (multi-hit beams).
+std::vector<HitboxDef> beamHits(const BeamDef& b, float dmg, float angle, float bkb, float kbg, int hits = 1,
+                                int firstGroup = 0);

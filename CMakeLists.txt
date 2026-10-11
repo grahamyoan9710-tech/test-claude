@@ -18,6 +18,7 @@ add_library(clash_core STATIC
   src/core/roster.cpp
   src/core/stage.cpp
   src/core/match.cpp
+  src/core/weapons.cpp
   src/core/fighter_update.cpp
   src/core/fighter_physics.cpp
   src/core/combat.cpp

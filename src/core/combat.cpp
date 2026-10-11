@@ -37,7 +37,7 @@ bool Match::tryCounter(Fighter& v, Fighter* attacker) {
 void Match::resolveHits() {
   struct Pending {
     int a, v;
-    const HitboxDef* h;
+    HitboxDef h;  // copy: a held weapon changes its element and knockback
     Vec2 pos;
     float mul;
   };
@@ -50,13 +50,32 @@ void Match::resolveHits() {
     if (m->counterStart >= 0 && !a.counterTriggered) continue;
     float mul = 1.0f;
     if (m->chargeFrame >= 0) mul += m->chargeDamageMul * float(a.charge) / float(m->maxCharge);
+    // A held weapon: harder hits; the base moves also reach further and take its element.
+    const WeaponDef* w = a.weaponDef();
+    const bool baseMove = m == &a.def->moves[a.move];
+    if (w) mul *= w->damageMul;
+    auto worldBox = [&](const HitboxDef& h) {
+      HitboxDef x = h;
+      if (w) {
+        x.growth *= w->kbMul;
+        if (baseMove) {
+          if (h.fx == HitFx::Normal || h.fx == HitFx::Slash) x.fx = w->fx;
+          if (h.limb == Limb::Weapon || h.limb == Limb::ArmFront || h.limb == Limb::ArmBack) {
+            x.offset = x.offset * w->reachMul;
+            x.radius *= std::sqrt(w->reachMul);
+          }
+        }
+      }
+      return x;
+    };
     if (orb.active && !m->isGrab) {
       for (const auto& h : m->hitboxes) {
         if (a.moveFrame < h.start || a.moveFrame >= h.end) continue;
         int key = 63 * 64 + h.group;
         if (std::find(a.hitList.begin(), a.hitList.end(), key) != a.hitList.end()) continue;
-        Vec2 hp = a.center() + Vec2{h.offset.x * a.facing, h.offset.y};
-        if ((hp - orb.pos).len() > h.radius + orb.radius) continue;
+        const HitboxDef x = worldBox(h);
+        Vec2 hp = a.center() + Vec2{x.offset.x * a.facing, x.offset.y};
+        if ((hp - orb.pos).len() > x.radius + orb.radius) continue;
         a.hitList.push_back(key);
         a.hitlag = std::max(a.hitlag, 4);
         hitOrb(a.id, h.damage * mul, a.center(), h.fx);
@@ -74,10 +93,11 @@ void Match::resolveHits() {
         if (a.moveFrame < h.start || a.moveFrame >= h.end) continue;
         int key = v.id * 64 + h.group;
         if (std::find(a.hitList.begin(), a.hitList.end(), key) != a.hitList.end()) continue;
-        Vec2 hp = a.center() + Vec2{h.offset.x * a.facing, h.offset.y};
-        if (!circleRect(hp, h.radius, hurt)) continue;
+        const HitboxDef x = worldBox(h);
+        Vec2 hp = a.center() + Vec2{x.offset.x * a.facing, x.offset.y};
+        if (!circleRect(hp, x.radius, hurt)) continue;
         if (m->isGrab) grabs.push_back({a.id, v.id});
-        else hits.push_back({a.id, v.id, &h, hp, mul});
+        else hits.push_back({a.id, v.id, x, hp, mul});
         a.hitList.push_back(key);
         break;  // one hitbox per victim per frame (first listed = priority)
       }
@@ -89,14 +109,15 @@ void Match::resolveHits() {
     Fighter& v = fighters[ph.v];
     if (!v.active()) continue;
     if (tryCounter(v, &a)) continue;
-    int dir = ph.h->reverse ? -a.facing : a.facing;
-    applyHit(&a, v, *ph.h, ph.pos, dir, ph.mul, false);
+    int dir = ph.h.reverse ? -a.facing : a.facing;
+    applyHit(&a, v, ph.h, ph.pos, dir, ph.mul, false);
   }
 
   for (auto [ai, vi] : grabs) {
     Fighter& a = fighters[ai];
     Fighter& v = fighters[vi];
-    if (a.state != FState::Attack || a.move != Grab) continue;  // got hit meanwhile
+    const MoveDef* am = a.currentMove();
+    if (!am || !am->isGrab) continue;  // got hit meanwhile
     if (v.state == FState::Grabbed || !v.active() || v.isIntangible()) continue;
     if (v.grabPartner >= 0) releaseGrab(v, false);
     setState(a, FState::Holding);
@@ -188,6 +209,34 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
   if (attacker && !throwHit) attacker->hitlag = lag;
   v.flash = 10;
   emit(EvType::Hit, hitPos, attacker ? attacker->id : -1, v.id, kb, dir, h.fx);
+  events.back().impact = h.impact;
+}
+
+// Damage credit for projectiles and explosions (no attacker in applyHit).
+void Match::creditProjectile(int owner, Fighter& v, float damage, bool wasShielding) {
+  if (owner < 0 || owner >= int(fighters.size())) return;
+  if (!wasShielding) {
+    fighters[owner].damageDealt += damage;
+    gainUlt(fighters[owner], damage * kUltPerDamageDealt);
+    v.lastHitBy = owner;
+    v.lastHitFrame = frame;
+  } else {
+    gainUlt(fighters[owner], damage * kUltPerShieldHit);
+  }
+}
+
+void Match::explodeProjectile(Projectile& pr) {
+  if (pr.explodeRadius <= 0.0f) return;
+  const float r = pr.explodeRadius;
+  pr.explodeRadius = 0.0f;  // once
+  emit(EvType::Explosion, pr.pos, pr.owner, -1, r, {}, pr.explode.fx);
+  for (auto& v : fighters) {
+    if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
+    if (!circleRect(pr.pos, r, v.hurtbox())) continue;
+    const bool wasShielding = v.state == FState::Shield || v.state == FState::ShieldStun;
+    applyHit(nullptr, v, pr.explode, pr.pos, v.center().x >= pr.pos.x ? 1 : -1, 1.0f, false);
+    creditProjectile(pr.owner, v, pr.explode.damage, wasShielding);
+  }
 }
 
 void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
@@ -205,6 +254,18 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
     pr.bounces = p.bounces;
     pr.piercing = p.piercing;
     pr.visual = p.visual;
+    pr.rehit = p.rehit;
+    pr.pull = p.pull;
+    pr.pullRadius = p.pullRadius;
+    pr.boomerang = p.boomerang;
+    pr.grow = p.grow;
+    pr.explodeRadius = p.explodeRadius;
+    pr.explode = p.explode;
+    pr.spawnRadius = p.radius;
+    if (const WeaponDef* w = f.weaponDef()) {
+      pr.hit.damage *= w->damageMul;
+      pr.explode.damage *= w->damageMul;
+    }
     projectiles.push_back(pr);
   }
   emit(EvType::Projectile, f.center(), f.id, -1, 0.0f, {}, p.hit.fx);
@@ -214,55 +275,117 @@ void Match::updateProjectiles() {
   const Rect& blast = stageDef->blast;
   for (auto& pr : projectiles) {
     if (!pr.alive) continue;
+    ++pr.age;
+    pr.radius += pr.grow;
+    pr.hit.radius = pr.radius;
+    // Boomerang: after half its flight it homes back to its owner's hand.
+    if (pr.boomerang && pr.owner >= 0) {
+      const Fighter& o = fighters[pr.owner];
+      if (!pr.returning && pr.age >= pr.maxLife / 2) {
+        pr.returning = true;
+        pr.hitList.clear();
+      }
+      if (pr.returning) {
+        Vec2 d = o.center() - pr.pos;
+        if (d.len() < 34.0f || !o.active() || pr.age > pr.maxLife * 3) {
+          pr.alive = false;
+          continue;
+        }
+        pr.vel = d.norm() * std::max(12.0f, pr.vel.len());
+        pr.life = std::max(pr.life, 2);
+      }
+    }
     pr.vel.y += pr.gravity;
     Vec2 prev = pr.pos;
     pr.pos += pr.vel;
-    if (--pr.life <= 0 || !blast.contains(pr.pos)) {
+    if (!blast.contains(pr.pos)) {
       pr.alive = false;
       continue;
     }
-    for (const auto& p : platforms) {
-      if (!circleRect(pr.pos, pr.radius * 0.6f, p.rect)) continue;
-      bool fromAbove = prev.y + pr.radius * 0.6f <= p.rect.top() + 2.0f && pr.vel.y >= 0.0f;
-      if (pr.bounces && fromAbove) {
-        pr.pos.y = p.rect.top() - pr.radius * 0.6f;
-        pr.vel.y = -6.5f;
-      } else if (p.solid) {
-        pr.alive = false;
+    if (--pr.life <= 0) {
+      pr.alive = false;
+      explodeProjectile(pr);
+      continue;
+    }
+    if (!pr.boomerang) {
+      for (const auto& p : platforms) {
+        if (!circleRect(pr.pos, pr.spawnRadius * 0.6f, p.rect)) continue;
+        bool fromAbove = prev.y + pr.spawnRadius * 0.6f <= p.rect.top() + 2.0f && pr.vel.y >= 0.0f;
+        if (pr.bounces && fromAbove) {
+          pr.pos.y = p.rect.top() - pr.spawnRadius * 0.6f;
+          pr.vel.y = -6.5f;
+        } else if (p.solid || (pr.explodeRadius > 0.0f && fromAbove)) {
+          pr.alive = false;
+        }
       }
     }
-    if (!pr.alive) continue;
+    if (!pr.alive) {
+      explodeProjectile(pr);
+      continue;
+    }
+    // Vortex: drags the fighters around it
+    if (pr.pull > 0.0f) {
+      for (auto& v : fighters) {
+        if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible() ||
+            v.state == FState::Grabbed || v.state == FState::LedgeHang)
+          continue;
+        Vec2 d = pr.pos - v.center();
+        float l = d.len();
+        if (l > pr.pullRadius || l < 4.0f) continue;
+        Vec2 a = d * (pr.pull * 0.25f / l);
+        v.vel.x += a.x;
+        if (!v.grounded) v.vel.y += a.y;
+      }
+    }
     if (orb.active && (pr.pos - orb.pos).len() < pr.radius + orb.radius &&
         std::find(pr.hitList.begin(), pr.hitList.end(), 63) == pr.hitList.end()) {
       pr.hitList.push_back(63);
       hitOrb(pr.owner, pr.hit.damage, pr.pos - pr.vel, pr.hit.fx);
       if (!pr.piercing) {
         pr.alive = false;
+        explodeProjectile(pr);
         continue;
       }
     }
     for (auto& v : fighters) {
       if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
-      if (std::find(pr.hitList.begin(), pr.hitList.end(), v.id) != pr.hitList.end()) continue;
+      if (pr.rehit > 0) {
+        auto it = std::find_if(pr.lastHit.begin(), pr.lastHit.end(), [&](const auto& e) { return e.first == v.id; });
+        if (it != pr.lastHit.end() && frame - it->second < pr.rehit) continue;
+      } else if (std::find(pr.hitList.begin(), pr.hitList.end(), v.id) != pr.hitList.end()) {
+        continue;
+      }
       if (!circleRect(pr.pos, pr.radius, v.hurtbox())) continue;
-      pr.hitList.push_back(v.id);
+      if (pr.rehit > 0) {
+        auto it = std::find_if(pr.lastHit.begin(), pr.lastHit.end(), [&](const auto& e) { return e.first == v.id; });
+        if (it != pr.lastHit.end()) it->second = frame;
+        else pr.lastHit.push_back({v.id, frame});
+      } else {
+        pr.hitList.push_back(v.id);
+      }
       if (tryCounter(v, nullptr)) {
-        pr.alive = false;
+        const MoveDef* cm = v.currentMove();
+        if (cm && cm->reflects) {  // sent back to the sender, faster
+          pr.owner = v.id;
+          pr.vel = pr.vel * -1.15f;
+          pr.life = pr.maxLife;
+          pr.age = 0;
+          pr.boomerang = pr.returning = false;
+          pr.hitList.clear();
+          pr.lastHit.clear();
+          emit(EvType::Reflect, pr.pos, v.id, -1, 0.0f, pr.vel.norm(), pr.hit.fx);
+        } else {
+          pr.alive = false;
+        }
         break;
       }
       int dir = pr.vel.x >= 0.0f ? 1 : -1;
-      bool wasShielding = v.state == FState::Shield || v.state == FState::ShieldStun;
+      const bool wasShielding = v.state == FState::Shield || v.state == FState::ShieldStun;
       applyHit(nullptr, v, pr.hit, pr.pos, dir, 1.0f, false);
-      if (!wasShielding && pr.owner >= 0) {
-        fighters[pr.owner].damageDealt += pr.hit.damage;
-        gainUlt(fighters[pr.owner], pr.hit.damage * kUltPerDamageDealt);
-        v.lastHitBy = pr.owner;
-        v.lastHitFrame = frame;
-      } else if (wasShielding && pr.owner >= 0) {
-        gainUlt(fighters[pr.owner], pr.hit.damage * kUltPerShieldHit);
-      }
+      creditProjectile(pr.owner, v, pr.hit.damage, wasShielding);
       if (!pr.piercing) {
         pr.alive = false;
+        explodeProjectile(pr);
         break;
       }
     }

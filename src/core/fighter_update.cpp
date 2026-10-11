@@ -55,7 +55,7 @@ void Match::setState(Fighter& f, FState s, int timer) {
 }
 
 void Match::startMove(Fighter& f, int id) {
-  const MoveDef& m = f.def->moves[id];
+  const MoveDef& m = f.moveDef(id);
   if (!m.exists()) return;
   f.state = FState::Attack;
   f.stateFrame = 0;
@@ -465,7 +465,7 @@ void Match::updateFighter(Fighter& f) {
 }
 
 void Match::updateMove(Fighter& f) {
-  const MoveDef& m = f.def->moves[f.move];
+  const MoveDef& m = f.moveDef(f.move);
   const IS& in = f.in;
   if (f.charging && f.moveFrame == m.chargeFrame) {
     bool held = isSpecialMove(f.move) ? in.special : (in.attack || in.smash || in.cstick.len() > 0.5f);
@@ -510,9 +510,10 @@ void Match::updateMove(Fighter& f) {
   if (m.intangibleStart >= 0 && t == std::max(1, m.intangibleStart))  // t starts at 1
     f.intangible = m.intangibleEnd - t;
   if (m.teleportFrame == t) {
-    Vec2 dir = in.stick.len() > 0.3f ? in.stick.norm() : Vec2{0, -1};
+    Vec2 dir = m.teleportForward ? Vec2{float(f.facing), 0.0f} : in.stick.len() > 0.3f ? in.stick.norm() : Vec2{0, -1};
     if (std::fabs(dir.x) > 0.2f) f.facing = dir.x > 0 ? 1 : -1;
     f.pos += dir * m.teleportDist;
+    if (m.turnAfterTeleport) f.facing = -f.facing;
     f.grounded = false;
     f.vel = {0, 0};
     for (const auto& p : platforms) {  // never end up inside the stage

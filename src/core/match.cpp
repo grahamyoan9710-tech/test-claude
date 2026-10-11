@@ -28,6 +28,7 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
     fighters.push_back(f);
   }
   orbTimer = rng.irange(60 * 10, 60 * 20);
+  itemTimer = rng.irange(60 * 7, 60 * 11);
 }
 
 void Match::emit(EvType t, Vec2 pos, int a, int b, float strength, Vec2 dir, HitFx fx) {
@@ -70,6 +71,7 @@ void Match::step(const std::array<InputState, 4>& inputs) {
     for (auto& f : fighters) updateFighter(f);
     updateProjectiles();
     updateOrb();
+    updateItems();
   }
   resolveHits();
   checkBlastZones();
@@ -117,6 +119,7 @@ void Match::koFighter(Fighter& f) {
   Vec2 dir = (p - Vec2{0, -150}).norm();
   emit(EvType::KO, p, f.id, f.lastHitBy, f.lastKnockback, dir);
   if (f.grabPartner >= 0) releaseGrab(f, false);
+  loseWeapon(f, false);
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;
@@ -243,12 +246,14 @@ void Match::startFinalSmash(Fighter& f) {
   startMove(f, FinalSmash);
   freezeTimer = 30;
   freezeOwner = f.id;
-  HitFx fx = f.def->moves[FinalSmash].hitboxes.empty() ? HitFx::Magic : f.def->moves[FinalSmash].hitboxes[0].fx;
+  const MoveDef& fs = f.moveDef(FinalSmash);
+  HitFx fx = fs.hitboxes.empty() ? fs.projectile.hit.fx : fs.hitboxes[0].fx;
   emit(EvType::FinalSmash, f.center(), f.id, -1, 0.0f, {}, fx);
 }
 
 void Match::resetPositions() {
   projectiles.clear();
+  items.clear();
   for (auto& f : fighters) {
     if (f.eliminated) continue;
     if (f.grabPartner >= 0) releaseGrab(f, false);
@@ -267,6 +272,7 @@ void Match::resetPositions() {
     f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
     f.finalSmash = false;
     f.ult = 0.0f;
+    loseWeapon(f, false);
     setState(f, FState::Air);
   }
   freezeTimer = 0;

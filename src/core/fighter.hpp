@@ -83,6 +83,8 @@ struct Fighter {
   int escapeTimer = 0;
   int respawnTimer = 0;
   float ult = 0.0f;          // ultimate meter (0..kUltMax)
+  int weapon = -1;           // weapon picked up (index in def->weapons), -1 = none
+  int weaponTimer = 0;       // frames left with it
   bool finalSmash = false;   // ultimate ready (full meter or Clash Orb broken): the ultimate button unleashes it
 
   // Input
@@ -109,8 +111,16 @@ struct Fighter {
     if (state == FState::Knockdown) h *= 0.4f;
     return {pos.x - def->width * 0.5f, pos.y - h, def->width, h};
   }
+  const WeaponDef* weaponDef() const { return weapon >= 0 ? &def->weapons[weapon & 1] : nullptr; }
+  // A move as this fighter performs it: the held weapon may replace it.
+  const MoveDef& moveDef(int id) const {
+    if (const WeaponDef* w = weaponDef())
+      for (const auto& [mid, m] : w->moves)
+        if (mid == id) return m;
+    return def->moves[id];
+  }
   const MoveDef* currentMove() const {
-    return (state == FState::Attack && move >= 0) ? &def->moves[move] : nullptr;
+    return (state == FState::Attack && move >= 0) ? &moveDef(move) : nullptr;
   }
   bool pressed(bool InputState::*b) const { return in.*b && !(prev.*b); }
   bool cstickPressed() const { return in.cstick.len() > 0.5f && prev.cstick.len() <= 0.5f; }

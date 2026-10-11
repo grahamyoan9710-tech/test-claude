@@ -19,6 +19,7 @@ class CpuBrain {
   }
   bool recover(const Match& m, const Fighter& f, InputState& in);
   bool chaseOrb(const Match& m, const Fighter& f, InputState& in);
+  bool fetchWeapon(const Match& m, const Fighter& f, InputState& in);
   void fight(const Match& m, const Fighter& f, const Fighter& t, InputState& in);
 
   int level_;

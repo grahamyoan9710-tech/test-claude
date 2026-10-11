@@ -123,7 +123,7 @@ void Match::onLand(Fighter& f, float impact) {
       emit(EvType::Land, f.pos, f.id, -1, impact);
       break;
     case FState::Attack: {
-      const MoveDef& m = f.def->moves[f.move];
+      const MoveDef& m = f.moveDef(f.move);
       if (isAerial(f.move)) {
         setState(f, FState::Landing, m.landingLag);
         emit(EvType::Land, f.pos, f.id, -1, impact);

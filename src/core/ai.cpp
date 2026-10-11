@@ -145,6 +145,10 @@ InputState CpuBrain::think(const Match& m, int self) {
     last_ = in;
     return in;
   }
+  if (f.weapon < 0 && !m.items.empty() && fetchWeapon(m, f, in)) {
+    last_ = in;
+    return in;
+  }
 
   // Pick the closest opponent.
   const Fighter* target = nullptr;
@@ -192,6 +196,29 @@ bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
     in.stick = aim;
     tap(in, &IS::special);
   }
+  return true;
+}
+
+// Walks to one of its own weapons when it is close and nobody is in its face.
+bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
+  const WeaponItem* best = nullptr;
+  float bd = 650.0f;
+  for (const auto& it : m.items) {
+    if (it.character != f.charIndex || !it.grounded) continue;
+    float d = std::fabs(it.pos.x - f.pos.x) + std::fabs(it.pos.y - f.pos.y);
+    if (d < bd) {
+      bd = d;
+      best = &it;
+    }
+  }
+  if (!best || !f.grounded) return false;
+  for (const auto& o : m.fighters)
+    if (o.id != f.id && o.active() && (o.pos - f.pos).len() < 110.0f) return false;  // busy fighting
+  const float dx = best->pos.x - f.pos.x, dy = best->pos.y - f.pos.y;
+  in.stick.x = std::fabs(dx) > 12.0f ? signf(dx) : 0.0f;
+  if (!m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f) && dy > -20.0f) in.stick.x = 0.0f;  // no walking off
+  if (dy < -50.0f && std::fabs(dx) < 160.0f && f.state != FState::JumpSquat) tap(in, &IS::jump);
+  else if (dy > 30.0f && std::fabs(dx) < 30.0f) in.stick.y = 1.0f;  // drop through a thin platform
   return true;
 }
 

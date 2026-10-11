@@ -351,6 +351,72 @@ static void testUltEdgeCases() {
   }
 }
 
+static int charIndex(const char* name) {
+  for (int i = 0; i < int(roster().size()); ++i)
+    if (roster()[i].name == name) return i;
+  return 0;
+}
+
+static void testWeapons() {
+  std::printf("[weapons]\n");
+  const int kratos = charIndex("KRATOS"), gojo = charIndex("GOJO");
+  MatchConfig cfg = duel(0, kratos, gojo, false, false);
+  cfg.items = false;
+  cfg.weapons = false;  // no random drops: the test drops them itself
+  Match m(cfg);
+  skipCountdown(m);
+  Fighter& f = m.fighters[0];
+  Fighter& v = m.fighters[1];
+  f.pos = {-200, 0};
+  f.facing = 1;
+  v.pos = {250, 0};
+  Pad p{m};
+  m.dropWeaponFor(1, 0);  // Gojo's weapon: Kratos must not be able to take it
+  m.items.back().pos = {-150, -300};
+  for (int i = 0; i < 120 && !m.items.back().grounded; ++i) p.idle(1);
+  CHECK(!m.items.empty() && m.items.back().grounded, "a dropped weapon lands on the stage");
+  p.run(30, key(1, 0));
+  CHECK(f.weapon < 0 && m.items.size() == 1, "another character's weapon cannot be picked up");
+  m.items.clear();
+  m.dropWeaponFor(0, 0);  // Leviathan axe
+  m.items.back().pos = {f.pos.x + 60, -300};
+  for (int i = 0; i < 120 && !m.items.back().grounded; ++i) p.idle(1);
+  p.run(20, key(1, 0));
+  CHECK(f.weapon == 0 && m.items.empty(), "walking over its own weapon picks it up (weapon %d)", f.weapon);
+  p.idle(20);
+  f.facing = 1;
+  p.run(1, key(0, 0, false, false, false, true));
+  CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Lancer de Léviathan", "the axe replaces the neutral special");
+  bool thrown = false, back = false;
+  for (int i = 0; i < 200; ++i) {
+    p.idle(1);
+    if (!m.projectiles.empty()) thrown = true;
+    if (thrown && m.projectiles.empty()) {
+      back = true;
+      break;
+    }
+  }
+  CHECK(thrown && back, "the axe flies and comes back (thrown %d back %d)", thrown, back);
+  f.weaponTimer = 2;
+  p.idle(3);
+  CHECK(f.weapon < 0, "a weapon vanishes after its time");
+  // Reach: a held weapon makes the base moves hit harder
+  float base = 0.0f, boosted = 0.0f;
+  for (int pass = 0; pass < 2; ++pass) {
+    Match m2(cfg);
+    skipCountdown(m2);
+    m2.fighters[0].pos = {-40, 0};
+    m2.fighters[0].facing = 1;
+    m2.fighters[1].pos = {20, 0};
+    if (pass == 1) m2.equipWeapon(m2.fighters[0], 1);
+    Pad p2{m2};
+    p2.run(1, key(0, 0, true));
+    p2.idle(25);
+    (pass == 0 ? base : boosted) = m2.fighters[1].percent;
+  }
+  CHECK(boosted > base * 1.1f, "weapon damage bonus (%.1f vs %.1f)", boosted, base);
+}
+
 static void testTraining() {
   std::printf("[training mode]\n");
   MatchConfig cfg = duel(0, 2, 0, false, true);
@@ -529,6 +595,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "ult") testUltMeter();
   if (only.empty() || only == "ult") testUltEdgeCases();
   if (only.empty() || only == "training") testTraining();
+  if (only.empty() || only == "weapons") testWeapons();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "battle") testBattles();
   if (only.empty() || only == "balance") testBalance();
