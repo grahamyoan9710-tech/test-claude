@@ -55,14 +55,18 @@ if(CLASH_BUILD_GAME)
     FetchContent_MakeAvailable(raylib)
   endif()
 
-  # Fonts, icon and controller database are compiled into the executable (see cmake/embed.cmake).
+  # Fonts, icon, controller database and fighter pictures are compiled into the executable (see cmake/embed.cmake).
   include(cmake/embed.cmake)
   set(CLASH_ASSETS_C "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_assets.c")
   embed_files(OUTPUT "${CLASH_ASSETS_C}" FILES
     font_title_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/LuckiestGuy-Regular.ttf"
     font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Poppins-Bold.ttf"
     icon_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
-    gamecontrollerdb_txt "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt")
+    gamecontrollerdb_txt "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt"
+    fighter_naruto_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/fighters/naruto.png"
+    fighter_naruto_rig "${CMAKE_CURRENT_SOURCE_DIR}/assets/fighters/naruto.rig"
+    fighter_ganondorf_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/fighters/ganondorf.png"
+    fighter_ganondorf_rig "${CMAKE_CURRENT_SOURCE_DIR}/assets/fighters/ganondorf.rig")
   set(CLASH_EXTRA_SOURCES "${CLASH_ASSETS_C}")
   if(WIN32)  # icon of the .exe in the file explorer
     set(CLASH_RC "${CMAKE_CURRENT_BINARY_DIR}/generated/icon.rc")
@@ -86,6 +90,7 @@ if(CLASH_BUILD_GAME)
     src/game/audio.cpp
     src/game/render_fighter.cpp
     src/game/render_body.cpp
+    src/game/fighter_art.cpp
     src/game/render_world.cpp
     src/game/render_stages.cpp
     src/game/paint.cpp

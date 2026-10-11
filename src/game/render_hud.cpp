@@ -86,7 +86,7 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     DrawCircleV({x + 50, y + 46}, 36, withAlpha(ui::kInk, 0.5f));
     DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
     DrawRing({x + 50, y + 46}, 37, 38.5f, 0, 360, 36, withAlpha(ui::kGold, 0.5f));
-    drawPortrait(*f.def, f.palette, {x + 50, y + 44}, 62, time + f.id);
+    drawPortraitDisc(*f.def, f.palette, {x + 50, y + 46}, 36, time + f.id);
     if (const WeaponDef* w = f.weaponDef()) {  // held weapon: badge on the portrait, ring = time left
       const Vector2 b{x + 80, y + 72};
       const Color c = hitFxColor(w->fx), g = hitFxGlow(w->fx);

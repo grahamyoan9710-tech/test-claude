@@ -1,0 +1,8 @@
+{
+  "image": "ganondorf.png",
+  "output": "assets/fighters/ganondorf",
+  "parts": "whole",
+  "ground": 955,
+  "top": 30,
+  "joints": {"head": [435, 85], "neck": [425, 150], "hips": [430, 470]}
+}

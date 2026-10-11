@@ -153,6 +153,9 @@ void App::run() {
     enterScreen(Screen::MainMenu);
   } else if (opt_.screen == "css") {
     training_ = opt_.training;
+    const int n = int(roster().size());
+    for (int i = 0; i < int(std::min<size_t>(4, opt_.fighters.size())); ++i)  // --fighters: who is picked
+      slots_[i] = {i == 0 ? 1 : 2, kKeyboard1, std::clamp(opt_.fighters[i], 0, n - 1), 9};
     enterScreen(Screen::CharSelect);
   } else if (opt_.screen == "stage") {
     enterScreen(Screen::StageSelect);
@@ -172,7 +175,8 @@ void App::run() {
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "results") {
-    for (int i = 0; i < 4; ++i) slots_[i] = {2, kKeyboard1, i, 9};
+    for (int i = 0; i < 4; ++i)
+      slots_[i] = {2, kKeyboard1, i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, int(roster().size()) - 1) : i, 9};
     startMatch();
     while (match_->update() != MatchScreen::Result::Finished) {}
     finishMatch();

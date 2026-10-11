@@ -59,6 +59,11 @@ Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing,
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
 void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
+// A fighter shown big in a menu, feet at `feet`, about `height` tall: its picture when it has one.
+void drawShowcase(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing, float height,
+                  float time);
+// The same in a disc of `radius` (HUD medallions, weapon tags).
+void drawPortraitDisc(const CharacterDef& def, int palette, Vec2 center, float radius, float time);
 
 // ---- Weapons (render_weapons.cpp) ---------------------------------------------
 // A weapon held at `grip`, pointing along `dir` (unit), at `scale` (1 = a 100 px fighter).

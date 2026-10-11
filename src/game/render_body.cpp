@@ -4,6 +4,7 @@
 // Each hero has its own build (proportions), outfit, hair and face, drawn layer by layer:
 // back cloth -> back hair -> back leg -> back arm -> torso -> front leg -> skirt -> head -> hair ->
 // weapon -> front arm -> energy.
+#include "game/fighter_art.hpp"
 #include "game/pixel.hpp"
 #include "game/render.hpp"
 
@@ -302,15 +303,6 @@ struct Painter {
   }
 };
 
-struct Xf {
-  Vec2 center;
-  int facing;
-  float scale, rot, squash, sx;
-  Vector2 operator()(Vec2 l) const {
-    Vec2 v{l.x * facing * scale * sx, l.y * scale * squash};
-    return V(center + rotate(v, rot));
-  }
-};
 Xf xform(const CharacterDef& d, const Pose& pose, Vec2 feet, int facing, float scale) {
   Xf X;
   X.facing = facing;
@@ -437,15 +429,11 @@ Cut cutFor(Hero h, Form form = Form::None) {
   return c;
 }
 
-struct Rig {
-  float hr, tilt;
-  Vec2 hips, chest, neck, head, shF, shB, hipF, hipB;
-  Vec2 elbowF, elbowB, kneeF, kneeB, handF, handB, footF, footB;
-};
 Rig solveRig(const CharacterDef& d, const Pose& pose) {
+  Rig r;
+  if (art::solve(d, pose, r)) return r;  // drawn from a picture: its proportions
   const float H = d.height;
   const Build b = buildFor(d.hero);
-  Rig r;
   r.hr = b.head * H;
   r.tilt = pose.lean * 0.55f;
   const float drop = pose.crouch * 0.14f * H;
@@ -2531,6 +2519,13 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   Look L = lookFor(d, palette);
   formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
+  if (art::rigged(d.hero)) {  // the picture, then what the fighter holds and casts
+    art::drawFighter(d, pose, R, X, alpha, flashColor, flash);
+    b.props();
+    b.frontWeaponDraw();
+    b.energy();
+    return;
+  }
   b.draw();
 }
 
@@ -2542,7 +2537,17 @@ void drawCharacterSprite(const CharacterDef& d, int palette, const Pose& pose, V
   });
 }
 
+void drawShowcase(const CharacterDef& d, int palette, const Pose& pose, Vec2 feet, int facing, float height,
+                  float time) {
+  if (art::rigged(d.hero)) {  // the picture itself, crisp, a little bigger (it is detailed)
+    drawCharacter(d, palette, pose, feet, facing, height * 1.1f / d.height, 1.0f, WHITE, 0.0f, time);
+  } else if (!art::drawWhole(d.hero, feet + Vec2{0.0f, -std::sin(time * 2.6f) * 0.6f}, height * 1.1f, facing, 1.0f)) {
+    drawCharacterSprite(d, palette, pose, feet, facing, height / d.height, 1.0f, WHITE, 0.0f, time);
+  }
+}
+
 void drawPortrait(const CharacterDef& d, int palette, Vec2 center, float size, float time) {
+  if (art::drawBust(d.hero, center, size, 1.0f)) return;
   const float H = d.height;
   const Build B = buildFor(d.hero);
   const float hrLocal = B.head * H;
@@ -2581,6 +2586,11 @@ void drawPortrait(const CharacterDef& d, int palette, Vec2 center, float size, f
   drawBust(bb, rad / scale);
   b.head();
   b.frontHair();
+}
+
+void drawPortraitDisc(const CharacterDef& d, int palette, Vec2 center, float radius, float time) {
+  if (art::drawDisc(d.hero, center, radius, 1.0f)) return;
+  drawPortrait(d, palette, center + Vec2{0.0f, -radius * 0.055f}, radius * 1.72f, time);
 }
 
 Vec2 limbWorld(const CharacterDef& d, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb, bool weaponTip) {

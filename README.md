@@ -5,21 +5,23 @@ on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l
 
 ![Écran titre](docs/titre.jpg)
 
-Les personnages sont dessinés et animés par le code (squelette + cinématique inverse) puis affichés en
-**pixel art**, comme des sprites faits à la main (contour sombre d'un pixel, aplats francs) ; les menus,
-les arènes et les effets restent lisses. Les sons et la musique sont synthétisés au lancement. Les seules
-ressources sont deux polices libres et la base de manettes SDL, intégrées directement dans l'exécutable :
-il n'y a aucun fichier à installer à côté.
+Les personnages sont animés par le code (squelette + cinématique inverse) puis affichés en **pixel art**,
+comme des sprites faits à la main (contour sombre d'un pixel, aplats francs) ; les menus, les arènes et les
+effets restent lisses. **Naruto est dessiné d'après une illustration** : l'image est découpée en six morceaux
+que le squelette anime (voir [Combattants illustrés](#combattants-illustrés)) ; les autres sont encore
+dessinés par le code. Les sons et la musique sont synthétisés au lancement. Les ressources (deux polices
+libres, la base de manettes SDL et les illustrations) sont intégrées directement dans l'exécutable : il n'y a
+aucun fichier à installer à côté.
 
 Les trois arènes d'origine s'inspirent de *Zelda: Tears of the Kingdom* (îles célestes, ruines Zonaï aux
 runes turquoise, profondeurs éclairées par des racines lumineuses) et **huit autres viennent des animes** :
-deux par série, de Las Noches à la Vallée de la Fin. Tout est dessiné par le code (aucune image ni logo
-repris d'un jeu ou d'un manga).
+deux par série, de Las Noches à la Vallée de la Fin. Les arènes sont entièrement dessinées par le code
+(aucune image ni logo repris d'un jeu ou d'un manga).
 
 | Menu principal | Sélection des 17 combattants |
 |---|---|
 | ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
-| **Combat : Kenpachi, Sasuke, Naruto et le Chasseur** | **Cut-in d'ultime : Bijūdama (Naruto)** |
+| **Combat : Kenpachi, Sasuke, Naruto et le Chasseur** | **Cut-in d'ultime : Barrage Uzumaki (Naruto)** |
 | ![Combat](docs/combat.jpg) | ![Cut-in](docs/cutin.jpg) |
 | **Ultime de Tensa Zangetsu : Vasto Lorde et son Cero** | **Transformation : Segunda Etapa (Ulquiorra)** |
 | ![Ultime](docs/attaque_finale.jpg) | ![Transformation](docs/transformation.jpg) |
@@ -39,6 +41,34 @@ Grimoires, Shibuya, le lycée Jujutsu, Konoha et la Vallée de la Fin.
 Naruto court en ninja, les coups engagent tout le corps.
 
 ![Animations de Naruto](docs/animations.jpg)
+
+## Combattants illustrés
+
+Un combattant peut être dessiné d'après une **illustration** (pixel art détaillé, en pied, tourné vers la
+droite) au lieu de formes dessinées par le code. L'image est découpée en six morceaux — jambe et bras
+arrière, buste, jambe avant, tête, bras avant — et chaque morceau suit les os du squelette : marche, course,
+sauts, coups, smashs, spéciales et ultimes animent l'illustration elle-même, qui se plie aux coudes, aux
+genoux et aux chevilles. Au repos, le combattant reprend exactement la pose de l'image. Sous les membres
+avant, le buste est complété à partir de ses propres couleurs pour qu'un bras qui bouge ne laisse pas de
+trou. La même image sert aux portraits : carte de sélection, vignettes, cut-in d'ultime, médaillons du
+combat et écran des résultats.
+
+![Naruto : l'illustration et son animation en jeu](docs/illustre.jpg)
+
+Aujourd'hui : **Naruto** (combattant et portraits) et **Ganondorf** (portraits seulement : ses bras croisés
+ne se séparent pas du buste, il garde son dessin par le code en combat).
+
+Pour ajouter un combattant (images générées par le joueur avec ChatGPT, un seul personnage par image, fond
+uni, bras et jambes bien séparés du corps, mains vides : le jeu dessine les armes) :
+
+```bash
+python3 scripts/import_portrait.py image.png art/fighters/ichigo.png   # détoure le fond uni (--box pour recadrer)
+# art/fighters/ichigo.json : les articulations repérées sur l'image (voir naruto.json et scripts/rig_art.py)
+python3 scripts/rig_art.py art/fighters/ichigo.json --debug /tmp/ichigo   # découpe : assets/fighters/ichigo.png + .rig
+```
+
+puis déclarer les deux fichiers dans `CMakeLists.txt` (intégration) et dans `kSources`
+(`src/game/fighter_art.cpp`).
 
 **Chaque ultime est unique** (51 en tout) : Getsuga Tenshō, Vasto Lorde, Gran Rey Cero, Cero Metralleta,
 Violet imaginaire, Amaterasu, Kendō, Sanctuaire démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du
@@ -219,9 +249,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-6.2-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-6.3-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-6.2-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-6.3-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -327,6 +357,7 @@ src/game/   interface raylib
   fonts.cpp            polices intégrées
   pixel.cpp            rendu pixel art des personnages (petite texture, contour, palette réduite)
   render_body.cpp      dessin des personnages (squelette + IK)
+  fighter_art.cpp      combattants et portraits illustrés : morceaux de l'image animés par le squelette
   render_weapons.cpp   dessin des armes (en main et posées au sol)
   render_items.cpp     armes posées sur l'arène
   render_vfx.cpp       rayons et arrière-plans des ultimes
@@ -341,6 +372,9 @@ src/game/   interface raylib
   audio.cpp            synthèse des sons et de la musique
 assets/fonts/          polices (intégrées à la compilation par cmake/embed.cmake)
 assets/gamecontrollerdb.txt  base des manettes SDL (intégrée elle aussi)
+assets/fighters/       illustrations découpées (morceaux + articulations), intégrées à la compilation
+art/fighters/          illustrations détourées et leurs articulations (sources de assets/fighters)
+scripts/               import_portrait.py (détourage), rig_art.py (découpe), package_release.sh (archives)
 tests/sim_test.cpp     tests sans écran
 ```
 
@@ -352,9 +386,12 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 - Police **Poppins** par Indian Type Foundry — licence SIL Open Font License 1.1 (`assets/fonts/Poppins-OFL.txt`).
 - Base de manettes **SDL_GameControllerDB** — licence zlib (`assets/gamecontrollerdb-LICENSE.txt`).
 - Direction artistique inspirée de *The Legend of Zelda: Tears of the Kingdom* (Nintendo) ; aucun élément
-  du jeu n'est repris, tout est dessiné par le code.
+  du jeu n'est repris.
+- Illustrations de **Naruto** et **Ganondorf** (`art/fighters/`) : générées par l'auteur du projet avec
+  ChatGPT, détourées et découpées par `scripts/`.
 - **Projet de fan, non officiel et non commercial.** Les combattants rendent hommage à *Black Clover*
   (Yūki Tabata / Shūeisha), *Bleach* (Tite Kubo / Shūeisha), *The Legend of Zelda: Tears of the Kingdom*
   (Nintendo), *God of War* (Santa Monica Studio / Sony Interactive Entertainment), *Jujutsu Kaisen*
-  (Gege Akutami / Shūeisha), *Naruto* (Masashi Kishimoto / Shūeisha) et *Monster Hunter* (Capcom) ; ces noms et personnages appartiennent à leurs ayants droit. Tout est dessiné
-  par le code : aucune image, aucun son et aucun modèle de ces œuvres n'est utilisé.
+  (Gege Akutami / Shūeisha), *Naruto* (Masashi Kishimoto / Shūeisha) et *Monster Hunter* (Capcom) ; ces noms et personnages appartiennent à leurs ayants droit. Les
+  arènes, les effets, les sons et les combattants sans illustration sont faits par le code ; aucune image,
+  aucun son et aucun modèle tiré de ces œuvres n'est utilisé.

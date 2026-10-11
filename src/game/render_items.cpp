@@ -34,6 +34,6 @@ void drawItems(const Match& m, float time) {
     const Vec2 tag = center + Vec2{0.0f, -58.0f};
     DrawCircleV(V(tag), 21, withAlpha(c, 0.9f));
     DrawCircleV(V(tag), 18, {24, 30, 34, 235});
-    drawPortrait(d, 0, tag, 30, time);
+    drawPortraitDisc(d, 0, tag, 18, time);
   }
 }

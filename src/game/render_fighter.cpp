@@ -6,6 +6,7 @@
 #include <cstdio>
 
 #include "core/swing.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/pixel.hpp"
 #include "game/settings.hpp"
@@ -792,7 +793,7 @@ Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
     p.lean += lean;
     p.crouch += crouch;
   };
-  switch (d.hero) {  // each hero's guard
+  if (!art::stance(d, p, bob)) switch (d.hero) {  // each hero's guard (drawn from a picture: its stance)
     case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); break;
     case Hero::Yuno: stance({0.11f, 0.07f}, {-0.05f, 0.07f}, 0.08f, -0.07f, -0.02f, 0.0f); break;
     case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); break;

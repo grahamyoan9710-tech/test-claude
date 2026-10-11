@@ -36,7 +36,7 @@ void App::drawResults() {
     if (d.style == BodyStyle::Puff) p.handF = {0.32f * H, -0.2f * H}, p.handB = {-0.32f * H, -0.2f * H};
     float hop = std::fabs(std::sin(t * 4.0f)) * 18.0f;
     DrawEllipse(330, 632, 70.0f - hop, 11.0f, withAlpha(ui::kInk, 0.3f));
-    drawCharacterSprite(d, winnerPalette_, p, {330, 630 - hop}, 1, 250.0f / H, 1.0f, WHITE, 0.0f, t);
+    drawShowcase(d, winnerPalette_, p, {330, 630 - hop}, 1, 250.0f, t);
     ui::drawSprite(ui::Sprite::Victory, 330 - ui::spriteWidth(ui::Sprite::Victory, 92) * 0.5f, 26, 92);
     drawTextCentered(d.name.c_str(), 330, 134, 44, wc, true, FontKind::Title);
     drawTextCentered(winnerCpu_ ? "Ordinateur" : TextFormat("Joueur %d", winnerPort_ + 1), 330, 186, 22, ui::kCream);
