@@ -29,6 +29,17 @@ struct Pose {
   Vec2 flow, flowTip;     // drag on scarves, capes and tails (secondary motion, ~[-1.5, 1.5])
   float glow = 0.0f;      // extra glow of the ancient-tech runes (ultimate ready)
   bool ghost = false;     // afterimage: flat tinted silhouette
+  // --- what the fighter carries (set by computePose; restPose leaves the base kit) ---
+  WeaponVisual held = WeaponVisual::None;  // weapon / power-up picked up during the match
+  HitFx heldFx = HitFx::Normal;            // its element (subtle glow)
+  bool twoHanded = false;  // back hand on the grip too
+  bool hideWeapon = false; // the weapon is flying (thrown axe)
+  float shieldOpen = 0.0f; // Kratos's Guardian Shield: 0 folded on the forearm .. 1 unfolded
+  float bow = -1.0f;       // < 0: no bow out; 0..1: string drawn back
+  int prop = 0;            // object in the hand before a throw / shot (see render_fighter.cpp)
+  float charge = 0.0f;     // energy gathered in the hands (casts, hand signs, raised arm)
+  HitFx chargeFx = HitFx::Normal;
+  bool shout = false;      // roaring / shouting face
 };
 
 Pose restPose(const CharacterDef& def, float time);
@@ -46,6 +57,27 @@ void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size,
 // A weapon held at `grip`, pointing along `dir` (unit), at `scale` (1 = a 100 px fighter).
 void drawWeaponVisual(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time);
 float weaponVisualLength(WeaponVisual v);  // grip to tip, at scale 1
+// The same, as a fighter holds it.
+struct WeaponStyle {
+  int side = 1;           // +1 / -1: mirrors the asymmetric weapons (the fighter's facing)
+  bool single = false;    // in a hand: one Blade of Chaos, Link's sword without its shield
+  float glow = 0.0f;      // aura of a picked-up weapon's element (0 = none)
+  HitFx fx = HitFx::Normal;
+  float pull = -1.0f;     // bows: string drawn back (0..1), < 0 = at rest
+  float open = 0.0f;      // grimoire: opened (0..1)
+  int variant = 0;        // bows: 0 golden bow of light, 1 plain wooden bow, 2 bow of flames
+  bool ghost = false;     // afterimage: flat silhouette in `tint`
+  Color tint = WHITE;
+};
+void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
+                      const WeaponStyle& style);
+// Round shield on a fighter's arm: Link's, or Kratos's Guardian Shield (folds along `fold` into a bracer).
+void drawShieldVisual(bool guardian, Vec2 center, float radius, float open, Vec2 fold, float alpha, float time,
+                      const WeaponStyle& style);
+bool isHandWeapon(WeaponVisual v);  // drawn in the front hand (not a power-up, not a shield)
+// The weapon in a fighter's front hand for this pose (picked-up weapon, else the base blade) and its length (px).
+WeaponVisual frontWeapon(const CharacterDef& def, const Pose& pose);
+float frontWeaponLength(const CharacterDef& def, const Pose& pose);
 // Weapons lying on the stage (render_items.cpp)
 void drawItems(const Match& m, float time);
 

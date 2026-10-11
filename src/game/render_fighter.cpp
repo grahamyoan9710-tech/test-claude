@@ -10,8 +10,6 @@
 #include "game/ui.hpp"
 
 namespace {
-bool isPuff(const CharacterDef& d) { return d.style == BodyStyle::Puff; }
-
 Color fxColor(HitFx fx) {
   switch (fx) {
     case HitFx::Fire: return {255, 140, 40, 255};
@@ -168,7 +166,7 @@ Vec2 strikePath(Vec2 rest, Vec2 target, float e) {
 
 void applyMove(Pose& p, const Fighter& f, float time) {
   const CharacterDef& d = *f.def;
-  const MoveDef& m = d.moves[f.move];
+  const MoveDef& m = f.moveDef(f.move);
   const float H = f.height();
   const int t = f.moveFrame;
   const Vec2 shoulder{0.03f * H, -0.17f * H};
@@ -398,15 +396,29 @@ Pose restPose(const CharacterDef& d, float time) {
   p.handB = {0.08f * H, 0.03f * H + bob};
   p.footF = {0.10f * H, 0.5f * H};
   p.footB = {-0.09f * H, 0.5f * H};
-  if (isPuff(d)) {
-    p.handF = {0.33f * H, 0.08f * H + bob};
-    p.handB = {-0.30f * H, 0.08f * H + bob};
-    p.footF = {0.14f * H, 0.5f * H};
-    p.footB = {-0.14f * H, 0.5f * H};
-  }
-  if (d.style == BodyStyle::Knight) {
+  auto stance = [&](Vec2 hF, Vec2 hB, float fF, float fB, float lean, float crouch) {
+    p.handF = Vec2{hF.x * H, hF.y * H + bob};
+    p.handB = Vec2{hB.x * H, hB.y * H + bob};
+    p.footF.x = fF * H;
+    p.footB.x = fB * H;
+    p.lean += lean;
+    p.crouch += crouch;
+  };
+  auto blade = [&](Vec2 dir) {
     p.weapon = true;
-    p.weaponDir = Vec2{1.0f, 0.55f + br * 0.03f}.norm();
+    p.weaponDir = rotate(dir.norm(), br * 0.03f);
+  };
+  switch (d.hero) {  // each hero's guard
+    case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); blade({1.0f, 0.62f}); break;
+    case Hero::Yuno: stance({0.11f, 0.07f}, {-0.05f, 0.07f}, 0.08f, -0.07f, -0.02f, 0.0f); break;
+    case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); blade({1.0f, 0.42f}); break;
+    case Hero::Byakuya: stance({0.12f, 0.07f}, {-0.03f, 0.08f}, 0.08f, -0.07f, -0.06f, 0.0f); blade({0.4f, 1.0f}); break;
+    case Hero::Link: stance({0.17f, 0.05f}, {0.17f, -0.07f}, 0.12f, -0.12f, 0.04f, 0.1f); blade({1.0f, 0.28f}); break;
+    case Hero::Ganondorf: stance({0.17f, 0.05f}, {-0.12f, 0.05f}, 0.12f, -0.13f, 0.0f, 0.06f); break;
+    case Hero::Kratos: stance({0.16f, 0.02f}, {0.03f, 0.05f}, 0.13f, -0.12f, 0.06f, 0.1f); break;
+    case Hero::Gojo: stance({0.04f, 0.09f}, {-0.05f, 0.09f}, 0.07f, -0.07f, -0.1f, 0.0f); break;
+    case Hero::Sukuna: stance({0.1f, 0.08f}, {-0.06f, 0.08f}, 0.1f, -0.09f, 0.04f, 0.04f); break;
+    default: break;
   }
   float bl = std::fmod(time + d.height, 3.7f);
   p.blink = bl < 0.12f || (std::fmod(time * 0.37f + d.height, 3.0f) < 0.4f && bl > 0.3f && bl < 0.4f);  // sometimes twice
@@ -624,6 +636,14 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
     default:
       break;
   }
+  if (const WeaponDef* w = f.weaponDef()) {  // picked-up weapon: held all the time
+    p.held = w->visual;
+    p.heldFx = w->fx;
+    if (isHandWeapon(w->visual) && !p.weapon) {
+      p.weapon = true;
+      p.weaponDir = Vec2{1.0f, 0.5f}.norm();
+    }
+  }
   return p;
 }
 
@@ -804,7 +824,8 @@ void stepAnim(Anim& a, const Fighter& f, const Match& m) {
     a.trailLimb = p.trailLimb;
   }
   if (attacking && p.trailLimb != Limb::None && p.trailLimb != Limb::Body) {
-    const bool blade = p.trailLimb == Limb::Weapon && f.def->weaponLength > 0;
+    const bool blade = (p.trailLimb == Limb::Weapon || (p.trailLimb == Limb::ArmFront && isHandWeapon(p.held))) &&
+                       frontWeaponLength(*f.def, p) > 0.0f;
     for (int i = std::min(a.trailN, kTrail - 1); i > 0; --i) {
       a.trailA[i] = a.trailA[i - 1];
       a.trailB[i] = a.trailB[i - 1];
@@ -1164,10 +1185,4 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       }
     }
   }
-}
-
-void drawPortrait(const CharacterDef& d, int palette, Vec2 center, float size, float time) {
-  float scale = size / d.height;
-  Pose p = restPose(d, time);
-  drawCharacter(d, palette, p, center + Vec2{0, size * 0.5f}, 1, scale, 1.0f, WHITE, 0.0f, time);
 }

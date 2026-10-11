@@ -1,7 +1,9 @@
 // Procedural cartoon bodies: a small 2-bone IK rig drawn with thick outlined strokes.
 // Look: painterly cel shading (warm key light from the upper left, cool teal-tinted shadow with a
-// soft terminator, thin rim light), warm umber outlines, earthy palettes with gold trims and the
-// glowing teal runes of an ancient technology.
+// soft terminator, thin rim light), warm umber outlines, earthy palettes.
+// Each hero has its own build (proportions), outfit, hair and face, drawn layer by layer:
+// back cloth -> back hair -> back leg -> back arm -> torso -> front leg -> skirt -> head -> hair ->
+// weapon -> front arm -> energy.
 #include "game/render.hpp"
 
 namespace {
@@ -10,7 +12,10 @@ const Color kShadowTint = {38, 100, 116, 255};
 const Color kRimTint = {200, 244, 236, 255};
 const Color kWarmLight = {255, 236, 200, 255};
 const Color kGold = {226, 180, 76, 255};
+const Color kInkFace = {44, 28, 26, 255};
+const Color kUltraGlow = {110, 255, 150, 255};  // TotK green (Ultrahand, Zonai runes)
 const Vec2 kLight{-0.55f, -0.835f};  // towards the key light (screen space)
+constexpr int kMaxPoly = 12;
 
 // Every shape is drawn in layers, pass by pass for a whole group of shapes, so that the
 // limbs of one group read as a single shaded volume (no seams at the joints).
@@ -56,6 +61,25 @@ void triangle(Vector2 a, Vector2 b, Vector2 c, Color k) {
   float cross = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
   if (cross > 0) std::swap(b, c);
   DrawTriangle(a, b, c, k);
+}
+void fanFill(const Vector2* q, int n, Color k) {
+  for (int i = 1; i + 1 < n; ++i) triangle(q[0], q[i], q[i + 1], k);
+}
+// Outward mitred offset of a convex polygon (sharp tips are clamped).
+void growPoly(const Vector2* q, int n, float d, Vector2* out) {
+  float area = 0.0f;
+  for (int i = 0; i < n; ++i) area += q[i].x * q[(i + 1) % n].y - q[(i + 1) % n].x * q[i].y;
+  const float sg = area > 0.0f ? 1.0f : -1.0f;
+  for (int i = 0; i < n; ++i) {
+    Vec2 e0 = (W(q[i]) - W(q[(i + n - 1) % n])).norm(), e1 = (W(q[(i + 1) % n]) - W(q[i])).norm();
+    Vec2 n0 = Vec2{e0.y, -e0.x} * sg, n1 = Vec2{e1.y, -e1.x} * sg;
+    if (n0.len2() < 0.5f) n0 = n1;
+    if (n1.len2() < 0.5f) n1 = n0;
+    Vec2 m = (n0 + n1).norm();
+    if (m.len2() < 0.5f) m = n0;
+    float k = std::max(0.5f, dot(m, n0));
+    out[i] = V(W(q[i]) + m * (d / k));
+  }
 }
 
 struct Painter {
@@ -140,17 +164,51 @@ struct Painter {
       disc(at(0.3f), r * 0.7f, fill(litTone(k)));
     }
   }
-  // Single triangle (spikes, ears, hair...): shadow, then a lit inset towards the light.
-  void tri(Vector2 a, Vector2 b, Vector2 c, Color k, bool shadedTri = true) const {
-    Vector2 m{(a.x + b.x + c.x) / 3, (a.y + b.y + c.y) / 3};
+  // Convex polygon: mitred outline; shadow, then a mid inset towards the light (and a lit core for `lit`).
+  void poly(const Vector2* q, int n, Color k, bool lit = false) const {
+    if (n < 3) return;
     if (pass == kLine) {
       if (ghost) return;
-      auto grow = [&](Vector2 p) {
-        Vec2 d = W(p) - W(m);
-        float l = d.len();
-        return l > 0.01f ? V(W(p) + d * ((l + ow * 1.7f) / l) - d) : p;
+      Vector2 g[kMaxPoly];
+      growPoly(q, n, ow, g);
+      fanFill(g, n, line());
+      return;
+    }
+    if (!shaded()) {
+      if (pass == kLit) fanFill(q, n, fill(k));
+      return;
+    }
+    if (pass == kShadow) {
+      fanFill(q, n, fill(shadowTone(k)));
+    } else if (pass == kLit) {
+      Vec2 m{};
+      for (int i = 0; i < n; ++i) m += W(q[i]);
+      m = m / float(n);
+      float ext = 0.0f;
+      for (int i = 0; i < n; ++i) ext = std::max(ext, (W(q[i]) - m).len());
+      Vector2 in[kMaxPoly];
+      auto inset = [&](float k2, float shift) {
+        for (int i = 0; i < n; ++i) in[i] = V(m + (W(q[i]) - m) * k2 + kLight * (ext * shift));
       };
-      triangle(grow(a), grow(b), grow(c), line());
+      inset(0.9f, 0.05f);
+      fanFill(in, n, fill(midTone(k)));
+      if (lit) {
+        inset(0.62f, 0.16f);
+        fanFill(in, n, fill(litTone(k)));
+      }
+    }
+  }
+  void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color k, bool lit = false) const {
+    Vector2 q[4] = {a, b, c, d};
+    poly(q, 4, k, lit);
+  }
+  // Single triangle (spikes, ears, hair...): mid tone with a lit inset towards the light.
+  void tri(Vector2 a, Vector2 b, Vector2 c, Color k, bool shadedTri = true) const {
+    if (pass == kLine) {
+      if (ghost) return;
+      Vector2 q[3] = {a, b, c}, g[3];
+      growPoly(q, 3, ow, g);
+      triangle(g[0], g[1], g[2], line());
       return;
     }
     if (!shaded() || !shadedTri) {
@@ -160,6 +218,7 @@ struct Painter {
     if (pass == kShadow) {
       triangle(a, b, c, fill(shadowTone(k)));
     } else if (pass == kLit) {
+      Vector2 m{(a.x + b.x + c.x) / 3, (a.y + b.y + c.y) / 3};
       float per = (W(b) - W(a)).len() + (W(c) - W(b)).len() + (W(a) - W(c)).len();
       float area = std::fabs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) * 0.5f;
       float rin = per > 0.01f ? 2.0f * area / per : 0.0f;
@@ -181,18 +240,17 @@ struct Painter {
       }
     }
   }
-  void glowLine(Vector2 a, Vector2 b, float w, float k = 1.0f) const {
+  void glowLine(Vector2 a, Vector2 b, float w, float k = 1.0f, Color c = kZonaiGlow) const {
     if (!details() || flat) return;
     float g = clampf(glow * k, 0.0f, 2.0f);
-    DrawLineEx(a, b, w * 3.4f, withAlpha(fill(kZonaiGlow), alpha * 0.22f * g));
-    DrawLineEx(a, b, w, withAlpha(fill(mixColor(kZonaiGlow, WHITE, 0.25f + 0.2f * g)),
-                                  alpha * std::min(1.0f, 0.45f + 0.5f * g)));
+    DrawLineEx(a, b, w * 3.4f, withAlpha(fill(c), alpha * 0.22f * g));
+    DrawLineEx(a, b, w, withAlpha(fill(mixColor(c, WHITE, 0.25f + 0.2f * g)), alpha * std::min(1.0f, 0.45f + 0.5f * g)));
   }
-  void glowDot(Vector2 c, float r, float k = 1.0f) const {
+  void glowDot(Vector2 c, float r, float k = 1.0f, Color col = kZonaiGlow) const {
     if (!details() || flat) return;
     float g = clampf(glow * k, 0.0f, 2.0f);
-    disc(c, r * 2.6f, withAlpha(fill(kZonaiGlow), alpha * 0.2f * g));
-    disc(c, r, withAlpha(fill(mixColor(kZonaiGlow, WHITE, 0.35f)), alpha * std::min(1.0f, 0.5f + 0.5f * g)));
+    disc(c, r * 2.6f, withAlpha(fill(col), alpha * 0.2f * g));
+    disc(c, r, withAlpha(fill(mixColor(col, WHITE, 0.35f)), alpha * std::min(1.0f, 0.5f + 0.5f * g)));
   }
 };
 
@@ -227,60 +285,6 @@ Vec2 ik(Vec2 root, Vec2 target, float l1, float l2, float bend, Vec2& end) {
 }
 
 Vec2 polar(float deg, float r) { return {std::cos(deg2rad(deg)) * r, std::sin(deg2rad(deg)) * r}; }
-float wrapAngle(float a) {
-  a = std::fmod(a + kPi, 2.0f * kPi);
-  return (a < 0.0f ? a + 2.0f * kPi : a) - kPi;
-}
-
-struct Dims {
-  float headR, torsoTh, armTh, legTh, handR, footR;
-};
-Dims dimsFor(BodyStyle s) {
-  switch (s) {
-    case BodyStyle::Speedster: return {0.17f, 0.24f, 0.065f, 0.07f, 0.045f, 0.055f};
-    case BodyStyle::Brute: return {0.13f, 0.32f, 0.11f, 0.12f, 0.075f, 0.075f};
-    case BodyStyle::Knight: return {0.14f, 0.19f, 0.065f, 0.075f, 0.045f, 0.055f};
-    case BodyStyle::Ninja: return {0.14f, 0.18f, 0.065f, 0.07f, 0.045f, 0.05f};
-    default: return {0.15f, 0.22f, 0.075f, 0.085f, 0.055f, 0.06f};
-  }
-}
-
-struct Rig {
-  float hr;
-  Vec2 hips, neck, head, shF, shB, hipF, hipB;
-  Vec2 elbowF, elbowB, kneeF, kneeB, handF, handB, footF, footB;
-};
-Rig solveRig(const CharacterDef& d, const Pose& pose) {
-  const float H = d.height;
-  const Dims dm = dimsFor(d.style);
-  Rig r;
-  r.hr = dm.headR * H;
-  const float drop = pose.crouch * 0.14f * H;
-  r.hips = {0.0f, 0.10f * H + drop};
-  r.neck = r.hips + rotate({0.0f, -0.27f * H}, pose.lean);
-  r.head = r.neck + rotate({0.0f, -r.hr * 0.9f}, pose.lean * 1.3f);
-  r.shF = r.neck + rotate({0.035f * H, 0.04f * H}, pose.lean);
-  r.shB = r.neck + rotate({-0.035f * H, 0.04f * H}, pose.lean);
-  r.hipF = r.hips + Vec2{0.035f * H, 0.0f};
-  r.hipB = r.hips + Vec2{-0.035f * H, 0.0f};
-  const float ua = 0.155f * H, thigh = 0.205f * H;
-  r.elbowF = ik(r.shF, pose.handF, ua, ua, 1.0f, r.handF);
-  r.elbowB = ik(r.shB, pose.handB, ua, ua, 1.0f, r.handB);
-  r.kneeF = ik(r.hipF, pose.footF, thigh, thigh, -1.0f, r.footF);
-  r.kneeB = ik(r.hipB, pose.footB, thigh, thigh, -1.0f, r.footB);
-  return r;
-}
-
-// Puffo's arms and legs are stubs: hand and foot targets stay close to the ball.
-Vec2 puffCenter(const CharacterDef& d, const Pose& pose) { return {0.0f, 0.08f * d.height + pose.crouch * 0.06f * d.height}; }
-Vec2 stubby(const CharacterDef& d, const Pose& pose, Vec2 h, float reach = 0.54f) {
-  Vec2 bc = puffCenter(d, pose);
-  Vec2 rel = h - bc;
-  float l = rel.len();
-  float maxL = reach * d.height;
-  return l > maxL ? bc + rel * (maxL / l) : h;
-}
-Vec2 stubbyFoot(const CharacterDef& d, const Pose& pose, Vec2 f) { return stubby(d, pose, f, 0.5f); }
 
 // Secondary motion: a chain hanging from `root`. Its direction mixes the rest direction, gravity
 // (world down, whatever the body rotation) and the drag of the fighter's motion (pose.flow, the
@@ -298,96 +302,1175 @@ void chain(Vec2 root, Vec2 rest, float len, int n, const Pose& pose, float time,
   }
 }
 
-void drawEyes(const Painter& P, const Xf& X, Vec2 head, float r, const Pose& pose, Color iris) {
-  if (!P.details()) return;
-  Color dark = P.fill({44, 28, 26, 255});
-  Vec2 eyes[2] = {head + Vec2{0.18f * r, -0.08f * r}, head + Vec2{0.62f * r, -0.06f * r}};
-  for (int i = 0; i < 2; ++i) {
-    Vector2 e = X(eyes[i]);
-    float s = X.scale * (i == 0 ? 1.0f : 0.85f);
-    if (pose.hurt) {
-      DrawLineEx({e.x - 4 * s, e.y - 4 * s}, {e.x + 4 * s, e.y + 4 * s}, 2.5f * X.scale, dark);
-      DrawLineEx({e.x - 4 * s, e.y + 4 * s}, {e.x + 4 * s, e.y - 4 * s}, 2.5f * X.scale, dark);
-    } else if (pose.blink) {
-      DrawLineEx({e.x - 4 * s, e.y + 1 * s}, {e.x, e.y + 2 * s}, 2.0f * X.scale, dark);
-      DrawLineEx({e.x, e.y + 2 * s}, {e.x + 4 * s, e.y + 1 * s}, 2.0f * X.scale, dark);
-    } else {
-      fillEllipse(e, 0.17f * r * s, 0.27f * r * s, P.fill({252, 246, 232, 255}));
-      Vector2 ic{e.x + 0.06f * r * s * X.facing, e.y + 0.02f * r * s};
-      fillEllipse(ic, 0.11f * r * s, 0.18f * r * s, P.fill(iris));
-      fillEllipse(ic, 0.06f * r * s, 0.1f * r * s, dark);
-      disc({e.x + 0.02f * r * s * X.facing, e.y - 0.09f * r * s}, 0.045f * r * s, P.fill(WHITE));
-    }
+// ---- Builds: proportions of each hero (fractions of the height) ---------------------------------
+struct Build {
+  float head, torso, hipsY, shX, hipX, ua, fa, thigh, shin, chest, waist, arm, fore, leg, shinTh, hand, foot;
+};
+Build buildFor(Hero h) {
+  switch (h) {
+    //                    head   torso  hipsY  shX    hipX   ua     fa     thigh  shin   chest  waist  arm    fore   leg    shinT  hand   foot
+    case Hero::Asta:      return {0.158f, 0.25f, 0.12f, 0.045f, 0.04f, 0.15f, 0.15f, 0.195f, 0.195f, 0.25f, 0.20f, 0.085f, 0.078f, 0.088f, 0.08f, 0.058f, 0.062f};
+    case Hero::Yuno:      return {0.138f, 0.27f, 0.10f, 0.035f, 0.033f, 0.158f, 0.158f, 0.205f, 0.205f, 0.18f, 0.15f, 0.06f, 0.055f, 0.068f, 0.062f, 0.045f, 0.052f};
+    case Hero::Ichigo:    return {0.132f, 0.27f, 0.10f, 0.04f, 0.036f, 0.158f, 0.158f, 0.205f, 0.205f, 0.21f, 0.17f, 0.074f, 0.066f, 0.105f, 0.1f, 0.046f, 0.05f};
+    case Hero::Byakuya:   return {0.126f, 0.275f, 0.09f, 0.038f, 0.034f, 0.16f, 0.16f, 0.21f, 0.21f, 0.19f, 0.15f, 0.068f, 0.062f, 0.1f, 0.096f, 0.043f, 0.048f};
+    case Hero::Link:      return {0.15f, 0.26f, 0.11f, 0.038f, 0.035f, 0.152f, 0.152f, 0.2f, 0.2f, 0.2f, 0.16f, 0.066f, 0.062f, 0.075f, 0.07f, 0.048f, 0.056f};
+    case Hero::Ganondorf: return {0.112f, 0.30f, 0.09f, 0.06f, 0.045f, 0.16f, 0.16f, 0.21f, 0.21f, 0.33f, 0.25f, 0.105f, 0.098f, 0.11f, 0.1f, 0.062f, 0.066f};
+    case Hero::Kratos:    return {0.12f, 0.29f, 0.10f, 0.055f, 0.042f, 0.158f, 0.158f, 0.205f, 0.205f, 0.30f, 0.22f, 0.1f, 0.092f, 0.1f, 0.086f, 0.06f, 0.06f};
+    case Hero::Gojo:      return {0.112f, 0.255f, 0.04f, 0.034f, 0.03f, 0.165f, 0.165f, 0.235f, 0.235f, 0.165f, 0.13f, 0.056f, 0.052f, 0.064f, 0.058f, 0.042f, 0.05f};
+    case Hero::Sukuna:    return {0.135f, 0.27f, 0.10f, 0.04f, 0.036f, 0.158f, 0.158f, 0.205f, 0.205f, 0.21f, 0.17f, 0.076f, 0.07f, 0.082f, 0.076f, 0.048f, 0.054f};
+    default:              return {0.14f, 0.27f, 0.10f, 0.035f, 0.035f, 0.155f, 0.155f, 0.205f, 0.205f, 0.2f, 0.17f, 0.07f, 0.065f, 0.075f, 0.07f, 0.05f, 0.055f};
   }
 }
 
-void drawPuff(Painter& P, const Xf& X, const CharacterDef& d, const Palette& pal, const Pose& pose, float time) {
+struct Rig {
+  float hr, tilt;
+  Vec2 hips, chest, neck, head, shF, shB, hipF, hipB;
+  Vec2 elbowF, elbowB, kneeF, kneeB, handF, handB, footF, footB;
+};
+Rig solveRig(const CharacterDef& d, const Pose& pose) {
   const float H = d.height;
-  Color body = earthy(pal.primary), feet = earthy(pal.secondary);
-  const Vec2 bc = puffCenter(d, pose);
-  const float R = 0.42f * H;
-  const float s = X.scale;
-  auto group = [&](const auto& fn) {
+  const Build b = buildFor(d.hero);
+  Rig r;
+  r.hr = b.head * H;
+  r.tilt = pose.lean * 0.55f;
+  const float drop = pose.crouch * 0.14f * H;
+  r.hips = {0.0f, b.hipsY * H + drop};
+  r.neck = r.hips + rotate({0.0f, -b.torso * H}, pose.lean);
+  r.chest = lerpv(r.hips, r.neck, 0.62f);
+  r.head = r.neck + rotate({0.01f * H, -r.hr * 1.02f}, pose.lean * 1.15f);
+  r.shF = r.neck + rotate({b.shX * H, 0.045f * H}, pose.lean);
+  r.shB = r.neck + rotate({-b.shX * H, 0.045f * H}, pose.lean);
+  r.hipF = r.hips + Vec2{b.hipX * H, 0.0f};
+  r.hipB = r.hips + Vec2{-b.hipX * H, 0.0f};
+  r.elbowF = ik(r.shF, pose.handF, b.ua * H, b.fa * H, 1.0f, r.handF);
+  r.elbowB = ik(r.shB, pose.handB, b.ua * H, b.fa * H, 1.0f, r.handB);
+  r.kneeF = ik(r.hipF, pose.footF, b.thigh * H, b.shin * H, -1.0f, r.footF);
+  r.kneeB = ik(r.hipB, pose.footB, b.thigh * H, b.shin * H, -1.0f, r.footB);
+  return r;
+}
+
+// ---- Looks: colours of a hero in one palette -------------------------------------------------------
+struct Look {
+  Color skin, hair, eyes;
+  Color top, arm, fore, foreB, hand, handB, thigh, shin, foot;
+  Color cloth, trim, accent, belt, dark;
+};
+Look lookFor(const CharacterDef& d, int palette) {
+  const Palette& p = d.palettes[palette & 1];
+  const Color pri = earthy(p.primary), sec = earthy(p.secondary), acc = earthy(p.accent), skin = earthy(p.skin);
+  Look L;
+  L.skin = skin;
+  L.hair = earthy(p.hair);
+  L.eyes = C(p.eyes);
+  L.top = pri;
+  L.arm = L.fore = L.foreB = pri;
+  L.hand = L.handB = skin;
+  L.thigh = L.shin = sec;
+  L.foot = {70, 50, 40, 255};
+  L.cloth = pri;
+  L.trim = kGold;
+  L.accent = acc;
+  L.belt = {104, 70, 46, 255};
+  L.dark = {34, 32, 38, 255};
+  switch (d.hero) {
+    case Hero::Asta:
+      L.top = shade(sec, 0.62f);
+      L.arm = L.fore = L.foreB = skin;
+      L.thigh = L.shin = sec;
+      L.foot = {36, 32, 34, 255};
+      L.cloth = pri;
+      L.trim = acc;
+      L.belt = {70, 54, 44, 255};
+      break;
+    case Hero::Yuno:
+      L.top = L.arm = L.fore = L.foreB = sec;
+      L.thigh = L.shin = mixColor(sec, {30, 30, 36, 255}, 0.35f);
+      L.foot = {44, 38, 40, 255};
+      L.cloth = pri;
+      L.trim = acc;
+      L.belt = acc;
+      break;
+    case Hero::Ichigo:
+      L.thigh = L.shin = pri;
+      L.foot = sec;
+      L.cloth = sec;  // inner collar, obi
+      break;
+    case Hero::Byakuya:
+      L.top = pri;  // haori
+      L.arm = L.fore = L.foreB = sec;
+      L.hand = L.handB = {240, 238, 236, 255};
+      L.thigh = L.shin = sec;
+      L.foot = {236, 234, 230, 255};
+      L.cloth = pri;
+      L.trim = mixColor(pri, {200, 214, 232, 255}, 0.55f);  // silver scarf
+      break;
+    case Hero::Link:
+      L.fore = {52, 64, 56, 255};  // Ultrahand
+      L.hand = {64, 78, 66, 255};
+      L.handB = {112, 78, 52, 255};
+      L.thigh = L.shin = {128, 108, 84, 255};
+      L.foot = {98, 66, 42, 255};
+      L.belt = sec;
+      L.trim = acc;
+      break;
+    case Hero::Ganondorf:
+      L.arm = L.fore = L.foreB = pri;
+      L.hand = L.handB = shade(pri, 1.25f);
+      L.thigh = L.shin = shade(pri, 0.9f);
+      L.foot = shade(pri, 0.8f);
+      L.cloth = sec;
+      L.trim = acc;
+      L.belt = shade(pri, 0.8f);
+      break;
+    case Hero::Kratos:
+      L.top = L.arm = skin;
+      L.fore = L.foreB = sec;  // bracers
+      L.thigh = skin;
+      L.shin = sec;
+      L.foot = shade(sec, 0.8f);
+      L.cloth = pri;  // skirt
+      L.trim = {200, 160, 84, 255};
+      L.belt = {92, 62, 44, 255};
+      break;
+    case Hero::Gojo:
+      L.thigh = L.shin = sec;
+      L.foot = {26, 26, 32, 255};
+      break;
+    case Hero::Sukuna:
+      L.thigh = L.shin = shade(pri, 0.9f);
+      L.foot = {48, 40, 44, 255};
+      L.cloth = sec;  // scarf, sash
+      break;
+    default: break;
+  }
+  return L;
+}
+
+// ---- Faces --------------------------------------------------------------------------------------------
+struct EyeStyle {
+  Color iris{70, 52, 44, 255};
+  float w = 0.16f, h = 0.25f;  // white of the eye (head radii)
+  float lid = 0.0f;            // upper lid lowered (calm, narrow eyes)
+  float brow = 0.0f;           // + = frowning (inner end lower)
+  float browTh = 0.09f;
+  bool glow = false;           // glowing iris
+  bool dark = false;           // black sclera (hollow)
+  bool lashes = false;
+};
+
+struct Body {
+  Painter& P;
+  const Xf& X;
+  const CharacterDef& d;
+  const Pose& pose;
+  const Rig& R;
+  const Build& B;
+  const Look& L;
+  float H, s, time;
+  Hero hero;
+  int pal;
+  bool bust = false;
+
+  WeaponVisual power() const { return pose.held; }
+  bool has(WeaponVisual v) const { return pose.held == v; }
+  template <class F>
+  void group(F fn) {
     for (int p = kLine; p <= kLit; ++p) {
       if ((p == kRim || p == kShadow) && !P.shaded()) continue;
       P.pass = p;
       fn();
     }
-  };
-  group([&] { P.ellipse(X(stubbyFoot(d, pose, pose.footB)), 0.13f * H * s, 0.08f * H * s, backTone(feet)); });
-  group([&] { P.circle(X(stubby(d, pose, pose.handB)), 0.1f * H * s, backTone(body)); });
-  group([&] {
-    P.circle(X(bc), R * s, body);
-    Vec2 tip = bc + Vec2{-0.02f * H, -R - 0.12f * H} + pose.flowTip * (0.07f * H) +
-               Vec2{std::sin(time * 2.3f) * 0.012f * H, 0.0f};
-    P.tri(X(bc + polar(-100, R * 0.95f)), X(bc + polar(-75, R * 0.95f)), X(tip), body);
-  });
-  group([&] { P.ellipse(X(stubbyFoot(d, pose, pose.footF)), 0.13f * H * s, 0.08f * H * s, feet); });
-  if (pose.weapon && d.weaponLength > 0) group([&] {
-    Vec2 hand = stubby(d, pose, pose.handF);
-    Vec2 dir = pose.weaponDir.norm();
-    Vec2 tip = hand + dir * d.weaponLength;
-    Vec2 perp{-dir.y, dir.x};
-    P.seg(X(hand), X(tip), 6 * s, {124, 84, 54, 255});
-    P.seg(X(tip - perp * 16), X(tip + perp * 16), 26 * s, feet);
-    P.deco([&] {
-      P.seg(X(tip - perp * 9), X(tip - perp * 6), 27 * s, kGold);
-      P.seg(X(tip + perp * 6), X(tip + perp * 9), 27 * s, kGold);
-    });
-    P.glowLine(X(tip - perp * 2 - dir * 7), X(tip - perp * 2 + dir * 7), 1.6f * s);
-  });
-  group([&] { P.circle(X(stubby(d, pose, pose.handF)), 0.1f * H * s, body); });
-  if (P.ghost) return;
-  P.pass = kLit;
-  Color dark = P.fill({48, 26, 34, 255});
-  Vec2 eyes[2] = {bc + Vec2{0.1f * H, -0.12f * H}, bc + Vec2{0.26f * H, -0.12f * H}};
-  for (auto e : eyes) {
-    Vector2 p = X(e);
-    if (pose.hurt || pose.blink) {
-      DrawLineEx({p.x - 7 * s, p.y}, {p.x + 7 * s, p.y}, 3 * s, dark);
-    } else {
-      fillEllipse(p, 0.05f * H * s, 0.1f * H * s, dark);
-      fillEllipse({p.x, p.y + 0.04f * H * s}, 0.035f * H * s, 0.04f * H * s, P.fill(feet));
-      disc({p.x, p.y - 0.04f * H * s}, 0.022f * H * s, P.fill(WHITE));
+  }
+  float t(float k) const { return k * H * s; }  // stroke thickness from a fraction of H
+  // Head frame: (x, y) in head radii, rotated with the head tilt.
+  Vec2 hp(float x, float y) const { return R.head + rotate(Vec2{x, y} * R.hr, R.tilt); }
+  Vec2 hp(Vec2 v) const { return hp(v.x, v.y); }
+  Vec2 down() const { return {std::sin(pose.rot), std::cos(pose.rot)}; }
+  Vec2 rl(Vec2 v) const { return rotate(v * H, pose.lean); }  // torso-relative offset (fractions of H)
+
+  // ---- generic pieces -------------------------------------------------------------------------
+  void limb(Vec2 a, Vec2 b, Vec2 c, float th1, float th2, Color c1, Color c2) {
+    P.seg(X(a), X(b), t(th1), c1);
+    P.seg(X(b), X(c), t(th2), c2);
+  }
+  void foot(Vec2 f, Color c, float k = 1.0f) {
+    P.ellipse(X(f + Vec2{0.022f * H, -0.012f * H}), B.foot * 1.45f * H * s * k, B.foot * H * s * k, c);
+  }
+  // Wide kimono sleeve hanging under the forearm.
+  void sleeveFlap(Vec2 elbow, Vec2 hand, float depth, Color c) {
+    Vec2 dn = down() * (depth * H);
+    Vec2 a = lerpv(elbow, hand, 0.1f), b = lerpv(elbow, hand, 0.78f);
+    P.quad(X(a), X(b), X(b + dn * 0.85f + (hand - elbow) * 0.08f), X(a + dn * 0.45f), c);
+  }
+  // Panel of cloth between two hanging chains.
+  void panel(const Vec2* a, const Vec2* b, int n, Color c, bool lit = false) {
+    for (int i = 0; i < n; ++i) P.quad(X(a[i]), X(a[i + 1]), X(b[i + 1]), X(b[i]), c, lit);
+  }
+  void ribbon(const Vec2* q, int n, float th0, float th1, Color c) {
+    for (int i = 0; i < n; ++i) P.seg(X(q[i]), X(q[i + 1]), t(lerpf(th0, th1, n > 1 ? float(i) / (n - 1) : 0.0f)), c);
+  }
+  // Skirt / coat tails / robe from the waist: the hem corners follow the legs.
+  void skirt(float topW, float len, float flare, Color c, float frontLift = 0.0f) {
+    const Vec2 w0 = R.hips + rl({-topW, -0.03f}), w1 = R.hips + rl({topW, -0.03f});
+    auto hem = [&](Vec2 hip, Vec2 knee, Vec2 foot, float side) {
+      Vec2 legDir = (lerpv(knee, foot, 0.3f) - hip).norm();
+      Vec2 p = hip + legDir * (len * H);
+      return p + Vec2{side * flare * H, 0.0f};
+    };
+    Vec2 hb = hem(R.hipB, R.kneeB, R.footB, -1.0f), hf = hem(R.hipF, R.kneeF, R.footF, 1.0f);
+    hf.y -= frontLift * H;
+    Vec2 mid = lerpv(hb, hf, 0.5f) + down() * (0.02f * H);
+    Vector2 q[5] = {X(w0), X(w1), X(hf), X(mid), X(hb)};
+    P.poly(q, 5, c);
+  }
+  void hemLine(float topW, float len, float flare, Color c, float frontLift = 0.0f) {
+    (void)topW;
+    auto hem = [&](Vec2 hip, Vec2 knee, Vec2 foot, float side) {
+      Vec2 legDir = (lerpv(knee, foot, 0.3f) - hip).norm();
+      return hip + legDir * (len * H) + Vec2{side * flare * H, 0.0f};
+    };
+    Vec2 hb = hem(R.hipB, R.kneeB, R.footB, -1.0f), hf = hem(R.hipF, R.kneeF, R.footF, 1.0f);
+    hf.y -= frontLift * H;
+    Vec2 mid = lerpv(hb, hf, 0.5f) + down() * (0.02f * H);
+    Vec2 up = rl({0.0f, -0.025f});
+    DrawLineEx(X(hb + up), X(mid + up), t(0.022f), P.fill(c));
+    DrawLineEx(X(mid + up), X(hf + up), t(0.022f), P.fill(c));
+  }
+
+  // ---- hair ---------------------------------------------------------------------------------------
+  // Spike: base on a circle (radius r0) around the hair centre hc, tip at distance len (head radii).
+  void spike(Vec2 hc, float ang, float halfW, float r0, float len, Color c, float flowK = 1.0f) {
+    Vec2 b0 = hc + polar(ang - halfW, r0), b1 = hc + polar(ang + halfW, r0), tip = hc + polar(ang, len);
+    Vec2 fl = pose.flowTip * (0.28f * R.hr * flowK * (len - r0));
+    P.tri(X(hp(b0)), X(hp(b1)), X(hp(tip) + fl), c);
+  }
+  // Strand hanging over the face: from two points of the hairline to a tip.
+  void strand(Vec2 a, Vec2 b, Vec2 tip, Color c) { P.tri(X(hp(a)), X(hp(b)), X(hp(tip) + pose.flowTip * (0.1f * R.hr)), c); }
+  // Base mass of the hair: the top and the back of the skull (convex pieces, the face stays free).
+  void cap(Color c, float vol = 1.0f, float front = -0.3f, float nape = 0.42f) {
+    const Vec2 top[6] = {{0.99f, front}, {0.78f, -0.8f}, {0.26f, -1.1f}, {-0.36f, -1.08f}, {-0.88f, -0.74f}, {-1.08f, -0.14f}};
+    Vector2 q[6];
+    for (int i = 0; i < 6; ++i) q[i] = X(hp(top[i] * vol));
+    P.poly(q, 6, c);
+    const Vec2 back[4] = {{-1.08f, -0.16f}, {-0.94f, nape}, {-0.5f, nape - 0.1f}, {-0.2f, -0.2f}};
+    for (int i = 0; i < 4; ++i) q[i] = X(hp(back[i] * vol));
+    P.poly(q, 4, c);
+  }
+
+  void backHair() {
+    const float hr = R.hr;
+    switch (hero) {
+      case Hero::Byakuya: {  // long straight black hair down the back
+        Vec2 a[4], b[4];
+        const float k = bust ? 0.55f : 1.0f;
+        chain(hp(-0.5f, -0.9f), {-0.35f, 1.0f}, 3.3f * hr * k, 3, pose, time, 0.8f, 0.7f, 0.03f, a);
+        chain(hp(-0.95f, 0.15f), {-0.1f, 1.0f}, 2.7f * hr * k, 3, pose, time + 0.3f, 0.8f, 0.8f, 0.03f, b);
+        group([&] { panel(a, b, 3, L.hair); });
+        break;
+      }
+      case Hero::Link: {  // short ponytail
+        Vec2 q[3];
+        chain(hp(-0.86f, -0.2f), {-0.85f, 0.75f}, 1.35f * hr, 2, pose, time, 0.45f, 0.9f, 0.08f, q);
+        group([&] {
+          P.seg(X(q[0]), X(q[1]), t(0.05f), L.hair);
+          P.seg(X(q[1]), X(q[2]), t(0.035f), L.hair);
+          P.deco([&] { P.circle(X(q[0] + (q[1] - q[0]) * 0.18f), t(0.02f), {120, 88, 58, 255}); });
+        });
+        break;
+      }
+      case Hero::Ganondorf: {  // long red braid
+        Vec2 q[4];
+        chain(hp(-0.9f, -0.05f), {-0.45f, 1.0f}, 2.6f * hr * (bust ? 0.5f : 1.0f), 3, pose, time, 0.6f, 0.9f, 0.05f, q);
+        group([&] {
+          ribbon(q, 3, 0.042f, 0.028f, L.hair);
+          P.deco([&] {
+            P.circle(X(q[0]), t(0.026f), L.trim);
+            for (int i = 1; i < 3; ++i) P.circle(X(q[i]), t(0.02f), shade(L.hair, 0.8f));
+          });
+        });
+        break;
+      }
+      default: break;
     }
   }
-  Color blush = P.fill({240, 110, 130, 150});
-  fillEllipse(X(bc + Vec2{0.05f * H, 0.02f * H}), 0.05f * H * s, 0.025f * H * s, blush);
-  fillEllipse(X(bc + Vec2{0.33f * H, 0.02f * H}), 0.04f * H * s, 0.025f * H * s, blush);
-  Vector2 mo = X(bc + Vec2{0.18f * H, 0.04f * H});
-  if (pose.hurt) disc(mo, 0.03f * H * s, dark);
-  else DrawLineEx({mo.x - 3 * s, mo.y}, {mo.x + 3 * s, mo.y + 2 * s}, 2 * s, dark);
+
+  void frontHair() {
+    const Color c = L.hair;
+    switch (hero) {
+      case Hero::Asta: {  // ash-blond, wild spikes up and back
+        const Vec2 hc{-0.12f, -0.2f};
+        group([&] {
+          cap(c, 1.02f, -0.32f, 0.3f);
+          const float sp[7][3] = {{-178, 15, 1.25f}, {-152, 14, 1.6f}, {-128, 13, 1.78f}, {-104, 12, 1.82f},
+                                  {-82, 12, 1.62f}, {-60, 12, 1.36f}, {-38, 12, 1.12f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.82f, k[2], c);
+          strand({0.95f, -0.38f}, {0.55f, -0.62f}, {0.92f, 0.02f}, c);
+          strand({0.62f, -0.5f}, {0.22f, -0.7f}, {0.5f, -0.06f}, c);
+        });
+        // dark headband over the hair, knotted at the back with two tails
+        Vec2 k0 = hp(-0.98f, -0.32f);
+        Vec2 q[3], r[3];
+        chain(k0, {-0.9f, 0.5f}, 0.75f * R.hr, 2, pose, time + 0.7f, 0.35f, 0.9f, 0.2f, q);
+        chain(k0, {-1.0f, -0.1f}, 0.85f * R.hr, 2, pose, time, 0.2f, 1.0f, 0.24f, r);
+        group([&] {
+          P.seg(X(q[0]), X(q[1]), t(0.032f), L.dark);
+          P.seg(X(q[1]), X(q[2]), t(0.026f), L.dark);
+          P.seg(X(r[0]), X(r[1]), t(0.03f), L.dark);
+          P.seg(X(r[1]), X(r[2]), t(0.024f), L.dark);
+          P.seg(X(hp(-0.98f, -0.32f)), X(hp(-0.2f, -0.52f)), t(0.05f), L.dark);
+          P.seg(X(hp(-0.2f, -0.52f)), X(hp(0.9f, -0.44f)), t(0.05f), L.dark);
+        });
+        break;
+      }
+      case Hero::Yuno: {  // black hair, soft spikes, fringe over the forehead
+        const Vec2 hc{-0.1f, -0.15f};
+        group([&] {
+          cap(c, 1.04f, -0.26f, 0.5f);
+          const float sp[6][3] = {{150, 18, 1.18f}, {176, 16, 1.2f}, {-158, 15, 1.3f}, {-132, 14, 1.36f}, {-106, 13, 1.24f},
+                                  {-80, 12, 1.12f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, k[2], c);
+          strand({1.0f, -0.3f}, {0.7f, -0.62f}, {1.0f, 0.12f}, c);
+          strand({0.74f, -0.5f}, {0.4f, -0.72f}, {0.62f, 0.14f}, c);
+          strand({0.42f, -0.62f}, {0.08f, -0.7f}, {0.24f, 0.05f}, c);
+          strand({0.1f, -0.4f}, {-0.22f, -0.44f}, {-0.02f, 0.62f}, c);
+        });
+        break;
+      }
+      case Hero::Ichigo: {  // orange, spikes all around
+        const Vec2 hc{-0.08f, -0.18f};
+        group([&] {
+          cap(c, 1.04f, -0.32f, 0.38f);
+          const float sp[9][3] = {{158, 16, 1.05f}, {-178, 15, 1.3f}, {-154, 14, 1.5f}, {-130, 13, 1.62f}, {-106, 12, 1.6f},
+                                  {-84, 12, 1.5f}, {-62, 12, 1.34f}, {-40, 12, 1.16f}, {-18, 12, 1.0f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, k[2], c, 0.6f);
+          strand({1.0f, -0.36f}, {0.66f, -0.6f}, {0.98f, 0.06f}, c);
+          strand({0.7f, -0.5f}, {0.36f, -0.7f}, {0.6f, -0.02f}, c);
+          strand({0.38f, -0.6f}, {0.02f, -0.7f}, {0.2f, -0.1f}, c);
+        });
+        break;
+      }
+      case Hero::Byakuya: {  // smooth black hair, long locks framing the face, white kenseikan
+        group([&] {
+          cap(c, 1.04f, -0.3f, 0.55f);
+          strand({0.92f, -0.42f}, {0.6f, -0.72f}, {0.62f, 0.3f}, c);  // the lock between the eyes
+          strand({0.3f, -0.66f}, {-0.05f, -0.7f}, {0.14f, 1.25f}, c);  // side lock to the chin
+          strand({-0.1f, -0.5f}, {-0.5f, -0.4f}, {-0.3f, 1.05f}, c);
+        });
+        const Color ken{246, 246, 250, 255};
+        group([&] {
+          P.seg(X(hp(-0.3f, -1.0f)), X(hp(-0.08f, -0.7f)), t(0.026f), ken);
+          P.seg(X(hp(-0.6f, -0.88f)), X(hp(-0.36f, -0.58f)), t(0.026f), ken);
+          P.seg(X(hp(-0.86f, -0.62f)), X(hp(-0.6f, -0.36f)), t(0.026f), ken);
+        });
+        break;
+      }
+      case Hero::Link: {  // dirty blond, parted bangs
+        const Vec2 hc{-0.1f, -0.18f};
+        group([&] {
+          cap(c, 1.04f, -0.28f, 0.42f);
+          const float sp[4][3] = {{-170, 16, 1.18f}, {-142, 15, 1.26f}, {-114, 14, 1.2f}, {-88, 13, 1.1f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, k[2], c, 0.6f);
+          strand({1.0f, -0.32f}, {0.62f, -0.68f}, {0.98f, 0.14f}, c);
+          strand({0.56f, -0.66f}, {0.2f, -0.78f}, {0.36f, 0.02f}, c);
+          strand({0.12f, -0.5f}, {-0.2f, -0.5f}, {0.0f, 0.7f}, c);
+        });
+        // pointed ear over the side hair
+        group([&] {
+          P.tri(X(hp(-0.32f, -0.02f)), X(hp(-0.08f, 0.3f)), X(hp(-1.05f, -0.62f)), L.skin);
+          P.deco([&] { P.circle(X(hp(-0.2f, 0.28f)), t(0.012f), {90, 160, 220, 255}); });
+        });
+        break;
+      }
+      case Hero::Ganondorf: {  // red hair swept back like flames, gold circlet with a jewel
+        const Vec2 hc{-0.2f, -0.2f};
+        group([&] {
+          cap(c, 1.04f, -0.42f, 0.42f);
+          const float sp[5][3] = {{-178, 14, 1.75f}, {-160, 13, 1.85f}, {-142, 12, 1.7f}, {162, 14, 1.45f}, {-124, 12, 1.4f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, k[2], c, 1.2f);
+          P.deco([&] {
+            P.seg(X(hp(-0.9f, -0.46f)), X(hp(0.0f, -0.62f)), t(0.022f), L.trim);
+            P.seg(X(hp(0.0f, -0.62f)), X(hp(0.9f, -0.5f)), t(0.022f), L.trim);
+          });
+        });
+        group([&] {  // the jewel
+          Vec2 j = hp(0.72f, -0.58f);
+          const float r = 0.2f * R.hr;
+          P.tri(X(j + Vec2{0, -r * 1.3f}), X(j + Vec2{r, 0}), X(j + Vec2{0, r * 1.3f}), L.trim);
+          P.tri(X(j + Vec2{0, -r * 1.3f}), X(j + Vec2{-r, 0}), X(j + Vec2{0, r * 1.3f}), L.trim);
+          P.deco([&] { P.circle(X(j), r * 0.55f * s, {120, 220, 170, 255}); });
+        });
+        break;
+      }
+      case Hero::Kratos: {  // bald: no hair; the thick beard
+        group([&] {
+          Vector2 q[7] = {X(hp(-0.3f, 0.12f)), X(hp(0.3f, 0.36f)), X(hp(0.92f, 0.3f)), X(hp(1.0f, 0.7f)),
+                          X(hp(0.62f, 1.38f)), X(hp(0.05f, 1.22f)), X(hp(-0.36f, 0.62f))};
+          P.poly(q, 7, c);
+          P.deco([&] {
+            P.seg(X(hp(0.5f, 0.52f)), X(hp(0.98f, 0.5f)), t(0.02f), shade(c, 0.85f));
+          });
+        });
+        break;
+      }
+      case Hero::Gojo: {  // snow-white hair spiking up (falls down without the blindfold)
+        const bool eyes = has(WeaponVisual::SixEyes);
+        const float up = eyes ? 0.72f : 1.0f;
+        const Vec2 hc{-0.06f, -0.22f};
+        group([&] {
+          cap(c, 1.06f, -0.3f, 0.45f);
+          const float sp[8][3] = {{-178, 14, 1.3f}, {-156, 13, 1.62f}, {-134, 12, 1.92f}, {-112, 12, 2.06f},
+                                  {-90, 12, 2.0f}, {-68, 12, 1.8f}, {-48, 12, 1.5f}, {-28, 12, 1.16f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, 0.84f + (k[2] - 0.84f) * up, c, 0.5f);
+          if (eyes) {  // fringe over the forehead
+            strand({1.0f, -0.36f}, {0.62f, -0.64f}, {0.95f, 0.02f}, c);
+            strand({0.66f, -0.56f}, {0.3f, -0.72f}, {0.5f, -0.04f}, c);
+            strand({0.32f, -0.64f}, {-0.04f, -0.7f}, {0.12f, 0.0f}, c);
+          } else {
+            strand({1.0f, -0.4f}, {0.66f, -0.64f}, {0.96f, -0.18f}, c);
+            strand({0.68f, -0.56f}, {0.34f, -0.7f}, {0.56f, -0.2f}, c);
+          }
+        });
+        break;
+      }
+      case Hero::Sukuna: {  // pink, short spikes
+        const Vec2 hc{-0.1f, -0.2f};
+        group([&] {
+          cap(c, 1.02f, -0.36f, 0.3f);
+          const float sp[7][3] = {{-176, 15, 1.2f}, {-152, 14, 1.42f}, {-128, 13, 1.52f}, {-104, 12, 1.5f}, {-82, 12, 1.36f},
+                                  {-60, 12, 1.2f}, {-38, 12, 1.04f}};
+          for (auto& k : sp) spike(hc, k[0], k[1], 0.84f, k[2], c, 0.6f);
+          strand({0.98f, -0.4f}, {0.62f, -0.62f}, {0.9f, -0.12f}, c);
+          strand({0.6f, -0.56f}, {0.26f, -0.7f}, {0.42f, -0.18f}, c);
+        });
+        break;
+      }
+      default: break;
+    }
+  }
+
+  // ---- face ---------------------------------------------------------------------------------------
+  EyeStyle eyeStyle() const {
+    EyeStyle e;
+    e.iris = L.eyes;
+    switch (hero) {
+      case Hero::Asta: e.w = 0.17f; e.h = 0.28f; e.brow = 0.12f; e.browTh = 0.11f; break;
+      case Hero::Yuno: e.w = 0.16f; e.h = 0.22f; e.lid = 0.25f; e.brow = 0.05f; break;
+      case Hero::Ichigo: e.w = 0.16f; e.h = 0.22f; e.lid = 0.2f; e.brow = 0.3f; e.browTh = 0.1f;
+        e.dark = pal == 1; break;
+      case Hero::Byakuya: e.w = 0.16f; e.h = 0.18f; e.lid = 0.45f; e.brow = 0.0f; e.browTh = 0.07f; break;
+      case Hero::Link: e.w = 0.16f; e.h = 0.26f; e.brow = 0.06f; break;
+      case Hero::Ganondorf: e.w = 0.15f; e.h = 0.17f; e.lid = 0.3f; e.brow = 0.42f; e.browTh = 0.14f; e.glow = true; break;
+      case Hero::Kratos: e.w = 0.15f; e.h = 0.17f; e.lid = 0.3f; e.brow = 0.45f; e.browTh = 0.15f; break;
+      case Hero::Gojo: e.w = 0.17f; e.h = 0.25f; e.lashes = true; e.glow = true; e.iris = {110, 210, 255, 255}; break;
+      case Hero::Sukuna: e.w = 0.16f; e.h = 0.2f; e.lid = 0.15f; e.brow = 0.35f; e.browTh = 0.1f;
+        e.glow = has(WeaponVisual::CursedFinger); break;
+      default: break;
+    }
+    return e;
+  }
+  void eye(Vec2 e, float k, const EyeStyle& st, bool far) {
+    const float r = R.hr * k;
+    const Color dark = P.fill(kInkFace);
+    auto S = [&](float v) { return v * r * s; };
+    if (pose.hurt) {
+      Vector2 c = X(e);
+      DrawLineEx({c.x - S(0.18f), c.y - S(0.16f)}, {c.x + S(0.16f), c.y}, S(0.08f) + 1.0f, dark);
+      DrawLineEx({c.x - S(0.18f), c.y + S(0.16f)}, {c.x + S(0.16f), c.y}, S(0.08f) + 1.0f, dark);
+      return;
+    }
+    if (pose.blink) {
+      DrawLineEx(X(e + Vec2{-st.w * r, 0.02f * r}), X(e + Vec2{st.w * r, 0.05f * r}), S(0.07f) + 0.8f, dark);
+      return;
+    }
+    const float h = st.h * (1.0f - 0.35f * st.lid);
+    const Vec2 c = e + Vec2{0.0f, 0.06f * st.lid * r};
+    if (st.glow && P.alpha > 0.9f) disc(X(c), S(st.w * 2.2f), withAlpha(P.fill(st.iris), P.alpha * 0.25f));
+    fillEllipse(X(c), S(st.w), S(h), P.fill(st.dark ? Color{20, 16, 18, 255} : Color{252, 248, 238, 255}));
+    const Vec2 ic = c + Vec2{0.05f * r, 0.02f * r};
+    fillEllipse(X(ic), S(st.w * 0.66f), S(h * 0.82f), P.fill(st.iris));
+    if (!st.glow) fillEllipse(X(ic + Vec2{0.01f * r, 0.02f * r}), S(st.w * 0.34f), S(h * 0.44f), P.fill({24, 18, 18, 255}));
+    else fillEllipse(X(ic), S(st.w * 0.3f), S(h * 0.4f), P.fill(mixColor(st.iris, WHITE, 0.75f)));
+    disc(X(ic + Vec2{-0.04f * r, -0.08f * r}), S(0.05f), P.fill(WHITE));
+    // upper lid line (anime lashes), thicker at the outer corner
+    DrawLineEx(X(c + Vec2{-st.w * r * 1.05f, -h * r * 0.55f}), X(c + Vec2{st.w * r * 1.1f, -h * r * 0.78f}),
+               S(0.085f) + 0.8f, dark);
+    if (st.lashes) {
+      Color lash = P.fill({250, 250, 255, 255});
+      DrawLineEx(X(c + Vec2{st.w * r * 0.9f, -h * r * 0.8f}), X(c + Vec2{st.w * r * 1.5f, -h * r * 1.15f}), S(0.05f) + 0.6f, lash);
+      DrawLineEx(X(c + Vec2{-st.w * r * 1.0f, -h * r * 0.5f}), X(c + Vec2{-st.w * r * 1.5f, -h * r * 0.8f}), S(0.05f) + 0.6f, lash);
+    }
+    // brow
+    {  // brow: lower at the inner end (towards the nose) when frowning
+      const float by = -h * r - 0.16f * r, dy = st.brow * 0.14f * r;
+      Vec2 b0 = c + Vec2{-st.w * r * 1.1f, by + (far ? dy : -dy)};
+      Vec2 b1 = c + Vec2{st.w * r * 1.15f, by + (far ? -dy : dy) - 0.02f * r};
+      Color bc = hero == Hero::Gojo ? Color{236, 236, 244, 255} : shade(L.hair, 0.55f);
+      if (hero == Hero::Kratos) bc = shade(L.hair, 0.8f);
+      DrawLineEx(X(b0), X(b1), S(st.browTh) + 1.0f, P.fill(bc));
+    }
+  }
+
+  void face() {
+    if (!P.details()) return;
+    const float hr = R.hr;
+    const EyeStyle st = eyeStyle();
+    const Color dark = P.fill(kInkFace);
+    const Vec2 eN = hp(0.16f, 0.08f), eF = hp(0.62f, 0.08f);
+    // marks under the eyes and on the skin (painted before the eyes)
+    if (hero == Hero::Kratos) {  // the red tattoo: over the scalp, around the eye, down the cheek
+      const Color red = P.fill(L.accent);
+      DrawLineEx(X(hp(0.55f, -0.78f)), X(hp(0.0f, -0.98f)), t(0.034f), red);
+      DrawLineEx(X(hp(0.0f, -0.98f)), X(hp(-0.6f, -0.78f)), t(0.034f), red);
+      DrawLineEx(X(hp(-0.6f, -0.78f)), X(hp(-0.92f, -0.3f)), t(0.034f), red);
+      fillEllipse(X(eN + Vec2{0.0f, -0.02f * hr}), 0.3f * hr * s, 0.3f * hr * s, red);
+      DrawLineEx(X(hp(0.12f, -0.5f)), X(hp(0.3f, -0.8f)), t(0.03f), red);
+      DrawLineEx(X(hp(0.1f, 0.2f)), X(hp(0.02f, 0.62f)), t(0.026f), red);
+    }
+    if (hero == Hero::Ichigo && pal == 1) {  // fragment of the hollow mask, red stripes
+      Vector2 q[5] = {X(hp(-0.15f, -0.52f)), X(hp(0.5f, -0.6f)), X(hp(0.55f, 0.42f)), X(hp(0.25f, 0.85f)), X(hp(-0.2f, 0.55f))};
+      Vector2 g[5];
+      growPoly(q, 5, P.ow * 0.8f, g);
+      fanFill(g, 5, P.line());
+      fanFill(q, 5, P.fill({246, 244, 238, 255}));
+      DrawLineEx(X(hp(0.08f, -0.55f)), X(hp(0.02f, 0.62f)), t(0.022f), P.fill({200, 30, 36, 255}));
+      DrawLineEx(X(hp(0.32f, -0.58f)), X(hp(0.3f, 0.48f)), t(0.018f), P.fill({200, 30, 36, 255}));
+    }
+    if (hero == Hero::Gojo && !has(WeaponVisual::SixEyes)) {  // the blindfold (drawn with the head): a fold
+      DrawLineEx(X(hp(-0.7f, -0.14f)), X(hp(0.9f, -0.06f)), t(0.008f) + 0.5f, P.fill({70, 70, 86, 255}));
+    } else {
+      eye(eN, 1.0f, st, false);
+      eye(eF, 0.82f, st, true);
+    }
+    if (hero == Hero::Sukuna) {  // extra eyes under the eyes, marks on the cheeks and the brow
+      const bool hot = has(WeaponVisual::CursedFinger);
+      const Color mk = P.fill(hot ? Color{230, 30, 40, 255} : Color{26, 20, 24, 255});
+      if (hot) {
+        const Color gl = withAlpha(P.fill({255, 60, 60, 255}), P.alpha * 0.3f);
+        DrawLineEx(X(hp(0.05f, 0.5f)), X(hp(0.75f, 0.42f)), t(0.05f), gl);
+        DrawLineEx(X(hp(0.1f, -0.66f)), X(hp(0.5f, -0.6f)), t(0.05f), gl);
+      }
+      DrawLineEx(X(hp(-0.1f, 0.5f)), X(hp(0.36f, 0.48f)), t(0.02f), mk);
+      DrawLineEx(X(hp(0.5f, 0.46f)), X(hp(0.82f, 0.44f)), t(0.016f), mk);
+      DrawLineEx(X(hp(0.2f, -0.62f)), X(hp(0.5f, -0.58f)), t(0.016f), mk);
+      DrawLineEx(X(hp(0.35f, -0.6f)), X(hp(0.4f, -0.4f)), t(0.014f), mk);
+      if (!pose.hurt && !pose.blink) {
+        for (int i = 0; i < 2; ++i) {
+          Vec2 e = (i ? eF : eN) + Vec2{0.02f * hr, 0.3f * hr};
+          float k = i ? 0.75f : 0.95f;
+          fillEllipse(X(e), 0.12f * hr * k * s, 0.07f * hr * k * s, P.fill({250, 240, 232, 255}));
+          fillEllipse(X(e + Vec2{0.02f * hr, 0}), 0.06f * hr * k * s, 0.06f * hr * k * s, P.fill(L.eyes));
+          DrawLineEx(X(e + Vec2{-0.14f * hr * k, -0.05f * hr}), X(e + Vec2{0.14f * hr * k, -0.07f * hr}), t(0.01f) + 0.6f, dark);
+        }
+      }
+    }
+    // nose and mouth
+    DrawLineEx(X(hp(0.9f, 0.28f)), X(hp(0.96f, 0.38f)), t(0.008f) + 0.6f, withAlpha(dark, P.alpha * 0.6f));
+    const Vec2 mo = hp(0.56f, 0.66f);
+    if (pose.hurt || pose.shout) {
+      fillEllipse(X(mo), 0.16f * hr * s, 0.12f * hr * s, P.fill({70, 24, 30, 255}));
+      DrawLineEx(X(mo + Vec2{-0.12f * hr, -0.07f * hr}), X(mo + Vec2{0.12f * hr, -0.07f * hr}), t(0.012f), P.fill(WHITE));
+    } else if (hero == Hero::Asta) {  // big grin
+      DrawLineEx(X(mo + Vec2{-0.2f * hr, -0.04f * hr}), X(mo + Vec2{0.16f * hr, -0.08f * hr}), t(0.03f), P.fill({248, 246, 240, 255}));
+      DrawLineEx(X(mo + Vec2{-0.22f * hr, -0.02f * hr}), X(mo + Vec2{0.18f * hr, -0.04f * hr}), t(0.008f) + 0.6f, dark);
+    } else if (hero == Hero::Sukuna) {  // wicked smile
+      DrawLineEx(X(mo + Vec2{-0.18f * hr, -0.08f * hr}), X(mo + Vec2{0.06f * hr, 0.0f}), t(0.01f) + 0.6f, dark);
+      DrawLineEx(X(mo + Vec2{0.06f * hr, 0.0f}), X(mo + Vec2{0.2f * hr, -0.1f * hr}), t(0.01f) + 0.6f, dark);
+    } else if (hero != Hero::Kratos) {
+      DrawLineEx(X(mo + Vec2{-0.1f * hr, 0.0f}), X(mo + Vec2{0.1f * hr, -0.01f * hr}), t(0.009f) + 0.6f, dark);
+    }
+  }
+
+  // Head: neck, skull, chin, ear, then the face.
+  void head() {
+    const float hr = R.hr;
+    group([&] {
+      if (hero != Hero::Gojo && !bust) P.seg(X(R.neck), X(lerpv(R.neck, R.head, 0.55f)), t(B.head * 0.62f), L.skin);
+      if (hero == Hero::Ganondorf || hero == Hero::Kratos) {  // square jaw
+        P.quad(X(hp(-0.5f, 0.3f)), X(hp(0.95f, 0.25f)), X(hp(0.82f, 0.95f)), X(hp(0.0f, 1.0f)), L.skin);
+      } else {
+        P.tri(X(hp(-0.4f, 0.45f)), X(hp(0.92f, 0.32f)), X(hp(0.5f, 1.12f)), L.skin);
+      }
+      P.circle(X(R.head), hr * s, L.skin);
+      if (hero == Hero::Ganondorf) P.tri(X(hp(0.9f, -0.05f)), X(hp(1.22f, 0.36f)), X(hp(0.86f, 0.42f)), L.skin);  // nose
+      if (hero != Hero::Link && hero != Hero::Byakuya)
+        P.deco([&] { P.ellipse(X(hp(-0.22f, 0.12f)), 0.17f * hr * s, 0.24f * hr * s, L.skin); });
+      if (hero == Hero::Gojo && !has(WeaponVisual::SixEyes))
+        P.deco([&] { P.seg(X(hp(-0.98f, -0.12f)), X(hp(1.0f, -0.02f)), t(B.head * 0.42f), {30, 30, 38, 255}); });
+      face();
+    });
+  }
+
+  // ---- back cloth (capes, robes, scarves) ------------------------------------------------------
+  void backCloth() {
+    switch (hero) {
+      case Hero::Asta: {  // short hooded Black Bulls cloak over the back shoulder
+        Vec2 a[3], b[3];
+        chain(R.neck + rl({-0.06f, 0.0f}), {-0.55f, 1.0f}, 0.34f * H, 2, pose, time, 0.6f, 1.0f, 0.06f, a);
+        chain(R.neck + rl({0.0f, 0.04f}), {-0.2f, 1.0f}, 0.27f * H, 2, pose, time + 0.4f, 0.6f, 0.9f, 0.06f, b);
+        group([&] {
+          panel(a, b, 2, L.cloth);
+          P.circle(X(R.neck + rl({-0.05f, -0.01f})), t(0.065f), L.cloth);  // hood
+          P.deco([&] {
+            Vec2 e = lerpv(a[1], b[1], 0.5f) + (a[0] - a[1]) * 0.15f;
+            P.circle(X(e), t(0.03f), L.trim);
+            P.tri(X(e + Vec2{-0.02f * H, -0.01f * H}), X(e + Vec2{-0.005f * H, -0.02f * H}), X(e + Vec2{-0.04f * H, -0.05f * H}), L.trim);
+            P.tri(X(e + Vec2{0.02f * H, -0.01f * H}), X(e + Vec2{0.005f * H, -0.02f * H}), X(e + Vec2{0.035f * H, -0.05f * H}), L.trim);
+          });
+        });
+        break;
+      }
+      case Hero::Yuno: {  // long Golden Dawn robe, gold trims
+        Vec2 a[4], b[4];
+        chain(R.neck + rl({-0.05f, 0.01f}), {-0.4f, 1.0f}, 0.6f * H, 3, pose, time, 0.7f, 1.1f, 0.05f, a);
+        chain(R.neck + rl({0.03f, 0.04f}), {-0.08f, 1.0f}, 0.52f * H, 3, pose, time + 0.5f, 0.7f, 1.0f, 0.05f, b);
+        group([&] {
+          panel(a, b, 3, L.cloth);
+          P.circle(X(R.neck + rl({-0.045f, 0.0f})), t(0.06f), L.cloth);  // hood
+          if (P.details()) {
+            for (int i = 0; i < 3; ++i) DrawLineEx(X(a[i]), X(a[i + 1]), t(0.018f), P.fill(L.trim));
+            DrawLineEx(X(a[3]), X(b[3]), t(0.02f), P.fill(L.trim));
+          }
+        });
+        break;
+      }
+      case Hero::Byakuya: {  // haori back panel to the calves + the long silver scarf
+        Vec2 a[4], b[4], q[4];
+        chain(R.neck + rl({-0.06f, 0.02f}), {-0.3f, 1.0f}, 0.66f * H, 3, pose, time, 0.8f, 1.0f, 0.03f, a);
+        chain(R.neck + rl({0.02f, 0.05f}), {-0.02f, 1.0f}, 0.6f * H, 3, pose, time + 0.5f, 0.8f, 0.9f, 0.03f, b);
+        chain(R.neck + rl({-0.04f, -0.02f}), {-1.0f, 0.35f}, 0.62f * H, 3, pose, time + 0.2f, 0.32f, 1.2f, 0.14f, q);
+        group([&] {
+          panel(a, b, 3, L.cloth);
+          if (P.details()) DrawLineEx(X(a[3]), X(b[3]), t(0.02f), P.fill(shade(L.cloth, 0.75f)));
+        });
+        group([&] { ribbon(q, 3, 0.05f, 0.036f, L.trim); });
+        break;
+      }
+      case Hero::Ganondorf: {  // big dark red cape
+        Vec2 a[4], b[4];
+        chain(R.neck + rl({-0.09f, 0.0f}), {-0.6f, 1.0f}, 0.68f * H, 3, pose, time, 0.85f, 1.0f, 0.03f, a);
+        chain(R.neck + rl({0.03f, 0.03f}), {-0.1f, 1.0f}, 0.6f * H, 3, pose, time + 0.5f, 0.85f, 0.9f, 0.03f, b);
+        group([&] {
+          panel(a, b, 3, L.cloth);
+          if (P.details()) {
+            DrawLineEx(X(lerpv(a[1], b[1], 0.4f)), X(lerpv(a[3], b[3], 0.35f)), t(0.012f), P.fill(shadowTone(L.cloth)));
+            DrawLineEx(X(a[3]), X(b[3]), t(0.016f), P.fill(L.trim));
+          }
+        });
+        break;
+      }
+      case Hero::Sukuna: {  // black scarf ends
+        Vec2 q[4], r[4];
+        chain(R.neck + rl({-0.04f, 0.0f}), {-1.0f, 0.5f}, 0.36f * H, 3, pose, time, 0.4f, 1.0f, 0.16f, q);
+        chain(R.neck + rl({-0.03f, 0.01f}), {-0.8f, 0.9f}, 0.3f * H, 3, pose, time + 0.9f, 0.5f, 0.9f, 0.16f, r);
+        group([&] {
+          ribbon(q, 3, 0.05f, 0.036f, L.cloth);
+          ribbon(r, 3, 0.044f, 0.032f, L.cloth);
+        });
+        break;
+      }
+      default: break;
+    }
+  }
+
+  // ---- limbs -------------------------------------------------------------------------------------
+  void leg(bool front) {
+    const Vec2 hip = front ? R.hipF : R.hipB, knee = front ? R.kneeF : R.kneeB, ft = front ? R.footF : R.footB;
+    auto tn = [&](Color c) { return front ? c : backTone(c); };
+    group([&] {
+      limb(hip, knee, ft, B.leg, B.shinTh, tn(L.thigh), tn(L.shin));
+      const Vec2 boot0 = lerpv(knee, ft, 0.42f);
+      switch (hero) {
+        case Hero::Asta: case Hero::Yuno: case Hero::Gojo:
+          P.deco([&] { P.seg(X(boot0), X(ft), t(B.shinTh * 1.08f), tn(L.foot)); });
+          break;
+        case Hero::Link:
+          P.deco([&] {
+            P.seg(X(lerpv(knee, ft, 0.3f)), X(ft), t(B.shinTh * 1.12f), tn(L.foot));
+            P.seg(X(lerpv(knee, ft, 0.28f)), X(lerpv(knee, ft, 0.38f)), t(B.shinTh * 1.22f), tn({140, 100, 64, 255}));
+          });
+          break;
+        case Hero::Ganondorf:
+          P.deco([&] {
+            P.seg(X(lerpv(knee, ft, 0.15f)), X(ft), t(B.shinTh * 1.1f), tn(shade(L.shin, 1.15f)));
+            P.circle(X(knee), t(0.03f), tn(L.trim));
+          });
+          break;
+        case Hero::Kratos:
+          P.deco([&] {
+            for (int i = 0; i < 3; ++i)
+              P.seg(X(lerpv(knee, ft, 0.22f + i * 0.22f)), X(lerpv(knee, ft, 0.3f + i * 0.22f)), t(B.shinTh * 1.12f),
+                    tn(shade(L.shin, 1.25f)));
+          });
+          break;
+        case Hero::Ichigo: case Hero::Byakuya:  // hakama flaring at the bottom
+          P.deco([&] { P.seg(X(lerpv(knee, ft, 0.55f)), X(lerpv(knee, ft, 0.8f)), t(B.shinTh * 1.18f), tn(L.shin)); });
+          break;
+        default: break;
+      }
+      foot(ft, tn(L.foot), hero == Hero::Ganondorf || hero == Hero::Kratos ? 1.05f : 1.0f);
+    });
+  }
+
+  void arm(bool front) {
+    const Vec2 sh = front ? R.shF : R.shB, el = front ? R.elbowF : R.elbowB, hd = front ? R.handF : R.handB;
+    auto tn = [&](Color c) { return front ? c : backTone(c); };
+    group([&] {
+      Color upper = L.arm, lower = front ? L.fore : L.foreB, hand = front ? L.hand : L.handB;
+      if (hero == Hero::Link && !front) lower = L.arm;
+      limb(sh, el, hd, B.arm, B.fore, tn(upper), tn(lower));
+      switch (hero) {
+        case Hero::Asta:  // wrapped forearms
+          P.deco([&] { P.seg(X(lerpv(el, hd, 0.35f)), X(lerpv(el, hd, 0.8f)), t(B.fore * 1.06f), tn({226, 218, 200, 255})); });
+          if (P.details())
+            for (int i = 0; i < 3; ++i)
+              DrawLineEx(X(lerpv(el, hd, 0.42f + i * 0.13f)), X(lerpv(el, hd, 0.48f + i * 0.13f) + Vec2{0, 0.012f * H}),
+                         t(0.006f) + 0.5f, P.fill({150, 140, 124, 255}));
+          break;
+        case Hero::Ichigo: case Hero::Byakuya: case Hero::Sukuna:
+          sleeveFlap(el, hd, hero == Hero::Sukuna ? 0.11f : 0.09f, tn(upper));
+          break;
+        case Hero::Link:
+          if (!front) P.deco([&] { P.seg(X(lerpv(el, hd, 0.55f)), X(lerpv(el, hd, 0.9f)), t(B.fore * 1.1f), tn({112, 78, 52, 255})); });
+          break;
+        case Hero::Ganondorf:  // gauntlets, pauldron
+          P.deco([&] {
+            P.seg(X(lerpv(el, hd, 0.3f)), X(lerpv(el, hd, 0.85f)), t(B.fore * 1.12f), tn(shade(L.fore, 1.2f)));
+            P.seg(X(lerpv(el, hd, 0.28f)), X(lerpv(el, hd, 0.36f)), t(B.fore * 1.2f), tn(L.trim));
+          });
+          P.ellipse(X(sh + rl({0.0f, -0.01f})), t(0.075f), t(0.062f), tn(L.top));
+          P.deco([&] { P.seg(X(sh + rl({-0.06f, 0.02f})), X(sh + rl({0.06f, 0.025f})), t(0.016f), tn(L.trim)); });
+          break;
+        case Hero::Kratos:  // bracers
+          P.deco([&] {
+            P.seg(X(lerpv(el, hd, 0.25f)), X(lerpv(el, hd, 0.82f)), t(B.fore * 1.1f), tn(L.fore));
+            P.seg(X(lerpv(el, hd, 0.45f)), X(lerpv(el, hd, 0.55f)), t(B.fore * 1.16f), tn({160, 150, 140, 255}));
+          });
+          break;
+        case Hero::Gojo:
+          P.deco([&] { P.seg(X(lerpv(el, hd, 0.84f)), X(lerpv(el, hd, 0.92f)), t(B.fore * 1.15f), tn(shade(L.top, 0.8f))); });
+          break;
+        default: break;
+      }
+      P.circle(X(hd), t(B.hand), tn(hand));
+      if (hero == Hero::Sukuna && P.details()) {  // black bands round the wrists
+        const bool hot = has(WeaponVisual::CursedFinger);
+        for (int i = 0; i < 2; ++i)
+          DrawLineEx(X(lerpv(el, hd, 0.8f + i * 0.08f) + Vec2{0, -0.025f * H}), X(lerpv(el, hd, 0.8f + i * 0.08f) + Vec2{0, 0.025f * H}),
+                     t(0.012f), P.fill(hot ? Color{230, 40, 50, 255} : Color{26, 20, 24, 255}));
+      }
+      if (hero == Hero::Link && front && P.details() && !P.flat) {  // Ultrahand: glowing Zonai lines
+        P.glowLine(X(lerpv(el, hd, 0.15f)), X(lerpv(el, hd, 0.55f)), 1.3f * s, 0.9f, kUltraGlow);
+        P.glowLine(X(lerpv(el, hd, 0.55f) + Vec2{0, -0.012f * H}), X(lerpv(el, hd, 0.85f) + Vec2{0, 0.008f * H}), 1.3f * s, 0.9f,
+                   kUltraGlow);
+        P.glowDot(X(lerpv(el, hd, 0.55f)), 1.4f * s, 1.0f, kUltraGlow);
+        P.glowDot(X(hd), 1.6f * s, 0.8f, kUltraGlow);
+      }
+    });
+  }
+
+  // ---- torso ---------------------------------------------------------------------------------------
+  void torso() {
+    group([&] {
+      const Vec2 top = R.neck + rl({0.0f, 0.03f});
+      P.seg(X(R.hips), X(R.chest), t(B.waist), L.top);
+      P.seg(X(R.chest), X(top), t(B.chest), L.top);
+      const Vec2 belt0 = R.hips + rl({-B.waist * 0.5f, -0.02f}), belt1 = R.hips + rl({B.waist * 0.5f, -0.02f});
+      switch (hero) {
+        case Hero::Asta:
+          P.deco([&] { P.seg(X(belt0), X(belt1), t(0.04f), L.belt); });
+          P.deco([&] { P.circle(X(R.neck + rl({0.035f, 0.035f})), t(0.022f), L.trim); });  // cloak clasp
+          break;
+        case Hero::Yuno:
+          P.deco([&] {
+            P.ellipse(X(R.neck + rl({-0.01f, 0.05f})), t(0.12f), t(0.075f), L.cloth);  // mantle
+            P.seg(X(belt0), X(belt1), t(0.03f), L.trim);
+            P.circle(X(R.neck + rl({0.05f, 0.04f})), t(0.022f), L.trim);
+          });
+          if (P.details())
+            DrawLineEx(X(R.neck + rl({-0.12f, 0.1f})), X(R.neck + rl({0.1f, 0.1f})), t(0.014f), P.fill(L.trim));
+          break;
+        case Hero::Ichigo:
+          P.deco([&] {
+            P.seg(X(R.neck + rl({-0.03f, 0.01f})), X(R.neck + rl({0.06f, 0.035f})), t(0.03f), L.cloth);  // white collar
+            P.seg(X(R.neck + rl({0.06f, 0.035f})), X(R.chest + rl({0.08f, 0.04f})), t(0.03f), L.cloth);
+            P.seg(X(R.shB + rl({-0.02f, -0.01f})), X(R.hips + rl({0.08f, -0.05f})), t(0.03f), L.accent);  // red strap
+            P.seg(X(belt0), X(belt1), t(0.04f), L.cloth);  // obi
+          });
+          break;
+        case Hero::Byakuya:
+          P.deco([&] {
+            P.tri(X(R.neck + rl({0.0f, 0.02f})), X(R.neck + rl({0.09f, 0.03f})), X(R.chest + rl({0.07f, 0.06f})), L.arm);  // kimono V
+            P.seg(X(R.neck + rl({0.04f, 0.025f})), X(R.chest + rl({0.07f, 0.03f})), t(0.016f), {240, 240, 244, 255});
+            P.seg(X(belt0), X(belt1), t(0.035f), L.arm);
+          });
+          break;
+        case Hero::Link:
+          P.deco([&] {
+            P.seg(X(R.shF + rl({0.01f, -0.01f})), X(R.hips + rl({-0.07f, -0.04f})), t(0.024f), L.belt);  // strap
+            P.seg(X(belt0), X(belt1), t(0.042f), L.belt);
+            P.circle(X(R.hips + rl({0.05f, -0.02f})), t(0.02f), L.trim);
+          });
+          break;
+        case Hero::Ganondorf:
+          P.deco([&] {
+            P.ellipse(X(R.chest + rl({0.04f, -0.01f})), t(0.12f), t(0.1f), shade(L.top, 1.18f));  // chest plate
+            P.seg(X(belt0), X(belt1), t(0.05f), L.trim);
+            P.circle(X(R.hips + rl({0.06f, -0.02f})), t(0.028f), {200, 40, 56, 255});
+          });
+          if (P.details()) {
+            DrawLineEx(X(R.chest + rl({-0.06f, -0.09f})), X(R.chest + rl({0.13f, -0.06f})), t(0.012f), P.fill(L.trim));
+            DrawLineEx(X(R.chest + rl({0.13f, -0.06f})), X(R.chest + rl({0.12f, 0.06f})), t(0.012f), P.fill(L.trim));
+          }
+          break;
+        case Hero::Kratos:
+          if (P.details()) {  // muscles, the red stripe down the back, a leather strap
+            const Color m = P.fill(shadowTone(L.top));
+            DrawLineEx(X(R.chest + rl({0.02f, 0.03f})), X(R.chest + rl({0.14f, 0.05f})), t(0.01f), m);
+            DrawLineEx(X(R.chest + rl({0.06f, 0.08f})), X(R.hips + rl({0.08f, -0.08f})), t(0.008f), m);
+            DrawLineEx(X(R.neck + rl({-0.1f, 0.06f})), X(R.hips + rl({-0.08f, -0.04f})), t(0.04f), P.fill(L.accent));
+          }
+          P.deco([&] {
+            P.seg(X(R.shB + rl({0.0f, -0.01f})), X(R.hips + rl({0.1f, -0.06f})), t(0.03f), L.belt);
+            P.seg(X(belt0), X(belt1), t(0.05f), L.belt);
+            P.circle(X(R.hips + rl({0.07f, -0.02f})), t(0.024f), L.trim);
+          });
+          break;
+        case Hero::Gojo:
+          P.deco([&] { P.seg(X(R.neck + rl({0.0f, -0.01f})), X(lerpv(R.neck, R.head, 0.55f)), t(B.chest * 0.5f), L.top); });  // collar
+          if (P.details()) {
+            DrawLineEx(X(R.neck + rl({0.07f, 0.04f})), X(R.hips + rl({0.06f, -0.02f})), t(0.008f), P.fill(shade(L.top, 0.7f)));
+            disc(X(R.neck + rl({0.06f, 0.02f})), t(0.012f), P.fill({200, 180, 120, 255}));
+          }
+          break;
+        case Hero::Sukuna:
+          P.deco([&] {
+            P.tri(X(R.neck + rl({0.02f, 0.02f})), X(R.neck + rl({0.1f, 0.03f})), X(R.chest + rl({0.07f, 0.04f})), L.skin);  // V
+            P.seg(X(belt0), X(belt1), t(0.05f), L.cloth);  // sash
+            P.seg(X(R.neck + rl({-0.06f, 0.0f})), X(R.neck + rl({0.06f, 0.02f})), t(0.05f), L.cloth);  // scarf
+          });
+          break;
+        default: break;
+      }
+    });
+  }
+
+  // Garments over the hips, after the legs.
+  void skirt() {
+    switch (hero) {
+      case Hero::Link:
+        group([&] {
+          skirt(B.waist * 0.52f, 0.17f, 0.02f, L.top);
+          if (P.details()) hemLine(B.waist * 0.52f, 0.17f, 0.02f, mixColor(L.top, WHITE, 0.35f));
+        });
+        break;
+      case Hero::Kratos:
+        group([&] {
+          skirt(B.waist * 0.55f, 0.18f, 0.03f, L.cloth);
+          if (P.details()) {
+            hemLine(B.waist * 0.55f, 0.18f, 0.03f, L.trim);
+            DrawLineEx(X(R.hips + rl({0.02f, 0.0f})), X(lerpv(R.hips, R.kneeF, 0.75f)), t(0.008f), P.fill(shadowTone(L.cloth)));
+          }
+        });
+        break;
+      case Hero::Gojo:
+        group([&] { skirt(B.waist * 0.55f, 0.13f, 0.03f, L.top); });
+        break;
+      case Hero::Sukuna:
+        group([&] {
+          skirt(B.waist * 0.55f, 0.27f, 0.05f, L.top);
+          P.deco([&] {
+            Vec2 q[3];
+            chain(R.hips + rl({0.05f, -0.02f}), {0.15f, 1.0f}, 0.16f * H, 2, pose, time, 0.4f, 0.8f, 0.1f, q);
+            P.seg(X(q[0]), X(q[1]), t(0.03f), L.cloth);
+            P.seg(X(q[1]), X(q[2]), t(0.026f), L.cloth);
+          });
+        });
+        break;
+      case Hero::Byakuya:
+        group([&] { skirt(B.waist * 0.6f, 0.26f, 0.04f, L.cloth, 0.02f); });
+        break;
+      case Hero::Ganondorf:
+        group([&] {
+          skirt(B.waist * 0.55f, 0.17f, 0.04f, shade(L.top, 1.1f));
+          if (P.details()) hemLine(B.waist * 0.55f, 0.17f, 0.04f, L.trim);
+        });
+        break;
+      case Hero::Yuno:
+        group([&] { skirt(B.waist * 0.5f, 0.1f, 0.02f, L.top); });
+        break;
+      default: break;
+    }
+  }
+
+  // ---- weapons and energy -------------------------------------------------------------------
+  WeaponStyle wstyle() const {
+    WeaponStyle st;
+    st.side = X.facing;
+    st.ghost = P.ghost;
+    st.tint = P.flashCol;
+    return st;
+  }
+  void frontWeaponDraw() {
+    const WeaponVisual v = frontWeapon(d, pose);
+    if (v == WeaponVisual::None) return;
+    const float len = frontWeaponLength(d, pose);
+    const float sc = len / std::max(1.0f, weaponVisualLength(v)) * s;
+    Vec2 dir = pose.weaponDir.norm();
+    Vec2 wd = W(X(R.handF + dir * 10.0f)) - W(X(R.handF));
+    WeaponStyle st = wstyle();
+    st.single = true;
+    if (v == pose.held) {
+      st.glow = 1.0f;
+      st.fx = pose.heldFx;
+    }
+    drawWeaponStyled(v, W(X(R.handF)), wd.norm(), sc, P.alpha, time, st);
+    if (v == WeaponVisual::BladesOfChaos) {  // the second blade in the other hand
+      Vec2 wb = W(X(R.handB + rotate(dir, 0.5f) * 10.0f)) - W(X(R.handB));
+      drawWeaponStyled(v, W(X(R.handB)), wb.norm(), sc, P.alpha, time, st);
+    }
+  }
+  // Shield / bow carried on the back arm (drawn over the torso when the arm is held forward).
+  void backArmGear() {
+    const Vec2 hb = R.handB, eb = R.elbowB;
+    WeaponStyle st = wstyle();
+    if (pose.bow >= 0.0f || has(WeaponVisual::BowOfLight)) {
+      Vec2 aim = pose.bow >= 0.0f ? (R.handB - R.handF).norm() : Vec2{1.0f, 0.15f}.norm();
+      if (aim.len2() < 0.5f) aim = {1, 0};
+      Vec2 wd = (W(X(hb + aim * 10.0f)) - W(X(hb))).norm();
+      const float sc = s * H / 100.0f;
+      st.pull = std::max(0.0f, pose.bow);
+      if (has(WeaponVisual::BowOfLight)) {
+        st.glow = 0.6f;
+        st.fx = HitFx::Light;
+      } else {
+        st.variant = hero == Hero::Sukuna ? 2 : 1;
+      }
+      drawWeaponStyled(WeaponVisual::BowOfLight, W(X(hb)) - wd * (20.0f * sc), wd, sc, P.alpha, time, st);
+      return;
+    }
+    if (d.baseWeapon == WeaponVisual::ShieldAndSword) {
+      Vec2 c = lerpv(eb, hb, 0.62f);
+      drawShieldVisual(false, W(X(c)), 0.15f * H * s, 1.0f, {1, 0}, P.alpha, time, st);
+    } else if (d.baseWeapon == WeaponVisual::GuardianShield) {
+      Vec2 c = lerpv(eb, hb, 0.55f);
+      Vec2 fold = W(X(eb)) - W(X(hb));
+      drawShieldVisual(true, W(X(c)), 0.17f * H * s, pose.shieldOpen, fold, P.alpha, time, st);
+    }
+  }
+  bool gearInFront() const {
+    if (pose.bow >= 0.0f) return true;
+    if (d.baseWeapon == WeaponVisual::GuardianShield) return pose.shieldOpen > 0.3f;
+    return R.handB.x > 0.06f * H;
+  }
+
+  void energy() {
+    if (P.ghost || P.flat) return;
+    const float k = P.alpha;
+    // Ganondorf: red-black malice curling up from the hands
+    if (hero == Hero::Ganondorf) {
+      for (int h = 0; h < 2; ++h) {
+        const Vec2 c = h ? R.handB : R.handF;
+        for (int i = 0; i < 2; ++i) {
+          Vec2 prev = c;
+          const float ph = time * 4.0f + i * 2.4f + h;
+          for (int j = 1; j <= 5; ++j) {
+            float u = j / 5.0f;
+            Vec2 q = c + Vec2{std::sin(ph + u * 5.0f) * 0.04f * H * u + (i ? 0.02f : -0.02f) * H, -0.17f * H * u};
+            DrawLineEx(X(prev), X(q), t(0.022f * (1.0f - u * 0.7f)), withAlpha({110, 8, 30, 255}, 0.55f * k));
+            DrawLineEx(X(prev), X(q), t(0.008f * (1.0f - u * 0.6f)) + 0.5f, withAlpha({255, 90, 110, 255}, 0.75f * k));
+            prev = q;
+          }
+        }
+      }
+    }
+    // Yuno: wind wisps circling the legs
+    if (hero == Hero::Yuno) {
+      for (int i = 0; i < 2; ++i) {
+        const float ph = time * (2.4f + i * 0.7f) + i * 2.0f;
+        const Vec2 c = R.hips + Vec2{0.0f, (0.18f + i * 0.12f) * H};
+        Vec2 prev{};
+        for (int j = 0; j <= 7; ++j) {
+          float a = ph + j * 0.32f;
+          Vec2 q = c + Vec2{std::cos(a) * 0.22f * H, std::sin(a) * 0.05f * H};
+          if (j > 0) DrawLineEx(X(prev), X(q), t(0.008f) + 0.5f, withAlpha({200, 255, 220, 255}, 0.55f * k * (j / 7.0f)));
+          prev = q;
+        }
+      }
+    }
+    // Hands charged with energy (casts, signs, a raised hand)
+    if (pose.charge > 0.01f) {
+      const Color c = hitFxColor(pose.chargeFx), g = hitFxGlow(pose.chargeFx);
+      const Vec2 at = pose.charge > 0.0f && (R.handF - R.handB).len() < 0.12f * H ? lerpv(R.handF, R.handB, 0.5f) : R.handF;
+      const float r = (0.05f + 0.07f * pose.charge) * H * s * (1.0f + 0.08f * std::sin(time * 20.0f));
+      disc(X(at), r * 2.0f, withAlpha(c, 0.18f * k * pose.charge));
+      disc(X(at), r, withAlpha(g, 0.55f * k * pose.charge));
+      disc(X(at), r * 0.45f, withAlpha(WHITE, 0.8f * k * pose.charge));
+    }
+    // Gojo: Hollow Purple above the front hand
+    if (has(WeaponVisual::HollowPurple)) {
+      const float sc = s * H / 100.0f * 0.8f;
+      Vec2 c = W(X(R.handF + Vec2{0.0f, -0.12f * H}));
+      drawWeaponStyled(WeaponVisual::HollowPurple, c - Vec2{15.0f * sc, 0}, {1, 0}, sc, k, time, wstyle());
+    }
+    // Six Eyes: cursed energy shimmering round the head
+    if (has(WeaponVisual::SixEyes)) {
+      const Vec2 c = R.head;
+      for (int i = 0; i < 5; ++i) {
+        float a = time * 1.5f + i * 1.256f;
+        Vec2 q = c + Vec2{std::cos(a) * 1.5f * R.hr, std::sin(a) * 1.2f * R.hr};
+        disc(X(q), t(0.008f) + 0.6f, withAlpha({160, 220, 255, 255}, 0.7f * k));
+      }
+    }
+    // Sukuna with a finger: red aura flickering
+    if (has(WeaponVisual::CursedFinger)) {
+      for (int i = 0; i < 3; ++i) {
+        float ph = std::fmod(time * 1.4f + i * 0.33f, 1.0f);
+        Vec2 q = R.chest + Vec2{(i - 1) * 0.12f * H, -ph * 0.4f * H};
+        disc(X(q), t(0.02f * (1.0f - ph)) + 0.5f, withAlpha({230, 40, 50, 255}, 0.6f * (1.0f - ph) * k));
+      }
+    }
+  }
+
+  // Yuno's grimoire floating by his shoulder.
+  void grimoire() {
+    if (hero != Hero::Yuno) return;
+    const bool big = has(WeaponVisual::Grimoire);
+    const float bob = std::sin(time * 2.2f) * 0.025f * H;
+    const Vec2 c = R.neck + Vec2{big ? -0.24f * H : -0.22f * H, -0.12f * H + bob};
+    const float sc = s * H / 100.0f * (big ? 0.95f : 0.62f);
+    WeaponStyle st = wstyle();
+    st.open = big ? 1.0f : 0.0f;
+    Vec2 dir = rotate(Vec2{1, 0}, std::sin(time * 1.3f) * 0.15f - 0.1f);
+    if (X.facing < 0) dir.x = -dir.x;
+    drawWeaponStyled(WeaponVisual::Grimoire, W(X(c)) - dir * (15.0f * sc), dir, sc, P.alpha, time, st);
+  }
+
+  // Props: bomb / spear in the throwing hand, an arrow on the string.
+  void props() {
+    if (pose.prop == 1) {  // Zonai bomb
+      Vec2 c = R.handF + Vec2{0.0f, -0.04f * H};
+      group([&] {
+        P.circle(X(c), t(0.05f), {70, 140, 160, 255});
+        P.glowDot(X(c), 1.6f * s, 1.2f);
+      });
+    }
+    if (pose.bow > 0.0f) {  // arrow on the string
+      Vec2 a = R.handF, b = R.handB + (R.handB - R.handF).norm() * (0.08f * H);
+      Color sh = hero == Hero::Sukuna ? Color{255, 150, 50, 255} : Color{150, 110, 70, 255};
+      DrawLineEx(X(a), X(b), t(0.012f) + 0.6f, P.fill(sh));
+      Vec2 dir = (b - a).norm(), n{-dir.y, dir.x};
+      triangle(X(b + dir * (0.04f * H)), X(b + n * (0.018f * H)), X(b - n * (0.018f * H)),
+               P.fill(hero == Hero::Sukuna ? Color{255, 220, 120, 255} : Color{200, 206, 214, 255}));
+      if (hero == Hero::Sukuna) {
+        for (int i = 0; i < 3; ++i)
+          disc(X(lerpv(a, b, 0.4f + i * 0.25f) + Vec2{0, std::sin(time * 20 + i) * 0.01f * H}), t(0.02f),
+               withAlpha({255, 140, 40, 255}, 0.4f * P.alpha));
+      }
+    }
+  }
+
+  void draw() {
+    backCloth();
+    backHair();
+    grimoire();
+    leg(false);
+    arm(false);
+    const bool gearFront = gearInFront();
+    if (!gearFront) backArmGear();
+    torso();
+    leg(true);
+    skirt();
+    if (gearFront) backArmGear();
+    head();
+    frontHair();
+    props();
+    frontWeaponDraw();
+    arm(true);
+    energy();
+  }
+};
+
+// ---- Bust (portraits) ---------------------------------------------------------------------------------
+void drawBust(Body& b, float R) {
+  // R: portrait radius in local units. Shoulders cut along the bottom of the medallion.
+  Painter& P = b.P;
+  const Xf& X = b.X;
+  const Look& L = b.L;
+  const float H = b.H;
+  Vector2 q[11];
+  const Vec2 sh[6] = {{-0.86f, 0.5f}, {-0.6f, 0.3f}, {-0.24f, 0.2f}, {0.3f, 0.2f}, {0.64f, 0.3f}, {0.86f, 0.5f}};
+  auto bustPoly = [&](Color c) {
+    int n = 0;
+    for (auto p : sh) q[n++] = X(p * R);
+    for (int i = 1; i <= 4; ++i) {
+      float a = deg2rad(36.0f + i * 108.0f / 5.0f);
+      q[n++] = X(Vec2{std::cos(a), std::sin(a)} * R);
+    }
+    P.poly(q, n, c);
+  };
+  Color top = L.top;
+  if (b.hero == Hero::Kratos) top = L.skin;
+  b.group([&] {
+    bustPoly(top);
+    if (!P.details()) return;
+    auto ln = [&](Vec2 a, Vec2 c, float w, Color k) { DrawLineEx(X(a * R), X(c * R), w * R * X.scale, P.fill(k)); };
+    switch (b.hero) {
+      case Hero::Asta:
+        ln({-0.8f, 0.45f}, {-0.3f, 0.24f}, 0.22f, L.cloth);
+        disc(X(Vec2{0.18f, 0.32f} * R), 0.07f * R * X.scale, P.fill(L.trim));
+        break;
+      case Hero::Yuno:
+        ln({-0.82f, 0.48f}, {-0.2f, 0.24f}, 0.16f, L.cloth);
+        ln({0.82f, 0.48f}, {0.25f, 0.24f}, 0.16f, L.cloth);
+        ln({-0.7f, 0.56f}, {0.7f, 0.56f}, 0.05f, L.trim);
+        break;
+      case Hero::Ichigo:
+        ln({-0.2f, 0.22f}, {0.12f, 0.6f}, 0.1f, L.cloth);
+        ln({0.3f, 0.22f}, {0.12f, 0.6f}, 0.1f, L.cloth);
+        ln({-0.6f, 0.3f}, {0.5f, 0.9f}, 0.09f, L.accent);
+        break;
+      case Hero::Byakuya:
+        ln({-0.2f, 0.22f}, {0.05f, 0.65f}, 0.12f, L.arm);
+        ln({0.3f, 0.22f}, {0.05f, 0.65f}, 0.12f, L.arm);
+        ln({-0.5f, 0.24f}, {0.5f, 0.26f}, 0.16f, L.trim);
+        break;
+      case Hero::Link:
+        ln({0.55f, 0.28f}, {-0.3f, 0.95f}, 0.08f, L.belt);
+        ln({-0.3f, 0.22f}, {0.35f, 0.22f}, 0.07f, mixColor(L.top, WHITE, 0.3f));
+        break;
+      case Hero::Ganondorf:
+        disc(X(Vec2{-0.62f, 0.4f} * R), 0.24f * R * X.scale, P.fill(shade(L.top, 1.2f)));
+        disc(X(Vec2{0.62f, 0.4f} * R), 0.24f * R * X.scale, P.fill(shade(L.top, 1.2f)));
+        ln({-0.82f, 0.5f}, {-0.42f, 0.32f}, 0.05f, L.trim);
+        ln({0.42f, 0.32f}, {0.82f, 0.5f}, 0.05f, L.trim);
+        ln({-0.25f, 0.6f}, {0.25f, 0.6f}, 0.04f, L.trim);
+        break;
+      case Hero::Kratos:
+        ln({0.55f, 0.25f}, {-0.25f, 0.95f}, 0.1f, L.belt);
+        ln({-0.7f, 0.36f}, {-0.6f, 0.9f}, 0.12f, L.accent);
+        break;
+      case Hero::Gojo:
+        ln({-0.3f, 0.24f}, {0.3f, 0.24f}, 0.3f, L.top);
+        disc(X(Vec2{0.18f, 0.3f} * R), 0.05f * R * X.scale, P.fill({200, 180, 120, 255}));
+        break;
+      case Hero::Sukuna:
+        ln({-0.05f, 0.22f}, {0.12f, 0.55f}, 0.14f, L.skin);
+        ln({-0.5f, 0.24f}, {0.5f, 0.26f}, 0.16f, L.cloth);
+        break;
+      default: break;
+    }
+  });
+  (void)H;
 }
 }  // namespace
 
 void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 feet, int facing, float scale,
                    float alpha, Color flashColor, float flash, float time) {
-  const Palette& pal = d.palettes[palette & 1];
   const float H = d.height;
   const Xf X = xform(d, pose, feet, facing, scale);
 
   Painter P;
-  P.ow = std::max(1.5f, 3.0f * scale * (H / 100.0f));
+  P.ow = std::max(1.5f, 3.0f * scale * std::min(1.15f, H / 100.0f));
   P.alpha = alpha;
   P.flashCol = flashColor;
   P.flash = clampf(flash, 0.0f, 1.0f);
@@ -395,261 +1478,58 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   P.ghost = pose.ghost;
   P.glow = 0.6f + 0.22f * std::sin(time * 2.6f) + pose.glow;
 
-  if (d.style == BodyStyle::Puff) {
-    drawPuff(P, X, d, pal, pose, time);
-    return;
-  }
-
-  const Dims dm = dimsFor(d.style);
+  const Build B = buildFor(d.hero);
   const Rig R = solveRig(d, pose);
-  const float hr = R.hr;
-  const Vec2 hips = R.hips, neck = R.neck, head = R.head;
-  const float s = scale;
+  const Look L = lookFor(d, palette);
+  Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
+  b.draw();
+}
 
-  Color primary = earthy(pal.primary), secondary = earthy(pal.secondary), accent = earthy(pal.accent),
-        skin = earthy(pal.skin);
-  Color torsoC = primary, armC = primary, handC = skin, legC = secondary, footC{100, 64, 42, 255}, headC = skin;
-  Color hair = shade(primary, 0.45f);
-  switch (d.style) {
-    case BodyStyle::Brawler: handC = {244, 236, 218, 255}; break;  // ivory gloves
-    case BodyStyle::Speedster: armC = handC = legC = footC = headC = primary; break;
-    case BodyStyle::Brute: armC = handC = legC = skin; footC = secondary; break;
-    case BodyStyle::Knight: torsoC = secondary; legC = shade(primary, 0.6f); footC = secondary; break;
-    case BodyStyle::Ninja: armC = handC = legC = footC = secondary; headC = primary; break;
-    default: break;
-  }
-
-  auto group = [&](const auto& fn) {
-    for (int p = kLine; p <= kLit; ++p) {
-      if ((p == kRim || p == kShadow) && !P.shaded()) continue;
-      P.pass = p;
-      fn();
-    }
-  };
-  group([&] {
-    // --- Back accessories (secondary motion) ----------------------------------
-    if (d.style == BodyStyle::Knight) {  // cape
-      Vec2 c0 = neck + Vec2{-0.03f * H, 0.0f}, c1 = neck + Vec2{0.02f * H, 0.02f * H};
-      Vec2 q[3];
-      chain(c0, {-0.75f, 1.0f}, 0.5f * H, 2, pose, time, 0.35f, 0.9f, 0.05f, q);
-      Vec2 c3 = hips + Vec2{-0.06f * H, 0.34f * H} + pose.flow * (0.05f * H);
-      Color cape = shade(primary, 0.78f);
-      P.tri(X(c0), X(q[1]), X(c3), cape, false);
-      P.tri(X(q[1]), X(q[2]), X(c3), cape, false);
-      P.tri(X(c0), X(c1), X(c3), cape, false);
-      if (P.details()) {
-        DrawLineEx(X(q[2]), X(c3), 2.6f * s, P.fill(kGold));
-        DrawLineEx(X(lerpv(c0, c1, 0.5f)), X(lerpv(q[2], c3, 0.4f)), 1.6f * s, P.fill(shadowTone(cape)));
-      }
-    }
-    if (d.style == BodyStyle::Speedster) {  // lightning tail: stiff, swung by the drag, tip lagging
-      auto swing = [&](Vec2 drag) {
-        Vec2 rest{-0.52f, -0.84f};
-        float a = std::atan2(rest.y + drag.y * 0.5f, rest.x + drag.x * 0.5f) - std::atan2(rest.y, rest.x);
-        return clampf(wrapAngle(a), -0.7f, 0.7f) + std::sin(time * 3.0f) * 0.04f;
-      };
-      const float a0 = swing(pose.flow), a1 = swing(pose.flowTip);
-      Vec2 t0 = hips + Vec2{-0.1f * H, 0.0f};
-      Vec2 t1 = t0 + rotate(Vec2{-0.14f, -0.12f} * H, a0);
-      Vec2 t2 = t1 + rotate(Vec2{0.06f, -0.1f} * H, lerpf(a0, a1, 0.5f));
-      Vec2 t3 = t2 + rotate(Vec2{-0.18f, -0.2f} * H, a1);
-      P.seg(X(t0), X(t1), 0.06f * H * s, primary);
-      P.seg(X(t1), X(t2), 0.07f * H * s, primary);
-      P.seg(X(t2), X(t3), 0.1f * H * s, primary);
-      auto tipPt = [&](Vec2 o) { return X(t3 + rotate(o * H, a1)); };
-      P.tri(tipPt({0.02f, 0.04f}), tipPt({-0.08f, -0.08f}), tipPt({0.06f, -0.03f}), accent);
-      P.glowDot(tipPt({-0.01f, -0.02f}), 1.8f * s, 0.8f);
-    }
-    if (d.style == BodyStyle::Ninja) {  // scarf
-      Vec2 q[4];
-      chain(neck + Vec2{-0.02f * H, 0.01f * H}, {-1.0f, 0.1f}, 0.36f * H, 3, pose, time, 0.3f, 1.0f, 0.2f, q);
-      for (int i = 0; i < 3; ++i) P.seg(X(q[i]), X(q[i + 1]), lerpf(0.062f, 0.042f, i / 2.0f) * H * s, accent);
-    }
-    if (d.style == BodyStyle::Knight) {  // hair + ponytail behind the head
-      P.circle(X(head + Vec2{-0.15f * hr, -0.2f * hr}), hr * 1.02f * s, hair);
-      Vec2 q[3];
-      chain(head + Vec2{-0.7f * hr, -0.5f * hr}, {-0.75f, 1.0f}, 1.7f * hr, 2, pose, time, 0.5f, 0.8f, 0.08f, q);
-      P.seg(X(q[0]), X(q[1]), 0.08f * H * s, hair);
-      P.seg(X(q[1]), X(q[2]), 0.068f * H * s, hair);
-    }
-  });
-  group([&] {
-    // --- Back limbs -----------------------------------------------------------
-    P.seg(X(R.hipB), X(R.kneeB), dm.legTh * H * s, backTone(legC));
-    P.seg(X(R.kneeB), X(R.footB), dm.legTh * H * s, backTone(legC));
-    P.ellipse(X(R.footB + Vec2{0.02f * H, -0.01f * H}), dm.footR * 1.4f * H * s, dm.footR * H * s, backTone(footC));
-  });
-  group([&] {
-    P.seg(X(R.shB), X(R.elbowB), dm.armTh * H * s, backTone(armC));
-    P.seg(X(R.elbowB), X(R.handB), dm.armTh * H * s, backTone(armC));
-    if (d.style == BodyStyle::Brawler)
-      P.deco([&] {
-        P.seg(X(lerpv(R.elbowB, R.handB, 0.7f)), X(lerpv(R.elbowB, R.handB, 0.82f)), dm.armTh * 1.2f * H * s,
-              backTone(kGold));
-      });
-    P.circle(X(R.handB), dm.handR * H * s, backTone(handC));
-  });
-  group([&] {
-    // --- Torso ------------------------------------------------------------------
-    P.seg(X(hips), X(neck + rotate({0.0f, 0.03f * H}, pose.lean)), dm.torsoTh * H * s, torsoC);
-    if (d.style == BodyStyle::Brute) {
-      for (int i = 0; i < 3; ++i) {  // back spikes
-        Vec2 base = lerpv(neck, hips, 0.15f + i * 0.3f) + rotate({-0.15f * H, 0.0f}, pose.lean);
-        P.tri(X(base + Vec2{0.0f, -0.05f * H}), X(base + Vec2{0.0f, 0.05f * H}), X(base + Vec2{-0.12f * H, -0.04f * H}), accent);
-      }
-    }
-    const Vec2 mid = lerpv(hips, neck, 0.45f);
-    if (d.style == BodyStyle::Brute) {  // belly plate with a glowing ancient glyph
-      Vec2 pc = mid + rotate({0.06f * H, 0.02f * H}, pose.lean);
-      P.deco([&] { P.ellipse(X(pc), 0.09f * H * s, 0.12f * H * s, accent); });
-      if (P.details() && !P.flat) {
-        Vector2 g = X(pc + Vec2{0.005f * H, 0.0f});
-        float gr = 0.042f * H * s;
-        float k = std::min(1.6f, P.glow);
-        disc(g, gr * 2.2f, withAlpha(P.fill(kZonaiGlow), P.alpha * 0.18f * k));
-        DrawRing(g, gr * 0.72f, gr, 0, 360, 20, withAlpha(P.fill(kZonaiGlow), P.alpha * std::min(1.0f, 0.5f + 0.4f * k)));
-        for (int i = 0; i < 3; ++i) {
-          float a = time * 0.4f + i * 2.094f;
-          P.glowLine({g.x + std::cos(a) * gr * 1.1f, g.y + std::sin(a) * gr * 1.1f},
-                     {g.x + std::cos(a) * gr * 1.9f, g.y + std::sin(a) * gr * 1.9f}, 1.2f * s);
-        }
-        P.glowDot(g, gr * 0.3f);
-      }
-    }
-    if (d.style == BodyStyle::Brawler || d.style == BodyStyle::Knight || d.style == BodyStyle::Ninja) {  // belt
-      Vec2 b0 = hips + Vec2{-0.09f * H, -0.02f * H}, b1 = hips + Vec2{0.09f * H, -0.02f * H};
-      Color belt = d.style == BodyStyle::Brawler ? Color{110, 72, 46, 255} : accent;
-      P.deco([&] { P.seg(X(b0), X(b1), 0.045f * H * s, belt); });
-      if (d.style == BodyStyle::Brawler) P.deco([&] { P.circle(X(hips + Vec2{0.05f * H, -0.02f * H}), 0.03f * H * s, kGold); });
-      if (d.style == BodyStyle::Knight) {
-        const Vec2 c0 = neck + rotate({-0.07f * H, 0.035f * H}, pose.lean);
-        const Vec2 c1 = neck + rotate({0.07f * H, 0.035f * H}, pose.lean);
-        P.deco([&] { P.seg(X(c0), X(c1), 0.03f * H * s, kGold); });  // gold collar
-        P.glowDot(X(hips + Vec2{0.04f * H, -0.02f * H}), 1.6f * s);
-      }
-      if (d.style == BodyStyle::Ninja) P.deco([&] { P.circle(X(hips + Vec2{0.05f * H, -0.02f * H}), 0.022f * H * s, kGold); });
-    }
-  });
-  group([&] {
-    // --- Front leg --------------------------------------------------------------
-    P.seg(X(R.hipF), X(R.kneeF), dm.legTh * H * s, legC);
-    P.seg(X(R.kneeF), X(R.footF), dm.legTh * H * s, legC);
-    P.ellipse(X(R.footF + Vec2{0.02f * H, -0.01f * H}), dm.footR * 1.4f * H * s, dm.footR * H * s, footC);
-  });
-  group([&] {
-    // --- Head -----------------------------------------------------------------
-    if (d.style == BodyStyle::Speedster) {  // ears behind
-      Vec2 e1a = head + polar(-125, hr * 0.8f), e1b = head + polar(-95, hr * 0.8f), e1t = head + Vec2{-0.55f * hr, -2.0f * hr};
-      P.tri(X(e1a), X(e1b), X(e1t), primary);
-      P.tri(X(lerpv(e1a, e1t, 0.65f)), X(lerpv(e1b, e1t, 0.65f)), X(e1t), secondary);
-    }
-    P.circle(X(head), hr * s, headC);
-    if (d.style == BodyStyle::Speedster) {
-      Vec2 e2a = head + polar(-85, hr * 0.8f), e2b = head + polar(-55, hr * 0.8f), e2t = head + Vec2{0.35f * hr, -1.95f * hr};
-      P.tri(X(e2a), X(e2b), X(e2t), primary);
-      P.tri(X(lerpv(e2a, e2t, 0.65f)), X(lerpv(e2b, e2t, 0.65f)), X(e2t), secondary);
-    }
-    if (d.style == BodyStyle::Brawler) {  // flame hair, licking backwards with the motion
-      for (int i = 0; i < 4; ++i) {
-        float a0 = -170.0f + i * 38.0f;
-        Vec2 b0 = head + polar(a0, hr * 0.85f), b1 = head + polar(a0 + 45.0f, hr * 0.85f);
-        Vec2 tip = head + polar(a0 + 10.0f, hr * (1.75f + 0.12f * std::sin(time * 9.0f + i))) + Vec2{-0.3f * hr, 0.0f} +
-                   pose.flowTip * (0.35f * hr * (0.6f + 0.15f * i));
-        P.tri(X(b0), X(b1), X(tip), i % 2 ? accent : primary);
-      }
-    }
-    if (d.style == BodyStyle::Brute) {  // horns
-      Color horn = {232, 220, 190, 255};
-      P.tri(X(head + polar(-150, hr)), X(head + polar(-115, hr)), X(head + Vec2{-1.25f * hr, -1.55f * hr}), horn);
-      P.tri(X(head + polar(-70, hr)), X(head + polar(-35, hr)), X(head + Vec2{1.05f * hr, -1.6f * hr}), horn);
-    }
-    if (P.details()) {
-      if (d.style == BodyStyle::Ninja) {  // eye band of the hood + glyph on the brow
-        fillEllipse(X(head + Vec2{0.42f * hr, -0.08f * hr}), 0.6f * hr * s, 0.3f * hr * s, P.fill(skin));
-        Vector2 gc = X(head + Vec2{0.28f * hr, -0.62f * hr});
-        float gs = 0.13f * hr * s;
-        P.glowLine({gc.x - gs, gc.y}, {gc.x, gc.y - gs}, 1.1f * s);
-        P.glowLine({gc.x, gc.y - gs}, {gc.x + gs, gc.y}, 1.1f * s);
-        P.glowLine({gc.x + gs, gc.y}, {gc.x, gc.y + gs}, 1.1f * s);
-        P.glowLine({gc.x, gc.y + gs}, {gc.x - gs, gc.y}, 1.1f * s);
-      }
-      drawEyes(P, X, head, hr, pose, d.style == BodyStyle::Brute ? Color{200, 50, 34, 255} : Color{70, 52, 44, 255});
-      if (d.style == BodyStyle::Speedster) {  // electric cheeks
-        Vector2 ck = X(head + Vec2{0.55f * hr, 0.45f * hr});
-        disc(ck, 0.34f * hr * s, withAlpha(P.fill(accent), P.alpha * 0.22f));
-        disc(ck, 0.18f * hr * s, P.fill(accent));
-      }
-      if (d.style == BodyStyle::Knight) {  // tiara with a teal gem
-        triangle(X(head + polar(-110, hr * 0.9f)), X(head + polar(-60, hr * 0.9f)), X(head + polar(-80, hr * 1.42f)),
-                 P.fill(kGold));
-        P.glowDot(X(head + polar(-82, hr * 1.06f)), 1.3f * s);
-      }
-      if (d.style == BodyStyle::Brute) {
-        Vector2 m0 = X(head + Vec2{0.55f * hr, 0.5f * hr});
-        triangle(m0, {m0.x + 3 * s * facing, m0.y - 6 * s}, {m0.x + 6 * s * facing, m0.y}, P.fill({246, 238, 220, 255}));
-      }
-      if (d.style != BodyStyle::Ninja && pose.hurt) disc(X(head + Vec2{0.55f * hr, 0.5f * hr}), 0.12f * hr * s, P.fill({64, 24, 30, 255}));
-    }
-  });
-  group([&] {
-    if (d.style == BodyStyle::Ninja) {  // headband tails
-      Vec2 k0 = head + Vec2{-0.85f * hr, -0.3f * hr};
-      Vec2 q[3], r[3];
-      chain(k0, {-0.8f, 0.55f}, 0.65f * hr, 2, pose, time + 0.7f, 0.35f, 0.9f, 0.22f, q);
-      chain(k0, {-1.0f, -0.1f}, 0.75f * hr, 2, pose, time, 0.2f, 1.0f, 0.25f, r);
-      P.seg(X(q[0]), X(q[1]), 0.035f * H * s, accent);
-      P.seg(X(q[1]), X(q[2]), 0.03f * H * s, accent);
-      P.seg(X(r[0]), X(r[1]), 0.032f * H * s, accent);
-      P.seg(X(r[1]), X(r[2]), 0.027f * H * s, accent);
-    }
-  });
-  group([&] {
-    // --- Front arm + weapon ------------------------------------------------------
-    if (pose.weapon && d.weaponLength > 0) {
-      Vec2 dir = pose.weaponDir.norm();
-      Vec2 perp{-dir.y, dir.x};
-      Vec2 tip = R.handF + dir * d.weaponLength;
-      if (d.style == BodyStyle::Knight) {
-        P.seg(X(R.handF), X(tip), 0.035f * H * s, {214, 222, 230, 255});
-        P.seg(X(R.handF - perp * 9.0f), X(R.handF + perp * 9.0f), 0.03f * H * s, kGold);
-        if (P.details() && !P.flat) {
-          DrawLineEx(X(R.handF + dir * 8.0f), X(tip - dir * 4.0f), 1.3f * s, P.fill({250, 252, 255, 255}));
-          P.glowLine(X(R.handF + dir * 10.0f), X(R.handF + dir * (d.weaponLength * 0.55f)), 1.2f * s, 0.8f);
-        }
-        P.glowDot(X(R.handF - dir * 6.0f), 1.5f * s);
-      } else {
-        P.seg(X(R.handF), X(tip), 0.03f * H * s, {74, 70, 78, 255});
-        P.circle(X(R.handF - dir * 6.0f), 0.025f * H * s, accent);
-        P.glowLine(X(R.handF + dir * 5.0f), X(tip - dir * 2.0f), 1.0f * s, 0.7f);
-      }
-    }
-    P.seg(X(R.shF), X(R.elbowF), dm.armTh * H * s, armC);
-    P.seg(X(R.elbowF), X(R.handF), dm.armTh * H * s, armC);
-    if (d.style == BodyStyle::Brawler) {  // gold cuff + ancient glowing veins
-      P.deco([&] {
-        P.seg(X(lerpv(R.elbowF, R.handF, 0.7f)), X(lerpv(R.elbowF, R.handF, 0.82f)), dm.armTh * 1.2f * H * s, kGold);
-      });
-      P.glowLine(X(lerpv(R.elbowF, R.handF, 0.12f)), X(lerpv(R.elbowF, R.handF, 0.6f)), 1.2f * s, 0.8f);
-    }
-    P.circle(X(R.handF), dm.handR * H * s, handC);
-  });
+void drawPortrait(const CharacterDef& d, int palette, Vec2 center, float size, float time) {
+  const float H = d.height;
+  const Build B = buildFor(d.hero);
+  const float hrLocal = B.head * H;
+  const float rad = size * 0.5f;
+  const float scale = rad * 0.4f / hrLocal;
+  Pose pose = restPose(d, time);
+  pose.lean = 0.0f;
+  pose.flow = pose.flowTip = {};
+  Rig R{};
+  R.hr = hrLocal;
+  R.tilt = 0.0f;
+  R.head = {0.0f, 0.0f};
+  R.neck = {0.0f, hrLocal * 1.0f};
+  R.chest = R.neck + Vec2{0.0f, 0.1f * H};
+  R.hips = R.neck + Vec2{0.0f, B.torso * H};
+  R.shF = R.neck + Vec2{0.1f * H, 0.05f * H};
+  R.shB = R.neck + Vec2{-0.1f * H, 0.05f * H};
+  Xf X;
+  X.facing = 1;
+  X.scale = scale;
+  X.rot = 0.0f;
+  X.squash = X.sx = 1.0f;
+  X.center = center + Vec2{0.04f * rad, -0.14f * rad};
+  Painter P;
+  P.ow = std::max(1.0f, size * 0.035f);
+  P.glow = 0.7f;
+  const Look L = lookFor(d, palette);
+  Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
+  b.bust = true;
+  // The bust is laid out around the medallion centre: shift the frame so the shoulders sit low.
+  Xf XB = X;
+  XB.center = center;
+  Body bb{P, XB, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
+  bb.bust = true;
+  b.backHair();
+  drawBust(bb, rad / scale);
+  b.head();
+  b.frontHair();
 }
 
 Vec2 limbWorld(const CharacterDef& d, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb, bool weaponTip) {
   const Xf X = xform(d, pose, feet, facing, scale);
-  Vec2 l;
-  if (d.style == BodyStyle::Puff) {
-    switch (limb) {
-      case Limb::ArmBack: l = stubby(d, pose, pose.handB); break;
-      case Limb::LegFront: l = stubbyFoot(d, pose, pose.footF); break;
-      case Limb::LegBack: l = stubbyFoot(d, pose, pose.footB); break;
-      case Limb::Head: case Limb::Body: case Limb::None: l = puffCenter(d, pose); break;
-      default: l = stubby(d, pose, pose.handF); break;
-    }
-    if (weaponTip) l = stubby(d, pose, pose.handF) + pose.weaponDir.norm() * d.weaponLength;
-    return W(X(l));
-  }
   const Rig R = solveRig(d, pose);
+  Vec2 l;
   switch (limb) {
     case Limb::ArmBack: l = R.handB; break;
     case Limb::LegFront: l = R.footF; break;
@@ -658,6 +1538,6 @@ Vec2 limbWorld(const CharacterDef& d, const Pose& pose, Vec2 feet, int facing, f
     case Limb::Body: case Limb::None: l = lerpv(R.hips, R.neck, 0.5f); break;
     default: l = R.handF; break;
   }
-  if (weaponTip) l = R.handF + pose.weaponDir.norm() * d.weaponLength;
+  if (weaponTip) l = R.handF + pose.weaponDir.norm() * frontWeaponLength(d, pose);
   return W(X(l));
 }
