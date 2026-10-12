@@ -52,7 +52,9 @@ void App::enterScreen(Screen s) {
   if (s == Screen::CharSelect && screen_ != Screen::StageSelect) {  // a fresh visit
     padLeft_ = {};
     for (int d = 0; d < kDeviceCount; ++d) cssCur_[d] = {ownedCard(d) >= 0, std::max(0, ownedCard(d)), 1, 0};
+    audio_.voice(training_ ? "training" : "choose");
   }
+  if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
   if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
   screen_ = s;
   screenFrames_ = 0;
@@ -198,6 +200,7 @@ void App::run() {
     time_ += 1.0f / 60.0f;
     if (toastTimer_ > 0) --toastTimer_;
     updatePads();
+    audio_.update();
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
     // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once.

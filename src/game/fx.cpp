@@ -608,10 +608,17 @@ void Fx::onEvents(const Match& m) {
       case EvType::Swing:
         au.play(Sfx::Swing, clampf(0.2f + e.strength / 30.0f, 0.2f, 0.7f), clampf(1.3f - e.strength / 40.0f, 0.7f, 1.3f));
         break;
-      case EvType::Countdown: au.play(Sfx::Beep, 0.7f); break;
-      case EvType::Go: au.play(Sfx::Go, 0.8f); break;
+      case EvType::Countdown:
+        au.play(Sfx::Beep, 0.4f);
+        au.voice(e.strength >= 2.5f ? "three" : e.strength >= 1.5f ? "two" : "one");
+        break;
+      case EvType::Go:
+        au.play(Sfx::Go, 0.8f);
+        au.voice("go");
+        break;
       case EvType::GameSet:
         au.play(Sfx::GameSet, 0.9f);
+        au.voice("game");
         au.play(Sfx::Crowd, 0.9f, 0.9f);
         break;
       case EvType::Clank: break;
@@ -654,6 +661,7 @@ void Fx::onEvents(const Match& m) {
         }
         au.play(Sfx::UltUnleash, 1.0f);
         au.play(Sfx::CutIn, 0.9f);
+        au.voice("superclash");
         au.play(Sfx::DomainDrone, 0.85f, e.a >= 0 ? 0.85f + 0.05f * (e.a % 4) : 1.0f);
         au.play(Sfx::Crowd, 0.9f, 1.15f);
         break;

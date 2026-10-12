@@ -300,9 +300,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.4-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.5-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.4-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.5-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -426,6 +426,7 @@ assets/fonts/          polices (intégrées à la compilation par cmake/embed.cm
 assets/gamecontrollerdb.txt  base des manettes SDL (intégrée elle aussi)
 assets/fighters/       illustrations découpées (morceaux + articulations), intégrées à la compilation
 assets/sprites/        animations générées (planches d'images et sheets.txt), intégrées elles aussi
+assets/audio/          bruitages, annonceur et musiques (.mp3), intégrés eux aussi
 art/fighters/          illustrations détourées et leurs articulations (sources de assets/fighters)
 scripts/               import_portrait.py (détourage), rig_art.py (découpe), import_sheet.py (animations
                        générées), package_release.sh (archives)
@@ -444,6 +445,9 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 - Illustrations des **17 combattants** (`art/fighters/`) : générées par l'auteur du projet avec ChatGPT,
   détourées et découpées par `scripts/`.
 - Animations de Naruto (`assets/sprites/`) : générées avec SpriteCook d'après son illustration.
+- Bruitages et annonceur (`assets/audio/`) : générés avec ElevenLabs. Un son sans fichier est synthétisé par
+  le jeu ; les musiques `music_menu.mp3` et `music_<monde>.mp3` (naruto, bleach, blackclover, jjk, zelda)
+  remplacent le thème synthétisé dès qu'elles sont dans le dossier.
 - **Projet de fan, non officiel et non commercial.** Les combattants rendent hommage à *Black Clover*
   (Yūki Tabata / Shūeisha), *Bleach* (Tite Kubo / Shūeisha), *The Legend of Zelda: Tears of the Kingdom*
   (Nintendo), *God of War* (Santa Monica Studio / Sony Interactive Entertainment), *Jujutsu Kaisen*

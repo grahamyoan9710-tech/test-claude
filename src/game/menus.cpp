@@ -252,7 +252,11 @@ void App::updateCss(const MenuNav& nav) {
     if (moved) audio_.play(Sfx::MenuMove, 0.6f);
     const int fieldCol = c.row < 0 ? c.rule : c.col;
     if (n.confirm) {
-      if (pick && c.row == 1) audio_.play(Sfx::MenuSelect, 0.7f);  // the fighter is chosen: nothing to cycle
+      if (pick && c.row == 1) {  // the fighter is chosen: the announcer calls the name
+        audio_.play(Sfx::MenuSelect, 0.7f);
+        const SlotSetup& sl = slots_[c.col];
+        audio_.voice(sl.random ? "random" : voiceKey(roster()[sl.character].name).c_str());
+      }
       else if (c.row != 1 || (!training_ && slots_[c.col].type == 0)) changeField(fieldCol, c.row, 1, e);
     }
     if (n.prev && (c.row != 1 || pick)) changeField(fieldCol, c.row, -1, e);
@@ -281,6 +285,7 @@ void App::updateCss(const MenuNav& nav) {
       s.random = i == nTiles - 1;
       if (!s.random) s.character = i;
       audio_.play(Sfx::MenuSelect, 0.7f);
+      audio_.voice(s.random ? "random" : voiceKey(roster()[i].name).c_str());
     }
   bool ready = activeSlots() >= 2;
   bool clickGo = ready && ui::clicked(readyRect());

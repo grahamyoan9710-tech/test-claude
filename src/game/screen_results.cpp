@@ -4,6 +4,8 @@
 #include "game/ui.hpp"
 
 void App::updateResults(const MenuNav& nav) {
+  if (screenFrames_ == 25) audio_.voice("winner");  // "The winner is..." then the name
+  if (screenFrames_ == 105 && winnerChar_ >= 0) audio_.voice(voiceKey(roster()[winnerChar_].name).c_str());
   if (screenFrames_ > 40 && (nav.confirm || nav.start || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
     audio_.play(Sfx::MenuSelect);
     goTo(Screen::CharSelect);

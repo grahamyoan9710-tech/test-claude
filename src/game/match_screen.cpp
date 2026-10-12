@@ -166,7 +166,11 @@ MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devic
   comboStart_.assign(m_.fighters.size(), 0.0f);
   comboShow_.assign(m_.fighters.size(), 0);
   updateCamera(true);
-  audio_.setMusic(2);
+  // the theme of the stage's world (music_<world>.mp3), else the synthesized battle theme
+  const std::string& series = m_.stage().series;
+  const char* world = series == "Naruto" ? "naruto" : series == "Bleach" ? "bleach" : series == "Black Clover" ? "blackclover"
+                      : series == "Jujutsu Kaisen" ? "jjk" : series.rfind("Zelda", 0) == 0 ? "zelda" : "battle";
+  audio_.setMusic(2, world);
 }
 
 std::vector<std::string> MatchScreen::pauseItems() const {
