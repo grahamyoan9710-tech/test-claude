@@ -1,11 +1,14 @@
-// Fighters drawn from an illustration (see fighter_art.hpp).
+// Fighters made from an illustration (see fighter_art.hpp).
 //
-// Each part of the picture is a grid of small quads whose corners are skinned on the skeleton: a corner
-// follows its own bone, and blends into the neighbouring bone around a joint (elbow, knee...), so the picture
-// bends there instead of breaking. The bones keep the picture's proportions; their rotations come from the
-// pose's joints (the same IK targets as the drawn fighters).
+// The parts taken from the picture (head, torso, skirt, cape) are grids of small quads whose corners follow the
+// skeleton: the head and the torso rigidly, a skirt between the hips and both legs, a cape with the torso and
+// trailing behind. The limbs are not pieces of the picture: each segment is drawn for the pose as a volume — the
+// widths measured on the picture, its pattern from a straightened strip of the picture, lit by the game in the
+// picture's own tones — with the picture's fists and shoes at the ends. The bones keep the picture's proportions;
+// their directions come from the same pose on the drawn build (solve()).
 #include "game/fighter_art.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cstdio>
 #include <cstring>
@@ -13,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "game/pixel.hpp"
 #include "rlgl.h"
 
 // The pictures embedded at build time (CLASH_FIGHTER_ART in CMakeLists.txt).
@@ -101,8 +105,42 @@ struct Limb {  // bone lengths in fighter heights
   float l1 = 0, l2 = 0;
 };
 
+// The limbs are drawn as volumes (not pieces of the picture): widths and colours measured on the picture.
+struct Ramp {  // the shadow, middle and light tones of a colour, as the picture paints them
+  Color c[3] = {{90, 90, 90, 255}, {128, 128, 128, 255}, {170, 170, 170, 255}};
+};
+struct LimbSample {
+  float t, w;  // along the chain (0..2: shoulder/hip -> elbow/knee -> hand/ankle), half width (fighter heights)
+  Ramp r;
+};
+struct Shoe {
+  float heel = -0.03f, toe = 0.06f, sole = 0.04f;  // relative to the ankle (fighter heights)
+  Ramp r;
+};
+enum LimbId { kArmF, kArmB, kLegF, kLegB, kLimbs };
+// A limb segment straightened in the atlas: x along the bone (the joint at x = ext, the next one at ext + len),
+// y across it (the bone at y = half), the picture's shading taken out (the game lights it).
+struct Strip {
+  bool ok = false;
+  float ox = 0, oy = 0, ext = 0, half = 0, len = 0;  // atlas px
+};
+// A rigid piece of the picture at the end of a limb (fist, shoe), turning about its joint.
+struct Piece {
+  bool ok = false;
+  float ax = 0, ay = 0, w = 0, h = 0, x0 = 0, y0 = 0;  // atlas position, box in the picture
+  Vec2 anchor;                                       // the joint it turns about (picture px)
+};
+
 struct Art {
   bool tried = false, ok = false, rigged = false;
+  bool volumes = false;  // limbs measured: drawn as volumes
+  std::vector<LimbSample> limb[kLimbs];
+  float fistR[2] = {0.03f, 0.03f};  // F, B
+  Ramp fistC[2];
+  Shoe shoe[2];
+  Strip strip[kLimbs][2];
+  Piece fist[2], foot[2];  // F, B
+  float atlasW = 1, atlasH = 1;
   Texture2D tex{};
   float ground = 0, top = 0, unit = 1;  // unit: picture px per fighter height
   Joints px{}, n{};
@@ -227,9 +265,10 @@ void weigh(const Art& A, Kind kind, Vert& v, float partTop, float partBottom) {
       add(f ? kFtF : kFtB, (1.0f - wt) * s.foot);
       break;
     }
-    case kPartSkirt: {  // cloth from the waist: the hips hold its top, below it is pulled by both legs
+    case kPartSkirt: {  // cloth from the waist: the hips hold it, the legs pull its lower part only half way —
+      // a kick lifts the robe and the leg comes out from under it instead of stretching the cloth like a sheet
       const float hipY = (j.hipF.y + j.hipB.y) * 0.5f, thigh = (j.kneeF - j.hipF).len();
-      const float wt = sstep(hipY + 0.45f * thigh, hipY - 0.05f * thigh, p.y);
+      const float wt = 0.5f + 0.5f * sstep(hipY + 0.45f * thigh, hipY - 0.05f * thigh, p.y);
       const float dF = std::min(segDist(p, j.hipF, j.kneeF), segDist(p, j.kneeF, j.ankleF));
       const float dB = std::min(segDist(p, j.hipB, j.kneeB), segDist(p, j.kneeB, j.ankleB));
       const float c = 0.06f * A.unit, iF = 1.0f / (dF * dF + c * c), iB = 1.0f / (dB * dB + c * c);
@@ -258,6 +297,16 @@ void weigh(const Art& A, Kind kind, Vert& v, float partTop, float partBottom) {
   }
 }
 
+Color rgb(const int* c) {
+  return {(unsigned char)std::clamp(c[0], 0, 255), (unsigned char)std::clamp(c[1], 0, 255),
+          (unsigned char)std::clamp(c[2], 0, 255), 255};
+}
+Ramp ramp(const int* c) {
+  Ramp r;
+  for (int i = 0; i < 3; ++i) r.c[i] = rgb(c + 3 * i);
+  return r;
+}
+
 void load(Art& A, const Source& s) {
   const std::string text(reinterpret_cast<const char*>(s.rig), *s.rigSize);
   struct PartLine {
@@ -272,7 +321,8 @@ void load(Art& A, const Source& s) {
     const std::string line = text.substr(pos, end - pos);
     pos = end + 1;
     char key[32] = {}, name[32] = {};
-    float x = 0, y = 0;
+    float x = 0, y = 0, fz[3] = {};
+    int ci[9] = {};
     PartLine pl;
     if (std::sscanf(line.c_str(), "ground %f", &x) == 1) A.ground = x;
     else if (std::sscanf(line.c_str(), "top %f", &x) == 1) A.top = x;
@@ -294,6 +344,36 @@ void load(Art& A, const Source& s) {
                            &pl.oy) == 7) {
       pl.name = key;
       lines.push_back(pl);
+    } else if (std::sscanf(line.c_str(), "limb %31s %f %f %d %d %d %d %d %d %d %d %d", name, &x, &y, &ci[0], &ci[1],
+                           &ci[2], &ci[3], &ci[4], &ci[5], &ci[6], &ci[7], &ci[8]) == 12) {
+      const std::string k = name;
+      const int id = k == "armF" ? kArmF : k == "armB" ? kArmB : k == "legF" ? kLegF : k == "legB" ? kLegB : -1;
+      if (id >= 0) A.limb[id].push_back({x, y, ramp(ci)});
+    } else if (std::sscanf(line.c_str(), "fist %31s %f %d %d %d %d %d %d %d %d %d", name, &x, &ci[0], &ci[1], &ci[2],
+                           &ci[3], &ci[4], &ci[5], &ci[6], &ci[7], &ci[8]) == 11) {
+      const int f = name[0] == 'B' ? 1 : 0;
+      A.fistR[f] = x;
+      A.fistC[f] = ramp(ci);
+    } else if (std::sscanf(line.c_str(), "shoe %31s %f %f %f %f %d %d %d %d %d %d %d %d %d", name, &x, &y, &fz[0],
+                           &fz[1], &ci[0], &ci[1], &ci[2], &ci[3], &ci[4], &ci[5], &ci[6], &ci[7], &ci[8]) == 14) {
+      Shoe& sh = A.shoe[name[0] == 'B' ? 1 : 0];
+      sh.heel = x;  // picture px for now, made relative to the ankle once the joints are known
+      sh.toe = y;
+      sh.sole = fz[0];
+      sh.r = ramp(ci);
+    } else if (int k = 0; std::sscanf(line.c_str(), "strip %31s %d %f %f %f %f %f", name, &k, &x, &y, &fz[0], &fz[1],
+                                      &fz[2]) == 7) {
+      const std::string nm = name;
+      const int id = nm == "armF" ? kArmF : nm == "armB" ? kArmB : nm == "legF" ? kLegF : nm == "legB" ? kLegB : -1;
+      if (id >= 0 && (k == 0 || k == 1)) A.strip[id][k] = {true, x, y, fz[0], fz[1], fz[2]};
+    } else if (float pv[8]; std::sscanf(line.c_str(), "piece %31s %f %f %f %f %f %f %f %f", name, &pv[0], &pv[1],
+                                         &pv[2], &pv[3], &pv[4], &pv[5], &pv[6], &pv[7]) == 9) {
+      const std::string nm = name;
+      Piece pc{true, pv[0], pv[1], pv[2], pv[3], pv[4], pv[5], {pv[6], pv[7]}};
+      if (nm == "fistF") A.fist[0] = pc;
+      if (nm == "fistB") A.fist[1] = pc;
+      if (nm == "shoeF") A.foot[0] = pc;
+      if (nm == "shoeB") A.foot[1] = pc;
     }
   }
   const uint32_t all = (1u << std::size(kJoints)) - 1u;
@@ -311,6 +391,34 @@ void load(Art& A, const Source& s) {
     A.legB = limbOf(n.hipB, n.kneeB, n.ankleB);
     A.footPhiF = footPhi(n.footF - n.kneeF);
     A.footPhiB = footPhi(n.footB - n.kneeB);
+    A.volumes = true;
+    for (int i = 0; i < kLimbs; ++i) {
+      std::vector<LimbSample>& L = A.limb[i];
+      if (L.size() < 4) A.volumes = false;
+      // Flat bands of colour along the limb (pixel art): a sample close to the band's colour joins it.
+      Ramp band = L.empty() ? Ramp{} : L[0].r;
+      for (LimbSample& q : L) {
+        q.w /= A.unit;
+        const Color a = q.r.c[1], b = band.c[1];
+        const float dr = float(a.r) - b.r, dg = float(a.g) - b.g, db = float(a.b) - b.b;
+        if (dr * dr + dg * dg + db * db < 34.0f * 34.0f) q.r = band;
+        else band = q.r;
+      }
+      // Widths: smoothed along the limb (a measure can catch a strap or a fold).
+      for (size_t i = 1; i + 1 < L.size(); ++i) {
+        const float m = std::max(std::min(L[i - 1].w, L[i + 1].w), std::min(L[i].w, std::max(L[i - 1].w, L[i + 1].w)));
+        L[i].w = 0.5f * (L[i].w + m);
+      }
+    }
+    for (int f = 0; f < 2; ++f) {
+      A.fistR[f] /= A.unit;
+      const Vec2 ankle = f ? A.px.ankleB : A.px.ankleF;
+      Shoe& sh = A.shoe[f];
+      const float sole = std::min(sh.sole, A.ground + 2.0f);
+      sh.heel = (sh.heel - ankle.x) / A.unit;
+      sh.toe = (sh.toe - ankle.x) / A.unit;
+      sh.sole = std::max(0.02f, (sole - ankle.y) / A.unit);
+    }
   }
 
   Image img = LoadImageFromMemory(".png", s.png, int(*s.pngSize));
@@ -357,6 +465,8 @@ void load(Art& A, const Source& s) {
       }
     A.parts.push_back(std::move(P));
   }
+  A.atlasW = float(AW);
+  A.atlasH = float(AH);
   A.tex = LoadTextureFromImage(img);
   UnloadImage(img);
   if (A.tex.id == 0) return;
@@ -448,6 +558,258 @@ struct BoneXf {
 void drawStill(const Art& A, Vec2 anchor, Vec2 at, float k, int facing, float alpha, const Mask& mask, int sub) {
   drawParts(A, [&](const Vert& v) { return V(at + Vec2{(v.src.x - anchor.x) * k * facing, (v.src.y - anchor.y) * k}); },
             withAlpha(WHITE, alpha), mask, sub);
+}
+}  // namespace
+
+namespace {
+// ---- Limbs drawn as volumes ---------------------------------------------------------------------------
+// Pixel-art cel shading under the key light (upper left and in front, like the pictures): every shape is split
+// into a shadow, a middle and a lit tone by the way its surface faces the light on screen, frame after frame —
+// a raised arm is lit like a raised arm, not like a turned piece of paper.
+constexpr float kLx = -0.4f, kLy = -0.6f, kLz = 0.7f;
+constexpr float kLitAbove = 0.78f, kShadowBelow = 0.36f;
+
+Color toneOf(const Ramp& r, int k) { return r.c[std::clamp(k, 0, 2)]; }
+// Tone of a surface whose normal is (nx, ny) on screen and nz towards the viewer.
+int toneAt(float nx, float ny, float nz) {
+  const float d = nx * kLx + ny * kLy + nz * kLz;
+  return d > kLitAbove ? 2 : d < kShadowBelow ? 0 : 1;
+}
+
+struct Flat {  // flat-coloured triangles, tinted like the picture (hit flash, afterimage, transformation)
+  Color tint = WHITE;
+  float amount = 0.0f, alpha = 1.0f;
+  Color fin(Color c) const {
+    Color m = amount > 0.0f ? mixColor(c, tint, amount) : c;
+    m.a = (unsigned char)(m.a * alpha);
+    return m;
+  }
+  void tri(Vector2 a, Vector2 b, Vector2 c, Color k) const {
+    const Color f = fin(k);
+    rlColor4ub(f.r, f.g, f.b, f.a);
+    rlVertex2f(a.x, a.y);
+    rlVertex2f(b.x, b.y);
+    rlVertex2f(c.x, c.y);
+  }
+  void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color k) const {
+    tri(a, b, c, k);
+    tri(a, c, d, k);
+  }
+  void disc(Vector2 c, float r, Color k, int n = 16) const {
+    for (int i = 0; i < n; ++i) {
+      const float a0 = 2.0f * kPi * i / n, a1 = 2.0f * kPi * (i + 1) / n;
+      tri(c, {c.x + std::cos(a0) * r, c.y + std::sin(a0) * r}, {c.x + std::cos(a1) * r, c.y + std::sin(a1) * r}, k);
+    }
+  }
+  // A cel-shaded ellipse (a ball): axes u, v on screen.
+  void ball(Vector2 c, Vec2 u, Vec2 v, const Ramp& k, int n = 16) const {
+    const float rings[3] = {0.0f, 0.62f, 1.0f};
+    for (int ring = 0; ring < 2; ++ring)
+      for (int i = 0; i < n; ++i) {
+        const float a0 = 2.0f * kPi * i / n, a1 = 2.0f * kPi * (i + 1) / n, am = (a0 + a1) * 0.5f;
+        const float r0 = rings[ring], r1 = rings[ring + 1], rm = (r0 + r1) * 0.5f;
+        const Vec2 dir = (u * std::cos(am) + v * std::sin(am)).norm();
+        const Color col = toneOf(k, toneAt(dir.x * rm, dir.y * rm, std::sqrt(std::max(0.0f, 1.0f - rm * rm))));
+        auto at = [&](float r, float a) {
+          const Vec2 p = u * (std::cos(a) * r) + v * (std::sin(a) * r);
+          return Vector2{c.x + p.x, c.y + p.y};
+        };
+        if (ring == 0) tri(c, at(r1, a0), at(r1, a1), col);
+        else quad(at(r0, a0), at(r1, a0), at(r1, a1), at(r0, a1), col);
+      }
+  }
+};
+
+// A limb segment from its strip of the picture: the silhouette of the measured widths, the picture's own pattern
+// (bands, wraps, folds, a badge), lit by the game: each slice across the limb takes the shadow / middle / light
+// tone the picture gives that colour, by the way it faces the light now. Round caps at both joints.
+struct StripDraw {
+  const Art& A;
+  const Xf& X;
+  float H, facing, unit;
+  float u(float x) const { return x / A.atlasW; }
+  float v(float y) const { return y / A.atlasH; }
+  // Light multiplier of a slice (vertex colour): the picture's tone over its lit tone, per channel.
+  static Color mul(const Ramp& r, int k) {
+    const Color a = r.c[std::clamp(k, 0, 2)], b = r.c[2];
+    auto ch = [](float x, float y) { return (unsigned char)clampf(y > 0.0f ? 255.0f * x / y : 255.0f, 0.0f, 255.0f); };
+    return {ch(a.r, b.r), ch(a.g, b.g), ch(a.b, b.b), 255};
+  }
+  void vert(Vector2 p, float sx, float sy, Color c, const Strip& S, float alpha) const {
+    rlColor4ub(c.r, c.g, c.b, (unsigned char)(255.0f * alpha));
+    rlTexCoord2f(u(S.ox + sx), v(S.oy + sy));
+    rlVertex2f(p.x, p.y);
+  }
+  void segment(const Strip& S, const std::vector<LimbSample>& L, int sgm, Vec2 ja, Vec2 jb, float alpha) const {
+    std::vector<const LimbSample*> q;
+    for (const LimbSample& smp : L)
+      if (int(smp.t) == sgm || (sgm == 1 && smp.t >= 2.0f)) q.push_back(&smp);
+    if (q.empty() || !S.ok) return;
+    const Vector2 Ap = X(ja), Bp = X(jb);
+    Vec2 ds = W(Bp) - W(Ap);
+    if (ds.len2() < 1e-6f) ds = {0.0f, 1.0f};
+    ds = ds.norm();
+    const Vec2 ns{-ds.y, ds.x};
+    const int n = int(q.size());
+    auto wpic = [&](int m) {  // half width at station m, picture px
+      const float a = q[std::max(0, m - 1)]->w, b = q[std::min(n - 1, m)]->w;
+      return (m == 0 ? b : m == n ? a : 0.5f * (a + b)) * unit;
+    };
+    const float toScreen = H / unit * X.scale;  // picture px -> screen
+    constexpr int kCuts = 8;
+    constexpr float kIn = 0.94f;  // stay inside the picture's own outline
+    for (int m = 0; m < n; ++m) {
+      const float t0 = float(m) / n, t1 = float(m + 1) / n, w0 = wpic(m), w1 = wpic(m + 1);
+      const Vec2 p0 = lerpv(W(Ap), W(Bp), t0), p1 = lerpv(W(Ap), W(Bp), t1);
+      const float x0 = S.ext + t0 * S.len, x1 = S.ext + t1 * S.len;
+      for (int c = 0; c < kCuts; ++c) {
+        const float a0 = -1.0f + 2.0f * c / kCuts, a1 = -1.0f + 2.0f * (c + 1) / kCuts, am = 0.5f * (a0 + a1);
+        const Color k = mul(q[m]->r, toneAt(ns.x * am, ns.y * am, std::sqrt(std::max(0.0f, 1.0f - am * am))));
+        auto P = [&](const Vec2& p, float w, float a) { return V(p + ns * (w * toScreen * a)); };
+        const float y00 = S.half + facing * a0 * w0 * kIn, y01 = S.half + facing * a1 * w0 * kIn;
+        const float y10 = S.half + facing * a0 * w1 * kIn, y11 = S.half + facing * a1 * w1 * kIn;
+        vert(P(p0, w0, a0), x0, y00, k, S, alpha);
+        vert(P(p1, w1, a0), x1, y10, k, S, alpha);
+        vert(P(p1, w1, a1), x1, y11, k, S, alpha);
+        vert(P(p0, w0, a1), x0, y01, k, S, alpha);
+      }
+    }
+    // Caps: half discs past each joint, from the strip's own pixels there.
+    for (int end = 0; end < 2; ++end) {
+      const Vec2 c = end ? W(Bp) : W(Ap);
+      const float w = wpic(end ? n : 0), xc = S.ext + (end ? S.len : 0.0f), dir = end ? 1.0f : -1.0f;
+      const Ramp& rp = end ? q.back()->r : q.front()->r;
+      constexpr int kFan = 8;
+      for (int i = 0; i < kFan; ++i) {
+        const float b0 = -kPi * 0.5f + kPi * i / kFan, b1 = -kPi * 0.5f + kPi * (i + 1) / kFan, bm = 0.5f * (b0 + b1);
+        const Vec2 nm = ns * std::sin(bm) + ds * (dir * std::cos(bm));
+        const Color k = mul(rp, toneAt(nm.x * 0.6f, nm.y * 0.6f, 0.8f));
+        auto P = [&](float b) { return V(c + (ns * std::sin(b) + ds * (dir * std::cos(b))) * (w * toScreen)); };
+        auto sx = [&](float b) { return xc + dir * std::cos(b) * w * kIn; };
+        auto sy = [&](float b) { return S.half + facing * std::sin(b) * w * kIn; };
+        vert(V(c), xc, S.half, k, S, alpha);  // a triangle as a quad (rlgl textures quads only)
+        vert(P(b0), sx(b0), sy(b0), k, S, alpha);
+        vert(P(b1), sx(b1), sy(b1), k, S, alpha);
+        vert(P(b1), sx(b1), sy(b1), k, S, alpha);
+      }
+    }
+  }
+  // A rigid piece (fist, shoe): its box in the picture turned by `angle` about its joint, placed at `at`.
+  void piece(const Piece& pc, Vec2 at, float angle, float alpha) const {
+    if (!pc.ok) return;
+    const float k = H / unit;
+    Vec2 corner[4] = {{pc.x0, pc.y0}, {pc.x0 + pc.w, pc.y0}, {pc.x0 + pc.w, pc.y0 + pc.h}, {pc.x0, pc.y0 + pc.h}};
+    const float uvx[4] = {pc.ax, pc.ax + pc.w, pc.ax + pc.w, pc.ax}, uvy[4] = {pc.ay, pc.ay, pc.ay + pc.h, pc.ay + pc.h};
+    Vector2 q[4];
+    for (int i = 0; i < 4; ++i) q[i] = X(at + rotate((corner[i] - pc.anchor) * k, angle));
+    const unsigned char a = (unsigned char)(255.0f * alpha);
+    for (int i = 0; i < 4; ++i) {
+      rlColor4ub(255, 255, 255, a);
+      rlTexCoord2f(uvx[i] / A.atlasW, uvy[i] / A.atlasH);
+      rlVertex2f(q[i].x, q[i].y);
+    }
+  }
+};
+
+// One limb: two segments (shoulder/hip -> elbow/knee -> hand/ankle) with the measured widths and colour bands,
+// round at the joints. `ink`: the outline pass (everything one art pixel wider, in the sprite's ink).
+void limbVolume(const std::vector<LimbSample>& L, const Vec2 j[3], float H, const Xf& X, const Flat& F, float ow,
+                bool ink) {
+  const Color inkC = pix::kInk;
+  for (int sgm = 0; sgm < 2; ++sgm) {
+    std::vector<const LimbSample*> q;
+    for (const LimbSample& smp : L)
+      if (int(smp.t) == sgm || (sgm == 1 && smp.t >= 2.0f)) q.push_back(&smp);
+    if (q.empty()) continue;
+    const Vector2 A = X(j[sgm]), B = X(j[sgm + 1]);
+    Vec2 ds = W(B) - W(A);
+    if (ds.len2() < 1e-6f) ds = {0.0f, 1.0f};
+    ds = ds.norm();
+    const Vec2 ns{-ds.y, ds.x};
+    const int n = int(q.size());
+    auto width = [&](int m) {  // half width at station m (0..n), screen units
+      const float a = q[std::max(0, m - 1)]->w, b = q[std::min(n - 1, m)]->w;
+      return (m == 0 ? b : m == n ? a : 0.5f * (a + b)) * H * X.scale;
+    };
+    auto station = [&](int m) { return lerpv(W(A), W(B), float(m) / n); };
+    for (int m = 0; m < n; ++m) {
+      const Vec2 p0 = station(m), p1 = station(m + 1);
+      const float w0 = width(m), w1 = width(m + 1);
+      if (ink) {
+        F.quad(V(p0 + ns * (w0 + ow)), V(p1 + ns * (w1 + ow)), V(p1 - ns * (w1 + ow)), V(p0 - ns * (w0 + ow)), inkC);
+        continue;
+      }
+      constexpr int kCuts = 6;  // across the limb: a cylinder lit from the upper left
+      for (int c = 0; c < kCuts; ++c) {
+        const float u0 = -1.0f + 2.0f * c / kCuts, u1 = -1.0f + 2.0f * (c + 1) / kCuts, um = 0.5f * (u0 + u1);
+        const Color col = toneOf(q[m]->r, toneAt(ns.x * um, ns.y * um, std::sqrt(std::max(0.0f, 1.0f - um * um))));
+        F.quad(V(p0 + ns * (w0 * u0)), V(p1 + ns * (w1 * u0)), V(p1 + ns * (w1 * u1)), V(p0 + ns * (w0 * u1)), col);
+      }
+    }
+    // Round joints: the start of the segment (shoulder / hip only for the first one) and its end.
+    const float wA = width(0), wB = width(n);
+    if (sgm == 1 || ink) {
+      if (ink) F.disc(A, wA + ow, inkC);
+      else F.ball(A, Vec2{wA, 0.0f}, Vec2{0.0f, wA}, q.front()->r);
+    }
+    if (ink) F.disc(B, wB + ow, inkC);
+  }
+  // The elbow / knee on top of both segments.
+  if (!ink && !L.empty()) {
+    const Vector2 K = X(j[1]);
+    const LimbSample* best = &L[0];
+    for (const LimbSample& smp : L)
+      if (std::fabs(smp.t - 1.0f) < std::fabs(best->t - 1.0f)) best = &smp;
+    const float wk = best->w * H * X.scale;
+    F.ball(K, Vec2{wk, 0.0f}, Vec2{0.0f, wk}, best->r);
+  }
+}
+
+// A fist at the end of the forearm, oriented along it.
+void fistVolume(Vec2 elbow, Vec2 hand, float r, const Ramp& c, const Xf& X, const Flat& F, float ow, bool ink) {
+  const Vector2 C = X(hand);
+  Vec2 d = W(X(hand)) - W(X(elbow));
+  d = d.len2() > 1e-6f ? d.norm() : Vec2{1.0f, 0.0f};
+  const Vec2 n{-d.y, d.x};
+  const float rs = r * X.scale;
+  if (ink) {
+    Ramp inkR;
+    inkR.c[0] = inkR.c[1] = inkR.c[2] = pix::kInk;
+    F.ball(C, d * (rs * 1.08f + ow), n * (rs * 0.92f + ow), inkR);
+  }
+  else F.ball(C, d * (rs * 1.08f), n * (rs * 0.92f), c);
+}
+
+// A shoe under the ankle, tilted with the foot.
+void shoeVolume(const Shoe& sh, Vec2 ankle, float angle, float H, const Xf& X, const Flat& F, float ow, bool ink) {
+  const float Hx = sh.heel * H, Tx = sh.toe * H, S = sh.sole * H, Lf = Tx - Hx;
+  const Vec2 pts[6] = {{Hx, S}, {Tx, S}, {Tx, S * 0.5f}, {Hx + 0.62f * Lf, S * 0.12f}, {Hx + 0.36f * Lf, -S * 0.3f},
+                       {Hx + 0.06f * Lf, -S * 0.3f}};
+  Vector2 q[6];
+  Vec2 c{};
+  for (int i = 0; i < 6; ++i) {
+    q[i] = X(ankle + rotate(pts[i], angle));
+    c += W(q[i]) * (1.0f / 6.0f);
+  }
+  if (ink) {
+    for (int i = 0; i < 6; ++i) {  // edges, one art pixel thick around the shoe
+      const Vec2 a = W(q[i]), b = W(q[(i + 1) % 6]);
+      Vec2 e = b - a;
+      if (e.len2() < 1e-6f) continue;
+      e = e.norm();
+      const Vec2 nn{-e.y, e.x};
+      F.quad(V(a + nn * ow), V(b + nn * ow), V(b - nn * ow), V(a - nn * ow), pix::kInk);
+      F.disc(V(a), ow, pix::kInk, 8);
+    }
+    return;
+  }
+  for (int i = 1; i < 5; ++i) F.tri(q[0], q[i], q[i + 1], sh.r.c[1]);
+  // The sole in shadow, the top of the toe catching the light.
+  auto at = [&](Vec2 p) { return X(ankle + rotate(p, angle)); };
+  F.quad(at({Hx, S}), at({Tx, S}), at({Tx, S * 0.78f}), at({Hx, S * 0.78f}), toneOf(sh.r, 0));
+  F.quad(at({Hx + 0.62f * Lf, S * 0.16f}), at({Tx, S * 0.52f}), at({Tx - 0.12f * Lf, S * 0.62f}),
+         at({Hx + 0.56f * Lf, S * 0.3f}), toneOf(sh.r, 2));
+  (void)c;
 }
 }  // namespace
 
@@ -636,15 +998,8 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
     g_tintLoc = g_tint.id ? GetShaderLocation(g_tint, "tint") : -1;
   }
   const bool shaded = amount > 0.01f && g_tint.id != 0 && g_tintLoc >= 0;
-  if (shaded) {
-    BeginShaderMode(g_tint);
-    const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
-    SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
-  }
   const Vec2 trail = lerpv(pose.flow, pose.flowTip, 0.6f);
-  const unsigned kinds = layers == Layers::BelowWeapon ? ~(1u << kPartArmF)
-                       : layers == Layers::WeaponArm ? (1u << kPartArmF) : ~0u;
-  drawParts(*A, [&](const Vert& v) {
+  auto place = [&](const Vert& v) {
     Vec2 p{};
     for (int i = 0; i < kInfluences; ++i) {
       if (v.w[i] <= 0.0f) continue;
@@ -654,8 +1009,79 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
     }
     if (v.sway > 0.0f) p += trail * (v.sway * H);  // cloth trailing behind the motion
     return X(p);
-  }, withAlpha(WHITE, alpha), Mask{}, 1, kinds);
-  if (shaded) EndShaderMode();
+  };
+  auto picture = [&](unsigned kinds) {
+    if (shaded) {
+      BeginShaderMode(g_tint);
+      const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
+      SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
+    }
+    drawParts(*A, place, withAlpha(WHITE, alpha), Mask{}, 1, kinds);
+    if (shaded) EndShaderMode();
+  };
+  if (!A->volumes) {  // not measured: the picture's own limbs
+    picture(layers == Layers::BelowWeapon ? ~(1u << kPartArmF) : layers == Layers::WeaponArm ? (1u << kPartArmF) : ~0u);
+    return;
+  }
+  // The limbs are volumes drawn for this pose; the head, the torso and the cloth come from the picture.
+  Flat F;
+  F.tint = tc;
+  F.amount = amount;
+  F.alpha = alpha;
+  const float art = pix::artUnit();
+  const float ow = art > 0.0f ? art : 1.2f;
+  const Vec2 ankleF = T[kFtF].now, ankleB = T[kFtB].now;
+  const float footAF = std::atan2(T[kFtF].s, T[kFtF].c), footAB = std::atan2(T[kFtB].s, T[kFtB].c);
+  const StripDraw SD{*A, X, H, float(X.facing), A->unit};
+  const bool strips = A->strip[kArmF][0].ok;
+  auto limbs = [&](int id) {
+    const bool arm = id == kArmF || id == kArmB, front = id == kArmF || id == kLegF;
+    const Vec2 j[3] = {arm ? (front ? r.shF : r.shB) : (front ? r.hipF : r.hipB),
+                       arm ? (front ? r.elbowF : r.elbowB) : (front ? r.kneeF : r.kneeB),
+                       arm ? (front ? r.handF : r.handB) : (front ? ankleF : ankleB)};
+    // The outline, one art pixel around the limb. (rlgl: set the texture, then begin; a textured draw is in quads.)
+    rlSetTexture(rlGetTextureIdDefault());
+    rlBegin(RL_TRIANGLES);
+    limbVolume(A->limb[id], j, H, X, F, ow, true);
+    if (!strips) {
+      limbVolume(A->limb[id], j, H, X, F, ow, false);
+      if (arm) fistVolume(j[1], j[2], A->fistR[front ? 0 : 1] * H, A->fistC[front ? 0 : 1], X, F, ow, false);
+      else shoeVolume(A->shoe[front ? 0 : 1], j[2], front ? footAF : footAB, H, X, F, ow, false);
+    }
+    rlEnd();
+    rlSetTexture(0);
+    if (!strips) return;
+    // The limb itself, from the picture, lit by the game; then the fist or the shoe.
+    if (shaded) {
+      BeginShaderMode(g_tint);
+      const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
+      SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
+    }
+    rlSetTexture(A->tex.id);
+    rlBegin(RL_QUADS);
+    SD.segment(A->strip[id][0], A->limb[id], 0, j[0], j[1], alpha);
+    SD.segment(A->strip[id][1], A->limb[id], 1, j[1], j[2], alpha);
+    if (arm) {
+      const Vec2 nb = front ? n.handF - n.elbowF : n.handB - n.elbowB;
+      const float ang = angleOf(j[2] - j[1]) - angleOf(nb);
+      SD.piece(A->fist[front ? 0 : 1], j[2], ang, alpha);
+    } else {
+      SD.piece(A->foot[front ? 0 : 1], j[2], front ? footAF : footAB, alpha);
+    }
+    rlEnd();
+    rlSetTexture(0);
+    if (shaded) EndShaderMode();
+  };
+  if (layers != Layers::WeaponArm) {
+    picture(1u << kPartCape);
+    limbs(kLegB);
+    limbs(kLegF);
+    limbs(kArmB);
+    picture(1u << kPartTorso);
+    picture(1u << kPartSkirt);
+    picture(1u << kPartHead);
+  }
+  if (layers != Layers::BelowWeapon) limbs(kArmF);
 }
 
 bool drawWhole(Hero h, Vec2 feet, float height, int facing, float alpha) {

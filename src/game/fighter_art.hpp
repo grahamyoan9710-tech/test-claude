@@ -1,11 +1,12 @@
 #pragma once
-// Fighters drawn from an illustration instead of procedural shapes.
+// Fighters made from an illustration instead of procedural shapes.
 //
-// scripts/rig_art.py cuts a picture of the fighter (full body, facing right) into six parts — back leg, back
-// arm, torso, front leg, head, front arm — packed in assets/fighters/<name>.png, and writes the joints marked
-// on the picture in assets/fighters/<name>.rig. The game skins the parts on the same skeleton as the drawn
-// fighters (render_body.cpp), with the picture's proportions: every move, combo and ultimate animates them.
-// A picture without limb joints is only used for the portraits.
+// scripts/rig_art.py cuts a picture of the fighter (full body, facing right) into parts — head, torso, the cloth
+// of a skirt or a cape, and the limbs — packed in assets/fighters/<name>.png, and writes the joints marked on the
+// picture and the measures of its limbs in assets/fighters/<name>.rig. In a fight the head, the torso and the
+// cloth are the picture's own (rigid, never stretched); the arms and the legs are redrawn for each pose as lit
+// volumes with the picture's widths, patterns and colours. All of it rides the same skeleton as the drawn
+// fighters (render_body.cpp), with the picture's proportions. A picture without limb joints is only a portrait.
 #include "game/render.hpp"
 
 // Fighter-local frame (body centre at the origin, feet at y = +height/2, +x the way it faces) to the screen.

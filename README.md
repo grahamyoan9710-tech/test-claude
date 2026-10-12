@@ -5,8 +5,9 @@ on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l
 
 ![Écran titre](docs/titre.jpg)
 
-**Les 17 combattants sont dessinés d'après des illustrations en pixel art** : chaque image est découpée en
-six morceaux que le squelette du jeu anime (cinématique inverse), voir
+**Les 17 combattants sont faits d'après des illustrations en pixel art** : la tête, le buste et les
+vêtements viennent de l'image, les bras et les jambes sont redessinés par le jeu à chaque image (en
+volume, avec les motifs et les couleurs de l'illustration), voir
 [Combattants illustrés](#combattants-illustrés). En combat, ils passent par un rendu **pixel art** (contour
 sombre d'un pixel, aplats francs) ; les menus, les arènes et les effets restent lisses. Les sons et la
 musique sont synthétisés au lancement. Les ressources (deux polices
@@ -44,23 +45,26 @@ et la course suivent le sol, Naruto court en ninja, les coups engagent tout le c
 
 ## Combattants illustrés
 
-Chaque combattant est dessiné d'après une **illustration** (pixel art détaillé, en pied, tourné vers la
-droite). L'image est découpée en morceaux — jambe et bras arrière, buste, jambe avant, tête, bras avant, et
-pour les tenues amples une **jupe** (hakama, kimono, pans de manteau, kilt, tunique) et une **cape** — et
-chaque morceau suit les os du squelette : marche, course, sauts, coups, smashs, spéciales et ultimes animent
-l'illustration elle-même, qui se plie aux coudes, aux genoux et aux chevilles.
+Chaque combattant est fait d'après une **illustration** (pixel art détaillé, en pied, tourné vers la
+droite), sans la déformer :
 
+- **La tête, le buste et les vêtements** viennent de l'image et restent rigides : ils suivent le squelette
+  (penché, rotation, saut) sans jamais être étirés ni tassés. Pour les tenues amples, une **jupe** (hakama,
+  kimono, robe, pans de manteau, kilt, tunique) est tenue par les hanches et suit les jambes à moitié — un
+  coup de pied soulève la robe et la jambe sort dessous —, et une **cape** suit le buste ; les deux traînent
+  derrière le mouvement.
+- **Les bras et les jambes sont redessinés par le jeu à chaque image**, comme des volumes : leur silhouette
+  (largeurs mesurées sur l'image), leurs motifs (bandages, brassards, plis, écussons) pris sur l'image dans
+  un bras ou une jambe « déplié », et leur éclairage calculé par le jeu selon leur orientation, dans les
+  trois tons (ombre, milieu, lumière) que l'illustration donne à chaque couleur. Un bras levé est éclairé
+  comme un bras levé : plus d'effet de papier découpé, plus de membre étiré. Les poings et les chaussures
+  sont des morceaux rigides de l'image, au bout des membres.
 - **Les mouvements sont adaptés à chaque corps** : le jeu calcule chaque attaque sur un squelette de
-  référence, puis chaque membre de l'illustration prend la direction et l'ouverture du membre calculé, avec
-  ses propres longueurs. Les coudes et les genoux plient toujours dans le bon sens, les pieds restent posés
-  au sol (les hanches descendent au besoin), et un membre ne se replie jamais complètement.
-- **Aucun écrasement** : l'illustration n'est jamais étirée ni tassée, les accroupissements sont peu
-  profonds.
-- **Les vêtements suivent comme du tissu** : une jupe se plie entre les deux jambes, la cape suit le buste,
-  et les deux traînent derrière le mouvement.
-- Au repos, le combattant reprend exactement la pose de l'image. Sous les morceaux posés devant eux, le
-  buste, la jupe et la cape sont complétés à partir de leurs propres couleurs : un membre qui bouge ne laisse
-  pas de trou.
+  référence, puis chaque membre prend la direction et l'ouverture du membre calculé avec les longueurs de
+  l'illustration. Les coudes et les genoux plient toujours dans le bon sens, les pieds restent posés au sol
+  (les hanches descendent au besoin), et un membre ne se replie jamais complètement.
+- Au repos, le combattant reprend la pose de l'image. Sous les membres, le buste, la jupe et la cape sont
+  complétés à partir de leurs propres couleurs : un membre qui bouge ne laisse pas de trou.
 - En combat, les illustrations passent par un pixel art plus fin que celui des anciens personnages (un
   pixel d'art par pixel de l'écran 1280×720), et la caméra est plus proche : les combattants sont plus
   grands et plus détaillés.
@@ -84,7 +88,8 @@ python3 scripts/import_portrait.py image.png art/fighters/link.png   # détoure 
 #   --box X0 Y0 X1 Y1 : un personnage d'une planche   --scale 2 : petite image en pixel art, agrandie au pixel près
 #   --main : ôte les morceaux des voisins   --shade-min 0.85 : garde les habits de la couleur du fond
 # art/fighters/link.json : les articulations repérées sur l'image, et les polygones de la jupe et de la cape
-#   (voir les autres .json et scripts/rig_art.py)
+#   (voir les autres .json et scripts/rig_art.py) ; rig_art.py mesure aussi les membres (largeurs, couleurs,
+#   motifs « dépliés »), les poings et les chaussures
 python3 scripts/rig_art.py art/fighters/link.json --debug /tmp/link   # découpe : assets/fighters/link.png + .rig
 ```
 
@@ -269,9 +274,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.2-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.2-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -377,7 +382,7 @@ src/game/   interface raylib
   fonts.cpp            polices intégrées
   pixel.cpp            rendu pixel art des personnages (petite texture, contour, palette réduite)
   render_body.cpp      dessin des personnages (squelette + IK)
-  fighter_art.cpp      combattants et portraits illustrés : morceaux de l'image animés par le squelette
+  fighter_art.cpp      combattants illustrés : tête, buste et vêtements de l'image, membres redessinés en volume
   render_weapons.cpp   dessin des armes (en main et posées au sol)
   render_items.cpp     armes posées sur l'arène
   render_vfx.cpp       rayons et arrière-plans des ultimes
