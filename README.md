@@ -8,7 +8,9 @@ on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l
 **Les 17 combattants sont faits d'après des illustrations en pixel art** : la tête, le buste et les
 vêtements viennent de l'image, les bras et les jambes sont redessinés par le jeu à chaque image (en
 volume, avec les motifs et les couleurs de l'illustration), voir
-[Combattants illustrés](#combattants-illustrés). En combat, ils passent par un rendu **pixel art** (contour
+[Combattants illustrés](#combattants-illustrés). Naruto a en plus une garde et un coup de poing **dessinés image
+par image** (essai avec SpriteCook, voir [Animations générées](#animations-générées-essai-avec-naruto)). En
+combat, ils passent par un rendu **pixel art** (contour
 sombre d'un pixel, aplats francs) ; les menus, les arènes et les effets restent lisses. Les sons et la
 musique sont synthétisés au lancement. Les ressources (deux polices
 libres, la base de manettes SDL et les illustrations) sont intégrées directement dans l'exécutable : il n'y a
@@ -94,6 +96,25 @@ python3 scripts/rig_art.py art/fighters/link.json --debug /tmp/link   # découpe
 ```
 
 puis ajouter son nom à `CLASH_FIGHTER_ART` (`CMakeLists.txt`) et à `kSources` (`src/game/fighter_art.cpp`).
+
+### Animations générées (essai avec Naruto)
+
+Naruto a deux animations **dessinées image par image** par [SpriteCook](https://spritecook.ai) d'après son
+illustration : sa garde (8 images en boucle, le bandeau flotte au vent) et son coup de poing (8 images). Elles
+remplacent le squelette quand il est en garde, pour ses jabs 1 et 2 et pour son tilt avant. L'image du poing
+tendu reste affichée tant que la zone de coup est active, la préparation et le retour se partagent le reste du
+mouvement. Ses autres mouvements gardent le rendu squelette + illustration.
+
+```bash
+# planche.png : la planche d'images rendue par SpriteCook (spritesheet) ; naruto_sc256.png : l'image de
+# 256x256 qui lui a été envoyée, où l'illustration est posée en (34, 12) à l'échelle 0.244468
+python3 scripts/import_sheet.py planche.png naruto attack --source art/fighters/naruto_sc256.png \
+    --placement 34 12 0.244468 --impact 3   # --impact : l'image où le coup porte ; --loop : animation en boucle
+```
+
+Le script écrit `assets/sprites/naruto_attack.png` et sa ligne dans `assets/sprites/sheets.txt` (pieds,
+échelle, boucle, image du coup), intégrés à la compilation. Les animations reconnues sont `idle` (la garde) et
+`attack` (`kSheetNames`, `src/game/fighter_art.cpp`).
 
 **Chaque ultime est unique** (51 en tout) : Getsuga Tenshō, Vasto Lorde, Gran Rey Cero, Cero Metralleta,
 Violet imaginaire, Amaterasu, Kendō, Sanctuaire démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du
@@ -274,9 +295,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.2-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.3-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.2-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.3-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -322,6 +343,7 @@ super_clash --demo            # match de démonstration entre 4 ordinateurs
 super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 16)
 super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
+super_clash --screen training --fighters 8,9   # entraînement : Naruto (clavier 1) contre Sasuke en cible
 super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 3)
 super_clash --screen anim --tab 32   # pellicules d'animation : combattant N/4, page N%4 (allures, jabs, smashs, spéciales et ultime)
 super_clash --stage 10        # arène par défaut (0 à 10, dans l'ordre de l'écran de choix)
@@ -398,8 +420,10 @@ src/game/   interface raylib
 assets/fonts/          polices (intégrées à la compilation par cmake/embed.cmake)
 assets/gamecontrollerdb.txt  base des manettes SDL (intégrée elle aussi)
 assets/fighters/       illustrations découpées (morceaux + articulations), intégrées à la compilation
+assets/sprites/        animations générées (planches d'images et sheets.txt), intégrées elles aussi
 art/fighters/          illustrations détourées et leurs articulations (sources de assets/fighters)
-scripts/               import_portrait.py (détourage), rig_art.py (découpe), package_release.sh (archives)
+scripts/               import_portrait.py (détourage), rig_art.py (découpe), import_sheet.py (animations
+                       générées), package_release.sh (archives)
 tests/sim_test.cpp     tests sans écran
 ```
 
@@ -414,6 +438,7 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
   du jeu n'est repris.
 - Illustrations des **17 combattants** (`art/fighters/`) : générées par l'auteur du projet avec ChatGPT,
   détourées et découpées par `scripts/`.
+- Animations de Naruto (`assets/sprites/`) : générées avec SpriteCook d'après son illustration.
 - **Projet de fan, non officiel et non commercial.** Les combattants rendent hommage à *Black Clover*
   (Yūki Tabata / Shūeisha), *Bleach* (Tite Kubo / Shūeisha), *The Legend of Zelda: Tears of the Kingdom*
   (Nintendo), *God of War* (Santa Monica Studio / Sony Interactive Entertainment), *Jujutsu Kaisen*

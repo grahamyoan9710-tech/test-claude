@@ -43,6 +43,9 @@ struct Pose {
   bool shout = false;      // roaring / shouting face
   float bladeLen = 0.0f;   // > 0: the blade in hand is drawn this long (grip to tip, px at scale 1) = its hitbox
   Form form = Form::None;  // transformation (Vasto Lorde, Segunda Etapa...)
+  int sheet = -1;          // a generated animation shows this pose instead (see SheetAnim in fighter_art.hpp)
+  float sheetT = 0.0f;     // looping animations: seconds; the others: 0..1 through the move
+  float sheetHit0 = -1.0f, sheetHit1 = -1.0f;  // when the move's first blow is out (0..1), to time the drawn one
 };
 
 // Standing guard; `held` is the weapon picked up during the match (carried in hand), if any.

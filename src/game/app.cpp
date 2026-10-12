@@ -171,6 +171,8 @@ void App::run() {
     enterScreen(Screen::Anim);
   } else if (opt_.screen == "training") {
     training_ = true;
+    for (int i = 0; i < int(std::min<size_t>(2, opt_.fighters.size())); ++i)  // --fighters: player 1, the dummy
+      slots_[i].character = std::clamp(opt_.fighters[i], 0, int(roster().size()) - 1);
     startMatch();
     transition_ = -1;
     enterScreen(Screen::Match);

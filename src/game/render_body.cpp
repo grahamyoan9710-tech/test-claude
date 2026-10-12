@@ -2531,6 +2531,10 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   Look L = lookFor(d, palette);
   formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
+  if (art::rigged(d.hero) && pose.sheet >= 0 && art::drawSheet(d, pose, X, alpha, flashColor, flash)) {
+    b.energy();  // a generated animation frame
+    return;
+  }
   if (art::rigged(d.hero)) {  // the picture, with what the fighter carries, casts and summons around it
     b.grimoire();  // Yuno's book, behind him
     if (d.hero == Hero::Starrk) {
@@ -2564,7 +2568,12 @@ void drawCharacterSprite(const CharacterDef& d, int palette, const Pose& pose, V
 void drawShowcase(const CharacterDef& d, int palette, const Pose& pose, Vec2 feet, int facing, float height,
                   float time) {
   if (art::rigged(d.hero)) {  // the picture itself, crisp, a little bigger (it is detailed)
-    drawCharacter(d, palette, pose, feet, facing, height * 1.1f / d.height, 1.0f, WHITE, 0.0f, time);
+    Pose p = pose;
+    if (art::hasSheet(d.hero, art::kSheetIdle) && frontWeapon(d, p) == WeaponVisual::None) {  // its generated guard
+      p.sheet = art::kSheetIdle;
+      p.sheetT = time;
+    }
+    drawCharacter(d, palette, p, feet, facing, height * 1.1f / d.height, 1.0f, WHITE, 0.0f, time);
   } else if (!art::drawWhole(d.hero, feet + Vec2{0.0f, -std::sin(time * 2.6f) * 0.6f}, height * 1.1f, facing, 1.0f)) {
     drawCharacterSprite(d, palette, pose, feet, facing, height / d.height, 1.0f, WHITE, 0.0f, time);
   }

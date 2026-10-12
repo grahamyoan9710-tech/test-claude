@@ -330,17 +330,6 @@ void App::drawCss() {
     const char* head = training_ ? (col == 0 ? "JOUEUR 1" : "MANNEQUIN") : TextFormat("JOUEUR %d", col + 1);
     drawTextOutlined(head, cr.x + 30, cr.y + 7, 30, type ? ui::kCream : ui::kMuted, ui::kInk, 3.0f, FontKind::Title);
 
-    const char* typeName = type == 1 ? "HUMAIN" : type == 2 ? "ORDINATEUR" : "VIDE";
-    if (training_) typeName = col == 0 ? "VOUS" : "CIBLE D'ENTRAÎNEMENT";
-    Rectangle f0 = fieldRect(col, 0, training_);
-    if (training_) {
-      DrawRectangleRounded(f0, 0.5f, 10, withAlpha(ui::kInk, 0.6f));
-      drawTextCentered(typeName, f0.x + f0.width * 0.5f, f0.y + 8, 18, ui::kMuted, false);
-      if (cssRow_ == 0 && cssCol_ == col) ui::focusFrame(f0, t, 0.5f);
-    } else {
-      ui::selector(f0, typeName, cssRow_ == 0 && cssCol_ == col, t);
-    }
-
     Rectangle f1 = fieldRect(col, 1, training_);
     bool foc1 = cssRow_ == 1 && cssCol_ == col;
     if (type != 0) {
@@ -367,6 +356,18 @@ void App::drawCss() {
       else drawTextCentered("ESPACE", f1.x + f1.width * 0.5f, f1.y + 64, 30, ui::kMuted, true, FontKind::Title);
       drawTextCentered("pour rejoindre", f1.x + f1.width * 0.5f, f1.y + 108, 18, ui::kMuted, false);
       if (foc1) ui::focusFrame(f1, t, 0.12f);
+    }
+
+    // over the fighter: a cloth or a lock of hair flying above the head passes behind it
+    const char* typeName = type == 1 ? "HUMAIN" : type == 2 ? "ORDINATEUR" : "VIDE";
+    if (training_) typeName = col == 0 ? "VOUS" : "CIBLE D'ENTRAÎNEMENT";
+    Rectangle f0 = fieldRect(col, 0, training_);
+    if (training_) {
+      DrawRectangleRounded(f0, 0.5f, 10, withAlpha(ui::kInk, 0.6f));
+      drawTextCentered(typeName, f0.x + f0.width * 0.5f, f0.y + 8, 18, ui::kMuted, false);
+      if (cssRow_ == 0 && cssCol_ == col) ui::focusFrame(f0, t, 0.5f);
+    } else {
+      ui::selector(f0, typeName, cssRow_ == 0 && cssCol_ == col, t);
     }
 
     Rectangle f2 = fieldRect(col, 2, training_);

@@ -43,19 +43,32 @@ FIGHTER_ART(kratos)
 FIGHTER_ART(hunter)
 }
 #undef FIGHTER_ART
+// Generated animations (assets/sprites, embedded by CMakeLists.txt with their index sheets.txt).
+extern "C" {
+struct ClashSheet {
+  const char* name;  // "<fighter>_<anim>"
+  const unsigned char* data;
+  const unsigned int* size;
+};
+extern const ClashSheet clash_sheets[];  // ends with a null name
+extern const unsigned char sheets_txt[];
+extern const unsigned int sheets_txt_size;
+}
 
 namespace art {
 namespace {
 
 struct Source {
   Hero hero;
+  const char* name;
   const unsigned char* png;
   const unsigned int* pngSize;
   const unsigned char* rig;
   const unsigned int* rigSize;
 };
-#define SOURCE(hero, name) \
-  {Hero::hero, fighter_##name##_png, &fighter_##name##_png_size, fighter_##name##_rig, &fighter_##name##_rig_size}
+#define SOURCE(hero, name)                                                                            \
+  {Hero::hero, #name, fighter_##name##_png, &fighter_##name##_png_size, fighter_##name##_rig, \
+   &fighter_##name##_rig_size}
 const Source kSources[] = {
     SOURCE(Asta, asta),         SOURCE(Yuno, yuno),       SOURCE(Ichigo, ichigo), SOURCE(Byakuya, byakuya),
     SOURCE(Kenpachi, kenpachi), SOURCE(Ulquiorra, ulquiorra), SOURCE(Grimmjow, grimmjow), SOURCE(Starrk, starrk),
@@ -140,6 +153,13 @@ struct Art {
   Shoe shoe[2];
   Strip strip[kLimbs][2];
   Piece fist[2], foot[2];  // F, B
+  struct Sheet {  // a generated animation: frames side by side
+    bool ok = false, loop = false;
+    Texture2D tex{};
+    int frames = 0, impact = -1;  // impact: the frame where the blow lands (-1: none)
+    float fw = 0, fh = 0, ax = 0, ay = 0, pxPerH = 1;  // frame size, the feet (hips' x on the ground), scale
+  };
+  Sheet sheets[kSheetCount];
   float atlasW = 1, atlasH = 1;
   Texture2D tex{};
   float ground = 0, top = 0, unit = 1;  // unit: picture px per fighter height
@@ -475,15 +495,96 @@ void load(Art& A, const Source& s) {
   A.ok = true;
 }
 
+constexpr const char* kSheetNames[kSheetCount] = {"idle", "attack"};
+constexpr float kSheetFps = 8.0f;  // looping animations
+
+void loadSheets(Art& A, const char* fighter) {
+  const std::string text(reinterpret_cast<const char*>(sheets_txt), sheets_txt_size);
+  size_t pos = 0;
+  while (pos < text.size()) {
+    size_t end = text.find('\n', pos);
+    if (end == std::string::npos) end = text.size();
+    const std::string line = text.substr(pos, end - pos);
+    pos = end + 1;
+    char who[32] = {}, anim[32] = {};
+    int frames = 0, loop = 0, impact = -1;
+    float fw = 0, fh = 0, ax = 0, ay = 0, pxh = 0;
+    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %d", who, anim, &frames, &fw, &fh, &ax, &ay,
+                    &pxh, &loop, &impact) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
+      continue;
+    int id = -1;
+    for (int i = 0; i < kSheetCount; ++i)
+      if (std::strcmp(anim, kSheetNames[i]) == 0) id = i;
+    if (id < 0) continue;
+    const std::string key = std::string(fighter) + "_" + anim;
+    for (const ClashSheet* cs = clash_sheets; cs->name; ++cs) {
+      if (key != cs->name) continue;
+      Image img = LoadImageFromMemory(".png", cs->data, int(*cs->size));
+      if (!img.data) break;
+      Art::Sheet& S = A.sheets[id];
+      S.tex = LoadTextureFromImage(img);
+      UnloadImage(img);
+      if (S.tex.id == 0) break;
+      GenTextureMipmaps(&S.tex);
+      SetTextureFilter(S.tex, TEXTURE_FILTER_TRILINEAR);
+      S.frames = frames;
+      S.fw = fw, S.fh = fh, S.ax = ax, S.ay = ay, S.pxPerH = pxh;
+      S.loop = loop != 0;
+      S.impact = impact < frames ? impact : -1;
+      S.ok = true;
+      break;
+    }
+  }
+}
+
 Art* get(Hero h) {
   if (size_t(h) >= g_art.size()) return nullptr;
   Art& A = g_art[size_t(h)];
   if (!A.tried) {
     A.tried = true;
     for (const Source& s : kSources)
-      if (s.hero == h) load(A, s);
+      if (s.hero == h) {
+        load(A, s);
+        if (A.ok) loadSheets(A, s.name);
+      }
   }
   return A.ok ? &A : nullptr;
+}
+
+// Tint of the fighter: hit flash, afterimage, and the colour a transformation gives the body (the avatars around
+// it — wings, Susanoo, the fox — are drawn apart). False when nothing tints it.
+bool tintOf(const Pose& pose, Color flashColor, float flash, Color& tc, float& amount) {
+  tc = flashColor;
+  amount = clampf(flash, 0.0f, 1.0f);
+  if (pose.ghost) amount = std::max(amount, 0.65f);
+  Color formCol{};
+  float formK = 0.0f;
+  switch (pose.form) {
+    case Form::KuramaAvatar: formCol = {255, 190, 60, 255}, formK = 0.35f; break;   // golden chakra cloak
+    case Form::SpartanRage: formCol = {255, 110, 40, 255}, formK = 0.3f; break;     // red-hot
+    case Form::DemonUnion: formCol = {22, 18, 26, 255}, formK = 0.4f; break;        // black demon markings
+    case Form::VastoLorde: formCol = {240, 240, 234, 255}, formK = 0.55f; break;    // white hollow body
+    case Form::RedDemon: formCol = {225, 40, 32, 255}, formK = 0.4f; break;         // red skin
+    case Form::Segunda: formCol = {20, 26, 22, 255}, formK = 0.5f; break;           // black body
+    case Form::Pantera: formCol = {214, 238, 255, 255}, formK = 0.35f; break;       // white armour
+    case Form::LosLobos: formCol = {236, 232, 220, 255}, formK = 0.15f; break;      // fur-lined coat
+    default: break;
+  }
+  if (formK > amount) {
+    tc = mixColor(formCol, flashColor, formK > 0.0f ? amount / formK : 0.0f);
+    amount = formK;
+  }
+  if (!g_tintTried) {
+    g_tintTried = true;
+    g_tint = LoadShaderFromMemory(nullptr, kTintFrag);
+    g_tintLoc = g_tint.id ? GetShaderLocation(g_tint, "tint") : -1;
+  }
+  return amount > 0.01f && g_tint.id != 0 && g_tintLoc >= 0;
+}
+void beginTint(Color tc, float amount) {
+  BeginShaderMode(g_tint);
+  const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
+  SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
 }
 
 // ---- Drawing ----------------------------------------------------------------------------------------
@@ -970,34 +1071,9 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
   leg(kThF, kShF, kFtF, r.hipF, r.kneeF, r.footF, n.hipF, n.kneeF, n.ankleF, n.footF, A->footPhiF);
   leg(kThB, kShB, kFtB, r.hipB, r.kneeB, r.footB, n.hipB, n.kneeB, n.ankleB, n.footB, A->footPhiB);
 
-  // Tint: hit flash, afterimage, and the colour a transformation gives the body (the avatars around it — wings,
-  // Susanoo, the fox — are drawn apart).
-  Color tc = flashColor;
-  float amount = clampf(flash, 0.0f, 1.0f);
-  if (pose.ghost) amount = std::max(amount, 0.65f);
-  Color formCol{};
-  float formK = 0.0f;
-  switch (pose.form) {
-    case Form::KuramaAvatar: formCol = {255, 190, 60, 255}, formK = 0.35f; break;   // golden chakra cloak
-    case Form::SpartanRage: formCol = {255, 110, 40, 255}, formK = 0.3f; break;     // red-hot
-    case Form::DemonUnion: formCol = {22, 18, 26, 255}, formK = 0.4f; break;        // black demon markings
-    case Form::VastoLorde: formCol = {240, 240, 234, 255}, formK = 0.55f; break;    // white hollow body
-    case Form::RedDemon: formCol = {225, 40, 32, 255}, formK = 0.4f; break;         // red skin
-    case Form::Segunda: formCol = {20, 26, 22, 255}, formK = 0.5f; break;           // black body
-    case Form::Pantera: formCol = {214, 238, 255, 255}, formK = 0.35f; break;       // white armour
-    case Form::LosLobos: formCol = {236, 232, 220, 255}, formK = 0.15f; break;      // fur-lined coat
-    default: break;
-  }
-  if (formK > amount) {
-    tc = mixColor(formCol, flashColor, formK > 0.0f ? amount / formK : 0.0f);
-    amount = formK;
-  }
-  if (!g_tintTried) {
-    g_tintTried = true;
-    g_tint = LoadShaderFromMemory(nullptr, kTintFrag);
-    g_tintLoc = g_tint.id ? GetShaderLocation(g_tint, "tint") : -1;
-  }
-  const bool shaded = amount > 0.01f && g_tint.id != 0 && g_tintLoc >= 0;
+  Color tc;
+  float amount = 0.0f;
+  const bool shaded = tintOf(pose, flashColor, flash, tc, amount);
   const Vec2 trail = lerpv(pose.flow, pose.flowTip, 0.6f);
   auto place = [&](const Vert& v) {
     Vec2 p{};
@@ -1011,11 +1087,7 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
     return X(p);
   };
   auto picture = [&](unsigned kinds) {
-    if (shaded) {
-      BeginShaderMode(g_tint);
-      const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
-      SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
-    }
+    if (shaded) beginTint(tc, amount);
     drawParts(*A, place, withAlpha(WHITE, alpha), Mask{}, 1, kinds);
     if (shaded) EndShaderMode();
   };
@@ -1052,11 +1124,7 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
     rlSetTexture(0);
     if (!strips) return;
     // The limb itself, from the picture, lit by the game; then the fist or the shoe.
-    if (shaded) {
-      BeginShaderMode(g_tint);
-      const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
-      SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
-    }
+    if (shaded) beginTint(tc, amount);
     rlSetTexture(A->tex.id);
     rlBegin(RL_QUADS);
     SD.segment(A->strip[id][0], A->limb[id], 0, j[0], j[1], alpha);
@@ -1082,6 +1150,57 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
     picture(1u << kPartHead);
   }
   if (layers != Layers::BelowWeapon) limbs(kArmF);
+}
+
+namespace {
+// The frame of a generated animation the pose shows. A blow is timed on the move: the frames before the impact
+// play while it winds up, the impact holds while the hitbox is out, the rest is the recovery.
+int sheetFrame(const Art::Sheet& S, const Pose& pose) {
+  if (S.loop) return int(std::floor(std::max(0.0f, pose.sheetT) * kSheetFps)) % S.frames;
+  const float t = clampf(pose.sheetT, 0.0f, 1.0f);
+  if (S.impact < 0 || pose.sheetHit0 < 0.0f) return std::clamp(int(t * S.frames), 0, S.frames - 1);
+  const float h0 = pose.sheetHit0, h1 = std::max(h0, pose.sheetHit1);
+  if (t < h0) return std::clamp(int(t / h0 * S.impact), 0, std::max(0, S.impact - 1));
+  const int rest = S.frames - 1 - S.impact;
+  if (t < h1 || rest <= 0) return S.impact;
+  return std::min(S.frames - 1, S.impact + 1 + int((t - h1) / std::max(1e-3f, 1.0f - h1) * rest));
+}
+}  // namespace
+
+bool hasSheet(Hero h, SheetAnim a) {
+  const Art* A = get(h);
+  return A && a >= 0 && a < kSheetCount && A->sheets[a].ok;
+}
+
+bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash) {
+  if (pose.sheet < 0 || pose.sheet >= kSheetCount || alpha <= 0.0f) return false;
+  const Art* A = get(d.hero);
+  if (!A || !A->sheets[pose.sheet].ok) return false;
+  const Art::Sheet& S = A->sheets[pose.sheet];
+  const int i = sheetFrame(S, pose);
+  // Frame pixels to the fighter's frame: the anchor on the feet (y = +H/2), S.pxPerH pixels per fighter height.
+  const float H = d.height, k = H / S.pxPerH;
+  auto P = [&](float x, float y) { return X(Vec2{(x - S.ax) * k, (y - S.ay) * k + 0.5f * H}); };
+  const Vector2 q[4] = {P(0, 0), P(S.fw, 0), P(S.fw, S.fh), P(0, S.fh)};
+  const float tw = float(S.tex.width), th = float(S.tex.height);
+  const float u0 = i * S.fw / tw, u1 = (i + 1) * S.fw / tw;
+  const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, S.fh / th}, {u0, S.fh / th}};
+  Color tc;
+  float amount = 0.0f;
+  const bool shaded = tintOf(pose, flashColor, flash, tc, amount);
+  if (shaded) beginTint(tc, amount);
+  rlSetTexture(S.tex.id);
+  rlBegin(RL_QUADS);
+  const unsigned char a = (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f));
+  for (int c = 0; c < 4; ++c) {
+    rlColor4ub(255, 255, 255, a);
+    rlTexCoord2f(uv[c][0], uv[c][1]);
+    rlVertex2f(q[c].x, q[c].y);
+  }
+  rlEnd();
+  rlSetTexture(0);
+  if (shaded) EndShaderMode();
+  return true;
 }
 
 bool drawWhole(Hero h, Vec2 feet, float height, int facing, float alpha) {

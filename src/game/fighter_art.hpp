@@ -45,6 +45,11 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
 // The picture in its own pose: the whole fighter (`height`: from the feet to the top of the skull), the head
 // and shoulders in drawPortrait's frame, the head in a disc.
 bool drawWhole(Hero h, Vec2 feet, float height, int facing, float alpha);
+// Animations generated from the picture (SpriteCook, see scripts/import_sheet.py): frame by frame drawings that
+// replace the skeleton for the poses they cover.
+enum SheetAnim { kSheetIdle, kSheetAttack, kSheetCount };
+bool hasSheet(Hero h, SheetAnim a);
+bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 bool drawBust(Hero h, Vec2 center, float size, float alpha);
 bool drawDisc(Hero h, Vec2 center, float radius, float alpha);
 }  // namespace art

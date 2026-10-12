@@ -5,4 +5,5 @@ dist/
 !docs/*.png
 !assets/*.png
 !assets/fighters/*.png
+!assets/sprites/*.png
 !art/fighters/*.png

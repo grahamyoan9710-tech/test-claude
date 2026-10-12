@@ -1067,6 +1067,28 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
   }
   p.bladeLen = f.bladeLength();
   p.form = f.formKind();
+  // Animations generated for the fighter (art::drawSheet) replace the skeleton for the poses they cover: standing
+  // in guard, and the punches (the third jab stays the kick that ends the combo).
+  if (frontWeapon(d, p) == WeaponVisual::None && p.form == Form::None) {
+    if (f.state == FState::Idle && art::hasSheet(d.hero, art::kSheetIdle)) {
+      p.sheet = art::kSheetIdle;
+      p.sheetT = tt;
+    } else if (f.state == FState::Attack && (f.move == Jab || f.move == Jab2 || f.move == FTilt) &&
+               art::hasSheet(d.hero, art::kSheetAttack)) {
+      const MoveDef* md = f.currentMove();
+      const float dur = float(std::max(1, md ? md->duration : 20));
+      p.sheet = art::kSheetAttack;
+      p.sheetT = clampf(float(f.moveFrame) / dur, 0.0f, 1.0f);
+      if (md && !md->hitboxes.empty()) {  // the drawn blow lands with the first hitbox
+        int h0 = md->hitboxes[0].start, h1 = 0;
+        for (const auto& h : md->hitboxes) h0 = std::min(h0, h.start);
+        for (const auto& h : md->hitboxes)
+          if (h.start == h0) h1 = std::max(h1, h.end);
+        p.sheetHit0 = float(h0) / dur;
+        p.sheetHit1 = float(h1) / dur;
+      }
+    }
+  }
   return p;
 }
 
