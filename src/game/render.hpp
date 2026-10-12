@@ -80,6 +80,7 @@ struct WeaponStyle {
   int variant = 0;        // bows: 0 golden bow of light, 1 plain wooden bow, 2 bow of flames
   bool ghost = false;     // afterimage: flat silhouette in `tint`
   Color tint = WHITE;
+  float slim = 1.0f;      // cross-section of the weapon (< 1: slimmer, for the illustrated fighters' realistic builds)
 };
 void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
                       const WeaponStyle& style);

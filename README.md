@@ -21,7 +21,7 @@ deux par série, de Las Noches à la Vallée de la Fin. Les arènes sont entièr
 | Menu principal | Sélection des 17 combattants |
 |---|---|
 | ![Menu principal](docs/menu.jpg) | ![Sélection](docs/selection.jpg) |
-| **Combat : Kenpachi, Sasuke, Naruto et le Chasseur** | **Cut-in d'ultime : Barrage Uzumaki (Naruto)** |
+| **Combat : Naruto, Sasuke, Ichigo et Gojo** | **Cut-in d'ultime : Barrage Uzumaki (Naruto)** |
 | ![Combat](docs/combat.jpg) | ![Cut-in](docs/cutin.jpg) |
 | **Ultime de Tensa Zangetsu : Vasto Lorde et son Cero** | **Transformation : Segunda Etapa (Ulquiorra)** |
 | ![Ultime](docs/attaque_finale.jpg) | ![Transformation](docs/transformation.jpg) |
@@ -45,20 +45,36 @@ et la course suivent le sol, Naruto court en ninja, les coups engagent tout le c
 ## Combattants illustrés
 
 Chaque combattant est dessiné d'après une **illustration** (pixel art détaillé, en pied, tourné vers la
-droite). L'image est découpée en six morceaux — jambe et bras
-arrière, buste, jambe avant, tête, bras avant — et chaque morceau suit les os du squelette : marche, course,
-sauts, coups, smashs, spéciales et ultimes animent l'illustration elle-même, qui se plie aux coudes, aux
-genoux et aux chevilles. Au repos, le combattant reprend exactement la pose de l'image. Sous les membres
-avant, le buste est complété à partir de ses propres couleurs pour qu'un bras qui bouge ne laisse pas de
-trou. La même image sert aux portraits : carte de sélection, vignettes, cut-in d'ultime, médaillons du
-combat et écran des résultats.
+droite). L'image est découpée en morceaux — jambe et bras arrière, buste, jambe avant, tête, bras avant, et
+pour les tenues amples une **jupe** (hakama, kimono, pans de manteau, kilt, tunique) et une **cape** — et
+chaque morceau suit les os du squelette : marche, course, sauts, coups, smashs, spéciales et ultimes animent
+l'illustration elle-même, qui se plie aux coudes, aux genoux et aux chevilles.
+
+- **Les mouvements sont adaptés à chaque corps** : le jeu calcule chaque attaque sur un squelette de
+  référence, puis chaque membre de l'illustration prend la direction et l'ouverture du membre calculé, avec
+  ses propres longueurs. Les coudes et les genoux plient toujours dans le bon sens, les pieds restent posés
+  au sol (les hanches descendent au besoin), et un membre ne se replie jamais complètement.
+- **Aucun écrasement** : l'illustration n'est jamais étirée ni tassée, les accroupissements sont peu
+  profonds.
+- **Les vêtements suivent comme du tissu** : une jupe se plie entre les deux jambes, la cape suit le buste,
+  et les deux traînent derrière le mouvement.
+- Au repos, le combattant reprend exactement la pose de l'image. Sous les morceaux posés devant eux, le
+  buste, la jupe et la cape sont complétés à partir de leurs propres couleurs : un membre qui bouge ne laisse
+  pas de trou.
+- En combat, les illustrations passent par un pixel art plus fin que celui des anciens personnages (un
+  pixel d'art par pixel de l'écran 1280×720), et la caméra est plus proche : les combattants sont plus
+  grands et plus détaillés.
+
+La même image sert aux portraits : carte de sélection, vignettes, cut-in d'ultime, médaillons du combat et
+écran des résultats.
 
 ![Naruto : l'illustration et son animation en jeu](docs/illustre.jpg)
 
 Les **17 combattants** sont illustrés. Les armes (épées, Zangetsu, lames du Chaos, arc et bouclier de Link,
-grimoire de Yuno, loups de Starrk...) restent dessinées par le jeu, dans la main de l'illustration ; une
-transformation teinte l'illustration (cape dorée de Kurama, corps blanc du Vasto Lorde, peau rouge du Démon
-rouge...) en plus de son avatar (ailes, Susanoo, renard).
+grimoire de Yuno, loups de Starrk...) restent dessinées par le jeu : le poing de l'illustration se referme
+sur la poignée, et les lames sont plus fines pour aller avec les silhouettes réalistes (leur longueur, celle
+de la zone de coup, ne change pas). Une transformation teinte l'illustration (cape dorée de Kurama, corps
+blanc du Vasto Lorde, peau rouge du Démon rouge...) en plus de son avatar (ailes, Susanoo, renard).
 
 Pour ajouter ou remplacer un combattant (image générée avec ChatGPT : un personnage en pied, tourné vers la
 droite, fond uni, bras et jambes bien séparés du corps, mains vides) :
@@ -67,7 +83,8 @@ droite, fond uni, bras et jambes bien séparés du corps, mains vides) :
 python3 scripts/import_portrait.py image.png art/fighters/link.png   # détoure le fond uni
 #   --box X0 Y0 X1 Y1 : un personnage d'une planche   --scale 2 : petite image en pixel art, agrandie au pixel près
 #   --main : ôte les morceaux des voisins   --shade-min 0.85 : garde les habits de la couleur du fond
-# art/fighters/link.json : les articulations repérées sur l'image (voir les autres .json et scripts/rig_art.py)
+# art/fighters/link.json : les articulations repérées sur l'image, et les polygones de la jupe et de la cape
+#   (voir les autres .json et scripts/rig_art.py)
 python3 scripts/rig_art.py art/fighters/link.json --debug /tmp/link   # découpe : assets/fighters/link.png + .rig
 ```
 
@@ -252,9 +269,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

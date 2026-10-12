@@ -26,15 +26,21 @@ struct Rig {
   Vec2 elbowF, elbowB, kneeF, kneeB, handF, handB, footF, footB;
 };
 
+// The skeleton of a pose with the drawn build's proportions (render_body.cpp).
+Rig buildRig(const CharacterDef& d, const Pose& pose);
+
 namespace art {
 bool rigged(Hero h);    // the fighter itself is drawn from its picture
 bool portrait(Hero h);  // the portraits are (the fighter may still be drawn by code)
-// The skeleton of a pose with the picture's proportions. False: no picture, the drawn build applies.
-bool solve(const CharacterDef& d, const Pose& pose, Rig& r);
+// The skeleton of a pose with the picture's proportions, from the same pose on the drawn build (`built`): each
+// limb takes the direction and the extension of the drawn one. False: no picture, the drawn build applies.
+bool solve(const CharacterDef& d, const Pose& pose, const Rig& built, Rig& r);
 // Rest pose guard: the stance of the picture (hand and foot targets, torso as drawn).
 bool stance(const CharacterDef& d, Pose& p, float bob);
+// The weapon goes between the two layers: the front fist closes over its grip.
+enum class Layers { All, BelowWeapon, WeaponArm };
 void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf& X, float alpha, Color flashColor,
-                 float flash);
+                 float flash, Layers layers = Layers::All);
 // The picture in its own pose: the whole fighter (`height`: from the feet to the top of the skull), the head
 // and shoulders in drawPortrait's frame, the head in a disc.
 bool drawWhole(Hero h, Vec2 feet, float height, int facing, float alpha);

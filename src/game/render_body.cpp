@@ -307,10 +307,12 @@ Xf xform(const CharacterDef& d, const Pose& pose, Vec2 feet, int facing, float s
   Xf X;
   X.facing = facing;
   X.scale = scale;
-  X.squash = pose.squash;
-  X.sx = pose.sx;
+  // An illustration is never squashed nor stretched: it moves with its skeleton only.
+  const float k = art::rigged(d.hero) ? 0.0f : 1.0f;
+  X.squash = 1.0f + (pose.squash - 1.0f) * k;
+  X.sx = 1.0f + (pose.sx - 1.0f) * k;
   X.rot = pose.rot * facing;
-  X.center = feet + Vec2{pose.shift.x * facing * scale, -d.height * 0.5f * scale * pose.squash + pose.shift.y * scale};
+  X.center = feet + Vec2{pose.shift.x * facing * scale, -d.height * 0.5f * scale * X.squash + pose.shift.y * scale};
   return X;
 }
 
@@ -429,9 +431,10 @@ Cut cutFor(Hero h, Form form = Form::None) {
   return c;
 }
 
-Rig solveRig(const CharacterDef& d, const Pose& pose) {
+}  // namespace
+
+Rig buildRig(const CharacterDef& d, const Pose& pose) {
   Rig r;
-  if (art::solve(d, pose, r)) return r;  // drawn from a picture: its proportions
   const float H = d.height;
   const Build b = buildFor(d.hero);
   r.hr = b.head * H;
@@ -452,6 +455,14 @@ Rig solveRig(const CharacterDef& d, const Pose& pose) {
   r.kneeF = ik(r.hipF, pose.footF, b.thigh * H, b.shin * H, -1.0f, r.footF);
   r.kneeB = ik(r.hipB, pose.footB, b.thigh * H, b.shin * H, -1.0f, r.footB);
   return r;
+}
+
+namespace {
+Rig solveRig(const CharacterDef& d, const Pose& pose) {
+  const Rig built = buildRig(d, pose);
+  Rig r;
+  if (art::solve(d, pose, built, r)) return r;  // drawn from a picture: the same motion on its proportions
+  return built;
 }
 
 // ---- Looks: colours of a hero in one palette -------------------------------------------------------
@@ -2153,6 +2164,7 @@ struct Body {
     st.side = X.facing;
     st.ghost = P.ghost;
     st.tint = P.flashCol;
+    if (art::rigged(hero)) st.slim = 0.74f;  // a realistic build: the blades thinner, the length (the hitbox) kept
     return st;
   }
   void frontWeaponDraw() {
@@ -2527,11 +2539,12 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
     }
     const bool gearFront = b.gearInFront();  // shield, bow
     if (!gearFront) b.backArmGear();
-    art::drawFighter(d, pose, R, X, alpha, flashColor, flash);
+    art::drawFighter(d, pose, R, X, alpha, flashColor, flash, art::Layers::BelowWeapon);
     if (gearFront) b.backArmGear();
     if (pose.form != Form::None) b.horns();
+    b.frontWeaponDraw();  // under the front arm: the fist holds the grip
+    art::drawFighter(d, pose, R, X, alpha, flashColor, flash, art::Layers::WeaponArm);
     b.props();
-    b.frontWeaponDraw();
     b.energy();
     if (d.hero == Hero::Starrk) b.wolfPack(true);
     return;
@@ -2542,9 +2555,10 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
 void drawCharacterSprite(const CharacterDef& d, int palette, const Pose& pose, Vec2 feet, int facing, float scale,
                          float alpha, Color flashColor, float flash, float time) {
   const float h = d.height * scale, rx = std::max(h * 1.7f, 200.0f * scale);
+  const bool illustrated = art::rigged(d.hero);  // a detailed picture: finer pixels, more colour bands
   pix::sprite({feet.x - rx, feet.y - h * 2.3f, rx * 2.0f, h * 2.9f}, alpha, [&](float a) {
     drawCharacter(d, palette, pose, feet, facing, scale, a, flashColor, flash, time);
-  });
+  }, illustrated ? pix::kFinePixel : 0.0f, illustrated ? 40.0f : 20.0f);
 }
 
 void drawShowcase(const CharacterDef& d, int palette, const Pose& pose, Vec2 feet, int facing, float height,

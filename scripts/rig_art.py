@@ -16,6 +16,9 @@ The JSON file names the cut-out picture (see import_portrait.py) and marks the j
       "radius": {"armF": [r_shoulder, r_elbow, r_hand], "handF": r, "legF": [r_hip, r_knee, r_ankle],
                  "footF": [r_ankle, r_toe], "heelF": [r_ankle, r_sole], "torso": r, ...},
       "blend": {"neck": px, "shoulder": px, "elbow": px, "hip": px, "knee": px, "ankle": px},  # bend zones
+      "skirt": [[[x, y], ...]],           # polygon(s): cloth from the waist down (hakama, robe, coat tails, kilt)
+      "cape": [[[x, y], ...]],            # polygon(s): cloth hanging behind the body
+      "order": ["cape", "legB", ...],     # drawing order of the parts (back to front), see below
       "neckCut": [[x, y], ...],           # line between the head and the collar
       "cutToEdges": true,                 # extend that line to both sides of the picture
       "close": 22                         # how far the torso is filled in under the limbs (px)
@@ -24,17 +27,18 @@ The JSON file names the cut-out picture (see import_portrait.py) and marks the j
 F is the arm / leg on the side the fighter faces (to the right of the picture), drawn in front of the body;
 B is the other one, drawn behind it. A picture without limb joints ("parts": "whole") is only a portrait.
 
-The parts: legB, armB (behind the body), torso, legF, head, armF (in front). Each limb takes the pixels around
-its bones (tapered capsules); the head takes what hangs from the skull above the neck cut; the torso takes the
-rest. Under the parts drawn in front of it, the torso is filled in from its own colours, so a limb that moves
-away does not leave a hole.
+The parts, back to front by default: cape, legB, torso, legF, skirt, armB, head, armF. Each limb takes the
+pixels around its bones (tapered capsules); the head takes what hangs from the skull above the neck cut; the
+skirt and the cape take their polygons; the torso takes the rest. Under the parts drawn in front of them, the
+torso, the skirt and the cape are filled in from their own colours, so a limb that moves away leaves no hole.
+In the game the skirt bends between both legs and the hips, the cape follows the torso and trails behind.
 """
 import argparse
 import json
 import os
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 PAD = 12  # transparent margin around each part in the atlas (mipmaps must not bleed between parts)
 ATLAS_W = 1024
@@ -178,7 +182,8 @@ def main():
     J = {k: tuple(v) for k, v in spec.get("joints", {}).items()}
     R = spec.get("radius", {})
 
-    parts = {}  # name -> (mask, soft alpha factor)
+    parts = {}  # name -> mask
+    filled = {}
     whole = spec.get("parts") == "whole"
     if whole:
         parts["whole"] = opaque
@@ -196,11 +201,19 @@ def main():
                     e = np.maximum(e, e2)
             return m & opaque, e
 
+        def polygon(key):
+            m = np.zeros((h, w), dtype=bool)
+            for poly in spec.get(key, []):
+                im = Image.new("L", (w, h), 0)
+                ImageDraw.Draw(im).polygon([tuple(p) for p in poly], fill=255)
+                m |= np.asarray(im) > 0
+            return m & opaque
+
         armF, _ = limb(["shF", "elbowF", "handF"], "armF", [("handF", ["handF"])])
         armB, _ = limb(["shB", "elbowB", "handB"], "armB", [("handB", ["handB"])])
+        armB &= ~armF
         legF, _ = limb(["hipF", "kneeF", "ankleF"], "legF", [("footF", ["ankleF", "toeF"]), ("heelF", ["ankleF", "footF"])])
         legB, _ = limb(["hipB", "kneeB", "ankleB"], "legB", [("footB", ["ankleB", "toeB"]), ("heelB", ["ankleB", "footB"])])
-        legF &= ~armF
         # Head: everything hanging from the skull above the neck cut.
         barrier = np.zeros((h, w), dtype=bool)
         cut = [list(p) for p in spec["neckCut"]]
@@ -208,16 +221,21 @@ def main():
             cut = [[0, cut[0][1]]] + cut + [[w - 1, cut[-1][1]]]
         raster_line(barrier, cut)
         head = flood(opaque & ~barrier & ~armF & ~armB & ~legF & ~legB, tuple(int(v) for v in J["head"]))
-        head = dilate(head, 2) & opaque & ~armF  # gives back the barrier line
-        legF &= ~head
-        armB &= ~(armF | head | legF)
-        legB &= ~(armF | head | legF | armB)
+        head = dilate(head, 2) & opaque & ~armF & ~armB  # gives back the barrier line
+        # Cloth: a skirt (hakama, robe, coat tails, kilt, tunic) bends between the legs; a cape hangs behind.
+        skirtZone = polygon("skirt")
+        capeZone = polygon("cape")
+        skirt = skirtZone & ~(armF | armB | head)
+        legF &= ~(armF | armB | head | skirt)
+        legB &= ~(armF | armB | head | skirt | legF)
+        cape = capeZone & ~(armF | armB | head | skirt | legF | legB)
         torso, _ = capsule_chain(px, py, [J["hips"], J["neck"]], [R.get("torso", 100)] * 2)
-        torso &= opaque & ~(armF | head | legF | armB | legB)
+        torso &= opaque & ~(armF | armB | head | skirt | legF | legB | cape)
         # What no bone claimed (a holster on a thigh, the hem of wide trousers, toes) goes to the nearest part.
-        names = ["torso", "legB", "armB", "legF", "head", "armF"]
+        names = ["torso", "legB", "armB", "legF", "head", "armF", "skirt", "cape"]
+        masks = [torso, legB, armB, legF, head, armF, skirt, cape]
         label = np.zeros((h, w), dtype=np.int8)
-        for i, m in enumerate([torso, legB, armB, legF, head, armF]):
+        for i, m in enumerate(masks):
             label[m] = i + 1
         for _ in range(400):
             todo = opaque & (label == 0)
@@ -231,24 +249,39 @@ def main():
             if (grown == label).all():
                 break
             label = grown
-        torso, legB, armB, legF, head, armF = [(label == i + 1) for i in range(6)]
-        front = armF | head | legF
-        back = armB | legB
-        core = torso
+        own = {name: label == i + 1 for i, name in enumerate(names)}
+        order = [n for n in spec.get("order", ["cape", "legB", "torso", "legF", "skirt", "armB", "head", "armF"])
+                 if own[n].any()]
+        # A torso, a skirt or a cape is filled in from its own colours under the parts drawn over it (a limb that
+        # moves away leaves no hole); under the parts drawn before it, it keeps the picture as it is.
         rc = int(spec.get("close", 22))
-        hull = erode(dilate(core, rc), rc)
-        torso_keep = core | (hull & back)
-        todo = hull & front & opaque
-        rgb = inpaint(img[..., :3], torso_keep, todo)
-        torso_rgba = np.dstack([rgb, np.where(torso_keep | todo, img[..., 3], 0.0)])
-        torso_rgba[todo, 3] = 255.0
-        parts = {"legB": legB, "armB": armB, "torso": None, "legF": legF, "head": head, "armF": armF}
-        order = ["legB", "armB", "torso", "legF", "head", "armF"]
+        zones = {"torso": erode(dilate(own["torso"], rc), rc), "skirt": skirtZone | own["skirt"],
+                 "cape": capeZone | own["cape"]}
+        filled = {}
+        for name in ("torso", "skirt", "cape"):
+            if name not in order:
+                continue
+            k = order.index(name)
+            before = np.zeros((h, w), dtype=bool)
+            after = np.zeros((h, w), dtype=bool)
+            for other in order:
+                if other != name:
+                    if order.index(other) < k:
+                        before |= own[other]
+                    else:
+                        after |= own[other]
+            keep = own[name] | (zones[name] & before)
+            todo = zones[name] & after & opaque
+            rgb = inpaint(img[..., :3], keep, todo)
+            rgba = np.dstack([rgb, np.where(keep | todo, img[..., 3], 0.0)])
+            rgba[todo, 3] = 255.0
+            filled[name] = rgba
+        parts = {n: own[n] for n in names}
 
     layers = {}
     for name in order:
-        if name == "torso":
-            rgba = torso_rgba
+        if name in filled:
+            rgba = filled[name]
         else:
             m = parts[name]
             rgba = img.copy()
@@ -303,7 +336,8 @@ def main():
     if a.debug:
         os.makedirs(a.debug, exist_ok=True)
         colors = {"legB": (60, 90, 255), "armB": (0, 200, 255), "torso": (255, 255, 255), "legF": (255, 60, 60),
-                  "head": (255, 220, 0), "armF": (60, 255, 60), "whole": (255, 255, 255)}
+                  "head": (255, 220, 0), "armF": (60, 255, 60), "whole": (255, 255, 255), "skirt": (255, 120, 220),
+                  "cape": (150, 90, 40)}
         vis = np.zeros((h, w, 3), dtype=np.float32)
         for name in order:
             m = layers[name][..., 3] > 127

@@ -371,7 +371,7 @@ void MatchScreen::updateCamera(bool snap) {
     maxY = std::max(maxY, c.y + 130.0f);
   }
   float w = maxX - minX, h = maxY - minY;
-  float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
+  float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.32f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
   // An ultimate: the camera tightens on its user and on the fighters it is dealing with.
   int ultUser = -1;

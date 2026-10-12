@@ -62,7 +62,8 @@ const Source kSources[] = {
 #undef SOURCE
 
 enum Bone { kTorso, kHead, kUpF, kLoF, kUpB, kLoB, kThF, kShF, kFtF, kThB, kShB, kFtB, kBones };
-enum Kind { kPartTorso, kPartHead, kPartArmF, kPartArmB, kPartLegF, kPartLegB, kPartWhole };
+enum Kind { kPartTorso, kPartHead, kPartArmF, kPartArmB, kPartLegF, kPartLegB, kPartSkirt, kPartCape, kPartWhole };
+constexpr int kInfluences = 8;  // bones a grid corner may follow
 constexpr int kCell = 12;  // grid step on the picture (px)
 
 struct Joints {
@@ -86,8 +87,9 @@ struct Vert {
   Vec2 src;   // on the picture (px)
   Vec2 n;     // bind position in fighter heights: origin under the hips at mid height, feet at y = 0.5
   float u, v; // atlas
-  uint8_t bone[4];
-  float w[4];
+  uint8_t bone[kInfluences];
+  float w[kInfluences];
+  float sway = 0.0f;  // cloth: how far the corner trails behind the motion (fighter heights)
 };
 struct Part {
   Kind kind = kPartTorso;
@@ -95,8 +97,8 @@ struct Part {
   std::vector<Vert> verts;  // (nx + 1) * (ny + 1)
   std::vector<int> cells;   // the cells with something drawn in them
 };
-struct Limb {  // lengths in fighter heights, IK bend side
-  float l1 = 0, l2 = 0, bend = 1;
+struct Limb {  // bone lengths in fighter heights
+  float l1 = 0, l2 = 0;
 };
 
 struct Art {
@@ -154,26 +156,51 @@ Limb limbOf(Vec2 a, Vec2 b, Vec2 c) {
   Limb l;
   l.l1 = (b - a).len();
   l.l2 = (c - b).len();
-  Vec2 e;
-  const Vec2 p = ik(a, c, l.l1, l.l2, 1.0f, e), q = ik(a, c, l.l1, l.l2, -1.0f, e);
-  l.bend = (p - b).len2() <= (q - b).len2() ? 1.0f : -1.0f;
   return l;
 }
 
 // ---- Loading ----------------------------------------------------------------------------------------
-void weigh(const Art& A, Kind kind, Vert& v) {
+// Inside a leg: how much a point follows the thigh, the shin and the foot (blended around the knee and ankle).
+struct LegShare {
+  float thigh, shin, foot;
+};
+LegShare legShare(const Art& A, bool f, Vec2 p) {
+  const Joints& j = A.px;
+  const Vec2 hp = f ? j.hipF : j.hipB, kn = f ? j.kneeF : j.kneeB, an = f ? j.ankleF : j.ankleB, ft = f ? j.footF : j.footB;
+  const Vec2 ut = (kn - hp).norm(), us = (an - kn).norm(), uf = (ft - an).norm();
+  Vec2 nk = (ut + us).norm(), na = (us + uf).norm();
+  if (nk.len2() < 0.5f) nk = ut;
+  if (na.len2() < 0.5f) na = us;
+  const float wk = sstep(-A.blendKnee, A.blendKnee, dot(p - kn, nk));
+  const float wa = sstep(-A.blendAnkle, A.blendAnkle, dot(p - an, na));
+  return {1.0f - wk, wk * (1.0f - wa), wk * wa};
+}
+
+float segDist(Vec2 p, Vec2 a, Vec2 b) {
+  const Vec2 d = b - a;
+  const float t = clampf(dot(p - a, d) / std::max(1e-6f, d.len2()), 0.0f, 1.0f);
+  return (p - (a + d * t)).len();
+}
+
+void weigh(const Art& A, Kind kind, Vert& v, float partTop, float partBottom) {
   const Joints& j = A.px;
   const Vec2 p = v.src;
-  float w[4] = {1, 0, 0, 0};
-  uint8_t b[4] = {kTorso, kTorso, kTorso, kTorso};
+  float w[kInfluences] = {1};
+  uint8_t b[kInfluences] = {kTorso};
+  int n = 1;
+  auto add = [&](int bone, float wt) {
+    if (wt <= 1e-4f || n >= kInfluences) return;
+    b[n] = uint8_t(bone);
+    w[n++] = wt;
+  };
   switch (kind) {
     case kPartHead: {
       const Vec2 u = (j.head - j.neck).norm();
       const float bn = A.blendNeck;
       const float near = 1.0f - sstep(bn * 3.0f, bn * 6.0f, (p - j.neck).len());
       const float wt = sstep(bn, -bn, dot(p - j.neck, u)) * near;
-      b[0] = kHead, w[0] = 1.0f - wt;
-      b[1] = kTorso, w[1] = wt;
+      w[0] = wt;
+      add(kHead, 1.0f - wt);
       break;
     }
     case kPartArmF: case kPartArmB: {
@@ -184,33 +211,50 @@ void weigh(const Art& A, Kind kind, Vert& v) {
       if (ne.len2() < 0.5f) ne = uu;
       const float wt = sstep(A.blendShoulder, -A.blendShoulder, dot(p - sh, uu));
       const float wl = sstep(-A.blendElbow, A.blendElbow, dot(p - el, ne));
-      b[0] = kTorso, w[0] = wt;
-      b[1] = f ? kUpF : kUpB, w[1] = (1.0f - wt) * (1.0f - wl);
-      b[2] = f ? kLoF : kLoB, w[2] = (1.0f - wt) * wl;
+      w[0] = wt;
+      add(f ? kUpF : kUpB, (1.0f - wt) * (1.0f - wl));
+      add(f ? kLoF : kLoB, (1.0f - wt) * wl);
       break;
     }
     case kPartLegF: case kPartLegB: {
       const bool f = kind == kPartLegF;
-      const Vec2 hp = f ? j.hipF : j.hipB, kn = f ? j.kneeF : j.kneeB, an = f ? j.ankleF : j.ankleB,
-                 ft = f ? j.footF : j.footB;
-      const Vec2 ut = (kn - hp).norm(), us = (an - kn).norm(), uf = (ft - an).norm();
-      Vec2 nk = (ut + us).norm(), na = (us + uf).norm();
-      if (nk.len2() < 0.5f) nk = ut;
-      if (na.len2() < 0.5f) na = us;
-      const float wt = sstep(A.blendHip, -A.blendHip, dot(p - hp, ut));
-      const float wk = sstep(-A.blendKnee, A.blendKnee, dot(p - kn, nk));
-      const float wa = sstep(-A.blendAnkle, A.blendAnkle, dot(p - an, na));
-      b[0] = kTorso, w[0] = wt;
-      b[1] = f ? kThF : kThB, w[1] = (1.0f - wt) * (1.0f - wk);
-      b[2] = f ? kShF : kShB, w[2] = (1.0f - wt) * wk * (1.0f - wa);
-      b[3] = f ? kFtF : kFtB, w[3] = (1.0f - wt) * wk * wa;
+      const Vec2 hp = f ? j.hipF : j.hipB, kn = f ? j.kneeF : j.kneeB;
+      const float wt = sstep(A.blendHip, -A.blendHip, dot(p - hp, (kn - hp).norm()));
+      const LegShare s = legShare(A, f, p);
+      w[0] = wt;
+      add(f ? kThF : kThB, (1.0f - wt) * s.thigh);
+      add(f ? kShF : kShB, (1.0f - wt) * s.shin);
+      add(f ? kFtF : kFtB, (1.0f - wt) * s.foot);
       break;
     }
+    case kPartSkirt: {  // cloth from the waist: the hips hold its top, below it is pulled by both legs
+      const float hipY = (j.hipF.y + j.hipB.y) * 0.5f, thigh = (j.kneeF - j.hipF).len();
+      const float wt = sstep(hipY + 0.45f * thigh, hipY - 0.05f * thigh, p.y);
+      const float dF = std::min(segDist(p, j.hipF, j.kneeF), segDist(p, j.kneeF, j.ankleF));
+      const float dB = std::min(segDist(p, j.hipB, j.kneeB), segDist(p, j.kneeB, j.ankleB));
+      const float c = 0.06f * A.unit, iF = 1.0f / (dF * dF + c * c), iB = 1.0f / (dB * dB + c * c);
+      const float sF = iF / (iF + iB);
+      const LegShare lf = legShare(A, true, p), lb = legShare(A, false, p);
+      w[0] = wt;
+      add(kThF, (1.0f - wt) * sF * lf.thigh);
+      add(kShF, (1.0f - wt) * sF * lf.shin);
+      add(kFtF, (1.0f - wt) * sF * lf.foot);
+      add(kThB, (1.0f - wt) * (1.0f - sF) * lb.thigh);
+      add(kShB, (1.0f - wt) * (1.0f - sF) * lb.shin);
+      add(kFtB, (1.0f - wt) * (1.0f - sF) * lb.foot);
+      v.sway = 0.035f * clampf((p.y - hipY) / std::max(1.0f, A.ground - hipY), 0.0f, 1.0f);
+      break;
+    }
+    case kPartCape:  // hangs from the shoulders with the torso, its hem trails behind
+      v.sway = 0.08f * clampf((p.y - partTop) / std::max(1.0f, partBottom - partTop), 0.0f, 1.0f);
+      break;
     default: break;
   }
-  for (int i = 0; i < 4; ++i) {
-    v.bone[i] = b[i];
-    v.w[i] = w[i];
+  float sum = 0.0f;
+  for (int i = 0; i < n; ++i) sum += w[i];
+  for (int i = 0; i < kInfluences; ++i) {
+    v.bone[i] = i < n ? b[i] : uint8_t(kTorso);
+    v.w[i] = i < n && sum > 0.0f ? w[i] / sum : 0.0f;
   }
 }
 
@@ -282,7 +326,8 @@ void load(Art& A, const Source& s) {
     Part P;
     const std::string& nm = pl.name;
     P.kind = nm == "torso" ? kPartTorso : nm == "head" ? kPartHead : nm == "armF" ? kPartArmF
-           : nm == "armB" ? kPartArmB : nm == "legF" ? kPartLegF : nm == "legB" ? kPartLegB : kPartWhole;
+           : nm == "armB" ? kPartArmB : nm == "legF" ? kPartLegF : nm == "legB" ? kPartLegB
+           : nm == "skirt" ? kPartSkirt : nm == "cape" ? kPartCape : kPartWhole;
     if (!A.rigged) P.kind = kPartWhole;
     P.nx = (pl.w + kCell - 1) / kCell;
     P.ny = (pl.h + kCell - 1) / kCell;
@@ -295,7 +340,7 @@ void load(Art& A, const Source& s) {
         v.n = norm(v.src);
         v.u = (pl.ax + sx) / AW;
         v.v = (pl.ay + sy) / AH;
-        weigh(A, P.kind, v);
+        weigh(A, P.kind, v, float(pl.oy), float(pl.oy + pl.h));
       }
     for (int jy = 0; jy < P.ny; ++jy)
       for (int ix = 0; ix < P.nx; ++ix) {
@@ -349,12 +394,13 @@ struct Mask {
 
 // Draws every part: `place` gives the screen position of a grid corner. `sub` splits the cells (fine masks).
 template <class Place>
-void drawParts(const Art& A, Place place, Color tint, const Mask& mask, int sub = 1) {
+void drawParts(const Art& A, Place place, Color tint, const Mask& mask, int sub = 1, unsigned kinds = ~0u) {
   static std::vector<Vector2> pts;
   static std::vector<float> ks;
   rlSetTexture(A.tex.id);
   rlBegin(RL_QUADS);
   for (const Part& P : A.parts) {
+    if (!(kinds & (1u << P.kind))) continue;
     pts.resize(P.verts.size());
     ks.resize(P.verts.size());
     for (size_t i = 0; i < P.verts.size(); ++i) {
@@ -412,13 +458,17 @@ bool rigged(Hero h) {
 
 bool portrait(Hero h) { return get(h) != nullptr; }
 
-bool solve(const CharacterDef& d, const Pose& pose, Rig& r) {
-  const Art* A = get(d.hero);
-  if (!A || !A->rigged) return false;
-  const float H = d.height;
-  const Joints& n = A->n;
+namespace {
+// An illustration bends less than a cartoon: its limbs fold over the picture (the cloth looks crushed) when a knee
+// or an elbow closes too far. Crouches are shallower, knees and elbows keep a minimum opening.
+constexpr float kCrouch = 0.4f;
+constexpr float kMinLeg = 0.68f, kMinArm = 0.52f;  // hip-to-foot / shoulder-to-hand, fraction of the full limb
+
+// Torso of a pose on the picture: hips (lowered by `drop` more), neck, head, shoulders and hip joints.
+void torso(const Art& A, float H, const Pose& pose, float drop, Rig& r) {
+  const Joints& n = A.n;
   auto L = [&](Vec2 v) { return v * H; };
-  r.hips = {0.0f, n.hips.y * H + pose.crouch * 0.14f * H};
+  r.hips = {0.0f, n.hips.y * H + pose.crouch * kCrouch * 0.14f * H + drop};
   r.neck = r.hips + rotate(L(n.neck - n.hips), pose.lean);
   r.chest = lerpv(r.hips, r.neck, 0.62f);
   r.head = r.neck + rotate(L(n.head - n.neck), pose.lean * 1.15f);
@@ -429,36 +479,111 @@ bool solve(const CharacterDef& d, const Pose& pose, Rig& r) {
   r.shB = r.neck + rotate(L(n.shB - n.neck) + Vec2{0.065f * tw * H, 0.0f}, pose.lean);
   r.hipF = r.hips + L(n.hipF - n.hips) + Vec2{-0.012f * tw * H, 0.0f};
   r.hipB = r.hips + L(n.hipB - n.hips) + Vec2{0.018f * tw * H, 0.0f};
-  r.elbowF = ik(r.shF, pose.handF, A->armF.l1 * H, A->armF.l2 * H, A->armF.bend, r.handF);
-  r.elbowB = ik(r.shB, pose.handB, A->armB.l1 * H, A->armB.l2 * H, A->armB.bend, r.handB);
-  auto leg = [&](const Limb& l, Vec2 hip, Vec2 target, Vec2 nAnkle, Vec2 nFoot, float phi0, Vec2& knee, Vec2& foot) {
+}
+
+// Leg length on the picture, hip to sole.
+float legReach(const Limb& l, Vec2 nAnkle, Vec2 nFoot) { return l.l1 + l.l2 + (nAnkle - nFoot).len(); }
+}  // namespace
+
+bool solve(const CharacterDef& d, const Pose& pose, const Rig& P, Rig& r) {
+  const Art* A = get(d.hero);
+  if (!A || !A->rigged) return false;
+  const float H = d.height, ground = 0.5f * H;
+  const Joints& n = A->n;
+  auto L = [&](Vec2 v) { return v * H; };
+
+  // Feet: the drawn foot's direction from its hip and its extension, on the picture's longer legs. A foot on the
+  // ground stays on the ground (its distance from the hip scaled the same way).
+  struct LegGoal {
+    Vec2 v;          // drawn hip -> foot, scaled to the picture's leg
+    float g = 0.0f;  // 1: the foot is on the ground
+  };
+  auto legGoal = [&](const Limb& l, Vec2 nAnkle, Vec2 nFoot, Vec2 phip, Vec2 pkn, Vec2 pft) {
+    LegGoal G;
+    const float lp = (pkn - phip).len() + (pft - pkn).len(), la = legReach(l, nAnkle, nFoot) * H;
+    const Vec2 v = pft - phip;
+    const float e = lp > 1e-4f ? clampf(v.len() / lp, kMinLeg, 1.0f) : 1.0f;
+    const Vec2 rel = (v.len2() > 1e-8f ? v.norm() : Vec2{0.0f, 1.0f}) * (e * la);
+    G.g = smoothstep((pft.y - (ground - 0.06f * H)) / (0.05f * H));
+    G.v = {lerpf(rel.x, v.x * (la / std::max(lp, 1e-4f)), G.g), rel.y};
+    return G;
+  };
+  const LegGoal gF = legGoal(A->legF, n.ankleF, n.footF, P.hipF, P.kneeF, P.footF);
+  const LegGoal gB = legGoal(A->legB, n.ankleB, n.footB, P.hipB, P.kneeB, P.footB);
+
+  // The hips come down when a foot on the ground could not reach it (a wide stance, a long stride).
+  torso(*A, H, pose, 0.0f, r);
+  float drop = 0.0f;
+  auto need = [&](const LegGoal& G, const Limb& l, Vec2 nAnkle, Vec2 nFoot, Vec2 hip) {
+    if (G.g <= 0.0f) return;
+    const float reach = legReach(l, nAnkle, nFoot) * H * 0.985f;
+    const float dx = std::min(std::fabs(G.v.x), reach * 0.95f);
+    const float lowest = ground - std::sqrt(reach * reach - dx * dx);  // highest the hip may be
+    drop = std::max(drop, (lowest - hip.y) * G.g);
+  };
+  need(gF, A->legF, n.ankleF, n.footF, r.hipF);
+  need(gB, A->legB, n.ankleB, n.footB, r.hipB);
+  if (drop > 0.0f) torso(*A, H, pose, drop, r);
+
+  // Arms: the drawn arm's direction from the shoulder and its extension, on the picture's arm. Elbows bend down and
+  // back, never forward, and never fold completely.
+  auto arm = [&](const Limb& l, Vec2 sh, Vec2 psh, Vec2 pel, Vec2 phd, Vec2 nSh, Vec2 nHd, Vec2& elbow, Vec2& hand) {
+    const float lp = (pel - psh).len() + (phd - pel).len(), la = (l.l1 + l.l2) * H;
+    const Vec2 v = phd - psh;
+    const float e = lp > 1e-4f ? clampf(v.len() / lp, kMinArm, 1.0f) : 1.0f;
+    const Vec2 u = v.len2() > 1e-8f ? v.norm() : (nHd - nSh).norm();
+    elbow = ik(sh, sh + u * (e * la), l.l1 * H, l.l2 * H, 1.0f, hand);
+  };
+  arm(A->armF, r.shF, P.shF, P.elbowF, P.handF, n.shF, n.handF, r.elbowF, r.handF);
+  arm(A->armB, r.shB, P.shB, P.elbowB, P.handB, n.shB, n.handB, r.elbowB, r.handB);
+
+  // Legs: knees bend forward; the foot stays flat on the ground, and follows the shin when it swings far.
+  auto leg = [&](const Limb& l, const LegGoal& G, Vec2 hip, Vec2 nAnkle, Vec2 nFoot, float phi0, Vec2& knee,
+                 Vec2& foot) {
+    Vec2 target = hip + G.v;
+    if (G.g > 0.0f) target.y = lerpf(target.y, ground, G.g);
     float th = 0.0f;
     Vec2 ankle;
     for (int it = 0; it < 2; ++it) {
-      knee = ik(hip, target + rotate(L(nAnkle - nFoot), th), l.l1 * H, l.l2 * H, l.bend, ankle);
+      knee = ik(hip, target + rotate(L(nAnkle - nFoot), th), l.l1 * H, l.l2 * H, -1.0f, ankle);
       th = -(footPhi(target - knee) - phi0);
     }
     foot = ankle + rotate(L(nFoot - nAnkle), th);
   };
-  leg(A->legF, r.hipF, pose.footF, n.ankleF, n.footF, A->footPhiF, r.kneeF, r.footF);
-  leg(A->legB, r.hipB, pose.footB, n.ankleB, n.footB, A->footPhiB, r.kneeB, r.footB);
+  leg(A->legF, gF, r.hipF, n.ankleF, n.footF, A->footPhiF, r.kneeF, r.footF);
+  leg(A->legB, gB, r.hipB, n.ankleB, n.footB, A->footPhiB, r.kneeB, r.footB);
   return true;
 }
 
 bool stance(const CharacterDef& d, Pose& p, float bob) {
   const Art* A = get(d.hero);
   if (!A || !A->rigged) return false;
-  const float H = d.height;
-  p.handF = A->n.handF * H + Vec2{0.0f, bob};
-  p.handB = A->n.handB * H + Vec2{0.0f, bob};
-  p.footF = A->n.footF * H;
-  p.footB = A->n.footB * H;
   p.lean -= 0.06f;  // the picture stands as it was drawn (the rest pose leans 0.06 forward)
+  // Targets on the drawn build that solve() maps back onto the picture's own pose.
+  const float H = d.height;
+  const Joints& n = A->n;
+  const Rig P = buildRig(d, p);
+  auto handGoal = [&](const Limb& l, Vec2 psh, Vec2 pel, Vec2 phd, Vec2 nSh, Vec2 nHd) {
+    const float lp = (pel - psh).len() + (phd - pel).len(), la = (l.l1 + l.l2) * H;
+    return psh + (nHd - nSh) * (H * lp / la) + Vec2{0.0f, bob};
+  };
+  auto footGoal = [&](const Limb& l, Vec2 phip, Vec2 pkn, Vec2 pft, Vec2 nHip, Vec2 nAnkle, Vec2 nFoot) {
+    const float lp = (pkn - phip).len() + (pft - pkn).len(), la = legReach(l, nAnkle, nFoot) * H;
+    return Vec2{phip.x + (nFoot.x - nHip.x) * H * lp / la, 0.5f * H};
+  };
+  const Vec2 hF = handGoal(A->armF, P.shF, P.elbowF, P.handF, n.shF, n.handF);
+  const Vec2 hB = handGoal(A->armB, P.shB, P.elbowB, P.handB, n.shB, n.handB);
+  const Vec2 fF = footGoal(A->legF, P.hipF, P.kneeF, P.footF, n.hipF, n.ankleF, n.footF);
+  const Vec2 fB = footGoal(A->legB, P.hipB, P.kneeB, P.footB, n.hipB, n.ankleB, n.footB);
+  p.handF = hF;
+  p.handB = hB;
+  p.footF = fF;
+  p.footB = fB;
   return true;
 }
 
 void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf& X, float alpha, Color flashColor,
-                 float flash) {
+                 float flash, Layers layers) {
   const Art* A = get(d.hero);
   if (!A || !A->rigged || alpha <= 0.0f) return;
   const float H = d.height;
@@ -516,16 +641,20 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
     const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
     SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
   }
+  const Vec2 trail = lerpv(pose.flow, pose.flowTip, 0.6f);
+  const unsigned kinds = layers == Layers::BelowWeapon ? ~(1u << kPartArmF)
+                       : layers == Layers::WeaponArm ? (1u << kPartArmF) : ~0u;
   drawParts(*A, [&](const Vert& v) {
     Vec2 p{};
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < kInfluences; ++i) {
       if (v.w[i] <= 0.0f) continue;
       const BoneXf& b = T[v.bone[i]];
       const Vec2 dd = (v.n - b.bind) * H;
       p += Vec2{b.c * dd.x - b.s * dd.y + b.now.x, b.s * dd.x + b.c * dd.y + b.now.y} * v.w[i];
     }
+    if (v.sway > 0.0f) p += trail * (v.sway * H);  // cloth trailing behind the motion
     return X(p);
-  }, withAlpha(WHITE, alpha), Mask{});
+  }, withAlpha(WHITE, alpha), Mask{}, 1, kinds);
   if (shaded) EndShaderMode();
 }
 

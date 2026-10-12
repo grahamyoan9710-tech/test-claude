@@ -28,8 +28,9 @@ blend hip 18
 blend knee 18
 blend ankle 12
 part legB 12 12 221 552 4 360
-part armB 456 12 159 344 16 166
-part torso 779 12 154 292 122 135
-part legF 257 12 175 536 193 360
-part head 12 588 124 144 160 4
-part armF 639 12 116 336 246 168
+part torso 152 588 154 255 122 135
+part legF 257 12 148 536 220 360
+part skirt 429 12 344 442 12 390
+part armB 797 12 159 344 16 166
+part head 330 588 124 144 160 4
+part armF 12 588 116 336 246 168

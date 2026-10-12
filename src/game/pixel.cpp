@@ -11,15 +11,13 @@
 
 namespace pix {
 namespace {
-// The layer is allocated for the finest art pixel; coarser ones use its top-left part.
-constexpr int kW = (kScreenW * 2 + 2) / 3, kH = (kScreenH * 2 + 2) / 3;
-int layerW() { return std::min(kW, int(std::ceil(kScreenW / artPixel()))); }
-int layerH() { return std::min(kH, int(std::ceil(kScreenH / artPixel()))); }
+// The layer is allocated for the finest art pixel (kFinePixel); coarser ones use its top-left part.
+constexpr int kW = int(kScreenW / kFinePixel + 0.5f), kH = int(kScreenH / kFinePixel + 0.5f);
 
 const RenderTexture2D* g_frame = nullptr;
 RenderTexture2D g_raw{}, g_out{};
 Shader g_shader{};
-int g_texelLoc = -1, g_inkLoc = -1, g_lightLoc = -1;
+int g_texelLoc = -1, g_inkLoc = -1, g_lightLoc = -1, g_levelsLoc = -1;
 bool g_ready = false;
 float g_artUnit = 0.0f;
 
@@ -35,6 +33,7 @@ uniform sampler2D texture0;
 uniform vec2 texel;
 uniform vec3 ink;
 uniform vec2 light;
+uniform float levels;
 out vec4 finalColor;
 vec4 at(vec2 o) { return texture(texture0, fragTexCoord + o * texel); }
 void main() {
@@ -54,7 +53,7 @@ void main() {
   vec3 rgb = c.rgb / c.a;
   float lit = step(at(light).a, 0.5), dark = step(at(-light).a, 0.5);
   rgb = rgb * (1.0 + 0.2 * lit * (1.0 - dark)) * (1.0 - 0.18 * dark * (1.0 - lit));
-  rgb = floor(clamp(rgb, 0.0, 1.0) * 20.0 + 0.5) / 20.0;
+  rgb = floor(clamp(rgb, 0.0, 1.0) * levels + 0.5) / levels;
   finalColor = vec4(rgb, 1.0);
 }
 )";
@@ -70,6 +69,7 @@ bool ready() {
   g_texelLoc = GetShaderLocation(g_shader, "texel");
   g_inkLoc = GetShaderLocation(g_shader, "ink");
   g_lightLoc = GetShaderLocation(g_shader, "light");
+  g_levelsLoc = GetShaderLocation(g_shader, "levels");
   return g_raw.id != 0 && g_out.id != 0;
 }
 
@@ -91,7 +91,7 @@ float artUnit() { return g_artUnit; }
 
 void setFrameTarget(const RenderTexture2D* target) { g_frame = target; }
 
-void sprite(Rect b, float alpha, const std::function<void(float)>& draw) {
+void sprite(Rect b, float alpha, const std::function<void(float)>& draw, float pixel, float levels) {
   if (alpha <= 0.0f) return;
   if (!enabled() || !g_frame || !ready()) {
     draw(alpha);
@@ -100,8 +100,9 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw) {
   rlDrawRenderBatchActive();
   const Matrix mv = rlGetMatrixModelview(), proj = rlGetMatrixProjection();
   // Bounds in layer pixels (the current transform gives frame pixels).
-  const int LW = layerW(), LH = layerH();
-  const float k = 1.0f / (g_renderScale * artPixel());
+  const float ap = pixel > 0.0f ? std::max(pixel, kFinePixel) : artPixel();
+  const int LW = std::min(kW, int(std::ceil(kScreenW / ap))), LH = std::min(kH, int(std::ceil(kScreenH / ap)));
+  const float k = 1.0f / (g_renderScale * ap);
   float x0 = 1e9f, y0 = 1e9f, x1 = -1e9f, y1 = -1e9f;
   for (Vector2 p : {Vector2{b.x, b.y}, Vector2{b.right(), b.y}, Vector2{b.x, b.bottom()}, Vector2{b.right(), b.bottom()}}) {
     const Vector2 q = Vector2Transform(p, mv);
@@ -140,16 +141,17 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw) {
   SetShaderValue(g_shader, g_texelLoc, texel, SHADER_UNIFORM_VEC2);
   SetShaderValue(g_shader, g_inkLoc, ink, SHADER_UNIFORM_VEC3);
   SetShaderValue(g_shader, g_lightLoc, light, SHADER_UNIFORM_VEC2);
+  SetShaderValue(g_shader, g_levelsLoc, &levels, SHADER_UNIFORM_FLOAT);
   DrawTexturePro(g_raw.texture, layerSrc(ix0, iy0, w, h, LH), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,
                  WHITE);
   EndShaderMode();
   rlDrawRenderBatchActive();
 
-  // 3. Back into the frame, each art pixel a square of artPixel() virtual pixels.
+  // 3. Back into the frame, each art pixel a square of `ap` virtual pixels.
   rlEnableFramebuffer(g_frame->id);
   rlViewport(0, 0, g_frame->texture.width, g_frame->texture.height);
   rlSetMatrixProjection(proj);
-  const float s = g_renderScale * artPixel();
+  const float s = g_renderScale * ap;
   rlSetMatrixModelview(MatrixScale(s, s, 1.0f));
   const unsigned char a = (unsigned char)clampf(alpha * 255.0f, 0.0f, 255.0f);
   DrawTexturePro(g_out.texture, layerSrc(ix0, iy0, w, h, LH), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,

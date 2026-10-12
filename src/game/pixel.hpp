@@ -8,8 +8,8 @@
 #include "game/common.hpp"
 
 namespace pix {
-// Virtual pixels per art pixel: 1.5 with the smooth (supersampled) rendering, so that one art pixel is exactly 3x3
-// pixels of the frame (1280x720 -> an 854x480 sprite layer: detailed sprites, still pixel art); 2 otherwise.
+// Virtual pixels per art pixel of the drawn sprites: 1.5 with the smooth (supersampled) rendering, so that one art
+// pixel is exactly 3x3 pixels of the frame; 2 otherwise. The illustrated fighters use kFinePixel.
 float artPixel();
 
 bool enabled();  // settings: "Personnages en pixel art"
@@ -18,7 +18,10 @@ void setFrameTarget(const RenderTexture2D* target);
 // Draws `draw` (in the current coordinate space: world with a camera, or screen) as a pixel-art sprite.
 // `bounds` (same space) must contain everything it draws. `draw` gets the alpha to draw with: 1 in pixel
 // art (the whole sprite is faded by `alpha` afterwards), `alpha` itself in smooth HD.
-void sprite(Rect bounds, float alpha, const std::function<void(float)>& draw);
+// `pixel`: virtual pixels per art pixel for this sprite (0: artPixel()); `levels`: colour bands per channel.
+void sprite(Rect bounds, float alpha, const std::function<void(float)>& draw, float pixel = 0.0f, float levels = 20.0f);
+// The art pixel of the illustrated fighters: about the grid of their own pictures at the usual camera distance.
+constexpr float kFinePixel = 1.0f;
 // Inside a sprite's draw: the size of one art pixel in drawing units (0 outside a pixel-art sprite).
 // The character renderer sizes its ink lines with it.
 float artUnit();

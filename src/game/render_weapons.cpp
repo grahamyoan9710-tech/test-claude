@@ -46,7 +46,7 @@ float hash(float x) { return x - std::floor(x); }
 
 // Weapon painter: coordinates in weapon units (a along, b across), scaled.
 struct WP {
-  Vec2 o, u, v;
+  Vec2 o, u, v;  // v: across the weapon, already scaled by the style's slimness
   float s = 1.0f, alpha = 1.0f, ow = 2.0f, time = 0.0f;
   bool line = false, ghost = false;
   Color tint = WHITE;
@@ -1069,7 +1069,7 @@ void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float al
   WP p;
   p.o = grip;
   p.u = dir;
-  p.v = Vec2{-dir.y, dir.x} * (st.side >= 0 ? 1.0f : -1.0f);
+  p.v = Vec2{-dir.y, dir.x} * ((st.side >= 0 ? 1.0f : -1.0f) * st.slim);
   p.s = scale;
   p.alpha = alpha;
   p.time = time;
