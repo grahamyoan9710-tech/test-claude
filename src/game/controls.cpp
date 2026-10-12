@@ -462,3 +462,39 @@ MenuNav readMenuNav() {
   nav.right = out[3];
   return nav;
 }
+
+MenuNav readMenuNavFor(int device) {
+  static int held[kDeviceCount][4] = {};
+  MenuNav nav;
+  if (device < 0 || device >= kDeviceCount) return nav;
+  bool dir[4] = {};
+  if (device == kKeyboard1) {
+    dir[0] = IsKeyDown(KEY_W), dir[1] = IsKeyDown(KEY_S), dir[2] = IsKeyDown(KEY_A), dir[3] = IsKeyDown(KEY_D);
+    nav.confirm = anyPressed({KEY_SPACE, KEY_J});
+    nav.prev = IsKeyPressed(KEY_K);
+    nav.start = IsKeyPressed(KEY_ENTER);
+  } else if (device == kKeyboard2) {
+    dir[0] = IsKeyDown(KEY_UP), dir[1] = IsKeyDown(KEY_DOWN), dir[2] = IsKeyDown(KEY_LEFT), dir[3] = IsKeyDown(KEY_RIGHT);
+    nav.confirm = anyPressed({KEY_PERIOD, KEY_KP_1});
+    nav.prev = anyPressed({KEY_SLASH, KEY_KP_2});
+    nav.start = IsKeyPressed(KEY_KP_ENTER);
+  } else {
+    const int i = device - kPad1;
+    const Pad& p = g_pads[i];
+    if (p.joy >= 0) {
+      for (int k = 0; k < 4; ++k) dir[k] = p.menuDir[k] || p.down[kPadUp + k];
+      nav.confirm = padPressed(i, kPadA);
+      nav.prev = padPressed(i, kPadX);
+      nav.start = padPressed(i, kPadStart);
+    }
+  }
+  bool out[4];
+  for (int k = 0; k < 4; ++k) {
+    int& h = held[device][k];
+    h = dir[k] ? h + 1 : 0;
+    out[k] = h == 1 || (h > 18 && h % 6 == 0);  // key repeat
+  }
+  nav.up = out[0], nav.down = out[1], nav.left = out[2], nav.right = out[3];
+  if (nav.confirm || nav.start) nav.device = device;
+  return nav;
+}

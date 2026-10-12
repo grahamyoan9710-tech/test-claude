@@ -49,7 +49,10 @@ void App::goTo(Screen s, bool instant) {
 }
 
 void App::enterScreen(Screen s) {
-  if (s == Screen::CharSelect && screen_ != Screen::StageSelect) padLeft_ = {};  // a fresh visit
+  if (s == Screen::CharSelect && screen_ != Screen::StageSelect) {  // a fresh visit
+    padLeft_ = {};
+    for (int d = 0; d < kDeviceCount; ++d) cssCur_[d] = {ownedCard(d) >= 0, std::max(0, ownedCard(d)), 1, 0};
+  }
   if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
   screen_ = s;
   screenFrames_ = 0;
@@ -82,7 +85,7 @@ void App::applyDisplaySettings() {
 void App::startMatch() {
   const Settings& st = settings();
   MatchConfig cfg;
-  cfg.stage = stage_;
+  cfg.stage = stageRandom_ ? GetRandomValue(0, int(stageList().size()) - 1) : stage_;
   cfg.stocks = st.stocks;
   cfg.items = training_ ? false : st.items;
   cfg.weapons = st.weapons;
@@ -96,7 +99,8 @@ void App::startMatch() {
       s.type = i == 0 ? 1 : 2;
     }
     if (s.type == 0) continue;
-    cfg.slots[i] = {true, s.character, s.type == 2, s.level};
+    const int fighter = s.random ? GetRandomValue(0, int(roster().size()) - 1) : s.character;
+    cfg.slots[i] = {true, fighter, s.type == 2, s.level};
     devices[i] = s.device;
   }
   match_ = std::make_unique<MatchScreen>(cfg, devices, audio_, st.showHitboxes || opt_.debug);

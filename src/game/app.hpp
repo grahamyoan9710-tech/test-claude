@@ -84,6 +84,14 @@ struct SlotSetup {
   int device = kKeyboard1;
   int character = 0;
   int level = 5;
+  bool random = false;  // a fighter drawn at random when the match starts
+};
+
+// A cursor on the character select, one per input device: each player moves their own.
+struct CssCursor {
+  bool on = false;
+  int col = 0, row = 1;  // card and field (-1: the rules on top, 0 type, 1 fighter, 2 device / level)
+  int rule = 0;          // which rule, on row -1
 };
 
 class App {
@@ -118,6 +126,9 @@ class App {
   void changeField(int col, int row, int delta, int by = -1);
   bool padJoins();
   int activeSlots() const;
+  int ownedCard(int device) const;          // the card this device plays (-1: none)
+  bool canPick(int col, int device) const;  // may this device change the fighter of that card
+  void stepFighter(int col, int delta);     // next / previous fighter of a card ("?" = random included)
   // screens (screen_results.cpp)
   void updateResults(const MenuNav& nav);
   void drawResults();
@@ -153,8 +164,10 @@ class App {
   bool training_ = false;
   std::array<SlotSetup, 4> slots_;
   int stage_ = 0;
-  int cssCol_ = 0, cssRow_ = 1;
+  int cssCol_ = 0, cssRow_ = 1;  // the card and field under the mouse
   int rulesCol_ = 0;
+  std::array<CssCursor, kDeviceCount> cssCur_{};
+  bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
