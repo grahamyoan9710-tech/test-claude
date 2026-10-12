@@ -21,13 +21,14 @@ import numpy as np
 from PIL import Image
 
 SHADE_MIN, SHADE_MAX = 0.55, 1.12  # background shades counted as background (ground shadow .. light noise)
+# (--shade-min raises the darkest one: clothes in a darker shade of the background must stay)
 
 
-def shade_distance(rgb, bg):
+def shade_distance(rgb, bg, shade_min=SHADE_MIN):
     """Distance of each pixel to the segment of background shades, and the closest shade."""
     bgv = bg.astype(np.float32)
     s = (rgb @ bgv) / float(bgv @ bgv)
-    s = np.clip(s, SHADE_MIN, SHADE_MAX)
+    s = np.clip(s, shade_min, SHADE_MAX)
     near = s[..., None] * bgv
     return np.linalg.norm(rgb - near, axis=-1), near
 
@@ -81,6 +82,12 @@ def main():
     ap.add_argument("--tol", type=float, default=10.0, help="colour distance still counted as background")
     ap.add_argument("--edge", type=float, default=40.0, help="colour range of the soft edge beyond --tol")
     ap.add_argument("--height", type=int, help="scale the trimmed character to this height")
+    ap.add_argument("--shade-min", type=float, default=SHADE_MIN,
+                    help="darkest background shade removed (raise it when there is no ground shadow)")
+    ap.add_argument("--scale", type=int, default=1,
+                    help="enlarge by this whole factor, pixel for pixel (small pixel-art pictures)")
+    ap.add_argument("--main", action="store_true",
+                    help="drop the pieces touching the left or right side (a neighbour on a sheet of characters)")
     a = ap.parse_args()
 
     im = Image.open(a.input).convert("RGB")
@@ -92,7 +99,7 @@ def main():
     border = np.concatenate([rgb[:3].reshape(-1, 3), rgb[-3:].reshape(-1, 3), rgb[:, :3].reshape(-1, 3),
                              rgb[:, -3:].reshape(-1, 3)])
     bg = np.median(border, axis=0)
-    dist, near = shade_distance(rgb, bg)
+    dist, near = shade_distance(rgb, bg, a.shade_min)
     bglike = dist < a.tol
 
     # 1. The background, from the edges of the picture.
@@ -122,11 +129,15 @@ def main():
     k = alpha[ring][:, None]
     out[ring] = np.clip((rgb[ring] - (1.0 - k) * near[ring]) / k, 0.0, 255.0)
 
-    # 4. Lone specks of noise left in the background.
+    # 4. Lone specks of noise left in the background (and, with --main, the neighbours' pieces).
     opaque = alpha > 0.0
     specks = 0
-    for comp in components(opaque):
-        if len(comp) < 24:
+    comps = list(components(opaque))
+    biggest = max((len(c) for c in comps), default=0)
+    for comp in comps:
+        xs_ = np.asarray(comp) % w
+        side = a.main and len(comp) < biggest and (xs_.min() == 0 or xs_.max() == w - 1)
+        if len(comp) < 24 or side:
             alpha.ravel()[comp] = 0.0
             specks += 1
 
@@ -139,6 +150,8 @@ def main():
     if a.height and res.height != a.height:
         sw = max(1, round(res.width * a.height / res.height))
         res = res.convert("RGBa").resize((sw, a.height), Image.LANCZOS).convert("RGBA")
+    if a.scale > 1:
+        res = res.resize((res.width * a.scale, res.height * a.scale), Image.NEAREST)
     res.save(a.output, optimize=True)
     print(f"{a.output}: {res.width}x{res.height}, background {tuple(int(v) for v in bg)}, "
           f"{pockets} enclosed pocket(s), {specks} speck(s) removed")

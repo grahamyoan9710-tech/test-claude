@@ -15,12 +15,30 @@
 
 #include "rlgl.h"
 
+// The pictures embedded at build time (CLASH_FIGHTER_ART in CMakeLists.txt).
+#define FIGHTER_ART(name)                                                      \
+  extern const unsigned char fighter_##name##_png[], fighter_##name##_rig[]; \
+  extern const unsigned int fighter_##name##_png_size, fighter_##name##_rig_size;
 extern "C" {
-extern const unsigned char fighter_naruto_png[], fighter_naruto_rig[];
-extern const unsigned int fighter_naruto_png_size, fighter_naruto_rig_size;
-extern const unsigned char fighter_ganondorf_png[], fighter_ganondorf_rig[];
-extern const unsigned int fighter_ganondorf_png_size, fighter_ganondorf_rig_size;
+FIGHTER_ART(asta)
+FIGHTER_ART(yuno)
+FIGHTER_ART(ichigo)
+FIGHTER_ART(byakuya)
+FIGHTER_ART(kenpachi)
+FIGHTER_ART(ulquiorra)
+FIGHTER_ART(grimmjow)
+FIGHTER_ART(starrk)
+FIGHTER_ART(naruto)
+FIGHTER_ART(sasuke)
+FIGHTER_ART(kakashi)
+FIGHTER_ART(gojo)
+FIGHTER_ART(sukuna)
+FIGHTER_ART(link)
+FIGHTER_ART(ganondorf)
+FIGHTER_ART(kratos)
+FIGHTER_ART(hunter)
 }
+#undef FIGHTER_ART
 
 namespace art {
 namespace {
@@ -32,11 +50,16 @@ struct Source {
   const unsigned char* rig;
   const unsigned int* rigSize;
 };
+#define SOURCE(hero, name) \
+  {Hero::hero, fighter_##name##_png, &fighter_##name##_png_size, fighter_##name##_rig, &fighter_##name##_rig_size}
 const Source kSources[] = {
-    {Hero::Naruto, fighter_naruto_png, &fighter_naruto_png_size, fighter_naruto_rig, &fighter_naruto_rig_size},
-    {Hero::Ganondorf, fighter_ganondorf_png, &fighter_ganondorf_png_size, fighter_ganondorf_rig,
-     &fighter_ganondorf_rig_size},
+    SOURCE(Asta, asta),         SOURCE(Yuno, yuno),       SOURCE(Ichigo, ichigo), SOURCE(Byakuya, byakuya),
+    SOURCE(Kenpachi, kenpachi), SOURCE(Ulquiorra, ulquiorra), SOURCE(Grimmjow, grimmjow), SOURCE(Starrk, starrk),
+    SOURCE(Naruto, naruto),     SOURCE(Sasuke, sasuke),   SOURCE(Kakashi, kakashi), SOURCE(Gojo, gojo),
+    SOURCE(Sukuna, sukuna),     SOURCE(Link, link),       SOURCE(Ganondorf, ganondorf), SOURCE(Kratos, kratos),
+    SOURCE(Hunter, hunter),
 };
+#undef SOURCE
 
 enum Bone { kTorso, kHead, kUpF, kLoF, kUpB, kLoB, kThF, kShF, kFtF, kThB, kShB, kFtB, kBones };
 enum Kind { kPartTorso, kPartHead, kPartArmF, kPartArmB, kPartLegF, kPartLegB, kPartWhole };
@@ -460,13 +483,27 @@ void drawFighter(const CharacterDef& d, const Pose& pose, const Rig& r, const Xf
   leg(kThF, kShF, kFtF, r.hipF, r.kneeF, r.footF, n.hipF, n.kneeF, n.ankleF, n.footF, A->footPhiF);
   leg(kThB, kShB, kFtB, r.hipB, r.kneeB, r.footB, n.hipB, n.kneeB, n.ankleB, n.footB, A->footPhiB);
 
-  // Tint: hit flash, afterimage, Kurama's golden chakra cloak.
+  // Tint: hit flash, afterimage, and the colour a transformation gives the body (the avatars around it — wings,
+  // Susanoo, the fox — are drawn apart).
   Color tc = flashColor;
   float amount = clampf(flash, 0.0f, 1.0f);
   if (pose.ghost) amount = std::max(amount, 0.65f);
-  if (pose.form == Form::KuramaAvatar && amount < 0.35f) {
-    tc = mixColor({255, 190, 60, 255}, flashColor, amount / 0.35f);
-    amount = 0.35f;
+  Color formCol{};
+  float formK = 0.0f;
+  switch (pose.form) {
+    case Form::KuramaAvatar: formCol = {255, 190, 60, 255}, formK = 0.35f; break;   // golden chakra cloak
+    case Form::SpartanRage: formCol = {255, 110, 40, 255}, formK = 0.3f; break;     // red-hot
+    case Form::DemonUnion: formCol = {22, 18, 26, 255}, formK = 0.4f; break;        // black demon markings
+    case Form::VastoLorde: formCol = {240, 240, 234, 255}, formK = 0.55f; break;    // white hollow body
+    case Form::RedDemon: formCol = {225, 40, 32, 255}, formK = 0.4f; break;         // red skin
+    case Form::Segunda: formCol = {20, 26, 22, 255}, formK = 0.5f; break;           // black body
+    case Form::Pantera: formCol = {214, 238, 255, 255}, formK = 0.35f; break;       // white armour
+    case Form::LosLobos: formCol = {236, 232, 220, 255}, formK = 0.15f; break;      // fur-lined coat
+    default: break;
+  }
+  if (formK > amount) {
+    tc = mixColor(formCol, flashColor, formK > 0.0f ? amount / formK : 0.0f);
+    amount = formK;
   }
   if (!g_tintTried) {
     g_tintTried = true;

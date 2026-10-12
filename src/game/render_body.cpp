@@ -2519,11 +2519,21 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   Look L = lookFor(d, palette);
   formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
-  if (art::rigged(d.hero)) {  // the picture, then what the fighter holds and casts
+  if (art::rigged(d.hero)) {  // the picture, with what the fighter carries, casts and summons around it
+    b.grimoire();  // Yuno's book, behind him
+    if (d.hero == Hero::Starrk) {
+      b.wolfPack(false);
+      b.lilynette();
+    }
+    const bool gearFront = b.gearInFront();  // shield, bow
+    if (!gearFront) b.backArmGear();
     art::drawFighter(d, pose, R, X, alpha, flashColor, flash);
+    if (gearFront) b.backArmGear();
+    if (pose.form != Form::None) b.horns();
     b.props();
     b.frontWeaponDraw();
     b.energy();
+    if (d.hero == Hero::Starrk) b.wolfPack(true);
     return;
   }
   b.draw();

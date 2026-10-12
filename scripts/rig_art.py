@@ -17,6 +17,7 @@ The JSON file names the cut-out picture (see import_portrait.py) and marks the j
                  "footF": [r_ankle, r_toe], "heelF": [r_ankle, r_sole], "torso": r, ...},
       "blend": {"neck": px, "shoulder": px, "elbow": px, "hip": px, "knee": px, "ankle": px},  # bend zones
       "neckCut": [[x, y], ...],           # line between the head and the collar
+      "cutToEdges": true,                 # extend that line to both sides of the picture
       "close": 22                         # how far the torso is filled in under the limbs (px)
     }
 
@@ -202,7 +203,10 @@ def main():
         legF &= ~armF
         # Head: everything hanging from the skull above the neck cut.
         barrier = np.zeros((h, w), dtype=bool)
-        raster_line(barrier, spec["neckCut"])
+        cut = [list(p) for p in spec["neckCut"]]
+        if spec.get("cutToEdges"):  # the cut runs across the whole picture (hair or a collar on the shoulders)
+            cut = [[0, cut[0][1]]] + cut + [[w - 1, cut[-1][1]]]
+        raster_line(barrier, cut)
         head = flood(opaque & ~barrier & ~armF & ~armB & ~legF & ~legB, tuple(int(v) for v in J["head"]))
         head = dilate(head, 2) & opaque & ~armF  # gives back the barrier line
         legF &= ~head

@@ -1,8 +1,156 @@
 {
-  "image": "ganondorf.png",
-  "output": "assets/fighters/ganondorf",
-  "parts": "whole",
-  "ground": 955,
-  "top": 30,
-  "joints": {"head": [435, 85], "neck": [425, 150], "hips": [430, 470]}
+ "image": "ganondorf.png",
+ "output": "assets/fighters/ganondorf",
+ "ground": 930,
+ "top": 30,
+ "joints": {
+  "neck": [
+   265,
+   140
+  ],
+  "head": [
+   270,
+   70
+  ],
+  "hips": [
+   255,
+   380
+  ],
+  "shF": [
+   330,
+   185
+  ],
+  "elbowF": [
+   375,
+   330
+  ],
+  "handF": [
+   400,
+   470
+  ],
+  "shB": [
+   150,
+   190
+  ],
+  "elbowB": [
+   100,
+   330
+  ],
+  "handB": [
+   95,
+   470
+  ],
+  "hipF": [
+   300,
+   410
+  ],
+  "kneeF": [
+   330,
+   650
+  ],
+  "ankleF": [
+   350,
+   840
+  ],
+  "footF": [
+   360,
+   930
+  ],
+  "toeF": [
+   425,
+   890
+  ],
+  "hipB": [
+   200,
+   410
+  ],
+  "kneeB": [
+   160,
+   660
+  ],
+  "ankleB": [
+   110,
+   860
+  ],
+  "footB": [
+   100,
+   930
+  ],
+  "toeB": [
+   60,
+   925
+  ]
+ },
+ "radius": {
+  "armF": [
+   36,
+   32,
+   30
+  ],
+  "handF": 32,
+  "armB": [
+   36,
+   32,
+   30
+  ],
+  "handB": 32,
+  "legF": [
+   42,
+   44,
+   38
+  ],
+  "footF": [
+   36,
+   28
+  ],
+  "heelF": [
+   36,
+   32
+  ],
+  "legB": [
+   42,
+   44,
+   38
+  ],
+  "footB": [
+   36,
+   28
+  ],
+  "heelB": [
+   36,
+   32
+  ],
+  "torso": 130
+ },
+ "blend": {
+  "neck": 10,
+  "shoulder": 14,
+  "elbow": 14,
+  "hip": 18,
+  "knee": 18,
+  "ankle": 12
+ },
+ "neckCut": [
+  [
+   95,
+   108
+  ],
+  [
+   200,
+   146
+  ],
+  [
+   255,
+   136
+  ],
+  [
+   305,
+   128
+  ],
+  [
+   335,
+   122
+  ]
+ ],
+ "cutToEdges": true
 }
