@@ -239,24 +239,42 @@ Touches et boutons par défaut (modifiables dans **Paramètres → Commandes**) 
 | Action | Clavier 1 | Clavier 2 | Manette (Xbox / PlayStation / Switch) |
 |---|---|---|---|
 | Se déplacer / viser | `W` `A` `S` `D` | Flèches | Stick gauche / croix |
-| Sauter | `Espace` | `,` ou `Pavé 0` | `X` / `Y` (□ / △) |
-| Attaque | `J` | `.` ou `Pavé 1` | `A` (✕, `B` sur Switch) |
-| Spéciale | `K` | `/` ou `Pavé 2` | `B` (○, `A` sur Switch) |
-| Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `LT` / `RT` (`L2` / `R2`, `ZL` / `ZR`) |
-| Saisie | `I` (ou bouclier + attaque) | `Ctrl droit` ou `Pavé 5` | `LB` (`L1`, `L`) |
+| Sauter | `Espace` | `,` ou `Pavé 0` | `X` / `Y` (□ / △), ou le stick vers le haut |
+| Attaque | `J` | `.` ou `Pavé 1` | bouton de droite : `A` sur Switch (`B` Xbox, ○) |
+| Spéciale | `K` | `/` ou `Pavé 2` | bouton du bas : `B` sur Switch (`A` Xbox, ✕) |
+| Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `ZL` / `ZR` (`LT` / `RT`, `L2` / `R2`) |
+| Saisie | `I` (ou bouclier + attaque) | `Ctrl droit` ou `Pavé 5` | `L` / `R` (`LB` / `RB`, `L1` / `R1`) |
 | Attaque smash | `O` (+ direction) | `;` ou `Pavé 4` | Stick droit |
-| **Ultime** (barre pleine) | `U` | `'` ou `Pavé 6` | `RB` (`R1`, `R`) |
+| **Ultime** (barre pleine) | `U`, ou Spéciale | `'` ou `Pavé 6`, ou Spéciale | Spéciale (`B` sur Switch), ou `−` / `Back` |
 | Pause | `Échap` / `P` | `Échap` / `P` | `Start` (`Options`, `+`) |
+
+La manette reprend **les touches de Super Smash Bros. Ultimate**, à la même place : attaque à droite, spéciale en
+bas, saut en haut et à gauche, saisie sur les gâchettes hautes, bouclier sur les gâchettes basses, smash au stick
+droit, et le stick vers le haut fait sauter (« Saut avec le stick », dans Paramètres > Jeu). Comme le Final Smash,
+**l'ultime part avec la spéciale** (sans direction) quand la barre est pleine.
+
+**Combos de touches** (clavier et manette) :
+
+| Combinaison | Effet |
+|---|---|
+| Attaque + Spéciale ensemble | attaque smash (dans la direction tenue, sinon vers l'avant) ; en l'air, une aérienne |
+| Bouclier + Attaque | saisie |
+| Bas, Bas-avant, Avant + Attaque (quart de cercle) | smash avant **à pleine puissance**, sans le charger (l'écran flashe) |
+| Bas, Haut + Attaque | smash haut à pleine puissance |
+| Spéciale avec la barre d'ulti pleine | ultime |
+
+**Paramètres > Commandes** : « Tout réinitialiser » remet d'un coup les touches des deux claviers et les boutons
+de la manette par défaut (« Réinitialiser » ne remet qu'un clavier, ou que la manette).
 
 Les touches correspondent à des **positions** sur le clavier (celles d'un clavier QWERTY) : sur un
 clavier AZERTY, le joueur 1 se déplace donc avec `Z` `Q` `S` `D`, et le joueur 2 utilise `;` (saut),
 `:` (attaque), `!` (spéciale), `M` (smash) et `ù` (ultime). L'écran **Commandes** affiche le nom réel
 des touches de votre clavier.
 
-Les boutons de la manette sont désignés par leur **position** (comme sur une manette Xbox) : sur une
-manette Switch, l'attaque est donc le bouton du bas (`B`) et la spéciale celui de droite (`A`).
-Sur une manette **sans gâchettes** (style Super Nintendo), le bouclier passe sur `R`/`RB` et l'ultime
-sur `Select` ; l'écran affiche alors ces boutons-là.
+Les boutons de la manette sont désignés par leur **position** : sur une manette Switch, l'attaque est le
+bouton de droite (`A`) et la spéciale celui du bas (`B`), comme dans Smash ; sur une manette Xbox, ce sont `B`
+et `A`. Sur une manette **sans gâchettes** (style Super Nintendo), le bouclier passe sur `R`/`RB` et la saisie
+sur `L`/`LB` ; l'écran affiche alors ces boutons-là.
 
 **Manettes** : branchez-les quand vous voulez, elles sont reconnues automatiquement (Xbox, PlayStation,
 Switch Pro, 8BitDo, Logitech... grâce à la base [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
@@ -300,9 +318,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.5-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.6-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.5-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.6-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

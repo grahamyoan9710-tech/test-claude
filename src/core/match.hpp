@@ -182,6 +182,7 @@ class Match {
   void updateOrb();
   void hitOrb(int attacker, float damage, Vec2 from, HitFx fx);
   void startFinalSmash(Fighter& f);
+  void startChargedSmash(Fighter& f, int id);  // a smash at full power (command inputs)
   void startForm(Fighter& f, int form);
   void endForm(Fighter& f);
   // weapons.cpp

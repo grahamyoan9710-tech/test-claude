@@ -356,6 +356,7 @@ InputState readDevice(int d) {
     in.shield = held(kActShield);
     in.smash = held(kActSmash);
     in.ultimate = held(kActUltimate);
+    in.tapJump = settings().tapJump && !p.down[kPadUp];  // the stick jumps, the d-pad does not
   }
   return in;
 }
@@ -395,9 +396,9 @@ PadFamily padFamily(int p) { return padConnected(p) ? g_pads[p].family : PadFami
 int padBinding(int p, int action, int slot) {
   if (action < kActJump || action >= kActionCount || slot < 0 || slot > 1) return -1;
   const Settings& s = settings();
-  if (s.padIsDefault() && !padHasTriggers(p)) {  // SNES-style pads: RB shields, Back = ultimate
+  if (s.padIsDefault() && !padHasTriggers(p)) {  // SNES-style pads: RB shields, LB grabs
     if (action == kActShield) return slot == 0 ? kPadRB : -1;
-    if (action == kActUltimate) return slot == 0 ? kPadBack : -1;
+    if (action == kActGrab) return slot == 0 ? kPadLB : -1;
   }
   return s.pad[action][slot];
 }

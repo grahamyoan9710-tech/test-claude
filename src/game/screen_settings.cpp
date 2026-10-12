@@ -30,9 +30,10 @@ const RowInfo kRows[3][7] = {
      {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
      {"Armes", "Des armes tombent du ciel : chaque combattant ramasse les siennes en marchant dessus."},
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 10 : le niveau 10 frappe deux fois plus fort)."},
+     {"Saut avec le stick", "Manette : pousser le stick vers le haut fait sauter, comme dans Smash Bros."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},
 };
-const int kRowCounts[4] = {4, 7, 5, kActionCount + 1};  // controls: the actions + the reset buttons
+const int kRowCounts[4] = {4, 7, 6, kActionCount + 1};  // controls: the actions + the reset buttons
 
 Rectangle tabRect(int i) { return {72.0f + i * 252.0f, 136, 236, 50}; }
 Rectangle rowRect(int row) { return {kPanel.x + 20, kPanel.y + 16 + row * 53.0f, kPanel.width - 40, 47}; }
@@ -45,14 +46,18 @@ Rectangle sliderRect(int row) {
   return {w.x + 12, w.y + 10, w.width - 110, 14};
 }
 Rectangle keyRect(int row, int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 48 + row * 30.0f, 216, 26}; }
-Rectangle resetRect(int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 56 + kActionCount * 30.0f, 216, 30}; }
+// The reset row: keyboard 1, keyboard 2, then everything (both keyboards and the gamepad).
+Rectangle resetRect(int col) {
+  if (col == 2) return {kPanel.x + 824, kPanel.y + 52 + kActionCount * 30.0f, 302, 28};
+  return {kPanel.x + 300 + col * 236.0f, kPanel.y + 52 + kActionCount * 30.0f, 216, 28};
+}
 
 enum class Widget { Slider, Toggle, Selector, Button };
 Widget widgetFor(int tab, int row) {
   if (tab == 0) return row < 3 ? Widget::Slider : Widget::Button;
   if (tab == 1) return (row == 1 || row == 2) ? Widget::Selector : Widget::Toggle;
-  if (row == 1 || row == 2) return Widget::Toggle;
-  return row == 4 ? Widget::Button : Widget::Selector;
+  if (row == 1 || row == 2 || row == 4) return Widget::Toggle;
+  return row == 5 ? Widget::Button : Widget::Selector;
 }
 int* volumeFor(int row) {
   Settings& s = settings();
@@ -65,7 +70,15 @@ constexpr int kPadActionRows = kActionCount - kActJump;
 constexpr int kPadRows = kPadActionRows + 1;
 int padAction(int row) { return kActJump + row; }
 Rectangle padCellRect(int row, int col) { return {kPanel.x + 262 + col * 150.0f, kPanel.y + 76 + row * 34.0f, 136, 30}; }
-Rectangle padResetRect() { return {kPanel.x + 262, kPanel.y + 84 + kPadActionRows * 34.0f, 286, 32}; }
+// The reset row: the gamepad, then everything (the gamepad and both keyboards).
+Rectangle padResetRect(int col = 0) { return {kPanel.x + 262 + col * 150.0f, kPanel.y + 84 + kPadActionRows * 34.0f, 136, 32}; }
+void resetAllControls() {
+  Settings& s = settings();
+  s.resetKeys(0);
+  s.resetKeys(1);
+  s.resetPad();
+  saveSettings();
+}
 
 // The pad the tab shows: the first connected one of that family (-1: none, the saved bindings).
 int shownPad(PadFamily f) {
@@ -82,7 +95,7 @@ void materializePadFallback() {
   const int pad = shownPad(promptFamily());
   if (pad >= 0 && s.padIsDefault() && !padHasTriggers(pad)) {
     s.pad[kActShield] = {kPadRB, -1};
-    s.pad[kActUltimate] = {kPadBack, -1};
+    s.pad[kActGrab] = {kPadLB, -1};
   }
 }
 
@@ -229,12 +242,15 @@ void drawPadBindings(PadFamily f, int row, int col, bool waiting, float t) {
       }
     }
   }
-  const Rectangle rb = padResetRect();
-  const bool resetFoc = row == kPadActionRows;
-  DrawRectangleRounded(rb, 0.5f, 10, resetFoc ? mixColor(kTabColors[3], ui::kCream, 0.12f) : shade(kTabColors[3], 0.7f));
-  DrawRectangleRoundedLinesEx(ui::grow(rb, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
-  drawTextCentered("RÉINITIALISER", rb.x + rb.width * 0.5f, rb.y + 7, 17, ui::kCream);
-  if (resetFoc) ui::focusFrame(rb, t, 0.5f);
+  for (int c = 0; c < 2; ++c) {
+    const Rectangle rb = padResetRect(c);
+    const bool resetFoc = row == kPadActionRows && col == c;
+    const Color base = c == 1 ? Color{170, 70, 52, 255} : kTabColors[3];
+    DrawRectangleRounded(rb, 0.5f, 10, resetFoc ? mixColor(base, ui::kCream, 0.12f) : shade(base, 0.7f));
+    DrawRectangleRoundedLinesEx(ui::grow(rb, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
+    drawTextCentered(c == 0 ? "RÉINITIALISER" : "TOUT + CLAVIERS", rb.x + rb.width * 0.5f, rb.y + 8, 14, ui::kCream);
+    if (resetFoc) ui::focusFrame(rb, t, 0.5f);
+  }
 
   // What never changes
   float x = kPanel.x + 30, y = kPanel.y + kPanel.height - 72;
@@ -314,7 +330,8 @@ void App::changeSetting(int row, int delta) {
       if (row == 1) s.items = !s.items;
       if (row == 2) s.weapons = !s.weapons;
       if (row == 3) s.cpuLevel = 1 + (s.cpuLevel - 1 + delta + kMaxCpuLevel) % kMaxCpuLevel;
-      if (row == 4) {
+      if (row == 4) s.tapJump = !s.tapJump;
+      if (row == 5) {
         s = Settings();
         toast("Paramètres par défaut rétablis");
       }
@@ -394,12 +411,15 @@ void App::updateSettings(const MenuNav& nav) {
   int before = setRow_ * 10 + setTab_ * 100 + setCol_;
   if (nav.up && setRow_ >= 0) setRow_--;
   if (nav.down && setRow_ < rows - 1) setRow_++;
+  if (setTab_ == 3 && setRow_ != kActionCount) setCol_ = std::min(setCol_, 1);  // the 3rd column is the reset row's
   if (nav.left || nav.right) {
     int d = nav.left ? -1 : 1;
     if (setRow_ < 0) {
       setTab_ = (setTab_ + d + 4) % 4;
+    } else if (setTab_ == 3 && !padTable && setRow_ == kActionCount) {  // the reset row: 3 buttons
+      setCol_ = (setCol_ + d + 3) % 3;
     } else if (setTab_ == 3) {
-      setCol_ = 1 - setCol_;
+      setCol_ = 1 - std::min(setCol_, 1);
     } else {
       changeSetting(setRow_, d);
     }
@@ -422,6 +442,9 @@ void App::updateSettings(const MenuNav& nav) {
       setRow_ = 0;
     } else if (setRow_ < kPadActionRows) {
       waitingPad_ = true;
+    } else if (setCol_ == 1) {
+      resetAllControls();
+      toast("Touches du clavier et boutons de la manette réinitialisés");
     } else {
       s.resetPad();
       saveSettings();
@@ -435,6 +458,9 @@ void App::updateSettings(const MenuNav& nav) {
       if (setRow_ < kActionCount) {
         waitingKey_ = true;
         while (GetKeyPressed() != 0) {}
+      } else if (setCol_ == 2) {
+        resetAllControls();
+        toast("Touches du clavier et boutons de la manette réinitialisés");
       } else {
         s.resetKeys(setCol_);
         saveSettings();
@@ -485,11 +511,18 @@ void App::updateSettings(const MenuNav& nav) {
           audio_.play(Sfx::MenuSelect);
         }
       }
-    if (ui::clicked(padResetRect())) {
+    if (ui::clicked(padResetRect(0))) {
       setRow_ = kPadActionRows;
+      setCol_ = 0;
       s.resetPad();
       saveSettings();
       toast("Boutons de la manette réinitialisés");
+    }
+    if (ui::clicked(padResetRect(1))) {
+      setRow_ = kPadActionRows;
+      setCol_ = 1;
+      resetAllControls();
+      toast("Touches du clavier et boutons de la manette réinitialisés");
     }
   } else {  // keyboard table
     for (int r = 0; r < kActionCount; ++r)
@@ -511,6 +544,12 @@ void App::updateSettings(const MenuNav& nav) {
         saveSettings();
         toast(c == 0 ? "Touches du clavier 1 réinitialisées" : "Touches du clavier 2 réinitialisées");
       }
+    if (ui::clicked(resetRect(2))) {
+      setRow_ = kActionCount;
+      setCol_ = 2;
+      resetAllControls();
+      toast("Touches du clavier et boutons de la manette réinitialisés");
+    }
   }
   if (dragSlider_ >= 0 && !IsMouseButtonDown(MOUSE_BUTTON_LEFT)) saveSettings();
   if (setRow_ * 10 + setTab_ * 100 + setCol_ != before) audio_.play(Sfx::MenuMove, 0.6f);
@@ -584,7 +623,7 @@ void App::drawSettings() {
                                     : r == 4 ? s.showFps
                                     : r == 6 ? s.pixelArt
                                              : s.showHitboxes)
-                                 : r == 2 ? s.weapons : s.items;
+                                 : r == 2 ? s.weapons : r == 4 ? s.tapJump : s.items;
           ui::toggle({w.x + w.width - 120, w.y, 120, w.height}, on, foc, t);
           break;
         }
@@ -641,14 +680,20 @@ void App::drawSettings() {
         if (foc && !wait) ui::focusFrame(k, t, 0.4f);
       }
     }
-    for (int c = 0; c < 2; ++c) {
+    for (int c = 0; c < 3; ++c) {
       Rectangle b = resetRect(c);
       bool foc = setRow_ == kActionCount && setCol_ == c;
-      DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, ui::kCream, 0.12f) : shade(accent, 0.7f));
+      const Color base = c == 2 ? Color{170, 70, 52, 255} : accent;
+      DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(base, ui::kCream, 0.12f) : shade(base, 0.7f));
       DrawRectangleRoundedLinesEx(ui::grow(b, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
-      drawTextCentered("RÉINITIALISER", b.x + b.width * 0.5f, b.y + 6, 17, ui::kCream);
+      drawTextCentered(c == 2 ? "TOUT RÉINITIALISER (+ MANETTE)" : "RÉINITIALISER", b.x + b.width * 0.5f, b.y + 5, 16,
+                       ui::kCream);
       if (foc) ui::focusFrame(b, t, 0.5f);
     }
+    drawText("Combos :  Attaque + Spéciale = smash   •   Bas, Bas-avant, Avant + Attaque = smash avant chargé",
+             kPanel.x + 46, kPanel.y + 413, 12, ui::kMuted);
+    drawText("Bas, Haut + Attaque = smash haut chargé   •   Spéciale (barre d'ulti pleine) = ultime",
+             kPanel.x + 103, kPanel.y + 426, 12, ui::kMuted);
     // Gamepad reference
     const PadFamily f = promptFamily();
     Rectangle box{kPanel.x + 806, kPanel.y + 16, 338, kPanel.height - 32};
@@ -670,8 +715,7 @@ void App::drawSettings() {
       drawText(a < 0 ? "Pause" : a == kActLeft ? "Se déplacer" : actionName(a), box.x + 128, y - 11, 17,
                a == kActUltimate ? ui::kGold : ui::kCream);
     }
-    drawText("Clavier 2 : le pavé numérique marche", box.x + 18, box.y + box.height - 46, 15, ui::kMuted);
-    drawText("aussi (0 à 6).", box.x + 18, box.y + box.height - 27, 15, ui::kMuted);
+    drawText("Clavier 2 : le pavé numérique marche aussi (0 à 6).", box.x + 18, box.y + box.height - 66, 13, ui::kMuted);
   }
   if (help) {
     float y = kPanel.y + kPanel.height - 40;

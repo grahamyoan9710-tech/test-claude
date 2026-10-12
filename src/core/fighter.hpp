@@ -99,6 +99,7 @@ struct Fighter {
   // Input
   InputState in, prev;
   Vec2 stickHist[6];
+  uint8_t dirHist[20] = {};  // the stick's direction over the last frames, newest first (numpad: 5 = neutral)
 
   // Stats
   int kos = 0;

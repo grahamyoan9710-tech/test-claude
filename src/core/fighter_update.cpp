@@ -1,4 +1,6 @@
 // Fighter state machine: reads the controller and decides what happens.
+#include <initializer_list>
+
 #include "core/match.hpp"
 
 namespace {
@@ -28,6 +30,28 @@ int aerialFor(const Fighter& f, Vec2 d) {
   if (d.len() < 0.3f) return NAir;
   if (std::fabs(d.y) >= std::fabs(d.x)) return d.y < 0 ? UAir : DAir;
   return (d.x > 0 ? 1 : -1) == f.facing ? FAir : BAir;
+}
+
+// Command inputs, read on the stick's history (numpad notation, `face` = 1 facing right): the steps of `seq` in
+// order within the last 18 frames, the last one held now or a frame ago.
+bool motion(const Fighter& f, std::initializer_list<int> seq, int face) {
+  auto mirror = [&](int d) { return face > 0 ? d : (d % 3 == 1 ? d + 2 : d % 3 == 0 ? d - 2 : d); };
+  const int* steps = seq.begin();
+  const int n = int(seq.size());
+  int k = n - 1;
+  for (int i = 0; i < 18 && k >= 0; ++i) {
+    if (f.dirHist[i] == mirror(steps[k])) --k;
+    else if (k == n - 1 && i > 1) return false;  // the last step is the stick now
+  }
+  return k < 0;
+}
+
+// Tap jump: the stick flicked up (gamepads, the setting on).
+bool tapJumped(const Fighter& f) { return f.in.tapJump && f.in.stick.y < -0.6f && f.flickY(); }
+
+// A + B together: a smash attack (as Smash Bros.' "A+B smash" option).
+bool abPressed(const Fighter& f) {
+  return (f.pressed(&IS::attack) && f.in.special) || (f.pressed(&IS::special) && f.in.attack);
 }
 
 int specialFor(Fighter& f) {
@@ -72,9 +96,21 @@ void Match::startMove(Fighter& f, int id) {
   if (id == SSpecial && !f.grounded) f.sideSpecialUsed = true;
 }
 
+// A smash attack at full power without charging it (the command inputs): the screen flashes.
+void Match::startChargedSmash(Fighter& f, int id) {
+  startMove(f, id);
+  const MoveDef& m = f.moveDef(id);
+  if (f.move != id) return;
+  if (m.chargeFrame >= 0) f.charge = m.maxCharge;
+  f.charging = false;
+  emit(EvType::SuperFlash, f.center(), f.id);
+}
+
 bool Match::tryGroundActions(Fighter& f) {
   const IS& in = f.in;
-  if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
+  // The ultimate: its button, or the neutral special with a full meter (Smash Bros.' Final Smash).
+  if (f.finalSmash && freezeTimer == 0 &&
+      (f.pressed(&IS::ultimate) || (f.pressed(&IS::special) && in.stick.len() < 0.4f))) {
     startFinalSmash(f);
     return true;
   }
@@ -84,6 +120,22 @@ bool Match::tryGroundActions(Fighter& f) {
   }
   if (f.pressed(&IS::grab) || (in.shield && f.pressed(&IS::attack))) {
     startMove(f, Grab);
+    return true;
+  }
+  if (f.pressed(&IS::attack)) {  // command inputs: a smash at full power
+    for (int face : {f.facing, -f.facing})
+      if (motion(f, {2, 3, 6}, face)) {  // quarter circle forward: forward smash
+        f.facing = face;
+        startChargedSmash(f, FSmash);
+        return true;
+      }
+    if (motion(f, {2, 8}, 1)) {  // down then up: up smash
+      startChargedSmash(f, USmash);
+      return true;
+    }
+  }
+  if (abPressed(f)) {  // attack + special together: a smash attack
+    startMove(f, smashFor(f, in.stick.len() > 0.3f ? in.stick : Vec2{float(f.facing), 0.0f}));
     return true;
   }
   if (f.pressed(&IS::special)) {
@@ -118,12 +170,21 @@ bool Match::tryGroundActions(Fighter& f) {
     setState(f, FState::Shield);
     return true;
   }
+  if (tapJumped(f)) {
+    setState(f, FState::JumpSquat, f.def->jumpSquat);
+    return true;
+  }
   return false;
 }
 
 bool Match::tryAirActions(Fighter& f) {
-  if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
+  if (f.finalSmash && freezeTimer == 0 &&
+      (f.pressed(&IS::ultimate) || (f.pressed(&IS::special) && f.in.stick.len() < 0.4f))) {
     startFinalSmash(f);
+    return true;
+  }
+  if (abPressed(f)) {  // attack + special together: an aerial
+    startMove(f, aerialFor(f, f.in.stick.len() > 0.3f ? f.in.stick : Vec2{float(f.facing), 0.0f}));
     return true;
   }
   if (f.pressed(&IS::special)) {
@@ -145,7 +206,7 @@ bool Match::tryAirActions(Fighter& f) {
     startMove(f, aerialFor(f, f.in.stick));
     return true;
   }
-  if (f.pressed(&IS::jump) && f.airJumps > 0) {
+  if ((f.pressed(&IS::jump) || tapJumped(f)) && f.airJumps > 0) {
     airJump(f);
     return true;
   }
@@ -190,7 +251,7 @@ void Match::groundFriction(Fighter& f, float mul) {
 
 void Match::startJump(Fighter& f) {
   const CharacterDef& d = *f.def;
-  f.vel.y = -(f.in.jump ? d.jumpVel : d.shortHopVel);
+  f.vel.y = -(f.in.jump || (f.in.tapJump && f.in.stick.y < -0.6f) ? d.jumpVel : d.shortHopVel);
   f.vel.x = clampf(f.vel.x + f.in.stick.x * 1.5f, -d.airSpeed, d.airSpeed);
   f.grounded = false;
   f.groundPlat = -1;
@@ -474,6 +535,16 @@ void Match::updateFighter(Fighter& f) {
 }
 
 void Match::updateMove(Fighter& f) {
+  // Attack and special a frame or two apart still make an A+B smash: the move just started becomes the smash.
+  if (f.grounded && !f.moveStartedAir && f.moveFrame <= 3 && abPressed(f)) {
+    const bool normal = f.move == Jab || f.move == Jab2 || f.move == Jab3 || f.move == FTilt || f.move == UTilt ||
+                        f.move == DTilt;
+    const bool special = f.move == NSpecial || f.move == SSpecial || f.move == USpecial || f.move == DSpecial;
+    if (normal || special) {
+      startMove(f, smashFor(f, f.in.stick.len() > 0.3f ? f.in.stick : Vec2{float(f.facing), 0.0f}));
+      return;
+    }
+  }
   const MoveDef& m = f.moveDef(f.move);
   const IS& in = f.in;
   if (f.charging && f.moveFrame == m.chargeFrame) {

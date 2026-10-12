@@ -234,6 +234,51 @@ static void testKeyboardControls() {
   }
 }
 
+static void testCombos() {
+  std::printf("[combos and Smash Bros. controls]\n");
+  auto fresh = [] {
+    Match* m = new Match(duel(0, 8, 2, false, false));
+    skipCountdown(*m);
+    m->fighters[0].pos = {-200, 0};
+    m->fighters[0].facing = 1;
+    m->fighters[1].pos = {300, 0};
+    std::array<InputState, 4> none{};
+    for (int i = 0; i < 30; ++i) m->step(none);
+    return m;
+  };
+  auto run = [&](std::vector<std::pair<int, InputState>> script, Fighter* out = nullptr) {
+    Match* m = fresh();
+    Pad p{*m};
+    for (auto& [n, s] : script) p.run(n, s);
+    if (out) *out = m->fighters[0];
+    int mv = m->fighters[0].state == FState::Attack ? m->fighters[0].move : -1;
+    delete m;
+    return mv;
+  };
+  CHECK(run({{1, key(0, 0, true, false, false, true)}}) == FSmash, "attack + special together = forward smash");
+  CHECK(run({{1, key(0, -1, true, false, false, true)}}) == USmash, "up + attack + special = up smash");
+  CHECK(run({{1, key(0, 0, true)}, {1, key(0, 0, true, false, false, true)}}) == FSmash,
+        "special a frame after the attack still makes the smash");
+  Fighter f{};
+  CHECK(run({{2, key(0, 1)}, {2, key(1, 1)}, {1, key(1, 0)}, {1, key(1, 0, true)}}, &f) == FSmash,
+        "quarter circle forward + attack = forward smash");
+  CHECK(f.charge > 0 && !f.charging, "... at full power without charging (charge %d)", f.charge);
+  CHECK(run({{2, key(0, 1)}, {2, key(-1, 1)}, {1, key(-1, 0)}, {1, key(-1, 0, true)}}, &f) == FSmash && f.facing < 0,
+        "the quarter circle the other way turns around");
+  CHECK(run({{3, key(0, 1)}, {1, key(0, -1)}, {1, key(0, -1, true)}}, &f) == USmash && f.charge > 0,
+        "down, up + attack = up smash at full power");
+  CHECK(run({{8, key(1, 0)}, {1, key(1, 0, true)}}) == FTilt, "holding forward then attack stays a tilt");
+  InputState up = key(0, -1);
+  up.tapJump = true;
+  run({{1, up}, {12, up}}, &f);
+  CHECK(!f.grounded, "the stick flicked up jumps (tap jump)");
+  run({{1, key(0, -1)}, {12, key(0, -1)}}, &f);
+  CHECK(f.grounded, "no tap jump without the setting (keyboards)");
+  InputState upTilt = key(0, -1, true);
+  upTilt.tapJump = true;
+  CHECK(run({{6, key(0, -0.4f)}, {1, upTilt}}) == UTilt, "tap jump still allows the up tilt");
+}
+
 static void testFinalSmash() {
   std::printf("[clash orb + final smash]\n");
   Match m(duel(0, 0, 2, false, false));
@@ -257,13 +302,11 @@ static void testFinalSmash() {
   CHECK(f.finalSmash && f.ult >= kUltMax, "breaking the orb fills the ultimate meter (orb hp %.0f, meter %.0f)",
         m.orb.hp, f.ult);
   p.idle(30);
+  p.run(1, key(0, -1, false, false, false, true));
+  CHECK(f.move != FinalSmash, "an up special does not waste the ultimate");
+  p.idle(80);
   p.run(1, key(0, 0, false, false, false, true));
-  CHECK(f.move != FinalSmash, "the special button does not waste the ultimate");
-  p.idle(60);
-  InputState ult;
-  ult.ultimate = true;
-  p.run(1, ult);
-  CHECK(f.state == FState::Attack && f.move == FinalSmash, "the ultimate button triggers the final smash");
+  CHECK(f.state == FState::Attack && f.move == FinalSmash, "the neutral special with a full meter is the final smash");
   CHECK(f.ult == 0.0f && !f.finalSmash, "the meter is spent (%.0f)", f.ult);
   CHECK(m.freezeTimer > 0, "cinematic freeze");
   int stocks = v.stocks;
@@ -772,6 +815,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "jab") testJabHits();
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
+  if (only.empty() || only == "combos") testCombos();
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();
   if (only.empty() || only == "ult") testUltEdgeCases();

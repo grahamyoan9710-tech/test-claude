@@ -63,6 +63,12 @@ void Match::step(const std::array<InputState, 4>& inputs) {
     f.in = started() ? inputs[f.port] : InputState{};
     for (int i = 5; i > 0; --i) f.stickHist[i] = f.stickHist[i - 1];
     f.stickHist[0] = f.in.stick;
+    for (int i = 19; i > 0; --i) f.dirHist[i] = f.dirHist[i - 1];
+    {
+      const int x = f.in.stick.x > 0.5f ? 1 : f.in.stick.x < -0.5f ? -1 : 0;
+      const int y = f.in.stick.y > 0.5f ? 1 : f.in.stick.y < -0.5f ? -1 : 0;
+      f.dirHist[0] = uint8_t(5 + x - 3 * y);  // numpad notation: 2 down, 6 right, 3 down-right...
+    }
   }
   if (freezeTimer > 0) {  // final smash cinematic: only its user moves
     --freezeTimer;
