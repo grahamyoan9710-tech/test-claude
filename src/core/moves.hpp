@@ -145,6 +145,7 @@ struct ProjectileDef {
   bool follow = false;     // stays on its target while it lives (black flames, vortices, petal spheres)
   int armDelay = 0;        // harmless for its first frames (the warning before a strike from the sky)
   bool ignoreGround = false;  // flies through the stage (strikes from the sky, eruptions)
+  bool single = false;     // one at a time: a new one replaces the fighter's previous one (no spamming)
 };
 
 // A beam drawn from the fighter during a move (the damage comes from the move's hitboxes, see beamHits).

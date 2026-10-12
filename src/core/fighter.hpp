@@ -142,6 +142,7 @@ struct Fighter {
     float m = 1.0f;
     if (const WeaponDef* w = weaponDef()) m *= w->damageMul;
     if (const FormDef* fd = formDef()) m *= fd->damageMul;
+    if (cpu && cpuLevel >= 10) m *= 2.0f;  // level 10: twice the power of level 9
     return m;
   }
   const MoveDef* currentMove() const {

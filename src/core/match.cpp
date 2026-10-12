@@ -120,6 +120,8 @@ void Match::koFighter(Fighter& f) {
   emit(EvType::KO, p, f.id, f.lastHitBy, f.lastKnockback, dir);
   if (f.grabPartner >= 0) releaseGrab(f, false);
   loseWeapon(f, false);
+  endForm(f);
+  f.captor = -1;
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;
@@ -273,6 +275,8 @@ void Match::resetPositions() {
     f.finalSmash = false;
     f.ult = 0.0f;
     loseWeapon(f, false);
+    endForm(f);
+    f.captor = -1;
     setState(f, FState::Air);
   }
   freezeTimer = 0;

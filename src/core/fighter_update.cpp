@@ -217,6 +217,13 @@ void Match::updateFighter(Fighter& f) {
     return;
   }
   if (f.flash > 0) f.flash--;
+  if (f.form >= 0) {  // transformation running out
+    const FormDef* fd = f.formDef();
+    bool over = !fd;
+    if (fd && fd->duration > 0) over = --f.formTimer <= 0;
+    else if (fd) over = f.state != FState::Attack || f.move != f.formMove;
+    if (over) endForm(f);
+  }
   if (f.hitlag > 0) {
     f.hitlag--;
     return;
@@ -510,12 +517,22 @@ void Match::updateMove(Fighter& f) {
     if (f.vel.y < -0.5f) f.grounded = false;
   }
   if (m.projectileFrame == t) spawnProjectiles(f, m.projectile);
+  if (m.formIndex >= 0 && m.formFrame == t) startForm(f, m.formIndex);
   if (m.intangibleStart >= 0 && t == std::max(1, m.intangibleStart))  // t starts at 1
     f.intangible = m.intangibleEnd - t;
-  if (m.teleportFrame == t) {
-    Vec2 dir = m.teleportForward ? Vec2{float(f.facing), 0.0f} : in.stick.len() > 0.3f ? in.stick.norm() : Vec2{0, -1};
-    if (std::fabs(dir.x) > 0.2f) f.facing = dir.x > 0 ? 1 : -1;
-    f.pos += dir * m.teleportDist;
+  if (m.teleportFrame == t && (m.counterStart < 0 || f.counterTriggered)) {
+    const Fighter* tg = m.teleportToTarget ? nearestOpponent(f) : nullptr;
+    if (tg) {  // right in front of the nearest opponent
+      const int side = tg->pos.x >= f.pos.x ? 1 : -1;
+      f.pos = {tg->pos.x - side * m.teleportDist, tg->pos.y};
+      f.facing = side;
+    } else {
+      Vec2 dir = m.teleportForward || m.teleportToTarget ? Vec2{float(f.facing), 0.0f}
+                 : in.stick.len() > 0.3f                 ? in.stick.norm()
+                                                         : Vec2{0, -1};
+      if (std::fabs(dir.x) > 0.2f) f.facing = dir.x > 0 ? 1 : -1;
+      f.pos += dir * m.teleportDist;
+    }
     if (m.turnAfterTeleport) f.facing = -f.facing;
     f.grounded = false;
     f.vel = {0, 0};
@@ -657,13 +674,34 @@ void Match::updateGrabbed(Fighter& f) {
   if (f.escapeTimer <= 0 && g->state == FState::Holding) releaseGrab(f, true);
 }
 
+void Match::startForm(Fighter& f, int index) {
+  if (index < 0 || index >= int(f.def->forms.size())) return;
+  if (f.form >= 0) endForm(f);
+  const FormDef& fd = f.def->forms[index];
+  f.form = index;
+  f.formTimer = fd.duration;
+  f.formMove = fd.duration > 0 ? -1 : f.move;
+  emit(EvType::Transform, f.center(), f.id, int(fd.form));
+}
+
+void Match::endForm(Fighter& f) {
+  if (f.form < 0) return;
+  const FormDef* fd = f.formDef();
+  emit(EvType::TransformEnd, f.center(), f.id, fd ? int(fd->form) : 0);
+  f.form = -1;
+  f.formTimer = 0;
+  f.formMove = -1;
+}
+
 // Held by an opponent's cinematic ultimate: pulled to the hold point (or frozen where it was caught).
 void Match::updateCaptured(Fighter& f) {
   Fighter* c = f.captor >= 0 && f.captor < int(fighters.size()) ? &fighters[f.captor] : nullptr;
   const MoveDef* m = c ? c->currentMove() : nullptr;
-  if (!c || !c->active() || !m || c->move != FinalSmash) {
+  if (!c || !c->active() || !m || c->move != FinalSmash) {  // the cinematic is over: let go
     f.captor = -1;
-    setState(f, f.grounded ? FState::Idle : FState::Air);
+    setState(f, FState::Air);
+    f.vel = {0.0f, -4.0f};
+    f.grounded = false;
     return;
   }
   f.vel = f.kbVel = {0, 0};

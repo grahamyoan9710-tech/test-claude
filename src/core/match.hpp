@@ -28,7 +28,10 @@ enum class EvType : uint8_t {
   WeaponSpawn, WeaponPickup, WeaponBreak, WeaponLand,  // b = weapon slot, strength = character
   SuperFlash,  // a = fighter, b = move id: freeze + cut-in
   Explosion,   // strength = radius
-  Reflect
+  Reflect,
+  Capture,       // a = attacker, b = victim caught by a cinematic ultimate
+  Transform,     // a = fighter, b = Form
+  TransformEnd   // a = fighter, b = Form
 };
 
 // A weapon lying on the stage (or falling on it).
@@ -85,6 +88,11 @@ struct Projectile {
   HitboxDef explode;
   int age = 0;
   float spawnRadius = 10.0f;
+  int follow = -1;          // stays on this fighter (offset followOffset from its center)
+  Vec2 followOffset;
+  int armDelay = 0;         // harmless while age < armDelay
+  bool ignoreGround = false;
+  bool unblockable = false; // fired by an ultimate: shields do not stop it
 };
 
 class Match {
@@ -159,6 +167,11 @@ class Match {
                 float damageMul, bool throwHit);
   void spawnProjectiles(Fighter& f, const ProjectileDef& p);
   bool tryCounter(Fighter& victim, Fighter* attacker);
+  void captureHit(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 pos, float mul);
+  void lockedHit(Fighter& a, Fighter& v, const HitboxDef& h, float mul);
+  const Fighter* nearestOpponent(const Fighter& f) const;
+  void startForm(Fighter& f, int index);
+  void endForm(Fighter& f);
   // match.cpp
   void checkBlastZones();
   void koFighter(Fighter& f);
