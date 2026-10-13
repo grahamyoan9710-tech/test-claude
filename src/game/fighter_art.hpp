@@ -78,6 +78,9 @@ struct SheetMask {
   std::vector<unsigned char> opaque;
 };
 bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out);
+// The same for frame `frame` of clip `sheet` (whatever the pose); frames: the clip's frame count (0: no clip).
+bool sheetMaskAt(const CharacterDef& d, int sheet, int frame, SheetMask& out);
+int sheetFrames(const CharacterDef& d, int sheet);
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 bool drawBust(Hero h, Vec2 center, float size, float alpha);
 // Effects made with PixelLab (vfx_workbench or animated pictures, scripts/import_fx.py): a strip of frames

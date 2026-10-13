@@ -79,6 +79,7 @@ struct ExportPose {
 int exportPose(const ExportPose& e);
 // --check-hitboxes (check_hitboxes.cpp): the hitboxes of every clip-drawn move against the frames shown with them.
 int checkHitboxes(const std::string& outPath);
+int fitImpacts(const std::string& outPath);  // --fit-impacts: every blow against every frame of its clip
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
 // A pose shown by the fighter's run clip (if it has one) at `phase` 0..1 of the cycle: running clones.
 void runClip(const CharacterDef& def, Pose& pose, float phase);

@@ -10,7 +10,7 @@
 //                    [--palette N]   (colours of the menus, see menu_theme.hpp; 0 = the game's)
 //                    [--export-audio DIR]
 //                    [--export-pose FIGHTER SLOT OUT.png [--anchor AX AY] [--pxh P] [--size N]]
-//                    [--check-hitboxes OUT.tsv]
+//                    [--check-hitboxes OUT.tsv] [--fit-impacts OUT.tsv]
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -60,6 +60,8 @@ int main(int argc, char** argv) {
       return exportPose(e);
     } else if (is("--check-hitboxes") && i + 1 < argc) {  // OUT.tsv: hitboxes against the drawn clips
       return checkHitboxes(argv[++i]);
+    } else if (is("--fit-impacts") && i + 1 < argc) {  // OUT.tsv: each blow against every frame of its clip
+      return fitImpacts(argv[++i]);
     } else if (is("--export-audio") && i + 1 < argc) {
       int n = Audio::exportAll(argv[++i]);
       std::printf("%d audio files written\n", n);

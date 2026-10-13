@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <vector>
 
 #include "core/hitshapes.hpp"
 #include "core/match.hpp"
@@ -96,3 +97,88 @@ int checkHitboxes(const std::string& outPath) {
   std::printf("%d rows -> %s\n", rows, outPath.c_str());
   return 0;
 }
+
+// --fit-impacts OUT.tsv: for every clip-drawn move, each blow (hitbox windows merged as the renderer does) against
+// every frame of its clip: the share of the blow's hitboxes (over all its frames) that the frame's drawing covers.
+// scripts/fit_impacts.py picks, blow by blow and in order, the frames that cover them best.
+int fitImpacts(const std::string& outPath) {
+  SetTraceLogLevel(LOG_WARNING);
+  SetConfigFlags(FLAG_WINDOW_HIDDEN);
+  InitWindow(320, 240, "fit");
+  FILE* out = std::fopen(outPath.c_str(), "w");
+  if (!out) return 1;
+  std::fprintf(out, "fighter\tclip\tblow\tstart\tend\tduration\tcoverage_per_frame\n");
+  const auto& r = roster();
+  int rows = 0;
+  for (int ci = 0; ci < int(r.size()); ++ci) {
+    const CharacterDef& d = r[ci];
+    if (!art::hasClips(d.hero)) continue;
+    for (int slot = -1; slot <= 1; ++slot)
+      for (int mv = 0; mv < MOVE_COUNT; ++mv) {
+        const int sheet = (slot < 0 ? art::kSheetMove0 : slot == 0 ? art::kSheetWeapon0 : art::kSheetWeapon1) + mv;
+        const int nf = art::sheetFrames(d, sheet);
+        if (nf <= 0) continue;
+        MatchConfig cfg;
+        cfg.items = false;
+        cfg.weapons = false;
+        cfg.slots[0] = {true, ci, true, 5};
+        cfg.slots[1] = {true, ci == 0 ? 1 : 0, true, 5};
+        Match m(cfg);
+        Fighter& f = m.fighters[0];
+        if (slot >= 0) m.equipWeapon(f, slot);
+        const MoveDef& md = f.moveDef(mv);
+        if (md.duration <= 0 || md.hitboxes.empty()) continue;
+        std::vector<std::pair<int, int>> w;  // the blows, as clipImpact (render_fighter.cpp) merges them
+        for (const auto& h : md.hitboxes)
+          if (h.end > h.start) w.push_back({h.start, h.end});
+        std::sort(w.begin(), w.end());
+        std::vector<std::pair<int, int>> blows;
+        for (const auto& [a, b] : w) {
+          if (!blows.empty() && a <= blows.back().second) blows.back().second = std::max(blows.back().second, b);
+          else blows.push_back({a, b});
+        }
+        if (blows.size() > 4) blows.resize(4);
+        const float H = d.height;
+        std::vector<art::SheetMask> masks(nf);
+        for (int j = 0; j < nf; ++j) art::sheetMaskAt(d, sheet, j, masks[j]);
+        for (int bi = 0; bi < int(blows.size()); ++bi) {
+          std::vector<double> cov(nf, 0.0);
+          long total = 0;
+          for (int fr = blows[bi].first; fr < std::min(blows[bi].second, md.duration); ++fr) {
+            f.facing = 1;
+            f.moveFrame = fr;
+            for (const HitShape& s : hitShapes(md, fr, f.center(), 1, H, f.bladeLength()))
+              for (int j = 0; j < nf; ++j) {
+                const art::SheetMask& mk = masks[j];
+                const float k = H / mk.pxPerH;
+                auto toPx = [&](Vec2 wpt) {
+                  const Vec2 l = wpt - f.center();
+                  return Vec2{mk.ax + l.x / k, mk.ay + (l.y - H * 0.5f) / k};
+                };
+                const Vec2 a = toPx(s.a), b = toPx(s.b);
+                const float rad = s.radius / k;
+                int inside = 0, covered = 0;
+                for (int y = int(std::floor(std::min(a.y, b.y) - rad)); y <= int(std::ceil(std::max(a.y, b.y) + rad)); ++y)
+                  for (int x = int(std::floor(std::min(a.x, b.x) - rad)); x <= int(std::ceil(std::max(a.x, b.x) + rad)); ++x) {
+                    if (segDist({float(x), float(y)}, a, b) > rad) continue;
+                    ++inside;
+                    if (x >= 0 && y >= 0 && x < mk.w && y < mk.h && mk.opaque[size_t(y) * mk.w + x]) ++covered;
+                  }
+                if (inside) cov[j] += double(covered) / inside;
+                if (j == 0) ++total;
+              }
+          }
+          std::fprintf(out, "%s\t%s\t%d\t%d\t%d\t%d\t", d.name.c_str(), art::sheetName(sheet), bi, blows[bi].first,
+                       blows[bi].second, md.duration);
+          for (int j = 0; j < nf; ++j) std::fprintf(out, "%s%.3f", j ? "," : "", total ? cov[j] / total : 0.0);
+          std::fprintf(out, "\n");
+          ++rows;
+        }
+      }
+  }
+  std::fclose(out);
+  CloseWindow();
+  std::printf("%d blows -> %s\n", rows, outPath.c_str());
+  return 0;
+}
+

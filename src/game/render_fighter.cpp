@@ -828,7 +828,8 @@ namespace {
 // overlap or follow each other merge into one blow), else what it throws, casts or fires. None: the clip plays evenly.
 void clipImpact(const MoveDef& md, float dur, Pose& p) {
   std::vector<std::pair<int, int>> w;
-  for (const auto& h : md.hitboxes) w.push_back({h.start, h.end});
+  for (const auto& h : md.hitboxes)
+    if (h.end > h.start) w.push_back({h.start, h.end});  // (a throw's hitbox is never out: start == end)
   if (w.empty()) {
     if (md.throwFrame >= 0) w.push_back({md.throwFrame, md.throwFrame + 3});
     else if (md.projectileFrame >= 0) w.push_back({md.projectileFrame, md.projectileFrame + 4});

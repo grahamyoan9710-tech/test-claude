@@ -1279,9 +1279,21 @@ bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out) {
   if (pose.sheet < 0 || pose.sheet >= kSheetCount) return false;
   const Art* A = clipsOf(d.hero);
   if (!A || !A->sheets[pose.sheet].ok) return false;
-  const Art::Sheet& S = A->sheets[pose.sheet];
+  return sheetMaskAt(d, pose.sheet, sheetFrame(A->sheets[pose.sheet], pose), out);
+}
+
+int sheetFrames(const CharacterDef& d, int sheet) {
+  const Art* A = clipsOf(d.hero);
+  return A && sheet >= 0 && sheet < kSheetCount && A->sheets[sheet].ok ? A->sheets[sheet].frames : 0;
+}
+
+bool sheetMaskAt(const CharacterDef& d, int sheet, int frame, SheetMask& out) {
+  if (sheet < 0 || sheet >= kSheetCount) return false;
+  const Art* A = clipsOf(d.hero);
+  if (!A || !A->sheets[sheet].ok) return false;
+  const Art::Sheet& S = A->sheets[sheet];
   static std::map<std::string, Image> decoded;  // the strips, decoded once on the CPU
-  const std::string key = std::string(heroKey(d.hero)) + "_" + sheetName(pose.sheet);
+  const std::string key = std::string(heroKey(d.hero)) + "_" + sheetName(sheet);
   auto it = decoded.find(key);
   if (it == decoded.end()) {
     const unsigned char* data = nullptr;
@@ -1293,7 +1305,7 @@ bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out) {
     it = decoded.emplace(key, img).first;
   }
   const Image& img = it->second;
-  out.frame = sheetFrame(S, pose);
+  out.frame = std::clamp(frame, 0, S.frames - 1);
   out.w = int(S.fw);
   out.h = int(S.fh);
   out.ax = S.ax;
