@@ -424,6 +424,10 @@ struct CharacterDef {
 };
 
 const std::vector<CharacterDef>& roster();
+// The hitboxes of the moves drawn by generated clips are moved onto what the clips draw (core/roster_hitfit.inc,
+// written by `super_clash --fit-hitboxes`). That tool sets this before the first roster() call to get the hitboxes
+// as written in the roster, the fit not applied.
+extern bool g_rawHitboxes;
 
 // --- helpers used to author the roster (roster_normals.cpp) ---------------
 HitboxDef hb(int start, int end, float ox, float oy, float radius, float dmg, float angle,

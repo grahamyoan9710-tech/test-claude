@@ -62,6 +62,9 @@ int main(int argc, char** argv) {
       return checkHitboxes(argv[++i]);
     } else if (is("--fit-impacts") && i + 1 < argc) {  // OUT.tsv: each blow against every frame of its clip
       return fitImpacts(argv[++i]);
+    } else if (is("--fit-hitboxes") && i + 1 < argc) {  // OUT.inc: the hitboxes moved onto the clips' drawing
+      g_rawHitboxes = true;  // fitted from the roster as written
+      return fitHitboxes(argv[++i]);
     } else if (is("--export-audio") && i + 1 < argc) {
       int n = Audio::exportAll(argv[++i]);
       std::printf("%d audio files written\n", n);

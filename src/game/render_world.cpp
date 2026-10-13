@@ -1640,6 +1640,51 @@ void shotSkyBolt(const Shot& s, float time) {
 }
 }  // namespace
 
+// Projectiles drawn by a PixelLab effect (assets/sprites/fx_<name>.png), sized on their hitbox: the effect's hit
+// radius (its fx line in sheets.txt) is the projectile's radius. Without the effect the procedural drawing stays.
+enum class FxPlace : uint8_t {
+  Travel,  // flies along its velocity (drawn to the right, turned and mirrored to its course); origin on the hitbox
+  Area,    // stays upright, origin on the hitbox centre
+  Sky,     // comes down from above onto the hitbox centre
+  Ground,  // rises from the ground under the hitbox (origin on the column's foot)
+};
+struct ShotFx {
+  ProjVisual v;
+  const char* fx;
+  FxPlace place;
+};
+constexpr ShotFx kShotFx[] = {
+    {ProjVisual::BlackSlash, "black_divider", FxPlace::Travel},  {ProjVisual::WindRain, "wind_rain", FxPlace::Travel},
+    {ProjVisual::ZephyrSpear, "zephyr_spear", FxPlace::Travel},  {ProjVisual::GiantGetsuga, "getsuga", FxPlace::Travel},
+    {ProjVisual::GetsugaCross, "getsuga_cross", FxPlace::Travel}, {ProjVisual::PetalSphere, "petal_sphere", FxPlace::Area},
+    {ProjVisual::SwordBeam, "sword_beam", FxPlace::Travel},      {ProjVisual::LightPillar, "light_pillar", FxPlace::Sky},
+    {ProjVisual::GloomPillar, "gloom_pillar", FxPlace::Ground},  {ProjVisual::PurpleOrb, "hollow_purple", FxPlace::Travel},
+    {ProjVisual::MaxBlue, "max_blue", FxPlace::Area},            {ProjVisual::ReiatsuWave, "reiatsu_wave", FxPlace::Travel},
+    {ProjVisual::Rasenshuriken, "rasenshuriken", FxPlace::Travel}, {ProjVisual::Bijudama, "bijudama", FxPlace::Travel},
+    {ProjVisual::KirinBolt, "kirin", FxPlace::Sky},              {ProjVisual::IndraArrow, "indra_arrow", FxPlace::Travel},
+    {ProjVisual::KamuiShuriken, "susanoo_shuriken", FxPlace::Travel}, {ProjVisual::StarrkCero, "starrk_cero", FxPlace::Travel},
+};
+
+static bool shotSprite(const Projectile& p, const Shot& s, float time) {
+  const ShotFx* e = nullptr;
+  for (const ShotFx& x : kShotFx)
+    if (x.v == p.visual) e = &x;
+  const bool skyBolt = p.visual == ProjVisual::Lightning && p.vel.len2() < 1.0f;  // Kamutoke: a bolt from the sky
+  const char* name = skyBolt ? "sky_bolt" : e ? e->fx : nullptr;
+  const art::FxInfo* fx = name ? art::fxInfo(name) : nullptr;
+  if (!fx) return false;
+  const FxPlace place = skyBolt ? FxPlace::Sky : e->place;
+  const float size = s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
+  const float t = time + hash01(s.seed) * fx->duration();  // copies side by side do not pulse together
+  if (place == FxPlace::Travel) {
+    const bool flip = s.d.x < 0.0f;  // mirrored, not upside down, when it flies to the left
+    const float rot = flip ? std::atan2(-s.d.y, -s.d.x) : std::atan2(s.d.y, s.d.x);
+    return art::drawFx(name, t, s.c, size, rot, flip, s.k);
+  }
+  const Vec2 at = place == FxPlace::Ground ? s.c + Vec2{0.0f, s.r * 1.2f} : s.c;
+  return art::drawFx(name, t, at, size, 0.0f, (s.seed & 1u) != 0 && place == FxPlace::Area, s.k);
+}
+
 void drawProjectiles(const Match& m, float time) {
   for (size_t i = 0; i < m.projectiles.size(); ++i) {
     const Projectile& p = m.projectiles[i];
@@ -1666,6 +1711,7 @@ void drawProjectiles(const Match& m, float time) {
       continue;
     }
     if (p.armDelay > 0) s.k = std::min(s.k, 1.0f);
+    if (shotSprite(p, s, time)) continue;
     switch (p.visual) {
       case ProjVisual::BlackSlash: shotBlackSlash(s, time); continue;
       case ProjVisual::WindBlade: shotWindBlade(s); continue;

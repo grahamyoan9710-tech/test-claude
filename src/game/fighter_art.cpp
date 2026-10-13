@@ -1424,8 +1424,8 @@ const Fx* fxOf(const char* name) {
     pos = end + 1;
     char key[64] = {};
     int frames = 0, loop = 0;
-    float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f;
-    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop) < 6 ||
+    float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f, hit = 0.0f;
+    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop, &hit) < 6 ||
         std::strcmp(key, name) != 0 || frames <= 0)
       continue;
     const unsigned char* data = nullptr;
@@ -1438,7 +1438,7 @@ const Fx* fxOf(const char* name) {
     if (F.tex.id == 0) break;
     GenTextureMipmaps(&F.tex);
     SetTextureFilter(F.tex, TEXTURE_FILTER_TRILINEAR);
-    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0};
+    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit};
     F.ok = true;
     break;
   }
@@ -1473,6 +1473,34 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
     rlColor4ub(tint.r, tint.g, tint.b, a);
     rlTexCoord2f(uv[k][0], uv[k][1]);
     rlVertex2f(q[k].x, q[k].y);
+  }
+  rlEnd();
+  rlSetTexture(0);
+  return true;
+}
+
+bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha) {
+  const Fx* F = fxOf(name);
+  if (!F || alpha <= 0.0f || len <= 0.0f || size <= 0.0f) return F != nullptr;
+  const FxInfo& I = F->info;
+  int frame = int(std::floor(std::max(0.0f, t) * I.fps));
+  frame = I.loop ? frame % I.frames : std::min(frame, I.frames - 1);
+  const Vec2 d = dir.len2() > 1e-6f ? dir.norm() : Vec2{1.0f, 0.0f}, n{-d.y, d.x};
+  const float tile = I.fw * size, top = I.ay * size, bottom = (I.fh - I.ay) * size;
+  const float tw = float(F->tex.width), th = float(F->tex.height);
+  const unsigned char a = (unsigned char)(255.0f * std::clamp(alpha, 0.0f, 1.0f));
+  rlSetTexture(F->tex.id);
+  rlBegin(RL_QUADS);
+  for (float x = 0.0f; x < len; x += tile) {
+    const float w = std::min(tile, len - x), u0 = frame * I.fw / tw, u1 = (frame * I.fw + I.fw * (w / tile)) / tw;
+    const Vec2 p0 = from + d * x, p1 = from + d * (x + w);
+    const Vec2 q[4] = {p0 - n * top, p1 - n * top, p1 + n * bottom, p0 + n * bottom};
+    const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, I.fh / th}, {u0, I.fh / th}};
+    for (int k = 0; k < 4; ++k) {
+      rlColor4ub(255, 255, 255, a);
+      rlTexCoord2f(uv[k][0], uv[k][1]);
+      rlVertex2f(q[k].x, q[k].y);
+    }
   }
   rlEnd();
   rlSetTexture(0);

@@ -2,6 +2,9 @@
 // Kaisen, Zelda: Tears of the Kingdom, God of War and Monster Hunter. Each one has its normals, four
 // specials, three ultimates (bare-handed and with each of its two weapons) and two weapons that drop
 // during a match.
+#include <cmath>
+#include <iterator>
+
 #include "core/roster_kit.hpp"
 
 namespace {
@@ -1304,6 +1307,53 @@ void addWeaponStrikes(CharacterDef& c) {
 }
 }  // namespace
 
+bool g_rawHitboxes = false;
+
+namespace {
+// One hitbox moved onto the drawing of its clip:
+// fighter, weapon slot (-1: bare-handed), move, index in the move's hitboxes, the radius it was written with (the
+// entry is dropped if that changed: the roster moved on since the fit), its fitted offset and radius, and for a
+// blade swing its fitted angles and reach (its offset is unused).
+struct HitFit {
+  const char* fighter;
+  int slot, move, index;
+  float was, x, y, r, a0, a1, reach1;
+};
+constexpr HitFit kHitFit[] = {
+#include "core/roster_hitfit.inc"
+    {nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
+MoveDef* moveOf(CharacterDef& c, int slot, int move) {
+  if (slot < 0) return move >= 0 && move < MOVE_COUNT ? &c.moves[move] : nullptr;
+  if (slot >= int(std::size(c.weapons))) return nullptr;
+  for (auto& [id, m] : c.weapons[slot].moves)
+    if (id == move) return &m;
+  return nullptr;
+}
+
+void applyHitFit(std::vector<CharacterDef>& v) {
+  for (const HitFit& h : kHitFit) {
+    if (!h.fighter) break;
+    for (auto& c : v) {
+      if (c.name != h.fighter) continue;
+      MoveDef* m = moveOf(c, h.slot, h.move);
+      if (!m || h.index < 0 || h.index >= int(m->hitboxes.size())) continue;
+      HitboxDef& x = m->hitboxes[h.index];
+      if (std::fabs(x.radius - h.was) > 0.01f) continue;
+      x.radius = h.r;
+      if (x.swing) {
+        x.a0 = h.a0;
+        x.a1 = h.a1;
+        x.reach1 = h.reach1;
+      } else {
+        x.offset = {h.x, h.y};
+      }
+    }
+  }
+}
+}  // namespace
+
 const std::vector<CharacterDef>& roster() {
   static const std::vector<CharacterDef> r = [] {
     std::vector<CharacterDef> v = {makeAsta(),      makeYuno(),     makeIchigo(),   makeByakuya(),   makeKenpachi(),
@@ -1314,6 +1364,7 @@ const std::vector<CharacterDef>& roster() {
       addWeaponStrikes(c);  // before the ultimates: the bows copy their special's arrow
       addUltimates(c);      // roster_ultimates.cpp
     }
+    if (!g_rawHitboxes) applyHitFit(v);
     return v;
   }();
   return r;

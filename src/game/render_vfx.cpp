@@ -1,5 +1,6 @@
 // Big move effects: the VFX drawing kit, beams and the ultimates' cinematic domains.
 // Everything is made of a few large gradient triangles (cheap on software GL), additive where it glows.
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/ui.hpp"
 
@@ -796,6 +797,34 @@ void rageFront(const Fighter& f, float k, float t, const Rect& v) {
 }
 }  // namespace
 
+// Beams drawn by a PixelLab effect: a segment that tiles along the beam (fx_<name>) and its end (fx_<name>_head), both
+// sized on the beam's width (the effect's hit radius is half the beam's width). The beams by element.
+static const char* beamSprite(HitFx fx) {
+  switch (fx) {
+    case HitFx::Claw: return "gran_rey_cero";
+    case HitFx::Hollow: return "cero_oscuras";
+    case HitFx::Blood: return "vasto_cero";
+    case HitFx::Light: return "light_dragon";
+    case HitFx::Gloom: return "demon_dragon";
+    case HitFx::Fire: return "wyvern_fire";
+    default: return nullptr;
+  }
+}
+
+static bool drawSpriteBeam(Vec2 a, Vec2 dir, float len, float w, HitFx fx, float time) {
+  const char* name = beamSprite(fx);
+  const art::FxInfo* seg = name ? art::fxInfo(name) : nullptr;
+  if (!seg) return false;
+  const float size = 0.5f * w / (seg->hit > 0.0f ? seg->hit : 0.4f * seg->fh);
+  art::drawFxStrip(name, time, a, dir, len, size);
+  const std::string head = std::string(name) + "_head";
+  if (art::fxInfo(head.c_str())) {
+    const bool flip = dir.x < 0.0f;
+    art::drawFx(head.c_str(), time, a + dir * len, size, flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
+  }
+  return true;
+}
+
 void drawBeams(const Match& m, float time) {
   for (const auto& f : m.fighters) {
     const MoveDef* mv = f.currentMove();
@@ -809,6 +838,7 @@ void drawBeams(const Match& m, float time) {
     env *= std::min(1.0f, left / 5.0f + 0.2f);
     const float pulse = 1.0f + 0.06f * std::sin(time * 47.0f) + 0.04f * std::sin(time * 91.0f + f.id);
     const float len = b.length * std::min(1.0f, (u + 1) / 3.0f);
+    if (drawSpriteBeam(a, dir, len, b.width * env * pulse, b.fx, time)) continue;
     drawBeam(a, dir, len, b.width * env * pulse, beamStyle(b.fx), time, uint32_t(f.id * 977 + 13));
   }
 }

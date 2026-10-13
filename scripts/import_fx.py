@@ -8,10 +8,11 @@ SOURCE is either
   out unless --keep-first).
 Options: --anchor X Y (the effect's origin in the frame: where the game puts it; default: the JSON pivot, else the
 frame centre), --fps N (default: from the JSON, else 15), --loop, --only A-B (frames to keep), --keep-first,
---flip (mirror the frames: the game expects effects travelling to the right).
+--flip (mirror the frames: the game expects effects travelling to the right), --hit R (the radius, in frame pixels,
+the hitbox should have to match the drawing: the game then sizes the effect on the hitbox).
 
 Writes assets/sprites/fx_NAME.png (the frames side by side, cropped to their common box, paletted when it fits)
-and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop.
+and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop [hit].
 """
 import argparse
 import json
@@ -71,6 +72,7 @@ def main():
     ap.add_argument("--only", default=None)
     ap.add_argument("--keep-first", action="store_true")
     ap.add_argument("--flip", action="store_true")
+    ap.add_argument("--hit", type=float, default=0.0)
     a = ap.parse_args()
 
     frames, (ax, ay), fps = load(a)
@@ -107,7 +109,8 @@ def main():
     lines = open(index).read().splitlines() if os.path.exists(index) else []
     header = [l for l in lines if l.startswith("#")]
     body = [l for l in lines if l.strip() and not l.startswith("#") and not l.split()[:2] == ["fx", a.name]]
-    body.append(f"fx {a.name} {len(frames)} {fw} {fh} {ax - x0:.1f} {ay - y0:.1f} {fps:g} {1 if a.loop else 0}")
+    line = f"fx {a.name} {len(frames)} {fw} {fh} {ax - x0:.1f} {ay - y0:.1f} {fps:g} {1 if a.loop else 0}"
+    body.append(line + (f" {a.hit:g}" if a.hit > 0 else ""))
     open(index, "w").write("\n".join(header + sorted(body)) + "\n")
     print(f"fx {a.name}: {len(frames)} frames {fw}x{fh} @ {fps:g} fps, {os.path.getsize(out) // 1024} KB")
 

@@ -115,7 +115,7 @@ sheet naruto dthrow 12 198 243 75.0 232.0 213.0 0 4 15
 sheet naruto dtilt 8 206 233 70.0 232.0 213.0 0 2 15
 sheet naruto fair 12 185 177 45.0 238.0 213.0 0 3 15
 sheet naruto fall 8 144 232 40.0 232.0 213.0 1 -1 15
-sheet naruto fsmash 12 229 233 89.0 232.0 213.0 0 5 15
+sheet naruto fsmash 12 229 233 89.0 232.0 213.0 0 4 15
 sheet naruto fthrow 8 199 233 70.0 232.0 213.0 0 2 15
 sheet naruto ftilt 8 198 233 70.0 232.0 213.0 0 1 15
 sheet naruto getup 8 213 233 84.0 232.0 213.0 0 -1 15
@@ -135,7 +135,7 @@ sheet naruto land 4 145 233 72.0 232.0 213.0 0 -1 15
 sheet naruto ledge 4 129 246 39.0 159.8 213.0 1 -1 15
 sheet naruto ledgeattack 8 234 233 93.0 232.0 213.0 0 2 15
 sheet naruto nair 12 149 187 45.0 232.0 213.0 0 3 15
-sheet naruto nspecial 12 241 233 94.0 232.0 213.0 0 6 15
+sheet naruto nspecial 12 241 233 94.0 232.0 213.0 0 8 15
 sheet naruto pummel 4 187 231 70.0 230.0 213.0 0 1 15
 sheet naruto roll 8 188 233 71.0 232.0 213.0 0 -1 15
 sheet naruto run 8 220 212 86.0 218.0 213.0 1 -1 15

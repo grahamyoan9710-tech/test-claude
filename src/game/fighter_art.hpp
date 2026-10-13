@@ -91,6 +91,7 @@ struct FxInfo {
   int frames = 0;
   float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f;
   bool loop = false;
+  float hit = 0.0f;  // the radius (half-thickness for a beam), in frame pixels, that its hitbox should have; 0: unknown
   float duration() const { return frames / fps; }
 };
 const FxInfo* fxInfo(const char* name);
@@ -98,6 +99,9 @@ bool drawFx(const char* name, float t, Vec2 at, float size, float rot = 0.0f, bo
             Color tint = WHITE);
 bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0.0f, bool flip = false,
                  float alpha = 1.0f, Color tint = WHITE);
+// A beam: the effect `name` (a horizontal segment that tiles, anchored on its left middle) repeated from `from` along
+// `dir` over `len` world units, `size` world units per frame pixel, the last tile cut where the beam ends.
+bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha = 1.0f);
 // The same bust (not faded), cut to a box slanted like ui::slanted: the close-ups of the character select.
 bool drawBustIn(Hero h, Vec2 center, float size, Rectangle box, float slant, float alpha);
 bool drawDisc(Hero h, Vec2 center, float radius, float alpha);
