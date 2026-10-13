@@ -5,40 +5,45 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr float kCardW = 290, kCardH = 364, kCardGap = 16, kCardY = 262, kCardSlant = 16;
-
 int cardCount(bool training) { return training ? 2 : 4; }
-float cardX(int col, bool training) {
-  int n = cardCount(training);
-  return (kScreenW - (n * kCardW + (n - 1) * kCardGap)) * 0.5f + col * (kCardW + kCardGap);
+
+// Fighting-game layout (in the spirit of Dragon Ball FighterZ): the fighters stand big on both sides of a "VS",
+// one side against the other (J1 / J3 on the left, J2 / J4 on the right; in a team battle, red against blue),
+// the first of each side closest to the middle, with its plate under it; every fighter in a grid at the bottom.
+float g_slotX[4] = {410, 870, 140, 1140};  // set each frame by App::layoutCss
+float g_slotW[4] = {270, 270, 270, 270};
+int g_slotSide[4] = {0, 1, 0, 1};
+constexpr float kFeetY = 396, kPlateY = 404, kPlateH = 74;
+
+Rectangle plateRect(int col) {
+  const float pw = std::min(250.0f, g_slotW[col] - 12.0f);
+  return {g_slotX[col] - pw * 0.5f, kPlateY, pw, kPlateH};
 }
-Rectangle cardRect(int col, bool training) { return {cardX(col, training), kCardY, kCardW, kCardH}; }
-// Fields: the rules on top (row -1: lives, orb, weapons, mode), then on each card the type (0), the fighter (1),
-// the device or level (2) and, in a team battle, the team chip in the card's band (3).
-Rectangle fieldRect(int col, int row, bool training) {
+// Fields: the rules in the top corners (row -1: lives, orb, weapons, mode), then for each player the type (0),
+// the fighter (1: the big picture), the device or level (2) and, in a team battle, the team chip (3).
+Rectangle fieldRect(int col, int row, bool) {
   if (row < 0) {
-    const Rectangle r[4] = {{640, 40, 140, 44}, {788, 40, 158, 44}, {954, 40, 158, 44}, {1120, 40, 140, 44}};
+    const Rectangle r[4] = {{16, 16, 150, 36}, {172, 16, 160, 36}, {948, 16, 160, 36}, {1114, 16, 150, 36}};
     return r[std::clamp(col, 0, 3)];
   }
-  float x = cardX(col, training);
+  const float w = g_slotW[col];
+  const Rectangle pl = plateRect(col);
   switch (row) {
-    case 3: return {x + kCardW - 112, kCardY + 6, 96, 32};
-    case 0: return {x + 24, kCardY + 54, kCardW - 48, 36};
-    case 1: return {x + 14, kCardY + 98, kCardW - 28, 206};
-    default: return {x + 20, kCardY + 316, kCardW - 48, 36};
+    case 3: return {g_slotX[col] + w * 0.5f - 92, 138, 82, 26};
+    case 0: return {pl.x, pl.y + 44, pl.width * 0.5f - 3, 28};
+    case 1: return {g_slotX[col] - w * 0.5f + 6, 134, w - 12, kFeetY - 130};
+    default: return {pl.x + pl.width * 0.5f + 3, pl.y + 44, pl.width * 0.5f - 3, 28};
   }
 }
-// The roster: one strip of tall tiles, or two rows of wide tiles when there are many fighters.
-// The last tile, after every fighter, is "?": a fighter drawn at random.
+// The roster: every fighter in a grid at the bottom (rows of 9), and "?" (a fighter drawn at random) in the middle,
+// under the "VS".
 Rectangle rosterRect(int i) {
-  const int n = int(roster().size()) + 1;
-  if (n <= 12) {
-    const float pitch = std::min(188.0f, 1150.0f / n), w = pitch - 8.0f;
-    return {(kScreenW - pitch * n) * 0.5f + 8.0f + i * pitch, 112, w, 132};
-  }
-  const int perRow = (n + 1) / 2, row = i / perRow, col = i % perRow, inRow = row == 0 ? perRow : n - perRow;
-  const float pitch = std::min(150.0f, 1200.0f / perRow), w = pitch - 8.0f;
-  return {(kScreenW - pitch * inRow) * 0.5f + 4.0f + col * pitch, 104.0f + row * 76.0f, w, 70.0f};
+  const int n = int(roster().size());
+  if (i >= n) return {kScreenW * 0.5f - 52, 262, 104, 124};  // a tall tile: the "?" over its name
+  constexpr int perRow = 9;
+  constexpr float w = 134, h = 74, pitch = 140;
+  const int row = i / perRow, col = i % perRow, inRow = std::min(perRow, n - row * perRow);
+  return {(kScreenW - (pitch * inRow - 6)) * 0.5f + col * pitch, 518.0f + row * 80.0f, w, h};
 }
 // Tile tint per universe (the fighters of one series sit side by side).
 Color seriesColor(const std::string& series) {
@@ -50,7 +55,7 @@ Color seriesColor(const std::string& series) {
   if (series == "Naruto") return {226, 140, 36, 255};
   return {120, 120, 130, 255};
 }
-Rectangle readyRect() { return {0, 632, float(kScreenW), 38}; }
+Rectangle readyRect() { return {0, 480, float(kScreenW), 34}; }
 // Stage select: a big live preview, its sheet on the right, every stage below in rows of thumbnails.
 constexpr int kStageCols = 6;
 Rectangle bigPreviewRect() { return {40, 108, 576, 324}; }
@@ -129,8 +134,10 @@ void App::changeField(int col, int row, int delta, int by) {
     else if (col == 1) settings().items = !settings().items;
     else if (col == 2) settings().weapons = !settings().weapons;
     else {
-      settings().teams = !settings().teams;
-      if (settings().teams) audio_.voice("teambattle");
+      const bool on = !teamBattle();
+      settings().teams = on;
+      teamsForced_ = false;
+      if (on) audio_.voice("teambattle");
     }
     saveSettings();
     return;
@@ -164,7 +171,8 @@ void App::changeField(int col, int row, int delta, int by) {
       stepFighter(col, delta);
       break;
     default:
-      if (s.type == 1) s.device = (s.device + delta + kDeviceCount) % kDeviceCount;
+      if (s.type == 1)  // another player on that device takes this one's: no two players on one device
+        assignDevice(col, (s.device + delta + kDeviceCount) % kDeviceCount);
       else if (s.type == 2) s.level = std::clamp(s.level + delta, 1, kMaxCpuLevel);  // 1..10, no wrap
       break;
   }
@@ -192,6 +200,22 @@ bool App::padJoins() {
   return false;
 }
 
+void App::layoutCss() const {
+  const int cols = cardCount(training_);
+  const bool teams = teamBattle();
+  int count[2] = {0, 0}, rank[4] = {};
+  for (int i = 0; i < cols; ++i) {
+    g_slotSide[i] = teams ? slotTeam(i) : i % 2;  // left: J1, J3 (red); right: J2, J4 (blue)
+    rank[i] = count[g_slotSide[i]]++;
+  }
+  for (int i = 0; i < cols; ++i) {
+    const int n = std::max(2, count[g_slotSide[i]]);
+    const float w = std::min(270.0f, 520.0f / n);
+    g_slotW[i] = w;
+    g_slotX[i] = g_slotSide[i] == 0 ? 545.0f - (rank[i] + 0.5f) * w : 735.0f + (rank[i] + 0.5f) * w;
+  }
+}
+
 int App::ownedCard(int device) const {
   if (training_) return slots_[0].device == device ? 0 : -1;
   for (int i = 0; i < 4; ++i)
@@ -214,6 +238,7 @@ void App::stepFighter(int col, int delta) {
 }
 
 void App::updateCss(const MenuNav& nav) {
+  layoutCss();
   if (padJoins()) return;  // that press is used up
   const int cols = cardCount(training_);
   const int minRow = training_ ? 0 : -1;
@@ -250,7 +275,7 @@ void App::updateCss(const MenuNav& nav) {
     }
     c.col = std::clamp(c.col, 0, cols - 1);
     // Rows from the top: the rules, the team chip (team battles), the type, the fighter, the device / level.
-    const bool teamRow = !training_ && settings().teams;
+    const bool teamRow = teamBattle();
     const int order[5] = {-1, 3, 0, 1, 2};
     int at = 0;
     while (at < 5 && order[at] != c.row) ++at;
@@ -291,7 +316,7 @@ void App::updateCss(const MenuNav& nav) {
   }
 
   // Mouse: fields (the arrows of a fighter go back or forth), roster tiles, ready banner
-  const int lastRow = (!training_ && settings().teams) ? 3 : 2;
+  const int lastRow = teamBattle() ? 3 : 2;
   for (int row = minRow; row <= lastRow; ++row)
     for (int col = 0; col < (row < 0 ? 4 : cols); ++col) {
       const Rectangle f = fieldRect(col, row, training_);
@@ -337,10 +362,34 @@ void App::updateCss(const MenuNav& nav) {
 void App::drawCss() {
   const float t = time_;
   const auto& r = roster();
-  const Color accent = training_ ? Color{98, 136, 76, 255} : Color{178, 82, 58, 255};
-  ui::stageBackdrop(1, t, 0.66f);
-  ui::header(training_ ? "ENTRAÎNEMENT" : "COMBAT", nullptr, accent, t);
+  layoutCss();
   const int cols = cardCount(training_);
+  const bool teamsOn = teamBattle();
+  // Backdrop: the two sides in their colours, rays behind the "VS"
+  ui::stageBackdrop(1, t, 0.82f);
+  const Color warm = teamsOn ? teamColor(0) : Color{214, 92, 48, 255};
+  const Color cool = teamsOn ? teamColor(1) : Color{70, 110, 220, 255};
+  DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(warm, 0.42f), withAlpha(warm, 0.0f));
+  DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(cool, 0.0f), withAlpha(cool, 0.42f));
+  {
+    const Vector2 c{kScreenW * 0.5f, 62};
+    for (int k = 0; k < 18; ++k) {
+      const float a0 = t * 0.12f + k * (2.0f * kPi / 18), a1 = a0 + 0.12f;
+      DrawTriangle(c, {c.x + std::cos(a1) * 900, c.y + std::sin(a1) * 900}, {c.x + std::cos(a0) * 900, c.y + std::sin(a0) * 900},
+                   withAlpha(ui::kGold, 0.06f));
+    }
+    ui::glow(c, 120, withAlpha(ui::kGold, 0.25f), 8);
+    const float pulse = 0.5f + 0.5f * std::sin(t * 4.0f);
+    drawTextOutlined("VS", c.x - textWidth("VS", 86, FontKind::Title) * 0.5f, 6, 86, mixColor(ui::kGold, ui::kCream, 0.3f * pulse),
+                     ui::kInk, 5.0f, FontKind::Title);
+    const char* title = training_ ? "ENTRAÎNEMENT" : teamsOn ? "COMBAT EN ÉQUIPES" : "CHOIX DES COMBATTANTS";
+    const float tw = textWidth(title, 20, FontKind::Title) + 40;
+    const Rectangle tb{c.x - tw * 0.5f, 96, tw, 30};
+    ui::slanted(tb, 10, withAlpha(ui::kInk, 0.92f), withAlpha(ui::kInk, 0.92f));
+    ui::slantedOutline(tb, 10, 1.5f, ui::kGold);
+    drawTextCentered(title, c.x, tb.y + 5, 20, ui::kCream, true, FontKind::Title);
+  }
+  DrawRectangleGradientV(0, 500, kScreenW, kScreenH - 500, withAlpha(ui::kInk, 0.55f), withAlpha(ui::kInk, 0.92f));
   // A field is focused when a player's cursor is on it, or under the mouse.
   auto cursorOn = [&](int col, int row) {
     for (int d = 0; d < kDeviceCount; ++d) {
@@ -357,9 +406,9 @@ void App::drawCss() {
     ui::selector(fieldRect(0, -1, false), TextFormat("VIES : %d", s.stocks), focusOn(0, -1), t);
     ui::selector(fieldRect(1, -1, false), s.items ? "ORBE : OUI" : "ORBE : NON", focusOn(1, -1), t);
     ui::selector(fieldRect(2, -1, false), s.weapons ? "ARMES : OUI" : "ARMES : NON", focusOn(2, -1), t);
-    ui::selector(fieldRect(3, -1, false), s.teams ? "2 CONTRE 2" : "SOLO", focusOn(3, -1), t);
+    ui::selector(fieldRect(3, -1, false), teamBattle() ? "2 CONTRE 2" : "SOLO", focusOn(3, -1), t);
   } else {
-    Rectangle info{820, 42, 410, 40};
+    Rectangle info{864, 16, 400, 36};
     ui::panel(info, withAlpha(ui::kInk, 0.85f), withAlpha(ui::kGold, 0.7f), 0.5f);
     drawTextCentered("Vies infinies  •  Mannequin réglable en pause", info.x + info.width * 0.5f, info.y + 9, 18,
                      ui::kCream, false);
@@ -415,7 +464,7 @@ void App::drawCss() {
       bool active = training_ || sl.type != 0;
       if (!active || (rnd ? !sl.random : sl.random || sl.character != i)) continue;
       bool cpu = training_ ? s == 1 : sl.type == 2;
-      Color tc = (!training_ && settings().teams) ? teamColor(slotTeam(s)) : cpu ? cpuColor() : portColor(s);
+      Color tc = teamBattle() ? teamColor(slotTeam(s)) : cpu ? cpuColor() : portColor(s);
       chosen = true;
       Rectangle tag = wide ? Rectangle{rr.x + 4 + tags * 40.0f, rr.y + rr.height - 24, 38, 22}
                            : Rectangle{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22};
@@ -429,102 +478,87 @@ void App::drawCss() {
     if (chosen) ui::corners(ui::grow(rr, 4), 14, 14, 2.5f, ui::kGold);
   }
 
-  // Player cards
-  for (int col = 0; col < cardCount(training_); ++col) {
+  // The players, big, on both sides of the "VS"
+  for (int col = 0; col < cols; ++col) {
     const SlotSetup& s = slots_[col];
     const int type = training_ ? (col == 0 ? 1 : 2) : s.type;
-    Rectangle cr = cardRect(col, training_);
-    const bool teamBattle = !training_ && settings().teams;
-    Color pc = type == 0 ? Color{70, 78, 80, 255}
-               : teamBattle ? teamColor(slotTeam(col))
+    const int facing = g_slotSide[col] == 0 ? 1 : -1;  // facing the other side
+    Color pc = type == 0 ? Color{90, 98, 100, 255}
+               : teamsOn ? teamColor(slotTeam(col))
                : type == 1 ? portColor(col) : cpuColor();
-    ui::slanted({cr.x + 7, cr.y + 9, cr.width, cr.height}, kCardSlant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    ui::slanted(cr, kCardSlant, withAlpha(mixColor(ui::kSlate, pc, type ? 0.2f : 0.05f), 0.94f),
-                withAlpha(mixColor(ui::kInk, pc, type ? 0.08f : 0.02f), 0.95f));
-    const Rectangle band{cr.x + kCardSlant * 0.85f, cr.y, cr.width - kCardSlant * 0.85f, 44};
-    ui::slanted(band, kCardSlant * 44 / kCardH, type ? shade(pc, 0.86f) : Color{58, 66, 68, 255},
-                type ? shade(pc, 0.55f) : Color{40, 48, 50, 255});
-    DrawLineEx({band.x + 2, band.y + band.height}, {band.x + band.width - kCardSlant * 44 / kCardH, band.y + band.height},
-               1.5f, withAlpha(ui::kGold, type ? 0.8f : 0.3f));
-    ui::rune({band.x + band.width - 30, band.y + 22}, 13, col, t * 0.3f, withAlpha(ui::kCream, type ? 0.45f : 0.15f), 2.0f);
-    ui::slantedOutline(cr, kCardSlant, 1.5f, type ? withAlpha(ui::kGold, 0.55f) : withAlpha(ui::kStone, 0.4f));
-    ui::corners(cr, kCardSlant, 16, 2.5f, type ? ui::kGold : withAlpha(ui::kStone, 0.6f));
+    const Rectangle f1 = fieldRect(col, 1, training_);
+    const bool foc1 = focusOn(col, 1);
+    const float cx = g_slotX[col], h = std::min(205.0f, g_slotW[col] * 0.76f);
     const float joined = 1.0f - (frames_ - joinedAt_[col]) / 45.0f;  // a gamepad just joined
-    if (joined > 0.0f) ui::slantedOutline(ui::grow(cr, 3), kCardSlant, 6, withAlpha(ui::kGold, joined));
-    const char* head = training_ ? (col == 0 ? "JOUEUR 1" : "MANNEQUIN") : TextFormat("JOUEUR %d", col + 1);
-    drawTextOutlined(head, cr.x + 30, cr.y + 7, 30, type ? ui::kCream : ui::kMuted, ui::kInk, 3.0f, FontKind::Title);
-    if (teamBattle && type != 0) {  // the team chip: press it to change sides
-      const Rectangle chip = fieldRect(col, 3, false);
-      const Color tc = teamColor(slotTeam(col));
-      DrawRectangleRounded(ui::grow(chip, 2), 0.5f, 8, ui::kInk);
-      DrawRectangleRounded(chip, 0.5f, 8, focusOn(col, 3) ? mixColor(tc, WHITE, 0.25f) : shade(tc, 0.85f));
-      DrawRectangleRoundedLinesEx(ui::grow(chip, -2), 0.5f, 8, 1.0f, withAlpha(ui::kCream, 0.6f));
-      drawTextCentered(teamName(slotTeam(col)), chip.x + chip.width * 0.5f, chip.y + 7, 17, WHITE, true, FontKind::Title);
-      if (focusOn(col, 3)) ui::focusFrame(chip, t, 0.5f);
+    if (type != 0) {
+      ui::glow({cx, kFeetY - h * 0.5f}, h * 0.75f, withAlpha(mixColor(pc, ui::kCream, 0.35f), 0.35f + 0.3f * std::max(0.0f, joined)), 8);
+      ui::stoneDisc({cx, kFeetY + 2}, h * 0.42f, 9, t + col, false);
     }
-
-    Rectangle f1 = fieldRect(col, 1, training_);
-    bool foc1 = focusOn(col, 1);
-    if (type != 0 && s.random) {  // "?": the fighter is drawn when the match starts
-      Vector2 base{f1.x + f1.width * 0.5f, f1.y + 136};
-      ui::glow({base.x, base.y - 50}, 95, withAlpha(mixColor(pc, ui::kCream, 0.5f), 0.4f), 8);
-      ui::stoneDisc({base.x, base.y + 2}, 74, 11, t + col, false);
+    if (type != 0 && s.random) {  // "?": drawn at random when the match starts
       const float pulse = 0.5f + 0.5f * std::sin(t * 3.0f + col);
-      drawTextCentered("?", base.x, base.y - 128, 110, mixColor(ui::kGold, ui::kCream, pulse), true, FontKind::Title);
-      drawTextCentered("ALÉATOIRE", base.x, f1.y + 146, 34, ui::kCream, true, FontKind::Title);
-      drawTextCentered("Tiré au sort au début du combat", base.x, f1.y + 184, 15, ui::kMuted, false);
-      if (foc1) {
-        ui::focusFrame(f1, t, 0.12f);
-        ui::arrowTri({f1.x + 16, f1.y + 80}, 22, -1, ui::kGold);
-        ui::arrowTri({f1.x + f1.width - 16, f1.y + 80}, 22, 1, ui::kGold);
-      }
+      drawTextCentered("?", cx, kFeetY - h - 10, h, mixColor(ui::kGold, ui::kCream, pulse), true, FontKind::Title);
     } else if (type != 0) {
       const CharacterDef& d = r[s.character];
       int pal = 0;
       for (int j = 0; j < col; ++j)
         if ((training_ || slots_[j].type != 0) && !slots_[j].random && slots_[j].character == s.character) pal = 1 - pal;
-      Vector2 base{f1.x + f1.width * 0.5f, f1.y + 136};
-      ui::glow({base.x, base.y - 50}, 95, withAlpha(mixColor(pc, ui::kCream, 0.5f), 0.4f), 8);
-      ui::stoneDisc({base.x, base.y + 2}, 74, 11, t + col, false);
       Pose p = restPose(d, t + col);
-      float hop = foc1 ? std::max(0.0f, std::sin(t * 5.0f)) * 6.0f : 0.0f;
-      drawShowcase(d, pal, p, {base.x, base.y - hop}, 1, 128.0f, t + col);
-      drawTextCentered(d.name.c_str(), base.x, f1.y + 146, 34, ui::kCream, true, FontKind::Title);
-      drawTextCentered(d.title.c_str(), base.x, f1.y + 184, 15, ui::kMuted, false);
-      if (foc1) {
-        ui::focusFrame(f1, t, 0.12f);
-        ui::arrowTri({f1.x + 16, f1.y + 80}, 22, -1, ui::kGold);
-        ui::arrowTri({f1.x + f1.width - 16, f1.y + 80}, 22, 1, ui::kGold);
-      }
-    } else {  // join hint: A on any free gamepad, or ESPACE on this card
-      ui::rune({f1.x + f1.width * 0.5f, f1.y + 86}, 64, 3, t * 0.15f, withAlpha(ui::kStone, 0.18f), 3.0f);
-      if (padPrompts()) ui::padGlyph(ui::Btn::A, f1.x + f1.width * 0.5f - 26, f1.y + 46, 52, promptFamily());
-      else drawTextCentered("ESPACE", f1.x + f1.width * 0.5f, f1.y + 64, 30, ui::kMuted, true, FontKind::Title);
-      drawTextCentered("pour rejoindre", f1.x + f1.width * 0.5f, f1.y + 108, 18, ui::kMuted, false);
-      if (foc1) ui::focusFrame(f1, t, 0.12f);
+      const float hop = foc1 ? std::max(0.0f, std::sin(t * 5.0f)) * 6.0f : 0.0f;
+      drawShowcase(d, pal, p, {cx, kFeetY - hop}, facing, h, t + col);
+    } else {  // join hint: A on any free gamepad, or ESPACE
+      ui::rune({cx, kFeetY - 110}, 60, 3, t * 0.15f, withAlpha(ui::kStone, 0.25f), 3.0f);
+      if (padPrompts()) ui::padGlyph(ui::Btn::A, cx - 24, kFeetY - 160, 48, promptFamily());
+      else drawTextCentered("ESPACE", cx, kFeetY - 150, 28, ui::kMuted, true, FontKind::Title);
+      drawTextCentered("pour rejoindre", cx, kFeetY - 108, 17, ui::kMuted, false);
     }
+    if (foc1 && type != 0) {  // the arrows: previous / next fighter
+      ui::arrowTri({f1.x + 14, kFeetY - h * 0.5f}, 22, -1, ui::kGold);
+      ui::arrowTri({f1.x + f1.width - 14, kFeetY - h * 0.5f}, 22, 1, ui::kGold);
+    }
+    if (foc1) ui::focusFrame(f1, t, 0.08f);
 
-    // over the fighter: a cloth or a lock of hair flying above the head passes behind it
+    // The plate: whose it is and the fighter's name, then the type and the device / level
+    const Rectangle pl = plateRect(col);
+    const Rectangle band{pl.x, pl.y, pl.width, 40};
+    ui::slanted({band.x + 4, band.y + 5, band.width, band.height}, 12, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
+    ui::slanted(band, 12, type ? shade(pc, 0.9f) : Color{56, 62, 64, 240}, type ? shade(pc, 0.55f) : Color{36, 42, 44, 240});
+    ui::slantedOutline(band, 12, joined > 0.0f ? 3.0f : 1.5f, joined > 0.0f ? ui::kGold : withAlpha(ui::kGold, type ? 0.7f : 0.25f));
+    const char* who = training_ ? (col == 0 ? "J1" : "CIBLE") : type == 2 ? "CPU" : TextFormat("J%d", col + 1);
+    drawTextOutlined(who, band.x + 14, band.y + 9, 20, type ? WHITE : ui::kMuted, ui::kInk, 2.0f, FontKind::Title);
+    const std::string name = type == 0 ? std::string("—") : s.random ? std::string("ALÉATOIRE") : r[s.character].name;
+    float ns = 26.0f;
+    const float nameW = band.width - 70.0f;
+    while (ns > 14.0f && textWidth(name.c_str(), ns, FontKind::Title) > nameW) ns -= 1.0f;
+    drawTextOutlined(name.c_str(), band.x + band.width - 12 - textWidth(name.c_str(), ns, FontKind::Title),
+                     band.y + 20 - ns * 0.55f, ns, ui::kCream, ui::kInk, 3.0f, FontKind::Title);
+    if (teamsOn && type != 0) {  // the team chip: press it to change sides
+      const Rectangle chip = fieldRect(col, 3, false);
+      const Color tc = teamColor(slotTeam(col));
+      DrawRectangleRounded(ui::grow(chip, 2), 0.5f, 8, ui::kInk);
+      DrawRectangleRounded(chip, 0.5f, 8, focusOn(col, 3) ? mixColor(tc, WHITE, 0.25f) : shade(tc, 0.85f));
+      DrawRectangleRoundedLinesEx(ui::grow(chip, -2), 0.5f, 8, 1.0f, withAlpha(ui::kCream, 0.6f));
+      drawTextCentered(teamName(slotTeam(col)), chip.x + chip.width * 0.5f, chip.y + 5, 15, WHITE, true, FontKind::Title);
+      if (focusOn(col, 3)) ui::focusFrame(chip, t, 0.5f);
+    }
     const char* typeName = type == 1 ? "HUMAIN" : type == 2 ? "ORDINATEUR" : "VIDE";
-    if (training_) typeName = col == 0 ? "VOUS" : "CIBLE D'ENTRAÎNEMENT";
-    Rectangle f0 = fieldRect(col, 0, training_);
+    if (training_) typeName = col == 0 ? "VOUS" : "CIBLE";
+    const Rectangle f0 = fieldRect(col, 0, training_);
     if (training_) {
-      DrawRectangleRounded(f0, 0.5f, 10, withAlpha(ui::kInk, 0.6f));
-      drawTextCentered(typeName, f0.x + f0.width * 0.5f, f0.y + 8, 18, ui::kMuted, false);
+      DrawRectangleRounded(f0, 0.5f, 10, withAlpha(ui::kInk, 0.7f));
+      drawTextCentered(typeName, f0.x + f0.width * 0.5f, f0.y + 6, 15, ui::kMuted, false);
       if (focusOn(col, 0)) ui::focusFrame(f0, t, 0.5f);
     } else {
       ui::selector(f0, typeName, focusOn(col, 0), t);
     }
-
-    Rectangle f2 = fieldRect(col, 2, training_);
-    bool foc2 = focusOn(col, 2);
+    const Rectangle f2 = fieldRect(col, 2, training_);
+    const bool foc2 = focusOn(col, 2);
     if (type == 1) {
       deviceSelector(f2, s.device, foc2, t);
     } else if (type == 2 && !training_) {
-      ui::selector(f2, s.level >= kMaxCpuLevel ? "NIVEAU 10 : PUISSANCE x2" : TextFormat("NIVEAU %d", s.level), foc2, t);
+      ui::selector(f2, s.level >= kMaxCpuLevel ? "NIV. 10 x2" : TextFormat("NIVEAU %d", s.level), foc2, t);
     } else {
-      DrawRectangleRounded(f2, 0.5f, 10, withAlpha(ui::kInk, 0.5f));
-      if (training_) drawTextCentered("Réglable en pause", f2.x + f2.width * 0.5f, f2.y + 9, 16, ui::kMuted, false);
+      DrawRectangleRounded(f2, 0.5f, 10, withAlpha(ui::kInk, 0.6f));
+      if (training_) drawTextCentered("en pause", f2.x + f2.width * 0.5f, f2.y + 6, 15, ui::kMuted, false);
       if (foc2) ui::focusFrame(f2, t, 0.5f);
     }
   }

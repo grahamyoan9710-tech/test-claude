@@ -304,11 +304,15 @@ Switch Pro, 8BitDo, Logitech... grâce à la base [SDL_GameControllerDB](https:/
 intégrée au jeu, licence zlib : `assets/gamecontrollerdb-LICENSE.txt`). Le pavé tactile et les capteurs de
 mouvement des manettes PlayStation, que Linux présente comme des manettes à part, sont ignorés.
 - La manette (ou le clavier) qui ouvre **Combat** ou **Entraînement** devient celle du joueur 1.
-- Dans la sélection des combattants, **chaque joueur a son propre curseur** (étiquette J1, J2... de sa
-  couleur) : gauche / droite change son combattant (puis, une ligne plus bas, son clavier ou sa manette, ou
-  le niveau d'un ordinateur) ; sur la ligne du haut de la carte, gauche / droite passe à une autre carte. La
-  case **« ? »** tire un combattant au sort au début du combat, et la carte **« ? »** de l'écran des arènes
-  une arène. Le clavier 2 rejoint la partie avec sa touche d'attaque (`.`).
+- La **sélection des combattants** est faite comme celle des jeux de combat d'anime : un grand « VS » au
+  milieu, les combattants en grand face à face (J1 et J3 à gauche contre J2 et J4 à droite ; en équipes, rouges
+  contre bleus), une plaque sous chacun (nom, humain / ordinateur, clavier / manette ou niveau), la case
+  **« ? »** au centre et tous les combattants en grille en bas. **Chaque joueur a son propre curseur**
+  (étiquette J1, J2... de sa couleur) : gauche / droite change son combattant ; une ligne plus bas (la
+  plaque), son clavier ou sa manette, ou le niveau d'un ordinateur ; sur le type (HUMAIN / ORDINATEUR),
+  gauche / droite passe à un autre joueur. La case **« ? »** tire un combattant au sort au début du combat,
+  et la carte **« ? »** de l'écran des arènes une arène. Le clavier 2 rejoint la partie avec sa touche
+  d'attaque (`.`).
 - Dans la sélection des combattants, une autre manette **rejoint la partie en appuyant sur `A` (ou
   `Start`)** : elle prend la première place libre (ou celle d'un ordinateur). On peut toujours choisir
   l'appareil de chaque joueur à la main, en bas de sa carte (« MANETTE 2 », avec le modèle reconnu).
@@ -341,9 +345,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.9-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-8.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.9-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-8.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

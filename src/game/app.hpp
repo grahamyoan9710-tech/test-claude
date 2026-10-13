@@ -131,6 +131,8 @@ class App {
   bool readyToFight() const;  // enough fighters (and, in a team battle, two teams)
   int slotTeam(int i) const { return slots_[i].team >= 0 ? (slots_[i].team & 1) : i / 2; }
   int ownedCard(int device) const;          // the card this device plays (-1: none)
+  void layoutCss() const;                   // where each player stands on the character select
+  bool teamBattle() const;                  // a team battle (the rule, or --teams)
   bool canPick(int col, int device) const;  // may this device change the fighter of that card
   void stepFighter(int col, int delta);     // next / previous fighter of a card ("?" = random included)
   // screens (screen_results.cpp)
@@ -172,6 +174,7 @@ class App {
   int rulesCol_ = 0;
   std::array<CssCursor, kDeviceCount> cssCur_{};
   bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random
+  bool teamsForced_ = false;  // --teams
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;

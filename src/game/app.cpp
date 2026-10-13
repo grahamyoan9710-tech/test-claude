@@ -31,9 +31,11 @@ App::App(Options opt) : opt_(std::move(opt)) {
   if (opt_.stage >= 0) stage_ = opt_.stage % int(stageList().size());
 }
 
+bool App::teamBattle() const { return !training_ && (settings().teams || teamsForced_); }
+
 bool App::readyToFight() const {
   if (activeSlots() < 2) return false;
-  if (training_ || !settings().teams) return true;
+  if (!teamBattle()) return true;
   bool seen[2] = {false, false};
   for (int i = 0; i < 4; ++i)
     if (slots_[i].type != 0) seen[slotTeam(i)] = true;
@@ -101,7 +103,7 @@ void App::startMatch() {
   cfg.items = training_ ? false : st.items;
   cfg.weapons = st.weapons;
   cfg.training = training_;
-  cfg.teams = !training_ && st.teams;
+  cfg.teams = teamBattle();
   cfg.seed = uint32_t(frames_) * 2654435761u + 12345u;
   std::array<int, 4> devices{};
   for (int i = 0; i < 4; ++i) {
@@ -150,7 +152,7 @@ void App::run() {
   loadFonts();
   ui::bakeSprites();
   loadSettings();
-  if (opt_.teams) settings().teams = true;
+  teamsForced_ = opt_.teams;  // --teams: for this run only (never saved)
   audio_.init();
   applyDisplaySettings();
   for (auto& s : slots_) s.level = settings().cpuLevel;
