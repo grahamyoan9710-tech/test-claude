@@ -170,8 +170,8 @@ bool Match::tryGroundActions(Fighter& f) {
     setState(f, FState::Shield);
     return true;
   }
-  if (tapJumped(f)) {
-    setState(f, FState::JumpSquat, f.def->jumpSquat);
+  if (tapJumped(f)) {  // on keys, a slightly longer crouch leaves the time to add the attack (up tilt)
+    setState(f, FState::JumpSquat, f.in.digital ? std::max(f.def->jumpSquat, 5) : f.def->jumpSquat);
     return true;
   }
   return false;
@@ -368,6 +368,21 @@ void Match::updateFighter(Fighter& f) {
       break;
     case FState::JumpSquat:
       groundFriction(f, 0.5f);
+      // As in Smash Bros., the jump's crouch can still turn into an up attack: up + special is the up special,
+      // up + attack the up smash (on keys, the attack a little after the up key: the up tilt), the smash key or
+      // the smash stick up the up smash. So up jumps and attacks upward on the same direction.
+      if (in.stick.y < -0.5f && f.pressed(&IS::special)) {
+        startMove(f, USpecial);
+        break;
+      }
+      if (in.stick.y < -0.5f && (f.pressed(&IS::attack) || f.pressed(&IS::smash))) {
+        startMove(f, in.digital && !f.pressed(&IS::smash) && !in.special ? UTilt : USmash);
+        break;
+      }
+      if (f.cstickPressed() && in.cstick.y < -0.5f && std::fabs(in.cstick.y) > std::fabs(in.cstick.x)) {
+        startMove(f, USmash);
+        break;
+      }
       if (f.stateFrame >= f.timer) startJump(f);
       break;
     case FState::Air:
@@ -395,7 +410,7 @@ void Match::updateFighter(Fighter& f) {
         emit(EvType::ShieldBreak, f.center(), f.id);
         break;
       }
-      if (f.pressed(&IS::jump)) { setState(f, FState::JumpSquat, d.jumpSquat); break; }
+      if (f.pressed(&IS::jump) || tapJumped(f)) { setState(f, FState::JumpSquat, d.jumpSquat); break; }  // out of shield
       if (f.pressed(&IS::attack) || f.pressed(&IS::grab)) { startMove(f, Grab); break; }
       if (f.flickX()) {
         setState(f, FState::Roll, 28);

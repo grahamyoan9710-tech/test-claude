@@ -239,7 +239,7 @@ Touches et boutons par défaut (modifiables dans **Paramètres → Commandes**) 
 | Action | Clavier 1 | Clavier 2 | Manette (Xbox / PlayStation / Switch) |
 |---|---|---|---|
 | Se déplacer / viser | `W` `A` `S` `D` | Flèches | Stick gauche / croix |
-| Sauter | `Espace` | `,` ou `Pavé 0` | `X` / `Y` (□ / △), ou le stick vers le haut |
+| Sauter | `Espace`, ou `W` (Haut) | `,` ou `Pavé 0`, ou `Flèche haut` | `X` / `Y` (□ / △), ou le stick vers le haut |
 | Attaque | `J` | `.` ou `Pavé 1` | bouton de droite : `A` sur Switch (`B` Xbox, ○) |
 | Spéciale | `K` | `/` ou `Pavé 2` | bouton du bas : `B` sur Switch (`A` Xbox, ✕) |
 | Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `ZL` / `ZR` (`LT` / `RT`, `L2` / `R2`) |
@@ -250,8 +250,21 @@ Touches et boutons par défaut (modifiables dans **Paramètres → Commandes**) 
 
 La manette reprend **les touches de Super Smash Bros. Ultimate**, à la même place : attaque à droite, spéciale en
 bas, saut en haut et à gauche, saisie sur les gâchettes hautes, bouclier sur les gâchettes basses, smash au stick
-droit, et le stick vers le haut fait sauter (« Saut avec le stick », dans Paramètres > Jeu). Comme le Final Smash,
-**l'ultime part avec la spéciale** (sans direction) quand la barre est pleine.
+droit. Comme le Final Smash, **l'ultime part avec la spéciale** (sans direction) quand la barre est pleine.
+
+**Haut saute, et attaque vers le haut** (comme Smash Bros., réglage « Saut avec Haut » dans Paramètres > Jeu) :
+pousser le stick vers le haut, ou appuyer sur la touche Haut, fait sauter. Pendant l'élan du saut (les quelques
+images avant de quitter le sol), une attaque transforme le saut en coup vers le haut :
+
+| | Manette | Clavier |
+|---|---|---|
+| Saut | stick vers le haut (vite) | Haut seul |
+| Smash haut | stick vers le haut + Attaque ensemble | Haut + Attaque **en même temps** (ou Haut + Smash) |
+| Tilt haut | stick poussé doucement vers le haut + Attaque | Haut, **puis** Attaque juste après |
+| Spéciale haut | stick vers le haut + Spéciale | Haut + Spéciale |
+| Aérienne haute | en l'air : haut + Attaque | en l'air : Haut + Attaque |
+
+Le saut fonctionne aussi depuis le bouclier (pour un smash haut ou une spéciale haut en sortie de bouclier).
 
 **Combat en équipes (2 contre 2)** : sur l'écran des combattants, la règle en haut à droite passe de « SOLO »
 à « 2 CONTRE 2 ». Chaque carte porte alors une pastille **ROUGE** ou **BLEUE** (joueurs 1-2 contre 3-4 au
@@ -324,9 +337,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.7-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.8-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.7-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.8-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

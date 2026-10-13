@@ -165,7 +165,7 @@ void App::changeField(int col, int row, int delta, int by) {
       break;
     default:
       if (s.type == 1) s.device = (s.device + delta + kDeviceCount) % kDeviceCount;
-      else if (s.type == 2) s.level = 1 + (s.level - 1 + delta + kMaxCpuLevel) % kMaxCpuLevel;
+      else if (s.type == 2) s.level = std::clamp(s.level + delta, 1, kMaxCpuLevel);  // 1..10, no wrap
       break;
   }
 }
@@ -300,7 +300,9 @@ void App::updateCss(const MenuNav& nav) {
       if (row < 0) rulesCol_ = col;
       else cssCol_ = col;
       int delta = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ? 1 : IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) ? -1 : 0;
-      if (delta != 0 && row == 1 && GetMousePosition().x < f.x + 48) delta = -1;  // the left arrow
+      // The left arrow goes back: the left part of a fighter, the left half of a selector (type, level, rules).
+      if (delta != 0 && row == 1 && GetMousePosition().x < f.x + 48) delta = -1;
+      if (delta != 0 && row != 1 && row != 3 && GetMousePosition().x < f.x + f.width * 0.5f) delta = -1;
       if (delta != 0) changeField(col, row, delta);
     }
   const int nTiles = int(roster().size()) + 1;

@@ -30,7 +30,7 @@ const RowInfo kRows[3][7] = {
      {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
      {"Armes", "Des armes tombent du ciel : chaque combattant ramasse les siennes en marchant dessus."},
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 10 : le niveau 10 frappe deux fois plus fort)."},
-     {"Saut avec le stick", "Manette : pousser le stick vers le haut fait sauter, comme dans Smash Bros."},
+     {"Saut avec Haut", "Comme Smash Bros. : Haut (stick ou touche) fait sauter ; Haut + attaque ou spéciale ensemble reste un coup vers le haut."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},
 };
 const int kRowCounts[4] = {4, 7, 6, kActionCount + 1};  // controls: the actions + the reset buttons

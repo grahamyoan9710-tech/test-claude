@@ -334,6 +334,8 @@ InputState readDevice(int d) {
     in.grab = down(kActGrab, KEY_KP_5);
     in.smash = down(kActSmash, KEY_KP_4);
     in.ultimate = down(kActUltimate, KEY_KP_6);
+    in.tapJump = settings().tapJump;  // the Up key jumps too (Paramètres > Jeu)
+    in.digital = true;
   } else if (d >= kPad1 && d < kDeviceCount && padConnected(d - kPad1)) {
     const Pad& p = g_pads[d - kPad1];
     in.stick = p.stick;

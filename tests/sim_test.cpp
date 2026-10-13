@@ -277,6 +277,26 @@ static void testCombos() {
   InputState upTilt = key(0, -1, true);
   upTilt.tapJump = true;
   CHECK(run({{6, key(0, -0.4f)}, {1, upTilt}}) == UTilt, "tap jump still allows the up tilt");
+  // Up jumps and attacks upward, as in Smash Bros.: the jump's crouch turns into the up attack.
+  auto pad = [](float y, bool attack = false, bool special = false) {
+    InputState s = key(0, y, attack, false, false, special);
+    s.tapJump = true;
+    return s;
+  };
+  auto keys = [&](float y, bool attack = false, bool special = false) {
+    InputState s = pad(y, attack, special);
+    s.digital = true;
+    return s;
+  };
+  CHECK(run({{1, pad(-1)}, {1, pad(-1, true)}}) == USmash, "stick up then attack in the jump's crouch = up smash");
+  CHECK(run({{1, pad(-1)}, {1, pad(-1, false, true)}}) == USpecial, "stick up then special = up special");
+  CHECK(run({{1, keys(-1, true)}}) == USmash, "Up + attack together (keys) = up smash");
+  CHECK(run({{1, keys(-1)}, {2, keys(-1)}, {1, keys(-1, true)}}) == UTilt, "Up then attack a little after (keys) = up tilt");
+  CHECK(run({{1, keys(-1)}, {1, keys(-1, false, true)}}) == USpecial, "Up then special (keys) = up special");
+  run({{1, keys(-1)}, {14, keys(-1)}}, &f);
+  CHECK(!f.grounded, "Up alone (keys) jumps");
+  run({{8, key(0, 0, false, false, true)}, {1, pad(-1)}, {12, pad(-1)}}, &f);
+  CHECK(!f.grounded, "stick up out of the shield jumps");
 }
 
 static void testTeams() {

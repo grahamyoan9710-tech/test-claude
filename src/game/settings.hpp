@@ -28,7 +28,7 @@ struct Settings {
   bool weapons = true;  // weapons drop during matches
   bool teams = false;   // team battle (2 v 2): red against blue
   int cpuLevel = 5;
-  bool tapJump = true;  // gamepads: pushing the stick up jumps (as in Smash Bros.)
+  bool tapJump = true;  // Up (the stick or the key) jumps too, as in Smash Bros.
   // Keyboard bindings for "Clavier 1" and "Clavier 2"
   std::array<std::array<int, kActionCount>, 2> keys{};
   // Gamepad bindings, shared by every pad: up to two buttons per action (PadButton values, -1 = none).
