@@ -6,6 +6,9 @@
 #include "game/audio.hpp"
 #include "game/common.hpp"
 
+// The colour of a fighter's ki aura, bright (the light of its side on the character select).
+Color auraColor(Hero h);
+
 // Visual + audio feedback driven by the simulation's events.
 class Fx {
  public:

@@ -44,6 +44,15 @@ AuraLook auraLook(Hero h) {
   }
 }
 
+}  // namespace
+
+Color auraColor(Hero h) {
+  if (h == Hero::Asta) return {186, 26, 44, 255};  // anti-magic: black aura, a blood-red glow
+  const AuraLook a = auraLook(h);
+  return a.dark ? a.inner : a.outer;
+}
+
+namespace {
 // One layer of flame: a soft blob whose rim licks upwards in flickering tongues.
 void kiFlame(Vec2 c, float H, float scale, float t, Color col, float alpha, float seed) {
   constexpr int kN = 30;

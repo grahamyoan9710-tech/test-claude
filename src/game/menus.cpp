@@ -1,5 +1,6 @@
 // Character select and stage select screens.
 #include "game/app.hpp"
+#include "game/fx.hpp"
 #include "game/menu_theme.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
@@ -14,6 +15,9 @@ int cardCount(bool training) { return training ? 2 : 4; }
 float g_slotX[4] = {410, 870, 140, 1140};  // set each frame by App::layoutCss
 float g_slotW[4] = {270, 270, 270, 270};
 int g_slotSide[4] = {0, 1, 0, 1};
+// The light of each side of the character select (left, right): rgb, sliding towards the colour it should have.
+float g_sideLight[2][3];
+bool g_sideLightSet = false;
 constexpr float kFeetY = 396, kPlateY = 404, kPlateH = 74;
 
 Rectangle plateRect(int col) {
@@ -373,10 +377,32 @@ void App::drawCss() {
   const Color night = th.night;
   ui::stageBackdrop(1, t, th.cssDim);
   DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(night, 0.55f), withAlpha(night, 0.2f));
-  const Color warm = teamsOn ? teamColor(0) : th.left;
-  const Color cool = teamsOn ? teamColor(1) : th.right;
-  DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(warm, 0.55f), withAlpha(warm, 0.0f));
-  DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(cool, 0.0f), withAlpha(cool, 0.55f));
+  // The light of each side takes the aura colour of the fighter picked by the first player standing there (J1 on
+  // the left, J2 on the right: the others do not change it) and slides to it; "?" runs through every colour.
+  Color side[2];
+  for (int k = 0; k < 2; ++k) {
+    Color want = k == 0 ? th.left : th.right;
+    for (int col = 0; col < cols; ++col) {
+      if (g_slotSide[col] != k) continue;
+      const SlotSetup& s = slots_[col];
+      if ((training_ || s.type != 0) && !s.random) {
+        want = auraColor(r[s.character].hero);
+      } else if ((training_ || s.type != 0) && s.random) {
+        const int n = int(r.size());
+        const float f = t * 0.8f + k * 5.0f;
+        const int i0 = int(f) % n;
+        want = mixColor(auraColor(r[i0].hero), auraColor(r[(i0 + 1) % n].hero), f - std::floor(f));
+      }
+      break;  // only the first player of the side
+    }
+    const float rgb[3] = {float(want.r), float(want.g), float(want.b)};
+    for (int c = 0; c < 3; ++c) g_sideLight[k][c] = g_sideLightSet ? lerpf(g_sideLight[k][c], rgb[c], 0.12f) : rgb[c];
+    side[k] = {(unsigned char)(g_sideLight[k][0] + 0.5f), (unsigned char)(g_sideLight[k][1] + 0.5f),
+               (unsigned char)(g_sideLight[k][2] + 0.5f), 255};
+  }
+  g_sideLightSet = true;
+  DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(side[0], 0.55f), withAlpha(side[0], 0.0f));
+  DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(side[1], 0.0f), withAlpha(side[1], 0.55f));
   {
     const Vector2 c{kScreenW * 0.5f, 62};
     for (int k = 0; k < 18; ++k) {

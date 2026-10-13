@@ -309,7 +309,10 @@ mouvement des manettes PlayStation, que Linux présente comme des manettes à pa
   contre bleus), une plaque sous chacun (nom, humain / ordinateur, clavier / manette ou niveau), la case
   **« ? »** au centre et tous les combattants en grille en bas : le visage de chacun en gros plan sur la
   couleur de son univers (vert Black Clover, bleu Bleach, orange Naruto, violet Jujutsu Kaisen, turquoise
-  Zelda, rouge God of War, or Monster Hunter), son nom en dessous. **Chaque joueur a son propre curseur**
+  Zelda, rouge God of War, or Monster Hunter), son nom en dessous. La **lumière de chaque côté** prend la
+  couleur de l'aura du combattant choisi par le premier joueur de ce côté : J1 à gauche (orange pour Naruto),
+  J2 à droite (violet pour Sasuke) ; J3 et J4 ne la changent pas. En équipes, c'est le premier joueur de
+  chaque équipe, et « ? » fait défiler toutes les couleurs. **Chaque joueur a son propre curseur**
   (étiquette J1, J2... de sa couleur) : gauche / droite change son combattant ; une ligne plus bas (la
   plaque), son clavier ou sa manette, ou le niveau d'un ordinateur ; sur le type (HUMAIN / ORDINATEUR),
   gauche / droite passe à un autre joueur. La case **« ? »** tire un combattant au sort au début du combat,
@@ -347,9 +350,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-8.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-8.2-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-8.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-8.2-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
