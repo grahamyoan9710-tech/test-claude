@@ -7,12 +7,14 @@
 //                    [--shot FRAME FILE.png]... [--record FROM TO EVERY DIR] [--fullres] [--quit-after FRAMES] [--debug]
 //                    [--ult SLOT]   (with --demo: the first fighter unleashes its ultimate, SLOT -1/0/1)
 //                    [--teams]   (team battle: red against blue)
+//                    [--palette N]   (colours of the menus, see menu_theme.hpp; 0 = the game's)
 //                    [--export-audio DIR]
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 #include "game/app.hpp"
+#include "game/menu_theme.hpp"
 
 int main(int argc, char** argv) {
   Options opt;
@@ -28,6 +30,7 @@ int main(int argc, char** argv) {
     }
     else if (is("--debug")) opt.debug = true;
     else if (is("--teams")) opt.teams = true;
+    else if (is("--palette") && i + 1 < argc) g_menuTheme = std::atoi(argv[++i]);
     else if (is("--fullres")) opt.fullRes = true;
     else if (is("--ult") && i + 1 < argc) opt.ultShow = std::atoi(argv[++i]);
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);

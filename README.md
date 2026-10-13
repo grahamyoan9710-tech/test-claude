@@ -396,6 +396,7 @@ super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la
 super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
 super_clash --teams --demo --fighters 8,9,2,13   # combat en équipes : les deux premiers contre les deux autres
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
+super_clash --screen menu --palette 2   # essayer une palette des menus : 0 actuelle, 1 Brasier, 2 Néon, 3 Shōnen, 4 Électrique, 5 Pop
 super_clash --screen training --fighters 8,9   # entraînement : Naruto (clavier 1) contre Sasuke en cible
 super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 3)
 super_clash --screen anim --tab 32   # pellicules d'animation : combattant N/4, page N%4 (allures, jabs, smashs, spéciales et ultime)

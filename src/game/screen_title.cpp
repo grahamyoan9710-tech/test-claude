@@ -1,5 +1,6 @@
 // Title screen ("appuyez sur ENTRÉE") and main menu.
 #include "game/app.hpp"
+#include "game/menu_theme.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -72,8 +73,18 @@ const Tile kTiles[4] = {
     {{680, 458, 500, 142}, 21, {146, 74, 210, 255}, {48, 20, 92, 255}, "QUITTER",
      "Quitter Super Clash Bros."},
 };
-// The menu's sky: twilight, from indigo night to a crimson horizon.
-constexpr Color kSkyTop = {24, 18, 72, 255}, kSkyLow = {150, 34, 76, 255};
+// Speed streaks: long thin strokes rushing from right to left behind the tiles, bright head, fading tail.
+void speedStreaks(float time, Color col) {
+  if (col.a == 0) return;
+  for (int i = 0; i < 9; ++i) {
+    const float len = 260.0f + 420.0f * hash(i * 7 + 1), th = 3.0f + 20.0f * hash(i * 13 + 5);
+    const float speed = 700.0f + 900.0f * hash(i * 3 + 2), y = 110.0f + 520.0f * hash(i * 11 + 3);
+    const float span = kScreenW + len + 200.0f;
+    const float x = kScreenW + 100.0f - std::fmod(time * speed + hash(i * 5) * span, span), s = th * 1.2f;
+    const Color tail = withAlpha(col, 0.0f);
+    ui::quad({x + s, y}, {x + len + s, y}, {x + len, y + th}, {x, y + th}, col, tail, tail, col);
+  }
+}
 }  // namespace
 
 // ---------------------------------------------------------------------------
@@ -231,10 +242,12 @@ void App::updateMainMenu(const MenuNav& nav) {
 
 void App::drawMainMenu() {
   const float t = time_;
-  ui::stageBackdrop(2, t, 0.58f);
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(kSkyTop, 0.6f), withAlpha(kSkyLow, 0.34f));
-  ui::glow({kScreenW * 0.5f, kScreenH + 60.0f}, 520, withAlpha({255, 150, 90, 255}, 0.12f), 8);  // the sun just set
-  ui::header("MENU PRINCIPAL", nullptr, kTiles[0].top, t);
+  const MenuTheme& th = menuTheme();
+  ui::stageBackdrop(2, t, th.dim);
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, th.skyTop, th.skyLow);
+  ui::glow({kScreenW * 0.5f, kScreenH + 60.0f}, 520, th.sun, 8);  // the sun just set
+  speedStreaks(t, th.streaks);
+  ui::header("MENU PRINCIPAL", nullptr, th.tiles[0][0], t);
   // small logo, top right
   ui::drawSprite(ui::Sprite::Logo, kScreenW - 360, 30, 52);
 
@@ -249,8 +262,9 @@ void App::drawMainMenu() {
     const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
     // shadow, body, sheen
     ui::slanted({rr.x + 10, rr.y + 12, rr.width, rr.height}, tile.slant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    Color top = sel ? mixColor(tile.top, ui::kCream, 0.08f) : shade(tile.top, 0.72f);
-    Color bottom = sel ? tile.bottom : shade(tile.bottom, 0.7f);
+    const Color ttop = th.tiles[i][0], tbottom = th.tiles[i][1];
+    Color top = sel ? mixColor(ttop, ui::kCream, 0.08f) : shade(ttop, 0.72f);
+    Color bottom = sel ? tbottom : shade(tbottom, 0.7f);
     ui::slanted(rr, tile.slant, withAlpha(top, 0.96f), withAlpha(bottom, 0.96f));
     ui::slanted({rr.x + tile.slant * 0.9f, rr.y, rr.width - tile.slant * 0.9f, rr.height * 0.18f}, tile.slant * 0.18f,
                 withAlpha(ui::kCream, 0.14f), withAlpha(ui::kCream, 0.0f));
@@ -266,7 +280,7 @@ void App::drawMainMenu() {
     ui::slantedOutline(rr, tile.slant, sel ? 3.0f : 2.5f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
     ui::corners(rr, tile.slant, big ? 30.0f : 18.0f, 3.0f, sel ? ui::kGold : withAlpha(ui::kGold, 0.45f));
     if (sel) {
-      ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(ui::kTeal, 0.18f + 0.16f * pulse));
+      ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(th.glow, 0.18f + 0.16f * pulse));
       ui::corners(ui::grow(rr, 9 + pulse * 3), tile.slant, big ? 34.0f : 20.0f, 3.0f, ui::kGold);
     }
 

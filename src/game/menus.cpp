@@ -1,5 +1,6 @@
 // Character select and stage select screens.
 #include "game/app.hpp"
+#include "game/menu_theme.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -56,9 +57,6 @@ Color seriesColor(const std::string& series) {
   return {214, 166, 52, 255};                                 // Monster Hunter: guild gold
 }
 constexpr Color kRandomTint = {74, 64, 176, 255};  // "?": a fighter or an arena drawn at random
-constexpr Color kNight = {22, 16, 58, 255};        // the twilight behind the fighters
-constexpr Color kLeftSide = {232, 38, 80, 255};    // crimson (left) against azure (right)
-constexpr Color kRightSide = {30, 128, 255, 255};
 constexpr float kTileSlant = 14.0f;
 Rectangle readyRect() { return {0, 480, float(kScreenW), 34}; }
 // Stage select: a big live preview, its sheet on the right, every stage below in rows of thumbnails.
@@ -371,10 +369,12 @@ void App::drawCss() {
   const int cols = cardCount(training_);
   const bool teamsOn = teamBattle();
   // Backdrop: a twilight sky, the two sides in their colours (crimson against azure), gold rays behind the "VS"
-  ui::stageBackdrop(1, t, 0.82f);
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(kNight, 0.55f), withAlpha(kNight, 0.2f));
-  const Color warm = teamsOn ? teamColor(0) : kLeftSide;
-  const Color cool = teamsOn ? teamColor(1) : kRightSide;
+  const MenuTheme& th = menuTheme();
+  const Color night = th.night;
+  ui::stageBackdrop(1, t, th.cssDim);
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(night, 0.55f), withAlpha(night, 0.2f));
+  const Color warm = teamsOn ? teamColor(0) : th.left;
+  const Color cool = teamsOn ? teamColor(1) : th.right;
   DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(warm, 0.55f), withAlpha(warm, 0.0f));
   DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(cool, 0.0f), withAlpha(cool, 0.55f));
   {
@@ -382,9 +382,9 @@ void App::drawCss() {
     for (int k = 0; k < 18; ++k) {
       const float a0 = t * 0.12f + k * (2.0f * kPi / 18), a1 = a0 + 0.12f;
       DrawTriangle(c, {c.x + std::cos(a1) * 900, c.y + std::sin(a1) * 900}, {c.x + std::cos(a0) * 900, c.y + std::sin(a0) * 900},
-                   withAlpha(ui::kGold, 0.07f));
+                   withAlpha(th.rays, 0.07f));
     }
-    ui::glow(c, 150, withAlpha(mixColor(ui::kGold, ui::kCream, 0.3f), 0.3f), 8);
+    ui::glow(c, 150, withAlpha(mixColor(th.rays, ui::kCream, 0.3f), 0.3f), 8);
     const float pulse = 0.5f + 0.5f * std::sin(t * 4.0f);
     drawTextOutlined("VS", c.x - textWidth("VS", 86, FontKind::Title) * 0.5f, 6, 86, mixColor(ui::kGold, ui::kCream, 0.3f * pulse),
                      ui::kInk, 5.0f, FontKind::Title);
@@ -396,7 +396,7 @@ void App::drawCss() {
     drawTextCentered(title, c.x, tb.y + 5, 20, ui::kCream, true, FontKind::Title);
   }
   // The grid's ground: deep night, a gold rule on top
-  DrawRectangleGradientV(0, 500, kScreenW, kScreenH - 500, withAlpha(kNight, 0.7f), withAlpha(shade(kNight, 0.45f), 0.96f));
+  DrawRectangleGradientV(0, 500, kScreenW, kScreenH - 500, withAlpha(night, 0.7f), withAlpha(shade(night, 0.45f), 0.96f));
   ui::rule(40, kScreenW - 40.0f, 500, withAlpha(ui::kGold, 0.45f));
   // A field is focused when a player's cursor is on it, or under the mouse.
   auto cursorOn = [&](int col, int row) {
@@ -608,11 +608,11 @@ void App::drawCss() {
   Rectangle rb = readyRect();
   if (ready) {
     float pulse = 0.5f + 0.5f * std::sin(t * 5.0f);
-    ui::slanted({-40, rb.y, kScreenW + 80.0f, rb.height}, 20, withAlpha(mixColor(kNight, ui::kTeal, 0.18f), 0.97f),
-                withAlpha(mixColor(kNight, ui::kInk, 0.6f), 0.97f));
+    ui::slanted({-40, rb.y, kScreenW + 80.0f, rb.height}, 20, withAlpha(mixColor(night, th.glow, 0.18f), 0.97f),
+                withAlpha(mixColor(night, ui::kInk, 0.6f), 0.97f));
     const int gy = int(rb.y), gh = int(rb.height);
-    DrawRectangleGradientH(240, gy, 400, gh, withAlpha(ui::kTeal, 0.0f), withAlpha(ui::kTeal, 0.16f + 0.1f * pulse));
-    DrawRectangleGradientH(640, gy, 400, gh, withAlpha(ui::kTeal, 0.16f + 0.1f * pulse), withAlpha(ui::kTeal, 0.0f));
+    DrawRectangleGradientH(240, gy, 400, gh, withAlpha(th.glow, 0.0f), withAlpha(th.glow, 0.16f + 0.1f * pulse));
+    DrawRectangleGradientH(640, gy, 400, gh, withAlpha(th.glow, 0.16f + 0.1f * pulse), withAlpha(th.glow, 0.0f));
     ui::slanted({-40, rb.y, kScreenW + 80.0f, 2}, 1, withAlpha(ui::kGold, 0.6f + 0.4f * pulse), withAlpha(ui::kGold, 0.6f + 0.4f * pulse));
     ui::slanted({-40, rb.y + rb.height - 2, kScreenW + 80.0f, 2}, 1, withAlpha(ui::kGold, 0.6f), withAlpha(ui::kGold, 0.6f));
     const char* txt = training_ ? "PRÊT POUR L'ENTRAÎNEMENT !" : "PRÊTS AU COMBAT !";
