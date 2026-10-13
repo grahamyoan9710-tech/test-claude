@@ -589,9 +589,10 @@ void beginTint(Color tc, float amount) {
 
 // ---- Drawing ----------------------------------------------------------------------------------------
 struct Mask {
-  enum { None, Box, Disc } kind = None;
+  enum { None, Box, Disc, Slant } kind = None;
   Vec2 c;               // centre
   float a = 0, b = 0;   // Box: half width a, from y = c.y - b to the bottom fade (c.y + 0.3a .. c.y + a); Disc: radius a
+  Rectangle r{};        // Slant: the box of a parallelogram leaning right by `a` (like ui::slanted), sharp edges
   float at(Vector2 p) const {
     if (kind == Box) {
       const float edge = a * 0.08f;
@@ -599,6 +600,12 @@ struct Mask {
              sstep(c.y - b, c.y - b + edge, p.y) * sstep(c.y + a, c.y + a * 0.3f, p.y);
     }
     if (kind == Disc) return sstep(a, a - 1.2f, (W(p) - c).len());
+    if (kind == Slant) {
+      const float fy = (p.y - r.y) / std::max(1.0f, r.height);
+      const float l = r.x + a * (1.0f - fy), rt = r.x + r.width - a * fy;
+      return sstep(l, l + 1.0f, p.x) * sstep(rt, rt - 1.0f, p.x) * sstep(r.y, r.y + 1.0f, p.y) *
+             sstep(r.y + r.height, r.y + r.height - 1.0f, p.y);
+    }
     return 1.0f;
   }
 };
@@ -625,9 +632,12 @@ void drawParts(const Art& A, Place place, Color tint, const Mask& mask, int sub 
       const Vert *v00 = &P.verts[i00], *v10 = &P.verts[i10], *v01 = &P.verts[i01], *v11 = &P.verts[i11];
       if (mask.kind != Mask::None && ks[i00] <= 0.0f && ks[i10] <= 0.0f && ks[i01] <= 0.0f && ks[i11] <= 0.0f)
         continue;
-      for (int sy = 0; sy < sub; ++sy)
-        for (int sx = 0; sx < sub; ++sx) {
-          const float fx[2] = {float(sx) / sub, float(sx + 1) / sub}, fy[2] = {float(sy) / sub, float(sy + 1) / sub};
+      // A cell inside the mask needs no split (the masks are convex: the whole cell is inside).
+      const int n = mask.kind != Mask::None && ks[i00] >= 1.0f && ks[i10] >= 1.0f && ks[i01] >= 1.0f && ks[i11] >= 1.0f
+                        ? 1 : sub;
+      for (int sy = 0; sy < n; ++sy)
+        for (int sx = 0; sx < n; ++sx) {
+          const float fx[2] = {float(sx) / n, float(sx + 1) / n}, fy[2] = {float(sy) / n, float(sy + 1) / n};
           // corners in drawing order: top-left, bottom-left, bottom-right, top-right
           const int ox[4] = {0, 0, 1, 1}, oy[4] = {0, 1, 1, 0};
           for (int k = 0; k < 4; ++k) {
@@ -637,7 +647,7 @@ void drawParts(const Art& A, Place place, Color tint, const Mask& mask, int sub 
                             pts[i00].y * w00 + pts[i10].y * w10 + pts[i01].y * w01 + pts[i11].y * w11};
             const float u = v00->u * w00 + v10->u * w10 + v01->u * w01 + v11->u * w11;
             const float v = v00->v * w00 + v10->v * w10 + v01->v * w01 + v11->v * w11;
-            const float m = sub > 1 && mask.kind != Mask::None ? mask.at(p)
+            const float m = n > 1 && mask.kind != Mask::None ? mask.at(p)
                                                                : ks[i00] * w00 + ks[i10] * w10 + ks[i01] * w01 + ks[i11] * w11;
             rlColor4ub(tint.r, tint.g, tint.b, (unsigned char)(tint.a * clampf(m, 0.0f, 1.0f)));
             rlTexCoord2f(u, v);
@@ -1221,6 +1231,18 @@ bool drawBust(Hero h, Vec2 center, float size, float alpha) {
   m.a = size * 0.5f;
   m.b = size * 0.62f;
   drawStill(*A, A->px.head, center + Vec2{size * 0.02f, -size * 0.12f}, k, 1, alpha, m, 2);
+  return true;
+}
+
+bool drawBustIn(Hero h, Vec2 center, float size, Rectangle box, float slant, float alpha) {
+  const Art* A = get(h);
+  if (!A) return false;
+  const float headR = std::max(8.0f, A->px.head.y - A->top);
+  Mask m;
+  m.kind = Mask::Slant;
+  m.r = box;
+  m.a = slant;
+  drawStill(*A, A->px.head, center + Vec2{size * 0.02f, -size * 0.12f}, size * 0.2f / headR, 1, alpha, m, 2);
   return true;
 }
 

@@ -43,18 +43,23 @@ Rectangle rosterRect(int i) {
   constexpr int perRow = 9;
   constexpr float w = 134, h = 74, pitch = 140;
   const int row = i / perRow, col = i % perRow, inRow = std::min(perRow, n - row * perRow);
-  return {(kScreenW - (pitch * inRow - 6)) * 0.5f + col * pitch, 518.0f + row * 80.0f, w, h};
+  return {(kScreenW - (pitch * inRow - 6)) * 0.5f + col * pitch, 516.0f + row * 80.0f, w, h};
 }
-// Tile tint per universe (the fighters of one series sit side by side).
+// Tile tint per universe (the fighters of one series sit side by side): bright, one hue each.
 Color seriesColor(const std::string& series) {
-  if (series == "Black Clover") return {64, 120, 72, 255};
-  if (series == "Bleach") return {200, 108, 44, 255};
-  if (series.rfind("Zelda", 0) == 0) return {52, 136, 132, 255};
-  if (series == "God of War") return {168, 44, 38, 255};
-  if (series == "Jujutsu Kaisen") return {98, 72, 176, 255};
-  if (series == "Naruto") return {226, 140, 36, 255};
-  return {120, 120, 130, 255};
+  if (series == "Black Clover") return {72, 164, 58, 255};     // grimoire green
+  if (series == "Bleach") return {56, 128, 236, 255};          // reishi blue
+  if (series.rfind("Zelda", 0) == 0) return {22, 170, 164, 255};  // Zonai teal
+  if (series == "God of War") return {208, 40, 50, 255};       // Spartan red
+  if (series == "Jujutsu Kaisen") return {138, 72, 228, 255};  // hollow purple
+  if (series == "Naruto") return {246, 128, 30, 255};          // Konoha orange
+  return {214, 166, 52, 255};                                 // Monster Hunter: guild gold
 }
+constexpr Color kRandomTint = {74, 64, 176, 255};  // "?": a fighter or an arena drawn at random
+constexpr Color kNight = {22, 16, 58, 255};        // the twilight behind the fighters
+constexpr Color kLeftSide = {232, 38, 80, 255};    // crimson (left) against azure (right)
+constexpr Color kRightSide = {30, 128, 255, 255};
+constexpr float kTileSlant = 14.0f;
 Rectangle readyRect() { return {0, 480, float(kScreenW), 34}; }
 // Stage select: a big live preview, its sheet on the right, every stage below in rows of thumbnails.
 constexpr int kStageCols = 6;
@@ -365,20 +370,21 @@ void App::drawCss() {
   layoutCss();
   const int cols = cardCount(training_);
   const bool teamsOn = teamBattle();
-  // Backdrop: the two sides in their colours, rays behind the "VS"
+  // Backdrop: a twilight sky, the two sides in their colours (crimson against azure), gold rays behind the "VS"
   ui::stageBackdrop(1, t, 0.82f);
-  const Color warm = teamsOn ? teamColor(0) : Color{214, 92, 48, 255};
-  const Color cool = teamsOn ? teamColor(1) : Color{70, 110, 220, 255};
-  DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(warm, 0.42f), withAlpha(warm, 0.0f));
-  DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(cool, 0.0f), withAlpha(cool, 0.42f));
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(kNight, 0.55f), withAlpha(kNight, 0.2f));
+  const Color warm = teamsOn ? teamColor(0) : kLeftSide;
+  const Color cool = teamsOn ? teamColor(1) : kRightSide;
+  DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(warm, 0.55f), withAlpha(warm, 0.0f));
+  DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(cool, 0.0f), withAlpha(cool, 0.55f));
   {
     const Vector2 c{kScreenW * 0.5f, 62};
     for (int k = 0; k < 18; ++k) {
       const float a0 = t * 0.12f + k * (2.0f * kPi / 18), a1 = a0 + 0.12f;
       DrawTriangle(c, {c.x + std::cos(a1) * 900, c.y + std::sin(a1) * 900}, {c.x + std::cos(a0) * 900, c.y + std::sin(a0) * 900},
-                   withAlpha(ui::kGold, 0.06f));
+                   withAlpha(ui::kGold, 0.07f));
     }
-    ui::glow(c, 120, withAlpha(ui::kGold, 0.25f), 8);
+    ui::glow(c, 150, withAlpha(mixColor(ui::kGold, ui::kCream, 0.3f), 0.3f), 8);
     const float pulse = 0.5f + 0.5f * std::sin(t * 4.0f);
     drawTextOutlined("VS", c.x - textWidth("VS", 86, FontKind::Title) * 0.5f, 6, 86, mixColor(ui::kGold, ui::kCream, 0.3f * pulse),
                      ui::kInk, 5.0f, FontKind::Title);
@@ -389,7 +395,9 @@ void App::drawCss() {
     ui::slantedOutline(tb, 10, 1.5f, ui::kGold);
     drawTextCentered(title, c.x, tb.y + 5, 20, ui::kCream, true, FontKind::Title);
   }
-  DrawRectangleGradientV(0, 500, kScreenW, kScreenH - 500, withAlpha(ui::kInk, 0.55f), withAlpha(ui::kInk, 0.92f));
+  // The grid's ground: deep night, a gold rule on top
+  DrawRectangleGradientV(0, 500, kScreenW, kScreenH - 500, withAlpha(kNight, 0.7f), withAlpha(shade(kNight, 0.45f), 0.96f));
+  ui::rule(40, kScreenW - 40.0f, 500, withAlpha(ui::kGold, 0.45f));
   // A field is focused when a player's cursor is on it, or under the mouse.
   auto cursorOn = [&](int col, int row) {
     for (int d = 0; d < kDeviceCount; ++d) {
@@ -414,68 +422,83 @@ void App::drawCss() {
                      ui::kCream, false);
   }
 
-  // Roster strip, then the "?" tile (random fighter)
+  // The bottom bar first: its shade must not darken the last row of the grid, just above it
+  const bool ready = readyToFight();
+  ui::footer({{"FLÈCHES", ui::Btn::Move, "Perso / Naviguer"}, {"ESPACE", ui::Btn::A, "Modifier"},
+              {"K", ui::Btn::X, "Précédent"}, {"ÉCHAP", ui::Btn::B, "Retour"}},
+             ready ? nullptr
+             : activeSlots() >= 2 ? "En équipes : il faut au moins un combattant dans chaque équipe."
+                                  : "Il faut au moins 2 combattants.");
+
+  // Roster grid, then the "?" tile (random fighter). Each fighter: a close-up of the face on the colour of its
+  // universe (as in a fighting game), its name on a band at the bottom.
   for (int i = 0; i <= int(r.size()); ++i) {
     Rectangle rr = rosterRect(i);
     bool hov = ui::hovered(rr);
     const bool rnd = i == int(r.size());
-    Color pc = rnd ? Color{120, 120, 130, 255} : seriesColor(r[i].series);
-    const bool wide = rr.width > rr.height;  // two rows: the portrait on the left, the name beside it
-    ui::slanted({rr.x + 5, rr.y + 6, rr.width, rr.height}, 14, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
-    ui::slanted(rr, 14, withAlpha(mixColor(pc, ui::kInk, hov ? 0.4f : 0.55f), 0.95f), withAlpha(mixColor(pc, ui::kInk, 0.86f), 0.95f));
+    Color pc = rnd ? kRandomTint : seriesColor(r[i].series);
+    bool chosen = false;
+    for (int s = 0; s < cardCount(training_); ++s) {
+      const SlotSetup& sl = slots_[s];
+      if ((training_ || sl.type != 0) && (rnd ? sl.random : !sl.random && sl.character == i)) chosen = true;
+    }
+    const bool lit = hov || chosen;
+    ui::slanted({rr.x + 4, rr.y + 4, rr.width, rr.height}, kTileSlant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
+    ui::slanted(rr, kTileSlant, withAlpha(mixColor(pc, ui::kInk, lit ? 0.12f : 0.3f), 0.97f),
+                withAlpha(mixColor(pc, ui::kInk, lit ? 0.62f : 0.76f), 0.97f));
+    ui::slanted({rr.x + kTileSlant * 0.7f, rr.y, rr.width - kTileSlant * 0.7f, rr.height * 0.3f}, kTileSlant * 0.3f,
+                withAlpha(ui::kCream, lit ? 0.2f : 0.12f), withAlpha(ui::kCream, 0.0f));
     if (rnd) {
       const float qs = std::min(rr.height * 0.9f, 60.0f), pulse = 0.5f + 0.5f * std::sin(t * 3.0f);
-      const float qx = wide ? rr.x + 38.0f : rr.x + rr.width * 0.5f, qy = wide ? rr.y + rr.height * 0.5f : rr.y + 54;
-      ui::glow({qx, qy}, 40, withAlpha(ui::kGold, 0.15f + 0.1f * pulse), 6);
+      const float qx = rr.x + rr.width * 0.5f, qy = rr.y + 54;
+      ui::rune({qx + 4, qy}, 46, 0, t * 0.3f, withAlpha(ui::kCream, 0.1f), 3.0f);
+      ui::glow({qx, qy}, 44, withAlpha(ui::kGold, 0.18f + 0.12f * pulse), 6);
       drawTextCentered("?", qx, qy - qs * 0.55f, qs, mixColor(ui::kGold, ui::kCream, pulse), true, FontKind::Title);
-      if (wide) {
-        drawText("ALÉATOIRE", rr.x + 72.0f, rr.y + 12, 18, ui::kCream, FontKind::Title);
-        drawText("au hasard", rr.x + 72.0f, rr.y + 40, 13, withAlpha(ui::kCream, 0.6f));
-      } else {
-        drawTextCentered("ALÉATOIRE", rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 26, 16, ui::kCream, false,
-                         FontKind::Title);
-      }
-    } else if (wide) {
-      const Vec2 pc0{rr.x + 38.0f, rr.y + rr.height * 0.5f};
-      ui::glow({pc0.x, pc0.y}, 40, withAlpha({255, 236, 196, 255}, 0.22f), 6);
-      drawPortrait(r[i], 0, pc0, rr.height - 8.0f, t + i);
-      const float tx = rr.x + 72.0f, tw = rr.width - 80.0f;
-      float ns = 22.0f;
-      while (ns > 13.0f && textWidth(r[i].name.c_str(), ns, FontKind::Title) > tw) ns -= 1.0f;
-      drawText(r[i].name.c_str(), tx, rr.y + 12, ns, ui::kCream, FontKind::Title);
-      std::string series = r[i].series.rfind("Zelda", 0) == 0 ? "Zelda" : r[i].series;
-      if (textWidth(series.c_str(), 13) > tw) series = series == "Jujutsu Kaisen" ? "JJK" : series.substr(0, 9) + ".";
-      drawText(series.c_str(), tx, rr.y + 40, 13, withAlpha(ui::kCream, 0.6f));
+      ui::slanted({rr.x, rr.y + rr.height - 30, rr.width - 4, 30}, 6, withAlpha(ui::kInk, 0.9f), withAlpha(ui::kInk, 0.9f));
+      DrawLineEx({rr.x + 6, rr.y + rr.height - 30}, {rr.x + rr.width - 6, rr.y + rr.height - 30}, 1.5f,
+                 withAlpha(ui::kGold, 0.6f));
+      drawTextCentered("ALÉATOIRE", rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 15 - 16 * 0.58f, 16,
+                       lit ? ui::kGold : ui::kCream, false, FontKind::Title);
     } else {
-      ui::rune({rr.x + rr.width * 0.5f + 4, rr.y + 54}, 50, i, t * 0.2f, withAlpha(ui::kCream, 0.07f), 3.0f);
-      ui::glow({rr.x + rr.width * 0.5f, rr.y + 60}, 60, withAlpha({255, 236, 196, 255}, 0.2f), 6);
-      drawPortrait(r[i], 0, {rr.x + rr.width * 0.5f, rr.y + 54}, std::min(92.0f, rr.width * 0.78f), t + i);
-      ui::slanted({rr.x, rr.y + rr.height - 30, rr.width - 4, 30}, 6, withAlpha(ui::kInk, 0.88f), withAlpha(ui::kInk, 0.88f));
-      DrawLineEx({rr.x + 6, rr.y + rr.height - 30}, {rr.x + rr.width - 6, rr.y + rr.height - 30}, 1.0f, withAlpha(ui::kGold, 0.4f));
-      float ns = 24.0f;  // long names shrink to fit the tile
-      while (ns > 14.0f && textWidth(r[i].name.c_str(), ns, FontKind::Title) > rr.width - 16.0f) ns -= 1.0f;
-      drawTextCentered(r[i].name.c_str(), rr.x + rr.width * 0.5f - 4, rr.y + rr.height - 15 - ns * 0.58f, ns, ui::kCream,
-                       false, FontKind::Title);
+      // The close-up fills the tile above the band (the box of that part of the slanted tile)
+      const float bh = 21.0f, sb = kTileSlant * bh / rr.height;
+      const Rectangle pic{rr.x + sb + 1.5f, rr.y + 1.5f, rr.width - sb - 3.0f, rr.height - bh - 1.5f};
+      const Vec2 head{rr.x + rr.width * 0.57f, rr.y + 29.0f};
+      ui::rune({head.x, head.y}, 30, i % 4, t * 0.2f, withAlpha(ui::kCream, 0.1f), 2.0f);
+      ui::glow({head.x, head.y}, 44, withAlpha(mixColor(pc, ui::kCream, 0.6f), lit ? 0.42f : 0.3f), 6);
+      constexpr float size = 104.0f;  // the head (and its hair) is a fifth of it
+      drawPortraitIn(r[i], 0, {head.x - size * 0.02f, head.y + size * 0.12f}, size, pic,
+                     kTileSlant * pic.height / rr.height, t + i);
+      // The name, on a band slanted like the tile, shrunk until it fits
+      const Rectangle band{rr.x, rr.y + rr.height - bh, rr.width - kTileSlant + sb, bh};
+      ui::slanted(band, sb, withAlpha(ui::kInk, 0.94f), withAlpha(ui::kInk, 0.98f));
+      DrawLineEx({band.x + sb, band.y}, {band.x + band.width, band.y}, 1.5f, withAlpha(mixColor(pc, ui::kGold, 0.45f), 0.95f));
+      const char* name = r[i].name.c_str();
+      const float room = band.width - sb - 14.0f;
+      float ns = 17.0f;
+      while (ns > 9.0f && textWidth(name, ns, FontKind::Title) > room) ns -= 0.5f;
+      drawTextCentered(name, band.x + band.width * 0.5f, band.y + bh * 0.5f - ns * 0.58f + 1.0f, ns,
+                       lit ? ui::kGold : ui::kCream, false, FontKind::Title);
     }
     int tags = 0;
-    bool chosen = false;
     for (int s = 0; s < cardCount(training_); ++s) {
       const SlotSetup& sl = slots_[s];
       bool active = training_ || sl.type != 0;
       if (!active || (rnd ? !sl.random : sl.random || sl.character != i)) continue;
       bool cpu = training_ ? s == 1 : sl.type == 2;
       Color tc = teamBattle() ? teamColor(slotTeam(s)) : cpu ? cpuColor() : portColor(s);
-      chosen = true;
-      Rectangle tag = wide ? Rectangle{rr.x + 4 + tags * 40.0f, rr.y + rr.height - 24, 38, 22}
-                           : Rectangle{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22};
+      // in the top corner (the face is a little to the right)
+      const Rectangle tag = rnd ? Rectangle{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22}
+                                : Rectangle{rr.x + kTileSlant + 3 + tags * 36.0f, rr.y + 4, 34, 18};
       DrawRectangleRounded(ui::grow(tag, 1.5f), 0.5f, 6, ui::kInk);
       DrawRectangleRounded(tag, 0.5f, 6, shade(tc, 0.85f));
-      drawTextCentered(cpu ? "CPU" : TextFormat("J%d", s + 1), tag.x + tag.width * 0.5f, tag.y + 3, 15, WHITE, false);
+      drawTextCentered(cpu ? "CPU" : TextFormat("J%d", s + 1), tag.x + tag.width * 0.5f, tag.y + (rnd ? 3 : 2),
+                       rnd ? 15 : 13, WHITE, false);
       ++tags;
     }
-    ui::slantedOutline(rr, 14, chosen ? 2.5f : hov ? 2.0f : 1.5f,
-                       chosen ? ui::kGold : hov ? withAlpha(ui::kGold, 0.6f) : withAlpha(ui::kStone, 0.55f));
-    if (chosen) ui::corners(ui::grow(rr, 4), 14, 14, 2.5f, ui::kGold);
+    ui::slantedOutline(rr, kTileSlant, chosen ? 2.5f : hov ? 2.0f : 1.5f,
+                       chosen ? ui::kGold : hov ? withAlpha(ui::kGold, 0.7f) : withAlpha(ui::kInk, 0.95f));
+    if (chosen) ui::corners(ui::grow(rr, 4), kTileSlant, 14, 2.5f, ui::kGold);
   }
 
   // The players, big, on both sides of the "VS"
@@ -582,11 +605,11 @@ void App::drawCss() {
   }
 
   // "Ready to fight" banner: teal ink, gold edges, a Zonai glow behind the words
-  bool ready = readyToFight();
   Rectangle rb = readyRect();
   if (ready) {
     float pulse = 0.5f + 0.5f * std::sin(t * 5.0f);
-    ui::slanted({-40, rb.y, kScreenW + 80.0f, rb.height}, 20, withAlpha({34, 56, 58, 255}, 0.97f), withAlpha(ui::kInk, 0.97f));
+    ui::slanted({-40, rb.y, kScreenW + 80.0f, rb.height}, 20, withAlpha(mixColor(kNight, ui::kTeal, 0.18f), 0.97f),
+                withAlpha(mixColor(kNight, ui::kInk, 0.6f), 0.97f));
     const int gy = int(rb.y), gh = int(rb.height);
     DrawRectangleGradientH(240, gy, 400, gh, withAlpha(ui::kTeal, 0.0f), withAlpha(ui::kTeal, 0.16f + 0.1f * pulse));
     DrawRectangleGradientH(640, gy, 400, gh, withAlpha(ui::kTeal, 0.16f + 0.1f * pulse), withAlpha(ui::kTeal, 0.0f));
@@ -599,11 +622,6 @@ void App::drawCss() {
     drawTextOutlined(txt, tx, rb.y + 4, 30, mixColor(ui::kGold, ui::kCream, 0.35f), ui::kInk, 3.0f, FontKind::Title);
     ui::prompt("ENTRÉE", ui::Btn::Start, kScreenW * 0.5f + w * 0.5f - 40, rb.y + 6, 26, true);
   }
-  ui::footer({{"FLÈCHES", ui::Btn::Move, "Perso / Naviguer"}, {"ESPACE", ui::Btn::A, "Modifier"},
-              {"K", ui::Btn::X, "Précédent"}, {"ÉCHAP", ui::Btn::B, "Retour"}},
-             ready ? nullptr
-             : activeSlots() >= 2 ? "En équipes : il faut au moins un combattant dans chaque équipe."
-                                  : "Il faut au moins 2 combattants.");
 }
 
 // ---------------------------------------------------------------------------
@@ -668,7 +686,7 @@ void App::drawStage() {
 
   // Its sheet: series, name, a line about it, the platforms, the rules of the match.
   const float px = big.x + big.width + 32, pw = kScreenW - 40 - px;
-  const Color sc = stageRandom_ ? Color{120, 120, 130, 255} : seriesColor(cur.series);
+  const Color sc = stageRandom_ ? kRandomTint : seriesColor(cur.series);
   const std::string series = stageRandom_ ? std::string("TOUTES LES SÉRIES") : upperFr(cur.series);
   const std::string name = stageRandom_ ? std::string("Aléatoire") : cur.name;
   const float chipW = textWidth(series.c_str(), 17) + 26;

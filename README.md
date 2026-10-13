@@ -11,10 +11,10 @@ volume, avec les motifs et les couleurs de l'illustration), voir
 [Combattants illustrés](#combattants-illustrés). Naruto a en plus une garde et un coup de poing **dessinés image
 par image** (essai avec SpriteCook, voir [Animations générées](#animations-générées-essai-avec-naruto)). En
 combat, ils passent par un rendu **pixel art** (contour
-sombre d'un pixel, aplats francs) ; les menus, les arènes et les effets restent lisses. Les sons et la
-musique sont synthétisés au lancement. Les ressources (deux polices
-libres, la base de manettes SDL et les illustrations) sont intégrées directement dans l'exécutable : il n'y a
-aucun fichier à installer à côté.
+sombre d'un pixel, aplats francs) ; les menus, les arènes et les effets restent lisses. Les bruitages et
+l'annonceur sont enregistrés (générés avec ElevenLabs), la musique est synthétisée au lancement. Les
+ressources (deux polices libres, la base de manettes SDL, les illustrations et les sons) sont intégrées
+directement dans l'exécutable : il n'y a aucun fichier à installer à côté.
 
 Les trois arènes d'origine s'inspirent de *Zelda: Tears of the Kingdom* (îles célestes, ruines Zonaï aux
 runes turquoise, profondeurs éclairées par des racines lumineuses) et **huit autres viennent des animes** :
@@ -307,7 +307,9 @@ mouvement des manettes PlayStation, que Linux présente comme des manettes à pa
 - La **sélection des combattants** est faite comme celle des jeux de combat d'anime : un grand « VS » au
   milieu, les combattants en grand face à face (J1 et J3 à gauche contre J2 et J4 à droite ; en équipes, rouges
   contre bleus), une plaque sous chacun (nom, humain / ordinateur, clavier / manette ou niveau), la case
-  **« ? »** au centre et tous les combattants en grille en bas. **Chaque joueur a son propre curseur**
+  **« ? »** au centre et tous les combattants en grille en bas : le visage de chacun en gros plan sur la
+  couleur de son univers (vert Black Clover, bleu Bleach, orange Naruto, violet Jujutsu Kaisen, turquoise
+  Zelda, rouge God of War, or Monster Hunter), son nom en dessous. **Chaque joueur a son propre curseur**
   (étiquette J1, J2... de sa couleur) : gauche / droite change son combattant ; une ligne plus bas (la
   plaque), son clavier ou sa manette, ou le niveau d'un ordinateur ; sur le type (HUMAIN / ORDINATEUR),
   gauche / droite passe à un autre joueur. La case **« ? »** tire un combattant au sort au début du combat,
@@ -345,9 +347,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-8.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-8.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-8.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-8.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

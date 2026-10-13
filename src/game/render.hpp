@@ -62,6 +62,9 @@ Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing,
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
 void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
+// The same close up, cut to a box slanted like ui::slanted (the roster tiles).
+void drawPortraitIn(const CharacterDef& def, int palette, Vec2 center, float size, Rectangle box, float slant,
+                    float time);
 // A fighter shown big in a menu, feet at `feet`, about `height` tall: its picture when it has one.
 void drawShowcase(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing, float height,
                   float time);

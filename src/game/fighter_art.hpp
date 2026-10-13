@@ -51,5 +51,7 @@ enum SheetAnim { kSheetIdle, kSheetAttack, kSheetCount };
 bool hasSheet(Hero h, SheetAnim a);
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 bool drawBust(Hero h, Vec2 center, float size, float alpha);
+// The same bust (not faded), cut to a box slanted like ui::slanted: the close-ups of the character select.
+bool drawBustIn(Hero h, Vec2 center, float size, Rectangle box, float slant, float alpha);
 bool drawDisc(Hero h, Vec2 center, float radius, float alpha);
 }  // namespace art

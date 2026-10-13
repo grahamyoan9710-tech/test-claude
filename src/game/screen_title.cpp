@@ -61,17 +61,19 @@ struct Tile {
   const char* desc;
 };
 
-// Earthy tiles: terracotta, moss, slate blue, dusk plum.
+// Jewel tiles under the gold trims: ruby, emerald, sapphire, amethyst.
 const Tile kTiles[4] = {
-    {{60, 126, 640, 474}, 70, {178, 82, 58, 255}, {86, 30, 32, 255}, "COMBAT",
+    {{60, 126, 640, 474}, 70, {218, 52, 70, 255}, {86, 12, 42, 255}, "COMBAT",
      "Affrontez jusqu'à 3 adversaires, humains ou ordinateurs."},
-    {{728, 126, 500, 142}, 21, {98, 136, 76, 255}, {36, 62, 44, 255}, "ENTRAÎNEMENT",
+    {{728, 126, 500, 142}, 21, {30, 164, 116, 255}, {6, 62, 58, 255}, "ENTRAÎNEMENT",
      "Vies infinies, mannequin, compteur de combos : idéal pour apprendre."},
-    {{704, 292, 500, 142}, 21, {66, 112, 132, 255}, {24, 46, 62, 255}, "PARAMÈTRES",
+    {{704, 292, 500, 142}, 21, {48, 116, 230, 255}, {14, 32, 104, 255}, "PARAMÈTRES",
      "Son, affichage, règles du jeu, touches et manettes."},
-    {{680, 458, 500, 142}, 21, {112, 86, 110, 255}, {46, 34, 52, 255}, "QUITTER",
+    {{680, 458, 500, 142}, 21, {146, 74, 210, 255}, {48, 20, 92, 255}, "QUITTER",
      "Quitter Super Clash Bros."},
 };
+// The menu's sky: twilight, from indigo night to a crimson horizon.
+constexpr Color kSkyTop = {24, 18, 72, 255}, kSkyLow = {150, 34, 76, 255};
 }  // namespace
 
 // ---------------------------------------------------------------------------
@@ -158,7 +160,7 @@ void App::drawTitle() {
     drawTextOutlined(txt, x, 368, 26, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.5f);
     ui::prompt("ENTRÉE", ui::Btn::Start, x + textWidth(txt, 26) + 14, 381 - ph * 0.5f, ph, true);
   }
-  drawTextOutlined("v8.0", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
+  drawTextOutlined("v8.1", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
   drawTextOutlined("C++ & raylib", 16, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
   if (f >= 22 && f < 40) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({255, 248, 228, 255}, (40 - f) / 18.0f * 0.7f));
 }
@@ -230,6 +232,8 @@ void App::updateMainMenu(const MenuNav& nav) {
 void App::drawMainMenu() {
   const float t = time_;
   ui::stageBackdrop(2, t, 0.58f);
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(kSkyTop, 0.6f), withAlpha(kSkyLow, 0.34f));
+  ui::glow({kScreenW * 0.5f, kScreenH + 60.0f}, 520, withAlpha({255, 150, 90, 255}, 0.12f), 8);  // the sun just set
   ui::header("MENU PRINCIPAL", nullptr, kTiles[0].top, t);
   // small logo, top right
   ui::drawSprite(ui::Sprite::Logo, kScreenW - 360, 30, 52);

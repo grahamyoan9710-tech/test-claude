@@ -2621,6 +2621,14 @@ void drawPortrait(const CharacterDef& d, int palette, Vec2 center, float size, f
   b.frontHair();
 }
 
+void drawPortraitIn(const CharacterDef& d, int palette, Vec2 center, float size, Rectangle box, float slant,
+                    float time) {
+  if (art::drawBustIn(d.hero, center, size, box, slant, 1.0f)) return;
+  beginClip({box.x + slant * 0.5f, box.y, box.width - slant, box.height});  // drawn by hand: a straight cut
+  drawPortrait(d, palette, center, size, time);
+  endClip();
+}
+
 void drawPortraitDisc(const CharacterDef& d, int palette, Vec2 center, float radius, float time) {
   if (art::drawDisc(d.hero, center, radius, 1.0f)) return;
   drawPortrait(d, palette, center + Vec2{0.0f, -radius * 0.055f}, radius * 1.72f, time);
