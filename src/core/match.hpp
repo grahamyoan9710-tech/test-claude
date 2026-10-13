@@ -66,6 +66,7 @@ struct GameEvent {
   int b = -1;             // other fighter (victim)
   HitFx fx = HitFx::Normal;
   bool impact = false;    // signature hit (impact frames)
+  int visual = -1;        // explosions: the ProjVisual of the projectile that blew up
 };
 
 struct Projectile {

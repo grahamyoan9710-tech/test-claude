@@ -1,5 +1,7 @@
 #include "game/fx.hpp"
 
+#include "game/fighter_art.hpp"
+
 #include "game/render.hpp"
 #include "game/ui.hpp"
 
@@ -692,7 +694,11 @@ void Fx::onEvents(const Match& m) {
         flashCol_ = WHITE;
         au.play(Sfx::CutIn, 0.7f, 1.1f);
         break;
-      case EvType::Explosion: explosion(e.pos, std::max(20.0f, e.strength), e.fx); break;
+      case EvType::Explosion:
+        explosion(e.pos, std::max(20.0f, e.strength), e.fx);
+        if (e.visual == int(ProjVisual::FireArrow))  // Fuga: a tower of fire where the arrow lands
+          playFx("fuga_blast", e.pos, 2.0f * e.strength / 170.0f);
+        break;
       case EvType::WeaponSpawn: {  // a pillar of light guides the weapon down from the sky
         const auto& chars = roster();
         const int ch = std::clamp(int(e.strength), 0, int(chars.size()) - 1);
@@ -899,7 +905,18 @@ void Fx::projectileTrails(const Match& m) {
   }
 }
 
+void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip) {
+  if (art::fxInfo(name)) sprites_.push_back({name, at, size, rot, flip, 0});
+}
+
 void Fx::update(const Match& m) {
+  for (auto& f : sprites_) ++f.t;
+  sprites_.erase(std::remove_if(sprites_.begin(), sprites_.end(),
+                                [](const SpriteFx& f) {
+                                  const art::FxInfo* i = art::fxInfo(f.name);
+                                  return !i || f.t / 60.0f >= i->duration();
+                                }),
+                 sprites_.end());
   for (auto& p : parts_) {
     p.vel.y += p.gravity;
     p.vel *= p.drag;
@@ -1271,6 +1288,7 @@ void Fx::drawWorld() const {
     }
   }
   vfx::additive(false);
+  for (const auto& f : sprites_) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip);
 }
 
 void Fx::drawScreen(const Camera2D& cam) const {

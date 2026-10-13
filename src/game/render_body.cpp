@@ -2201,6 +2201,15 @@ struct Body {
   void backArmGear() {
     const Vec2 hb = R.handB, eb = R.elbowB;
     WeaponStyle st = wstyle();
+    if (hero == Hero::Sukuna && pose.bow >= 0.0f) {  // Fuga: no bow, an arrow of fire held between his hands
+      const Vec2 a = W(X(R.handF)), b = W(X(R.handB)), d = b - a;
+      const float len = d.len(), sc = s * H / 100.0f;  // the arrow: about as long as he is tall
+      if (len > 1.0f)
+        art::drawFx("fuga_arrow", time, (a + b) * 0.5f + Vec2{(d.x >= 0.0f ? 30.0f : -30.0f) * sc, 0.0f}, 80.0f * sc / 110.0f,
+                    d.x >= 0.0f ? 0.0f : kPi, false,
+                    P.alpha * (0.4f + 0.6f * pose.bow));
+      return;
+    }
     if (pose.bow >= 0.0f || has(WeaponVisual::BowOfLight) || has(WeaponVisual::SusanooBow)) {
       Vec2 aim = pose.bow >= 0.0f ? (R.handB - R.handF).norm() : Vec2{1.0f, 0.15f}.norm();
       if (aim.len2() < 0.5f) aim = {1, 0};

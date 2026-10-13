@@ -2,7 +2,9 @@
 // Look: painterly skies, floating islands and ancient ruins carved with glowing teal runes.
 // Static scenery is baked once per theme into textures (premultiplied alpha) and scrolled
 // with parallax; only light things (particles, pulses, water) are drawn every frame.
+#include "game/fighter_art.hpp"
 #include "game/paint.hpp"
+#include "game/pixel.hpp"
 #include "game/render.hpp"
 #include "game/stage_art.hpp"
 #include "game/ui.hpp"
@@ -412,7 +414,7 @@ void bakeDepths(Art& a) {
   });
 }
 
-const Art& art(StageTheme theme) {
+const Art& themeArt(StageTheme theme) {
   ensureParticleSprite();
   Art& a = g_art[int(theme) % kStageThemeCount];
   if (!a.ready) {
@@ -683,7 +685,7 @@ void drawThin(const Rect& r, StageTheme th, float time, int seed) {
 
 void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
   (void)zoom;
-  const Art& a = art(stage.theme);
+  const Art& a = themeArt(stage.theme);
   const float dx = clampf(cam.x, -1200.0f, 1200.0f), dy = clampf(cam.y + 150.0f, -500.0f, 500.0f);
   const Vec2 pc{dx, dy};
   const float skyX = -40.0f + clampf(-dx * 0.03f, -40.0f, 40.0f), skyY = -40.0f + clampf(-dy * 0.03f, -40.0f, 40.0f);
@@ -1204,16 +1206,19 @@ void shotDismantle(const Projectile& p, const Shot& s) {
   vfx::additive(false);
 }
 
+// Fuga: Sukuna's arrow of fire (the PixelLab effect fx_fuga_arrow: a white-hot head, flames streaming back).
 void shotFireArrow(const Shot& s, float time) {
   vfx::additive(true);
-  vfx::glow(s.c, s.r * 2.4f, Ap({255, 110, 30, 255}, 0.4f * s.k), Ap({255, 80, 20, 255}, 0.0f));
-  for (int i = 0; i < 6; ++i) {  // flames licking back from the head
+  vfx::glow(s.c, s.r * 2.6f, Ap({255, 110, 30, 255}, 0.45f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  vfx::additive(false);
+  if (art::drawFx("fuga_arrow", time, s.c, s.r * 9.0f / 110.0f, std::atan2(s.d.y, s.d.x), false, s.k)) return;
+  vfx::additive(true);
+  for (int i = 0; i < 6; ++i) {  // without the effect: flames licking back from the head
     const float l = s.r * (3.0f + 2.5f * hash01(s.seed + i) + std::sin(time * 30.0f + i * 1.7f));
     const Vec2 tail = s.c - s.d * l + s.n * (std::sin(time * 25.0f + i * 2.3f) * s.r * 0.55f);
     vfx::streak(s.c + s.d * (s.r * 0.4f), tail, s.r * 1.1f, 0.0f, Ap(i % 2 ? Color{255, 140, 40, 255} : Color{255, 70, 20, 255}, 0.7f * s.k),
                 Ap({255, 40, 10, 255}, 0.0f));
   }
-  vfx::streak(s.c - s.d * (s.r * 2.5f), s.c + s.d * (s.r * 1.4f), 2.0f, 6.0f, Ap({255, 240, 190, 255}, 0.6f * s.k), Ap(WHITE, s.k));
   vfx::glow(s.c + s.d * (s.r * 0.8f), s.r * 0.9f, Ap({255, 250, 220, 255}, s.k), Ap({255, 200, 120, 255}, 0.0f));
   vfx::additive(false);
 }
@@ -1447,18 +1452,25 @@ void shotIndraArrow(const Shot& s, float time) {
   spear(s, s.r * 3.0f, s.r * 0.3f, {200, 140, 255, 255}, WHITE, v);
 }
 
+// Amaterasu: black flames with glowing sandy edges burning on the ground under the target (the PixelLab effect
+// fx_amaterasu). They rise out of the ground during the warning, burn while it lasts and sink as it ends.
 void shotBlackFlames(const Projectile& p, const Shot& s, float time) {
-  const float k = s.k;
-  for (int i = 0; i < 10; ++i) {  // tongues of black fire, purple-red at the edges
+  const float grow = smoothstep(clampf((p.age + 1.0f) / std::max(8.0f, float(p.armDelay)), 0.0f, 1.0f));
+  const float end = clampf(p.life / 16.0f, 0.0f, 1.0f);
+  const float h = s.r * 2.7f * (0.25f + 0.75f * grow) * (0.4f + 0.6f * end);  // flame height, world units
+  const Vec2 base = s.c + Vec2{0.0f, s.r};
+  const float a = std::min(1.0f, 2.0f * grow) * std::min(1.0f, 2.0f * end);
+  vfx::additive(true);
+  vfx::glow(base, s.r * 1.6f, Ap({240, 150, 70, 255}, 0.35f * a), Ap({240, 150, 70, 255}, 0.0f));
+  vfx::additive(false);
+  if (art::drawFx("amaterasu", float(p.age) / 60.0f + hash01(s.seed) * 2.0f, base, h / 100.0f, 0.0f, (s.seed & 1u) != 0, a))
+    return;
+  for (int i = 0; i < 10; ++i) {  // without the effect: tongues of black fire
     const float x = (hash01(s.seed + i * 3u) - 0.5f) * s.r * 1.6f;
-    const float h = s.r * (1.0f + 1.2f * hash01(s.seed + i * 3u + 1)) * (0.8f + 0.3f * std::sin(time * 14.0f + i * 1.7f));
-    const Vec2 b = s.c + Vec2{x, s.r * 0.6f}, tip = b + Vec2{std::sin(time * 9.0f + i) * s.r * 0.25f, -h};
-    vfx::additive(true);
-    vfx::wedge(b, tip, s.r * 0.55f, 2.0f, Ap({200, 30, 80, 255}, 0.45f * k), Ap({200, 30, 80, 255}, 0.0f));
-    vfx::additive(false);
-    vfx::wedge(b, tip, s.r * 0.4f, 1.0f, Ap({10, 4, 12, 255}, 0.92f * k), Ap({10, 4, 12, 255}, 0.4f * k));
+    const float th = h * 0.6f * (1.0f + 0.5f * hash01(s.seed + i * 3u + 1)) * (0.8f + 0.3f * std::sin(time * 14.0f + i * 1.7f));
+    const Vec2 b = base + Vec2{x, 0.0f}, tip = b + Vec2{std::sin(time * 9.0f + i) * s.r * 0.25f, -th};
+    vfx::wedge(b, tip, s.r * 0.4f, 1.0f, Ap({10, 4, 12, 255}, 0.92f * a), Ap({10, 4, 12, 255}, 0.4f * a));
   }
-  (void)p;
 }
 
 void shotKunai(const Shot& s) {
@@ -1490,21 +1502,18 @@ void shotWaterDragon(const Projectile& p, const Shot& s, float time) {
   vfx::additive(false);
 }
 
-void shotKamuiVortex(const Shot& s, float time) {
-  const Color g{150, 140, 170, 255};
-  vfx::glow(s.c, s.r * 1.1f, Ap({10, 8, 14, 255}, 0.85f * s.k), Ap({10, 8, 14, 255}, 0.0f));
-  vfx::additive(true);
-  for (int arm = 0; arm < 6; ++arm) {  // space twisting into the rift
-    Vec2 prev{};
-    for (int k = 0; k <= 12; ++k) {
-      const float u = k / 12.0f, a = -time * 5.0f + arm * kPi / 3.0f + u * 4.0f;
-      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a) * 0.85f} * (s.r * (1.5f - 1.35f * u));
-      if (k > 0) vfx::wedge(prev, q, 1.0f + 3.0f * u, 1.0f + 3.0f * u, Ap(g, 0.6f * u * s.k), Ap({220, 210, 240, 255}, 0.5f * u * s.k));
-      prev = q;
-    }
-  }
-  vfx::additive(false);
-  vfx::glow(s.c, s.r * 0.35f, Ap({0, 0, 0, 255}, s.k), Ap({20, 10, 30, 255}, s.k));
+// Kamui: space itself twists into a point and sucks in what stands there (the frame drawn so far is swirled,
+// pix::swirl), with the PixelLab rift turning on top (fx_kamui: a spiral collapsing into a black hole). It opens
+// during the warning, keeps pulling inwards while it lasts and collapses into a dot as it ends.
+void shotKamuiVortex(const Projectile& p, const Shot& s) {
+  const float open = smoothstep(clampf((p.age + 1.0f) / std::max(8.0f, float(p.armDelay)), 0.0f, 1.0f));
+  const float end = clampf(p.life / 14.0f, 0.0f, 1.0f);  // 1 until its last 14 frames
+  const float R = s.r * 2.4f * open * (0.3f + 0.7f * end);
+  pix::swirl(s.c, R * 1.25f, (2.5f + 0.12f * p.age) * open, 0.3f + 0.5f * open, 0.6f * open, std::min(1.0f, 2.0f * open));
+  const art::FxInfo* fx = art::fxInfo("kamui");
+  if (!fx || R < 1.0f) return;
+  const int frame = end >= 1.0f ? (p.age / 3) % 4 : std::min(fx->frames - 1, 4 + int((1.0f - end) * (fx->frames - 4)));
+  art::drawFxFrame("kamui", frame, s.c, R / (fx->fw * 0.46f), -p.age * 0.12f, false, 0.6f * std::min(1.0f, 2.0f * open));
 }
 
 void shuriken4(const Shot& s, float time, float R, Color body, Color edge) {
@@ -1634,6 +1643,14 @@ void drawProjectiles(const Match& m, float time) {
     s.k = std::min(1.0f, p.life / 8.0f) * std::min(1.0f, (p.age + 1) / 3.0f);
     s.age = float(p.age);
     s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
+    if (p.visual == ProjVisual::KamuiVortex) {  // the rift opening is its own warning
+      shotKamuiVortex(p, s);
+      continue;
+    }
+    if (p.visual == ProjVisual::BlackFlames) {  // so are the flames rising out of the ground
+      shotBlackFlames(p, s, time);
+      continue;
+    }
     if (!p.armed()) {  // the warning before the strike
       const bool sky = p.visual == ProjVisual::LightPillar || p.visual == ProjVisual::KirinBolt ||
                        p.visual == ProjVisual::Lightning || p.visual == ProjVisual::WindRain;
@@ -1698,7 +1715,6 @@ void drawProjectiles(const Match& m, float time) {
       case ProjVisual::BlackFlames: shotBlackFlames(p, s, time); continue;
       case ProjVisual::Kunai: shotKunai(s); continue;
       case ProjVisual::WaterDragon: shotWaterDragon(p, s, time); continue;
-      case ProjVisual::KamuiVortex: shotKamuiVortex(s, time); continue;
       case ProjVisual::KamuiShuriken: shotKamuiShuriken(s, time); continue;
       case ProjVisual::GiantGetsuga: shotGetsuga(s, false, time); continue;
       case ProjVisual::GetsugaCross: shotGetsugaCross(s, time); continue;
@@ -1806,7 +1822,7 @@ void drawOrb(const Match& m, float time) {
 }
 
 void drawStagePreview(const StageDef& s, Rectangle area, float time) {
-  art(s.theme);  // bake outside of the clip and transform below
+  themeArt(s.theme);  // bake outside of the clip and transform below
   // The real stage, scaled down and cropped to the area.
   const float sc = std::max(area.width / kScreenW, area.height / kScreenH);
   beginClip(area);
@@ -1833,7 +1849,7 @@ void drawStageThumb(int index, const StageDef& s, Rectangle area) {
   Layer& L = cache[index];
   if (L.rt.id == 0 || L.w != area.width || L.h != area.height || std::fabs(L.scale - g_renderScale) > 0.01f) {
     if (L.rt.id != 0) UnloadRenderTexture(L.rt);
-    art(s.theme);  // (bakes its own layers first, outside of this one)
+    themeArt(s.theme);  // (bakes its own layers first, outside of this one)
     L = bake(area.width, area.height, g_renderScale, [&] { drawStagePreview(s, {0, 0, area.width, area.height}, 2.0f); }, false);
   }
   drawBackdrop(L, area.x, area.y, area.y + area.height);

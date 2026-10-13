@@ -33,6 +33,9 @@ class Fx {
   };
   const Impact* impact() const { return impact_.t >= 0 && impact_.t < impact_.len ? &impact_ : nullptr; }
   float zoomPunch() const { return punch_; }  // extra camera zoom (0 = none)
+  // Plays a PixelLab effect once (art::drawFx: an fx line of sheets.txt) at `at`, `size` world units per effect
+  // pixel; it is drawn in front of the world until its last frame.
+  void playFx(const char* name, Vec2 at, float size, float rot = 0.0f, bool flip = false);
   Vec2 punchFocus() const { return punchPos_; }
 
  private:
@@ -97,6 +100,14 @@ class Fx {
   std::vector<KoBeam> kos_;
   std::vector<Pillar> pillars_;
   std::vector<FloatText> texts_;
+  struct SpriteFx {
+    const char* name;
+    Vec2 pos;
+    float size, rot;
+    bool flip;
+    int t = 0;
+  };
+  std::vector<SpriteFx> sprites_;
   struct Combo {  // hits chained on a fighter that never got out of hitstun in between
     int attacker = -1, hits = 0, lastHit = -1000, since = 0;
     bool live = false;

@@ -26,5 +26,9 @@ constexpr float kFinePixel = 1.0f;
 // The character renderer sizes its ink lines with it.
 float artUnit();
 constexpr Color kInk = {18, 13, 20, 255};  // sprite outline
+// Space twisting into the point `c` (Kamui): the frame drawn so far, within `radius` (current coordinates) of it,
+// is drawn back turned by up to `twist` radians (at the centre) and pulled in by `pinch` (0..1), darkened towards
+// the centre by `dark` (0..1). Needs the frame target (does nothing without it).
+void swirl(Vec2 c, float radius, float twist, float pinch, float dark, float alpha);
 void unload();
 }  // namespace pix

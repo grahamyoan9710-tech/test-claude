@@ -342,6 +342,7 @@ void Match::explodeProjectile(Projectile& pr) {
   const float r = pr.explodeRadius;
   pr.explodeRadius = 0.0f;  // once
   emit(EvType::Explosion, pr.pos, pr.owner, -1, r, {}, pr.explode.fx);
+  events.back().visual = int(pr.visual);
   for (auto& v : fighters) {
     if (!foes(pr.owner, v) || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
     if (!circleRect(pr.pos, r, v.hurtbox())) continue;
