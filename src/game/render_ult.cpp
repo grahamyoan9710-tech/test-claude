@@ -1,6 +1,7 @@
 // The cinematics of the v5 ultimates (one per UltFx: the backdrop behind the stage, a foreground layer),
 // what a held victim goes through (ice, chains, clones), and the transformations' avatars (Susanoo,
 // Kurama, wings). Same kit as render_vfx.cpp: a few big gradient triangles, additive where it glows.
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 
 namespace {
@@ -572,7 +573,16 @@ void ceroOscuras(const Ctx& x, bool front) {
 }
 
 void lanza(const Ctx& x, bool front) {
-  if (front) return;
+  if (front) {  // the javelin of light forms in his raised hand, then he throws it (shotLanza)
+    const int pf = x.f.moveDef(FinalSmash).projectileFrame;
+    if (x.mf >= 16 && x.mf < pf) {
+      const float u = clampf((x.mf - 16) / float(std::max(1, pf - 16)), 0.0f, 1.0f);
+      const float size = (0.4f + 0.6f * smoothstep(u)) * 1.7f, a = x.fc > 0 ? -0.22f : kPi + 0.22f;
+      const Vec2 hand = x.c + Vec2{-x.fc * 8.0f, -66.0f}, dir{std::cos(a), std::sin(a)};
+      art::drawFx("lanza", x.t, hand + dir * (110.0f * size), size, a, false, std::min(1.0f, 3.0f * u) * x.k);  // held by the shaft
+    }
+    return;
+  }
   huecoMundo(x);
   flashes(x.v, x.m.frame, x.k, {100, 255, 160, 255}, 17, 8);
 }

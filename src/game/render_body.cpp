@@ -1544,6 +1544,12 @@ struct Body {
   // Lilynette floating at his side: a small girl, short blonde hair, the broken mask with its horn over one eye.
   void lilynette() {
     if (!has(WeaponVisual::Lilynette) || P.ghost || bust) return;
+    if (const art::FxInfo* fx = art::fxInfo("lilynette")) {  // the PixelLab sprite, standing behind him
+      const float sz = 0.62f * H * s / std::max(1.0f, fx->ay);  // her height: the anchor is at her feet
+      const Vec2 at = W(X(Vec2{-0.42f * H, 0.5f * H}));
+      art::drawFx("lilynette", time + 0.37f, at, sz, 0.0f, X.facing < 0, P.alpha);
+      return;
+    }
     const float k = 0.42f, u = H * k, w = u * s;
     const Vec2 c = R.neck + Vec2{-0.36f * H, 0.02f * H + std::sin(time * 2.4f) * 0.03f * H};
     auto at = [&](float x, float y) { return c + Vec2{x, y} * u; };
@@ -2540,11 +2546,19 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   Look L = lookFor(d, palette);
   formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
-  if (art::rigged(d.hero) && pose.sheet >= 0) {  // a generated animation frame: it draws the turns and lifts itself
+  if (art::rigged(d.hero) && pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)) {
+    // A generated animation frame: it draws the turns and lifts itself. What the fighter carries and summons around
+    // it (Yuno's grimoire, Starrk's wolves and Lilynette) is drawn beside it.
+    b.grimoire();
+    if (d.hero == Hero::Starrk) {
+      b.wolfPack(false);
+      b.lilynette();
+    }
     Pose flat = pose;
     flat.rot = 0.0f;
     flat.shift = {0.0f, 0.0f};
     if (art::drawSheet(d, pose, xform(d, flat, feet + pose.sheetOffset * scale, facing, scale), alpha, flashColor, flash)) {
+      if (d.hero == Hero::Starrk) b.wolfPack(true);
       b.energy();
       return;
     }

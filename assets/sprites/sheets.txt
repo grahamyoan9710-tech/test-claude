@@ -7,6 +7,8 @@ fx amaterasu 12 99 114 50.0 108.0 12.0482 1
 fx fuga_arrow 8 124 32 115.0 16.0 14.9254 1
 fx fuga_blast 12 218 213 106.0 107.0 14.0845 0
 fx kamui 12 132 132 68.0 66.0 14.9254 0
+fx lanza 8 194 32 171.0 16.0 14.9254 1
+fx lanza_blast 12 224 224 112.0 112.0 14.0845 0
 icon cursed_finger 57 74
 icon double_mangekyo 86 86
 icon grimoire_closed 91 89
@@ -86,8 +88,8 @@ sheet kakashi uthrow 8 151 234 72.0 233.0 213.0 0 3 15
 sheet kakashi utilt 8 171 236 87.0 235.0 213.0 0 3 15
 sheet kakashi victory 12 130 232 74.0 231.0 213.0 0 -1 15
 sheet kakashi w0_jab 8 246 214 121.0 213.0 213.0 0 2 15
-sheet kakashi w0_nspecial 12 206 230 81.0 229.0 213.0 0 5 15
-sheet kakashi w0_ultimate 28 243 243 117.0 233.0 213.0 0 21 15
+sheet kakashi w0_nspecial 12 170 224 83.0 223.0 213.0 0 5 15
+sheet kakashi w0_ultimate 28 231 236 115.0 235.0 213.0 0 16 15
 sheet kakashi w1_jab 8 247 235 124.0 234.0 213.0 0 2 15
 sheet kakashi w1_nspecial 12 233 237 116.0 236.0 213.0 0 3 15
 sheet kakashi w1_ultimate 28 256 256 128.0 244.0 213.0 0 0 15
@@ -208,8 +210,8 @@ sheet sasuke w0_jab 8 235 237 113.0 235.0 213.0 0 2 15
 sheet sasuke w0_nspecial 12 224 246 92.0 244.0 213.0 0 5 15
 sheet sasuke w0_ultimate 28 254 248 122.0 240.0 213.0 0 14 15
 sheet sasuke w1_jab 8 234 236 112.0 234.0 213.0 0 0 15
-sheet sasuke w1_nspecial 12 203 212 71.0 210.0 213.0 0 4 15
-sheet sasuke w1_ultimate 28 256 228 124.0 226.0 213.0 0 18 15
+sheet sasuke w1_nspecial 12 151 207 71.0 205.0 213.0 0 5 15
+sheet sasuke w1_ultimate 28 191 237 84.0 235.0 213.0 0 12 15
 sheet sasuke walk 8 151 216 71.0 214.0 213.0 1 -1 15
 sheet starrk w0_jab 8 184 141 63.0 136.0 130.0 0 2 15
 sheet starrk w1_jab 8 182 155 65.0 153.0 130.0 0 3 15
@@ -222,7 +224,7 @@ sheet yuno w1_jab 8 234 214 116.0 212.0 130.0 0 1 15
 shield guardian_shield 102 100 51.0 50.0 51.0
 shield link_shield 96 112 48.0 56.0 56.0
 weapon asta_sword 230 76 31.8 36.5 229.0 36.5
-weapon chaos_blade 164 56 25.8 29.0 163.0 29.0
+weapon chaos_blade 158 50 42.0 17.0 157.0 17.0
 weapon charge_blade 248 56 33.6 27.0 247.0 27.0
 weapon demon_dweller 223 33 32.4 12.0 222.0 12.0
 weapon demon_king_sword 220 58 35.4 29.5 219.0 29.5
@@ -239,7 +241,7 @@ weapon kusanagi 232 29 37.8 14.0 231.0 14.0
 weapon leviathan_axe 247 89 49.2 41.5 246.0 41.5
 weapon link_sword 164 37 22.8 18.0 163.0 18.0
 weapon lobos_pistol 128 53 19.1 37.4 127.0 37.4
-weapon luz_de_la_luna 236 45 58.8 21.5 235.0 21.5
+weapon luz_de_la_luna 192 30 53.5 14.5 191.0 14.5
 weapon master_sword 243 54 40.8 26.5 242.0 26.5
 weapon nozarashi 235 85 46.8 41.5 234.0 41.5
 weapon pantera 214 21 34.8 9.5 213.0 9.5

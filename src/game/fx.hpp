@@ -89,7 +89,7 @@ class Fx {
   void hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big);
   void groundImpact(const Match& m, Vec2 feet, float strength);  // cracks, rubble and dust where a blow hits the ground
   void elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy);
-  void explosion(Vec2 pos, float r, HitFx fx);
+  void explosion(Vec2 pos, float r, HitFx fx, bool drawn = false);  // drawn: an effect sprite plays there too
   void startImpact(const Match& m, Vec2 pos, Vec2 dir, int attacker, int victim, HitFx fx, int len, bool ko);
   void hitSound(HitFx fx, float kb, bool big);
   void projectileTrails(const Match& m);

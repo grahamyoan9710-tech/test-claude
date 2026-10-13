@@ -1305,9 +1305,17 @@ void spear(const Shot& s, float len, float w, Color body, Color core, Color glow
   vfx::additive(false);
 }
 
-void shotLuzDeLaLuna(const Shot& s) { spear(s, s.r * 7.0f, s.r * 0.45f, {90, 240, 150, 255}, {230, 255, 236, 255}, {70, 255, 140, 255}); }
+void shotLuzDeLaLuna(const Shot& s, float time) {  // a smaller javelin of the same teal light as the Lanza
+  if (art::drawFx("lanza", time, s.c, s.r * 8.0f / 194.0f, std::atan2(s.d.y, s.d.x), false, s.k)) return;
+  spear(s, s.r * 7.0f, s.r * 0.45f, {90, 240, 150, 255}, {230, 255, 236, 255}, {70, 255, 140, 255});
+}
 
+// Lanza del Relámpago: the PixelLab javelin (fx_lanza: a barbed head of teal light, a crackling shaft).
 void shotLanza(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap({60, 230, 200, 255}, 0.4f * s.k), Ap({60, 230, 200, 255}, 0.0f));
+  vfx::additive(false);
+  if (art::drawFx("lanza", time, s.c, s.r * 10.0f / 194.0f, std::atan2(s.d.y, s.d.x), false, s.k)) return;
   spear(s, s.r * 6.0f, s.r * 0.55f, {60, 220, 120, 255}, {230, 255, 236, 255}, {70, 255, 140, 255});
   const uint32_t fs = s.seed + uint32_t(time * 40.0f) * 71u;
   vfx::additive(true);
@@ -1684,7 +1692,7 @@ void drawProjectiles(const Match& m, float time) {
         continue;
       case ProjVisual::ReiatsuWave: shotReiatsuWave(s, time); continue;
       case ProjVisual::CeroOscuras: shotCeroOscuras(s, time); continue;
-      case ProjVisual::LuzDeLaLuna: shotLuzDeLaLuna(s); continue;
+      case ProjVisual::LuzDeLaLuna: shotLuzDeLaLuna(s, time); continue;
       case ProjVisual::Lanza: shotLanza(s, time); continue;
       case ProjVisual::BarrelBomb: shotBarrel(p, s, time); continue;
       case ProjVisual::Phial: shotFlash(s, {255, 230, 90, 255}); continue;

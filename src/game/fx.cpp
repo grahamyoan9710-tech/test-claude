@@ -362,7 +362,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
   }
 }
 
-void Fx::explosion(Vec2 pos, float r, HitFx fx) {
+void Fx::explosion(Vec2 pos, float r, HitFx fx, bool drawn) {
   // Fire and plain blasts burn orange; the other elements explode in their own colours.
   const bool fiery = fx == HitFx::Fire || fx == HitFx::Normal || fx == HitFx::Slash;
   const bool elemental = !fiery;
@@ -371,7 +371,7 @@ void Fx::explosion(Vec2 pos, float r, HitFx fx) {
   add(PK::Flash, pos, {}, 12, r * 0.6f, r * 2.0f, hot);
   Particle& b = add(PK::Burst, pos, {}, 11, r * 0.9f, r * 2.4f, hot);
   b.rot = rng_.range(0, 2 * kPi);
-  for (int i = 0; i < 7; ++i) {
+  for (int i = 0; i < (drawn ? 0 : 7); ++i) {  // drawn: a PixelLab effect is the fireball
     Particle& p = add(PK::Fireball, pos + rdir() * rng_.range(0.0f, r * 0.35f), rdir() * 1.6f + Vec2{0.0f, -0.6f},
                       rng_.range(22, 34), r * 0.25f, r * rng_.range(0.6f, 0.9f), hot, -0.02f, 0.93f);
     p.color2 = elemental ? shade(mid, 0.3f) : Color{56, 46, 44, 255};
@@ -387,7 +387,7 @@ void Fx::explosion(Vec2 pos, float r, HitFx fx) {
   }
   for (int i = 0; i < 14; ++i)
     add(PK::Ember, pos, rdir() * rng_.range(3.0f, 10.0f), rng_.range(20, 36), 2.5f, 0.5f, mid, -0.05f, 0.93f);
-  for (int i = 0; i < 6; ++i)
+  for (int i = 0; i < (drawn ? 0 : 6); ++i)
     add(PK::Smoke, pos + rdir() * rng_.range(0.0f, r * 0.4f), {rng_.range(-1, 1), rng_.range(-2.0f, -0.8f)}, rng_.range(40, 60),
         r * 0.3f, r * 0.7f, {60, 54, 54, 190}, -0.01f, 0.96f);
   shake_ = std::max(shake_, std::min(20.0f, r / 5.0f));
@@ -695,9 +695,11 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::CutIn, 0.7f, 1.1f);
         break;
       case EvType::Explosion:
-        explosion(e.pos, std::max(20.0f, e.strength), e.fx);
         if (e.visual == int(ProjVisual::FireArrow))  // Fuga: a tower of fire where the arrow lands
           playFx("fuga_blast", e.pos, 2.0f * e.strength / 170.0f);
+        else if (e.visual == int(ProjVisual::Lanza))  // the Lanza: a dome of teal light
+          playFx("lanza_blast", e.pos, 2.0f * e.strength / 200.0f);
+        explosion(e.pos, std::max(20.0f, e.strength), e.fx, !sprites_.empty() && sprites_.back().t == 0);
         break;
       case EvType::WeaponSpawn: {  // a pillar of light guides the weapon down from the sky
         const auto& chars = roster();
