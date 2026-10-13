@@ -180,7 +180,7 @@ std::vector<std::string> MatchScreen::pauseItems() const {
     if (f.cpu) dummy = f.id;
   std::string mode = dummy >= 0 ? dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel) : "-";
   const Fighter& me = m_.fighters[0];
-  std::string weapon = upperFr("ARME : " + me.def->weapons[dropSlot_ & 1].name);
+  std::string weapon = upperFr("ARME " + std::to_string((dropSlot_ & 1) + 1) + "/2 : " + me.def->weapons[dropSlot_ & 1].name);
   auto onOff = [](bool b) { return std::string(b ? "OUI" : "NON"); };
   return {"REPRENDRE",
           "RÉINITIALISER LES POSITIONS",
@@ -201,12 +201,16 @@ MatchScreen::Result MatchScreen::updatePause() {
   if (nav.up) pauseSel_ = (pauseSel_ + n - 1) % n;
   if (nav.down) pauseSel_ = (pauseSel_ + 1) % n;
   bool click = false;
+  int clickSide = 0;  // a click on the left (-1) or right (+1) arrow of a training setting
   for (int i = 0; i < n; ++i) {
-    if (!ui::hovered(pauseItemRect(i, n))) continue;
+    const Rectangle r = pauseItemRect(i, n);
+    if (!ui::hovered(r)) continue;
     if (ui::mouseMoved()) pauseSel_ = i;
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       pauseSel_ = i;
       click = true;
+      const float mx = GetMousePosition().x;
+      if (training() && i >= 2 && i <= 7) clickSide = mx < r.x + 70.0f ? -1 : mx > r.x + r.width - 70.0f ? 1 : 0;
     }
   }
   if (pauseSel_ != before) audio_.play(Sfx::MenuMove);
@@ -218,11 +222,12 @@ MatchScreen::Result MatchScreen::updatePause() {
     audio_.play(Sfx::MenuBack);
     return Result::Running;
   }
-  const bool activate = nav.confirm || click;
-  const bool cycle = activate || nav.left || nav.right;
+  const bool left = nav.left || clickSide < 0, right = nav.right || clickSide > 0;
+  const bool activate = nav.confirm || (click && clickSide == 0);
+  const bool cycle = activate || left || right;
   if (training()) {
     if (pauseSel_ == 2 && cycle) {
-      int d = nav.left ? -1 : 1;
+      int d = left ? -1 : 1;
       for (auto& b : brains_) b.setDummy((b.dummy() + d + CpuBrain::kDummyCount) % CpuBrain::kDummyCount);
       audio_.play(Sfx::MenuMove);
       return Result::Running;
@@ -249,7 +254,7 @@ MatchScreen::Result MatchScreen::updatePause() {
       audio_.play(Sfx::MenuMove);
       return Result::Running;
     }
-    if (pauseSel_ == 7 && (nav.left || nav.right)) {  // which weapon
+    if (pauseSel_ == 7 && (left || right)) {  // which weapon: its arrows (ENTRÉE or a click in the middle drops it)
       dropSlot_ ^= 1;
       audio_.play(Sfx::MenuMove);
       return Result::Running;
@@ -553,8 +558,12 @@ void MatchScreen::drawPause() {
                                    : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
                      b.x + b.width * 0.5f, b.y + 48, 17, {250, 218, 200, 255}, false);
   }
-  ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
-              {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
+  if (training())
+    ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"GAUCHE/DROITE", ui::Btn::DPadLR, "Changer"},
+                {"ENTRÉE", ui::Btn::A, "Valider"}, {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
+  else
+    ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
+                {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
 }
 
 void MatchScreen::draw() {

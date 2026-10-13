@@ -134,6 +134,8 @@ Chaos, Dragon de lumière...
   - **Rester à 0 %** : les dégâts ne s'accumulent pas (chaque coup n'éjecte que de sa propre force) ;
   - **Mode combat (3 vies)** : un vrai combat de 3 vies contre le mannequin ; quand quelqu'un les a toutes
     perdues, « GAME! », puis le combat recommence (3 vies chacun, positions de départ).
+  - **Arme 1/2** : les flèches (clavier, manette, ou un clic sur les flèches) choisissent l'une des deux
+    armes du combattant, ENTRÉE (ou un clic au milieu) la fait tomber devant lui.
 - **17 combattants** inspirés de séries cultes (hommages de fans, dessinés d'après des illustrations), chacun avec ses
   stats, 4 attaques spéciales, **2 armes à ramasser** et **3 ultimes** : un à mains nues et un par arme.
   | | Univers | Spéciales | Ultime | Arme 1 → son ultime | Arme 2 → son ultime |
@@ -350,9 +352,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-8.2-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-8.3-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-8.2-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-8.3-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
