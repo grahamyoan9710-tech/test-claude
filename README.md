@@ -107,7 +107,8 @@ bouclier, roulade, esquives, coups reçus, chute au sol et relevé, étourdissem
 attente, remontée, attaque), victoire, et **tous leurs coups** (jabs, tilts, smashs, aériens, attaque en
 course, chopes et projections, 4 spéciales, ultime), plus les versions avec leurs armes (mode Ermite et
 manteau de Kurama de Naruto, sabre et Susanoo de Sasuke, Sharingan et Mangekyō de Kakashi). Sasuke se bat au
-sabre (chokutō) : ses coups partent d'une garde sabre en main.
+sabre (chokutō) : ses coups partent d'une garde sabre en main. En tout : 57 animations pour Naruto et Kakashi,
+56 pour Sasuke (il n'a pas de troisième jab), plus les 34 M1 des armes et les 47 dessins d'armes.
 
 - Les boucles (garde, chute, rebord, étourdissement...) tournent à **15 images par seconde** ; la marche et
   la course avancent avec le terrain parcouru (les pieds ne glissent pas).
@@ -123,7 +124,8 @@ sabre (chokutō) : ses coups partent d'une garde sabre en main.
 super_clash --export-pose ichigo 0 ichigo_w0.png --anchor 104 236 --pxh 130
 # 2. PixelLab anime cette image (les images reviennent en f_00.png, f_01.png...) ; 3. import :
 python3 scripts/import_clip.py ichigo w0_jab dossier/ --anchor 104 236 --pxh 130 --impact 3
-#   --loop : boucle ; --fps 15 ; --impact N : l'image où le coup porte ; --only A-B : garde ces images
+#   --loop : boucle ; --fps 15 ; --impact N : l'image où le coup porte ; --only A-B : garde ces images ;
+#   --drop PX : la première image est dessinée PX plus bas (la remontée du rebord part des mains sur le bord)
 python3 scripts/import_weapon.py weapon zangetsu image.png   # une arme : weapon, icon, bow ou shield
 ```
 
