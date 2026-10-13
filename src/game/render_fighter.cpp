@@ -901,8 +901,11 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     case FState::GetUp: once(art::kSheetGetUp, sf / std::max(1, f.timer)); break;
     case FState::Helpless: loop(art::kSheetHelpless) || loop(art::kSheetFall); break;
     case FState::LedgeHang: loop(art::kSheetLedge); break;
-    case FState::LedgeClimb:  // the clip climbs by itself: drawn from where the climb ends
-      if (once(art::kSheetClimb, sf / 18.0f)) p.sheetOffset = f.ledgeTo - f.pos;
+    case FState::LedgeClimb:  // the fighter rises from the ledge to the stage; the clip's first frame hangs lower
+      if (once(art::kSheetClimb, sf / 18.0f)) {
+        const float t = smoothstep(clampf(sf / 18.0f, 0.0f, 1.0f));  // as the climb moves the fighter
+        p.sheetOffset = {0.0f, (1.0f - t) * art::sheetDrop(*f.def, art::kSheetClimb)};
+      }
       break;
     case FState::Holding: loop(art::kSheetHold) || loop(art::kSheetIdle); break;
     case FState::Grabbed: case FState::Captured: loop(art::kSheetGrabbed) || once(art::kSheetHurt, 0.5f); break;

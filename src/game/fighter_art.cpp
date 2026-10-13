@@ -173,6 +173,7 @@ struct Art {
     int frames = 0, impact = -1;  // impact: the frame where the blow lands (-1: none)
     float fw = 0, fh = 0, ax = 0, ay = 0, pxPerH = 1;  // frame size, the feet (hips' x on the ground), scale
     float fps = 15.0f;                                 // looping clips
+    float drop = 0;  // px: the first frame sits this much lower than the anchor says, easing to 0 by the last
   };
   Sheet sheets[kSheetCount];
   bool clips = false, clipsTried = false;  // at least one sheet; sheets loaded
@@ -522,9 +523,9 @@ void loadSheets(Art& A, const char* fighter) {
     pos = end + 1;
     char who[32] = {}, anim[32] = {};
     int frames = 0, loop = 0, impact = -1;
-    float fw = 0, fh = 0, ax = 0, ay = 0, pxh = 0, fps = 15.0f;
-    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %d %f", who, anim, &frames, &fw, &fh, &ax,
-                    &ay, &pxh, &loop, &impact, &fps) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
+    float fw = 0, fh = 0, ax = 0, ay = 0, pxh = 0, fps = 15.0f, drop = 0.0f;
+    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %d %f %f", who, anim, &frames, &fw, &fh, &ax,
+                    &ay, &pxh, &loop, &impact, &fps, &drop) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
       continue;
     int id = -1;
     for (int i = 0; i < kSheetCount; ++i)
@@ -546,6 +547,7 @@ void loadSheets(Art& A, const char* fighter) {
       S.loop = loop != 0;
       S.impact = impact < frames ? impact : -1;
       S.fps = fps > 0.0f ? fps : 15.0f;
+      S.drop = drop;
       S.ok = true;
       A.clips = true;
       break;
@@ -1229,6 +1231,12 @@ const Art* clipsOf(Hero h) {
 bool hasSheet(Hero h, int a) {
   const Art* A = clipsOf(h);
   return A && a >= 0 && a < kSheetCount && A->sheets[a].ok;
+}
+
+float sheetDrop(const CharacterDef& d, int a) {
+  const Art* A = clipsOf(d.hero);
+  if (!A || a < 0 || a >= kSheetCount || !A->sheets[a].ok) return 0.0f;
+  return A->sheets[a].drop * d.height / A->sheets[a].pxPerH;
 }
 
 bool hasClips(Hero h) {

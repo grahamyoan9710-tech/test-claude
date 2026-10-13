@@ -2535,7 +2535,7 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
     Pose flat = pose;
     flat.rot = 0.0f;
     flat.shift = {0.0f, 0.0f};
-    if (art::drawSheet(d, pose, xform(d, flat, feet + pose.sheetOffset, facing, scale), alpha, flashColor, flash)) {
+    if (art::drawSheet(d, pose, xform(d, flat, feet + pose.sheetOffset * scale, facing, scale), alpha, flashColor, flash)) {
       b.energy();
       return;
     }

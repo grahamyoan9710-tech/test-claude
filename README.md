@@ -427,7 +427,7 @@ super_clash --export-pose naruto -1 naruto.png   # le combattant au repos sur un
 super_clash --screen menu --palette 2   # essayer une palette des menus : 0 actuelle, 1 Brasier, 2 Néon, 3 Shōnen, 4 Électrique, 5 Pop
 super_clash --screen training --fighters 8,9   # entraînement : Naruto (clavier 1) contre Sasuke en cible
 super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 3)
-super_clash --screen anim --tab 40   # pellicules d'animation : combattant N/5, page N%5 (allures, jabs, smashs, spéciales et ultime, M1 des armes)
+super_clash --screen anim --tab 48   # pellicules d'animation : combattant N/6, page N%6 (allures, jabs, smashs, spéciales et ultime, M1 des armes, rebord et chopes)
 super_clash --stage 10        # arène par défaut (0 à 10, dans l'ordre de l'écran de choix)
 super_clash --demo --record 300 480 2 dossier   # enregistre une image sur 2 de 300 à 480 (pour des GIF)
 super_clash --debug           # zones de coup visibles

@@ -1,7 +1,7 @@
 // Development sheets. --screen poses --tab PAGE: every fighter at rest, with each of its weapons, walking,
 // running and jumping, to check how the characters stand and hold their weapons. --screen anim --tab N:
-// filmstrips of one fighter (N / 5) through its gaits and moves (page N % 5, the last one with its weapons), to
-// judge the animation.
+// filmstrips of one fighter (N / 6) through its gaits and moves (page N % 6: gaits, jabs and tilts, smashes and
+// aerials, specials, with its weapons, ledge and throws), to judge the animation.
 #include <algorithm>
 #include <cmath>
 
@@ -65,7 +65,7 @@ namespace {
 struct Strip {
   const char* label;
   int move;      // MoveId, or -1 for a gait
-  int gait = 0;  // 0 walk, 1 run, 2 jump arc
+  int gait = 0;  // 0 walk, 1 run, 2 jump arc, 3 ledge (hanging, then climbing up)
   int weapon = -1;  // the picked-up weapon held (0, 1), or none
 };
 }  // namespace
@@ -73,7 +73,7 @@ struct Strip {
 void App::drawAnimSheet() {
   constexpr int kCols = 10, kRows = 5;
   const auto& r = roster();
-  constexpr int kPages = 5;
+  constexpr int kPages = 6;
   const int ci = std::clamp(setTab_ / kPages, 0, int(r.size()) - 1), page = setTab_ % kPages;
   const CharacterDef& d = r[ci];
   static const Strip pages[kPages][kRows] = {
@@ -84,6 +84,8 @@ void App::drawAnimSheet() {
        {"Ultime", FinalSmash}},
       {{"Jab", Jab}, {"M1 arme 1", Jab, 0, 0}, {"M1 arme 2", Jab, 0, 1}, {"Spécial arme 1", NSpecial, 0, 0},
        {"Spécial arme 2", NSpecial, 0, 1}},
+      {{"Rebord", -1, 3}, {"Chope", Grab}, {"Frappe (chope)", Pummel}, {"Projection avant", FThrow},
+       {"Projection arrière", BThrow}},
   };
   ClearBackground({58, 72, 84, 255});
   drawText(TextFormat("%s  —  page %d/%d", d.name.c_str(), page + 1, kPages), 12, 6, 22, ui::kCream);
@@ -118,8 +120,26 @@ void App::drawAnimSheet() {
       float when = time_;
       float lift = 0.0f;
       bool active = false;
+      bool onLedge = false;
       if (!mvd) {
-        if (st.gait == 0) {  // one cycle of each gait (driven by the distance covered)
+        if (st.gait == 3) {  // hanging (4 columns), then climbing up (6), placed as the core does from the corner (0, 0)
+          const Vec2 hang{-(d.width * 0.5f + 2.0f), d.height * 0.75f}, top{d.width * 0.7f, 0.0f};
+          onLedge = true;
+          f.grounded = false;
+          if (c < 4) {
+            f.state = FState::LedgeHang;
+            f.pos = hang;
+            when = time_ + c * 0.27f;  // the hanging loop at different moments
+          } else {
+            f.state = FState::LedgeClimb;
+            f.stateFrame = (c - 4) * 18 / 5;
+            f.ledgeFrom = hang;
+            f.ledgeTo = top;
+            const float t = smoothstep(std::min(1.0f, f.stateFrame / 18.0f));
+            f.pos = lerpv(hang, top, t);
+            f.pos.y -= std::sin(t * kPi) * 20.0f;
+          }
+        } else if (st.gait == 0) {  // one cycle of each gait (driven by the distance covered)
           f.state = FState::Walk;
           f.pos.x = c / float(kCols) * 0.76f * d.height;
         } else if (st.gait == 1) {
@@ -151,9 +171,15 @@ void App::drawAnimSheet() {
         for (const auto& h : mvd->hitboxes) active = active || (f.moveFrame >= h.start && f.moveFrame < h.end);
       }
       const Pose p = computePose(f, m, when);
-      const float scale = std::min(0.92f, 92.0f / d.height);
+      const float scale = std::min(0.92f, 92.0f / d.height) * (onLedge ? 0.62f : 1.0f);
       const float cx = x0 + (c + 0.5f) * colW;
       if (active) DrawRectangle(int(cx - colW * 0.5f + 2), int(base - rowH + 18), int(colW - 4), 4, {230, 80, 70, 255});
+      if (onLedge) {  // the stage's corner, the fighter where the core puts it
+        const Vec2 corner{cx - 8.0f, base - d.height * 0.75f * scale - 6.0f};
+        DrawRectangle(int(corner.x), int(corner.y), int(colW * 0.5f), int(base - corner.y), {92, 104, 116, 255});
+        drawCharacterSprite(d, 0, p, corner + f.pos * scale, 1, scale, 1.0f, WHITE, 0.0f, time_);
+        continue;
+      }
       drawCharacterSprite(d, 0, p, {cx, base - lift}, 1, scale, 1.0f, WHITE, 0.0f, time_);
       if (mvd) drawText(TextFormat("%d", f.moveFrame), cx - colW * 0.45f, base - 16, 13, ui::kMuted);
     }

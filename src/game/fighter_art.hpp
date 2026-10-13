@@ -66,6 +66,9 @@ bool embeddedSprite(const char* name, const unsigned char** data, unsigned* size
 const std::string& spriteIndex();
 bool hasSheet(Hero h, int anim);
 bool hasClips(Hero h);  // the fighter has at least one generated clip
+// How much lower the clip's first frame is drawn (world units; 0 for most clips): the ledge climb starts from the
+// hands on the ledge, where the hanging clip holds them, and ends standing on its anchor.
+float sheetDrop(const CharacterDef& d, int anim);
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 bool drawBust(Hero h, Vec2 center, float size, float alpha);
 // The same bust (not faded), cut to a box slanted like ui::slanted: the close-ups of the character select.
