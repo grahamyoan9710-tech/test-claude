@@ -8,8 +8,9 @@ on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l
 **Les 17 combattants sont faits d'après des illustrations en pixel art** : la tête, le buste et les
 vêtements viennent de l'image, les bras et les jambes sont redessinés par le jeu à chaque image (en
 volume, avec les motifs et les couleurs de l'illustration), voir
-[Combattants illustrés](#combattants-illustrés). Naruto a en plus une garde et un coup de poing **dessinés image
-par image** (essai avec SpriteCook, voir [Animations générées](#animations-générées-essai-avec-naruto)). En
+[Combattants illustrés](#combattants-illustrés). **Naruto, Sasuke et Kakashi sont entièrement animés image par
+image** (générés avec PixelLab), **toutes les armes sont des dessins PixelLab**, et chaque combattant a une
+**attaque M1 animée pour chacune de ses armes**, voir [Animations PixelLab](#animations-pixellab). En
 combat, ils passent par un rendu **pixel art** (contour
 sombre d'un pixel, aplats francs) ; les menus, les arènes et les effets restent lisses. Les bruitages et
 l'annonceur sont enregistrés (générés avec ElevenLabs), la musique est synthétisée au lancement. Les
@@ -77,9 +78,10 @@ La même image sert aux portraits : carte de sélection, vignettes, cut-in d'ult
 ![Naruto : l'illustration et son animation en jeu](docs/illustre.jpg)
 
 Les **17 combattants** sont illustrés. Les armes (épées, Zangetsu, lames du Chaos, arc et bouclier de Link,
-grimoire de Yuno, loups de Starrk...) restent dessinées par le jeu : le poing de l'illustration se referme
-sur la poignée, et les lames sont plus fines pour aller avec les silhouettes réalistes (leur longueur, celle
-de la zone de coup, ne change pas). Une transformation teinte l'illustration (cape dorée de Kurama, corps
+grimoire de Yuno, loups de Starrk...) sont des **dessins en pixel art générés avec PixelLab** : le poing de
+l'illustration se referme sur la poignée et l'image suit la lame (sa longueur, celle de la zone de coup, ne
+change pas) ; les arcs se tendent entre leurs deux pointes, les boucliers et les pouvoirs (grimoires, yeux,
+masques...) ont leur icône, reprise par les objets posés au sol et par le HUD. Une transformation teinte l'illustration (cape dorée de Kurama, corps
 blanc du Vasto Lorde, peau rouge du Démon rouge...) en plus de son avatar (ailes, Susanoo, renard).
 
 Pour ajouter ou remplacer un combattant (image générée avec ChatGPT : un personnage en pied, tourné vers la
@@ -97,24 +99,40 @@ python3 scripts/rig_art.py art/fighters/link.json --debug /tmp/link   # découpe
 
 puis ajouter son nom à `CLASH_FIGHTER_ART` (`CMakeLists.txt`) et à `kSources` (`src/game/fighter_art.cpp`).
 
-### Animations générées (essai avec Naruto)
+### Animations PixelLab
 
-Naruto a deux animations **dessinées image par image** par [SpriteCook](https://spritecook.ai) d'après son
-illustration : sa garde (8 images en boucle, le bandeau flotte au vent) et son coup de poing (8 images). Elles
-remplacent le squelette quand il est en garde, pour ses jabs 1 et 2 et pour son tilt avant. L'image du poing
-tendu reste affichée tant que la zone de coup est active, la préparation et le retour se partagent le reste du
-mouvement. Ses autres mouvements gardent le rendu squelette + illustration.
+**Naruto, Sasuke et Kakashi** sont animés **image par image** avec [PixelLab](https://www.pixellab.ai)
+(`animate_image_pixminimax`) d'après leur illustration : garde, marche, course, sauts, chute, atterrissage,
+bouclier, roulade, esquives, coups reçus, chute au sol et relevé, étourdissement, saisie, rebord (prise,
+attente, remontée, attaque), victoire, et **tous leurs coups** (jabs, tilts, smashs, aériens, attaque en
+course, chopes et projections, 4 spéciales, ultime), plus les versions avec leurs armes (mode Ermite et
+manteau de Kurama de Naruto, sabre et Susanoo de Sasuke, Sharingan et Mangekyō de Kakashi). Sasuke se bat au
+sabre (chokutō) : ses coups partent d'une garde sabre en main.
+
+- Les boucles (garde, chute, rebord, étourdissement...) tournent à **15 images par seconde** ; la marche et
+  la course avancent avec le terrain parcouru (les pieds ne glissent pas).
+- Un coup est étiré sur la durée du mouvement : la préparation jusqu'à l'image où il porte, **cette image
+  reste affichée tant que la zone de coup est active**, puis le retour en garde.
+- **Ramasser une arme change la M1** (le jab) : c'est une frappe de l'arme (taille, estoc, tir rapide ou
+  frappe d'énergie selon l'arme), et **chaque combattant a une animation PixelLab pour chacune de ses deux
+  armes** (Getsuga noir d'Ichigo, épée anti-magie d'Asta, lance de vent de Yuno, Senbonzakura de Byakuya...).
+- Un état sans animation garde le rendu squelette + illustration.
 
 ```bash
-# planche.png : la planche d'images rendue par SpriteCook (spritesheet) ; naruto_sc256.png : l'image de
-# 256x256 qui lui a été envoyée, où l'illustration est posée en (34, 12) à l'échelle 0.244468
-python3 scripts/import_sheet.py planche.png naruto attack --source art/fighters/naruto_sc256.png \
-    --placement 34 12 0.244468 --impact 3   # --impact : l'image où le coup porte ; --loop : animation en boucle
+# 1. la première image : le combattant au repos (avec son arme N), pieds en (100, 236), 150 px de haut
+super_clash --export-pose ichigo 0 ichigo_w0.png --anchor 104 236 --pxh 130
+# 2. PixelLab anime cette image (les images reviennent en f_00.png, f_01.png...) ; 3. import :
+python3 scripts/import_clip.py ichigo w0_jab dossier/ --anchor 104 236 --pxh 130 --impact 3
+#   --loop : boucle ; --fps 15 ; --impact N : l'image où le coup porte ; --only A-B : garde ces images
+python3 scripts/import_weapon.py weapon zangetsu image.png   # une arme : weapon, icon, bow ou shield
 ```
 
-Le script écrit `assets/sprites/naruto_attack.png` et sa ligne dans `assets/sprites/sheets.txt` (pieds,
-échelle, boucle, image du coup), intégrés à la compilation. Les animations reconnues sont `idle` (la garde) et
-`attack` (`kSheetNames`, `src/game/fighter_art.cpp`).
+Les scripts écrivent `assets/sprites/<combattant>_<animation>.png` (ou `weapon_<nom>.png`) et leur ligne dans
+`assets/sprites/sheets.txt`, intégrés à la compilation. Les noms d'animations : `idle`, `walk`, `run`,
+`jump`, `fall`, `land`, `shield`, `roll`, `hurt`, `knockdown`, `getup`, `ledge`, `climb`, `victory`...,
+le nom du coup (`jab`, `ftilt`, `fsmash`, `nair`, `nspecial`, `ultimate`...), et `w0_`/`w1_` devant pour la
+version avec l'arme 1 ou 2 (`sheetName`, `src/game/fighter_art.cpp`). `--screen anim` montre chaque
+combattant image par image.
 
 **Chaque ultime est unique** (51 en tout) : Getsuga Tenshō, Vasto Lorde, Gran Rey Cero, Cero Metralleta,
 Violet imaginaire, Amaterasu, Kendō, Sanctuaire démoniaque, Shuriken du Susanoo, Barrage Uzumaki, Fouet du
@@ -162,7 +180,8 @@ Chaos, Dragon de lumière...
   la ramasser, **en marchant dessus**. Pendant une vingtaine de secondes (anneau autour du portrait dans
   le HUD), il frappe plus fort et plus loin, ses coups prennent l'élément de l'arme, certaines spéciales
   changent (la hache de Kratos se lance et revient, l'Épée de légende tire un rayon, Amaterasu remplace la
-  boule de feu de Sasuke...) et **son ultime devient celui de l'arme**. Un K.O. fait perdre l'arme. Les
+  boule de feu de Sasuke...), **sa M1 devient une frappe de l'arme** (animée image par image) et **son
+  ultime devient celui de l'arme**. Un K.O. fait perdre l'arme. Les
   ordinateurs vont chercher les leurs. Réglage : **ARMES : OUI/NON** dans la sélection des combattants ou
   dans Paramètres → Jeu.
 - **Les ultimes** : chacun a sa cinématique (cut-in avec son nom, décor plein écran : Hueco Mundo, le
@@ -355,9 +374,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-8.4-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-9.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-8.4-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-9.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -404,6 +423,7 @@ super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la
 super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
 super_clash --teams --demo --fighters 8,9,2,13   # combat en équipes : les deux premiers contre les deux autres
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
+super_clash --export-pose naruto -1 naruto.png   # le combattant au repos sur une image 256x256 transparente (première image d'une animation PixelLab ; 0 ou 1 : avec son arme)
 super_clash --screen menu --palette 2   # essayer une palette des menus : 0 actuelle, 1 Brasier, 2 Néon, 3 Shōnen, 4 Électrique, 5 Pop
 super_clash --screen training --fighters 8,9   # entraînement : Naruto (clavier 1) contre Sasuke en cible
 super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 3)
@@ -466,8 +486,10 @@ src/game/   interface raylib
   fonts.cpp            polices intégrées
   pixel.cpp            rendu pixel art des personnages (petite texture, contour, palette réduite)
   render_body.cpp      dessin des personnages (squelette + IK)
-  fighter_art.cpp      combattants illustrés : tête, buste et vêtements de l'image, membres redessinés en volume
-  render_weapons.cpp   dessin des armes (en main et posées au sol)
+  fighter_art.cpp      combattants illustrés : tête, buste et vêtements de l'image, membres redessinés en volume ;
+                       animations image par image (sheets.txt)
+  render_weapons.cpp   dessin des armes (images PixelLab, en main et posées au sol)
+  export_pose.cpp      --export-pose : un combattant au repos sur une image transparente
   render_items.cpp     armes posées sur l'arène
   render_vfx.cpp       rayons et arrière-plans des ultimes
   render_ult.cpp       cinématiques propres à chaque attaque finale, avatars des transformations
@@ -482,11 +504,12 @@ src/game/   interface raylib
 assets/fonts/          polices (intégrées à la compilation par cmake/embed.cmake)
 assets/gamecontrollerdb.txt  base des manettes SDL (intégrée elle aussi)
 assets/fighters/       illustrations découpées (morceaux + articulations), intégrées à la compilation
-assets/sprites/        animations générées (planches d'images et sheets.txt), intégrées elles aussi
+assets/sprites/        animations et armes PixelLab (planches d'images et sheets.txt), intégrées elles aussi
 assets/audio/          bruitages, annonceur et musiques (.mp3), intégrés eux aussi
 art/fighters/          illustrations détourées et leurs articulations (sources de assets/fighters)
-scripts/               import_portrait.py (détourage), rig_art.py (découpe), import_sheet.py (animations
-                       générées), package_release.sh (archives)
+scripts/               import_portrait.py (détourage), rig_art.py (découpe), import_clip.py et
+                       import_weapon.py (animations et armes PixelLab), import_sheet.py (planches
+                       d'images), package_release.sh (archives)
 tests/sim_test.cpp     tests sans écran
 ```
 
@@ -501,7 +524,8 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
   du jeu n'est repris.
 - Illustrations des **17 combattants** (`art/fighters/`) : générées par l'auteur du projet avec ChatGPT,
   détourées et découpées par `scripts/`.
-- Animations de Naruto (`assets/sprites/`) : générées avec SpriteCook d'après son illustration.
+- Animations de Naruto, Sasuke et Kakashi, attaques M1 des armes et dessins des armes (`assets/sprites/`) :
+  générés avec PixelLab d'après les illustrations.
 - Bruitages et annonceur (`assets/audio/`) : générés avec ElevenLabs. Un son sans fichier est synthétisé par
   le jeu ; les musiques `music_menu.mp3` et `music_<monde>.mp3` (naruto, bleach, blackclover, jjk, zelda)
   remplacent le thème synthétisé dès qu'elles sont dans le dossier.
