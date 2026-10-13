@@ -71,6 +71,21 @@ bool hasClips(Hero h);  // the fighter has at least one generated clip
 float sheetDrop(const CharacterDef& d, int anim);
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 bool drawBust(Hero h, Vec2 center, float size, float alpha);
+// Effects made with PixelLab (vfx_workbench or animated pictures, scripts/import_fx.py): a strip of frames
+// assets/sprites/fx_<name>.png indexed by an "fx" line of sheets.txt. drawFx draws the effect `t` seconds after
+// it started (looping or holding its last frame), its anchor at `at`, `size` world units per frame pixel, turned
+// `rot` radians, mirrored when `flip`. False: no such effect (the caller draws its own).
+struct FxInfo {
+  int frames = 0;
+  float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f;
+  bool loop = false;
+  float duration() const { return frames / fps; }
+};
+const FxInfo* fxInfo(const char* name);
+bool drawFx(const char* name, float t, Vec2 at, float size, float rot = 0.0f, bool flip = false, float alpha = 1.0f,
+            Color tint = WHITE);
+bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0.0f, bool flip = false,
+                 float alpha = 1.0f, Color tint = WHITE);
 // The same bust (not faded), cut to a box slanted like ui::slanted: the close-ups of the character select.
 bool drawBustIn(Hero h, Vec2 center, float size, Rectangle box, float slant, float alpha);
 bool drawDisc(Hero h, Vec2 center, float radius, float alpha);

@@ -10,9 +10,11 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <iterator>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -1319,5 +1321,90 @@ bool drawDisc(Hero h, Vec2 center, float radius, float alpha) {
   m.a = radius * 0.94f;
   drawStill(*A, A->px.head, center + Vec2{0.0f, radius * 0.1f}, k, 1, alpha, m, 4);
   return true;
+}
+}  // namespace art
+
+namespace {
+struct Fx {
+  art::FxInfo info;
+  Texture2D tex{};
+  bool ok = false;
+};
+const Fx* fxOf(const char* name) {
+  static std::map<std::string, Fx> cache;
+  auto it = cache.find(name);
+  if (it != cache.end()) return it->second.ok ? &it->second : nullptr;
+  Fx& F = cache[name];
+  const std::string& index = art::spriteIndex();
+  size_t pos = 0;
+  while (pos < index.size()) {
+    size_t end = index.find('\n', pos);
+    if (end == std::string::npos) end = index.size();
+    const std::string line = index.substr(pos, end - pos);
+    pos = end + 1;
+    char key[64] = {};
+    int frames = 0, loop = 0;
+    float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f;
+    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop) < 6 ||
+        std::strcmp(key, name) != 0 || frames <= 0)
+      continue;
+    const unsigned char* data = nullptr;
+    unsigned size = 0;
+    if (!art::embeddedSprite(("fx_" + std::string(name)).c_str(), &data, &size)) break;
+    Image img = LoadImageFromMemory(".png", data, int(size));
+    if (!img.data) break;
+    F.tex = LoadTextureFromImage(img);
+    UnloadImage(img);
+    if (F.tex.id == 0) break;
+    GenTextureMipmaps(&F.tex);
+    SetTextureFilter(F.tex, TEXTURE_FILTER_TRILINEAR);
+    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0};
+    F.ok = true;
+    break;
+  }
+  return F.ok ? &F : nullptr;
+}
+}  // namespace
+
+namespace art {
+const FxInfo* fxInfo(const char* name) {
+  const Fx* F = fxOf(name);
+  return F ? &F->info : nullptr;
+}
+
+bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bool flip, float alpha, Color tint) {
+  const Fx* F = fxOf(name);
+  if (!F || alpha <= 0.0f) return false;
+  const FxInfo& I = F->info;
+  const int i = std::clamp(frame, 0, I.frames - 1);
+  const float c = std::cos(rot), s = std::sin(rot), fl = flip ? -1.0f : 1.0f;
+  auto P = [&](float x, float y) {
+    const float lx = (x - I.ax) * size * fl, ly = (y - I.ay) * size;
+    return Vector2{at.x + lx * c - ly * s, at.y + lx * s + ly * c};
+  };
+  const Vector2 q[4] = {P(0, 0), P(I.fw, 0), P(I.fw, I.fh), P(0, I.fh)};
+  const float tw = float(F->tex.width), th = float(F->tex.height);
+  const float u0 = i * I.fw / tw, u1 = (i + 1) * I.fw / tw;
+  const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, I.fh / th}, {u0, I.fh / th}};
+  rlSetTexture(F->tex.id);
+  rlBegin(RL_QUADS);
+  const unsigned char a = (unsigned char)(tint.a * std::clamp(alpha, 0.0f, 1.0f));
+  for (int k = 0; k < 4; ++k) {
+    rlColor4ub(tint.r, tint.g, tint.b, a);
+    rlTexCoord2f(uv[k][0], uv[k][1]);
+    rlVertex2f(q[k].x, q[k].y);
+  }
+  rlEnd();
+  rlSetTexture(0);
+  return true;
+}
+
+bool drawFx(const char* name, float t, Vec2 at, float size, float rot, bool flip, float alpha, Color tint) {
+  const Fx* F = fxOf(name);
+  if (!F) return false;
+  const FxInfo& I = F->info;
+  int frame = int(std::floor(std::max(0.0f, t) * I.fps));
+  frame = I.loop ? frame % I.frames : std::min(frame, I.frames - 1);
+  return drawFxFrame(name, frame, at, size, rot, flip, alpha, tint);
 }
 }  // namespace art

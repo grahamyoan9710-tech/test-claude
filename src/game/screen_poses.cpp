@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "core/hitshapes.hpp"
 #include "core/match.hpp"
 #include "game/app.hpp"
 #include "game/render.hpp"
@@ -181,7 +182,18 @@ void App::drawAnimSheet() {
         continue;
       }
       drawCharacterSprite(d, 0, p, {cx, base - lift}, 1, scale, 1.0f, WHITE, 0.0f, time_);
-      if (mvd) drawText(TextFormat("%d", f.moveFrame), cx - colW * 0.45f, base - 16, 13, ui::kMuted);
+      if (mvd) {  // the hitboxes out on this frame, exactly as the hit detection places them
+        const Vec2 feet{cx, base - lift};
+        for (const HitShape& h : hitShapes(*mvd, f.moveFrame, Vec2{0.0f, -d.height * 0.5f}, 1, d.height,
+                                           f.bladeLength())) {
+          const Color col = withAlpha(mvd->isGrab ? PURPLE : RED, 0.35f);
+          const Vector2 a = V(feet + h.a * scale), b = V(feet + h.b * scale);
+          DrawLineEx(a, b, h.radius * scale * 2.0f, col);
+          DrawCircleV(a, h.radius * scale, col);
+          DrawCircleV(b, h.radius * scale, col);
+        }
+        drawText(TextFormat("%d", f.moveFrame), cx - colW * 0.45f, base - 16, 13, ui::kMuted);
+      }
     }
   }
 }
