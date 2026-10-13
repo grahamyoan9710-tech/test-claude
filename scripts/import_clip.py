@@ -12,7 +12,8 @@
 - --anchor AX AY: where the fighter stands in the frames (its position x, the ground y), --pxh P: frame pixels per
   fighter height. PixelLab keeps the canvas of the frame it is given, so these are the ones of that frame;
 - --loop: a looping clip (idle, walk...) played at --fps images per second; otherwise the clip is spread over the
-  state or the move, and --impact N (from 0, after the frames left out) is the frame held while the blow is out;
+  state or the move, and --impact N (from 0, after the frames left out) is the frame held while the blow is out
+  (several blows: --impact 3,9, one frame per hitbox window of the move, in order);
 - --drop PX: the first frame is drawn PX lower, easing back to the anchor by the last (the ledge climb starts from
   the hands on the ledge and ends standing).
 
@@ -36,7 +37,7 @@ def main():
     ap.add_argument("--pxh", type=float, required=True)
     ap.add_argument("--loop", action="store_true")
     ap.add_argument("--fps", type=float, default=15.0)
-    ap.add_argument("--impact", type=int, default=-1)
+    ap.add_argument("--impact", default="-1", help="frame where the blow lands, or one per blow: 7,22")
     ap.add_argument("--keep-first", action="store_true")
     ap.add_argument("--only", default=None, help="range of frames to keep, e.g. 1-8")
     ap.add_argument("--drop", type=float, default=0.0,
@@ -86,7 +87,9 @@ def main():
         p.save(out, optimize=True, transparency=0)
     else:
         strip.save(out, optimize=True)
-    impact = a.impact if 0 <= a.impact < len(frames) else -1
+    keys = [int(v) for v in str(a.impact).split(",") if v.strip().lstrip("-").isdigit()]
+    keys = [k for k in keys if 0 <= k < len(frames)]
+    impact = ",".join(str(k) for k in keys) if keys else "-1"
     index = os.path.join(out_dir, "sheets.txt")
     lines = []
     if os.path.exists(index):

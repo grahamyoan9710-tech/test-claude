@@ -8,6 +8,7 @@
 // volumes with the picture's widths, patterns and colours. All of it rides the same skeleton as the drawn
 // fighters (render_body.cpp), with the picture's proportions. A picture without limb joints is only a portrait.
 #include <string>
+#include <vector>
 
 #include "game/render.hpp"
 
@@ -69,6 +70,14 @@ bool hasClips(Hero h);  // the fighter has at least one generated clip
 // How much lower the clip's first frame is drawn (world units; 0 for most clips): the ledge climb starts from the
 // hands on the ledge, where the hanging clip holds them, and ends standing on its anchor.
 float sheetDrop(const CharacterDef& d, int anim);
+// For the hitbox check (--check-hitboxes): the clip frame `pose` shows, and that frame's opacity on the CPU
+// (alpha > 0 per pixel, row by row) with the clip's anchor and pixels per fighter height. False: no such clip.
+struct SheetMask {
+  int frame = -1, w = 0, h = 0;
+  float ax = 0, ay = 0, pxPerH = 1;
+  std::vector<unsigned char> opaque;
+};
+bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out);
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 bool drawBust(Hero h, Vec2 center, float size, float alpha);
 // Effects made with PixelLab (vfx_workbench or animated pictures, scripts/import_fx.py): a strip of frames

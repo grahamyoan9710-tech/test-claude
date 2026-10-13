@@ -12,6 +12,7 @@
 #include <array>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iterator>
 #include <map>
@@ -94,6 +95,12 @@ const Source kSources[] = {
 };
 #undef SOURCE
 
+const char* heroKey(Hero h) {  // "naruto": the prefix of the fighter's files
+  for (const Source& s : kSources)
+    if (s.hero == h) return s.name;
+  return "";
+}
+
 enum Bone { kTorso, kHead, kUpF, kLoF, kUpB, kLoB, kThF, kShF, kFtF, kThB, kShB, kFtB, kBones };
 enum Kind { kPartTorso, kPartHead, kPartArmF, kPartArmB, kPartLegF, kPartLegB, kPartSkirt, kPartCape, kPartWhole };
 constexpr int kInfluences = 8;  // bones a grid corner may follow
@@ -172,7 +179,8 @@ struct Art {
   struct Sheet {  // a generated animation: frames side by side
     bool ok = false, loop = false;
     Texture2D tex{};
-    int frames = 0, impact = -1;  // impact: the frame where the blow lands (-1: none)
+    int frames = 0, impact = -1;  // impact: the frame where the (first) blow lands (-1: none)
+    int impacts[4] = {-1, -1, -1, -1}, nImpacts = 0;  // every blow's frame, in order (sheets.txt "7,22")
     float fw = 0, fh = 0, ax = 0, ay = 0, pxPerH = 1;  // frame size, the feet (hips' x on the ground), scale
     float fps = 15.0f;                                 // looping clips
     float drop = 0;  // px: the first frame sits this much lower than the anchor says, easing to 0 by the last
@@ -524,10 +532,11 @@ void loadSheets(Art& A, const char* fighter) {
     const std::string line = text.substr(pos, end - pos);
     pos = end + 1;
     char who[32] = {}, anim[32] = {};
-    int frames = 0, loop = 0, impact = -1;
+    int frames = 0, loop = 0;
+    char impact[32] = "-1";
     float fw = 0, fh = 0, ax = 0, ay = 0, pxh = 0, fps = 15.0f, drop = 0.0f;
-    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %d %f %f", who, anim, &frames, &fw, &fh, &ax,
-                    &ay, &pxh, &loop, &impact, &fps, &drop) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
+    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %31s %f %f", who, anim, &frames, &fw, &fh, &ax,
+                    &ay, &pxh, &loop, impact, &fps, &drop) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
       continue;
     int id = -1;
     for (int i = 0; i < kSheetCount; ++i)
@@ -547,7 +556,17 @@ void loadSheets(Art& A, const char* fighter) {
       S.frames = frames;
       S.fw = fw, S.fh = fh, S.ax = ax, S.ay = ay, S.pxPerH = pxh;
       S.loop = loop != 0;
-      S.impact = impact < frames ? impact : -1;
+      S.nImpacts = 0;
+      for (const char* c = impact; *c && S.nImpacts < 4;) {  // "7" or "7,22,30": increasing frames
+        char* end = nullptr;
+        const long v = std::strtol(c, &end, 10);
+        if (end == c) break;
+        if (v >= 0 && v < frames && (S.nImpacts == 0 || v > S.impacts[S.nImpacts - 1]))
+          S.impacts[S.nImpacts++] = int(v);
+        c = *end == ',' ? end + 1 : end;
+        if (*end != ',') break;
+      }
+      S.impact = S.nImpacts > 0 ? S.impacts[0] : -1;
       S.fps = fps > 0.0f ? fps : 15.0f;
       S.drop = drop;
       S.ok = true;
@@ -1188,12 +1207,27 @@ int sheetFrame(const Art::Sheet& S, const Pose& pose) {
   if (S.loop && pose.sheetPhase >= 0.0f) return int(std::floor(pose.sheetPhase * S.frames)) % S.frames;
   if (S.loop) return int(std::floor(std::max(0.0f, pose.sheetT) * S.fps)) % S.frames;
   const float t = clampf(pose.sheetT, 0.0f, 1.0f);
-  if (S.impact < 0 || pose.sheetHit0 < 0.0f) return std::clamp(int(t * S.frames), 0, S.frames - 1);
-  const float h0 = pose.sheetHit0, h1 = std::max(h0, pose.sheetHit1);
-  if (t < h0) return std::clamp(int(t / h0 * S.impact), 0, std::max(0, S.impact - 1));
-  const int rest = S.frames - 1 - S.impact;
-  if (t < h1 || rest <= 0) return S.impact;
-  return std::min(S.frames - 1, S.impact + 1 + int((t - h1) / std::max(1e-3f, 1.0f - h1) * rest));
+  const int m = std::min(S.nImpacts, pose.sheetHits);
+  if (m == 0) return std::clamp(int(t * S.frames), 0, S.frames - 1);
+  // Piecewise: the frames before each blow spread over the time before it, the blow's frame held while it is out,
+  // then the frames after the last blow spread over the rest of the move.
+  int from = 0;      // first frame of the stretch being played
+  float since = 0.0f;  // when that stretch started
+  for (int i = 0; i < m; ++i) {
+    const float a = pose.sheetHitA[i], b = std::max(a, pose.sheetHitB[i]);
+    const int k = S.impacts[i];
+    if (t < a) {
+      const int n = k - from;  // frames from..k-1 over [since, a)
+      if (n <= 0) return k;
+      return std::clamp(from + int((t - since) / std::max(1e-3f, a - since) * n), from, k - 1);
+    }
+    if (t < b) return k;
+    from = k + 1;
+    since = b;
+  }
+  const int rest = S.frames - from;
+  if (rest <= 0) return S.frames - 1;
+  return std::min(S.frames - 1, from + int((t - since) / std::max(1e-3f, 1.0f - since) * rest));
 }
 }  // namespace
 
@@ -1239,6 +1273,40 @@ float sheetDrop(const CharacterDef& d, int a) {
   const Art* A = clipsOf(d.hero);
   if (!A || a < 0 || a >= kSheetCount || !A->sheets[a].ok) return 0.0f;
   return A->sheets[a].drop * d.height / A->sheets[a].pxPerH;
+}
+
+bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out) {
+  if (pose.sheet < 0 || pose.sheet >= kSheetCount) return false;
+  const Art* A = clipsOf(d.hero);
+  if (!A || !A->sheets[pose.sheet].ok) return false;
+  const Art::Sheet& S = A->sheets[pose.sheet];
+  static std::map<std::string, Image> decoded;  // the strips, decoded once on the CPU
+  const std::string key = std::string(heroKey(d.hero)) + "_" + sheetName(pose.sheet);
+  auto it = decoded.find(key);
+  if (it == decoded.end()) {
+    const unsigned char* data = nullptr;
+    unsigned size = 0;
+    if (!embeddedSprite(key.c_str(), &data, &size)) return false;
+    Image img = LoadImageFromMemory(".png", data, int(size));
+    if (!img.data) return false;
+    ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+    it = decoded.emplace(key, img).first;
+  }
+  const Image& img = it->second;
+  out.frame = sheetFrame(S, pose);
+  out.w = int(S.fw);
+  out.h = int(S.fh);
+  out.ax = S.ax;
+  out.ay = S.ay;
+  out.pxPerH = S.pxPerH;
+  out.opaque.assign(size_t(out.w) * out.h, 0);
+  const auto* px = static_cast<const unsigned char*>(img.data);
+  for (int y = 0; y < out.h && y < img.height; ++y)
+    for (int x = 0; x < out.w; ++x) {
+      const int sx = out.frame * out.w + x;
+      if (sx < img.width) out.opaque[size_t(y) * out.w + x] = px[(size_t(y) * img.width + sx) * 4 + 3] > 0;
+    }
+  return true;
 }
 
 bool hasClips(Hero h) {

@@ -49,7 +49,11 @@ struct Pose {
   bool sheetFlip = false;  // the clip is drawn mirrored (a roll backwards)
   float sheetPhase = -1.0f;  // looping clips driven by the distance covered (walk, run): 0..1 through the cycle
   Vec2 sheetOffset;          // the clip is drawn from here instead of the feet (climbing a ledge: from the top)
-  float sheetHit0 = -1.0f, sheetHit1 = -1.0f;  // when the move's first blow is out (0..1), to time the drawn one
+  // When the move's blows are out (0..1 through the move: windows [sheetHitA, sheetHitB)), to show each drawn blow
+  // (the clip's impact frames, in order) while its hitboxes are.
+  static constexpr int kSheetHits = 4;
+  float sheetHitA[kSheetHits] = {-1.0f, -1.0f, -1.0f, -1.0f}, sheetHitB[kSheetHits] = {-1.0f, -1.0f, -1.0f, -1.0f};
+  int sheetHits = 0;
 };
 
 // Standing guard; `held` is the weapon picked up during the match (carried in hand), if any.
@@ -73,6 +77,8 @@ struct ExportPose {
   float ax = 100.0f, ay = 236.0f, pxh = 150.0f;
 };
 int exportPose(const ExportPose& e);
+// --check-hitboxes (check_hitboxes.cpp): the hitboxes of every clip-drawn move against the frames shown with them.
+int checkHitboxes(const std::string& outPath);
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
 // A pose shown by the fighter's run clip (if it has one) at `phase` 0..1 of the cycle: running clones.
 void runClip(const CharacterDef& def, Pose& pose, float phase);

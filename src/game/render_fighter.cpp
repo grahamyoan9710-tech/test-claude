@@ -824,26 +824,30 @@ Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
 }
 
 namespace {
-// The moment a move's drawn blow lands (0..1 through the move): its first hitbox, else what it throws, casts or
-// fires. -1: nothing to time (the clip plays evenly).
-void clipImpact(const MoveDef& md, float dur, float& h0, float& h1) {
-  int a = -1, b = -1;
-  if (!md.hitboxes.empty()) {
-    a = md.hitboxes[0].start;
-    for (const auto& h : md.hitboxes) a = std::min(a, h.start);
-    for (const auto& h : md.hitboxes)
-      if (h.start == a) b = std::max(b, h.end);
-  } else if (md.throwFrame >= 0) {
-    a = md.throwFrame, b = md.throwFrame + 3;
-  } else if (md.projectileFrame >= 0) {
-    a = md.projectileFrame, b = md.projectileFrame + 4;
-  } else if (!md.shots.empty()) {
-    a = md.shots[0].frame, b = a + 4;
-  } else if (md.teleportFrame >= 0) {
-    a = md.teleportFrame, b = a + 2;
+// When a move's drawn blows land (0..1 through the move): the windows where its hitboxes are out (hitboxes that
+// overlap or follow each other merge into one blow), else what it throws, casts or fires. None: the clip plays evenly.
+void clipImpact(const MoveDef& md, float dur, Pose& p) {
+  std::vector<std::pair<int, int>> w;
+  for (const auto& h : md.hitboxes) w.push_back({h.start, h.end});
+  if (w.empty()) {
+    if (md.throwFrame >= 0) w.push_back({md.throwFrame, md.throwFrame + 3});
+    else if (md.projectileFrame >= 0) w.push_back({md.projectileFrame, md.projectileFrame + 4});
+    else if (!md.shots.empty())
+      for (const auto& s : md.shots) w.push_back({s.frame, s.frame + 4});
+    else if (md.teleportFrame >= 0) w.push_back({md.teleportFrame, md.teleportFrame + 2});
   }
-  h0 = a >= 0 ? float(a) / dur : -1.0f;
-  h1 = b >= 0 ? float(b) / dur : -1.0f;
+  std::sort(w.begin(), w.end());
+  p.sheetHits = 0;
+  for (const auto& [a, b] : w) {
+    if (p.sheetHits > 0 && float(a) / dur <= p.sheetHitB[p.sheetHits - 1]) {  // overlaps or touches: the same blow
+      p.sheetHitB[p.sheetHits - 1] = std::max(p.sheetHitB[p.sheetHits - 1], float(b) / dur);
+      continue;
+    }
+    if (p.sheetHits == Pose::kSheetHits) break;
+    p.sheetHitA[p.sheetHits] = float(a) / dur;
+    p.sheetHitB[p.sheetHits] = float(b) / dur;
+    ++p.sheetHits;
+  }
 }
 
 // Frame-by-frame clips generated for the fighter (art::drawSheet) replace the skeleton for the states and moves
@@ -920,7 +924,7 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
       const float dur = float(std::max(1, md->duration));
       p.sheet = clip;
       p.sheetT = clampf(float(f.moveFrame) / dur, 0.0f, 1.0f);
-      clipImpact(*md, dur, p.sheetHit0, p.sheetHit1);
+      clipImpact(*md, dur, p);
       break;
     }
     default: break;
