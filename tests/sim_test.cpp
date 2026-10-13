@@ -299,6 +299,40 @@ static void testCombos() {
   CHECK(!f.grounded, "stick up out of the shield jumps");
 }
 
+// Jabs and tilts: the stick moves the fighter a little while it hits, without turning it or taking it off an edge.
+static void testAttackStep() {
+  std::printf("[moving while attacking]\n");
+  // Presses attack once at x (stick neutral), then holds the stick at sx while the jab plays out.
+  auto jab = [](float x, float sx, Fighter* out) {
+    Match m(duel(0, 8, 2, false, false));
+    skipCountdown(m);
+    m.fighters[0].pos = {x, 0};
+    m.fighters[0].facing = 1;
+    m.fighters[1].pos = {x - 700.0f, 0};
+    Pad p{m};
+    p.idle(30);
+    const float x0 = m.fighters[0].pos.x;
+    p.run(1, key(0, 0, true));
+    const int move = m.fighters[0].move;
+    for (int i = 0; i < 40 && m.fighters[0].state == FState::Attack; ++i) p.run(1, key(sx, 0));
+    *out = m.fighters[0];
+    return std::pair<int, float>(move, out->pos.x - x0);
+  };
+  Fighter f{};
+  auto [mv, still] = jab(-200.0f, 0.0f, &f);
+  CHECK(mv == Jab && std::fabs(still) < 2.0f, "a jab without the stick stays in place (moved %.1f)", still);
+  auto [mv2, fwd] = jab(-200.0f, 1.0f, &f);
+  CHECK(mv2 == Jab && fwd > 8.0f && f.facing == 1, "the stick forward moves the jab forward (moved %.1f)", fwd);
+  auto [mv3, back] = jab(-200.0f, -1.0f, &f);
+  CHECK(back < -8.0f && f.facing == 1, "... and back, still facing forward (moved %.1f, facing %d)", back, f.facing);
+  Match m(duel(0, 8, 2, false, false));
+  float right = 0.0f;
+  for (const auto& pl : m.platforms)
+    if (pl.solid && pl.rect.top() == 0.0f) right = std::max(right, pl.rect.right());
+  jab(right - 6.0f, 1.0f, &f);
+  CHECK(f.grounded && f.pos.x <= right, "never off the edge (x %.1f, edge %.1f)", f.pos.x, right);
+}
+
 static void testTeams() {
   std::printf("[team battle 2v2]\n");
   MatchConfig cfg;
@@ -965,6 +999,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "combos") testCombos();
+  if (only.empty() || only == "step") testAttackStep();
   if (only.empty() || only == "teams") testTeams();
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();

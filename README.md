@@ -332,6 +332,9 @@ mouvement des manettes PlayStation, que Linux présente comme des manettes à pa
 Combinaisons :
 - **Attaque smash** : direction + attaque *en même temps* (ou la touche smash). Maintenir pour charger.
 - **Attaques normales (tilts)** : maintenir la direction un court instant, *puis* attaquer.
+- **Bouger en attaquant** : pendant les coups au sol (enchaînement de coups simples, tilts), gauche / droite
+  fait avancer ou reculer le combattant un peu (à peu près la moitié de sa marche), sans le retourner ; il
+  s'arrête au bord de la plateforme au lieu de tomber.
 - **Attaque en course** : courir puis attaquer.
 - **Aériennes** : attaque + direction en l'air (avant, arrière, haut, bas, neutre).
 - **Spéciales** : spéciale + direction (neutre, côté, haut = remontée, bas).
@@ -352,9 +355,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-8.3-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-8.4-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-8.3-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-8.4-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

@@ -5,6 +5,7 @@
 
 namespace {
 using IS = InputState;
+constexpr float kAttackStep = 0.5f;  // jabs and tilts: how fast the stick moves the fighter (share of its walk)
 
 bool isAerial(int m) { return m >= NAir && m <= DAir; }
 bool isSpecialMove(int m) { return (m >= NSpecial && m <= DSpecial) || m >= Extra1; }
@@ -667,6 +668,18 @@ void Match::updateMove(Fighter& f) {
 
   if (f.grounded) {
     groundFriction(f, m.frictionMul);
+    // Jabs and tilts: the stick shuffles the fighter forward or back while it hits (a little, without turning
+    // around), but never off the edge of its platform.
+    if (f.move <= DTilt && std::fabs(in.stick.x) > 0.3f && f.groundPlat >= 0) {
+      const float want = clampf(in.stick.x, -1.0f, 1.0f) * f.def->walkSpeed * kAttackStep;
+      float v = f.vel.x;
+      if (want > 0.0f ? v < want : v > want)
+        v = approach(v, want, f.def->groundAccel * 0.5f + f.def->friction * m.frictionMul);
+      const Rect& r = platforms[f.groundPlat].rect;  // pushed towards an edge: stops right before it
+      if (want > 0.0f) v = std::min(v, std::max(0.0f, r.right() - 2.0f - f.pos.x));
+      else v = std::max(v, std::min(0.0f, r.left() + 2.0f - f.pos.x));
+      f.vel.x = v;
+    }
   } else {
     if (m.allowDrift) airControl(f, (isAerial(f.move) || f.moveStartedAir) ? 1.0f : 0.6f);
     applyGravity(f, m.gravityMul);
