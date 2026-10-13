@@ -9,6 +9,7 @@ fx fuga_blast 12 218 213 106.0 107.0 14.0845 0
 fx kamui 12 132 132 68.0 66.0 14.9254 0
 fx lanza 8 194 32 171.0 16.0 14.9254 1
 fx lanza_blast 12 224 224 112.0 112.0 14.0845 0
+fx lilynette 8 106 244 55.0 244.0 8 1
 icon cursed_finger 57 74
 icon double_mangekyo 86 86
 icon grimoire_closed 91 89
