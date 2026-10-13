@@ -14,7 +14,7 @@ const char* dummyName(const CpuBrain& b, int level) {
   }
 }
 Rectangle pauseItemRect(int i, int n) {
-  float h = 52, gap = 12;
+  const float h = n > 6 ? 44.0f : 52.0f, gap = n > 6 ? 8.0f : 12.0f;  // the training menu is longer
   float top = kScreenH * 0.5f - (n * (h + gap)) * 0.5f + 40;
   return {kScreenW * 0.5f - 260, top + i * (h + gap), 520, h};
 }
@@ -181,8 +181,16 @@ std::vector<std::string> MatchScreen::pauseItems() const {
   std::string mode = dummy >= 0 ? dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel) : "-";
   const Fighter& me = m_.fighters[0];
   std::string weapon = upperFr("ARME : " + me.def->weapons[dropSlot_ & 1].name);
-  return {"REPRENDRE", "RÉINITIALISER LES POSITIONS", "MANNEQUIN : " + mode,
-          std::string("ZONES DE COUP : ") + (debug_ ? "OUI" : "NON"), weapon, "QUITTER L'ENTRAÎNEMENT"};
+  auto onOff = [](bool b) { return std::string(b ? "OUI" : "NON"); };
+  return {"REPRENDRE",
+          "RÉINITIALISER LES POSITIONS",
+          "MANNEQUIN : " + mode,
+          "ULTI INFINIE : " + onOff(m_.trainInfiniteUlt),
+          "RESTER À 0 % : " + onOff(m_.trainZeroPercent),
+          "MODE COMBAT (3 VIES) : " + onOff(m_.trainFight),
+          "ZONES DE COUP : " + onOff(debug_),
+          weapon,
+          "QUITTER L'ENTRAÎNEMENT"};
 }
 
 MatchScreen::Result MatchScreen::updatePause() {
@@ -220,11 +228,28 @@ MatchScreen::Result MatchScreen::updatePause() {
       return Result::Running;
     }
     if (pauseSel_ == 3 && cycle) {
+      m_.trainInfiniteUlt = !m_.trainInfiniteUlt;
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 4 && cycle) {
+      m_.trainZeroPercent = !m_.trainZeroPercent;
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 5 && cycle) {  // a 3-stock fight against the dummy, starting over at each end
+      m_.setTrainFight(!m_.trainFight);
+      std::fill(combo_.begin(), combo_.end(), 0);
+      std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 6 && cycle) {
       debug_ = !debug_;
       audio_.play(Sfx::MenuMove);
       return Result::Running;
     }
-    if (pauseSel_ == 4 && (nav.left || nav.right)) {  // which weapon
+    if (pauseSel_ == 7 && (nav.left || nav.right)) {  // which weapon
       dropSlot_ ^= 1;
       audio_.play(Sfx::MenuMove);
       return Result::Running;
@@ -241,7 +266,7 @@ MatchScreen::Result MatchScreen::updatePause() {
     std::fill(combo_.begin(), combo_.end(), 0);
     std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
     resume();
-  } else if (training() && pauseSel_ == 4) {  // the weapon falls in front of the player
+  } else if (training() && pauseSel_ == 7) {  // the weapon falls in front of the player
     m_.loseWeapon(m_.fighters[0], false);
     m_.dropWeaponFor(0, dropSlot_);
     resume();
@@ -470,6 +495,17 @@ void MatchScreen::drawTrainingPanel() {
     std::string mode = std::string("Mannequin : ") + dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel);
     drawText(mode.c_str(), p.x + 16, p.y + 142, 15, withAlpha(ui::kCream, 0.85f));
   }
+  // The options on, under the panel
+  std::string on;
+  if (m_.trainFight) on += "Combat 3 vies";
+  if (m_.trainInfiniteUlt) on += std::string(on.empty() ? "" : "  •  ") + "Ulti infinie";
+  if (m_.trainZeroPercent) on += std::string(on.empty() ? "" : "  •  ") + "0 %";
+  if (!on.empty()) drawTextOutlined(on.c_str(), p.x + 4, p.y + p.height + 8, 16, {156, 206, 128, 255}, ui::kInk, 2.0f);
+  if (m_.trainRestart > 0) {  // the fight is over: it starts over
+    const float a = clampf(m_.trainRestart / 30.0f, 0.0f, 1.0f);
+    drawTextOutlined("Le combat recommence...", kScreenW * 0.5f - textWidth("Le combat recommence...", 34, FontKind::Title) * 0.5f,
+                     kScreenH * 0.5f + 70, 34, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 3.0f, FontKind::Title);
+  }
 }
 
 void MatchScreen::drawPause() {
@@ -497,7 +533,7 @@ void MatchScreen::drawPause() {
     }
     drawTextCentered(items[i].c_str(), r.x + r.width * 0.5f, r.y + r.height * 0.5f - 12, 24,
                      sel ? ui::kCream : ui::kMuted, true);
-    if (sel && training() && (i == 2 || i == 3 || i == 4)) {
+    if (sel && training() && i >= 2 && i <= 7) {
       ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, ui::kGold);
       ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
     }

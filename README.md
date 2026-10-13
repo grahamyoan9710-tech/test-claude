@@ -129,7 +129,11 @@ Chaos, Dragon de lumière...
   de 1 à 5 vies.
 - **Entraînement** : vies infinies face à un **mannequin** (immobile, qui saute, qui se protège, ou
   piloté par l'ordinateur), réinitialisation des positions, **compteur de combos** et dégâts du combo,
-  affichage des zones de coup. Tout se règle dans le menu pause.
+  affichage des zones de coup. Tout se règle dans le menu pause, avec aussi :
+  - **Ulti infinie** : la barre d'ulti se remplit de nouveau aussitôt (pour répéter les ultimes) ;
+  - **Rester à 0 %** : les dégâts ne s'accumulent pas (chaque coup n'éjecte que de sa propre force) ;
+  - **Mode combat (3 vies)** : un vrai combat de 3 vies contre le mannequin ; quand quelqu'un les a toutes
+    perdues, « GAME! », puis le combat recommence (3 vies chacun, positions de départ).
 - **17 combattants** inspirés de séries cultes (hommages de fans, dessinés d'après des illustrations), chacun avec ses
   stats, 4 attaques spéciales, **2 armes à ramasser** et **3 ultimes** : un à mains nues et un par arme.
   | | Univers | Spéciales | Ultime | Arme 1 → son ultime | Arme 2 → son ultime |
@@ -337,9 +341,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.8-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.9-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.8-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.9-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 

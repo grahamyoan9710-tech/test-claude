@@ -84,7 +84,32 @@ void Match::step(const std::array<InputState, 4>& inputs) {
   resolveHits();
   checkBlastZones();
   checkEnd();
+  if (cfg.training) updateTraining();
   ++frame;
+}
+
+void Match::updateTraining() {
+  for (auto& f : fighters) {
+    if (trainZeroPercent) f.percent = 0.0f;  // after the hits: each blow only knocks back by its own damage
+    const bool usingUlt = f.state == FState::Attack && f.move == FinalSmash;
+    if (trainInfiniteUlt && f.active() && !f.eliminated && !f.finalSmash && !usingUlt && freezeTimer == 0)
+      gainUlt(f, kUltMax);
+  }
+  if (trainRestart > 0 && --trainRestart == 0) restartTrainingFight();
+}
+
+void Match::setTrainFight(bool on) {
+  trainFight = on;
+  restartTrainingFight();
+}
+
+void Match::restartTrainingFight() {
+  trainRestart = 0;
+  for (auto& f : fighters) {
+    f.stocks = kTrainStocks;
+    f.eliminated = false;
+  }
+  resetPositions();
 }
 
 bool Match::ledgeValid(int ledge) const {
@@ -133,7 +158,7 @@ void Match::koFighter(Fighter& f) {
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;
-  if (!cfg.training) f.stocks--;
+  if (!cfg.training || trainFight) f.stocks--;
   if (freezeTimer > 0 && freezeOwner == f.id) freezeTimer = 0;  // the ultimate meter itself is kept
   f.state = FState::Dead;
   f.stateFrame = 0;
@@ -147,6 +172,10 @@ void Match::koFighter(Fighter& f) {
     f.koFrame = frame;
     f.finalSmash = false;  // nothing left to unleash it with
     f.ult = 0.0f;
+    if (cfg.training && trainFight && trainRestart == 0) {  // training fight: "GAME!", then it starts over
+      emit(EvType::GameSet, {}, -1);
+      trainRestart = 150;
+    }
   }
 }
 

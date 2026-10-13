@@ -716,6 +716,69 @@ static void testTraining() {
   v.percent = 80;
   m.resetPositions();
   CHECK(v.percent == 0.0f && m.fighters[0].percent == 0.0f, "reset clears damage");
+
+  // The options of the training pause menu
+  {
+    Match t(cfg);
+    skipCountdown(t);
+    Fighter& me = t.fighters[0];
+    Fighter& dm = t.fighters[1];
+    std::array<InputState, 4> none{};
+    t.trainInfiniteUlt = true;
+    t.step(none);
+    CHECK(me.finalSmash && me.ult >= kUltMax, "infinite ultimate: the meter is full");
+    me.pos = {-100, 0};
+    me.facing = 1;
+    dm.pos = {100, 0};
+    Pad p{t};
+    p.idle(20);
+    p.run(1, key(0, 0, false, false, false, true));
+    CHECK(me.move == FinalSmash, "the ultimate goes");
+    p.idle(600);
+    CHECK(me.finalSmash, "... and the meter fills up again");
+
+    t.trainInfiniteUlt = false;
+    t.trainZeroPercent = true;
+    t.resetPositions();
+    me.pos = {0, 0};
+    me.facing = 1;
+    dm.pos = {40, 0};
+    p.idle(30);
+    const int fallsBefore = dm.falls;
+    bool hit = false;
+    for (int i = 0; i < 4; ++i) {
+      p.run(1, key(0, 0, true));
+      for (int j = 0; j < 14; ++j) {
+        p.idle(1);
+        for (const auto& e : t.events) hit = hit || (e.type == EvType::Hit && e.b == dm.id);
+      }
+    }
+    CHECK(hit && dm.percent == 0.0f && dm.falls == fallsBefore, "hit, and it stays at 0 %% (%.1f%%)", dm.percent);
+    t.trainZeroPercent = false;
+
+    t.setTrainFight(true);
+    CHECK(dm.stocks == Match::kTrainStocks && me.stocks == Match::kTrainStocks, "fight mode: 3 stocks each");
+    bool gameSet = false;
+    for (int k = 0; k < 3; ++k) {
+      for (int i = 0; i < 1500 && dm.stocks > 2 - k; ++i) {
+        if (dm.active() && dm.state != FState::Respawn) dm.pos = {0, 3000};  // under the blast zone
+        t.step(none);
+        for (const auto& e : t.events) gameSet = gameSet || e.type == EvType::GameSet;
+      }
+    }
+    CHECK(dm.stocks == 0 && dm.eliminated && gameSet, "three falls end the fight (stocks %d)", dm.stocks);
+    CHECK(!t.finished, "the training goes on");
+    for (int i = 0; i < 200; ++i) t.step(none);
+    CHECK(dm.stocks == Match::kTrainStocks && !dm.eliminated && me.stocks == Match::kTrainStocks,
+          "then the fight starts over (stocks %d)", dm.stocks);
+    t.setTrainFight(false);
+    const int falls2 = dm.falls;
+    for (int i = 0; i < 1500 && dm.falls == falls2; ++i) {
+      if (dm.active() && dm.state != FState::Respawn) dm.pos = {0, 3000};
+      t.step(none);
+    }
+    CHECK(dm.falls > falls2 && dm.stocks == Match::kTrainStocks, "fight mode off: lives are infinite again");
+  }
 }
 
 static void testRecovery() {

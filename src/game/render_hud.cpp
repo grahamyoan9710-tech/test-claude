@@ -125,7 +125,7 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       float w = textWidth(pct, size, FontKind::Title);
       drawTextOutlined(pct, x + 180 - w + jx, y + 30 + jy, size, col, ui::kInk, 4.0f, FontKind::Title);
       drawTextOutlined("%", x + 184 + jx, y + 50 + jy, 26, col, ui::kInk, 3.0f, FontKind::Title);
-      if (!m.cfg.training) {
+      if (!m.cfg.training || m.trainFight) {
         for (int i = 0; i < std::min(f.stocks, 6); ++i) {
           Vector2 c{x + 104.0f + i * 17.0f, y + 78.0f};
           DrawCircleV(c, 7, ui::kInk);

@@ -138,6 +138,15 @@ class Match {
   bool finished = false;
   int winner = -1;
   int winnerTeam = -1;  // team battles: the team left standing
+
+  // Training options (the pause menu of Entraînement), changed during the session.
+  bool trainInfiniteUlt = false;  // the ultimate meter fills up again at once
+  bool trainZeroPercent = false;  // every fighter stays at 0 %
+  bool trainFight = false;        // 3 stocks each; when someone runs out, the fight starts over
+  int trainRestart = 0;           // frames before the fight starts over (after the last stock)
+  static constexpr int kTrainStocks = 3;
+  void setTrainFight(bool on);
+  void restartTrainingFight();    // everyone back to 3 stocks, 0 % and the starting positions
   int finishFrame = 0;
   Rng rng;
 
@@ -187,6 +196,7 @@ class Match {
   void koFighter(Fighter& f);
   void respawnFighter(Fighter& f);
   void checkEnd();
+  void updateTraining();
   void updateOrb();
   void hitOrb(int attacker, float damage, Vec2 from, HitFx fx);
   void startFinalSmash(Fighter& f);
