@@ -56,6 +56,20 @@ extern const unsigned int sheets_txt_size;
 }
 
 namespace art {
+bool embeddedSprite(const char* name, const unsigned char** data, unsigned* size) {
+  for (const ClashSheet* cs = clash_sheets; cs->name; ++cs)
+    if (std::strcmp(cs->name, name) == 0) {
+      *data = cs->data;
+      *size = *cs->size;
+      return true;
+    }
+  return false;
+}
+const std::string& spriteIndex() {
+  static const std::string text(reinterpret_cast<const char*>(sheets_txt), sheets_txt_size);
+  return text;
+}
+
 namespace {
 
 struct Source {
@@ -158,8 +172,10 @@ struct Art {
     Texture2D tex{};
     int frames = 0, impact = -1;  // impact: the frame where the blow lands (-1: none)
     float fw = 0, fh = 0, ax = 0, ay = 0, pxPerH = 1;  // frame size, the feet (hips' x on the ground), scale
+    float fps = 15.0f;                                 // looping clips
   };
   Sheet sheets[kSheetCount];
+  bool clips = false, clipsTried = false;  // at least one sheet; sheets loaded
   float atlasW = 1, atlasH = 1;
   Texture2D tex{};
   float ground = 0, top = 0, unit = 1;  // unit: picture px per fighter height
@@ -495,8 +511,6 @@ void load(Art& A, const Source& s) {
   A.ok = true;
 }
 
-constexpr const char* kSheetNames[kSheetCount] = {"idle", "attack"};
-constexpr float kSheetFps = 8.0f;  // looping animations
 
 void loadSheets(Art& A, const char* fighter) {
   const std::string text(reinterpret_cast<const char*>(sheets_txt), sheets_txt_size);
@@ -508,13 +522,13 @@ void loadSheets(Art& A, const char* fighter) {
     pos = end + 1;
     char who[32] = {}, anim[32] = {};
     int frames = 0, loop = 0, impact = -1;
-    float fw = 0, fh = 0, ax = 0, ay = 0, pxh = 0;
-    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %d", who, anim, &frames, &fw, &fh, &ax, &ay,
-                    &pxh, &loop, &impact) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
+    float fw = 0, fh = 0, ax = 0, ay = 0, pxh = 0, fps = 15.0f;
+    if (std::sscanf(line.c_str(), "sheet %31s %31s %d %f %f %f %f %f %d %d %f", who, anim, &frames, &fw, &fh, &ax,
+                    &ay, &pxh, &loop, &impact, &fps) < 9 || std::strcmp(who, fighter) != 0 || frames <= 0 || pxh <= 0.0f)
       continue;
     int id = -1;
     for (int i = 0; i < kSheetCount; ++i)
-      if (std::strcmp(anim, kSheetNames[i]) == 0) id = i;
+      if (std::strcmp(anim, sheetName(i)) == 0) id = i;
     if (id < 0) continue;
     const std::string key = std::string(fighter) + "_" + anim;
     for (const ClashSheet* cs = clash_sheets; cs->name; ++cs) {
@@ -531,7 +545,9 @@ void loadSheets(Art& A, const char* fighter) {
       S.fw = fw, S.fh = fh, S.ax = ax, S.ay = ay, S.pxPerH = pxh;
       S.loop = loop != 0;
       S.impact = impact < frames ? impact : -1;
+      S.fps = fps > 0.0f ? fps : 15.0f;
       S.ok = true;
+      A.clips = true;
       break;
     }
   }
@@ -545,7 +561,6 @@ Art* get(Hero h) {
     for (const Source& s : kSources)
       if (s.hero == h) {
         load(A, s);
-        if (A.ok) loadSheets(A, s.name);
       }
   }
   return A.ok ? &A : nullptr;
@@ -1166,7 +1181,8 @@ namespace {
 // The frame of a generated animation the pose shows. A blow is timed on the move: the frames before the impact
 // play while it winds up, the impact holds while the hitbox is out, the rest is the recovery.
 int sheetFrame(const Art::Sheet& S, const Pose& pose) {
-  if (S.loop) return int(std::floor(std::max(0.0f, pose.sheetT) * kSheetFps)) % S.frames;
+  if (S.loop && pose.sheetPhase >= 0.0f) return int(std::floor(pose.sheetPhase * S.frames)) % S.frames;
+  if (S.loop) return int(std::floor(std::max(0.0f, pose.sheetT) * S.fps)) % S.frames;
   const float t = clampf(pose.sheetT, 0.0f, 1.0f);
   if (S.impact < 0 || pose.sheetHit0 < 0.0f) return std::clamp(int(t * S.frames), 0, S.frames - 1);
   const float h0 = pose.sheetHit0, h1 = std::max(h0, pose.sheetHit1);
@@ -1177,20 +1193,58 @@ int sheetFrame(const Art::Sheet& S, const Pose& pose) {
 }
 }  // namespace
 
-bool hasSheet(Hero h, SheetAnim a) {
-  const Art* A = get(h);
+const char* sheetName(int anim) {
+  static const char* const kStates[kSheetMove0] = {
+      "idle", "walk", "run", "crouch", "jumpsquat", "jump", "airjump", "fall", "land", "shield", "roll", "spotdodge",
+      "airdodge", "hurt", "tumble", "knockdown", "getup", "helpless", "ledge", "climb", "hold", "grabbed", "dizzy",
+      "victory"};
+  static const char* const kMoves[MOVE_COUNT] = {
+      "jab", "jab2", "jab3", "ftilt", "utilt", "dtilt", "dashattack", "fsmash", "usmash", "dsmash", "nair", "fair",
+      "bair", "uair", "dair", "nspecial", "sspecial", "uspecial", "dspecial", "grab", "pummel", "fthrow", "bthrow",
+      "uthrow", "dthrow", "ledgeattack", "getupattack", "extra1", "extra2", "extra3", "ultimate"};
+  static std::array<std::string, kSheetCount> names = [] {
+    std::array<std::string, kSheetCount> n;
+    for (int i = 0; i < kSheetMove0; ++i) n[i] = kStates[i];
+    for (int m = 0; m < MOVE_COUNT; ++m) {
+      n[kSheetMove0 + m] = kMoves[m];
+      n[kSheetWeapon0 + m] = std::string("w0_") + kMoves[m];
+      n[kSheetWeapon1 + m] = std::string("w1_") + kMoves[m];
+    }
+    return n;
+  }();
+  return anim >= 0 && anim < kSheetCount ? names[anim].c_str() : "";
+}
+
+// The fighter's clips, loaded the first time they are needed (the menus only need the pictures).
+const Art* clipsOf(Hero h) {
+  Art* A = get(h);
+  if (A && !A->clipsTried) {
+    A->clipsTried = true;
+    for (const Source& s : kSources)
+      if (s.hero == h) loadSheets(*A, s.name);
+  }
+  return A;
+}
+
+bool hasSheet(Hero h, int a) {
+  const Art* A = clipsOf(h);
   return A && a >= 0 && a < kSheetCount && A->sheets[a].ok;
+}
+
+bool hasClips(Hero h) {
+  const Art* A = clipsOf(h);
+  return A && A->clips;
 }
 
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash) {
   if (pose.sheet < 0 || pose.sheet >= kSheetCount || alpha <= 0.0f) return false;
-  const Art* A = get(d.hero);
+  const Art* A = clipsOf(d.hero);
   if (!A || !A->sheets[pose.sheet].ok) return false;
   const Art::Sheet& S = A->sheets[pose.sheet];
   const int i = sheetFrame(S, pose);
   // Frame pixels to the fighter's frame: the anchor on the feet (y = +H/2), S.pxPerH pixels per fighter height.
-  const float H = d.height, k = H / S.pxPerH;
-  auto P = [&](float x, float y) { return X(Vec2{(x - S.ax) * k, (y - S.ay) * k + 0.5f * H}); };
+  const float H = d.height, k = H / S.pxPerH, flip = pose.sheetFlip ? -1.0f : 1.0f;
+  auto P = [&](float x, float y) { return X(Vec2{(x - S.ax) * k * flip, (y - S.ay) * k + 0.5f * H}); };
   const Vector2 q[4] = {P(0, 0), P(S.fw, 0), P(S.fw, S.fh), P(0, S.fh)};
   const float tw = float(S.tex.width), th = float(S.tex.height);
   const float u0 = i * S.fw / tw, u1 = (i + 1) * S.fw / tw;

@@ -115,6 +115,7 @@ if(CLASH_BUILD_GAME)
     src/game/screen_title.cpp
     src/game/screen_settings.cpp
     src/game/screen_poses.cpp
+    src/game/export_pose.cpp
     src/game/screen_results.cpp
     src/game/menus.cpp
     src/game/match_screen.cpp

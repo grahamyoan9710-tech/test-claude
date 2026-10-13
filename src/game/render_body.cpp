@@ -2531,9 +2531,14 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   Look L = lookFor(d, palette);
   formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
-  if (art::rigged(d.hero) && pose.sheet >= 0 && art::drawSheet(d, pose, X, alpha, flashColor, flash)) {
-    b.energy();  // a generated animation frame
-    return;
+  if (art::rigged(d.hero) && pose.sheet >= 0) {  // a generated animation frame: it draws the turns and lifts itself
+    Pose flat = pose;
+    flat.rot = 0.0f;
+    flat.shift = {0.0f, 0.0f};
+    if (art::drawSheet(d, pose, xform(d, flat, feet + pose.sheetOffset, facing, scale), alpha, flashColor, flash)) {
+      b.energy();
+      return;
+    }
   }
   if (art::rigged(d.hero)) {  // the picture, with what the fighter carries, casts and summons around it
     b.grimoire();  // Yuno's book, behind him
@@ -2569,7 +2574,7 @@ void drawShowcase(const CharacterDef& d, int palette, const Pose& pose, Vec2 fee
                   float time) {
   if (art::rigged(d.hero)) {  // the picture itself, crisp, a little bigger (it is detailed)
     Pose p = pose;
-    if (art::hasSheet(d.hero, art::kSheetIdle) && frontWeapon(d, p) == WeaponVisual::None) {  // its generated guard
+    if (p.sheet < 0 && art::hasSheet(d.hero, art::kSheetIdle)) {  // its generated guard
       p.sheet = art::kSheetIdle;
       p.sheetT = time;
     }

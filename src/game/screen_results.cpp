@@ -1,5 +1,6 @@
 // Results screen: the winner celebrates, then the scoreboard.
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/ui.hpp"
 
@@ -38,6 +39,10 @@ void App::drawResults() {
     p.handB = {-0.32f * H, -0.44f * H};
     p.weaponDir = Vec2{0.35f, -1.0f}.norm();
     if (d.style == BodyStyle::Puff) p.handF = {0.32f * H, -0.2f * H}, p.handB = {-0.32f * H, -0.2f * H};
+    if (art::hasSheet(d.hero, art::kSheetVictory)) {  // its own victory pose, played once then held
+      p.sheet = art::kSheetVictory;
+      p.sheetT = clampf(screenFrames_ / 90.0f, 0.0f, 1.0f);
+    }
     float hop = std::fabs(std::sin(t * 4.0f)) * 18.0f;
     DrawEllipse(330, 632, 70.0f - hop, 11.0f, withAlpha(ui::kInk, 0.3f));
     drawShowcase(d, winnerPalette_, p, {330, 630 - hop}, 1, 250.0f, t);

@@ -581,6 +581,37 @@ static void testWeapons() {
   CHECK(boosted > base * 1.1f, "weapon damage bonus (%.1f vs %.1f)", boosted, base);
 }
 
+// With a picked-up weapon the basic attack becomes the weapon's own strike (its clip: w0_jab / w1_jab), and it hits.
+static void testWeaponStrikes() {
+  std::printf("[weapon strikes]\n");
+  const auto& r = roster();
+  for (int c = 0; c < int(r.size()); ++c)
+    for (int slot = 0; slot < 2; ++slot) {
+      MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
+      cfg.items = false;
+      cfg.weapons = false;
+      Match m(cfg);
+      skipCountdown(m);
+      Fighter& f = m.fighters[0];
+      f.pos = {-60, 0};
+      f.facing = 1;
+      m.fighters[1].pos = {20, 0};
+      m.equipWeapon(f, slot);
+      Pad p{m};
+      p.run(1, key(0, 0, true));
+      const std::string name = f.state == FState::Attack ? f.moveDef(f.move).name : "-";
+      const bool strike = f.state == FState::Attack && f.move == Jab && f.moveDef(Jab).nextMove < 0 &&
+                          f.moveDef(Jab).name != r[c].moves[Jab].name;
+      bool hit = false;
+      for (int i = 0; i < 60 && !hit; ++i) {
+        p.idle(1);
+        hit = m.fighters[1].percent > 0.0f;
+      }
+      CHECK(strike && hit, "%s weapon %d: the jab becomes the weapon's strike and hits (move \"%s\", hit %d)",
+            r[c].name.c_str(), slot, name.c_str(), hit);
+    }
+}
+
 // Every ultimate (bare-handed and with each weapon) hits, lets its victim go, and can KO at high percent.
 static void testAllUltimates() {
   std::printf("[every ultimate: 3 per fighter]\n");
@@ -1000,6 +1031,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "combos") testCombos();
   if (only.empty() || only == "step") testAttackStep();
+  if (only.empty() || only == "strikes") testWeaponStrikes();
   if (only.empty() || only == "teams") testTeams();
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();

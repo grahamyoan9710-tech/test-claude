@@ -1,6 +1,7 @@
 // Development sheets. --screen poses --tab PAGE: every fighter at rest, with each of its weapons, walking,
 // running and jumping, to check how the characters stand and hold their weapons. --screen anim --tab N:
-// filmstrips of one fighter (N / 4) through its gaits and moves (page N % 4), to judge the animation.
+// filmstrips of one fighter (N / 5) through its gaits and moves (page N % 5, the last one with its weapons), to
+// judge the animation.
 #include <algorithm>
 #include <cmath>
 
@@ -65,23 +66,27 @@ struct Strip {
   const char* label;
   int move;      // MoveId, or -1 for a gait
   int gait = 0;  // 0 walk, 1 run, 2 jump arc
+  int weapon = -1;  // the picked-up weapon held (0, 1), or none
 };
 }  // namespace
 
 void App::drawAnimSheet() {
   constexpr int kCols = 10, kRows = 5;
   const auto& r = roster();
-  const int ci = std::clamp(setTab_ / 4, 0, int(r.size()) - 1), page = setTab_ % 4;
+  constexpr int kPages = 5;
+  const int ci = std::clamp(setTab_ / kPages, 0, int(r.size()) - 1), page = setTab_ % kPages;
   const CharacterDef& d = r[ci];
-  static const Strip pages[4][kRows] = {
+  static const Strip pages[kPages][kRows] = {
       {{"Marche", -1, 0}, {"Course", -1, 1}, {"Saut", -1, 2}, {"Attaque course", DashAttack}, {"Tilt avant", FTilt}},
       {{"Jab 1", Jab}, {"Jab 2", Jab2}, {"Jab 3", Jab3}, {"Tilt haut", UTilt}, {"Tilt bas", DTilt}},
       {{"Smash avant", FSmash}, {"Smash haut", USmash}, {"Smash bas", DSmash}, {"Aérien avant", FAir}, {"Aérien arrière", BAir}},
       {{"Spécial", NSpecial}, {"Spécial côté", SSpecial}, {"Spécial haut", USpecial}, {"Spécial bas", DSpecial},
        {"Ultime", FinalSmash}},
+      {{"Jab", Jab}, {"M1 arme 1", Jab, 0, 0}, {"M1 arme 2", Jab, 0, 1}, {"Spécial arme 1", NSpecial, 0, 0},
+       {"Spécial arme 2", NSpecial, 0, 1}},
   };
   ClearBackground({58, 72, 84, 255});
-  drawText(TextFormat("%s  —  page %d/4", d.name.c_str(), page + 1), 12, 6, 22, ui::kCream);
+  drawText(TextFormat("%s  —  page %d/%d", d.name.c_str(), page + 1, kPages), 12, 6, 22, ui::kCream);
   const float x0 = 150.0f, colW = 112.0f, y0 = 34.0f, rowH = 136.0f;
   for (int row = 0; row < kRows; ++row) {
     const Strip& st = pages[page][row];
@@ -93,7 +98,10 @@ void App::drawAnimSheet() {
     cfg.weapons = false;
     cfg.slots[0] = {true, ci, true, 5};
     cfg.slots[1] = {true, ci == 0 ? 1 : 0, true, 5};
-    const MoveDef* mvd = st.move >= 0 ? &d.moves[st.move] : nullptr;
+    Fighter held;  // the move as performed with the weapon in hand
+    held.def = &d;
+    held.weapon = st.weapon;
+    const MoveDef* mvd = st.move >= 0 ? &held.moveDef(st.move) : nullptr;
     const bool exists = !mvd || mvd->duration > 0;
     drawText(st.label, 10, base - 74, 18, ui::kCream);
     if (mvd && exists) drawText(TextFormat("%d images", mvd->duration), 10, base - 50, 15, ui::kMuted);
@@ -104,6 +112,7 @@ void App::drawAnimSheet() {
     for (int c = 0; c < kCols; ++c) {
       Match m(cfg);
       Fighter& f = m.fighters[0];
+      if (st.weapon >= 0) m.equipWeapon(f, st.weapon);
       f.facing = 1;
       f.grounded = true;
       float when = time_;

@@ -1684,6 +1684,7 @@ void drawProjectiles(const Match& m, float time) {
         pose.handB = {-0.25f * H, 0.05f * H};
         pose.lean = 0.35f;
         const int facing = p.vel.x >= 0.0f ? 1 : -1;
+        runClip(*o.def, pose, std::fmod(p.age * 0.06f, 1.0f));  // the clone runs like its owner
         drawCharacterSprite(*o.def, o.palette, pose, {p.pos.x, p.pos.y + H * 0.5f}, facing, 1.0f, std::min(1.0f, s.k) * 0.92f,
                             {255, 240, 200, 255}, 0.12f, time);
         if (p.age < 6) shotFlash(s, {240, 240, 240, 255});

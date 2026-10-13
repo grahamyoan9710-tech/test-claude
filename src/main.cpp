@@ -9,11 +9,13 @@
 //                    [--teams]   (team battle: red against blue)
 //                    [--palette N]   (colours of the menus, see menu_theme.hpp; 0 = the game's)
 //                    [--export-audio DIR]
+//                    [--export-pose FIGHTER SLOT OUT.png [--anchor AX AY] [--pxh P] [--size N]]
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 #include "game/app.hpp"
+#include "game/render.hpp"
 #include "game/menu_theme.hpp"
 
 int main(int argc, char** argv) {
@@ -44,6 +46,17 @@ int main(int argc, char** argv) {
       opt.padGlyphs = int(std::strcmp(f, "ps") == 0       ? PadFamily::PlayStation
                           : std::strcmp(f, "switch") == 0 ? PadFamily::Nintendo
                                                           : PadFamily::Xbox);
+    } else if (is("--export-pose") && i + 3 < argc) {  // FIGHTER SLOT OUT.png [--anchor AX AY] [--pxh P] [--size N]
+      ExportPose e;
+      e.fighter = argv[++i];
+      e.slot = std::atoi(argv[++i]);
+      e.out = argv[++i];
+      for (int k = i + 1; k < argc; ++k) {
+        if (std::strcmp(argv[k], "--anchor") == 0 && k + 2 < argc) e.ax = float(std::atof(argv[++k])), e.ay = float(std::atof(argv[++k]));
+        else if (std::strcmp(argv[k], "--pxh") == 0 && k + 1 < argc) e.pxh = float(std::atof(argv[++k]));
+        else if (std::strcmp(argv[k], "--size") == 0 && k + 1 < argc) e.size = std::atoi(argv[++k]);
+      }
+      return exportPose(e);
     } else if (is("--export-audio") && i + 1 < argc) {
       int n = Audio::exportAll(argv[++i]);
       std::printf("%d audio files written\n", n);

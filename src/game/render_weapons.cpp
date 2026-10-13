@@ -2,10 +2,145 @@
 // Every weapon is drawn in a frame tied to its grip: `a` runs along the weapon (grip -> tip),
 // `b` across it (+ = cutting edge side). Two passes, like the bodies: warm umber outlines, then fills
 // with a bevel / highlight; energy (glows, petals, lightning, chains of fire) goes on top.
+#include <cstdio>
+#include <cstring>
+#include <map>
+#include <string>
+
+#include "game/fighter_art.hpp"
 #include "game/pixel.hpp"
 #include "game/render.hpp"
+#include "rlgl.h"
 
 namespace {
+// ---- Pictures (PixelLab) ------------------------------------------------------------------------
+// A weapon drawn from its picture, assets/sprites/weapon_<key>.png, indexed in sheets.txt by one line:
+//   weapon <key> w h ox oy tx ty            a hand weapon, lying flat: pixel of the grip (a = 0) and of the tip
+//                                           (a = its length); the pommel, chain or cloth sit left of the grip
+//   icon <key> w h                          a power (items, HUD), upright, as wide as its 30 weapon units
+//   bow <key> w h hx hy ux uy dx dy         a bow, standing, its back to the right: grip and the two tips
+//   shield <key> w h cx cy r                a shield seen from the front: its centre and radius
+// The code keeps drawing what moves: the auras, the folding of a shield.
+struct WSprite {
+  bool ok = false;
+  Texture2D tex{};
+  float w = 0, h = 0;
+  float p[6] = {};
+};
+
+const WSprite* weaponSprite(const char* kind, const char* key) {
+  static std::map<std::string, WSprite> cache;
+  const std::string id = std::string(kind) + " " + key;
+  auto it = cache.find(id);
+  if (it != cache.end()) return it->second.ok ? &it->second : nullptr;
+  WSprite& S = cache[id];
+  const std::string& index = art::spriteIndex();
+  size_t pos = 0;
+  while (pos < index.size()) {
+    size_t end = index.find('\n', pos);
+    if (end == std::string::npos) end = index.size();
+    const std::string line = index.substr(pos, end - pos);
+    pos = end + 1;
+    char k[16] = {}, name[48] = {};
+    float v[8] = {};
+    const int n = std::sscanf(line.c_str(), "%15s %47s %f %f %f %f %f %f %f %f", k, name, &v[0], &v[1], &v[2], &v[3],
+                              &v[4], &v[5], &v[6], &v[7]);
+    if (n < 4 || std::strcmp(k, kind) != 0 || std::strcmp(name, key) != 0) continue;
+    const unsigned char* data = nullptr;
+    unsigned size = 0;
+    if (!art::embeddedSprite(("weapon_" + std::string(key)).c_str(), &data, &size)) break;
+    Image img = LoadImageFromMemory(".png", data, int(size));
+    if (!img.data) break;
+    S.tex = LoadTextureFromImage(img);
+    UnloadImage(img);
+    if (S.tex.id == 0) break;
+    GenTextureMipmaps(&S.tex);
+    SetTextureFilter(S.tex, TEXTURE_FILTER_TRILINEAR);
+    S.w = v[0];
+    S.h = v[1];
+    for (int i = 0; i < 6; ++i) S.p[i] = v[2 + i];
+    S.ok = true;
+    break;
+  }
+  return S.ok ? &S : nullptr;
+}
+
+const char* handKey(WeaponVisual v) {
+  switch (v) {
+    case WeaponVisual::AstaSword: return "asta_sword";
+    case WeaponVisual::DemonSlayer: return "demon_slayer";
+    case WeaponVisual::DemonDweller: return "demon_dweller";
+    case WeaponVisual::WindSpear: return "wind_spear";
+    case WeaponVisual::Zangetsu: return "zangetsu";
+    case WeaponVisual::TensaZangetsu: return "tensa_zangetsu";
+    case WeaponVisual::Katana: return "katana";
+    case WeaponVisual::Senbonzakura: return "senbonzakura";
+    case WeaponVisual::Kageyoshi: return "kageyoshi";
+    case WeaponVisual::MasterSword: return "master_sword";
+    case WeaponVisual::DemonKingSword: return "demon_king_sword";
+    case WeaponVisual::GloomSpear: return "gloom_spear";
+    case WeaponVisual::LeviathanAxe: return "leviathan_axe";
+    case WeaponVisual::BladesOfChaos: return "chaos_blade";
+    case WeaponVisual::Kamutoke: return "kamutoke";
+    case WeaponVisual::ShieldAndSword: return "link_sword";
+    case WeaponVisual::KenpachiSword: return "kenpachi_sword";
+    case WeaponVisual::Nozarashi: return "nozarashi";
+    case WeaponVisual::RedBankai: return "red_bankai";
+    case WeaponVisual::LuzDeLaLuna: return "luz_de_la_luna";
+    case WeaponVisual::GreatSword: return "great_sword";
+    case WeaponVisual::ChargeBlade: return "charge_blade";
+    case WeaponVisual::Gunlance: return "gunlance";
+    case WeaponVisual::Kusanagi: return "kusanagi";
+    case WeaponVisual::KakashiKunai: return "kakashi_kunai";
+    case WeaponVisual::Pantera: return "pantera";
+    case WeaponVisual::LobosPistol: return "lobos_pistol";
+    default: return nullptr;
+  }
+}
+const char* iconKey(WeaponVisual v, float open) {
+  switch (v) {
+    case WeaponVisual::Grimoire: return open > 0.5f ? "grimoire_open" : "grimoire_closed";
+    case WeaponVisual::HollowPurple: return "hollow_purple";
+    case WeaponVisual::SixEyes: return "six_eyes";
+    case WeaponVisual::CursedFinger: return "cursed_finger";
+    case WeaponVisual::SegundaCore: return "segunda_core";
+    case WeaponVisual::SageScroll: return "sage_scroll";
+    case WeaponVisual::KuramaChakra: return "kurama_chakra";
+    case WeaponVisual::SharinganEye: return "sharingan";
+    case WeaponVisual::Mangekyo: return "mangekyo";
+    case WeaponVisual::DoubleMangekyo: return "double_mangekyo";
+    case WeaponVisual::PanteraClaws: return "pantera_claws";
+    case WeaponVisual::LobosPack: return "lobos_pack";
+    case WeaponVisual::Lilynette: return "lilynette";
+    default: return nullptr;
+  }
+}
+const char* bowKey(int variant) {
+  switch (variant) {
+    case 1: return "bow_wood";
+    case 2: return "bow_flame";
+    case 3: return "bow_susanoo";
+    default: return "bow_light";
+  }
+}
+
+// The picture as a quad: `at` maps a picture pixel to the screen. A ghost (afterimage) takes the tint's colour.
+template <class At>
+void drawPicture(const WSprite& S, At at, float alpha, bool ghost, Color tint) {
+  const Vector2 q[4] = {at(0.0f, 0.0f), at(S.w, 0.0f), at(S.w, S.h), at(0.0f, S.h)};
+  const float uv[4][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+  const Color c = ghost ? tint : WHITE;
+  const unsigned char a = (unsigned char)(255.0f * clampf(alpha * (ghost ? tint.a / 255.0f : 1.0f), 0.0f, 1.0f));
+  rlSetTexture(S.tex.id);
+  rlBegin(RL_QUADS);
+  for (int i = 0; i < 4; ++i) {
+    rlColor4ub(c.r, c.g, c.b, a);
+    rlTexCoord2f(uv[i][0], uv[i][1]);
+    rlVertex2f(q[i].x, q[i].y);
+  }
+  rlEnd();
+  rlSetTexture(0);
+}
 const Color kInk = {56, 35, 28, 255};
 constexpr int kMaxPts = 12;
 
@@ -1061,6 +1196,62 @@ float weaponVisualLength(WeaponVisual v) {
   }
 }
 
+namespace {
+// The weapon from its picture, if it has one. False: draw it with code.
+bool drawWeaponPicture(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time, const WeaponStyle& st) {
+  const float side = st.side >= 0 ? 1.0f : -1.0f;
+  const Vec2 n = Vec2{-dir.y, dir.x} * side;
+  // A power (and Yuno's book): its icon, upright, centred where the code draws its orb (a = 15).
+  if (const char* key = iconKey(v, st.open); key && (st.icon || v == WeaponVisual::Grimoire)) {
+    const WSprite* S = weaponSprite("icon", key);
+    if (!S) return false;
+    const Vec2 c = grip + dir * (15.0f * scale);
+    const float k = 30.0f * scale * (st.icon ? 1.35f : 1.0f) / std::max(1.0f, S->w);
+    drawPicture(*S, [&](float x, float y) { return V(c + Vec2{(x - S->w * 0.5f) * k, (y - S->h * 0.5f) * k}); }, alpha,
+                st.ghost, st.tint);
+    return true;
+  }
+  if (v == WeaponVisual::BowOfLight || v == WeaponVisual::SusanooBow) {  // the bow as drawn (string included)
+    const WSprite* S = weaponSprite("bow", bowKey(v == WeaponVisual::SusanooBow ? 3 : st.variant));
+    if (!S) return false;
+    const float hx = S->p[0], hy = S->p[1];
+    const Vec2 e1{S->p[2] - hx, S->p[3] - hy}, e2{S->p[4] - hx, S->p[5] - hy};
+    const float det = e1.x * e2.y - e2.x * e1.y;
+    if (std::fabs(det) < 1e-3f) return false;
+    // pixel -> weapon units: the grip at (23, 0), the tips at (13, -24) and (13, 24), as the code's bow
+    auto units = [&](float x, float y) {
+      const float dx = x - hx, dy = y - hy;
+      const float u = (e2.y * dx - e2.x * dy) / det, w = (-e1.y * dx + e1.x * dy) / det;
+      return Vec2{23.0f - 10.0f * u - 10.0f * w, -24.0f * u + 24.0f * w};
+    };
+    auto at = [&](Vec2 ab) { return grip + dir * (ab.x * scale) + n * (ab.y * scale); };
+    drawPicture(*S, [&](float x, float y) { return V(at(units(x, y))); }, alpha, st.ghost, st.tint);
+    return true;
+  }
+  const char* key = handKey(v);
+  if (!key) return false;
+  const WSprite* S = weaponSprite("weapon", key);
+  if (!S) return false;
+  if (v == WeaponVisual::BladesOfChaos && !st.single) {  // a crossed pair (items, HUD)
+    WeaponStyle one = st;
+    one.single = true;
+    drawWeaponPicture(v, grip + dir * (-2.0f * scale) + n * (7.0f * scale), rotate(dir, -0.35f), scale, alpha, time, one);
+    one.side = -st.side;
+    drawWeaponPicture(v, grip + dir * (4.0f * scale) + n * (-7.0f * scale), rotate(dir, 0.35f), scale, alpha, time, one);
+    return true;
+  }
+  if (v == WeaponVisual::ShieldAndSword && !st.single) {  // Link's kit: the shield behind the sword
+    drawShieldVisual(false, grip + dir * (30.0f * scale) + n * (-2.0f * scale), 17.0f * scale, 1.0f, {1, 0}, alpha,
+                     time, st);
+  }
+  const float len = weaponVisualLength(v);
+  const float ox = S->p[0], oy = S->p[1], k = len / std::max(1.0f, S->p[2] - ox) * scale;
+  drawPicture(*S, [&](float x, float y) { return V(grip + dir * ((x - ox) * k) + n * ((y - oy) * k)); }, alpha,
+              st.ghost, st.tint);
+  return true;
+}
+}  // namespace
+
 void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
                       const WeaponStyle& st) {
   if (v == WeaponVisual::None || alpha <= 0.0f) return;
@@ -1081,6 +1272,7 @@ void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float al
     p.ink = pix::kInk;
   }
   if (st.glow > 0.0f && !st.ghost) elementAura(p, v, st.fx, st.glow);
+  if (drawWeaponPicture(v, grip, dir, scale, alpha, time, st)) return;
   for (int pass = 0; pass < 2; ++pass) {
     p.line = pass == 0;
     drawVisual(v, p, st);
@@ -1093,6 +1285,13 @@ void drawWeaponVisual(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float al
 
 void drawShieldVisual(bool guardian, Vec2 center, float radius, float open, Vec2 fold, float alpha, float time,
                       const WeaponStyle& st) {
+  // The picture, seen from the front; the Guardian Shield folded into a bracer stays drawn by code.
+  if (const WSprite* S = weaponSprite("shield", guardian ? "guardian_shield" : "link_shield"); S && (!guardian || open > 0.5f)) {
+    const float k = radius / std::max(1.0f, S->p[2]);
+    drawPicture(*S, [&](float x, float y) { return V(center + Vec2{(x - S->p[0]) * k, (y - S->p[1]) * k}); }, alpha,
+                st.ghost, st.tint);
+    return;
+  }
   const float ow = std::max(1.0f, radius * 0.12f);
   if (guardian) guardianShieldDisc(center, radius, open, fold.norm(), alpha, ow, st.ghost, st.tint, time);
   else roundShieldDisc(center, radius, alpha, ow, st.ghost, st.tint);

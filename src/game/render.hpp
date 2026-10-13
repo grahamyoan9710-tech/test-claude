@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <array>
 #include <vector>
 
@@ -45,6 +46,9 @@ struct Pose {
   Form form = Form::None;  // transformation (Vasto Lorde, Segunda Etapa...)
   int sheet = -1;          // a generated animation shows this pose instead (see SheetAnim in fighter_art.hpp)
   float sheetT = 0.0f;     // looping animations: seconds; the others: 0..1 through the move
+  bool sheetFlip = false;  // the clip is drawn mirrored (a roll backwards)
+  float sheetPhase = -1.0f;  // looping clips driven by the distance covered (walk, run): 0..1 through the cycle
+  Vec2 sheetOffset;          // the clip is drawn from here instead of the feet (climbing a ledge: from the top)
   float sheetHit0 = -1.0f, sheetHit1 = -1.0f;  // when the move's first blow is out (0..1), to time the drawn one
 };
 
@@ -61,7 +65,17 @@ Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing,
                bool weaponTip = false);
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
 void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
+// --export-pose (export_pose.cpp): a fighter alone, rest pose, facing right, feet at (ax, ay), pxh pixels tall,
+// optionally holding its weapon `slot`, on a transparent size x size PNG (the first frame of a PixelLab clip).
+struct ExportPose {
+  std::string fighter, out;
+  int slot = -1, size = 256;
+  float ax = 100.0f, ay = 236.0f, pxh = 150.0f;
+};
+int exportPose(const ExportPose& e);
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
+// A pose shown by the fighter's run clip (if it has one) at `phase` 0..1 of the cycle: running clones.
+void runClip(const CharacterDef& def, Pose& pose, float phase);
 // The same close up, cut to a box slanted like ui::slanted (the roster tiles).
 void drawPortraitIn(const CharacterDef& def, int palette, Vec2 center, float size, Rectangle box, float slant,
                     float time);
@@ -87,6 +101,7 @@ struct WeaponStyle {
   bool ghost = false;     // afterimage: flat silhouette in `tint`
   Color tint = WHITE;
   float slim = 1.0f;      // cross-section of the weapon (< 1: slimmer, for the illustrated fighters' realistic builds)
+  bool icon = false;      // items and HUD: a power is shown by its icon (in a fight its effect is drawn on the body)
 };
 void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
                       const WeaponStyle& style);

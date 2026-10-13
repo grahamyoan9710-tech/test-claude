@@ -823,6 +823,114 @@ Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
   return p;
 }
 
+namespace {
+// The moment a move's drawn blow lands (0..1 through the move): its first hitbox, else what it throws, casts or
+// fires. -1: nothing to time (the clip plays evenly).
+void clipImpact(const MoveDef& md, float dur, float& h0, float& h1) {
+  int a = -1, b = -1;
+  if (!md.hitboxes.empty()) {
+    a = md.hitboxes[0].start;
+    for (const auto& h : md.hitboxes) a = std::min(a, h.start);
+    for (const auto& h : md.hitboxes)
+      if (h.start == a) b = std::max(b, h.end);
+  } else if (md.throwFrame >= 0) {
+    a = md.throwFrame, b = md.throwFrame + 3;
+  } else if (md.projectileFrame >= 0) {
+    a = md.projectileFrame, b = md.projectileFrame + 4;
+  } else if (!md.shots.empty()) {
+    a = md.shots[0].frame, b = a + 4;
+  } else if (md.teleportFrame >= 0) {
+    a = md.teleportFrame, b = a + 2;
+  }
+  h0 = a >= 0 ? float(a) / dur : -1.0f;
+  h1 = b >= 0 ? float(b) / dur : -1.0f;
+}
+
+// Frame-by-frame clips generated for the fighter (art::drawSheet) replace the skeleton for the states and moves
+// they cover. A fighter drawn entirely in clips has one for (nearly) everything; the others only have the strike
+// they make with each picked-up weapon. A state without its clip keeps the skeleton.
+void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
+  const Hero h = f.def->hero;
+  if (!art::hasClips(h)) return;
+  const float sf = float(f.stateFrame);
+  auto loop = [&](int a) {
+    if (!art::hasSheet(h, a)) return false;
+    p.sheet = a;
+    p.sheetT = tt;
+    return true;
+  };
+  auto once = [&](int a, float t) {
+    if (!art::hasSheet(h, a)) return false;
+    p.sheet = a;
+    p.sheetT = clampf(t, 0.0f, 1.0f);
+    return true;
+  };
+  switch (f.state) {
+    case FState::Idle: case FState::Respawn: loop(art::kSheetIdle); break;
+    case FState::Walk: case FState::Run: {  // the steps follow the ground covered (no skating)
+      const bool run = f.state == FState::Run;
+      if (loop(run ? art::kSheetRun : art::kSheetWalk)) {
+        const float cycle = f.def->height * (run ? 1.4f : 0.8f), u = f.pos.x * float(f.facing) / cycle;
+        p.sheetPhase = u - std::floor(u);
+      }
+      break;
+    }
+    case FState::Crouch: once(art::kSheetCrouch, (sf + 1.0f) / 5.0f); break;
+    case FState::JumpSquat:
+      once(art::kSheetJumpSquat, (sf + 1.0f) / std::max(1, f.timer)) || once(art::kSheetCrouch, 1.0f);
+      break;
+    case FState::Air: {
+      if (f.tumble && loop(art::kSheetTumble)) break;  // still flying from a heavy blow
+      const int since = m.frame - f.airJumpFrame;
+      if (since >= 0 && since < 24 && once(art::kSheetAirJump, since / 24.0f)) break;
+      if (f.vel.y < 0.0f && once(art::kSheetJump, sf / 20.0f)) break;
+      loop(art::kSheetFall);
+      break;
+    }
+    case FState::Landing: once(art::kSheetLand, sf / std::max(1, f.timer)); break;
+    case FState::Shield: case FState::ShieldStun: once(art::kSheetShield, (sf + 1.0f) / 6.0f); break;
+    case FState::Roll:
+      if (once(art::kSheetRoll, sf / 28.0f)) p.sheetFlip = f.actionDir * f.facing < 0;  // rolls the way it goes
+      break;
+    case FState::SpotDodge: once(art::kSheetSpotDodge, sf / 24.0f); break;
+    case FState::AirDodge: once(art::kSheetAirDodge, sf / 34.0f); break;
+    case FState::Hitstun:
+      if (!(f.tumble && sf > 10.0f && loop(art::kSheetTumble))) once(art::kSheetHurt, sf / 14.0f);
+      break;
+    case FState::Knockdown: once(art::kSheetKnockdown, 0.5f + sf / 20.0f); break;  // already falling: its second half
+    case FState::GetUp: once(art::kSheetGetUp, sf / std::max(1, f.timer)); break;
+    case FState::Helpless: loop(art::kSheetHelpless) || loop(art::kSheetFall); break;
+    case FState::LedgeHang: loop(art::kSheetLedge); break;
+    case FState::LedgeClimb:  // the clip climbs by itself: drawn from where the climb ends
+      if (once(art::kSheetClimb, sf / 18.0f)) p.sheetOffset = f.ledgeTo - f.pos;
+      break;
+    case FState::Holding: loop(art::kSheetHold) || loop(art::kSheetIdle); break;
+    case FState::Grabbed: case FState::Captured: loop(art::kSheetGrabbed) || once(art::kSheetHurt, 0.5f); break;
+    case FState::ShieldBreak: loop(art::kSheetDizzy) || loop(art::kSheetIdle); break;
+    case FState::Attack: {
+      const MoveDef* md = f.currentMove();
+      if (!md || f.move < 0 || f.move >= MOVE_COUNT) break;
+      const int withWeapon = f.weapon == 0 ? art::kSheetWeapon0 : f.weapon == 1 ? art::kSheetWeapon1 : -1;
+      int clip = withWeapon >= 0 && art::hasSheet(h, withWeapon + f.move) ? withWeapon + f.move
+                                                                            : art::kSheetMove0 + f.move;
+      if (!art::hasSheet(h, clip)) break;
+      const float dur = float(std::max(1, md->duration));
+      p.sheet = clip;
+      p.sheetT = clampf(float(f.moveFrame) / dur, 0.0f, 1.0f);
+      clipImpact(*md, dur, p.sheetHit0, p.sheetHit1);
+      break;
+    }
+    default: break;
+  }
+}
+}  // namespace
+
+void runClip(const CharacterDef& def, Pose& pose, float phase) {
+  if (!art::hasSheet(def.hero, art::kSheetRun)) return;
+  pose.sheet = art::kSheetRun;
+  pose.sheetPhase = phase - std::floor(phase);
+}
+
 Pose computePose(const Fighter& f, const Match& m, float time) {
   const CharacterDef& d = *f.def;
   const float H = d.height;
@@ -1067,28 +1175,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
   }
   p.bladeLen = f.bladeLength();
   p.form = f.formKind();
-  // Animations generated for the fighter (art::drawSheet) replace the skeleton for the poses they cover: standing
-  // in guard, and the punches (the third jab stays the kick that ends the combo).
-  if (frontWeapon(d, p) == WeaponVisual::None && p.form == Form::None) {
-    if (f.state == FState::Idle && art::hasSheet(d.hero, art::kSheetIdle)) {
-      p.sheet = art::kSheetIdle;
-      p.sheetT = tt;
-    } else if (f.state == FState::Attack && (f.move == Jab || f.move == Jab2 || f.move == FTilt) &&
-               art::hasSheet(d.hero, art::kSheetAttack)) {
-      const MoveDef* md = f.currentMove();
-      const float dur = float(std::max(1, md ? md->duration : 20));
-      p.sheet = art::kSheetAttack;
-      p.sheetT = clampf(float(f.moveFrame) / dur, 0.0f, 1.0f);
-      if (md && !md->hitboxes.empty()) {  // the drawn blow lands with the first hitbox
-        int h0 = md->hitboxes[0].start, h1 = 0;
-        for (const auto& h : md->hitboxes) h0 = std::min(h0, h.start);
-        for (const auto& h : md->hitboxes)
-          if (h.start == h0) h1 = std::max(h1, h.end);
-        p.sheetHit0 = float(h0) / dur;
-        p.sheetHit1 = float(h1) / dur;
-      }
-    }
-  }
+  pickClip(p, f, m, tt);
   return p;
 }
 

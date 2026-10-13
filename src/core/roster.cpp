@@ -1232,6 +1232,76 @@ CharacterDef makeHunter() {
   c.weapons[1].moves = {{NSpecial, shell}};
   return c;
 }
+// The basic attack (jab) with a picked-up weapon: one big strike, drawn by its own clip (w0_jab / w1_jab). A blade
+// slashes from above down to the front, a spear or a lance thrusts, a bow looses a quick arrow, a power strikes with
+// a burst of its energy. No chain: pressing again strikes again.
+float pickupReach(WeaponVisual v) {  // weapon units, a 100-unit fighter (render_weapons.cpp weaponVisualLength)
+  switch (v) {
+    case WeaponVisual::DemonSlayer: return 100;
+    case WeaponVisual::DemonDweller: return 80;
+    case WeaponVisual::Zangetsu: return 90;
+    case WeaponVisual::TensaZangetsu: return 82;
+    case WeaponVisual::Senbonzakura: return 74;
+    case WeaponVisual::Kageyoshi: return 80;
+    case WeaponVisual::MasterSword: return 79;
+    case WeaponVisual::DemonKingSword: return 96;
+    case WeaponVisual::LeviathanAxe: return 72;
+    case WeaponVisual::BladesOfChaos: return 86;
+    case WeaponVisual::Nozarashi: return 110;
+    case WeaponVisual::RedBankai: return 113;
+    case WeaponVisual::Pantera: return 74;
+    case WeaponVisual::ChargeBlade: return 82;
+    default: return 0;
+  }
+}
+bool pickupThrusts(WeaponVisual v) {
+  return v == WeaponVisual::WindSpear || v == WeaponVisual::GloomSpear || v == WeaponVisual::LuzDeLaLuna ||
+         v == WeaponVisual::Gunlance || v == WeaponVisual::Kamutoke;
+}
+float thrustReach(WeaponVisual v) {
+  switch (v) {
+    case WeaponVisual::WindSpear: return 98;
+    case WeaponVisual::GloomSpear: return 105;
+    case WeaponVisual::LuzDeLaLuna: return 104;
+    case WeaponVisual::Gunlance: return 108;
+    default: return 94;  // Kamutoke
+  }
+}
+
+MoveDef weaponStrike(const CharacterDef& c, const WeaponDef& w) {
+  const float S = c.height / 100.0f;
+  const F fx = w.fx;
+  const WeaponVisual v = w.visual;
+  if (v == WeaponVisual::BowOfLight || v == WeaponVisual::SusanooBow) {  // a quick arrow, like the special's
+    for (const auto& [id, special] : w.moves)
+      if (id == NSpecial && special.projectileFrame >= 0) {
+        MoveDef m = mv("Tir rapide", 32, {});
+        m.projectileFrame = 11;
+        m.projectile = special.projectile;
+        m.projectile.hit.damage *= 0.5f;
+        m.projectile.explodeRadius = 0.0f;
+        m.pose = PoseHint::Bow;
+        return m;
+      }
+  }
+  MoveDef m;
+  if (const float R = pickupReach(v) * S; R > 0.0f) {  // the slash: high behind the head, down to the front
+    m = mv("Frappe de l'arme", 30, {hb(8, 10, R * 0.35f, -R * 0.55f, 20 * S, 7.0f, 45, 40, 85, L::Weapon, 0, fx),
+                                    hb(9, 12, R * 0.7f, -R * 0.12f, 28 * S, 9.0f, 40, 40, 85, L::Weapon, 0, fx),
+                                    hb(9, 12, R * 0.35f, -R * 0.05f, 22 * S, 9.0f, 40, 40, 85, L::Weapon, 0, fx)});
+  } else if (pickupThrusts(v)) {  // the thrust: straight ahead, far
+    const float R = thrustReach(v) * S;
+    m = mv("Estoc de l'arme", 30, {hb(8, 11, R * 0.5f, -10 * S, 20 * S, 7.5f, 38, 38, 85, L::Weapon, 0, fx),
+                                   hb(9, 12, R * 0.95f, -10 * S, 24 * S, 8.5f, 38, 38, 85, L::Weapon, 0, fx)});
+  } else {  // a power: a burst of its energy in front of the hands
+    m = mv("Frappe d'énergie", 30, {hb(8, 12, 52 * S, -10 * S, 34 * S, 8.5f, 45, 40, 80, L::ArmFront, 0, fx)});
+  }
+  return m;
+}
+
+void addWeaponStrikes(CharacterDef& c) {
+  for (auto& w : c.weapons) w.moves.push_back({Jab, weaponStrike(c, w)});
+}
 }  // namespace
 
 const std::vector<CharacterDef>& roster() {
@@ -1240,7 +1310,10 @@ const std::vector<CharacterDef>& roster() {
                                    makeUlquiorra(), makeGrimmjow(), makeStarrk(),   makeNaruto(),    makeSasuke(),
                                    makeKakashi(),   makeGojo(),     makeSukuna(),   makeLink(),      makeGanondorf(),
                                    makeKratos(),    makeHunter()};
-    for (auto& c : v) addUltimates(c);  // roster_ultimates.cpp
+    for (auto& c : v) {
+      addWeaponStrikes(c);  // before the ultimates: the bows copy their special's arrow
+      addUltimates(c);      // roster_ultimates.cpp
+    }
     return v;
   }();
   return r;

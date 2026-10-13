@@ -26,7 +26,9 @@ void drawItems(const Match& m, float time) {
     const float a = -1.1f + std::sin(time * 1.6f + it.age * 0.01f) * 0.25f;
     const Vec2 dir{std::cos(a), std::sin(a)};
     const float len = std::max(30.0f, weaponVisualLength(w.visual) * 0.8f);
-    drawWeaponVisual(w.visual, center - dir * (len * 0.5f), dir, 0.8f, 1.0f, time);
+    WeaponStyle st;
+    st.icon = true;
+    drawWeaponStyled(w.visual, center - dir * (len * 0.5f), dir, 0.8f, 1.0f, time, st);
     if (w.visual == WeaponVisual::SixEyes || w.visual == WeaponVisual::CursedFinger || w.visual == WeaponVisual::Grimoire ||
         w.visual == WeaponVisual::HollowPurple)
       DrawCircleV(V(center), 10.0f, withAlpha(g, 0.9f));
