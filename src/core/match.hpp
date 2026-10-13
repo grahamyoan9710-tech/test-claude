@@ -11,12 +11,14 @@ struct MatchConfig {
     int character = 0;
     bool cpu = false;
     int level = 5;
+    int team = 0;  // with `teams`: fighters of one team cannot hurt each other
   };
   int stage = 0;
   int stocks = 3;
   bool items = true;  // Clash Orb
   bool weapons = true;  // weapons drop from the sky (each one for a given character)
   bool training = false;  // infinite lives, the match never ends
+  bool teams = false;     // team battle (2 v 2...): the last team standing wins
   std::array<Slot, 4> slots;
   uint32_t seed = 12345;
 };
@@ -135,6 +137,7 @@ class Match {
   int countdown = 200;
   bool finished = false;
   int winner = -1;
+  int winnerTeam = -1;  // team battles: the team left standing
   int finishFrame = 0;
   Rng rng;
 
@@ -174,6 +177,11 @@ class Match {
   void captureFighter(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 hitPos, float damageMul);
   void holdHit(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 hitPos, float damageMul);
   int nearestOpponent(const Fighter& f) const;  // -1 if nobody can be targeted
+  // Can a hurt b (not itself, not a teammate)? `owner` -1: nobody's (the stage, an orb...).
+  bool foes(const Fighter& a, const Fighter& b) const { return a.id != b.id && a.team != b.team; }
+  bool foes(int owner, const Fighter& b) const {
+    return owner < 0 || owner >= int(fighters.size()) || foes(fighters[owner], b);
+  }
   // match.cpp
   void checkBlastZones();
   void koFighter(Fighter& f);

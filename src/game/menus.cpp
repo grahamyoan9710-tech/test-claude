@@ -13,11 +13,16 @@ float cardX(int col, bool training) {
   return (kScreenW - (n * kCardW + (n - 1) * kCardGap)) * 0.5f + col * (kCardW + kCardGap);
 }
 Rectangle cardRect(int col, bool training) { return {cardX(col, training), kCardY, kCardW, kCardH}; }
+// Fields: the rules on top (row -1: lives, orb, weapons, mode), then on each card the type (0), the fighter (1),
+// the device or level (2) and, in a team battle, the team chip in the card's band (3).
 Rectangle fieldRect(int col, int row, bool training) {
-  if (row < 0) return col == 0 ? Rectangle{652, 40, 176, 44} : col == 1 ? Rectangle{840, 40, 226, 44}
-                                                                       : Rectangle{1078, 40, 178, 44};
+  if (row < 0) {
+    const Rectangle r[4] = {{640, 40, 140, 44}, {788, 40, 158, 44}, {954, 40, 158, 44}, {1120, 40, 140, 44}};
+    return r[std::clamp(col, 0, 3)];
+  }
   float x = cardX(col, training);
   switch (row) {
+    case 3: return {x + kCardW - 112, kCardY + 6, 96, 32};
     case 0: return {x + 24, kCardY + 54, kCardW - 48, 36};
     case 1: return {x + 14, kCardY + 98, kCardW - 28, 206};
     default: return {x + 20, kCardY + 316, kCardW - 48, 36};
@@ -122,11 +127,19 @@ void App::changeField(int col, int row, int delta, int by) {
   if (row < 0) {
     if (col == 0) settings().stocks = 1 + (settings().stocks - 1 + delta + 5) % 5;
     else if (col == 1) settings().items = !settings().items;
-    else settings().weapons = !settings().weapons;
+    else if (col == 2) settings().weapons = !settings().weapons;
+    else {
+      settings().teams = !settings().teams;
+      if (settings().teams) audio_.voice("teambattle");
+    }
     saveSettings();
     return;
   }
   SlotSetup& s = slots_[col];
+  if (row == 3) {  // the team chip: red <-> blue
+    s.team = 1 - slotTeam(col);
+    return;
+  }
   if (training_) {
     if (row == 1) stepFighter(col, delta);
     if (row == 2 && col == 0) s.device = (s.device + delta + kDeviceCount) % kDeviceCount;
@@ -236,16 +249,31 @@ void App::updateCss(const MenuNav& nav) {
       continue;
     }
     c.col = std::clamp(c.col, 0, cols - 1);
-    c.row = std::clamp(c.row, minRow, 2);
+    // Rows from the top: the rules, the team chip (team battles), the type, the fighter, the device / level.
+    const bool teamRow = !training_ && settings().teams;
+    const int order[5] = {-1, 3, 0, 1, 2};
+    int at = 0;
+    while (at < 5 && order[at] != c.row) ++at;
+    if (at == 5 || (!teamRow && c.row == 3) || c.row < minRow) at = 3;  // back on the fighter
+    auto valid = [&](int i) { return order[i] >= minRow && (teamRow || order[i] != 3); };
     bool moved = false;
-    if (n.up && c.row > minRow) --c.row, moved = true;
-    if (n.down && c.row < 2) ++c.row, moved = true;
+    if (n.up) {
+      int i = at - 1;
+      while (i >= 0 && !valid(i)) --i;
+      if (i >= 0) at = i, moved = true;
+    }
+    if (n.down) {
+      int i = at + 1;
+      while (i < 5 && !valid(i)) ++i;
+      if (i < 5) at = i, moved = true;
+    }
+    c.row = order[at];
     const int dx = (n.right ? 1 : 0) - (n.left ? 1 : 0);
     // On your own card (or a CPU's), left / right change the fighter and the device / level; the top row (the
     // type) moves to another card.
     const bool pick = (c.row == 1 || c.row == 2) && canPick(c.col, e) && (c.row == 1 || !training_ || c.col == 0);
     if (dx != 0) {
-      if (c.row < 0) c.rule = (c.rule + dx + 3) % 3, moved = true;
+      if (c.row < 0) c.rule = (c.rule + dx + 4) % 4, moved = true;
       else if (pick) changeField(c.col, c.row, dx, e);
       else c.col = (c.col + dx + cols) % cols, moved = true;
     }
@@ -263,8 +291,9 @@ void App::updateCss(const MenuNav& nav) {
   }
 
   // Mouse: fields (the arrows of a fighter go back or forth), roster tiles, ready banner
-  for (int row = minRow; row <= 2; ++row)
-    for (int col = 0; col < (row < 0 ? 3 : cols); ++col) {
+  const int lastRow = (!training_ && settings().teams) ? 3 : 2;
+  for (int row = minRow; row <= lastRow; ++row)
+    for (int col = 0; col < (row < 0 ? 4 : cols); ++col) {
       const Rectangle f = fieldRect(col, row, training_);
       if (!ui::hovered(f)) continue;
       cssRow_ = row;
@@ -287,7 +316,7 @@ void App::updateCss(const MenuNav& nav) {
       audio_.play(Sfx::MenuSelect, 0.7f);
       audio_.voice(s.random ? "random" : voiceKey(roster()[i].name).c_str());
     }
-  bool ready = activeSlots() >= 2;
+  bool ready = readyToFight();
   bool clickGo = ready && ui::clicked(readyRect());
 
   if (nav.start || clickGo) {
@@ -324,8 +353,9 @@ void App::drawCss() {
   if (!training_) {
     const Settings& s = settings();
     ui::selector(fieldRect(0, -1, false), TextFormat("VIES : %d", s.stocks), focusOn(0, -1), t);
-    ui::selector(fieldRect(1, -1, false), s.items ? "ORBE CLASH : OUI" : "ORBE CLASH : NON", focusOn(1, -1), t);
+    ui::selector(fieldRect(1, -1, false), s.items ? "ORBE : OUI" : "ORBE : NON", focusOn(1, -1), t);
     ui::selector(fieldRect(2, -1, false), s.weapons ? "ARMES : OUI" : "ARMES : NON", focusOn(2, -1), t);
+    ui::selector(fieldRect(3, -1, false), s.teams ? "2 CONTRE 2" : "SOLO", focusOn(3, -1), t);
   } else {
     Rectangle info{820, 42, 410, 40};
     ui::panel(info, withAlpha(ui::kInk, 0.85f), withAlpha(ui::kGold, 0.7f), 0.5f);
@@ -383,7 +413,7 @@ void App::drawCss() {
       bool active = training_ || sl.type != 0;
       if (!active || (rnd ? !sl.random : sl.random || sl.character != i)) continue;
       bool cpu = training_ ? s == 1 : sl.type == 2;
-      Color tc = cpu ? cpuColor() : portColor(s);
+      Color tc = (!training_ && settings().teams) ? teamColor(slotTeam(s)) : cpu ? cpuColor() : portColor(s);
       chosen = true;
       Rectangle tag = wide ? Rectangle{rr.x + 4 + tags * 40.0f, rr.y + rr.height - 24, 38, 22}
                            : Rectangle{rr.x + 14 + tags * 42.0f, rr.y + 6, 38, 22};
@@ -402,7 +432,10 @@ void App::drawCss() {
     const SlotSetup& s = slots_[col];
     const int type = training_ ? (col == 0 ? 1 : 2) : s.type;
     Rectangle cr = cardRect(col, training_);
-    Color pc = type == 1 ? portColor(col) : type == 2 ? cpuColor() : Color{70, 78, 80, 255};
+    const bool teamBattle = !training_ && settings().teams;
+    Color pc = type == 0 ? Color{70, 78, 80, 255}
+               : teamBattle ? teamColor(slotTeam(col))
+               : type == 1 ? portColor(col) : cpuColor();
     ui::slanted({cr.x + 7, cr.y + 9, cr.width, cr.height}, kCardSlant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
     ui::slanted(cr, kCardSlant, withAlpha(mixColor(ui::kSlate, pc, type ? 0.2f : 0.05f), 0.94f),
                 withAlpha(mixColor(ui::kInk, pc, type ? 0.08f : 0.02f), 0.95f));
@@ -418,6 +451,15 @@ void App::drawCss() {
     if (joined > 0.0f) ui::slantedOutline(ui::grow(cr, 3), kCardSlant, 6, withAlpha(ui::kGold, joined));
     const char* head = training_ ? (col == 0 ? "JOUEUR 1" : "MANNEQUIN") : TextFormat("JOUEUR %d", col + 1);
     drawTextOutlined(head, cr.x + 30, cr.y + 7, 30, type ? ui::kCream : ui::kMuted, ui::kInk, 3.0f, FontKind::Title);
+    if (teamBattle && type != 0) {  // the team chip: press it to change sides
+      const Rectangle chip = fieldRect(col, 3, false);
+      const Color tc = teamColor(slotTeam(col));
+      DrawRectangleRounded(ui::grow(chip, 2), 0.5f, 8, ui::kInk);
+      DrawRectangleRounded(chip, 0.5f, 8, focusOn(col, 3) ? mixColor(tc, WHITE, 0.25f) : shade(tc, 0.85f));
+      DrawRectangleRoundedLinesEx(ui::grow(chip, -2), 0.5f, 8, 1.0f, withAlpha(ui::kCream, 0.6f));
+      drawTextCentered(teamName(slotTeam(col)), chip.x + chip.width * 0.5f, chip.y + 7, 17, WHITE, true, FontKind::Title);
+      if (focusOn(col, 3)) ui::focusFrame(chip, t, 0.5f);
+    }
 
     Rectangle f1 = fieldRect(col, 1, training_);
     bool foc1 = focusOn(col, 1);
@@ -486,7 +528,7 @@ void App::drawCss() {
   }
 
   // Whose cursor is where: a tag in the player's colour on the corner of the field.
-  std::array<int, 16> stacked{};
+  std::array<int, 24> stacked{};
   for (int dev = 0; dev < kDeviceCount; ++dev) {
     const CssCursor& c = cssCur_[dev];
     if (!c.on) continue;
@@ -504,7 +546,7 @@ void App::drawCss() {
   }
 
   // "Ready to fight" banner: teal ink, gold edges, a Zonai glow behind the words
-  bool ready = activeSlots() >= 2;
+  bool ready = readyToFight();
   Rectangle rb = readyRect();
   if (ready) {
     float pulse = 0.5f + 0.5f * std::sin(t * 5.0f);
@@ -523,7 +565,9 @@ void App::drawCss() {
   }
   ui::footer({{"FLÈCHES", ui::Btn::Move, "Perso / Naviguer"}, {"ESPACE", ui::Btn::A, "Modifier"},
               {"K", ui::Btn::X, "Précédent"}, {"ÉCHAP", ui::Btn::B, "Retour"}},
-             ready ? nullptr : "Il faut au moins 2 combattants.");
+             ready ? nullptr
+             : activeSlots() >= 2 ? "En équipes : il faut au moins un combattant dans chaque équipe."
+                                  : "Il faut au moins 2 combattants.");
 }
 
 // ---------------------------------------------------------------------------

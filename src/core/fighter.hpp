@@ -26,6 +26,8 @@ constexpr float kLevel10Power = 2.0f;
 struct Fighter {
   int id = 0;          // index in Match::fighters
   int port = 0;        // controller slot (0..3)
+  int team = 0;        // fighters of one team cannot hurt each other (free for all: its own id)
+  bool inTeam = false; // a team battle: the fighter wears its team's colour
   int charIndex = 0;
   int palette = 0;
   const CharacterDef* def = nullptr;

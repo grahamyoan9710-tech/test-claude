@@ -253,6 +253,12 @@ bas, saut en haut et à gauche, saisie sur les gâchettes hautes, bouclier sur l
 droit, et le stick vers le haut fait sauter (« Saut avec le stick », dans Paramètres > Jeu). Comme le Final Smash,
 **l'ultime part avec la spéciale** (sans direction) quand la barre est pleine.
 
+**Combat en équipes (2 contre 2)** : sur l'écran des combattants, la règle en haut à droite passe de « SOLO »
+à « 2 CONTRE 2 ». Chaque carte porte alors une pastille **ROUGE** ou **BLEUE** (joueurs 1-2 contre 3-4 au
+départ) : appuyez dessus pour changer de camp. Les coéquipiers ne se blessent pas (ni coups, ni projectiles, ni
+ultimes), les ordinateurs visent l'autre équipe, et la dernière équipe encore en vie gagne ; les étiquettes, les
+cartes et les résultats prennent la couleur de l'équipe. Ça marche aussi en 2 contre 1 ou 3 contre 1.
+
 **Combos de touches** (clavier et manette) :
 
 | Combinaison | Effet |
@@ -318,9 +324,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-7.6-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-7.7-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-7.6-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-7.7-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
@@ -365,6 +371,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DFETCHCONTENT_SOURCE_DIR_RAYLIB=
 super_clash --demo            # match de démonstration entre 4 ordinateurs
 super_clash --demo --fighters 7,8   # ... avec ces combattants (numéros dans la grille, de 0 à 16)
 super_clash --demo --fighters 6,4 --ult 1   # le premier déclenche son ultime (-1 mains nues, 0 ou 1 : arme)
+super_clash --teams --demo --fighters 8,9,2,13   # combat en équipes : les deux premiers contre les deux autres
 super_clash --screen menu     # démarrer sur un écran : menu, settings, css, stage, training...
 super_clash --screen training --fighters 8,9   # entraînement : Naruto (clavier 1) contre Sasuke en cible
 super_clash --screen poses --tab 0   # planche de poses : chaque perso au repos, avec ses armes, en marche, en course, en saut (pages 0 à 3)

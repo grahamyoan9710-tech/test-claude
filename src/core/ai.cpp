@@ -249,7 +249,7 @@ InputState CpuBrain::think(const Match& m, int self) {
   const Fighter* target = nullptr;
   float best = 1e9f;
   for (const auto& o : m.fighters) {
-    if (o.id == f.id || !o.active()) continue;
+    if (!m.foes(f, o) || !o.active()) continue;
     float d = (o.pos - f.pos).len() + (o.state == FState::Respawn ? 600.0f : 0.0f);
     if (d < best) {
       best = d;
@@ -327,7 +327,7 @@ bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
   }
   if (!best || !f.grounded) return false;
   for (const auto& o : m.fighters)
-    if (o.id != f.id && o.active() && (o.pos - f.pos).len() < 110.0f) return false;  // busy fighting
+    if (m.foes(f, o) && o.active() && (o.pos - f.pos).len() < 110.0f) return false;  // busy fighting
   const float dx = best->pos.x - f.pos.x, dy = best->pos.y - f.pos.y;
   in.stick.x = std::fabs(dx) > 12.0f ? signf(dx) : 0.0f;
   if (!m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f) && dy > -20.0f) in.stick.x = 0.0f;  // no walking off
@@ -340,7 +340,7 @@ bool CpuBrain::chaseOrb(const Match& m, const Fighter& f, InputState& in) {
   Vec2 d = m.orb.pos - f.center();
   if (d.len() > 520.0f || f.finalSmash) return false;
   for (const auto& o : m.fighters)
-    if (o.id != f.id && o.active() && (o.pos - f.pos).len() < 120.0f) return false;  // busy fighting
+    if (m.foes(f, o) && o.active() && (o.pos - f.pos).len() < 120.0f) return false;  // busy fighting
   if (!f.grounded && !m.groundBelow({f.pos.x + f.vel.x * 12.0f, f.pos.y}, 1500.0f)) return false;
   in.stick.x = std::fabs(d.x) > 30.0f ? signf(d.x) : 0.0f;
   if (f.grounded && !m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f)) in.stick.x = 0.0f;
@@ -401,7 +401,7 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
   if (f.grounded && (f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run ||
                      f.state == FState::Crouch || f.state == FState::Landing)) {
     for (const auto& o : m.fighters) {
-      if (o.id == f.id || !o.active() || o.state != FState::Attack || o.move != FinalSmash) continue;
+      if (!m.foes(f, o) || !o.active() || o.state != FState::Attack || o.move != FinalSmash) continue;
       const int key = o.id * 1000003 + (m.frame - o.moveFrame);  // this ultimate (its first frame)
       if (key != ultKey_) {
         ultKey_ = key;
@@ -418,7 +418,7 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
                      f.state == FState::Crouch)) {
     bool threat = isThreat(t, f);
     for (const auto& p : m.projectiles) {
-      if (p.owner == f.id) continue;
+      if (!m.foes(p.owner, f)) continue;
       Vec2 rel = f.center() - p.pos;
       if (rel.len() < 160.0f && dot(rel, p.vel) > 0.0f) threat = true;
     }

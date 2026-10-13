@@ -279,6 +279,72 @@ static void testCombos() {
   CHECK(run({{6, key(0, -0.4f)}, {1, upTilt}}) == UTilt, "tap jump still allows the up tilt");
 }
 
+static void testTeams() {
+  std::printf("[team battle 2v2]\n");
+  MatchConfig cfg;
+  cfg.stage = 0;
+  cfg.stocks = 2;
+  cfg.teams = true;
+  cfg.slots[0] = {true, 8, false, 9, 0};
+  cfg.slots[1] = {true, 2, true, 9, 0};
+  cfg.slots[2] = {true, 9, true, 9, 1};
+  cfg.slots[3] = {true, 0, true, 9, 1};
+  {  // a teammate's jab does nothing
+    Match m(cfg);
+    skipCountdown(m);
+    Fighter& a = m.fighters[0];
+    Fighter& mate = m.fighters[1];
+    a.pos = {0, 0};
+    a.facing = 1;
+    mate.pos = {40, 0};
+    m.fighters[2].pos = {-400, 0};
+    m.fighters[3].pos = {-500, 0};
+    std::array<InputState, 4> in{};
+    for (int i = 0; i < 20; ++i) m.step(in);
+    const float before = mate.percent;
+    Pad p{m};
+    for (int i = 0; i < 6; ++i) {
+      p.run(1, key(0, 0, true));
+      p.idle(12);
+    }
+    CHECK(mate.percent == before, "no damage to a teammate (%.1f%% -> %.1f%%)", before, mate.percent);
+    m.fighters[2].pos = {40, 0};
+    m.fighters[2].vel = {};
+    p.idle(10);
+    const float foe = m.fighters[2].percent;
+    for (int i = 0; i < 6; ++i) {
+      p.run(1, key(0, 0, true));
+      p.idle(12);
+    }
+    CHECK(m.fighters[2].percent > foe, "the other team takes the hits (%.1f%%)", m.fighters[2].percent);
+  }
+  {  // CPUs play it out: one team wins, and the ranking starts with it
+    MatchConfig c = cfg;
+    c.slots[0].cpu = true;
+    Match m(c);
+    std::vector<CpuBrain> brains;
+    for (const auto& f : m.fighters) brains.emplace_back(9, 77u + 13u * uint32_t(f.id));
+    std::array<InputState, 4> in{};
+    for (int i = 0; i < 60 * 60 * 8 && !m.finished; ++i) {
+      for (size_t k = 0; k < m.fighters.size(); ++k) in[m.fighters[k].port] = brains[k].think(m, int(k));
+      m.step(in);
+    }
+    CHECK(m.finished, "the team battle ends");
+    CHECK(m.winnerTeam == 0 || m.winnerTeam == 1, "a team wins (%d)", m.winnerTeam);
+    int standing = 0;
+    for (const auto& f : m.fighters)
+      if (!f.eliminated) {
+        ++standing;
+        CHECK(f.team == m.winnerTeam, "only the winning team is left");
+      }
+    CHECK(standing >= 1, "someone is left");
+    auto rk = m.ranking();
+    CHECK(m.fighters[rk[0]].team == m.winnerTeam && m.fighters[rk[1]].team == m.winnerTeam,
+          "the winning team is ranked first");
+    CHECK(sane(m), "sane");
+  }
+}
+
 static void testFinalSmash() {
   std::printf("[clash orb + final smash]\n");
   Match m(duel(0, 0, 2, false, false));
@@ -417,14 +483,14 @@ static void testWeapons() {
   Pad p{m};
   m.dropWeaponFor(1, 0);  // Gojo's weapon: Kratos must not be able to take it
   m.items.back().pos = {-150, -300};
-  for (int i = 0; i < 120 && !m.items.back().grounded; ++i) p.idle(1);
+  for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   CHECK(!m.items.empty() && m.items.back().grounded, "a dropped weapon lands on the stage");
   p.run(30, key(1, 0));
   CHECK(f.weapon < 0 && m.items.size() == 1, "another character's weapon cannot be picked up");
   m.items.clear();
   m.dropWeaponFor(0, 0);  // Leviathan axe
   m.items.back().pos = {f.pos.x + 60, -300};
-  for (int i = 0; i < 120 && !m.items.back().grounded; ++i) p.idle(1);
+  for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   p.run(20, key(1, 0));
   CHECK(f.weapon == 0 && m.items.empty(), "walking over its own weapon picks it up (weapon %d)", f.weapon);
   p.idle(20);
@@ -816,6 +882,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "combos") testCombos();
+  if (only.empty() || only == "teams") testTeams();
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();
   if (only.empty() || only == "ult") testUltEdgeCases();

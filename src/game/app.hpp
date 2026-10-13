@@ -23,6 +23,7 @@ struct Options {
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
+  bool teams = false;  // --teams: team battle (red against blue) for this run
   bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
 };
@@ -85,6 +86,7 @@ struct SlotSetup {
   int character = 0;
   int level = 5;
   bool random = false;  // a fighter drawn at random when the match starts
+  int team = -1;        // team battles: 0 red, 1 blue (-1: cards 1-2 red, 3-4 blue)
 };
 
 // A cursor on the character select, one per input device: each player moves their own.
@@ -126,6 +128,8 @@ class App {
   void changeField(int col, int row, int delta, int by = -1);
   bool padJoins();
   int activeSlots() const;
+  bool readyToFight() const;  // enough fighters (and, in a team battle, two teams)
+  int slotTeam(int i) const { return slots_[i].team >= 0 ? (slots_[i].team & 1) : i / 2; }
   int ownedCard(int device) const;          // the card this device plays (-1: none)
   bool canPick(int col, int device) const;  // may this device change the fighter of that card
   void stepFighter(int col, int delta);     // next / previous fighter of a card ("?" = random included)
@@ -187,8 +191,10 @@ class App {
     bool cpu;
     int kos, falls;
     float damage;
+    int team = -1;  // team battles: the fighter's team
   };
   std::vector<ResultRow> results_;
   int winnerChar_ = -1, winnerPalette_ = 0, winnerPort_ = 0;
   bool winnerCpu_ = false;
+  int winnerTeam_ = -1;  // team battles: the team that won
 };

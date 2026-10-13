@@ -31,6 +31,15 @@ App::App(Options opt) : opt_(std::move(opt)) {
   if (opt_.stage >= 0) stage_ = opt_.stage % int(stageList().size());
 }
 
+bool App::readyToFight() const {
+  if (activeSlots() < 2) return false;
+  if (training_ || !settings().teams) return true;
+  bool seen[2] = {false, false};
+  for (int i = 0; i < 4; ++i)
+    if (slots_[i].type != 0) seen[slotTeam(i)] = true;
+  return seen[0] && seen[1];
+}
+
 int App::activeSlots() const {
   if (training_) return 2;
   int n = 0;
@@ -92,6 +101,7 @@ void App::startMatch() {
   cfg.items = training_ ? false : st.items;
   cfg.weapons = st.weapons;
   cfg.training = training_;
+  cfg.teams = !training_ && st.teams;
   cfg.seed = uint32_t(frames_) * 2654435761u + 12345u;
   std::array<int, 4> devices{};
   for (int i = 0; i < 4; ++i) {
@@ -102,7 +112,7 @@ void App::startMatch() {
     }
     if (s.type == 0) continue;
     const int fighter = s.random ? GetRandomValue(0, int(roster().size()) - 1) : s.character;
-    cfg.slots[i] = {true, fighter, s.type == 2, s.level};
+    cfg.slots[i] = {true, fighter, s.type == 2, s.level, slotTeam(i)};
     devices[i] = s.device;
   }
   match_ = std::make_unique<MatchScreen>(cfg, devices, audio_, st.showHitboxes || opt_.debug);
@@ -114,11 +124,12 @@ void App::finishMatch() {
   results_.clear();
   for (int id : m.ranking()) {
     const Fighter& f = m.fighters[id];
-    results_.push_back({f.charIndex, f.palette, f.port, f.cpu, f.kos, f.falls, f.damageDealt});
+    results_.push_back({f.charIndex, f.palette, f.port, f.cpu, f.kos, f.falls, f.damageDealt, f.inTeam ? f.team : -1});
   }
   winnerChar_ = -1;
-  if (m.winner >= 0) {
-    const Fighter& w = m.fighters[m.winner];
+  winnerTeam_ = m.cfg.teams ? m.winnerTeam : -1;
+  if (m.winner >= 0) {  // a team battle shows the best of the winning team (ranked first)
+    const Fighter& w = m.fighters[m.cfg.teams ? m.ranking()[0] : m.winner];
     winnerChar_ = w.charIndex;
     winnerPalette_ = w.palette;
     winnerPort_ = w.port;
@@ -139,6 +150,7 @@ void App::run() {
   loadFonts();
   ui::bakeSprites();
   loadSettings();
+  if (opt_.teams) settings().teams = true;
   audio_.init();
   applyDisplaySettings();
   for (auto& s : slots_) s.level = settings().cpuLevel;

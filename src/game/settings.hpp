@@ -26,6 +26,7 @@ struct Settings {
   int stocks = 3;
   bool items = true;
   bool weapons = true;  // weapons drop during matches
+  bool teams = false;   // team battle (2 v 2): red against blue
   int cpuLevel = 5;
   bool tapJump = true;  // gamepads: pushing the stick up jumps (as in Smash Bros.)
   // Keyboard bindings for "Clavier 1" and "Clavier 2"

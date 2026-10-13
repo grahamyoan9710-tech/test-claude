@@ -7,7 +7,7 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
   stageDef = &stages[std::clamp(cfg.stage, 0, int(stages.size()) - 1)];
   platforms = stageDef->platforms;
   const auto& chars = roster();
-  std::array<int, 16> used{};
+  std::vector<int> used(chars.size(), 0);  // fighters picked twice alternate their colours
   for (int port = 0; port < 4; ++port) {
     const auto& slot = cfg.slots[port];
     if (!slot.active) continue;
@@ -19,6 +19,8 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
     f.palette = used[f.charIndex]++ % 2;  // mirror match: alternate colours
     f.cpu = slot.cpu;
     f.cpuLevel = slot.level;
+    f.team = cfg.teams ? slot.team : f.id;
+    f.inTeam = cfg.teams;
     f.stocks = cfg.stocks;
     Vec2 spawn = stageDef->spawns[fighters.size() % stageDef->spawns.size()];
     f.pos = spawn;
@@ -173,15 +175,18 @@ void Match::respawnFighter(Fighter& f) {
 
 void Match::checkEnd() {
   if (fighters.size() < 2 || cfg.training) return;
-  int alive = 0, last = -1;
+  int alive = 0, last = -1;  // teams still standing (a fighter is its own team out of team battles)
   for (const auto& f : fighters)
     if (!f.eliminated) {
-      ++alive;
+      bool counted = false;
+      for (const auto& g : fighters) counted = counted || (g.id < f.id && !g.eliminated && g.team == f.team);
+      if (!counted) ++alive;
       last = f.id;
     }
   if (alive <= 1) {
     finished = true;
     winner = alive == 1 ? last : -1;
+    winnerTeam = alive == 1 ? fighters[last].team : -1;
     finishFrame = frame;
     emit(EvType::GameSet, {}, winner);
   }
@@ -310,6 +315,8 @@ std::vector<int> Match::ranking() const {
   std::stable_sort(ids.begin(), ids.end(), [&](int a, int b) {
     const Fighter& fa = fighters[a];
     const Fighter& fb = fighters[b];
+    if (cfg.teams && winnerTeam >= 0 && (fa.team == winnerTeam) != (fb.team == winnerTeam))
+      return fa.team == winnerTeam;  // the winning team first
     if (fa.eliminated != fb.eliminated) return !fa.eliminated;
     if (fa.eliminated) return fa.koFrame > fb.koFrame;
     if (fa.stocks != fb.stocks) return fa.stocks > fb.stocks;

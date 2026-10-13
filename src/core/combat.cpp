@@ -117,7 +117,7 @@ void Match::resolveHits() {
       }
     }
     for (auto& v : fighters) {
-      if (v.id == a.id || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
+      if (!foes(a, v) || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
       if (v.state == FState::Grabbed && v.grabPartner == a.id) continue;
       const bool held = v.state == FState::Captured && v.captor == a.id;
       if (v.state == FState::Captured && !held) continue;  // somebody else's ultimate holds it
@@ -228,7 +228,7 @@ int Match::nearestOpponent(const Fighter& f) const {
   int best = -1;
   float bd = 1e18f;
   for (const auto& o : fighters) {
-    if (o.id == f.id || !o.active() || o.state == FState::Respawn) continue;
+    if (!foes(f, o) || !o.active() || o.state == FState::Respawn) continue;
     const float d = (o.center() - f.center()).len2();
     if (d < bd) {
       bd = d;
@@ -343,7 +343,7 @@ void Match::explodeProjectile(Projectile& pr) {
   pr.explodeRadius = 0.0f;  // once
   emit(EvType::Explosion, pr.pos, pr.owner, -1, r, {}, pr.explode.fx);
   for (auto& v : fighters) {
-    if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
+    if (!foes(pr.owner, v) || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
     if (!circleRect(pr.pos, r, v.hurtbox())) continue;
     if (v.state == FState::Captured && v.captor != pr.owner) continue;
     if (v.state == FState::Captured) v.captor = -1;  // the explosion launches it out of the hold
@@ -360,7 +360,7 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
     targets.push_back(nearestOpponent(f));
   } else if (p.target == ProjTarget::All) {
     for (const auto& o : fighters)
-      if (o.id != f.id && o.active() && o.state != FState::Respawn) targets.push_back(o.id);
+      if (foes(f, o) && o.active() && o.state != FState::Respawn) targets.push_back(o.id);
     if (targets.empty()) targets.push_back(-1);
   } else {
     targets.push_back(-2);  // self
@@ -481,7 +481,7 @@ void Match::updateProjectiles() {
     // Vortex: drags the fighters around it
     if (pr.pull > 0.0f) {
       for (auto& v : fighters) {
-        if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible() ||
+        if (!foes(pr.owner, v) || !v.active() || v.state == FState::Respawn || v.isIntangible() ||
             v.state == FState::Grabbed || v.state == FState::LedgeHang || v.state == FState::Captured)
           continue;
         Vec2 d = pr.pos - v.center();
@@ -503,7 +503,7 @@ void Match::updateProjectiles() {
       }
     }
     for (auto& v : fighters) {
-      if (v.id == pr.owner || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
+      if (!foes(pr.owner, v) || !v.active() || v.state == FState::Respawn || v.isIntangible()) continue;
       if (v.state == FState::Captured && v.captor != pr.owner) continue;
       if (pr.stuckTo >= 0 && v.id != pr.stuckTo) continue;
       if (pr.rehit > 0) {
