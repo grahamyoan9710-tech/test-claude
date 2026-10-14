@@ -189,7 +189,7 @@ int fitImpacts(const std::string& outPath) {
 // (the limb, the weapon, the effect thrown out) is where it hits. Each hitbox goes to the far end of what is added in
 // its own direction from the body, and grows or shrinks to cover it, within limits that keep the move's reach and
 // balance: hitboxes of one blow pointing the same way move together; hitboxes on the body (spins) stay as written;
-// a blade swing keeps its sweep but is turned to where the blade is drawn, its reach set to the drawn tip. A report (OUT.inc with .tsv) gives each hitbox's cover of the drawing before and after.
+// blade swings stay as written (the report gives where the blade is drawn): their clip is matched by its timing. A report (OUT.inc with .tsv) gives each hitbox's cover of the drawing before and after.
 namespace {
 struct Px {
   float x, y;  // world units from the fighter's centre, facing right
@@ -347,7 +347,10 @@ int fitHitboxes(const std::string& outPath) {
             h1.reach1 = clampf(tip / std::max(1.0f, blade), 0.8f * h.reach1, 1.3f * h.reach1);
             const BladeSeg s1 = swingSegment(h1, swingAngle(h1, float(mid)), H, blade);
             const float c1 = coverSeg(hit, H, s1.a, s1.b, h.radius);
-            const bool better = c1 > c0 + 0.02f;
+            // Kept as written all the same: the clip holds one frame (often the end of the cut) while the swing
+            // sweeps its whole arc, and turning the arc onto that frame made the cuts miss (balance test). The
+            // impact frame (--fit-impacts) is what matches a swing to its clip. Reported only.
+            const bool better = false;
             char note[96];
             std::snprintf(note, sizeof note, better ? "swing turned %+.0f deg, reach %.2f" : "swing: no better, kept", delta,
                           h1.reach1);
@@ -404,6 +407,15 @@ int fitHitboxes(const std::string& outPath) {
           for (size_t k = 0; k < keep; ++k) dist.push_back((Vec2{far[k].second.x, far[k].second.y} - c).len());
           std::sort(dist.begin(), dist.end());
           float r1 = clampf(dist[dist.size() * 85 / 100] + 2.0f, 0.8f * L.radius, 1.35f * L.radius);
+          // The move keeps at least 90% of its reach: a hitbox pulled in towards the body grows, or is nudged out.
+          const float reach0 = dot(L.offset, lu) + L.radius;
+          float reach1 = dot(c, lu) + r1;
+          if (reach1 < 0.9f * reach0) {
+            const float grow = std::min(1.35f * L.radius - r1, 0.9f * reach0 - reach1);
+            r1 += std::max(0.0f, grow);
+            reach1 = dot(c, lu) + r1;
+            if (reach1 < 0.9f * reach0) c += lu * (0.9f * reach0 - reach1);
+          }
           Vec2 shift = c - L.offset;
           const float maxShift = 0.45f * H;
           if (shift.len() > maxShift) shift = shift * (maxShift / shift.len());

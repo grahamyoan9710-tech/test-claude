@@ -89,7 +89,7 @@ void asta(CharacterDef& c) {
   base.vel = {ve(1, VM::Set, 0, -2), ve(22, VM::Set, 0, 0), ve(34, VM::SetX, 15, 0), ve(52, VM::Set, 0, 0)};
   base.holdAt = {70, -6};
   base.projectileFrame = 60;
-  base.projectile = proj({60, -10}, {17, 0}, 0, 60, 90, 24, 92, 108, F::AntiMagic, PV::BlackSlash);
+  base.projectile = proj({60, -10}, {17, 0}, 0, 60, 112, 24, 92, 108, F::AntiMagic, PV::BlackSlash);
   base.projectile.piercing = true;
   base.projectile.hit.impact = true;
   setUlt(c, -1, base);
@@ -122,10 +122,10 @@ void yuno(CharacterDef& c) {
   rain.projectileFrame = 36;
   rain.projectileRepeat = 11;
   rain.projectileEvery = 4;
-  rain.projectile = proj({0, -440}, {0, 17}, 0, 40, 16, 2.4f, 12, 6, F::Wind, PV::WindRain);
+  rain.projectile = proj({0, -440}, {0, 17}, 0, 40, 20, 2.4f, 12, 6, F::Wind, PV::WindRain);
   rain.projectile.target = ProjTarget::All;
   rain.projectile.jitter = {110, 30};
-  ProjectileDef big = proj({0, -470}, {0, 26}, 0, 30, 54, 18, 92, 104, F::Wind, PV::WindRain);
+  ProjectileDef big = proj({0, -470}, {0, 26}, 0, 30, 66, 18, 92, 104, F::Wind, PV::WindRain);
   big.target = ProjTarget::All;
   big.ignoreGround = true;
   big.piercing = true;
@@ -137,7 +137,7 @@ void yuno(CharacterDef& c) {
   // Spirit spear: Sylph shapes a giant spear of wind that drags everything into its path.
   MoveDef spear = cine("LANCE DE ZÉPHYR", 96, {}, PoseHint::Throw, UltFx::ZephyrSpear);
   spear.projectileFrame = 54;
-  spear.projectile = proj({50, -16}, {24, 0}, 0, 60, 46, 26, 94, 110, F::Wind, PV::ZephyrSpear);
+  spear.projectile = proj({50, -16}, {24, 0}, 0, 60, 58, 26, 94, 110, F::Wind, PV::ZephyrSpear);
   spear.projectile.piercing = true;
   spear.projectile.ignoreGround = true;
   spear.projectile.pull = 2.5f;
@@ -150,7 +150,7 @@ void ichigo(CharacterDef& c) {
   // Shikai: Zangetsu grows into a giant blade of reiatsu, then one huge Getsuga Tensho.
   MoveDef gts = cine("GETSUGA TENSHŌ", 96, {}, PoseHint::Overhead, UltFx::GiantGetsuga);
   gts.projectileFrame = 54;
-  gts.projectile = proj({70, -14}, {15, 0}, 0, 70, 74, 21, 92, 104, F::Reiatsu, PV::GiantGetsuga);
+  gts.projectile = proj({70, -14}, {15, 0}, 0, 70, 96, 21, 92, 104, F::Reiatsu, PV::GiantGetsuga);
   gts.projectile.piercing = true;
   gts.projectile.ignoreGround = true;
   gts.projectile.grow = 0.6f;
@@ -163,7 +163,7 @@ void ichigo(CharacterDef& c) {
   cross.formIndex = mask;
   cross.formFrame = 22;
   cross.projectileFrame = 58;
-  cross.projectile = proj({70, -14}, {14, 0}, 0, 70, 82, 23, 94, 106, F::Dark, PV::GetsugaCross);
+  cross.projectile = proj({70, -14}, {14, 0}, 0, 70, 100, 23, 94, 106, F::Dark, PV::GetsugaCross);
   cross.projectile.piercing = true;
   cross.projectile.ignoreGround = true;
   cross.projectile.grow = 0.5f;
@@ -174,7 +174,7 @@ void ichigo(CharacterDef& c) {
   const int vl = addLook(c, Form::VastoLorde);
   std::vector<HitboxDef> vb = {cap(hb(35, 40, 44, -6, 56, 6, 0, 0, 0, L::ArmFront, 0, F::Blood))};
   multi(vb, 42, 2, 6, 44, -6, 50, 4, L::ArmFront, F::Blood, 1, 0);
-  const BeamDef cero = beamOf(56, 80, {36, -14}, 900, 150, F::Blood);
+  const BeamDef cero = beamOf(56, 80, {36, -14}, 900, 172, F::Blood);
   std::vector<HitboxDef> ch = beamHits(cero, 22, 30, 95, 110, 4, 3);
   launchLast(ch);
   vb.insert(vb.end(), ch.begin(), ch.end());
@@ -200,7 +200,7 @@ void byakuya(CharacterDef& c) {
   // Senbonzakura: Gokei, a sphere of blades closes on every opponent, then bursts.
   MoveDef gokei = cine("GŌKEI", 108, {}, PoseHint::HandSign, UltFx::Gokei);
   gokei.projectileFrame = 36;
-  gokei.projectile = proj({0, 0}, {0, 0}, 0, 56, 70, 2.0f, 8, 4, F::Petal, PV::PetalSphere);
+  gokei.projectile = proj({0, 0}, {0, 0}, 0, 56, 82, 2.0f, 8, 4, F::Petal, PV::PetalSphere);
   ProjectileDef& g = gokei.projectile;
   g.target = ProjTarget::All;
   g.armDelay = 22;
@@ -220,7 +220,7 @@ void byakuya(CharacterDef& c) {
 }
 
 void link(CharacterDef& c) {
-  setUlt(c, -1, beamUlt("DRAGON DE LUMIÈRE", 100, beamOf(40, 68, {24, -20}, 1100, 170, F::Light), 19, 5,
+  setUlt(c, -1, beamUlt("DRAGON DE LUMIÈRE", 100, beamOf(40, 68, {24, -20}, 1100, 195, F::Light), 19, 5,
                         PoseHint::Overhead, UltFx::LightDragon));
 
   // Master Sword: a flurry, then the blade's beam at full power.
@@ -228,7 +228,7 @@ void link(CharacterDef& c) {
                       {60, -6}, 4, 4, 3.0f, hb(0, 0, 0, 0, 0, 0, 0, 0, 0, L::Weapon, 0, F::Light));
   ms.hitboxes.pop_back();  // the beam is the finisher
   ms.projectileFrame = 66;
-  ms.projectile = proj({50, -10}, {20, 0}, 0, 50, 64, 24, 94, 108, F::Light, PV::SwordBeam);
+  ms.projectile = proj({50, -10}, {20, 0}, 0, 50, 80, 24, 94, 108, F::Light, PV::SwordBeam);
   ms.projectile.piercing = true;
   ms.projectile.ignoreGround = true;
   ms.projectile.hit.impact = true;
@@ -239,16 +239,16 @@ void link(CharacterDef& c) {
   rain.projectileFrame = 36;
   rain.projectileRepeat = 4;
   rain.projectileEvery = 9;
-  rain.projectile = strike(34, 16, 8, 4, 22, 12, F::Light, PV::LightPillar);
+  rain.projectile = strike(40, 16, 8, 4, 22, 12, F::Light, PV::LightPillar);
   rain.projectile.jitter = {60, 0};
-  ProjectileDef big = strike(70, 20, 10, 18, 92, 104, F::Light, PV::LightPillar);
+  ProjectileDef big = strike(86, 20, 10, 18, 92, 104, F::Light, PV::LightPillar);
   big.hit.impact = true;
   rain.shots = {{86, big}};
   setUlt(c, 1, rain);
 }
 
 void ganondorf(CharacterDef& c) {
-  setUlt(c, -1, beamUlt("DRAGON DÉMONIAQUE", 104, beamOf(46, 80, {30, -20}, 1000, 260, F::Gloom), 21, 6, PoseHint::Roar,
+  setUlt(c, -1, beamUlt("DRAGON DÉMONIAQUE", 104, beamOf(46, 80, {30, -20}, 1000, 299, F::Gloom), 21, 6, PoseHint::Roar,
                         UltFx::DemonDragon));
 
   setUlt(c, 0, ambush("RAGE DU ROI DÉMON", 104, UltFx::DemonKingRampage, PoseHint::Overhead, F::Gloom, L::Weapon, 34,
@@ -259,9 +259,9 @@ void ganondorf(CharacterDef& c) {
   pil.projectileFrame = 36;
   pil.projectileRepeat = 2;
   pil.projectileEvery = 18;
-  pil.projectile = strike(64, 18, 14, 5, 30, 20, F::Gloom, PV::GloomPillar);
+  pil.projectile = strike(72, 18, 14, 5, 30, 20, F::Gloom, PV::GloomPillar);
   pil.projectile.hit.angle = 85;
-  ProjectileDef big = strike(90, 18, 16, 20, 92, 106, F::Gloom, PV::GloomPillar);
+  ProjectileDef big = strike(104, 18, 16, 20, 92, 106, F::Gloom, PV::GloomPillar);
   big.hit.angle = 85;
   big.hit.impact = true;
   pil.shots = {{92, big}};
@@ -318,7 +318,7 @@ void gojo(CharacterDef& c) {
   // Bare-handed: maximum output Blue on the nearest opponent, a vortex that swallows the stage.
   MoveDef mb = cine("BLEU : PUISSANCE MAXIMALE", 100, {}, PoseHint::Raise, UltFx::MaxBlue);
   mb.projectileFrame = 36;
-  mb.projectile = proj({0, -30}, {0, 0}, 0, 64, 90, 2.2f, 8, 4, F::Cursed, PV::MaxBlue);
+  mb.projectile = proj({0, -30}, {0, 0}, 0, 64, 100, 2.2f, 8, 4, F::Cursed, PV::MaxBlue);
   ProjectileDef& b = mb.projectile;
   b.target = ProjTarget::Nearest;
   b.armDelay = 18;
@@ -348,8 +348,8 @@ void sukuna(CharacterDef& c) {
   km.projectileFrame = 36;
   km.projectileRepeat = 3;
   km.projectileEvery = 12;
-  km.projectile = strike(56, 14, 6, 5, 28, 20, F::Electric, PV::Lightning);
-  ProjectileDef big = strike(80, 16, 8, 18, 92, 104, F::Electric, PV::Lightning);
+  km.projectile = strike(64, 14, 6, 5, 28, 20, F::Electric, PV::Lightning);
+  ProjectileDef big = strike(96, 16, 8, 18, 92, 104, F::Electric, PV::Lightning);
   big.hit.impact = true;
   km.shots = {{86, big}};
   setUlt(c, 0, km);
@@ -357,7 +357,7 @@ void sukuna(CharacterDef& c) {
   // Sukuna's finger: "Open". A fire arrow, and the whole stage burns.
   MoveDef fg = cine("FÛGA", 100, {}, PoseHint::Bow, UltFx::FugaBlast);
   fg.projectileFrame = 58;
-  fg.projectile = proj({40, -12}, {16, 0}, 0, 50, 26, 10, 40, 60, F::Fire, PV::FireArrow);
+  fg.projectile = proj({40, -12}, {16, 0}, 0, 50, 34, 10, 40, 60, F::Fire, PV::FireArrow);
   fg.projectile.explodeRadius = 260;
   fg.projectile.explode = imp(hb(0, 0, 0, 0, 260, 26, 50, 96, 110, L::None, 0, F::Fire));
   setUlt(c, 1, fg);
@@ -372,7 +372,7 @@ void kenpachi(CharacterDef& c) {
   // Nozarashi: one swing that splits the stage.
   MoveDef noz = cine("TAILLE DE NOZARASHI", 96, {}, PoseHint::Overhead, UltFx::NozarashiCleave);
   noz.projectileFrame = 52;
-  noz.projectile = proj({60, -10}, {16, 0}, 0, 60, 80, 24, 94, 108, F::Berserk, PV::ReiatsuWave);
+  noz.projectile = proj({60, -10}, {16, 0}, 0, 60, 100, 24, 94, 108, F::Berserk, PV::ReiatsuWave);
   noz.projectile.piercing = true;
   noz.projectile.ignoreGround = true;
   noz.projectile.grow = 0.6f;
@@ -389,12 +389,12 @@ void kenpachi(CharacterDef& c) {
 }
 
 void ulquiorra(CharacterDef& c) {
-  setUlt(c, -1, beamUlt("CERO OSCURAS", 100, beamOf(46, 80, {30, -14}, 1100, 220, F::Hollow), 22, 6, PoseHint::Point,
+  setUlt(c, -1, beamUlt("CERO OSCURAS", 100, beamOf(46, 80, {30, -14}, 1100, 253, F::Hollow), 22, 6, PoseHint::Point,
                         UltFx::CeroOscuras));
 
   MoveDef lanza = cine("LANZA DEL RELÁMPAGO", 100, {}, PoseHint::Throw, UltFx::LanzaRelampago);
   lanza.projectileFrame = 60;
-  lanza.projectile = proj({40, -30}, {24, 0}, 0, 50, 34, 10, 40, 60, F::Hollow, PV::Lanza);
+  lanza.projectile = proj({40, -30}, {24, 0}, 0, 50, 42, 10, 40, 60, F::Hollow, PV::Lanza);
   lanza.projectile.explodeRadius = 280;
   lanza.projectile.explode = imp(hb(0, 0, 0, 0, 280, 26, 60, 96, 110, L::None, 0, F::Hollow));
   setUlt(c, 0, lanza);
@@ -439,7 +439,7 @@ void hunter(CharacterDef& c) {
   setUlt(c, 0, ad);
 
   // Gunlance: Wyvern's Fire, a blast of flames that throws the hunter back.
-  MoveDef wy = beamUlt("FEU DU WYVERN", 104, beamOf(64, 78, {70, -6}, 560, 210, F::Fire), 26, 2, PoseHint::Thrust,
+  MoveDef wy = beamUlt("FEU DU WYVERN", 104, beamOf(64, 78, {70, -6}, 560, 241, F::Fire), 26, 2, PoseHint::Thrust,
                        UltFx::WyvernFire);
   wy.vel = {ve(1, VM::Set, 0, -2), ve(22, VM::Set, 0, 0), ve(64, VM::SetX, -5, 0), ve(72, VM::Set, 0, 0)};
   setUlt(c, 1, wy);
@@ -456,8 +456,8 @@ void naruto(CharacterDef& c) {
 
   MoveDef rs = cine("RASENSHURIKEN", 100, {}, PoseHint::Throw, UltFx::Rasenshuriken);
   rs.projectileFrame = 56;
-  rs.projectile = proj({50, -20}, {13, 0}, 0, 60, 36, 6, 30, 20, F::Wind, PV::Rasenshuriken);
-  rs.projectile.explodeRadius = 230;
+  rs.projectile = proj({50, -20}, {13, 0}, 0, 60, 56, 6, 30, 20, F::Wind, PV::Rasenshuriken);
+  rs.projectile.explodeRadius = 260;
   rs.projectile.explode = imp(hb(0, 0, 0, 0, 230, 24, 70, 94, 108, L::None, 0, F::Wind));
   setUlt(c, 0, rs);
 
@@ -467,7 +467,7 @@ void naruto(CharacterDef& c) {
   bj.formIndex = ku;
   bj.formFrame = 24;
   bj.projectileFrame = 66;
-  bj.projectile = proj({80, -40}, {12, 0}, 0, 80, 70, 10, 40, 60, F::Chakra, PV::Bijudama);
+  bj.projectile = proj({80, -40}, {12, 0}, 0, 80, 90, 10, 40, 60, F::Chakra, PV::Bijudama);
   bj.projectile.explodeRadius = 300;
   bj.projectile.explode = imp(hb(0, 0, 0, 0, 300, 28, 70, 98, 112, L::None, 0, F::Dark));
   setUlt(c, 1, bj);
@@ -477,7 +477,7 @@ void sasuke(CharacterDef& c) {
   // Kirin: the storm gathers, then the lightning dragon falls on the nearest opponent.
   MoveDef kr = cine("KIRIN", 104, {}, PoseHint::Raise, UltFx::Kirin);
   kr.projectileFrame = 64;
-  kr.projectile = proj({0, 0}, {0, 0}, 0, 10, 110, 28, 96, 110, F::Lightning, PV::KirinBolt);
+  kr.projectile = proj({0, 0}, {0, 0}, 0, 10, 130, 28, 96, 110, F::Lightning, PV::KirinBolt);
   kr.projectile.target = ProjTarget::Nearest;
   kr.projectile.armDelay = 12;
   kr.projectile.piercing = true;
@@ -491,7 +491,7 @@ void sasuke(CharacterDef& c) {
   ia.formIndex = sus;
   ia.formFrame = 24;
   ia.projectileFrame = 64;
-  ia.projectile = proj({60, -40}, {28, 0}, 0, 50, 42, 28, 96, 110, F::Dark, PV::IndraArrow);
+  ia.projectile = proj({60, -40}, {28, 0}, 0, 50, 58, 28, 96, 110, F::Dark, PV::IndraArrow);
   ia.projectile.piercing = true;
   ia.projectile.ignoreGround = true;
   ia.projectile.hit.impact = true;
@@ -500,7 +500,7 @@ void sasuke(CharacterDef& c) {
   // Mangekyo: black flames on every opponent, they cling and burn, then flare up.
   MoveDef am = cine("AMATERASU", 100, {}, PoseHint::HandSign, UltFx::Amaterasu);
   am.projectileFrame = 40;
-  am.projectile = proj({0, 0}, {0, 0}, 0, 80, 52, 2.4f, 8, 4, F::BlackFlame, PV::BlackFlames);
+  am.projectile = proj({0, 0}, {0, 0}, 0, 80, 62, 2.4f, 8, 4, F::BlackFlame, PV::BlackFlames);
   ProjectileDef& a = am.projectile;
   a.target = ProjTarget::All;
   a.armDelay = 16;
@@ -520,7 +520,7 @@ void kakashi(CharacterDef& c) {
   // Sharingan: Kamui opens a rift on the nearest opponent and twists it away.
   MoveDef km = cine("KAMUI", 100, {}, PoseHint::Point, UltFx::Kamui);
   km.projectileFrame = 38;
-  km.projectile = proj({0, -10}, {0, 0}, 0, 60, 70, 2.6f, 8, 4, F::Dark, PV::KamuiVortex);
+  km.projectile = proj({0, -10}, {0, 0}, 0, 60, 80, 2.6f, 8, 4, F::Dark, PV::KamuiVortex);
   ProjectileDef& k = km.projectile;
   k.target = ProjTarget::Nearest;
   k.armDelay = 20;
@@ -540,7 +540,7 @@ void kakashi(CharacterDef& c) {
   ks.formIndex = sus;
   ks.formFrame = 24;
   ks.projectileFrame = 60;
-  ks.projectile = proj({70, -30}, {9, 0}, 0, 54, 70, 3, 14, 6, F::Dark, PV::KamuiShuriken);
+  ks.projectile = proj({70, -30}, {9, 0}, 0, 54, 84, 3, 14, 6, F::Dark, PV::KamuiShuriken);
   ks.projectile.piercing = true;
   ks.projectile.rehit = 5;
   ks.projectile.pull = 2.5f;
@@ -552,7 +552,7 @@ void kakashi(CharacterDef& c) {
 }
 void grimmjow(CharacterDef& c) {
   // Gran Rey Cero: his blood in the cero, a blast of blue light across the stage.
-  setUlt(c, -1, beamUlt("GRAN REY CERO", 100, beamOf(46, 78, {30, -14}, 1100, 230, F::Claw), 21, 6, PoseHint::Point,
+  setUlt(c, -1, beamUlt("GRAN REY CERO", 100, beamOf(46, 78, {30, -14}, 1100, 264, F::Claw), 21, 6, PoseHint::Point,
                         UltFx::GranReyCero));
 
   // Pantera: "Kishire, Pantera". The release (12 s): long hair, ears, tail, claws; the darts and the claws grow.
@@ -585,7 +585,7 @@ void starrk(CharacterDef& c) {
   cm.projectile = proj({40, -14}, {19, 0}, 0, 50, 14, 1.4f, 10, 4, F::Wolf, PV::StarrkCero);
   cm.projectile.jitter = {0, 70};
   cm.projectile.piercing = true;
-  ProjectileDef big = proj({50, -14}, {16, 0}, 0, 60, 60, 20, 92, 106, F::Wolf, PV::StarrkCero);
+  ProjectileDef big = proj({50, -14}, {16, 0}, 0, 60, 72, 20, 92, 106, F::Wolf, PV::StarrkCero);
   big.piercing = true;
   big.ignoreGround = true;
   big.hit.impact = true;

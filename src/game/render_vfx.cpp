@@ -864,12 +864,50 @@ void drawUltimateBackdrop(const Match& m, float time) {
   });
 }
 
+// Ultimates whose own hitboxes are drawn by a PixelLab effect: a storm over its active hitbox (each hit's circle,
+// kept on screen until the next hit), or an explosion played once from its biggest hitbox; sized on the hitbox (the
+// effect's hit radius is the hitbox's radius). True when the effect exists and was drawn.
+static bool ultSprite(const Fighter& f, UltFx fx, int mf, float k, float time) {
+  const char* name = nullptr;
+  bool burst = false;
+  switch (fx) {
+    case UltFx::Kageyoshi: name = "kageyoshi"; break;
+    case UltFx::MalevolentShrine: name = "malevolent_shrine"; break;
+    case UltFx::ChaosWhip: name = "chaos_whip"; break;
+    case UltFx::BlackMeteorite: name = "black_meteorite"; burst = true; break;
+    case UltFx::Fimbulwinter: name = "fimbulwinter"; burst = true; break;
+    default: return false;
+  }
+  const art::FxInfo* info = art::fxInfo(name);
+  if (!info) return false;
+  const auto& hbs = f.moveDef(FinalSmash).hitboxes;
+  const float hitR = info->hit > 0.0f ? info->hit : 0.4f * std::min(info->fw, info->fh);
+  auto at = [&](const HitboxDef& h) { return f.center() + Vec2{h.offset.x * f.facing, h.offset.y}; };
+  if (burst) {
+    const HitboxDef* big = nullptr;
+    for (const auto& h : hbs)
+      if (!h.capture && (!big || h.radius > big->radius)) big = &h;
+    if (!big || mf < big->start || (mf - big->start) / 60.0f >= info->duration()) return true;
+    return art::drawFx(name, (mf - big->start) / 60.0f, at(*big), big->radius / hitR, 0.0f, f.facing < 0, k);
+  }
+  const HitboxDef* cur = nullptr;  // the hit going on, or the last one until the next starts
+  for (const auto& h : hbs)
+    if (!h.capture && h.start <= mf && (!cur || h.start >= cur->start)) cur = &h;
+  if (!cur) return true;
+  int next = 1 << 30;
+  for (const auto& h : hbs)
+    if (h.start > cur->start) next = std::min(next, h.start);
+  if (mf >= std::max(cur->end, next == (1 << 30) ? cur->end : next)) return true;
+  return art::drawFx(name, time, at(*cur), cur->radius / hitR, 0.0f, f.facing < 0, k);
+}
+
 void drawUltimateFront(const Match& m, float time) {
   const Rect v = vfx::viewRect(40.0f);
   bool any = false;
   forEachUltimate(m, [&](const Fighter& f, float k, int mf) {
     any = true;
     const UltFx fx = f.moveDef(FinalSmash).ultFx;
+    if (ultSprite(f, fx, mf, k, time) && (fx == UltFx::Kageyoshi || fx == UltFx::MalevolentShrine)) return;
     switch (fx) {
       case UltFx::MalevolentShrine: shrineFront(m, f, k, mf, v); break;
       case UltFx::Kageyoshi: case UltFx::Gokei: petalFront(f, k, time); break;
