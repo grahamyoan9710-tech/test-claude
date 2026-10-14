@@ -253,6 +253,11 @@
   },
   "uthrow": {
    "impact": "4"
+  },
+  "dsmash": {
+   "replace": {
+    "6": 7
+   }
   }
  },
  "kakashi": {
@@ -511,6 +516,13 @@
   },
   "nspecial": {
    "impact": "4"
+  },
+  "helpless": {
+   "replace": {
+    "0": 1,
+    "6": 5,
+    "7": 4
+   }
   }
  },
  "yuno": {

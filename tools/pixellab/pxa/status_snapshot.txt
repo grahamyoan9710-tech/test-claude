@@ -4,12 +4,12 @@ ichigo     59/59 running  0  waiting  0
 byakuya    57/57 running  0  waiting  0
 kenpachi   58/58 running  0  waiting  0
 ulquiorra  57/57 running  0  waiting  0
-grimmjow   57/60 running  1  waiting  0  FAILED ['w1_sspecial', 'w1_ultimate']
-starrk     51/58 running  1  waiting  6
+grimmjow   58/60 running  0  waiting  0  FAILED ['w1_sspecial', 'w1_ultimate']
+starrk     52/58 running  0  waiting  6
 gojo       57/57 running  0  waiting  0
-sukuna     39/57 running  6  waiting 11  FAILED ['helpless']
+sukuna     40/57 running  8  waiting  8  FAILED ['helpless']
 link        0/58 running  0  waiting 58
 ganondorf  26/60 running  0  waiting 34
 kratos      0/60 running  0  waiting 60
 hunter      0/59 running  0  waiting 59
-total 578/817
+total 581/817

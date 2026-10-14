@@ -1318,7 +1318,7 @@
   },
   "w0_ultimate": {
    "job_id": "b914091f-5111-4aef-b909-468b7dd86b96",
-   "status": "submitted"
+   "status": "done"
   },
   "w0guard": {
    "job_id": "c907e530-22c1-4b58-bd82-c4f0a33ebe63",
@@ -1682,7 +1682,7 @@
   },
   "crouch": {
    "job_id": "9ffe3acf-08b1-42bb-9fe2-1897149ad5b2",
-   "status": "submitted"
+   "status": "done"
   },
   "crouch.qa1": {
    "job_id": "d99bc483-b8cb-4f6d-b822-b08df9b1d631",
@@ -1755,6 +1755,10 @@
   "grab": {
    "job_id": "eb1dd0ee-e17a-465c-95b7-eb4b2d2e2763",
    "status": "done"
+  },
+  "grabbed": {
+   "job_id": null,
+   "status": "submitting"
   },
   "grabbed.qa1": {
    "job_id": "9b81966c-d7a5-4182-a103-cdd8650576df",
@@ -2998,7 +3002,7 @@
   },
   "holdstart": {
    "job_id": "127fda98-0d1a-4e12-aa7f-c0de3746d32c",
-   "status": "submitted"
+   "status": "done"
   },
   "holdstart.qa1": {
    "job_id": "55ab6cc4-f019-4599-bf95-1a468da1c443",
@@ -3146,6 +3150,10 @@
    "job_id": "ad1dfc48-517d-43b6-8ec0-e48f26bbe52d",
    "status": "done"
   },
+  "climb": {
+   "job_id": "42efb226-3d37-402d-b29b-f8482c0d0a33",
+   "status": "submitted"
+  },
   "crouch": {
    "job_id": "37db7a1d-47c2-4eb9-b0cc-f0fbc58dda89",
    "status": "done"
@@ -3184,7 +3192,7 @@
   },
   "fsmash": {
    "job_id": "62aebc2c-fe48-4b84-bb26-a543b343261b",
-   "status": "submitted"
+   "status": "done"
   },
   "fthrow": {
    "job_id": "1b593808-72f1-48e9-a5c4-8f7cb5843bab",
@@ -3196,6 +3204,10 @@
   },
   "getup": {
    "job_id": "2ea68e1a-bfcd-4a4b-a46d-9eebd0ec2db1",
+   "status": "submitted"
+  },
+  "getupattack": {
+   "job_id": "9b670ba8-c7e5-4acf-8654-d024e6ada337",
    "status": "submitted"
   },
   "grab": {
@@ -3249,6 +3261,10 @@
   "land": {
    "job_id": "afed0e9c-8d99-4cf6-bd99-dd9ef301b31c",
    "status": "done"
+  },
+  "ledge": {
+   "job_id": "93b4beb3-55f5-41e2-b776-7e33f7e4d82d",
+   "status": "submitted"
   },
   "ledgeattack": {
    "job_id": "122e6233-691e-41d9-9b4f-bc250f6f4512",
