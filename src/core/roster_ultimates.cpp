@@ -291,7 +291,7 @@ void kratos(CharacterDef& c) {
 
   // Blades of Chaos: the chains catch from afar and drag the victim into a whirl of fire.
   std::vector<HitboxDef> cb = {cap(hb(36, 44, 200, -6, 120, 6, 0, 0, 0, L::Weapon, 0, F::Fire))};
-  multi(cb, 50, 5, 5, 60, -6, 70, 3.0f, L::Weapon, F::Fire, 1, 0);
+  multi(cb, 50, 5, 5, 40, -6, 110, 3.0f, L::Weapon, F::Fire, 1, 0);  // the whirl spans him and his victim
   cb.push_back(lau(hb(80, 86, 60, -6, 120, 22, 55, 95, 110, L::Weapon, 6, F::Fire)));
   MoveDef whip = cine("FOUET DU CHAOS", 104, cb, PoseHint::Spin, UltFx::ChaosWhip);
   whip.holdAt = {84, -10};
