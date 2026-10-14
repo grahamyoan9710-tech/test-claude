@@ -810,7 +810,7 @@ CharacterDef makeGrimmjow() {
   stats(c, 46, 106, 102, 4.5f, 10.0f, 5.6f, 0.66f, 10.6f, 15.8f, 15.8f, 10.4f, 14.6f, 3);
   c.groundAccel = 1.5f;
   c.weaponLength = 72;
-  const float S = 1.04f, P = 1.08f;
+  const float S = 1.04f, P = 1.20f;  // v10: hits harder, he fell to 33% after the clip refit
   buildBrawlerNormals(c, S, P, F::Claw);
   auto& m = c.moves;
 
@@ -1104,7 +1104,7 @@ CharacterDef makeKakashi() {
                 pal({40, 48, 70}, {90, 90, 96}, {120, 170, 230}, {236, 212, 188}, {214, 216, 222}, {40, 40, 44})};
   stats(c, 44, 104, 96, 4.3f, 9.5f, 5.3f, 0.6f, 10.0f, 15.0f, 15.2f, 10.0f, 14.2f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.02f, P = 1.26f;
+  const float S = 1.02f, P = 1.08f;  // v10: toned down, he won 72% of the balance duels
   buildBrawlerNormals(c, S, P, F::Lightning);
   auto& m = c.moves;
 
@@ -1115,7 +1115,7 @@ CharacterDef makeKakashi() {
   m[NSpecial].projectile.rehit = 8;
   m[NSpecial].pose = PoseHint::HandSign;
 
-  m[SSpecial] = mv("Raikiri", 52, {imp(hb(22, 28, 50, -6, 30, 14, 40, 60, 90, L::ArmFront, 0, F::Lightning))});
+  m[SSpecial] = mv("Raikiri", 52, {imp(hb(22, 28, 50, -6, 30, 12, 40, 60, 90, L::ArmFront, 0, F::Lightning))});
   m[SSpecial].vel = {ve(14, VelMode::SetX, 17, 0), ve(14, VelMode::SetY, 0, -1, 0, true), ve(30, VelMode::Scale, 0.2f, 1.0f)};
   m[SSpecial].gravityMul = 0.3f;
   m[SSpecial].frictionMul = 0.1f;

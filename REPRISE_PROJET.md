@@ -38,6 +38,10 @@ conflits, chacune a ses propres fichiers.
 - Conflit sur `sheets.txt` : garder les deux lignes. Le fichier est trié, une ligne par clip ou effet.
 
 ### Journal (le plus récent en haut)
+- 14/10 21 h 10 UTC, session B : équilibrage. Kakashi : puissance 1,26 → 1,08 et Raikiri 14 → 12 (72 % → 54 %).
+  Grimmjow : puissance 1,08 → 1,20 (33 % → 44 %). Seuls les dégâts changent, pas l'échelle S : le recalage des
+  hitboxes reste valable. Le test balance bouge de ±5 points d'un réglage à l'autre (96 matchs par perso). Encore
+  hauts : Asta 60, Ganondorf 61, Kratos 60, Byakuya 57 ; encore bas : Ulquiorra 41, Yuno 42, Sasuke 42, Link 42.
 - 14/10 21 h 00 UTC, session B : `fitall.sh` terminé (13 min, ctest réussi). 86 clips sur 205 ont un nouvel
   impact, 17 impacts de la revue remis, 139 hitboxes sur 442 recalées. Le contrôle signale encore 282 hitboxes sur
   692 qui frappent surtout là où rien n'est dessiné. Équilibre après recalage : Asta 60, Yuno 42, Ichigo 43,
@@ -152,8 +156,8 @@ conflits, chacune a ses propres fichiers.
 5. **Repasse des hitboxes et impacts** après chaque lot d'imports : `tools/pixellab/fitall.sh`. Il enchaîne
    `--fit-impacts`, `lock_impacts.py` (garde les impacts choisis à la main), `--fit-hitboxes`, le contrôle, la
    balance et ctest.
-6. **Équilibrage :** Kakashi est à 72 %, à ramener vers 50-55 %. Link (39 %) et Grimmjow (40 %) sont un peu
-   faibles.
+6. **Équilibrage :** Kakashi ramené à 54 % et Grimmjow remonté à 44 % (14/10, session B). Restent un peu
+   faibles : Ulquiorra, Yuno, Sasuke et Link (41-42 %) ; un peu forts : Asta, Ganondorf et Kratos (60-61 %).
 7. **Sortie v10.0 :**
    - section v10.0 dans le README ;
    - version dans `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README ;
