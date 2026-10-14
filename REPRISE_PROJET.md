@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Sortie v10.0 (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 14/10 21 h 45 UTC, session B : recherche de régressions. `sheets.txt` cohérent avec les images (720 lignes, rien
+  de manquant ni d'orphelin, impacts dans les clips). Les 51 ultimes (17 persos × 3) joués en démo sans plantage.
+  Corrigé : l'avertissement de compilation de `check_hitboxes.cpp`. Restent, connus : 282 hitboxes sur 692 qui
+  frappent là où rien n'est dessiné (surtout des hitboxes secondaires d'épée, à revoir avec les clips),
+  `wyvern_fire` à faire, `crouch`/`dizzy`/`helpless` d'Ulquiorra à régénérer, clips de Grimmjow pas encore relus.
 - 14/10 21 h 20 UTC, session B : règles du travail à deux ajoutées (section « Verrous », `fitall.sh` réservé à la
   session A, noter ce qui commence). `.gitignore` laisse passer `tools/pixellab/vfx/ult/*.png` : les planches des
   rayons sont maintenant dans git.

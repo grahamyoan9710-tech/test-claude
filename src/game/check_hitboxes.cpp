@@ -352,8 +352,10 @@ int fitHitboxes(const std::string& outPath) {
             // impact frame (--fit-impacts) is what matches a swing to its clip. Reported only.
             const bool better = false;
             char note[96];
-            std::snprintf(note, sizeof note, better ? "swing turned %+.0f deg, reach %.2f" : "swing: no better, kept", delta,
-                          h1.reach1);
+            if (better)
+              std::snprintf(note, sizeof note, "swing turned %+.0f deg, reach %.2f", delta, h1.reach1);
+            else
+              std::snprintf(note, sizeof note, "swing: no better, kept");
             report(i, hit.frame, h.offset, h.radius, h.offset, h.radius, c0, better ? c1 : c0, note);
             if (!better) continue;
             std::fprintf(out, "    {\"%s\", %d, %d, %d, %.2ff, 0, 0, %.1ff, %.1ff, %.1ff, %.3ff},  // %s swing\n", d.name.c_str(),
