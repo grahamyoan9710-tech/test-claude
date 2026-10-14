@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "d769df48-2a3e-493b-af91-fe58e51af7f5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a2ff933c-a72b-4baf-9e90-1052086e4090",
+  "description": "is knocked off his feet and falls flat on his back on the ground, ending lying down He keeps holding a slim katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Byakuya Kuchiki, a tall noble man with long black hair and white hair ornaments, a white captain haori over a black robe and a pale green scarf, holding a slim katana",
+  "initial_pose": "upright composed stance facing right, right arm extended holding a slim katana pointed forward and slightly up"
+ },
+ "reply": "id: d769df48-2a3e-493b-af91-fe58e51af7f5\njob_id: d769df48-2a3e-493b-af91-fe58e51af7f5\ndescription: is knocked off his feet and falls flat on his back on the ground, ending lying down He keeps holding a slim katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d769df48-2a3e-493b-af91-fe58e51af7f5\")\nasset_id: f6479d45-c02c-551d-88ba-a6965fcae1c4\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/byakuya_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

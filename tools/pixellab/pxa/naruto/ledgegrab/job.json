@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "4addc5aa-083c-4300-91c7-e8781a259abb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:67e502d5-1ede-4d13-b677-f87738d9d040",
+  "description": "reaches up with both arms and grabs the edge of a cliff above his head, hanging from it by both hands with the legs dangling below The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Naruto, a young ninja in an orange and black tracksuit with spiky blond hair and a forehead protector with long black tails",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 4addc5aa-083c-4300-91c7-e8781a259abb\njob_id: 4addc5aa-083c-4300-91c7-e8781a259abb\ndescription: reaches up with both arms and grabs the edge of a cliff above his head, hanging from it by both hands with the legs dangling below The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4addc5aa-083c-4300-91c7-e8781a259abb\")\nasset_id: 31b434b6-517d-5a5c-b488-48b202575ff7\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/naruto/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

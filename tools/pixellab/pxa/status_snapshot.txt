@@ -1,0 +1,15 @@
+asta       58/58 running  0  waiting  0
+yuno       59/59 running  0  waiting  0
+ichigo     59/59 running  0  waiting  0
+byakuya    57/57 running  0  waiting  0
+kenpachi   58/58 running  0  waiting  0
+ulquiorra  57/57 running  0  waiting  0
+grimmjow   57/60 running  3  waiting  0
+starrk     51/58 running  0  waiting  7
+gojo       57/57 running  0  waiting  0
+sukuna     28/57 running 12  waiting 16  FAILED ['helpless']
+link        0/58 running  0  waiting 58
+ganondorf  26/60 running  0  waiting 34
+kratos      0/60 running  0  waiting 60
+hunter      0/59 running  0  waiting 59
+total 567/817

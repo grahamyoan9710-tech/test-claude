@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "ed1ee02b-c019-44ba-b2ac-d5102daf9e24",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:834f7375-c853-4e14-9aa2-a4476e9fdad6",
+  "description": "reaches forward with both hands and closes them on the collar of an invisible opponent in front of him, then holds it at arm's length, the hands closed on empty air Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Naruto, a young ninja in an orange and black tracksuit with spiky blond hair and a forehead protector with long black tails",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: ed1ee02b-c019-44ba-b2ac-d5102daf9e24\njob_id: ed1ee02b-c019-44ba-b2ac-d5102daf9e24\ndescription: reaches forward with both hands and closes them on the collar of an invisible opponent in front of him, then holds it at arm's length, the hands closed on empty air Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ed1ee02b-c019-44ba-b2ac-d5102daf9e24\")\nasset_id: 1acd7fd3-32e8-59b5-adbc-65d1761e702c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/naruto_guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

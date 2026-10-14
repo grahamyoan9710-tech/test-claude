@@ -1,0 +1,235 @@
+{
+ "frames": [
+  {
+   "filename": "susanoo-kamui-shuriken 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 1.png",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 2.png",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 3.png",
+   "frame": {
+    "x": 0,
+    "y": 144,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 4.png",
+   "frame": {
+    "x": 144,
+    "y": 144,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 5.png",
+   "frame": {
+    "x": 288,
+    "y": 144,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 6.png",
+   "frame": {
+    "x": 0,
+    "y": 288,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "susanoo-kamui-shuriken 7.png",
+   "frame": {
+    "x": 144,
+    "y": 288,
+    "w": 144,
+    "h": 144
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 144,
+    "h": 144
+   },
+   "sourceSize": {
+    "w": 144,
+    "h": 144
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "susanoo-kamui-shuriken.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 432,
+   "h": 432
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 72,
+   "y": 72
+  },
+  "frameTags": [
+   {
+    "name": "susanoo-kamui-shuriken",
+    "from": 0,
+    "to": 7,
+    "direction": "forward"
+   }
+  ]
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "4b750521-ba4d-4706-8809-601c0b92078a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:00b51afc-89c4-4fd8-a4d2-afb0713410dd",
+  "description": "reaches forward with both hands and closes them on the collar of an invisible opponent in front of him, then holds it at arm's length, the hands closed on empty air Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Satoru Gojo from Jujutsu Kaisen, a tall man with spiky white hair and a black blindfold, a dark navy high-collared uniform",
+  "initial_pose": "relaxed upright stance facing right, one hand raised in front of his chest with the index and middle fingers up, the other arm hanging loose, black blindfold over his eyes"
+ },
+ "reply": "id: 4b750521-ba4d-4706-8809-601c0b92078a\njob_id: 4b750521-ba4d-4706-8809-601c0b92078a\ndescription: reaches forward with both hands and closes them on the collar of an invisible opponent in front of him, then holds it at arm's length, the hands closed on empty air Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4b750521-ba4d-4706-8809-601c0b92078a\")\nasset_id: 576046a2-d82e-533f-981c-ca92282f1729\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/gojo_guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

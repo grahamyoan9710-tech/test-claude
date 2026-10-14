@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "07a93f89-8073-4c42-9a63-d36991e86ae3",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:cedf3d8b-a974-465f-8568-16e5fb95bd04",
+  "description": "jumps up and stretches both arms straight up above his head, the hands closing on nothing near the top of the picture but fully inside it, then hangs still from his raised hands with the legs dangling below; empty background above and around the hands: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Coyote Starrk from Bleach, a tall lazy-looking arrancar with wavy brown hair and a goatee, a white open-collared jacket and white pants with a black sash",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 07a93f89-8073-4c42-9a63-d36991e86ae3\njob_id: 07a93f89-8073-4c42-9a63-d36991e86ae3\ndescription: jumps up and stretches both arms straight up above his head, the hands closing on nothing near the top of the picture but fully inside it, then hangs still from his raised hands with the legs dangling below; empty background above and around the hands: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"07a93f89-8073-4c42-9a63-d36991e86ae3\")\nasset_id: 163da534-2109-53fc-890b-cea43a907c76\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/starrk/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

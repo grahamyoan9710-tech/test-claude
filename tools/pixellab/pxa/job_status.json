@@ -1,0 +1,3786 @@
+{
+ "asta": {
+  "airdodge": {
+   "job_id": "0a256ce3-b895-4cee-b980-22a974f46052",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "b9882655-0096-4197-844e-53aa69c8d87a",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "e5b739f6-46f1-4835-853b-821c414e1954",
+   "status": "done"
+  },
+  "bair.qa1": {
+   "job_id": "74d597cc-b517-4c40-97b5-0c22e3f41aba",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "a5c68a27-d2fc-4895-92ab-486302c67bcc",
+   "status": "done"
+  },
+  "bthrow.qa1": {
+   "job_id": "c63504d5-a0d7-4916-9f13-3a45031608d9",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "acb5bd67-6115-40f9-8df1-8804fb8cb393",
+   "status": "done"
+  },
+  "climb.qa1": {
+   "job_id": "a9aebde7-fc41-4c6f-9dc0-22a259ba3ac3",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "f05a989a-71ed-4f9d-8c63-81a4bec4e835",
+   "status": "done"
+  },
+  "crouch_noweapon": {
+   "job_id": "4731c5e7-8886-4cf6-9cd6-d91f5c7d6f0f",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "0a883aae-2cb1-4162-9a4d-dccebe774fcb",
+   "status": "done"
+  },
+  "dair.qa1": {
+   "job_id": "ddaf3ec5-0b32-40b4-97e3-9b69c6038cec",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "525bac17-514c-44ae-aad1-11b8eda907ed",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "2ef3d454-772f-4ea6-983a-1b302e30f99b",
+   "status": "done"
+  },
+  "dizzy.qa1": {
+   "job_id": "707bee8f-6dee-497c-a8c8-2b7cacce397d",
+   "status": "done"
+  },
+  "dizzy_noweapon": {
+   "job_id": "978dc60a-c026-4f6b-94b4-783d548956bc",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "7d11fad5-7488-4f2b-a21b-93aa39c1a2ce",
+   "status": "done"
+  },
+  "dsmash.qa1": {
+   "job_id": "0e9c2411-f0d0-4feb-b0d6-de5e104694ab",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "7f3b749c-26b8-44b7-866c-0c5cd7a1533b",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "85fcb398-36d5-4d3d-8dd6-e36891d30b2a",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "10682302-e75e-4a4d-a11d-7706bb3b7d5e",
+   "status": "done"
+  },
+  "dtilt_noweapon": {
+   "job_id": "fe0cf950-90ce-4059-92ee-2acc3d9d54da",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "4b7f6c40-523d-4219-82e7-4fba12620491",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "e569859c-6a3e-43e5-943a-861369e1d119",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "b9ea51df-ab1f-4493-a498-bcf51506a6b3",
+   "status": "done"
+  },
+  "fsmash_noweapon": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "fthrow": {
+   "job_id": "8f9e1733-800e-466c-b7fa-edf5a6d6fa0a",
+   "status": "done"
+  },
+  "fthrow.qa1": {
+   "job_id": "4db3c265-3b5a-492a-8a9d-77fb9b680da6",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "1e26ad87-37a8-41c1-ab7d-c6394e0f5a08",
+   "status": "done"
+  },
+  "ftilt_noweapon": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "getup": {
+   "job_id": "fede216c-2abd-4326-9db6-b0b7ead247c0",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "fb85a1c0-5216-4e71-ba9e-678feb12273e",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "e2bc000d-67a1-4160-9828-e7ec7275c96a",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "17ef4dcc-85fd-4f67-ad05-2f5ff3b3d53e",
+   "status": "done"
+  },
+  "grabbed_noweapon": {
+   "job_id": "c711e124-43df-4c1b-bc4c-56e42c9468aa",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "67a08ff6-31db-4cdb-9e5f-7ac9096c5d41",
+   "status": "done"
+  },
+  "helpless.qa1": {
+   "job_id": "704c39b5-25b9-420e-b5e7-f258f7734131",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "e5c186bd-6a58-4a1d-8059-641d52522f01",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "33097fd5-de89-4889-beb0-413649c7b725",
+   "status": "done"
+  },
+  "holdstart_noweapon": {
+   "job_id": "cc720fde-be1c-4645-b63f-a6d30f189325",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "bf6f18ab-966e-4bf3-8b42-3debccb09bbf",
+   "status": "done"
+  },
+  "hurt_noweapon": {
+   "job_id": "72c4fc4f-4a7e-4ea1-a340-4ca0ae509899",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "9a02f7e0-373b-4cc1-9be3-25ac6622daf6",
+   "status": "done"
+  },
+  "idle_noweapon": {
+   "job_id": "425e7dc3-0533-46ca-a104-873494d05a60",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "299fbe65-6728-46e8-b6b0-2f6ebade6ba6",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "1461fc42-cef3-4f0d-9f52-f3142538eaff",
+   "status": "done"
+  },
+  "jab2_noweapon": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "jab_noweapon": {
+   "job_id": "6dea8994-670a-401c-aad5-c890be1e3e34",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "fc055acc-d221-4763-b0c2-33aabbd80f28",
+   "status": "done"
+  },
+  "jump_noweapon": {
+   "job_id": "88ef3052-01de-4a6d-8a4d-9bb263649877",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "ec28884d-6ddf-436b-82b5-8107a0b12db1",
+   "status": "done"
+  },
+  "knockdown_noweapon": {
+   "job_id": "bcbf6538-6c74-4e1f-8b40-a84a8f608442",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "a1e25725-0eb8-47f3-9e65-db33c60614e9",
+   "status": "done"
+  },
+  "land_noweapon": {
+   "job_id": "d116b93c-ed6d-49f1-a5d1-27ba2ccb6614",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "7842efbb-7fb8-4bca-83a9-b8cebca1da68",
+   "status": "done"
+  },
+  "ledge.qa1": {
+   "job_id": "bc92c3a1-e748-4566-b433-82fc291408cb",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "713ab1ab-4fb9-4f4b-8357-0f415a74d644",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "673ab0d5-b8db-4a94-a7bc-125ece39e521",
+   "status": "done"
+  },
+  "ledgegrab.qa1": {
+   "job_id": "ea03f953-27ad-4f9d-990b-e4d6ba027544",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "847034d4-9723-4614-9834-696cc8f0f02f",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "132f0098-c07c-48d4-9721-ed107fa7fbaf",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "6adb9c9e-9fa2-4aa7-87dc-887985e9b9e4",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "b5515677-a2f5-4983-9125-aa497a5907ea",
+   "status": "done"
+  },
+  "roll.qa1": {
+   "job_id": "e5be82a7-abbe-46cc-aca8-ae2ffc6f48c0",
+   "status": "done"
+  },
+  "roll_noweapon": {
+   "job_id": "ca8debf1-8d0d-4249-b873-2bba87809b90",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "e5ed37bc-6cfa-4ce5-884e-3a2fbffefc11",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "0cf10755-33fc-4ec0-8eae-6c77703fd0b8",
+   "status": "done"
+  },
+  "runstart_noweapon": {
+   "job_id": "03f473c3-d6f3-420b-8ceb-183fe544dc75",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "d6052030-89d9-4f85-8192-0441e7e7d77d",
+   "status": "done"
+  },
+  "shield_noweapon": {
+   "job_id": "c5087812-fed5-449a-a7e0-dede37e732bd",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "295e3f55-d4cb-472a-8ac5-7be3fbfabd48",
+   "status": "done"
+  },
+  "spotdodge.qa1": {
+   "job_id": "0fbd7cae-7b68-493e-ab72-bf183315c85f",
+   "status": "done"
+  },
+  "spotdodge_noweapon": {
+   "job_id": "0946019f-8572-4789-a07c-7370041726c2",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "1d4a73e7-57a7-4e6e-a7ae-793a59a8840d",
+   "status": "done"
+  },
+  "sspecial.qa1": {
+   "job_id": "7449c4b3-c209-4c99-b662-90bf5b074448",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "37e1151f-e054-4744-b907-0a62c7397beb",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "1d3bfbd7-fdd6-4891-abd0-c304d14d6027",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "064f9190-2382-40b8-b2e6-c2872ab04a1e",
+   "status": "done"
+  },
+  "ultimate.qa1": {
+   "job_id": "4713bc7c-7c9e-4cd9-be3a-f7b6e8d3c8af",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "4ef1475d-8bda-4c72-b3c4-5e2eaa9b346d",
+   "status": "done"
+  },
+  "usmash.qa1": {
+   "job_id": "c437d9d6-657c-477b-a69f-a17b1f6e690c",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "7806d21d-02ae-47cc-8b2e-b022daa3c098",
+   "status": "done"
+  },
+  "uspecial.qa1": {
+   "job_id": "a521a98e-a7bd-44e9-ae26-1e7c5dfa9af6",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "3e4eb832-ad3b-4da9-bd0b-c24fff83a5b9",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "7b5def8c-b990-4317-840f-43cf05acb50b",
+   "status": "done"
+  },
+  "utilt_noweapon": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "victory": {
+   "job_id": "b404d37b-387c-4456-aecd-2b83dac08159",
+   "status": "done"
+  },
+  "victory_noweapon": {
+   "job_id": "bf2bc3e2-9fea-4e3f-a6a1-fb93d496302c",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "fd8e7389-e80d-4094-8096-53da46ee6694",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "10d6dca4-0286-4284-a3f3-071a3c9ed403",
+   "status": "done"
+  },
+  "w0_ultimate.qa1": {
+   "job_id": "59153b75-d632-4d98-bae6-8ef434ed2c60",
+   "status": "done"
+  },
+  "w1_sspecial": {
+   "job_id": "f4a6f82e-1849-48a4-a5cd-d6346778a076",
+   "status": "done"
+  },
+  "w1_sspecial.qa1": {
+   "job_id": "8cf41d79-641d-48f8-bc47-8b417705dbba",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "d8eb5e0d-a577-4f60-bff8-c8dd7629d14b",
+   "status": "done"
+  },
+  "w1guard": {
+   "job_id": "cbd02520-5fdc-4704-88c5-9a8caa15095a",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "84045fd9-b92d-453b-82ab-589b0954c742",
+   "status": "done"
+  },
+  "walk.qa1": {
+   "job_id": "04cd0b49-b128-4c9a-8d5a-ecbe863f4198",
+   "status": "done"
+  },
+  "walk_noweapon": {
+   "job_id": "736e4c49-9a57-4fbd-9950-1d28fbe0e20d",
+   "status": "done"
+  }
+ },
+ "byakuya": {
+  "airdodge": {
+   "job_id": "99b03a65-35bd-405f-a2b9-046ca62b0b70",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "fc2a4090-aa2d-40b8-ab31-43310daa6116",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "47041fdd-e4df-4619-9268-7bba1eb18932",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "9c2173c8-9e83-49c6-9ae7-6742f5e204ca",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "6d0e3c7e-1360-4f2c-bb6e-558f0c1884fe",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "dc252850-b8ea-4f72-96c3-06dc570f36f5",
+   "status": "done"
+  },
+  "crouch_noweapon": {
+   "job_id": "d4aad764-11ed-49cd-8f49-286d4b8db998",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "01bf5130-05c2-42c4-988d-b5c22dc56876",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "341e8d4a-afb9-43f7-bd83-952ebe9948ca",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "0ff74534-7a99-427e-8f26-69cee91da891",
+   "status": "done"
+  },
+  "dizzy_noweapon": {
+   "job_id": "1808832c-9899-4e87-b828-689af575da4c",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "c23343da-2569-4c59-ac12-47686945af27",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "69eeb7f5-ee0b-4ac1-ac12-440c6ddc27c9",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "1e185d09-210f-492d-bbaf-a9f2a4cbc5f5",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "44682034-548c-4e46-ada8-b41223d6e116",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "59dad9a2-0134-4cac-b121-b7a9d5d56b49",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "f174151c-e312-4436-bd35-b7324b3ab67f",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "3e53b056-0db8-4d99-83c7-8d3e3ff4896c",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "c2c00672-e45d-4681-9634-da874eca44f0",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "af615ade-4028-4b66-91b9-52952a5e2880",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "a9661cfd-484c-47ad-9ea6-8bcfb47c9a03",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "e6f59aa6-bd58-4b4f-bd17-7443f8efc9f6",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "d07ecd1a-9cc3-4145-9854-a0b6aac693c3",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "0dbc5e31-a518-4591-a0b6-9cfd1be0b1e3",
+   "status": "done"
+  },
+  "grabbed_noweapon": {
+   "job_id": "53a4cb3e-0ef4-4d30-934d-f8a892db48d4",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "1fd69e19-dcf7-44be-bf5b-4801c01accad",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "cf257a97-b91f-4884-bed8-54136ee861a9",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "a3db8c90-07be-483b-a638-20c0cecac69d",
+   "status": "done"
+  },
+  "holdstart_noweapon": {
+   "job_id": "1d62ab8e-de72-49fd-a688-6bfb3e17bf5d",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "0918a650-76ea-44ea-b970-f038c3204013",
+   "status": "done"
+  },
+  "hurt_noweapon": {
+   "job_id": "cfbb766c-2bb3-4944-ab32-90c454505522",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "ae0dcee1-4502-4c07-a130-960d70b83691",
+   "status": "done"
+  },
+  "idle_noweapon": {
+   "job_id": "05bbd3da-8a00-4387-9019-a3137a66171e",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "031b3a87-61e4-4819-9d38-614d1959ce93",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "61d25556-1e91-4944-8604-a18a4bc05bb0",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "0885cf18-3409-473a-a513-4231c7065909",
+   "status": "done"
+  },
+  "jump_noweapon": {
+   "job_id": "b8709359-bed7-4ab5-8b9c-aacdfe69ab01",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "d769df48-2a3e-493b-af91-fe58e51af7f5",
+   "status": "done"
+  },
+  "knockdown_noweapon": {
+   "job_id": "feb3e693-c111-4687-a683-0adfca84b654",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "fb674b71-2462-4828-8f68-0f65d230b505",
+   "status": "done"
+  },
+  "land_noweapon": {
+   "job_id": "14dceb9e-e3ce-4998-9ed1-2e68f4a172b8",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "5eb8b861-ced9-4a63-99d5-fe4ae8ee8ec9",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "196bcab5-d0a3-4811-8558-b18a1d60543d",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "003f55a3-6121-4b92-be34-3327a6f8502c",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "85f67c14-2938-45f9-93c3-d7501a94c202",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "ca01a1fa-72f7-48a0-9e55-4d49946d15ec",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "aa5a0852-99f0-43b4-9d4e-4bb6ac0d6f71",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "3e468eb8-0750-470c-8ba7-fe8c606f9772",
+   "status": "done"
+  },
+  "roll_noweapon": {
+   "job_id": "20d2e7c7-5e95-407a-917c-1d105630b40f",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "db55003d-2186-4c2f-946a-0173f425d26d",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "62fdf934-e3dd-498e-9390-b2da87a7311b",
+   "status": "done"
+  },
+  "runstart_noweapon": {
+   "job_id": "af89bc49-0fd8-4103-88b1-4cbd0ffdb82f",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "04f2b874-31b4-45a4-bba9-5928d8d97c3d",
+   "status": "done"
+  },
+  "shield_noweapon": {
+   "job_id": "b767d5e5-007e-4677-a9f6-ee0286e1bae7",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "82eae7b2-5cf4-420b-a7aa-082bb80d7c7f",
+   "status": "done"
+  },
+  "spotdodge_noweapon": {
+   "job_id": "f15aa701-2440-4869-9211-124c233197d3",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "6b360c9b-1947-407d-9214-9f50d07892f7",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "b8e08a30-1cd6-45f5-81bd-45352e1c282e",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "05b1f992-2c3c-4069-bdd8-7f22ae75f6bc",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "d6d63307-79fb-4b82-9922-e1259cabe973",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "457c3b9e-b681-4f7a-9fe1-28bc8774939f",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "54d95ce4-5492-4ac0-b745-3b9a873550cd",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "85393c57-2769-4009-b720-fe673c3d9d69",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "8fcdc84a-66bb-4fe4-b29d-820e720904e9",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "72accad3-83f4-46ba-a496-5d9f4ffe17ab",
+   "status": "done"
+  },
+  "victory_noweapon": {
+   "job_id": "29cdd3c2-7450-4e9c-9a29-cb9e938bedeb",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "dbca7f8a-2a54-47bf-bceb-6bb6263d081f",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "f1cd6d1d-9ed8-49d7-a593-2a5a3251d061",
+   "status": "done"
+  },
+  "w1_dspecial": {
+   "job_id": "d0f3550c-9fd9-435b-a552-12c7fd54d704",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "c6084d4b-2f44-40f9-b920-5e458e3fe8ff",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "f068796c-fb58-4df9-925d-1067915e58bd",
+   "status": "done"
+  },
+  "walk_noweapon": {
+   "job_id": "d8fff78b-cc24-47d1-b62c-64363870b059",
+   "status": "done"
+  }
+ },
+ "ganondorf": {
+  "airdodge": {
+   "job_id": "48cec8e4-dac5-4068-9f79-02fec9cc3823",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "834375ee-3ddd-4eff-9c1e-2de6749174bc",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "b90753fc-abeb-4aa5-9eb3-8a94dc086948",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "28cb4196-39c0-41c8-a5c7-99562097e4ab",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "742f2702-aa51-4902-8ba5-7f70cafd8f15",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "8b03ed44-fdca-4dbe-b06d-8ab950e43383",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "33470037-7acd-470e-bf3e-3011841cff5f",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "4b75f915-ecdc-44ec-9d31-135db233d284",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "433c7704-3b9a-4ad7-9ce3-2d4bbd628cf0",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "530f34aa-cd4d-4876-a455-ad5c12a11fb4",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "48c07f8b-6d84-4019-b6cf-0223cf88b049",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "3c671937-fb17-4c39-81f1-690978793789",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "176a025d-075e-4e1d-b98b-f4e2a3065e60",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "0cb48ca6-4ae9-4f29-836b-4edf36db297c",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "e8a94962-b376-4648-916e-b0f1bf8b7c84",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "f7cd9c4c-6545-4205-9b43-0afbc97db728",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "f0e74272-23ef-4b70-9cec-a0fdd48aa6ba",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "30737ae5-b7ec-4f90-bd61-fec1c162b042",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "4d207c2d-fad1-40f8-bb38-582085f91293",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "96698a97-0964-46b6-a5f5-2a41fdb2ea24",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "05fc64db-3b3d-4d3f-a009-ab17595335cb",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "5e4580d8-4400-444c-a963-fbd9bb3c4ab1",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "38009613-cae0-46c8-95ff-12919bf87209",
+   "status": "done"
+  },
+  "spotdodge_failed": {
+   "job_id": "160e469a-060d-4fb9-b13d-ce20379361a1",
+   "status": "failed"
+  },
+  "tumble": {
+   "job_id": "14262aa7-748b-439c-ace2-43fbad3339c6",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "1660f282-c30d-4caf-85cd-cb2c91f71da0",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "9486707a-d2d0-4738-b103-c3d77e4b5fd1",
+   "status": "done"
+  }
+ },
+ "gen": {
+  "kakashi_toguard": {
+   "job_id": "aaf24a87-84ee-4c96-9dec-e46d491a2370",
+   "status": "done"
+  },
+  "sasuke_toguard": {
+   "job_id": "22e9c060-bd2b-403f-86f9-89928c64f911",
+   "status": "done"
+  }
+ },
+ "gen14": {
+  "asta_toguard": {
+   "job_id": "0e47f745-5def-4d91-8d48-04fc101b596d",
+   "status": "done"
+  },
+  "byakuya_toguard": {
+   "job_id": "9b87dec8-7b3a-44f7-9739-954f74f43eb3",
+   "status": "done"
+  },
+  "ganondorf_toguard": {
+   "job_id": "d8ae8ec1-2952-4b93-a7cd-935c6862dd0f",
+   "status": "done"
+  },
+  "ganondorf_toguard_v1": {
+   "job_id": "9ff341fd-4a8c-4351-b8ec-10c3061deae9",
+   "status": "done"
+  },
+  "gojo_toguard": {
+   "job_id": "c619bd92-f6a5-431f-b008-e9002cddd8db",
+   "status": "done"
+  },
+  "grimmjow_toguard": {
+   "job_id": "893f9044-a344-4a0a-be74-708494aa90e6",
+   "status": "done"
+  },
+  "hunter_toguard": {
+   "job_id": "03b64346-ea47-43fb-920b-ed6b61a1e6ef",
+   "status": "done"
+  },
+  "ichigo_toguard": {
+   "job_id": "54713898-7bb8-4339-8902-a1dd689f64d5",
+   "status": "done"
+  },
+  "kenpachi_toguard": {
+   "job_id": "1983817d-c3c9-45e1-94dd-83486f578a08",
+   "status": "done"
+  },
+  "kratos_toguard": {
+   "job_id": "ea1b2ad0-6100-436c-a3d9-b20fcbb03af9",
+   "status": "done"
+  },
+  "link_toguard": {
+   "job_id": "327a0457-1966-4456-a91f-b1264bd6f09c",
+   "status": "done"
+  },
+  "starrk_toguard": {
+   "job_id": "4825c776-6ef6-4371-bed8-1b6cc72c8b90",
+   "status": "done"
+  },
+  "sukuna_toguard": {
+   "job_id": "7a62667b-27b0-439b-bf45-1cdb94da44a4",
+   "status": "done"
+  },
+  "ulquiorra_toguard": {
+   "job_id": "d109ae50-0027-470a-8e29-3201993af015",
+   "status": "done"
+  },
+  "yuno_toguard": {
+   "job_id": "2daabf90-bc55-48db-9ed5-be373f06600c",
+   "status": "done"
+  }
+ },
+ "gojo": {
+  "airdodge": {
+   "job_id": "b4d0dcff-427d-433f-a750-f69d5dd0f2bd",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "31b78949-145c-411d-b14a-3ae2a5d671bd",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "51ff562a-eb70-4eeb-a00b-d5a9ba1a195f",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "b5ccdcdb-d886-4ff6-ab76-61606fcf42c1",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "ecb0da7d-3e8a-4036-841d-75090491d1d7",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "eaf67c2e-fa7c-45ef-a3d3-943a11889803",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "b5ee8386-f78c-4525-8022-344b9ee34352",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "2a8ab780-4e25-4da8-a07c-91af45f39a94",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "a66cc3ac-34de-41af-bab7-c00c3a3ed5fa",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "29706873-431c-486c-bf7b-dc678e1016b9",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "ec052bcd-127f-40cb-8054-f8e55ee0da19",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "e9f6dc1c-79be-4f5f-84c3-abddb65a0a3f",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "39609b80-3091-4aff-a9e9-da97a57f73ad",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "8cff71c2-5311-4be6-a6a0-09145f920659",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "2a504693-3b0c-4d46-b743-3da29c54a00f",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "3954cf9a-c2a6-43d2-8dcb-93882c0b2f64",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "39a5b7a2-8bec-4c90-a89e-e22dff71a323",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "9b66d40f-cbd8-4275-8671-a08d41c929dc",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "e1021742-660b-457f-bf1f-8188dd1d8757",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "bb402d6d-fe42-446e-8e31-cb59f507b8c7",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "476ea2e6-c7b3-40e7-93ed-409db56bb5f1",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "de47bfbc-16d6-4019-b2ed-337f6da64fa3",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "e034ca90-a283-4b17-b7b5-c23ac5980e4f",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "11a81f60-67ff-4bdd-a6ea-5b42f2492f78",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "4b750521-ba4d-4706-8809-601c0b92078a",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "8b8a6e79-9bd8-4108-af01-a69f4ebc68ee",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "51e2d126-8f1a-47a6-8bb3-e653d9893ce0",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "f94dac82-7d05-4f46-a87f-1b9f8baf1fb5",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "d63b82d9-bc65-440d-ad60-821a16623dd8",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "4e17137c-cac3-4ff8-a76b-06e1ac0bfe1c",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "6ebef88b-13ce-427d-adc2-614dd531251d",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "8a3392cc-0b02-457e-b869-43b3bfb2f043",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "8d0da5df-aa56-467a-a49b-2cd7bbf290c4",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "58269bde-347d-41ac-b646-b8e21f8f2862",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "0ece3f44-6d39-451f-bcfa-e06e4dc5a788",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "5d29537a-28bd-40e1-8557-45754ce55fd6",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "7cf9c757-76d8-454f-9e5d-4dae60d5edab",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "2e8700e8-9e86-48cf-8474-19de78da42e1",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "83d8a599-e024-45f9-a12a-8e20b4bef264",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "ee093a4b-7ea5-435a-98ad-be3348329af0",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "cc38291e-98e1-4b01-96c9-2ac60e550529",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "2a0a0751-f9fb-4169-8634-e0a62a830d97",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "f5ba60ce-4ea1-45f5-ab99-5db7e8cc0c14",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "fa74b6a6-35a7-4bda-9a11-e83b696416a7",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "54a8ddc3-6a77-4f6a-af7a-212bd1ebb9bc",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "ee998421-76b0-4560-9061-e9062c9b3359",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "85534df8-61d1-4077-86e0-d50f5d03edb1",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "84658033-bc28-4fd1-bfca-b26d96998f40",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "c6c97c9c-cad6-43fa-953b-799082db2d35",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "28604b40-8b70-4052-a642-bc3ddcbb5d98",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "a1197e3d-03bc-4592-821f-6a97bd5f6adf",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "73f79000-8d90-4fe6-b119-65d228dba665",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "ea7a3047-795e-42b0-9422-af370249d91f",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "e81855f2-da07-495e-b066-0497ccaac1d5",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "bd055a38-e3fb-4152-bace-66380cfa4cef",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "733135df-d41a-40f1-acb4-6c1849cd6fd0",
+   "status": "done"
+  },
+  "w1_ultimate.stale": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "walk": {
+   "job_id": "c522ec63-5232-414e-a1cd-38149c670c7b",
+   "status": "done"
+  }
+ },
+ "grimmjow": {
+  "airdodge": {
+   "job_id": "78f6127c-d794-49a4-9ef2-636cddbacd0b",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "9aaf1a43-726e-40c4-9c3d-cecbeda3e81a",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "785f0c99-5427-4a92-b9d5-c082fad5cd79",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "67b6ff38-0a35-4a3e-9252-851f5a3056e0",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "7047ab61-73b8-4aa8-ab1c-465944e76523",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "31c9744d-7c22-42a3-ac94-79dd1b769f41",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "e45730f6-676f-435f-bddb-afcf90c306dc",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "3815d0cf-7582-439e-83b0-eb5a351c6091",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "846c69ea-517a-4eea-a820-d37357c535a7",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "d7bc386b-6019-4feb-b61b-b09c02ffeaab",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "cf68e78c-a94c-49c6-bebb-2aa9eb7a4a12",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "d6679ad6-7823-4a52-a496-71224916f846",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "645ecea4-053a-42f6-9fc6-bdefc83db760",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "c45e8f86-6a85-4502-a64b-00dd3f53a364",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "97c3bf40-ce33-4984-8996-aea08603c71c",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "3bc2ab57-4ebf-49bb-9690-c4a3be8db472",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "6ea3d12e-b884-4fc0-a067-852f6584e326",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "398712b9-abb8-4227-bc12-dc7f1f38d43f",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "5885ec0b-2525-4677-94c1-21ffa8a16b28",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "6ecab968-4508-45ee-98b2-073472174493",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "d1e124c7-cb19-4259-bc12-3dcec331c15c",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "e9086603-160e-4783-bd3e-f615c6dad744",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "f6971629-2dd4-4ef5-838d-e8e6234d79bd",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "62a290d7-660f-4a56-ac07-8bdf2137d979",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "392d0b82-37c7-4d90-a6ce-6c452ef88d26",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "9e46802a-b238-4f79-8d2f-133720aa443c",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "28e6c29e-3c64-4ad6-909a-32feb87c0344",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "b01829a7-4863-49a0-9f79-28c973e63f50",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "d79d1c31-e9ce-4e70-bd35-6b3f0cd39ff4",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "2eec4b24-09e0-474e-9faf-f09f48c8cb92",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "6a49d06f-360f-421e-9964-367499e3d604",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "0c2c7037-51f6-48bf-97ae-5362d2a9f9a6",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "02a95ce6-5604-4c7f-8925-06ab4c885252",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "2919b69a-f8d3-4243-a1c7-959a32c88c2d",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "7f077dec-2e23-4e27-8dab-3cc9b24102f6",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "fa90062f-6d0d-4b45-9233-29f36a2280ce",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "95bf96e5-d788-444d-a4f5-6c0600c45fcf",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "856a0a7c-60de-4fda-b7c4-08d4e3a128fe",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "999b67c0-a498-4811-b765-a75ab5c6d93b",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "e9575384-76a1-466e-85ad-005d6d3e6341",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "40e2a126-ebae-4d2f-9548-00144356d4a4",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "04820ec4-275c-4632-b294-dcf61142a44b",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "ee7a2800-7dfb-4b33-8d8c-de96b06653bb",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "0d590aee-345c-494e-a1d5-ef868c62657c",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "299398cf-6614-4134-b2e5-926c81e541a5",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "16afb2cd-3988-4cf9-91ed-1662dd4fd96f",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "a23f8de2-b2ad-4486-9673-d145ee33854d",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "5183fdb9-a2ef-43fe-b429-fbecaceab026",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "eb2ae547-dd13-4cf8-98cd-b299feb99e26",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "81721103-23fb-4886-b744-732af7457af1",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "10037a2d-7e3c-4cbe-a348-9f1c1a0009fb",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "8146aa23-405f-44fa-b5e6-e9c610cbd343",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "a01082cb-a1d1-4fb0-8ee3-42a0f3fbbfca",
+   "status": "done"
+  },
+  "w0_sspecial": {
+   "job_id": "e1a46d64-2b55-41a2-8a22-a86f38e1a502",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "b914091f-5111-4aef-b909-468b7dd86b96",
+   "status": "submitted"
+  },
+  "w0guard": {
+   "job_id": "c907e530-22c1-4b58-bd82-c4f0a33ebe63",
+   "status": "done"
+  },
+  "w1_sspecial": {
+   "job_id": "fe50fda2-b111-442c-9df5-d8d126ee2514",
+   "status": "submitted"
+  },
+  "w1_ultimate": {
+   "job_id": "fdf5732f-2f00-4109-a23d-97b855500466",
+   "status": "submitted"
+  },
+  "w1guard": {
+   "job_id": "a3ef2701-755c-487d-b019-11fec0402668",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "112f32d4-445d-4333-846e-b4cbf24c37eb",
+   "status": "done"
+  }
+ },
+ "ichigo": {
+  "airdodge": {
+   "job_id": "9c9c08b8-0ce7-4b3d-a34f-5d6044586cfd",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "6bb1041b-72b5-4828-a67a-29f36147326d",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "89f0dc79-96a6-4eda-8b5e-d63580cf6aee",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "5ebdaf40-22a0-483b-8b60-25ea96377020",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "5e33c57f-ca2b-47a5-a3f3-8ffbb96d9511",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "57c54718-5e47-4b55-b90c-05e280ae5f68",
+   "status": "done"
+  },
+  "crouch.qa1": {
+   "job_id": "dc038e53-24af-4e2a-861c-6f78572999b5",
+   "status": "done"
+  },
+  "crouch_noweapon": {
+   "job_id": "cb68ea83-47de-40ea-ae86-5c51bccebafd",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "25fd5041-2564-4e2c-a35a-fede42936f81",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "b93a462e-7667-42d5-9055-ff0279fb6aea",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "2ee89feb-cadd-49d0-8e54-1dbd87ec6784",
+   "status": "done"
+  },
+  "dizzy.qa1": {
+   "job_id": "08c4c095-c6cf-4723-a74a-edc50c6bc498",
+   "status": "done"
+  },
+  "dizzy_noweapon": {
+   "job_id": "4964105b-7743-475d-b935-a1a98e7c50ac",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "bcd2da31-5fab-49fd-ba0b-86d2be40a31b",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "b26a08c8-1650-45e0-aa81-4f22088916a9",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "7d404dfd-3e90-40e9-a919-53b4e8120d03",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "f2344376-ab0b-4e47-803d-4525f56b01df",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "3f78d362-b544-457a-9f59-3f697af0be1a",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "49a69b89-94e5-4b4b-83e0-0ea80d4c8972",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "ad4b2db0-0f0e-4b48-9889-1f301d1acb59",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "7d071e55-7548-4991-9b9a-6cfae8673f70",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "c7281d7d-b4b6-4367-9db4-e16b07c1ca5f",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "fb5bf156-f6b7-493d-8ae0-ecd6b2810919",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "409020be-310f-48d7-b1fc-22b849497626",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "f267eb4a-4eeb-483d-8db3-a5667e07cfc7",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "6d138bb9-da22-4569-b080-56b554854bc9",
+   "status": "done"
+  },
+  "grabbed.qa1": {
+   "job_id": "0805a121-eff5-4767-bebf-3db9ac0da1c6",
+   "status": "done"
+  },
+  "grabbed_noweapon.stale": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "helpless": {
+   "job_id": "6d92aa80-db78-4014-a711-0ec8b3db2f19",
+   "status": "done"
+  },
+  "helpless.qa1": {
+   "job_id": "27c83a51-fe7b-4944-955c-31de35223ca0",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "d832c8d2-3db3-4f71-9df7-88e2cc6b5856",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "2bb4e55e-a4b7-45d4-a861-123694db4e14",
+   "status": "done"
+  },
+  "holdstart_noweapon": {
+   "job_id": "cdbfc192-fbcc-475f-aad1-54a2be6ec51c",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "01dbc751-9a40-4175-96d1-cfa84366ee7a",
+   "status": "done"
+  },
+  "hurt_noweapon": {
+   "job_id": "37799487-d8dd-42a3-a89d-821534e491a3",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "7026a9a1-6c25-46e1-9241-17321b449070",
+   "status": "done"
+  },
+  "idle_noweapon": {
+   "job_id": "da636eea-90e4-4344-9a7e-15d2c770cf1e",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "041eceb8-a121-420d-956f-861dd2474677",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "27033a75-b931-41e2-bab9-dd2861824924",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "9cd9b6de-83ec-46f2-9249-f1b2536945fa",
+   "status": "done"
+  },
+  "jump_noweapon": {
+   "job_id": "0a8897d4-fbde-4f44-a187-4d8f7d66b9a9",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "0cc4fc37-3c33-444a-bdf2-1dbffd065440",
+   "status": "done"
+  },
+  "knockdown_noweapon": {
+   "job_id": "d6394960-9ce4-4d3c-a9d8-4e2c23e76897",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "aefac10f-284c-4cc7-a91e-76a427d1af72",
+   "status": "done"
+  },
+  "land_noweapon": {
+   "job_id": "886713b1-14f6-4f63-b1c7-775808183ede",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "4772b28e-5371-4976-96bc-f65f5583edff",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "d7d7adee-6666-44c4-b33f-ac58e657895a",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "508ac7d3-8bd9-421f-92e3-e01e341bab55",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "7540d4e9-2709-4b50-98e0-d7a4aecae84c",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "19e73597-8315-45b5-84bd-d58544c11342",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "df11af3c-1341-4b2f-9c43-308519b19cf0",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "64e505b1-3a6d-4713-8246-da30e2377977",
+   "status": "done"
+  },
+  "roll_noweapon": {
+   "job_id": "75267250-093c-4ed7-abfb-f82508199e99",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "d935aadc-b485-476d-ba29-2e0cdfda9200",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "358fd653-c980-45d9-8962-a3655e344757",
+   "status": "done"
+  },
+  "runstart_noweapon": {
+   "job_id": "0effedb6-a11c-490e-8909-f4e0e30c670d",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "6f0a0a04-b589-45c0-82c3-3318b941115a",
+   "status": "done"
+  },
+  "shield_noweapon": {
+   "job_id": "abc9221d-52df-4373-8d02-eabd090b0edd",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "205845e5-cce4-4971-acff-b6e6f36a17ec",
+   "status": "done"
+  },
+  "spotdodge.qa1": {
+   "job_id": "c9cac539-eb25-4a82-b524-9b6f39c1e99f",
+   "status": "done"
+  },
+  "spotdodge_noweapon": {
+   "job_id": "47b487de-e257-42b1-8418-449b29ab9e6e",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "68695171-39f6-4d32-8fb9-32eba58e6be7",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "69d76b87-f8e7-4efe-a0d0-b85f211b7b88",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "a11868b1-174e-432b-a7c4-af03a72bf818",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "01a0f7f8-6b29-4137-9595-bfc88a74c08b",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "fedee52e-f016-44cf-9158-0e613e90e03b",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "54d11079-1dc3-4a0c-9103-5c2f26721250",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "d9c850d7-3c84-4d2c-beb6-a07080af072b",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "c6ee918f-4cfa-471c-b4aa-97e50d3a99e8",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "899f7651-8ea8-4307-bc54-dad35219ed7a",
+   "status": "done"
+  },
+  "victory_noweapon": {
+   "job_id": "ef08a364-9069-49ae-877a-6c9b40b70641",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "f415a94c-10cb-4653-8f24-282ea1d86c32",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "952d332e-cdb6-4341-af26-49d2ff3b2792",
+   "status": "done"
+  },
+  "w1_nspecial": {
+   "job_id": "d52335d8-26ad-4706-9c04-61b3c86815eb",
+   "status": "done"
+  },
+  "w1_sspecial": {
+   "job_id": "1c3e408d-60b7-4b9e-bca8-c967ee4b59d7",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "36b4860a-901c-4424-94a6-fdf44d28216f",
+   "status": "done"
+  },
+  "w1guard": {
+   "job_id": "e73f20b3-b0c2-446d-9774-50eb1e5a0182",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "7d965e91-35a6-4d65-a1cc-f066697695fe",
+   "status": "done"
+  },
+  "walk_noweapon": {
+   "job_id": "9a41e019-2448-4d7b-93d7-dd7c6752fbbd",
+   "status": "done"
+  }
+ },
+ "kakashi": {
+  "airdodge": {
+   "job_id": "4ab30cc9-e814-4fa2-8dee-6795a57e7a87",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "86423226-94a6-4a9e-814b-1806413a013d",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "39cc4652-9cdf-4c21-90fe-481d7711d3fc",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "43a84c7c-aec7-4bf8-8eac-0e55be947b7a",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "ee458244-12c3-45ed-916a-1e61641e64dd",
+   "status": "done"
+  },
+  "crouch.qa1": {
+   "job_id": "d99bc483-b8cb-4f6d-b822-b08df9b1d631",
+   "status": "done"
+  },
+  "crouch_v1": {
+   "job_id": "40cc4b71-50f3-4ba7-8bc6-e8178cef8808",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "376b8169-0ec2-450a-b4bc-c66343106931",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "3560f908-615d-4316-94c1-5d03e16afcba",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "39d15f01-d135-402e-ba3f-c0ae607023b0",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "2cf5801d-ac51-49b3-b2bf-a9c7d9582b87",
+   "status": "done"
+  },
+  "dspecial.qa1": {
+   "job_id": "4677031d-99b3-454d-8aab-8d2a7d52c797",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "8ca613be-ec71-45fc-b353-05fb5191f915",
+   "status": "done"
+  },
+  "dtilt.qa1": {
+   "job_id": "0d4e42aa-3e95-44c3-8958-48c27ad26fd5",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "2a21d8a5-3769-47fd-a214-1ae11625c76b",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "368fbd16-5577-4ba8-8912-b459f9cc5f08",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "163512d9-1529-44ab-84be-0c7280f7645e",
+   "status": "done"
+  },
+  "fthrow.qa1": {
+   "job_id": "ba3b4a76-e548-4e90-b3d9-409b5e5b260b",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "7500533f-0afb-4cd5-a27a-004021d75e93",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "ff3e780d-0f10-4e06-819c-97cd4099c557",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "8b55fcf8-c3ea-4a2b-a05b-5e19e622e0e0",
+   "status": "done"
+  },
+  "getupattack_v1": {
+   "job_id": "5e66264c-47aa-49d6-83a7-501b716a28bc",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "eb1dd0ee-e17a-465c-95b7-eb4b2d2e2763",
+   "status": "done"
+  },
+  "grabbed.qa1": {
+   "job_id": "9b81966c-d7a5-4182-a103-cdd8650576df",
+   "status": "done"
+  },
+  "helpless.qa1": {
+   "job_id": "9493fceb-3f4f-4870-8a88-651a7bd58538",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "cac7d21d-bbe1-4406-8a5e-27c991c90e47",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "629b5591-abf9-4cae-8b88-2fa05beade9a",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "ed36611a-1916-4ef8-9884-946add816bae",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "7caaa042-cac6-40df-a544-ae1815cdc0a5",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "693ecf08-4cf7-4eec-acfe-b1ff11433a77",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "1e30daa1-f478-4fde-a937-ae61cf4280b5",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "b1192ce8-b60d-4d22-a209-b2768ab18c0c",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "e8892887-93e9-4e08-a8a7-dd9bc5b13ada",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "55344ab9-8bf5-4671-8ce2-6bdea969455f",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "40cf33bc-cb3b-49d8-81d8-17b0c2467fe3",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "b8a3722e-7e0a-493d-ad4d-c784f42c67a9",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "e079c32e-9bdb-4159-94cb-c6723e84e7e1",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "b1faf5f0-df6c-47b4-9613-f6a52c0f0790",
+   "status": "done"
+  },
+  "nair.qa1": {
+   "job_id": "fa059e98-4d98-4253-b451-f83b278d0813",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "1a063a40-bfc3-4d84-b543-d8fcdf3eeb40",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "1c3af847-7e3f-43cb-98ad-94130e695c16",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "6b7d2eea-bdba-49e2-9f3c-7fd3dd3b610f",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "0afa7f89-ea3d-4355-8e3f-4ad557f432f6",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "880a3656-e580-4145-b0b4-d6a525f8b94d",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "9d10301d-3911-410d-bd6f-e33c75a01d24",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "be3ce367-7b4a-4664-8db7-677c3e886f52",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "58c5e6cd-0991-4041-ad4f-036d99585962",
+   "status": "done"
+  },
+  "sspecial_tint": {
+   "job_id": "7e084987-074f-423d-825c-cf11b33a6136",
+   "status": "done"
+  },
+  "sspecial_v1": {
+   "job_id": "192ad6a5-d76e-4ab2-b54f-44d62b29488a",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "1ea3379b-89f7-46d6-a245-153594b11df1",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "380582a1-9d86-4771-ba1a-77031b87584d",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "7f92e6e0-4600-484e-ad0a-11cc49c476f1",
+   "status": "done"
+  },
+  "ultimate_tint": {
+   "job_id": "33372e25-f1cb-4492-996a-776f864d2c9a",
+   "status": "done"
+  },
+  "ultimate_v1": {
+   "job_id": "cf0983cd-c539-4f74-8024-0bc9914764d1",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "c4720e23-6655-411f-aaf6-eba6e5423d4a",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "5ac143bc-dac3-4da1-b4c8-3f5de177fa11",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "5960d0a2-e656-4586-b9bc-e287d894b419",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "c2cd13ce-ff7e-48a4-9f04-9fa6772f01bb",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "5824d918-7dd3-488d-99c7-215d685922f9",
+   "status": "done"
+  },
+  "w0_jab": {
+   "job_id": "2ae1c635-e511-4fce-8fc9-de1855f9bc87",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "d7517bda-a9d2-4739-910c-6b2f688cefd0",
+   "status": "done"
+  },
+  "w0_nspecial_fxdrawn": {
+   "job_id": "36dc6259-8d14-4bf7-acdf-410834e3b1a7",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "9b611435-c3d7-4953-acb8-7cf4c94f300f",
+   "status": "done"
+  },
+  "w0_ultimate_fxdrawn": {
+   "job_id": "8982179d-c422-4532-85f1-e8ef2d9dae28",
+   "status": "done"
+  },
+  "w1_jab": {
+   "job_id": "1304d691-9cf5-4427-9293-47715e967cd8",
+   "status": "done"
+  },
+  "w1_jab_v1": {
+   "job_id": "0d8efe36-51ae-48d7-b0a8-97d7020dc1af",
+   "status": "done"
+  },
+  "w1_nspecial": {
+   "job_id": "bfef9958-a16d-40d3-bb4a-350f826a9f12",
+   "status": "done"
+  },
+  "w1_ultimate.qa1": {
+   "job_id": "34ca6ed5-6e0a-4ada-84fc-a792bd581cf0",
+   "status": "done"
+  },
+  "w1_ultimate_v1": {
+   "job_id": "9b558f54-3f0f-4b32-bf0c-8ca30814abbd",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "walk.qa1": {
+   "job_id": "cd182c25-ec7f-445d-88aa-9357434352e6",
+   "status": "done"
+  }
+ },
+ "kenpachi": {
+  "airdodge": {
+   "job_id": "75dc3f5c-6f29-412c-ad3f-73467d07da91",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "27f97b91-15ee-466b-8255-56905d1b8872",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "fc45a106-dc06-4b46-8acd-08099c29413d",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "5e02bcc7-2cd9-40c6-89be-9ac3864f0bc3",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "9e54f0bb-6b63-4c05-94e5-8140832a68d0",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "63ab27ca-13a0-40c0-8756-6e4a0f7e69d7",
+   "status": "done"
+  },
+  "crouch.qa1": {
+   "job_id": "7274d157-cd80-4d17-a758-64a2589e642c",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "402b82d1-b920-4aee-972c-0e9c8bfb8526",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "e9a65410-900f-4b4d-bcc3-05af2ed8f771",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "f4f27853-2bec-4287-83b8-9e25cf482c79",
+   "status": "done"
+  },
+  "dizzy.qa1": {
+   "job_id": "4bca3b9c-ef6c-48e9-9ba7-c1c066fe9cb4",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "30836bca-8620-4b78-89fc-bf2a25388bd6",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "23b1529c-43dc-4acf-9524-243cd55bae05",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "21be1b17-253c-431b-b382-09f6b4b6a096",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "d78db801-b5df-4f9e-9550-c23a02e85a34",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "233b77b4-a639-4490-8b7c-99460ab0bb21",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "45c3b656-e1c1-4efe-be35-34f428bf97b7",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "f4300f2e-5300-47cf-9bb8-56814058d3a1",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "dd486a30-b27e-47ee-a19f-0a544e974737",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "32d4ec23-6586-43b7-93fa-7111c4e94917",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "f0ab8d35-6800-47db-aab4-5bb99fc92fda",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "6291ddd1-fee9-4ebd-ac59-3efc868fe4f3",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "8081aa2e-a1b9-4440-94db-61b1e391d7e2",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "082e331f-a0e1-4008-bf5e-cf00f19e00ee",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "b4a5197c-85b3-47cf-b760-a506e0d9b927",
+   "status": "done"
+  },
+  "helpless.qa1": {
+   "job_id": "f8a0cb46-0dd4-427c-91cf-79ba1e2c8606",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "062ad2a5-b3f3-4890-b5c7-e929b2f7d450",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "ff5b5940-577c-4682-972d-5c83dd6a80b6",
+   "status": "done"
+  },
+  "holdstart_noweapon": {
+   "job_id": "15aa7417-25de-46ac-8c1b-569009351d58",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "e2a19a3d-5fbf-4a8b-8ff8-4dc22590aedb",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "580bec5c-9f98-4a96-ae7a-44078a55a0d4",
+   "status": "done"
+  },
+  "idle_noweapon": {
+   "job_id": "edd0e8e0-3df4-4fd6-86c7-784d077f1b12",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "24fc96c0-46c0-43ea-8a77-ebed99ef1b99",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "30f071df-7dd9-4a2e-8268-0dd25197f67f",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "b6603607-6a13-44e9-85f4-56cb950edf84",
+   "status": "done"
+  },
+  "jump_noweapon": {
+   "job_id": "ac0ae146-e017-41bb-b08f-b82553980864",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "535843e7-4f48-49b5-b3d5-c917bcbcc289",
+   "status": "done"
+  },
+  "knockdown_noweapon": {
+   "job_id": "6fc4ea58-481a-4ca6-a930-9362bb1f5fb2",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "87376db7-0037-41ba-b38f-7e5853dc952e",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "d2c43e8d-9064-40d9-b768-ea7010e94f33",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "1062aacb-f5d3-40c2-88e4-583f0f9327b7",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "f2034821-cea7-4c4b-a476-cac75d052bfa",
+   "status": "done"
+  },
+  "ledgegrab.qa1": {
+   "job_id": "510e7294-4bb9-44b3-9829-092f71bd1042",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "27345172-d86d-42ca-bedd-7019b9e608d4",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "9fb7c4fa-f041-4225-bd40-8a626b2dd3da",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "5ae1bf32-dc8b-48c6-9b6d-c6fff9ae5c68",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "c6f6e6c1-39c9-4a1f-bf72-d78cb5cb73b9",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "638e598e-a4e8-4a2a-9c1c-6f7c7f9960c4",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "c9a80d81-3cbf-4b03-b3c4-36654ac91336",
+   "status": "done"
+  },
+  "runstart_noweapon": {
+   "job_id": "2e96383c-ba9b-4e0f-911a-565c6cf1002d",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "771b50bc-961c-407b-8a43-25b69231bb16",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "ae527ef1-d9d4-45f0-af3d-29517e7396c9",
+   "status": "done"
+  },
+  "spotdodge.qa1": {
+   "job_id": "60662031-0589-43f0-950b-0c8cad57c7d0",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "a36af9ba-7497-41ac-b8af-76f41d446673",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "ab66fc1c-55e7-4974-898c-57ea880f871a",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "17a71977-cefb-44c3-ad14-ec9ba5edd5c7",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "27e25585-3286-46e3-908b-cc7207b6d5ed",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "bc12a776-ca76-40fa-8edd-dae98bfadba9",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "2c25dc9c-2dde-4fb4-acdb-3548dbab9186",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "44314394-5da8-481b-9f10-568b633a14c7",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "3de59d4f-5e67-42fe-affa-7e95007da0d6",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "899cbce8-7d10-4101-88b5-c3eb242082b5",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "f87cdc2f-40d5-4f34-ac11-9fba274f64c1",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "fdc2e55b-4959-4873-96ed-46a733a13135",
+   "status": "done"
+  },
+  "w0guard": {
+   "job_id": "85b02c30-5739-49bf-a349-aaa20cb41158",
+   "status": "done"
+  },
+  "w1_sspecial": {
+   "job_id": "f57c3855-31b8-47f8-97b3-50cb370a3425",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "16dd14d0-4eba-4345-ac28-3814abe9b533",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "949c4560-231d-4b67-94ec-570d2a647073",
+   "status": "done"
+  }
+ },
+ "naruto": {
+  "airdodge": {
+   "job_id": "d63aa307-4454-4249-99d5-1b03ea3927d0",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "f6d5fc62-2db5-44a8-88a6-a78971735036",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "b12fd0e3-f337-40c3-a0a3-6ec72acaac1b",
+   "status": "done"
+  },
+  "bair_v1": {
+   "job_id": "7aff2ca7-3a69-4b0f-8514-a934724d970d",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "3140b2d5-41d8-4835-a3af-fefec362c0b7",
+   "status": "done"
+  },
+  "bthrow_phantom": {
+   "job_id": "096ab51c-3040-4f3b-b686-074bef50586d",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "da7f36fd-8fdf-4a60-a171-cf5a1d4ec697",
+   "status": "done"
+  },
+  "climb_rock": {
+   "job_id": "fb591db1-dddb-4555-b11b-19ee7bb9f0f6",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "b89472d6-5875-4999-b25c-a39f84e262a5",
+   "status": "done"
+  },
+  "crouch.qa1": {
+   "job_id": "217cc1b1-4ea2-4060-8ca2-83df176e5e4d",
+   "status": "done"
+  },
+  "crouch_v1b": {
+   "job_id": "1782b4ae-0541-43a9-b580-a456c7465b8f",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "a8c3caf9-5071-4b28-92b0-3fb8a88c8366",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "136a7ce2-aa73-4751-8c62-0054596501fb",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "6387332d-632b-4b7a-80e9-e66d2dac5a4e",
+   "status": "done"
+  },
+  "dizzy.qa1": {
+   "job_id": "4afdab0f-dd9f-4293-903a-2de93fad86c9",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "6235ac08-6117-4156-9e44-e405afa05359",
+   "status": "done"
+  },
+  "dsmash.qa1": {
+   "job_id": "e0803584-5421-4fc9-9da0-a9ae54c0ded5",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "a2c6c802-cbf9-41ab-836d-8b4acc4ef044",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "b0542203-b609-4db2-baf9-55de653770de",
+   "status": "done"
+  },
+  "dthrow_phantom": {
+   "job_id": "c122fb09-4e26-4912-bff6-22a3998ce9dd",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "8bfc6291-e902-44b8-b8a0-0f853d1e5682",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "0dc37237-4c19-48d3-ad8a-1aa70e812d66",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "b46cd628-a0b5-400f-b654-2652faf97eff",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "24479e2d-7c9a-45a4-9b54-6055609a8771",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "fae75311-6bf7-4b64-955e-264ba301d57e",
+   "status": "done"
+  },
+  "fthrow_phantom": {
+   "job_id": "3ee88873-0dff-46e4-84d0-c5f1aa0544d5",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "49ca4272-438f-4b9e-b5a5-216ae1c155e3",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "0473a85a-a879-4ccb-b0f2-fce27444ee84",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "f30f02fa-73e3-4768-a195-8d0ba2c67724",
+   "status": "done"
+  },
+  "getupattack_v1": {
+   "job_id": "e3ebb756-501b-4260-b627-5e878ef8c2ad",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "0339239a-cbc3-47e8-ae44-33d8750014b3",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "56fbb8f4-a032-462b-8bcc-868e7357329c",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "35421a38-69e0-493e-b721-55d5ce9e1200",
+   "status": "done"
+  },
+  "helpless.qa1": {
+   "job_id": "992cee18-5c69-42b9-8120-7d9ddf6cc03b",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "b2f50e94-1fa7-4914-88e1-38c582887197",
+   "status": "done"
+  },
+  "hold_phantom": {
+   "job_id": "0b8ad419-2db3-4bcf-8808-e1f4586522fe",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "ed1ee02b-c019-44ba-b2ac-d5102daf9e24",
+   "status": "done"
+  },
+  "holdstart_phantom": {
+   "job_id": "ade4adb9-9e88-4b6b-932b-7473b930731d",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "5cd92d74-985f-45ca-8cf0-2b58084c2162",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "6cfa2dfb-0a7d-42da-b159-49af44985374",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "f269b52c-2694-47d0-a684-6345fc5a261a",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "317a1e29-fb03-4715-b05a-995f78b6635a",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "ab4b4aed-3773-451e-9ae9-6c805f1033db",
+   "status": "done"
+  },
+  "jab_v1b": {
+   "job_id": "9de57c57-ba38-44fb-aba5-50dae6a87c70",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "4288ccb2-62f5-4215-aff5-f5adfd0bc770",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "bc451568-cb49-407f-b56f-0a0ba8505fe7",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "e6d2a228-67f4-44a3-b05b-81b82cf2fd82",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "e826c4f0-c96e-4552-acf9-852eb3e9f024",
+   "status": "done"
+  },
+  "ledge_rock": {
+   "job_id": "537c4992-8ddc-4a3c-ab8c-5a092c886f36",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "3b69ef7f-3979-45a7-be60-4953b5e7a1c9",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "4addc5aa-083c-4300-91c7-e8781a259abb",
+   "status": "done"
+  },
+  "ledgegrab_rock": {
+   "job_id": "e5fa21ac-5367-4e5b-99f8-c45f51d4004a",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "338c5a7d-5a2a-4c7d-8a20-ba51c39759d4",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "98299f6f-8e73-452f-a899-2b1565f0707d",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "c986cc69-4051-4365-a21c-20504ba8d0bb",
+   "status": "done"
+  },
+  "pummel_phantom": {
+   "job_id": "4e1feaf2-d838-4025-b8ca-e8c29da809e0",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "9c88755e-1c33-4441-8db6-4243eb8caa50",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "e6631d9b-cb8a-4704-8eb4-43e8697eb0b3",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "53149237-fc80-4f83-ad5d-a56226c0b5e5",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "6a994a0e-22fb-41a7-98c0-8840eec528f4",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "df5fb205-9cd4-4a9d-b998-362edff745d9",
+   "status": "done"
+  },
+  "spotdodge_v1b": {
+   "job_id": "ce6280d5-b39e-4d50-bd4f-fa3e0220476c",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "71ec64d5-8202-4a70-bcf9-c51db54f7ae2",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "4ce7d290-f4ea-4883-96ca-5c0731f6e4ff",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "69443290-7756-43a8-8598-aa26e998d7ec",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "75b714a3-2afd-4dfd-ab04-a9988a80c34d",
+   "status": "done"
+  },
+  "ultimate_v1": {
+   "job_id": "5c880134-5c54-4c7c-8401-516424bd5289",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "fc32ae69-767f-4f0e-a970-ed8bf709244e",
+   "status": "done"
+  },
+  "usmash.qa1": {
+   "job_id": "3a3b8dc9-8460-4234-9c13-af4db773ed67",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "a27a7d31-0851-4f4f-b85e-92861fa079cc",
+   "status": "done"
+  },
+  "uspecial_v1": {
+   "job_id": "6c217a9d-35cb-491a-bf44-808b6960df4c",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "cb34d25b-0ac8-48a4-bbd7-a4428d1e7dae",
+   "status": "done"
+  },
+  "uthrow_phantom": {
+   "job_id": "982d80e7-cdec-4688-8706-78245aa23847",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "255012c4-9cc3-4799-914a-b14f761bc0a3",
+   "status": "done"
+  },
+  "utilt_v1b": {
+   "job_id": "8774f827-5665-4da3-bdaf-fe75f41f212c",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "c248e429-a6eb-4236-9054-2cef6039a68c",
+   "status": "done"
+  },
+  "w0_jab": {
+   "job_id": "4f146d5a-3218-4201-ae23-aebe11448740",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "c564c78f-b5ce-4e03-bc70-b87f7667caf6",
+   "status": "done"
+  },
+  "w0_nspecial.qa1": {
+   "job_id": "c21301a1-bf39-4542-a25e-e6d6c63f7448",
+   "status": "done"
+  },
+  "w0_nspecial_v1": {
+   "job_id": "756eb570-36de-4fa2-ab53-38f71b9b89d6",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "5f9f1020-c83f-4c2c-b356-8eef2841a838",
+   "status": "done"
+  },
+  "w0_ultimate_v1": {
+   "job_id": "3a4947dd-5c53-48f2-9593-0e9e51defe8f",
+   "status": "done"
+  },
+  "w1_jab": {
+   "job_id": "12455dcc-fb9b-41d7-92e8-ceb384fed4ed",
+   "status": "done"
+  },
+  "w1_jab.qa1": {
+   "job_id": "6d6a2c56-a372-4c33-a401-73d1e2137e12",
+   "status": "done"
+  },
+  "w1_sspecial": {
+   "job_id": "9dcf406a-6933-4474-9ae3-1f8ce9f1edbb",
+   "status": "done"
+  },
+  "w1_sspecial.qa1": {
+   "job_id": "add966b0-e22e-4c50-95c3-b49760593efc",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "0621638a-d63e-43e7-8540-0ff676e2c695",
+   "status": "done"
+  },
+  "w1_ultimate.qa1": {
+   "job_id": "40db9309-eaa5-4615-a552-31d25848ed89",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "839be4fd-787c-42ae-a45b-ee545da44090",
+   "status": "done"
+  },
+  "walk_v1": {
+   "job_id": "69ca4128-d42b-4052-b623-83645657e317",
+   "status": "done"
+  },
+  "walk_v1b": {
+   "job_id": "b75697b9-13ac-4df3-8dd7-b30993a8590c",
+   "status": "done"
+  }
+ },
+ "sasuke": {
+  "airdodge": {
+   "job_id": "ecf483b9-608e-4a95-b73f-c033bea25998",
+   "status": "done"
+  },
+  "airdodge_v1": {
+   "job_id": "233bd905-ab96-426f-9dc2-583685bae734",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "80993816-7650-4dbf-8e01-1e42274a0bdb",
+   "status": "done"
+  },
+  "airsword": {
+   "job_id": "c584fa3b-40ad-4a01-9c31-071f562d5f20",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "59913008-7303-43c8-acec-b3736c66e925",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "fad9e288-34dd-4e12-901f-0e96ab4a403d",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "4e4c2051-2223-46c9-bd50-c2a25b743bf5",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "0be118b8-59e7-427d-8e7e-0df1d229f8f9",
+   "status": "done"
+  },
+  "crouch.qa1": {
+   "job_id": "61e8b2eb-aaed-41a4-a0bd-4753b0856c75",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "5b5ccb0f-6266-46d2-a0fc-e8f0d3b9668b",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "2d14cb30-a64f-4794-af5b-e2e3f0e16d4a",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "f2e0fe0b-a7d4-4974-a122-b000bb6f1eee",
+   "status": "done"
+  },
+  "dizzy.qa1": {
+   "job_id": "deb2b5e4-afbe-4986-92f5-457672f3a587",
+   "status": "done"
+  },
+  "drawsword": {
+   "job_id": "a0a3acfa-3eb8-4a20-9cc7-13cbd2907c82",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "f9e439cb-8e64-4903-b7f3-ccd2c0c3f1db",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "915f4864-b327-4691-9e08-bf5e8921d45b",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "cc120f63-85b9-42da-8327-68abf834f789",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "7a540482-3dd3-4992-913d-9ca25ddf1c97",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "348d8c65-aab4-4770-a0c5-5a6aba6e29f3",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "c5864269-fa24-4aec-b8b0-4de7d23ae254",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "446ed3d4-b39f-4abc-b2c3-6094abe54abb",
+   "status": "submitted"
+  },
+  "fsmash.qa1": {
+   "job_id": "0ecdfa54-27fa-4f3b-9823-99e576b20af2",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "c8d20348-0a57-4778-bc3f-5d715aac4fbc",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "78d10225-1602-40ce-8906-9e86c79803a7",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "a2bc10dd-48ed-4c2d-b721-3a56d0fff7a0",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "16c2fa3a-ff0f-442c-8d9c-25de88beb4dc",
+   "status": "done"
+  },
+  "getupattack_v1": {
+   "job_id": "3fea3a9d-3926-4edb-ac17-122ee9b65403",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "c00a4963-b321-4942-a1c6-7c700b42a614",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "55f9250f-5928-4e7b-870f-b168fb1c2bb1",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "8b81e7b5-e627-470b-8fb3-9b5c0c208f52",
+   "status": "submitted"
+  },
+  "helpless.qa1": {
+   "job_id": "53311b2c-89f7-495c-b290-f17a2f0d428f",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "72752859-237d-486b-831d-d7c293545983",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "63533f4d-ad34-489d-b325-6051270385f7",
+   "status": "done"
+  },
+  "holdstart_phantom": {
+   "job_id": "9d033573-1cf7-46fa-83ce-086de1f643fc",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "cc5749ac-2045-41f5-b1eb-4277887db68c",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "df41bc32-eb05-42b6-ae6d-0fbc57bab1b7",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "08410177-63e4-49d1-970d-7260e3af2ed7",
+   "status": "failed"
+  },
+  "jab.qa1": {
+   "job_id": "87a98c33-c78d-4123-ad34-597383989cb8",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "f886304c-8dba-4ef3-a208-d4c6dafedfc1",
+   "status": "done"
+  },
+  "jab_v1": {
+   "job_id": "23569bfa-191a-48db-b747-e01b94f9cd1c",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "c2e8a292-0bf9-46a6-a20e-de726057d04a",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "eb4a15aa-b35d-4526-9f80-9686cf3e81dd",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "6defed88-11ef-46da-9e3b-948d33ac2655",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "4359654a-83b3-4866-a212-88a933faa5b9",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "39920669-7b28-4f49-a122-4aa65c59ecc6",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "fb91fe44-33c9-44bb-88ad-4a39a940eb34",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "d692922b-b23a-4b08-b0ec-f015093d5e6e",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "8264631e-77cc-4551-bfad-5ce6f8d0b96e",
+   "status": "done"
+  },
+  "nspecial_v1": {
+   "job_id": "a264ed58-02a4-4127-b591-8c5f9068a3c7",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "6cc1bca7-b198-4f50-8a76-a0d65eb2cccf",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "aa57873a-44ed-4ce0-ac6a-872e6a6095f9",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "64ea43c3-5c20-4cea-bbae-2b34a0c56b14",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "d73c5cfe-7848-4bf0-849b-bb978ce4dcff",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "4d0b68ae-fb3c-49b1-a49e-ad6d5deeb63d",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "75634d0c-0cbd-4a72-9be6-e71405a98ec6",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "2269f5ab-0636-41e3-bbd7-e724fbb87670",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "fe7b2912-f2c8-4e6c-9d72-41a5eb93ff34",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "a2d478bb-5c7e-4092-adc1-4b505e9881df",
+   "status": "done"
+  },
+  "uair_v1": {
+   "job_id": "18d54af4-96e7-4cc0-8f73-5cc7fd0d664a",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "0b640c52-fc47-483d-9a34-4a7a5f1d2b13",
+   "status": "done"
+  },
+  "ultimate_v1": {
+   "job_id": "dd97f215-d054-4b30-958d-a7b27010ca3a",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "e92b3405-f569-49cc-97e7-f62c50a327bc",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "56054fff-ab56-44a9-81ee-08e6fa7ff06b",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "067bdd43-6e09-491c-b5f3-52171f275323",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "2feddd45-bfbb-46e9-992e-8cb4f769eed1",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "9260089d-d57d-48c8-9136-421767e70281",
+   "status": "done"
+  },
+  "w0_jab": {
+   "job_id": "cc8a61af-9153-4387-8b1d-e3ec397d47c1",
+   "status": "done"
+  },
+  "w0_jab_lost": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "w0_jab_v1": {
+   "job_id": "02faa2c1-d174-483a-9c88-ccd7903601a2",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "d928ee91-9592-4f72-bdc3-9f6cf78a13b8",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "22dd19a4-dd20-4c4b-a81e-ebfbe5ed6eee",
+   "status": "done"
+  },
+  "w0_ultimate_lost": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "w0_ultimate_v1": {
+   "job_id": "a027c72f-7026-4cc5-9d97-ec8555c7bd9e",
+   "status": "done"
+  },
+  "w1_jab": {
+   "job_id": "2a14e00b-da1f-48a9-9100-2bb84157fa73",
+   "status": "done"
+  },
+  "w1_nspecial": {
+   "job_id": "fadebbd6-58c8-4d1e-9397-cb34022f5f12",
+   "status": "done"
+  },
+  "w1_nspecial_fxdrawn": {
+   "job_id": "931a28a2-9892-45a6-985d-0ab68d26197f",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "4a6748a9-1cdf-426d-8652-4a22fe9027ac",
+   "status": "done"
+  },
+  "w1_ultimate_fxdrawn": {
+   "job_id": "34918d16-d3f0-471e-b8a2-0b09db543afb",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "5b799ba7-5191-4f03-9d42-fcab34cd1ef5",
+   "status": "done"
+  }
+ },
+ "starrk": {
+  "airdodge": {
+   "job_id": "af65a2b1-3e9c-4b72-80b2-d10734e57252",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "0842792f-7976-4294-848c-fa9381a47789",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "ec9f10b7-5940-43c4-8424-238838461145",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "9d5611c6-86c2-4ad0-903d-9755b7a983b2",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "15e4ab66-a2ef-4f59-b9ec-f0cd285061a2",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "9c06489e-3ed2-4329-9948-ea4642a4151d",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "fa979d75-5c2a-4543-b5d0-0afbe2717257",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "472de0e4-6476-42d5-aa30-9c506a75390c",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "422588ac-f165-49fc-862e-6de5797656d6",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "bbb96da1-f69f-4f33-b1ab-3bf999af91eb",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "3e79c407-14ad-4a55-b3c0-569576a6f203",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "75080619-c80d-4e39-8d49-4a422bb9c055",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "32f885d0-bc32-4801-a7f4-08ca21c3cf6c",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "4ab58444-a038-4061-a36f-e4e84907edde",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "d07ae0a7-f94e-47ad-8ae7-e1b44109a4aa",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "d473c65d-c542-4ec7-9e89-c76c20d0b6f7",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "9d4f358c-3641-4bad-bf7d-52dc3e09cbd0",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "88cdcdd6-72f1-4595-97b2-b7d5d59adadf",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "4a506bf7-7b24-44bb-a6a4-46404bb44f64",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "d5b619ba-eff4-4ff8-8650-2e379032997b",
+   "status": "done"
+  },
+  "holdstart.qa1": {
+   "job_id": "55ab6cc4-f019-4599-bf95-1a468da1c443",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "8988bbb7-3cb2-40a3-965b-e07eb6c17958",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "e9af7cf7-1979-43cb-af90-1bbd592a4c5b",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "9d3c9ed0-bb96-4ded-a17d-0bd00b99f9dd",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "1bbdcd26-c508-4b57-9506-172b676e16bb",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "a92c8d0a-fc05-4dfc-97fc-4efa720cc2c8",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "bd06a44b-6ba4-4f37-98d7-44a92cad7faf",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "e6a3aed9-2747-42ed-8dad-c17b833c1d4e",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "b3788ff8-99ea-4f8e-a043-cb373300140e",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "8d7c33ce-45f1-4971-b3b5-21f20a79feb1",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "fa1f86ef-d5a6-415c-9205-dc3a411267fd",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "07a93f89-8073-4c42-9a63-d36991e86ae3",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "3ccb510f-e7c7-4f95-8a27-e9824a89e1a5",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "94d56236-30f3-43bb-9939-f8c41caf9f13",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "e80678bb-01b4-4636-99ad-cd615cceb7ba",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "0aea3333-0ef7-49fa-8628-7b9f692e39eb",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "fd560085-3877-4374-9cbf-4b35c4c6a0e8",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "df39b077-6b50-41d3-b72c-6a92c169d094",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "8cc02698-8004-4f9e-af4f-0aa70a712123",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "18e6789a-5d5f-412d-a6e5-c497919df1eb",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "2eefc206-d044-4a0d-84fb-b8213b8b5749",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "c137f615-c264-4f8e-9ec7-55bd8885cfcc",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "6468d674-f7ae-48fa-9f2d-cc3dcd5bfaa5",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "063f87a4-88c4-4cbb-aafd-70448fe9de51",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "8dbfe525-227c-4f07-90b3-d58504c96018",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "1381b2d0-240b-4443-818c-d28187dfd694",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "05e57588-4ce0-46c0-8c55-ba79329633b8",
+   "status": "done"
+  },
+  "w0_sspecial": {
+   "job_id": "01b260f1-81db-4a59-b9a1-db0494197bd1",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "afa7a099-3023-445e-870e-f60cfa7490cf",
+   "status": "done"
+  },
+  "w1_nspecial": {
+   "job_id": "e542811d-0942-4a39-8765-58e729fdd789",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "1e196f3f-dc36-4a36-84f0-20de7587e716",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "bf46813b-30f5-44fd-b04c-8fa68e4c3d08",
+   "status": "done"
+  }
+ },
+ "sukuna": {
+  "airdodge": {
+   "job_id": "a6b86527-c9fa-4103-b973-05b8a607ba84",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "749d439c-9696-4933-9250-c471cc59beaf",
+   "status": "submitted"
+  },
+  "bair": {
+   "job_id": "c036d929-87f7-41e8-9af7-03bbafc21f1a",
+   "status": "submitted"
+  },
+  "bthrow": {
+   "job_id": "ad1dfc48-517d-43b6-8ec0-e48f26bbe52d",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "37db7a1d-47c2-4eb9-b0cc-f0fbc58dda89",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "749ef59e-e1d5-4788-830f-5b21f0c66c83",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "2473691a-0f91-4a71-91a3-9ab343ec6195",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "78895e27-2095-42f6-90ef-ee87c3adc870",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "db2aca4a-1a95-48d3-b068-77e26542f053",
+   "status": "submitted"
+  },
+  "fair": {
+   "job_id": "add3e3d8-507f-473b-bfbe-f5cc33c514a6",
+   "status": "submitted"
+  },
+  "fall": {
+   "job_id": "5c026f3f-916c-45ee-a59a-4f8fe296ae84",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "62aebc2c-fe48-4b84-bb26-a543b343261b",
+   "status": "submitted"
+  },
+  "fthrow": {
+   "job_id": "1b593808-72f1-48e9-a5c4-8f7cb5843bab",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "aac98060-d5ad-423a-bd2c-9ff813bf25cf",
+   "status": "submitted"
+  },
+  "grabbed": {
+   "job_id": "6e245b0b-c545-45b7-ac37-d0b5aa5a54a1",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "937403f2-f192-4eaf-9c9f-9abdb2df001c",
+   "status": "failed"
+  },
+  "hold": {
+   "job_id": "663bc9f3-c638-48e8-8aea-86d524acf27a",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "e73ab68d-ed8c-4e0b-a717-7a1578c66790",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "c44e371f-85f1-48e1-9475-98512405951b",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "4501a0a8-b743-4fc1-a71a-f17b414519ff",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "a0b80168-c9ad-491e-af2e-0f20a9bcea22",
+   "status": "submitted"
+  },
+  "jab2": {
+   "job_id": "da0bdfc4-7cf9-4bdd-9d8c-a870d40e69fc",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "6f429c00-a458-43d4-bb68-a73b5e9f3b70",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "017b52f1-9407-4569-9482-9d6945774a2c",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "f76b83b8-a637-4854-9fdb-af4b832b2345",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "afed0e9c-8d99-4cf6-bd99-dd9ef301b31c",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "3af6c0bb-92a1-43a4-ba9f-959fb3782b9b",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "9fc4787f-836e-4dec-932f-87207a848fe7",
+   "status": "submitted"
+  },
+  "pummel": {
+   "job_id": "e365c2b8-beca-416a-ae7a-2d7a259e831b",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "fb83793d-62e0-424f-9c70-ae1026ed2537",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "2439b906-138c-4f0a-8a32-742e4489576a",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "0b1b42e9-54c7-404d-862d-2da36a5670bf",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "e38481df-4e77-4485-98c1-3df9afc6227f",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "ca99e9fb-4339-42d1-8a60-63fc43955fd0",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "f07d5933-7fd4-4619-9a98-4d4a15631c97",
+   "status": "submitted"
+  },
+  "uair": {
+   "job_id": "8d36b3b2-baf8-4403-9eb2-d98eb904b725",
+   "status": "submitted"
+  },
+  "usmash": {
+   "job_id": "d5112857-f4f1-4299-800a-a35c67f1a901",
+   "status": "submitted"
+  },
+  "uthrow": {
+   "job_id": "e25c08fa-d9be-494c-a8d2-33405e7399c1",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "0b9c10f3-630b-42fd-8e71-043ed7870c69",
+   "status": "submitted"
+  },
+  "victory": {
+   "job_id": "59a01a20-ded0-4775-95ba-66017253c6b5",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "782c8729-7f85-4743-9455-dda0ad1050f7",
+   "status": "done"
+  }
+ },
+ "ulquiorra": {
+  "airdodge": {
+   "job_id": "6671a087-ddc2-4d52-aa01-36488d75b208",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "fc40e587-5403-4816-bba3-918c8e51865f",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "4178742e-f8bc-4c34-a3bf-8d05f50dac85",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "f87515eb-ab62-4633-b685-56125f5d8cd1",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "92e44187-f37e-40a8-8687-c03034629855",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "efd89709-63e5-4e7c-b14e-17ba883ec234",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "69c5288f-b4a2-49d4-a029-5af33259b8cd",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "16379655-af76-4293-92f7-86cd6013c5dc",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "3f885a9b-2f86-49f9-b78a-c9a530a001ab",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "2a3bd1ba-600e-4741-81fa-1e56169a7b72",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "a8851ace-c78e-465c-a28d-bfe243d04204",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "91a2958b-4956-443b-967a-7ba1a629b2b0",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "9cae49c0-bbfc-4d60-aa05-21baccb665a1",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "17af7229-4e95-431e-a848-b3ca236e315b",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "75ecff10-3a77-4e5f-a017-0bf6e911ebb9",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "fbbe4b86-9c91-4832-a948-8de66d178495",
+   "status": "done"
+  },
+  "fthrow": {
+   "job_id": "0fb5b2b3-a639-4e96-99d2-d45eb017c791",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "c84fb8b4-b21b-4a14-82a6-f7da66b771c2",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "58fba5fb-6855-422d-85b9-2874caffe50b",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "dad04c9c-6155-4d91-be8c-15d2db0e32bc",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "6988c215-893b-4dfe-b47e-be3ac8dc5171",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "d13f879a-d949-46d2-8bd8-5a8177f1453d",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "a8689a54-04cc-4d38-9a67-c9cbca6e14b5",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "b97b945e-3c31-426f-b63c-383f4948be69",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "64094372-31f3-487e-96af-0796e82a9787",
+   "status": "done"
+  },
+  "holdstart.qa1": {
+   "job_id": "f24ed68d-f670-4c47-a1f5-d96bfaab0e5e",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "618344f6-94df-4f7f-9d45-7eb3cce452d7",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "de4852f3-94dd-4de9-9e6a-1dd8b03cd5fa",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "48cd5eb6-d2b3-41e2-aba1-552d7957ae9c",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "c92db613-8118-4c5e-a7cb-dcd3408bfae9",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "0a84b936-3539-4285-ad92-0f71d41a5f2b",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "c835c3f7-85af-4bf4-85f3-c7d18d2ca210",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "95660a18-de0d-4135-aa25-52cb86732149",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "4fe1e892-8c68-4a18-8b51-bc0650771876",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "fa641842-8f2d-459e-8b20-41d05a4dc6e5",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "3e4e81ee-3237-46f0-879a-5b83610c115a",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "72236094-77cb-42b6-a098-c33b400c87be",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "ef04fb59-1124-4658-a489-ebfff9912299",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "ea9e9a90-36be-442b-9c47-06364556c545",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "e5917444-dcaf-4e1e-9cb0-aaaf7750332d",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "d7bec12c-6ad9-4203-b43a-edf9997c22b8",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "d18f6e34-9c87-4113-9708-953b6367812a",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "715100d2-638f-4916-8e9a-c8b860dc19ab",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "99830d43-6ef9-44b6-8b1a-95aa9b152100",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "a5840ae4-74f0-45a2-9a74-6792e7b41dac",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "abd2d9d6-dd8e-4c6b-aa87-8c28d549e88d",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "9dcb99a7-4cb4-48ea-81c8-f764586b20cb",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "302e636a-db67-4990-aa19-aad8205de404",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "d515dc29-94c5-4998-8744-bd88d8a4da3b",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "811268ca-995f-4e8a-bc03-80f6f2cab262",
+   "status": "done"
+  },
+  "uspecial": {
+   "job_id": "eca5bf0d-918f-40c6-9a93-0abc02c061b8",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "30ed9bc7-6a96-461e-a016-5de55d4c3183",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "70243536-60e9-4139-b500-75ed160b156a",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "d8741cc0-2535-42ba-b7f8-44e641ddc0ec",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "abacec3e-1b69-4e2d-b8a3-b1228b742f43",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "a3eadf44-fc53-4ef0-b96e-8d33bed99731",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "272d6b98-cc5c-4a2d-9db4-52bf8848c2bc",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "290a448d-4355-4d22-ac67-cf9859d52e65",
+   "status": "done"
+  }
+ },
+ "yuno": {
+  "airdodge": {
+   "job_id": "99db3af4-7a18-486a-8479-f68a53aa6467",
+   "status": "done"
+  },
+  "airjump": {
+   "job_id": "3f723841-df40-4ae9-9b94-101c6217fb3e",
+   "status": "done"
+  },
+  "bair": {
+   "job_id": "69edce0f-97b1-4ea2-b449-9ec466a6cc4e",
+   "status": "done"
+  },
+  "bthrow": {
+   "job_id": "fa0cdf94-eb29-434f-b328-c9cfb35b828d",
+   "status": "done"
+  },
+  "climb": {
+   "job_id": "aaa65296-7e58-4cff-b7f6-2df676d24658",
+   "status": "done"
+  },
+  "crouch": {
+   "job_id": "3cbc724e-b31b-4ae4-a78c-1df1f151d5da",
+   "status": "done"
+  },
+  "crouch.qa1": {
+   "job_id": "9269dd79-a7db-4e1d-b8f8-47516ea96723",
+   "status": "done"
+  },
+  "dair": {
+   "job_id": "4951395c-636c-43a4-8a71-6e675b47edb1",
+   "status": "done"
+  },
+  "dashattack": {
+   "job_id": "11b91eb7-4b00-496e-b50f-f1c174c28302",
+   "status": "done"
+  },
+  "dizzy": {
+   "job_id": "59460f48-9d06-44b2-937f-686e12b5b2d5",
+   "status": "done"
+  },
+  "dizzy.qa1": {
+   "job_id": "10f8fdeb-366d-4f4c-b32a-81d5406c835c",
+   "status": "done"
+  },
+  "dsmash": {
+   "job_id": "7bc1a870-cb0a-473a-a753-b25b6050bab7",
+   "status": "done"
+  },
+  "dspecial": {
+   "job_id": "e2fbce1b-77c5-43a8-b7c0-4b6423e0fe82",
+   "status": "done"
+  },
+  "dthrow": {
+   "job_id": "51842ca1-6eeb-4aac-8ef1-f636c8ca9a74",
+   "status": "done"
+  },
+  "dtilt": {
+   "job_id": "5c84863b-ec6d-4695-81cd-613eddd14e00",
+   "status": "done"
+  },
+  "fair": {
+   "job_id": "2f5e9b5a-6af5-4409-9156-c750f41529e8",
+   "status": "done"
+  },
+  "fall": {
+   "job_id": "a87fa46d-2610-42c6-84af-875a9f1e3ac4",
+   "status": "done"
+  },
+  "fsmash": {
+   "job_id": "793d403d-caba-4699-b155-267a313fc8f7",
+   "status": "done"
+  },
+  "fsmash.stale": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "fthrow": {
+   "job_id": "bcf5542d-b37f-49fc-a992-14fe9d8b8da3",
+   "status": "done"
+  },
+  "ftilt": {
+   "job_id": "640e54d0-1fcd-4aca-844e-b4da298755d6",
+   "status": "done"
+  },
+  "getup": {
+   "job_id": "2bb6c274-63ef-4a0d-ab53-7e0899f7460d",
+   "status": "done"
+  },
+  "getupattack": {
+   "job_id": "9ff65ffd-4082-4913-b029-4cb0963f5f0e",
+   "status": "done"
+  },
+  "getupattack.qa1": {
+   "job_id": "532b141d-cddc-44f1-9832-f726dd476fd8",
+   "status": "done"
+  },
+  "grab": {
+   "job_id": "f6704644-c492-4f97-9ca7-5ad666f8877d",
+   "status": "done"
+  },
+  "grabbed": {
+   "job_id": "8350b355-acaa-4ae3-8c73-191e40119c7b",
+   "status": "done"
+  },
+  "helpless": {
+   "job_id": "1e5bd4af-fb49-4068-a494-0a5679a77217",
+   "status": "done"
+  },
+  "helpless.qa1": {
+   "job_id": "65575e3f-1ff0-4462-b05b-72e3d37111cf",
+   "status": "done"
+  },
+  "hold": {
+   "job_id": "c6273c20-df4e-4399-aeed-f1110e7a044b",
+   "status": "done"
+  },
+  "holdstart": {
+   "job_id": "a4ab2f38-ebdd-4c84-a54e-19a8ff317f8f",
+   "status": "done"
+  },
+  "hurt": {
+   "job_id": "95a57d84-187e-485d-9e24-6fdf65564763",
+   "status": "done"
+  },
+  "idle": {
+   "job_id": "e96be380-d81d-4b14-b1d3-8718aa46102d",
+   "status": "done"
+  },
+  "jab": {
+   "job_id": "a0e50b23-d274-4eb0-b3f7-7bd14bf926a5",
+   "status": "done"
+  },
+  "jab2": {
+   "job_id": "068ed3b6-69c8-49b2-99fc-ed457bf78302",
+   "status": "done"
+  },
+  "jab3": {
+   "job_id": "c346511e-d8f0-45cc-9c12-a749ae039ac8",
+   "status": "done"
+  },
+  "jump": {
+   "job_id": "2f025614-f8d9-467f-8e00-468bca6b7e3b",
+   "status": "done"
+  },
+  "knockdown": {
+   "job_id": "30028401-7636-49e5-a63e-0903a68f4eb7",
+   "status": "done"
+  },
+  "land": {
+   "job_id": "f2fb027f-f84f-4379-8fa3-5c3e72784583",
+   "status": "done"
+  },
+  "ledge": {
+   "job_id": "777d4f35-1f4a-480e-a50d-f3159a06a771",
+   "status": "done"
+  },
+  "ledgeattack": {
+   "job_id": "fd4ed68a-6de8-4c6f-a3c1-e25d781a9e57",
+   "status": "done"
+  },
+  "ledgegrab": {
+   "job_id": "567c6dd8-79bf-4b8e-ae06-04713fa570b0",
+   "status": "done"
+  },
+  "nair": {
+   "job_id": "841d90a2-aa22-466d-900a-00d84290285e",
+   "status": "done"
+  },
+  "nspecial": {
+   "job_id": "9834ab01-cdf8-45a6-aeff-c20a070e52a7",
+   "status": "done"
+  },
+  "pummel": {
+   "job_id": "ed9a7b87-f145-4558-8783-019c95c3ebd8",
+   "status": "done"
+  },
+  "roll": {
+   "job_id": "68fca1f6-7618-4994-b617-b5ae1bdb8c11",
+   "status": "done"
+  },
+  "run": {
+   "job_id": "260f3e50-2ad7-473a-9ebe-dcb8e0642d25",
+   "status": "done"
+  },
+  "runstart": {
+   "job_id": "b040bd69-6dcc-47e4-8606-2e40846f1f05",
+   "status": "done"
+  },
+  "shield": {
+   "job_id": "47061ce8-e974-4a83-a8a5-feaf42f347e1",
+   "status": "done"
+  },
+  "spotdodge": {
+   "job_id": "23a293c2-3a6a-4601-9010-80063b2c6a9d",
+   "status": "done"
+  },
+  "spotdodge.qa1": {
+   "job_id": "35329cf1-fc1a-4390-9e6b-5ac019d48be1",
+   "status": "done"
+  },
+  "sspecial": {
+   "job_id": "767edafc-2e54-4b43-bf1a-b97cd8c25775",
+   "status": "done"
+  },
+  "tumble": {
+   "job_id": "117d89d3-17d5-4905-a48c-26d88d928735",
+   "status": "done"
+  },
+  "uair": {
+   "job_id": "651aa057-d3c5-4994-a26c-81d3f1d0327c",
+   "status": "done"
+  },
+  "ultimate": {
+   "job_id": "5ca620ff-9be5-4137-a7c2-7cc978728146",
+   "status": "done"
+  },
+  "usmash": {
+   "job_id": "6c1f97c9-55c7-461c-a75e-43db1070284d",
+   "status": "done"
+  },
+  "usmash.stale": {
+   "job_id": null,
+   "status": "submitting"
+  },
+  "uspecial": {
+   "job_id": "9e4e2a7b-b3da-4015-9f1c-bacc77cd24a9",
+   "status": "done"
+  },
+  "uthrow": {
+   "job_id": "4fdd2ae9-5d5e-4ec2-8999-340a01e638d7",
+   "status": "done"
+  },
+  "utilt": {
+   "job_id": "dd1b85eb-8745-45d6-9c59-956d62d98b55",
+   "status": "done"
+  },
+  "victory": {
+   "job_id": "2a2e1a6b-afce-4470-b3b8-87d8230b28d2",
+   "status": "done"
+  },
+  "w0_nspecial": {
+   "job_id": "beac5b5e-456e-4521-8d6c-553772062262",
+   "status": "done"
+  },
+  "w0_ultimate": {
+   "job_id": "de455dd0-761a-4201-8d5a-a79e6708a3bb",
+   "status": "done"
+  },
+  "w1_sspecial": {
+   "job_id": "d0566ca0-41ff-4222-9c5c-50cdc50518c3",
+   "status": "done"
+  },
+  "w1_ultimate": {
+   "job_id": "8b7a2c0f-0077-4b0a-8556-633a09cc51c2",
+   "status": "done"
+  },
+  "w1guard": {
+   "job_id": "5b198143-8ab4-4e8d-9563-22720cb77efb",
+   "status": "done"
+  },
+  "w1guard_navy": {
+   "job_id": "20e5b39e-ceb7-4241-b1bf-7e692437341a",
+   "status": "done"
+  },
+  "walk": {
+   "job_id": "2a9c94ba-9f3a-4adc-8486-d84d4c21a2fa",
+   "status": "done"
+  }
+ }
+}

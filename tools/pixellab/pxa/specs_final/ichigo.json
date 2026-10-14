@@ -1,0 +1,220 @@
+{
+ "guard_pose": "wide stance facing right, holding the huge black-bladed cleaver sword Zangetsu raised upright in front of him, a red cloth hanging from the hilt",
+ "armed": "greatsword",
+ "skip": [
+  "jab3"
+ ],
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "quick straight thrust: drives the huge cleaver Zangetsu straight forward at full extension, then pulls it back into the stance The whole blade stays inside the picture."
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "diagonal slash: swings the huge cleaver Zangetsu from high in front down to low in front in one fast cut, then back into the stance The whole blade stays inside the picture."
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "big forward cut: lifts the huge cleaver Zangetsu above his head and brings it straight down to low in front of him, then back into the stance The whole blade stays inside the picture."
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "overhead arc: sweeps the huge cleaver Zangetsu from in front of him up over his head to behind him, then back into the stance The whole blade stays inside the picture."
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "crouching low cut: drops into a crouch and sweeps the huge cleaver Zangetsu low in front at shin height, then rises back into the stance The whole blade stays inside the picture."
+  ],
+  "dashattack": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "running slash: lunges forward with a long stride and swings the huge cleaver Zangetsu across in a wide horizontal cut, then stops and settles back into the stance The whole blade stays inside the picture."
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "charged smash: raises the huge cleaver Zangetsu far behind his head, blue-white spiritual pressure flaring over the blade, then brings it down in a tremendous cut to the front, then recovers into the stance The whole blade stays inside the picture."
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising smash: crouches, then swings the huge cleaver Zangetsu in a big arc from in front straight up over his head, blue-white spiritual pressure flaring trailing the blade, then back into the stance The whole blade stays inside the picture."
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "low spinning cut: slashes the huge cleaver Zangetsu low in front, then spins around and slashes low behind him, blue-white spiritual pressure flaring, then back into the stance The whole blade stays inside the picture."
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "double cut in mid-air: chops the huge cleaver Zangetsu down in front of him, then swings it back up, the blade circling close around his body, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "crescent cut in mid-air: swings the huge cleaver Zangetsu in a big arc from above his head down to below him in front, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "bair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "backward cut in mid-air: twists his torso and swings the huge cleaver Zangetsu behind him in a downward arc, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "uair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "overhead arc in mid-air: swings the huge cleaver Zangetsu from behind him over his head to the front, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "downward stab in mid-air: points the huge cleaver Zangetsu straight down beneath him and plunges it down, then pulls it back up to the tucked pose The whole blade stays inside the picture."
+  ],
+  "ledgeattack": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "rises from a low crouch with a quick low horizontal cut of the huge cleaver Zangetsu forward at knee height, then back into the stance The whole blade stays inside the picture."
+  ],
+  "getupattack": [
+   8,
+   "knockdown@last",
+   "guard",
+   false,
+   "around",
+   "from lying on his back, swings the huge cleaver Zangetsu low across in front of him, then low behind him while springing to his feet, ending in the stance The whole blade stays inside the picture."
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Getsuga Tensho: raises Zangetsu high over his shoulder as blue-white spiritual energy flares along the blade, then swings it down diagonally to the front and releases a crescent wave of blue-white spiritual energy that flies forward, then slowly recovers into the stance The whole blade stays inside the picture."
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Shunpo: vanishes in a flash step leaving a fading afterimage, reappears lunging forward and slashes Zangetsu across in a fast horizontal cut, then returns to the stance The whole blade stays inside the picture."
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   null,
+   false,
+   "up",
+   "rising slash: springs upward swinging Zangetsu in a huge upward arc from low in front to high above his head, a trail of blue-white spiritual energy following the blade, ending in mid-air with the sword raised and the legs hanging The whole blade stays inside the picture."
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Cero: swipes his left hand across his face and a white hollow mask with red stripes forms over it, he thrusts the open hand forward as a red sphere of spiritual energy swells in front of his palm, then fires a short thick crimson Cero blast straight forward, then the mask crumbles away and he returns to the stance"
+  ],
+  "ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Getsuga Tensho at full power: blue-white spiritual pressure flares up around him like flames, a long blade of blue light grows over Zangetsu, he raises it high with both hands, then swings it down and releases a huge crescent wave of blue-white spiritual energy that flies forward, then the glow fades and he returns to the stance The whole blade stays inside the picture."
+  ],
+  "w0_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Getsuga Tensho at full strength: raises Zangetsu high over his shoulder as a thick flare of blue-white spiritual energy wraps the blade, then swings it down with all his strength and releases a big, wide crescent wave of blue-white energy forward, then recovers into the stance The whole blade stays inside the picture."
+  ],
+  "w0_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Getsuga Jujisho: swipes his hand across his face and a white hollow mask with red stripes forms over it, black spiritual pressure edged with red flares around him and along Zangetsu, he slashes twice in an X, releasing two black-and-red crescent waves that cross in front of him and fly forward, then the mask crumbles away and he returns to the stance The whole blade stays inside the picture."
+  ],
+  "w1_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Bankai Getsuga Tensho: holding the slim black katana Tensa Zangetsu, its short chain swinging from the hilt, he swings it in a fast diagonal cut and releases a crescent wave of black spiritual energy edged with red that flies forward, then returns to the stance"
+  ],
+  "w1_sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Bankai Shunpo: vanishes at blinding speed into a trail of black afterimages, reappears lunging forward and cuts across with the black katana Tensa Zangetsu leaving a black-and-red streak, then returns to the stance"
+  ],
+  "w1_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Vasto Lorde Cero: his body turns bone-white with a hole in his chest, a white skull mask with two long horns covers his face and long orange hair falls down his back, he lunges forward and strikes twice with his clawed hand, then lowers his head and a crimson sphere gathers between the horns and fires a thick red Cero beam straight forward, then the hollow form crumbles away and he returns to the stance"
+  ]
+ },
+ "notes": "makeIchigo: buildSwordNormals(S=1.08, P=1.06, smashFx=Reiatsu) -> no jab3 (skip); baseWeapon Zangetsu, weaponLength 88. Specials: nspecial Getsuga (piercing, grows) at f20/58 with long end lag; sspecial Shunpo dash f4 (speed 20, intangible f4-12), slash f12-16/44; uspecial rises f4 (vy -17.5), hits f4-14/44, helpless -> pin None, ends airborne; dspecial red Cero beam f22-34/56 (230 px, fx Blood, pose Cast). w0 'Zangetsu (Shikai)' replaces nspecial (bigger Getsuga), jab (exists) and ultimate (GETSUGA JUJISHO: hollow mask from f22, two crossed Getsuga at f58/100). w1 'Tensa Zangetsu (Bankai)' replaces nspecial (black Getsuga, f14/46), sspecial (Bankai Shunpo), jab (exists) and ultimate (VASTO LORDE: CERO). Base ultimate GETSUGA TENSHO: Zangetsu grows a blade of blue reiatsu (UltFx GiantGetsuga), projectile at f54/96. The base Getsuga is blue-white (Shikai, and the game draws ProjVisual::Getsuga blue); black-and-red only for the Bankai/mask versions. w1 clips start from the Shikai cleaver guard: the prompts name Tensa Zangetsu but PixelLab will likely keep the cleaver. Source inconsistencies: the uspecial is named 'Tsukiyomi' (not an Ichigo technique, the clip just calls it a rising slash); the dspecial is a Cero fired without a mask in the game (in Bleach only the hollowfied Ichigo fires one: the clip adds a quick mask); Getsuga Jujisho is a Bankai + mask technique in Bleach but is given to the Shikai weapon (w0). The blade already touches the top edge of the guard picture: sword clips end with 'The whole blade stays inside the picture.' Generic states already generated (walk/crouch/shield texts say fists) contradict the sword guard: check them."
+}

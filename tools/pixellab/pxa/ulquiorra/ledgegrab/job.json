@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "72236094-77cb-42b6-a098-c33b400c87be",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:585ccf74-6f9d-4da6-8673-049c8883884e",
+  "description": "jumps up and stretches both arms straight up above his head, the hands closing on nothing near the top of the picture but fully inside it, then hangs still from his raised hands with the legs dangling below; empty background above and around the hands: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ulquiorra Cifer from Bleach, a pale thin arrancar with black hair, a broken white helmet on his head, green tear lines, a long white coat with black trim",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 72236094-77cb-42b6-a098-c33b400c87be\njob_id: 72236094-77cb-42b6-a098-c33b400c87be\ndescription: jumps up and stretches both arms straight up above his head, the hands closing on nothing near the top of the picture but fully inside it, then hangs still from his raised hands with the legs dangling below; empty background above and around the hands: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"72236094-77cb-42b6-a098-c33b400c87be\")\nasset_id: 2b7b224d-9aa1-51d8-872b-6c6da599b516\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/ulquiorra/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

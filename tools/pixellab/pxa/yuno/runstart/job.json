@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "b040bd69-6dcc-47e4-8606-2e40846f1f05",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ccd3cec2-5e60-4e8d-a6b6-b815718d1e08",
+  "description": "breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Yuno, a slim young man with black hair, a white and gold Golden Dawn robe with a dark blue cape",
+  "initial_pose": "calm magic stance facing right, one hand raised forward, a small green grimoire floating behind him"
+ },
+ "reply": "id: b040bd69-6dcc-47e4-8606-2e40846f1f05\njob_id: b040bd69-6dcc-47e4-8606-2e40846f1f05\ndescription: breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b040bd69-6dcc-47e4-8606-2e40846f1f05\")\nasset_id: 30afe6f5-9013-51f8-a377-44575a0f59a9\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/yuno_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

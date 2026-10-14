@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "bc451568-cb49-407f-b56f-0a0ba8505fe7",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:7ec4b597-dbbe-47d7-8552-ee2576264da2",
+  "description": "is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Naruto, a young ninja in an orange and black tracksuit with spiky blond hair and a forehead protector with long black tails",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: bc451568-cb49-407f-b56f-0a0ba8505fe7\njob_id: bc451568-cb49-407f-b56f-0a0ba8505fe7\ndescription: is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bc451568-cb49-407f-b56f-0a0ba8505fe7\")\nasset_id: 18ed2ca9-f450-5d8f-9485-a442416cfbcc\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/naruto_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

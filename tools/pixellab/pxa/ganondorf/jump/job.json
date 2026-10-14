@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "0cb48ca6-4ae9-4f29-836b-4edf36db297c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e6b87b94-5317-40a7-99fc-a581943ee9e0",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ganondorf from Zelda Tears of the Kingdom, a towering warlord with red hair, dark skin, black and gold armor and a long dark red cape",
+  "initial_pose": "heavy fighting stance facing right, fists clenched at chest height, cape behind him"
+ },
+ "reply": "id: 0cb48ca6-4ae9-4f29-836b-4edf36db297c\njob_id: 0cb48ca6-4ae9-4f29-836b-4edf36db297c\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0cb48ca6-4ae9-4f29-836b-4edf36db297c\")\nasset_id: cb89fcd9-66f5-5951-9f29-25f9f5ac23bd\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/ganondorf_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

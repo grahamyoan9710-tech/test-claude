@@ -1,0 +1,617 @@
+{
+ "asta": {
+  "jump": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "jab": {
+   "replace": {
+    "2": 3
+   },
+   "impact": "2"
+  },
+  "jab2": {
+   "replace": {
+    "3": 4
+   },
+   "impact": "3"
+  },
+  "nspecial": {
+   "replace": {
+    "4": 6,
+    "5": 6
+   },
+   "impact": "4"
+  },
+  "fsmash": {
+   "replace": {
+    "5": 7,
+    "6": 7
+   },
+   "impact": "5"
+  },
+  "w0_nspecial": {
+   "replace": {
+    "5": 8,
+    "6": 8,
+    "7": 8
+   },
+   "impact": "5"
+  },
+  "dspecial": {
+   "replace": {
+    "7": 8,
+    "1": 2
+   },
+   "impact": "7"
+  },
+  "fair": {
+   "replace": {
+    "1": 2
+   },
+   "impact": "1"
+  },
+  "getupattack": {
+   "replace": {
+    "0": 1
+   },
+   "impact": "0,3"
+  },
+  "getup": {
+   "replace": {
+    "1": 2
+   }
+  },
+  "uair": {
+   "replace": {
+    "4": 5,
+    "8": 9
+   },
+   "impact": "8"
+  },
+  "uthrow": {
+   "replace": {
+    "2": 1,
+    "3": 4
+   },
+   "impact": "3"
+  },
+  "dashattack": {
+   "impact": "2,3"
+  },
+  "dtilt": {
+   "impact": "2"
+  },
+  "dthrow": {
+   "impact": "3"
+  },
+  "pummel": {
+   "impact": "1"
+  },
+  "grab": {
+   "impact": "1"
+  },
+  "ftilt": {
+   "impact": "2"
+  },
+  "airdodge": {
+   "replace": {
+    "4": 3
+   }
+  },
+  "bair": {
+   "degrey": {
+    "frames": [
+     1
+    ],
+    "tol": 30
+   }
+  },
+  "dsmash": {
+   "degrey": {
+    "frames": [
+     1
+    ],
+    "tol": 30
+   },
+   "impact": "2,5"
+  },
+  "bthrow": {
+   "degrey": {
+    "frames": [
+     7
+    ],
+    "tol": 30
+   },
+   "impact": "7"
+  },
+  "sspecial": {
+   "degrey": {
+    "frames": [
+     2,
+     10,
+     11
+    ],
+    "tol": 30
+   }
+  },
+  "ultimate": {
+   "degrey": {
+    "frames": [
+     2,
+     19
+    ],
+    "tol": 30
+   }
+  },
+  "w0_ultimate": {
+   "degrey": {
+    "frames": [
+     11,
+     18
+    ],
+    "tol": 30
+   }
+  },
+  "w1_sspecial": {
+   "degrey": {
+    "frames": [
+     1,
+     12
+    ],
+    "tol": 30
+   }
+  },
+  "spotdodge": {
+   "replace": {
+    "2": 3
+   }
+  },
+  "fthrow": {
+   "impact": "4"
+  },
+  "w1_jab": {
+   "impact": "1"
+  },
+  "w0_jab": {
+   "impact": "2"
+  }
+ },
+ "naruto": {
+  "airdodge": {
+   "replace": {
+    "2": 1,
+    "3": 1,
+    "4": 1
+   }
+  },
+  "fsmash": {
+   "replace": {
+    "4": 5
+   }
+  },
+  "getupattack": {
+   "impact": "3,4"
+  },
+  "fall": {
+   "replace": {
+    "0": 1,
+    "6": 3,
+    "7": 2
+   }
+  },
+  "jab3": {
+   "replace": {
+    "3": 4
+   },
+   "impact": "3"
+  },
+  "jab": {
+   "replace": {
+    "1": 3
+   },
+   "impact": "1"
+  },
+  "jab2": {
+   "replace": {
+    "1": 2
+   },
+   "impact": "1"
+  },
+  "hurt": {
+   "replace": {
+    "0": 2,
+    "1": 2
+   }
+  },
+  "nspecial": {
+   "replace": {
+    "5": 4,
+    "6": 7
+   },
+   "impact": "8"
+  },
+  "ultimate": {
+   "replace": {
+    "24": 27,
+    "25": 27,
+    "26": 27
+   },
+   "impact": "10,12,13,14,20"
+  },
+  "uspecial": {
+   "impact": "3"
+  },
+  "utilt": {
+   "impact": "3"
+  },
+  "w0_ultimate": {
+   "replace": {
+    "16": 17
+   }
+  },
+  "uthrow": {
+   "impact": "4"
+  }
+ },
+ "kakashi": {
+  "airdodge": {
+   "replace": {
+    "1": 0,
+    "2": 0,
+    "3": 4
+   }
+  },
+  "dashattack": {
+   "replace": {
+    "2": 3
+   },
+   "impact": "2"
+  },
+  "dizzy": {
+   "replace": {
+    "0": 3,
+    "1": 2,
+    "5": 4,
+    "6": 3,
+    "7": 3
+   }
+  },
+  "fsmash": {
+   "replace": {
+    "4": 5,
+    "6": 5,
+    "7": 5,
+    "8": 5
+   }
+  },
+  "grab": {
+   "trim_right": {
+    "ref": 4,
+    "frames": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "margin": 2
+   }
+  },
+  "getupattack": {
+   "replace": {
+    "2": 1
+   },
+   "impact": "1,3"
+  },
+  "jab3": {
+   "replace": {
+    "2": 5,
+    "3": 5
+   },
+   "impact": "2"
+  },
+  "jab": {
+   "replace": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "impact": "2"
+  },
+  "hurt": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "nspecial": {
+   "replace": {
+    "6": 5,
+    "7": 5,
+    "8": 5,
+    "9": 5,
+    "10": 0,
+    "11": 0
+   },
+   "impact": "9"
+  },
+  "sspecial": {
+   "replace": {
+    "1": 11,
+    "2": 11,
+    "3": 11,
+    "4": 11,
+    "5": 11,
+    "6": 11,
+    "7": 11
+   }
+  },
+  "ultimate": {
+   "replace": {
+    "6": 0,
+    "7": 0,
+    "8": 1,
+    "9": 2,
+    "10": 3,
+    "11": 4,
+    "17": 12,
+    "18": 13,
+    "19": 14,
+    "20": 15,
+    "21": 16
+   }
+  },
+  "usmash": {
+   "replace": {
+    "3": 2,
+    "4": 6,
+    "5": 6
+   }
+  },
+  "w0_jab": {
+   "replace": {
+    "2": 4,
+    "3": 4
+   },
+   "impact": "2"
+  },
+  "w1_jab": {
+   "replace": {
+    "2": 1,
+    "3": 4
+   },
+   "impact": "3"
+  },
+  "w1_nspecial": {
+   "replace": {
+    "2": 1,
+    "3": 5,
+    "4": 5
+   },
+   "impact": "3"
+  }
+ },
+ "ichigo": {
+  "airdodge": {
+   "replace": {
+    "0": 4,
+    "1": 4,
+    "2": 4,
+    "3": 4
+   }
+  },
+  "bthrow": {
+   "impact": "4"
+  },
+  "dashattack": {
+   "degrey": [
+    3
+   ]
+  },
+  "hurt": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "jab2": {
+   "replace": {
+    "1": 2
+   },
+   "impact": "2"
+  },
+  "ledgeattack": {
+   "replace": {
+    "0": 1
+   },
+   "impact": "0"
+  },
+  "utilt": {
+   "degrey": [
+    0,
+    6
+   ]
+  },
+  "w1_sspecial": {
+   "degrey": [
+    3,
+    5
+   ]
+  },
+  "w1_ultimate": {
+   "replace": {
+    "12": 11,
+    "13": 11,
+    "14": 11,
+    "15": 11,
+    "16": 11,
+    "17": 11,
+    "18": 11,
+    "19": 11,
+    "20": 11,
+    "21": 11
+   }
+  }
+ },
+ "byakuya": {
+  "airdodge": {
+   "replace": {
+    "2": 1,
+    "3": 1,
+    "4": 5
+   }
+  }
+ },
+ "sasuke": {
+  "dspecial": {
+   "replace": {
+    "5": 4,
+    "6": 4,
+    "7": 9,
+    "8": 9
+   }
+  },
+  "bair": {
+   "replace": {
+    "3": 4
+   },
+   "impact": "2"
+  },
+  "dashattack": {
+   "impact": "2"
+  },
+  "grab": {
+   "replace": {
+    "0": 3,
+    "1": 3,
+    "2": 3
+   },
+   "impact": "0"
+  },
+  "dthrow": {
+   "impact": "3"
+  },
+  "hurt": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "w0_jab": {
+   "replace": {
+    "5": 4
+   }
+  },
+  "w1_jab": {
+   "replace": {
+    "1": 3,
+    "2": 4,
+    "3": 5,
+    "4": 5
+   },
+   "impact": "3"
+  },
+  "nspecial": {
+   "impact": "4"
+  }
+ },
+ "yuno": {
+  "airdodge": {
+   "replace": {
+    "4": 3
+   }
+  },
+  "dthrow": {
+   "replace": {
+    "2": 3
+   }
+  },
+  "hurt": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "pummel": {
+   "impact": "1"
+  },
+  "utilt": {
+   "replace": {
+    "2": 3
+   },
+   "impact": "2"
+  },
+  "ultimate": {
+   "replace": {
+    "20": 22,
+    "21": 22
+   },
+   "degrey": [
+    8,
+    9,
+    19
+   ]
+  },
+  "w1_sspecial": {
+   "degrey": [
+    5,
+    8
+   ]
+  },
+  "w1_ultimate": {
+   "degrey": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ]
+  },
+  "dashattack": {
+   "degrey": [
+    1,
+    3
+   ]
+  }
+ },
+ "kenpachi": {
+  "airdodge": {
+   "replace": {
+    "2": 1,
+    "3": 1,
+    "4": 5
+   }
+  },
+  "bair": {
+   "impact": "2"
+  },
+  "dashattack": {
+   "degrey": [
+    3
+   ]
+  },
+  "hurt": {
+   "replace": {
+    "0": 2
+   }
+  },
+  "jab2": {
+   "impact": "1"
+  },
+  "w1_jab": {
+   "replace": {
+    "0": 3,
+    "1": 3,
+    "2": 4
+   },
+   "impact": "5"
+  },
+  "w0_jab": {
+   "degrey": [
+    1
+   ]
+  }
+ }
+}

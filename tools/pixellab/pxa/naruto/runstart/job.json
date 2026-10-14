@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "53149237-fc80-4f83-ad5d-a56226c0b5e5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:12bd5313-52a2-43ee-ba4d-155882c40281",
+  "description": "breaks into a ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Naruto, a young ninja in an orange and black tracksuit with spiky blond hair and a forehead protector",
+  "initial_pose": "fighting stance, fists raised, feet apart"
+ },
+ "reply": "id: 53149237-fc80-4f83-ad5d-a56226c0b5e5\njob_id: 53149237-fc80-4f83-ad5d-a56226c0b5e5\ndescription: breaks into a ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"53149237-fc80-4f83-ad5d-a56226c0b5e5\")\nasset_id: 02d1c7d8-895f-5585-b316-a4870cd0533d\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/naruto_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

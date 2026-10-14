@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "508ac7d3-8bd9-421f-92e3-e01e341bab55",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:2ca99339-1b15-481e-88e5-9ce2715fa308",
+  "description": "reaches up with both arms and grabs an invisible ledge above his head, hanging from it by both hands with the legs dangling below; only the character is drawn: no cliff, no rock, no wall, no ground He keeps holding the huge black-bladed cleaver sword Zangetsu the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ichigo Kurosaki, a young man with spiky orange hair, a black shihakusho robe with white sash and a red strap across the chest, holding the huge black-bladed cleaver sword Zangetsu",
+  "initial_pose": "in mid-air facing right, knees tucked, weapon in hand"
+ },
+ "reply": "id: 508ac7d3-8bd9-421f-92e3-e01e341bab55\njob_id: 508ac7d3-8bd9-421f-92e3-e01e341bab55\ndescription: reaches up with both arms and grabs an invisible ledge above his head, hanging from it by both hands with the legs dangling below; only the character is drawn: no cliff, no rock, no wall, no ground He keeps holding the huge black-bladed cleaver sword Zangetsu the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"508ac7d3-8bd9-421f-92e3-e01e341bab55\")\nasset_id: cc8b3d4a-a005-55ec-93cf-5d08e988141f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/ichigo/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

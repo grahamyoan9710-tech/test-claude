@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "0c2c7037-51f6-48bf-97ae-5362d2a9f9a6",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6c41ede7-1c8e-47ef-afa5-9c6d24fcbf7c",
+  "description": "is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Grimmjow Jaegerjaquez from Bleach, a muscular arrancar with spiky light-blue hair, a jaw-bone mask on the cheek, an open white jacket showing his abs, a black hakama",
+  "initial_pose": "feral crouched brawling stance facing right, knees bent, both fists raised, a wild grin"
+ },
+ "reply": "id: 0c2c7037-51f6-48bf-97ae-5362d2a9f9a6\njob_id: 0c2c7037-51f6-48bf-97ae-5362d2a9f9a6\ndescription: is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0c2c7037-51f6-48bf-97ae-5362d2a9f9a6\")\nasset_id: 35044cc5-5b89-5197-883a-aafa8b508064\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/grimmjow_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

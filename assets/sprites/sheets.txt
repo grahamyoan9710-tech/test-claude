@@ -7,7 +7,7 @@ fx amaterasu 12 99 114 50.0 108.0 12.0482 1
 fx bijudama 8 122 122 61.0 61.0 14.9254 1 50
 fx black_divider 12 118 154 68.0 77.0 14.9254 1 56
 fx black_meteorite 12 263 157 126.0 134.0 14.9254 0 95
-fx cero_wolf 8 158 74 104.0 33.0 14.9254 1 24
+fx cero_wolf 8 120 64 87.0 32.0 18 1 24
 fx chaos_whip 12 228 229 114.0 115.0 14.9254 1 96
 fx fimbulwinter 12 201 193 99.0 94.0 14.9254 0 84
 fx fuga_arrow 8 124 32 115.0 16.0 14.9254 1
@@ -30,8 +30,8 @@ fx petal_sphere 16 144 126 71.0 63.0 14.9254 1 58
 fx rasenshuriken 8 132 132 66.0 66.0 14.9254 1 60
 fx reiatsu_wave 12 115 180 98.0 93.0 14.9254 1 58
 fx sky_bolt 12 103 272 48.0 248.0 14.9254 1 26
-fx starrk_cero 8 72 50 47.0 25.0 14.9254 1 20
-fx susanoo_shuriken 8 132 132 66.0 66.0 14.9254 1 52
+fx starrk_cero 8 84 56 59.0 27.0 14.9254 1 21
+fx susanoo_shuriken 8 132 132 66.0 66.0 14.9254 1 55
 fx sword_beam 8 164 30 101.0 15.0 14.9254 1 30
 fx wind_rain 8 48 50 44.0 25.0 14.9254 1 18
 fx zephyr_spear 10 222 44 194.0 22.0 14.9254 1 35
@@ -51,27 +51,27 @@ icon sharingan 84 84
 icon six_eyes 86 80
 sheet asta airdodge 8 219 149 62.0 228.0 170.0 0 -1 15
 sheet asta airjump 8 239 238 69.0 244.0 170.0 0 -1 15
-sheet asta bair 12 244 224 66.0 228.0 170.0 0 7 15
-sheet asta bthrow 12 225 232 63.0 231.0 170.0 0 1 15
-sheet asta climb 8 224 224 62.0 223.0 170.0 0 -1 15 94.5
+sheet asta bair 12 227 230 64.0 231.0 170.0 0 1 15
+sheet asta bthrow 12 238 234 69.0 233.0 170.0 0 7 15
+sheet asta climb 8 229 214 56.0 213.0 170.0 0 -1 15 102.5
 sheet asta crouch 4 206 213 58.0 212.0 170.0 0 -1 15
-sheet asta dair 12 240 232 62.0 231.0 170.0 0 2 15
+sheet asta dair 12 228 225 62.0 228.0 170.0 0 2 15
 sheet asta dashattack 12 241 185 71.0 184.0 170.0 0 2,3 15
-sheet asta dizzy 8 218 230 59.0 229.0 170.0 1 -1 15
-sheet asta dsmash 12 255 252 78.0 240.0 170.0 0 0,2 15
+sheet asta dizzy 8 227 185 57.0 184.0 170.0 1 -1 15
+sheet asta dsmash 12 247 241 69.0 236.0 170.0 0 2,5 15
 sheet asta dspecial 12 230 234 64.0 233.0 170.0 0 7 15
 sheet asta dthrow 12 218 230 59.0 229.0 170.0 0 3 15
 sheet asta dtilt 8 239 186 62.0 184.0 170.0 0 2 15
 sheet asta fair 12 253 252 77.0 242.0 170.0 0 1 15
 sheet asta fall 8 219 224 62.0 228.0 170.0 1 -1 15
 sheet asta fsmash 12 256 243 78.0 242.0 170.0 0 5 15
-sheet asta fthrow 8 216 187 55.0 186.0 170.0 0 0 15
+sheet asta fthrow 8 218 234 59.0 233.0 170.0 0 4 15
 sheet asta ftilt 8 234 234 56.0 233.0 170.0 0 2 15
 sheet asta getup 8 221 230 55.0 229.0 170.0 0 -1 15
 sheet asta getupattack 8 233 187 66.0 184.0 170.0 0 0,3 15
 sheet asta grab 8 220 234 58.0 233.0 170.0 0 1 15
 sheet asta grabbed 4 216 222 57.0 221.0 170.0 1 -1 15
-sheet asta helpless 8 219 183 62.0 228.0 170.0 1 -1 15
+sheet asta helpless 8 221 209 62.0 228.0 170.0 1 -1 15
 sheet asta hold 4 217 187 58.0 186.0 170.0 1 -1 15
 sheet asta hurt 4 187 234 61.0 233.0 170.0 0 -1 15
 sheet asta idle 8 214 191 55.0 190.0 170.0 1 -1 15
@@ -80,31 +80,31 @@ sheet asta jab2 8 236 237 66.0 236.0 170.0 0 3 15
 sheet asta jump 8 219 152 62.0 231.0 170.0 0 -1 15
 sheet asta knockdown 8 185 234 64.0 232.0 170.0 0 -1 15
 sheet asta land 4 214 230 55.0 229.0 170.0 0 -1 15
-sheet asta ledge 4 224 213 62.0 128.5 170.0 1 -1 15
+sheet asta ledge 4 146 229 21.0 128.5 170.0 1 -1 15
 sheet asta ledgeattack 8 240 185 70.0 184.0 170.0 0 0 15
 sheet asta nair 12 237 249 74.0 241.0 170.0 0 0,8 15
 sheet asta nspecial 12 243 237 68.0 236.0 170.0 0 4 15
 sheet asta pummel 4 214 233 55.0 232.0 170.0 0 1 15
-sheet asta roll 8 220 238 58.0 235.0 170.0 0 -1 15
+sheet asta roll 8 222 238 62.0 235.0 170.0 0 -1 15
 sheet asta run 8 239 243 69.0 234.0 170.0 1 -1 15
 sheet asta shield 4 121 229 58.0 228.0 170.0 0 -1 15
-sheet asta spotdodge 8 231 236 63.0 235.0 170.0 0 -1 15
-sheet asta sspecial 16 247 256 69.0 244.0 170.0 0 1,2,3,5 15
+sheet asta spotdodge 8 230 235 63.0 234.0 170.0 0 -1 15
+sheet asta sspecial 16 256 256 78.0 244.0 170.0 0 11 15
 sheet asta tumble 8 219 226 62.0 228.0 170.0 1 -1 15
 sheet asta uair 12 220 244 63.0 238.0 170.0 0 8 15
-sheet asta ultimate 28 256 255 78.0 243.0 170.0 0 7,11,15,20 15
-sheet asta usmash 12 220 234 60.0 233.0 170.0 0 0 15
-sheet asta uspecial 12 256 249 78.0 241.0 170.0 0 6,7,9,11 15
+sheet asta ultimate 28 248 235 70.0 234.0 170.0 0 2 15
+sheet asta usmash 12 230 244 55.0 239.0 170.0 0 5 15
+sheet asta uspecial 12 231 238 67.0 237.0 170.0 0 10 15
 sheet asta uthrow 8 214 192 55.0 191.0 170.0 0 3 15
 sheet asta utilt 8 256 242 78.0 241.0 170.0 0 2 15
 sheet asta victory 12 222 185 60.0 184.0 170.0 0 -1 15
-sheet asta w0_jab 8 208 233 103.0 226.0 130.0 0 4 15
+sheet asta w0_jab 8 224 233 111.0 225.0 130.0 0 2 15
 sheet asta w0_nspecial 12 256 249 78.0 244.0 170.0 0 5 15
-sheet asta w0_ultimate 28 256 256 78.0 244.0 170.0 0 3,4,6,9 15
-sheet asta w1_jab 8 254 224 126.0 221.0 130.0 0 1 15
-sheet asta w1_sspecial 16 250 249 72.0 237.0 170.0 0 5,6,8,10 15
+sheet asta w0_ultimate 28 250 253 72.0 241.0 170.0 0 18 15
+sheet asta w1_jab 8 254 201 126.0 199.0 130.0 0 1 15
+sheet asta w1_sspecial 16 233 234 66.0 233.0 170.0 0 1 15
 sheet asta w1_ultimate 28 256 256 78.0 244.0 170.0 0 10 15
-sheet asta walk 8 217 190 55.0 189.0 170.0 1 -1 15
+sheet asta walk 8 212 190 53.0 189.0 170.0 1 -1 15
 sheet byakuya airdodge 8 147 180 85.0 230.0 180.0 0 -1 15
 sheet byakuya airjump 8 215 207 95.0 230.0 180.0 0 -1 15
 sheet byakuya bair 12 210 231 81.0 230.0 180.0 0 0 15
@@ -172,11 +172,11 @@ sheet hunter w1_jab 8 163 219 35.0 218.0 130.0 0 0 15
 sheet ichigo airdodge 8 176 211 64.0 215.0 170.0 0 -1 15
 sheet ichigo airjump 8 211 228 66.0 231.0 170.0 0 -1 15
 sheet ichigo bair 12 182 227 64.0 230.0 170.0 0 2 15
-sheet ichigo bthrow 12 195 232 71.0 231.0 170.0 0 0 15
+sheet ichigo bthrow 12 195 232 71.0 231.0 170.0 0 4 15
 sheet ichigo climb 8 195 234 60.0 233.0 170.0 0 -1 15 106.5
 sheet ichigo crouch 4 183 229 69.0 228.0 170.0 0 -1 15
 sheet ichigo dair 12 180 230 68.0 218.0 170.0 0 1 15
-sheet ichigo dashattack 12 249 243 96.0 231.0 170.0 0 3 15
+sheet ichigo dashattack 12 241 232 96.0 231.0 170.0 0 3 15
 sheet ichigo dizzy 8 193 232 73.0 231.0 170.0 1 -1 15
 sheet ichigo dsmash 12 235 240 92.0 235.0 170.0 0 6 15
 sheet ichigo dspecial 12 195 232 57.0 231.0 170.0 0 6 15
@@ -193,15 +193,15 @@ sheet ichigo grab 8 177 234 55.0 233.0 170.0 0 1 15
 sheet ichigo grabbed 4 179 234 59.0 233.0 170.0 1 -1 15
 sheet ichigo helpless 8 176 212 64.0 215.0 170.0 1 -1 15
 sheet ichigo hold 4 194 230 71.0 229.0 170.0 1 -1 15
-sheet ichigo hurt 4 182 233 72.0 232.0 170.0 0 -1 15
+sheet ichigo hurt 4 181 233 72.0 232.0 170.0 0 -1 15
 sheet ichigo idle 8 176 232 53.0 231.0 170.0 1 -1 15
 sheet ichigo jab 8 219 233 78.0 232.0 170.0 0 3 15
-sheet ichigo jab2 8 203 234 79.0 233.0 170.0 0 5 15
+sheet ichigo jab2 8 203 234 79.0 233.0 170.0 0 2 15
 sheet ichigo jump 8 181 214 68.0 215.0 170.0 0 -1 15
 sheet ichigo knockdown 8 175 241 60.0 237.0 170.0 0 -1 15
 sheet ichigo land 4 176 232 56.0 231.0 170.0 0 -1 15
 sheet ichigo ledge 4 159 236 55.0 128.5 170.0 1 -1 15
-sheet ichigo ledgeattack 8 199 232 73.0 231.0 170.0 0 0 15
+sheet ichigo ledgeattack 8 195 232 73.0 231.0 170.0 0 0 15
 sheet ichigo nair 12 198 230 68.0 230.0 170.0 0 2 15
 sheet ichigo nspecial 12 254 253 101.0 244.0 170.0 0 4 15
 sheet ichigo pummel 4 198 233 77.0 232.0 170.0 0 3 15
@@ -216,14 +216,14 @@ sheet ichigo ultimate 28 232 248 90.0 236.0 170.0 0 15 15
 sheet ichigo usmash 12 255 256 102.0 244.0 170.0 0 7 15
 sheet ichigo uspecial 12 234 235 91.0 234.0 170.0 0 3 15
 sheet ichigo uthrow 8 179 234 56.0 233.0 170.0 0 0 15
-sheet ichigo utilt 8 198 245 78.0 244.0 170.0 0 6 15
+sheet ichigo utilt 8 198 234 78.0 233.0 170.0 0 6 15
 sheet ichigo victory 12 169 232 55.0 231.0 170.0 0 -1 15
 sheet ichigo w0_jab 8 253 226 101.0 220.0 130.0 0 1 15
 sheet ichigo w0_nspecial 12 252 250 102.0 241.0 170.0 0 7 15
 sheet ichigo w0_ultimate 28 243 240 95.0 237.0 170.0 0 18 15
 sheet ichigo w1_jab 8 254 229 126.0 223.0 130.0 0 2 15
 sheet ichigo w1_nspecial 12 245 238 103.0 234.0 170.0 0 2 15
-sheet ichigo w1_sspecial 12 256 256 103.0 244.0 170.0 0 5 15
+sheet ichigo w1_sspecial 12 246 244 99.0 239.0 170.0 0 5 15
 sheet ichigo w1_ultimate 28 235 230 82.0 228.0 170.0 0 16 15
 sheet ichigo walk 8 173 235 53.0 234.0 170.0 1 -1 15
 sheet kakashi airdodge 8 135 161 68.0 229.0 213.0 0 -1 15
@@ -283,8 +283,62 @@ sheet kakashi w1_jab 8 204 226 88.0 225.0 213.0 0 3 15
 sheet kakashi w1_nspecial 12 209 237 92.0 236.0 213.0 0 3 15
 sheet kakashi w1_ultimate 28 227 219 112.0 218.0 213.0 0 12 15
 sheet kakashi walk 8 137 217 70.0 216.0 213.0 1 -1 15
+sheet kenpachi airdodge 8 152 136 56.0 227.0 165.0 0 -1 15
+sheet kenpachi airjump 8 185 183 60.0 231.0 165.0 0 -1 15
+sheet kenpachi bair 12 194 220 62.0 227.0 165.0 0 2 15
+sheet kenpachi bthrow 12 192 169 60.0 168.0 165.0 0 9 15
+sheet kenpachi climb 8 198 223 65.0 222.0 165.0 0 -1 15 97.2
+sheet kenpachi crouch 4 195 137 63.0 136.0 165.0 0 -1 15
+sheet kenpachi dair 12 155 220 61.0 227.0 165.0 0 0 15
+sheet kenpachi dashattack 12 243 155 84.0 154.0 165.0 0 1 15
+sheet kenpachi dizzy 8 192 167 60.0 166.0 165.0 1 -1 15
+sheet kenpachi dsmash 12 233 237 79.0 234.0 165.0 0 9 15
+sheet kenpachi dspecial 12 208 241 65.0 237.0 165.0 0 5 15
+sheet kenpachi dthrow 12 201 156 61.0 154.0 165.0 0 2 15
+sheet kenpachi dtilt 8 233 163 80.0 154.0 165.0 0 1 15
+sheet kenpachi fair 12 196 225 63.0 229.0 165.0 0 2 15
+sheet kenpachi fall 8 154 223 60.0 227.0 165.0 1 -1 15
+sheet kenpachi fsmash 12 241 240 81.0 231.0 165.0 0 4 15
+sheet kenpachi fthrow 8 192 155 60.0 154.0 165.0 0 3 15
+sheet kenpachi ftilt 8 194 234 61.0 233.0 165.0 0 2 15
+sheet kenpachi getup 8 192 158 60.0 154.0 165.0 0 -1 15
+sheet kenpachi getupattack 8 248 159 88.0 154.0 165.0 0 2 15
+sheet kenpachi grab 8 201 155 61.0 154.0 165.0 0 3 15
+sheet kenpachi grabbed 4 195 171 63.0 170.0 165.0 1 -1 15
+sheet kenpachi helpless 8 158 131 64.0 227.0 165.0 1 -1 15
+sheet kenpachi hold 4 165 152 54.0 151.0 165.0 1 -1 15
+sheet kenpachi hurt 4 165 181 64.0 180.0 165.0 0 -1 15
+sheet kenpachi idle 8 193 159 61.0 158.0 165.0 1 -1 15
+sheet kenpachi jab 8 244 159 84.0 158.0 165.0 0 2 15
+sheet kenpachi jab2 8 194 235 62.0 233.0 165.0 0 1 15
+sheet kenpachi jump 8 157 184 63.0 232.0 165.0 0 -1 15
+sheet kenpachi knockdown 8 186 141 59.0 137.0 165.0 0 -1 15
+sheet kenpachi land 4 207 155 67.0 154.0 165.0 0 -1 15
+sheet kenpachi ledge 4 105 211 32.0 124.8 165.0 1 -1 15
+sheet kenpachi ledgeattack 8 232 163 80.0 162.0 165.0 0 2 15
+sheet kenpachi nair 12 194 230 62.0 233.0 165.0 0 0 15
+sheet kenpachi nspecial 12 215 248 71.0 239.0 165.0 0 3 15
+sheet kenpachi pummel 4 165 165 54.0 164.0 165.0 0 3 15
+sheet kenpachi roll 8 193 157 61.0 154.0 165.0 0 -1 15
+sheet kenpachi run 8 176 142 61.0 145.0 165.0 1 -1 15
+sheet kenpachi shield 4 192 157 60.0 156.0 165.0 0 -1 15
+sheet kenpachi spotdodge 8 229 237 65.0 236.0 165.0 0 -1 15
+sheet kenpachi sspecial 16 235 251 80.0 239.0 165.0 0 1 15
+sheet kenpachi tumble 8 197 200 63.0 237.0 165.0 1 -1 15
+sheet kenpachi uair 12 201 222 65.0 229.0 165.0 0 0 15
+sheet kenpachi ultimate 28 249 256 85.0 244.0 165.0 0 8 15
+sheet kenpachi usmash 12 238 244 81.0 238.0 165.0 0 7 15
+sheet kenpachi uspecial 12 197 239 64.0 236.0 165.0 0 4 15
+sheet kenpachi uthrow 8 194 236 62.0 235.0 165.0 0 2 15
+sheet kenpachi utilt 8 198 165 62.0 164.0 165.0 0 3 15
+sheet kenpachi victory 12 197 171 65.0 170.0 165.0 0 -1 15
 sheet kenpachi w0_jab 8 242 232 117.0 225.0 130.0 0 1 15
-sheet kenpachi w1_jab 8 243 239 119.0 227.0 130.0 0 1 15
+sheet kenpachi w0_nspecial 12 235 252 71.0 243.0 165.0 0 4 15
+sheet kenpachi w0_ultimate 28 254 252 90.0 242.0 165.0 0 11 15
+sheet kenpachi w1_jab 8 220 178 101.0 167.0 130.0 0 5 15
+sheet kenpachi w1_sspecial 16 246 242 87.0 237.0 165.0 0 6 15
+sheet kenpachi w1_ultimate 28 228 239 80.0 235.0 165.0 0 17 15
+sheet kenpachi walk 8 193 158 61.0 157.0 165.0 1 -1 15
 sheet kratos w0_jab 8 235 194 116.0 193.0 130.0 0 3 15
 sheet kratos w1_jab 8 218 226 109.0 218.0 130.0 0 2 15
 sheet link w0_jab 8 234 218 117.0 217.0 130.0 0 3 15
@@ -406,8 +460,62 @@ sheet starrk w0_jab 8 184 141 63.0 136.0 130.0 0 2 15
 sheet starrk w1_jab 8 182 155 65.0 153.0 130.0 0 3 15
 sheet sukuna w0_jab 8 139 225 37.0 221.0 130.0 0 0 15
 sheet sukuna w1_jab 8 224 224 112.0 221.0 130.0 0 1 15
+sheet ulquiorra airdodge 8 139 163 65.0 236.0 185.0 0 -1 15
+sheet ulquiorra airjump 8 190 230 71.0 236.0 185.0 0 -1 15
+sheet ulquiorra bair 8 179 163 105.0 236.0 185.0 0 1 15
+sheet ulquiorra bthrow 12 137 189 64.0 189.0 185.0 0 8 15
+sheet ulquiorra climb 8 115 214 53.0 214.0 185.0 0 -1 15 99.2
+sheet ulquiorra crouch 4 96 150 46.0 150.0 185.0 0 -1 15
+sheet ulquiorra dair 12 154 235 69.0 237.0 185.0 0 4 15
+sheet ulquiorra dashattack 12 249 242 114.0 239.0 185.0 0 0 15
+sheet ulquiorra dizzy 8 78 189 38.0 189.0 185.0 1 -1 15
+sheet ulquiorra dsmash 12 241 190 114.0 189.0 185.0 0 4 15
+sheet ulquiorra dspecial 12 158 189 36.0 189.0 185.0 0 6 15
+sheet ulquiorra dthrow 12 189 218 86.0 216.0 185.0 0 2 15
+sheet ulquiorra dtilt 8 175 191 66.0 189.0 185.0 0 1 15
+sheet ulquiorra fair 12 190 176 65.0 236.0 185.0 0 3 15
+sheet ulquiorra fall 8 140 234 66.0 236.0 185.0 1 -1 15
+sheet ulquiorra fsmash 12 196 237 61.0 237.0 185.0 0 5 15
+sheet ulquiorra fthrow 8 126 189 35.0 189.0 185.0 0 0 15
+sheet ulquiorra ftilt 8 193 189 65.0 189.0 185.0 0 2 15
+sheet ulquiorra getup 8 161 190 78.0 189.0 185.0 0 -1 15
+sheet ulquiorra getupattack 8 243 189 115.0 189.0 185.0 0 2 15
+sheet ulquiorra grab 8 174 189 56.0 189.0 185.0 0 2 15
+sheet ulquiorra grabbed 4 110 189 40.0 189.0 185.0 1 -1 15
+sheet ulquiorra helpless 8 140 184 65.0 236.0 185.0 1 -1 15
+sheet ulquiorra hold 4 105 189 35.0 189.0 185.0 1 -1 15
+sheet ulquiorra hurt 4 200 235 89.0 235.0 185.0 0 -1 15
+sheet ulquiorra idle 8 73 189 35.0 189.0 185.0 1 -1 15
+sheet ulquiorra jab 8 127 189 35.0 189.0 185.0 0 2 15
+sheet ulquiorra jab2 8 148 190 68.0 189.0 185.0 0 1 15
+sheet ulquiorra jab3 8 212 244 88.0 240.0 185.0 0 2 15
+sheet ulquiorra jump 8 148 236 69.0 236.0 185.0 0 -1 15
+sheet ulquiorra knockdown 8 192 190 85.0 189.0 185.0 0 -1 15
+sheet ulquiorra land 4 113 190 52.0 189.0 185.0 0 -1 15
+sheet ulquiorra ledge 4 79 240 30.0 139.8 185.0 1 -1 15
+sheet ulquiorra ledgeattack 8 241 189 113.0 189.0 185.0 0 2 15
+sheet ulquiorra nair 12 242 234 120.0 236.0 185.0 0 4 15
+sheet ulquiorra nspecial 12 171 189 36.0 189.0 185.0 0 7 15
+sheet ulquiorra pummel 4 110 189 42.0 189.0 185.0 0 3 15
+sheet ulquiorra roll 8 132 189 57.0 189.0 185.0 0 -1 15
+sheet ulquiorra run 8 193 157 89.0 166.0 185.0 1 -1 15
+sheet ulquiorra shield 4 112 190 50.0 189.0 185.0 0 -1 15
+sheet ulquiorra spotdodge 8 243 242 115.0 241.0 185.0 0 -1 15
+sheet ulquiorra sspecial 12 200 241 92.0 240.0 185.0 0 6 15
+sheet ulquiorra tumble 8 182 184 80.0 236.0 185.0 1 -1 15
+sheet ulquiorra uair 8 180 173 79.0 236.0 185.0 0 7 15
+sheet ulquiorra ultimate 28 182 247 47.0 247.0 185.0 0 16 15
+sheet ulquiorra usmash 12 204 248 76.0 244.0 185.0 0 4 15
+sheet ulquiorra uspecial 12 132 239 58.0 239.0 185.0 0 4 15
+sheet ulquiorra uthrow 8 128 223 55.0 223.0 185.0 0 3 15
+sheet ulquiorra utilt 8 137 242 61.0 241.0 185.0 0 3 15
+sheet ulquiorra victory 12 110 239 49.0 239.0 185.0 0 -1 15
 sheet ulquiorra w0_jab 8 209 226 90.0 219.0 130.0 0 7 15
+sheet ulquiorra w0_nspecial 12 256 246 121.0 246.0 185.0 0 8 15
+sheet ulquiorra w0_ultimate 28 252 237 117.0 237.0 185.0 0 16 15
 sheet ulquiorra w1_jab 8 238 141 126.0 134.0 130.0 0 2 15
+sheet ulquiorra w1_ultimate 28 256 256 121.0 247.0 185.0 0 18 15
+sheet ulquiorra walk 8 79 193 36.0 192.0 185.0 1 -1 15
 sheet yuno airdodge 8 165 177 84.0 228.0 185.0 0 -1 15
 sheet yuno airjump 8 210 227 104.0 230.0 185.0 0 -1 15
 sheet yuno bair 8 191 189 95.0 228.0 185.0 0 1 15
