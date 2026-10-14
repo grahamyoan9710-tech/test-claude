@@ -1479,7 +1479,7 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
   return true;
 }
 
-bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha) {
+bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha, float fadeIn) {
   const Fx* F = fxOf(name);
   if (!F || alpha <= 0.0f || len <= 0.0f || size <= 0.0f) return F != nullptr;
   const FxInfo& I = F->info;
@@ -1488,18 +1488,29 @@ bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, floa
   const Vec2 d = dir.len2() > 1e-6f ? dir.norm() : Vec2{1.0f, 0.0f}, n{-d.y, d.x};
   const float tile = I.fw * size, top = I.ay * size, bottom = (I.fh - I.ay) * size;
   const float tw = float(F->tex.width), th = float(F->tex.height);
-  const unsigned char a = (unsigned char)(255.0f * std::clamp(alpha, 0.0f, 1.0f));
+  const float a = 255.0f * std::clamp(alpha, 0.0f, 1.0f);
+  auto alphaAt = [&](float x) {  // the fade at the start, linear: the GPU interpolates it between the cuts
+    return (unsigned char)(a * (fadeIn > 0.0f ? std::clamp(x / fadeIn, 0.0f, 1.0f) : 1.0f));
+  };
   rlSetTexture(F->tex.id);
   rlBegin(RL_QUADS);
   for (float x = 0.0f; x < len; x += tile) {
-    const float w = std::min(tile, len - x), u0 = frame * I.fw / tw, u1 = (frame * I.fw + I.fw * (w / tile)) / tw;
-    const Vec2 p0 = from + d * x, p1 = from + d * (x + w);
-    const Vec2 q[4] = {p0 - n * top, p1 - n * top, p1 + n * bottom, p0 + n * bottom};
-    const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, I.fh / th}, {u0, I.fh / th}};
-    for (int k = 0; k < 4; ++k) {
-      rlColor4ub(255, 255, 255, a);
-      rlTexCoord2f(uv[k][0], uv[k][1]);
-      rlVertex2f(q[k].x, q[k].y);
+    const float w = std::min(tile, len - x), u0 = frame * I.fw / tw;
+    // The tile is cut where the fade ends so the ramp stays straight.
+    const float cuts[3] = {x, fadeIn > x && fadeIn < x + w ? fadeIn : x + w, x + w};
+    for (int c = 0; c < 2; ++c) {
+      const float xa = cuts[c], xb = cuts[c + 1];
+      if (xb <= xa) continue;
+      const float ua = u0 + (xa - x) / tile * I.fw / tw, ub = u0 + (xb - x) / tile * I.fw / tw;
+      const Vec2 p0 = from + d * xa, p1 = from + d * xb;
+      const Vec2 q[4] = {p0 - n * top, p1 - n * top, p1 + n * bottom, p0 + n * bottom};
+      const float uv[4][2] = {{ua, 0.0f}, {ub, 0.0f}, {ub, I.fh / th}, {ua, I.fh / th}};
+      const unsigned char qa[4] = {alphaAt(xa), alphaAt(xb), alphaAt(xb), alphaAt(xa)};
+      for (int k = 0; k < 4; ++k) {
+        rlColor4ub(255, 255, 255, qa[k]);
+        rlTexCoord2f(uv[k][0], uv[k][1]);
+        rlVertex2f(q[k].x, q[k].y);
+      }
     }
   }
   rlEnd();

@@ -7,14 +7,20 @@ fx amaterasu 12 99 114 50.0 108.0 12.0482 1
 fx bijudama 8 122 122 61.0 61.0 14.9254 1 50
 fx black_divider 12 118 154 68.0 77.0 14.9254 1 56
 fx black_meteorite 12 263 157 126.0 134.0 14.9254 0 95
+fx cero_oscuras 8 96 62 0.0 31.0 14.9254 1 17
+fx cero_oscuras_head 8 112 107 0.0 53.0 14.9254 1 30
 fx cero_wolf 8 120 64 87.0 32.0 18 1 24
 fx chaos_whip 12 228 229 114.0 115.0 14.9254 1 96
+fx demon_dragon 8 96 59 0.0 29.0 14.9254 1 17
+fx demon_dragon_head 8 112 107 0.0 53.0 14.9254 1 30
 fx fimbulwinter 12 201 193 99.0 94.0 14.9254 0 84
 fx fuga_arrow 8 124 32 115.0 16.0 14.9254 1
 fx fuga_blast 12 218 213 106.0 107.0 14.0845 0
 fx getsuga 12 100 166 81.0 83.0 14.9254 1 58
 fx getsuga_cross 12 124 146 72.0 73.0 14.9254 1 58
 fx gloom_pillar 12 80 222 41.0 198.0 14.9254 1 35
+fx gran_rey_cero 8 96 56 0.0 28.0 14.9254 1 20
+fx gran_rey_cero_head 8 112 107 0.0 53.0 14.9254 1 32
 fx hollow_purple 12 247 246 124.0 123.0 14.9254 1 82
 fx indra_arrow 8 216 46 195.0 23.0 14.9254 1 22
 fx kageyoshi 12 239 215 119.0 107.0 14.9254 1 100
@@ -22,6 +28,8 @@ fx kamui 12 132 132 68.0 66.0 14.9254 0
 fx kirin 8 141 266 75.0 258.0 14.9254 1 42
 fx lanza 8 194 32 171.0 16.0 14.9254 1
 fx lanza_blast 12 224 224 112.0 112.0 14.0845 0
+fx light_dragon 8 96 53 0.0 26.0 14.9254 1 16
+fx light_dragon_head 8 112 108 0.0 54.0 14.9254 1 30
 fx light_pillar 12 100 239 55.0 219.0 14.9254 1 26
 fx lilynette 8 106 244 55.0 244.0 8 1
 fx malevolent_shrine 12 211 226 107.0 114.0 14.9254 1 112
@@ -33,6 +41,8 @@ fx sky_bolt 12 103 272 48.0 248.0 14.9254 1 26
 fx starrk_cero 8 84 56 59.0 27.0 14.9254 1 21
 fx susanoo_shuriken 8 132 132 66.0 66.0 14.9254 1 55
 fx sword_beam 8 164 30 101.0 15.0 14.9254 1 30
+fx vasto_cero 8 96 54 0.0 27.0 14.9254 1 16
+fx vasto_cero_head 8 112 107 0.0 53.0 14.9254 1 30
 fx wind_rain 8 48 50 44.0 25.0 14.9254 1 18
 fx zephyr_spear 10 222 44 194.0 22.0 14.9254 1 35
 icon cursed_finger 57 74

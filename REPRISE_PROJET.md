@@ -38,6 +38,16 @@ conflits, chacune a ses propres fichiers.
 - Conflit sur `sheets.txt` : garder les deux lignes. Le fichier est trié, une ligne par clip ou effet.
 
 ### Journal (le plus récent en haut)
+- 14/10 20 h 45 UTC, session B : rayons d'ultimes du groupe e importés (`gran_rey_cero`, `cero_oscuras`,
+  `vasto_cero`, `light_dragon`, `demon_dragon`, chacun avec son `_head`). Leurs PNG n'étaient pas dans git
+  (`*.png` ignoré dans `tools/`) : récupérés en réexportant les effets enregistrés (vfx_workbench, gratuit, mêmes
+  noms, disposition identique aux JSON). Le départ du rayon apparaît en fondu, avec une lueur à la main
+  (`drawFxStrip`, `drawSpriteBeam`). Vérifié en jeu sur les 5 ultimes. `wyvern_fire` reste à faire : seul son JSON
+  existe, sans image ni notes.
+  - Relecture Ulquiorra et Byakuya : déjà faite par la session A (186136b, 6cb7ccf), rien refait.
+  - Chemins de `tools/pixellab` : pas de `sed` (il toucherait 86 fichiers que `sync_repo.sh` réécrit). Sur une
+    machine dont le dépôt est dans `/home/user/test-claude`, un lien suffit :
+    `ln -sfn /home/user/test-claude/tools/pixellab <ancien chemin du scratchpad>`.
 - 14/10 19 h 30 UTC, session A : génération PixelLab relancée sur le compte du propriétaire (~3 560 générations
   restantes). Les régénérations Naruto/Sasuke/Kakashi sont en cours. Ce document reste à jour à chaque push.
 
@@ -125,7 +135,7 @@ conflits, chacune a ses propres fichiers.
    feu de wyvern :
    - les PNG et JSON sont dans `tools/pixellab/vfx/ult/` ;
    - leurs notes sont dans `notes_e.json` ;
-   - **wyvern_fire n'est pas encore fait**, et aucun n'est importé.
+   - **importés le 14/10 à 20 h 45** (session B), sauf **wyvern_fire, pas encore fait**.
 
    Le code les attend déjà : `beamSprite` dans `render_vfx.cpp` dessine `<nom>` plus `<nom>_head` quand ces effets
    existent. Import :
