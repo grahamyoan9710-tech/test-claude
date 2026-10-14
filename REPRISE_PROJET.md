@@ -38,6 +38,11 @@ conflits, chacune a ses propres fichiers.
 - Conflit sur `sheets.txt` : garder les deux lignes. Le fichier est trié, une ligne par clip ou effet.
 
 ### Journal (le plus récent en haut)
+- 14/10 21 h 00 UTC, session B : `fitall.sh` terminé (13 min, ctest réussi). 86 clips sur 205 ont un nouvel
+  impact, 17 impacts de la revue remis, 139 hitboxes sur 442 recalées. Le contrôle signale encore 282 hitboxes sur
+  692 qui frappent surtout là où rien n'est dessiné. Équilibre après recalage : Asta 60, Yuno 42, Ichigo 43,
+  Byakuya 57, Kenpachi 45, Ulquiorra 43, Grimmjow 33, Starrk 47, Naruto 50, Sasuke 40, **Kakashi 72**, Gojo 52,
+  Sukuna 57, Link 41, Ganondorf 61, Kratos 59, Hunter 48 (%). Équilibrage en cours (session B).
 - 14/10 20 h 50 UTC, session B : **lance `fitall.sh`** à la demande du propriétaire. Il réécrit
   `src/core/roster_hitfit.inc` et la colonne impact des lignes `sheet` de `sheets.txt` (fichiers de la session A).
   Session A : faire `git pull` avant ton prochain `fitall.sh` ou ton prochain import.
