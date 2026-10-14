@@ -484,11 +484,11 @@ sheet ulquiorra grab 8 174 189 56.0 189.0 185.0 0 2 15
 sheet ulquiorra grabbed 4 110 189 40.0 189.0 185.0 1 -1 15
 sheet ulquiorra helpless 8 140 184 65.0 236.0 185.0 1 -1 15
 sheet ulquiorra hold 4 105 189 35.0 189.0 185.0 1 -1 15
-sheet ulquiorra hurt 4 200 235 89.0 235.0 185.0 0 -1 15
+sheet ulquiorra hurt 4 200 212 89.0 212.0 185.0 0 -1 15
 sheet ulquiorra idle 8 73 189 35.0 189.0 185.0 1 -1 15
 sheet ulquiorra jab 8 127 189 35.0 189.0 185.0 0 2 15
 sheet ulquiorra jab2 8 148 190 68.0 189.0 185.0 0 1 15
-sheet ulquiorra jab3 8 212 244 88.0 240.0 185.0 0 2 15
+sheet ulquiorra jab3 8 181 244 82.0 240.0 185.0 0 2 15
 sheet ulquiorra jump 8 148 236 69.0 236.0 185.0 0 -1 15
 sheet ulquiorra knockdown 8 192 190 85.0 189.0 185.0 0 -1 15
 sheet ulquiorra land 4 113 190 52.0 189.0 185.0 0 -1 15
@@ -500,8 +500,8 @@ sheet ulquiorra pummel 4 110 189 42.0 189.0 185.0 0 3 15
 sheet ulquiorra roll 8 132 189 57.0 189.0 185.0 0 -1 15
 sheet ulquiorra run 8 193 157 89.0 166.0 185.0 1 -1 15
 sheet ulquiorra shield 4 112 190 50.0 189.0 185.0 0 -1 15
-sheet ulquiorra spotdodge 8 243 242 115.0 241.0 185.0 0 -1 15
-sheet ulquiorra sspecial 12 200 241 92.0 240.0 185.0 0 6 15
+sheet ulquiorra spotdodge 8 216 190 91.0 189.0 185.0 0 -1 15
+sheet ulquiorra sspecial 12 200 240 92.0 240.0 185.0 0 6 15
 sheet ulquiorra tumble 8 182 184 80.0 236.0 185.0 1 -1 15
 sheet ulquiorra uair 8 180 173 79.0 236.0 185.0 0 7 15
 sheet ulquiorra ultimate 28 182 247 47.0 247.0 185.0 0 16 15
