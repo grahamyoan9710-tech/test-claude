@@ -4,8 +4,10 @@ bow bow_light 58 180 57.0 89.5 6.0 0.0 5.5 179.0
 bow bow_susanoo 32 166 31.0 82.5 1.0 0.0 1.0 165.0
 bow bow_wood 37 177 36.0 88.0 7.0 0.0 7.0 176.0
 fx amaterasu 12 99 114 50.0 108.0 12.0482 1
+fx bijudama 8 122 122 61.0 61.0 14.9254 1 50
 fx black_divider 12 118 154 68.0 77.0 14.9254 1 56
 fx black_meteorite 12 263 157 126.0 134.0 14.9254 0 95
+fx cero_wolf 8 158 74 104.0 33.0 14.9254 1 24
 fx chaos_whip 12 228 229 114.0 115.0 14.9254 1 96
 fx fimbulwinter 12 201 193 99.0 94.0 14.9254 0 84
 fx fuga_arrow 8 124 32 115.0 16.0 14.9254 1
@@ -13,13 +15,23 @@ fx fuga_blast 12 218 213 106.0 107.0 14.0845 0
 fx getsuga 12 100 166 81.0 83.0 14.9254 1 58
 fx getsuga_cross 12 124 146 72.0 73.0 14.9254 1 58
 fx gloom_pillar 12 80 222 41.0 198.0 14.9254 1 35
+fx hollow_purple 12 247 246 124.0 123.0 14.9254 1 82
+fx indra_arrow 8 216 46 195.0 23.0 14.9254 1 22
 fx kageyoshi 12 239 215 119.0 107.0 14.9254 1 100
 fx kamui 12 132 132 68.0 66.0 14.9254 0
+fx kirin 8 141 266 75.0 258.0 14.9254 1 42
 fx lanza 8 194 32 171.0 16.0 14.9254 1
 fx lanza_blast 12 224 224 112.0 112.0 14.0845 0
 fx light_pillar 12 100 239 55.0 219.0 14.9254 1 26
 fx lilynette 8 106 244 55.0 244.0 8 1
+fx malevolent_shrine 12 211 226 107.0 114.0 14.9254 1 112
+fx max_blue 12 174 170 88.0 85.0 14.9254 1 76
 fx petal_sphere 16 144 126 71.0 63.0 14.9254 1 58
+fx rasenshuriken 8 132 132 66.0 66.0 14.9254 1 60
+fx reiatsu_wave 12 115 180 98.0 93.0 14.9254 1 58
+fx sky_bolt 12 103 272 48.0 248.0 14.9254 1 26
+fx starrk_cero 8 72 50 47.0 25.0 14.9254 1 20
+fx susanoo_shuriken 8 132 132 66.0 66.0 14.9254 1 52
 fx sword_beam 8 164 30 101.0 15.0 14.9254 1 30
 fx wind_rain 8 48 50 44.0 25.0 14.9254 1 18
 fx zephyr_spear 10 222 44 194.0 22.0 14.9254 1 35
@@ -93,7 +105,7 @@ sheet asta w1_jab 8 254 224 126.0 221.0 130.0 0 1 15
 sheet asta w1_sspecial 16 250 249 72.0 237.0 170.0 0 5,6,8,10 15
 sheet asta w1_ultimate 28 256 256 78.0 244.0 170.0 0 10 15
 sheet asta walk 8 217 190 55.0 189.0 170.0 1 -1 15
-sheet byakuya airdodge 8 226 180 85.0 230.0 180.0 0 -1 15
+sheet byakuya airdodge 8 147 180 85.0 230.0 180.0 0 -1 15
 sheet byakuya airjump 8 215 207 95.0 230.0 180.0 0 -1 15
 sheet byakuya bair 12 210 231 81.0 230.0 180.0 0 0 15
 sheet byakuya bthrow 12 223 199 87.0 198.0 180.0 0 6 15
@@ -221,7 +233,7 @@ sheet kakashi bthrow 12 162 214 83.0 213.0 213.0 0 2 15
 sheet kakashi climb 8 196 236 123.0 235.0 213.0 0 -1 15 64.2
 sheet kakashi crouch 4 138 186 71.0 185.0 213.0 0 -1 15
 sheet kakashi dair 12 156 232 78.0 229.0 213.0 0 3 15
-sheet kakashi dashattack 12 228 244 114.0 232.0 213.0 0 2 15
+sheet kakashi dashattack 12 217 203 110.0 202.0 213.0 0 2 15
 sheet kakashi dizzy 8 137 231 70.0 230.0 213.0 1 -1 15
 sheet kakashi dsmash 12 255 231 127.0 230.0 213.0 0 2 15
 sheet kakashi dspecial 12 256 203 128.0 202.0 213.0 0 4 15
@@ -229,18 +241,18 @@ sheet kakashi dthrow 12 179 203 73.0 202.0 213.0 0 0 15
 sheet kakashi dtilt 8 224 203 112.0 202.0 213.0 0 3 15
 sheet kakashi fair 12 218 179 93.0 234.0 213.0 0 0 15
 sheet kakashi fall 8 136 225 69.0 229.0 213.0 1 -1 15
-sheet kakashi fsmash 12 250 236 123.0 235.0 213.0 0 6 15
+sheet kakashi fsmash 12 208 236 84.0 235.0 213.0 0 6 15
 sheet kakashi fthrow 8 189 203 70.0 202.0 213.0 0 0 15
 sheet kakashi ftilt 8 199 229 96.0 228.0 213.0 0 2 15
 sheet kakashi getup 8 212 203 114.0 202.0 213.0 0 -1 15
-sheet kakashi getupattack 8 231 203 115.0 202.0 213.0 0 0,1 15
-sheet kakashi grab 8 198 203 70.0 202.0 213.0 0 1 15
+sheet kakashi getupattack 8 231 203 115.0 202.0 213.0 0 1,3 15
+sheet kakashi grab 8 179 203 70.0 202.0 213.0 0 0 15
 sheet kakashi grabbed 4 142 222 70.0 221.0 213.0 1 -1 15
 sheet kakashi helpless 8 148 204 75.0 230.0 213.0 1 -1 15
 sheet kakashi hold 4 149 200 70.0 199.0 213.0 1 -1 15
 sheet kakashi hurt 4 205 236 103.0 235.0 213.0 0 -1 15
 sheet kakashi idle 8 137 207 70.0 206.0 213.0 1 -1 15
-sheet kakashi jab 8 196 203 76.0 202.0 213.0 0 2 15
+sheet kakashi jab 8 195 203 76.0 202.0 213.0 0 2 15
 sheet kakashi jab2 8 192 203 76.0 202.0 213.0 0 2 15
 sheet kakashi jab3 8 210 243 102.0 242.0 213.0 0 2 15
 sheet kakashi jump 8 137 233 69.0 233.0 213.0 0 -1 15
@@ -249,26 +261,26 @@ sheet kakashi land 4 130 230 68.0 229.0 213.0 0 -1 15
 sheet kakashi ledge 4 67 227 51.0 160.8 213.0 1 -1 15
 sheet kakashi ledgeattack 8 235 233 115.0 232.0 213.0 0 2 15
 sheet kakashi nair 12 222 229 111.0 237.0 213.0 0 7 15
-sheet kakashi nspecial 12 241 241 114.0 236.0 213.0 0 9 15
+sheet kakashi nspecial 12 184 210 70.0 209.0 213.0 0 9 15
 sheet kakashi pummel 4 157 226 70.0 225.0 213.0 0 1 15
 sheet kakashi roll 8 158 203 71.0 202.0 213.0 0 -1 15
 sheet kakashi run 8 208 171 106.0 180.0 213.0 1 -1 15
 sheet kakashi shield 4 137 199 70.0 198.0 213.0 0 -1 15
 sheet kakashi spotdodge 8 163 211 96.0 210.0 213.0 0 -1 15
-sheet kakashi sspecial 16 208 204 96.0 203.0 213.0 0 8 15
+sheet kakashi sspecial 16 190 204 78.0 203.0 213.0 0 8 15
 sheet kakashi tumble 8 176 187 89.0 230.0 213.0 1 -1 15
 sheet kakashi uair 8 223 212 112.0 233.0 213.0 0 2 15
-sheet kakashi ultimate 28 216 208 107.0 207.0 213.0 0 13 15
-sheet kakashi usmash 12 147 234 73.0 233.0 213.0 0 4 15
+sheet kakashi ultimate 28 208 207 107.0 206.0 213.0 0 13 15
+sheet kakashi usmash 12 140 234 70.0 233.0 213.0 0 4 15
 sheet kakashi uspecial 12 227 244 128.0 243.0 213.0 0 6 15
 sheet kakashi uthrow 8 151 234 72.0 233.0 213.0 0 3 15
 sheet kakashi utilt 8 171 236 87.0 235.0 213.0 0 3 15
 sheet kakashi victory 12 130 232 74.0 231.0 213.0 0 -1 15
-sheet kakashi w0_jab 8 246 214 121.0 213.0 213.0 0 2 15
+sheet kakashi w0_jab 8 193 213 73.0 212.0 213.0 0 2 15
 sheet kakashi w0_nspecial 12 170 224 83.0 223.0 213.0 0 5 15
 sheet kakashi w0_ultimate 28 231 236 115.0 235.0 213.0 0 16 15
-sheet kakashi w1_jab 8 241 234 120.0 233.0 213.0 0 3 15
-sheet kakashi w1_nspecial 12 233 237 116.0 236.0 213.0 0 3 15
+sheet kakashi w1_jab 8 204 226 88.0 225.0 213.0 0 3 15
+sheet kakashi w1_nspecial 12 209 237 92.0 236.0 213.0 0 3 15
 sheet kakashi w1_ultimate 28 227 219 112.0 218.0 213.0 0 12 15
 sheet kakashi walk 8 137 217 70.0 216.0 213.0 1 -1 15
 sheet kenpachi w0_jab 8 242 232 117.0 225.0 130.0 0 1 15
@@ -277,7 +289,7 @@ sheet kratos w0_jab 8 235 194 116.0 193.0 130.0 0 3 15
 sheet kratos w1_jab 8 218 226 109.0 218.0 130.0 0 2 15
 sheet link w0_jab 8 234 218 117.0 217.0 130.0 0 3 15
 sheet link w1_jab 8 180 161 52.0 160.0 130.0 0 4 15
-sheet naruto airdodge 8 181 167 65.0 232.0 213.0 0 -1 15
+sheet naruto airdodge 8 144 167 40.0 232.0 213.0 0 -1 15
 sheet naruto airjump 8 172 230 58.0 232.0 213.0 0 -1 15
 sheet naruto bair 8 241 170 96.0 234.0 213.0 0 1 15
 sheet naruto bthrow 12 183 233 74.0 232.0 213.0 0 3 15
@@ -291,20 +303,20 @@ sheet naruto dspecial 12 215 235 83.0 234.0 213.0 0 6 15
 sheet naruto dthrow 12 198 243 75.0 232.0 213.0 0 4 15
 sheet naruto dtilt 8 206 233 70.0 232.0 213.0 0 2 15
 sheet naruto fair 12 185 177 45.0 238.0 213.0 0 3 15
-sheet naruto fall 8 144 232 40.0 232.0 213.0 1 -1 15
-sheet naruto fsmash 12 229 233 89.0 232.0 213.0 0 5 15
+sheet naruto fall 8 144 216 40.0 216.0 213.0 1 -1 15
+sheet naruto fsmash 12 224 233 85.0 232.0 213.0 0 4 15
 sheet naruto fthrow 8 199 233 70.0 232.0 213.0 0 2 15
 sheet naruto ftilt 8 198 233 70.0 232.0 213.0 0 1 15
 sheet naruto getup 8 213 233 84.0 232.0 213.0 0 -1 15
-sheet naruto getupattack 8 239 234 95.0 232.0 213.0 0 3,6 15
+sheet naruto getupattack 8 239 234 95.0 232.0 213.0 0 3,4 15
 sheet naruto grab 8 206 233 70.0 232.0 213.0 0 2 15
 sheet naruto grabbed 4 147 233 71.0 232.0 213.0 1 -1 15
 sheet naruto helpless 8 144 230 40.0 232.0 213.0 1 -1 15
 sheet naruto hold 4 176 228 70.0 227.0 213.0 1 -1 15
-sheet naruto hurt 4 235 229 94.0 228.0 213.0 0 -1 15
+sheet naruto hurt 4 219 216 94.0 216.0 213.0 0 -1 15
 sheet naruto idle 8 140 233 70.0 232.0 213.0 1 -1 15
 sheet naruto jab 8 197 233 72.0 232.0 213.0 0 1 15
-sheet naruto jab2 8 219 233 85.0 232.0 213.0 0 1 15
+sheet naruto jab2 8 216 233 82.0 232.0 213.0 0 1 15
 sheet naruto jab3 8 238 233 88.0 232.0 213.0 0 3 15
 sheet naruto jump 8 157 237 52.0 236.0 213.0 0 -1 15
 sheet naruto knockdown 8 235 233 95.0 234.0 213.0 0 -1 15
@@ -312,7 +324,7 @@ sheet naruto land 4 145 233 72.0 232.0 213.0 0 -1 15
 sheet naruto ledge 4 129 246 39.0 159.8 213.0 1 -1 15
 sheet naruto ledgeattack 8 234 233 93.0 232.0 213.0 0 2 15
 sheet naruto nair 12 149 187 45.0 232.0 213.0 0 3 15
-sheet naruto nspecial 12 241 233 94.0 232.0 213.0 0 5 15
+sheet naruto nspecial 12 241 233 94.0 232.0 213.0 0 8 15
 sheet naruto pummel 4 187 231 70.0 230.0 213.0 0 1 15
 sheet naruto roll 8 188 233 71.0 232.0 213.0 0 -1 15
 sheet naruto run 8 220 212 86.0 218.0 213.0 1 -1 15
@@ -321,31 +333,31 @@ sheet naruto spotdodge 8 229 232 89.0 231.0 213.0 0 -1 15
 sheet naruto sspecial 12 210 233 73.0 232.0 213.0 0 -1 15
 sheet naruto tumble 8 162 182 57.0 232.0 213.0 1 -1 15
 sheet naruto uair 8 221 228 87.0 232.0 213.0 0 3 15
-sheet naruto ultimate 28 220 233 82.0 232.0 213.0 0 12,13,14,15 15
+sheet naruto ultimate 28 220 233 82.0 232.0 213.0 0 10,12,13,14,20 15
 sheet naruto usmash 12 208 248 79.0 240.0 213.0 0 3 15
-sheet naruto uspecial 12 164 236 69.0 235.0 213.0 0 1 15
-sheet naruto uthrow 8 179 236 70.0 235.0 213.0 0 3 15
-sheet naruto utilt 8 219 235 86.0 234.0 213.0 0 4 15
+sheet naruto uspecial 12 164 236 69.0 235.0 213.0 0 3 15
+sheet naruto uthrow 8 179 236 70.0 235.0 213.0 0 4 15
+sheet naruto utilt 8 219 235 86.0 234.0 213.0 0 3 15
 sheet naruto victory 12 162 240 92.0 236.0 213.0 0 -1 15
 sheet naruto w0_jab 8 198 233 73.0 232.0 213.0 0 2 15
 sheet naruto w0_nspecial 12 192 233 72.0 232.0 213.0 0 4 15
-sheet naruto w0_ultimate 28 206 234 80.0 233.0 213.0 0 16 15
+sheet naruto w0_ultimate 28 202 234 76.0 233.0 213.0 0 16 15
 sheet naruto w1_jab 8 239 235 95.0 234.0 213.0 0 3 15
 sheet naruto w1_sspecial 12 234 233 93.0 232.0 213.0 0 7 15
 sheet naruto w1_ultimate 28 240 235 88.0 234.0 213.0 0 20 15
 sheet naruto walk 8 140 239 70.0 237.0 213.0 1 -1 15
 sheet sasuke airdodge 8 156 139 91.0 236.0 213.0 0 -1 15
 sheet sasuke airjump 8 173 197 76.0 235.0 213.0 0 -1 15
-sheet sasuke bair 12 246 204 119.0 228.0 213.0 0 1 15
+sheet sasuke bair 12 202 204 119.0 228.0 213.0 0 2 15
 sheet sasuke bthrow 12 160 209 77.0 207.0 213.0 0 3 15
 sheet sasuke climb 8 151 240 71.0 238.0 213.0 0 -1 15 66.2
 sheet sasuke crouch 4 141 196 75.0 193.0 213.0 0 -1 15
 sheet sasuke dair 12 172 221 84.0 226.0 213.0 0 0 15
-sheet sasuke dashattack 12 234 236 113.0 234.0 213.0 0 1 15
+sheet sasuke dashattack 12 234 236 113.0 234.0 213.0 0 2 15
 sheet sasuke dizzy 8 151 216 71.0 214.0 213.0 1 -1 15
 sheet sasuke dsmash 12 250 249 121.0 240.0 213.0 0 1,6 15
-sheet sasuke dspecial 12 242 255 117.0 244.0 213.0 0 5,6,7,8 15
-sheet sasuke dthrow 12 169 213 72.0 209.0 213.0 0 6 15
+sheet sasuke dspecial 12 225 236 109.0 234.0 213.0 0 5 15
+sheet sasuke dthrow 12 169 213 72.0 209.0 213.0 0 3 15
 sheet sasuke dtilt 8 227 238 110.0 233.0 213.0 0 3 15
 sheet sasuke fair 12 212 243 87.0 241.0 213.0 0 2 15
 sheet sasuke fall 8 145 240 77.0 236.0 213.0 1 -1 15
@@ -358,7 +370,7 @@ sheet sasuke grab 8 203 206 71.0 204.0 213.0 0 0 15
 sheet sasuke grabbed 4 154 215 71.0 213.0 213.0 1 -1 15
 sheet sasuke helpless 8 135 192 76.0 235.0 213.0 1 -1 15
 sheet sasuke hold 4 154 209 71.0 207.0 213.0 1 -1 15
-sheet sasuke hurt 4 173 233 82.0 231.0 213.0 0 -1 15
+sheet sasuke hurt 4 171 233 82.0 231.0 213.0 0 -1 15
 sheet sasuke idle 8 151 210 71.0 208.0 213.0 1 -1 15
 sheet sasuke jab 8 218 236 106.0 234.0 213.0 0 7 15
 sheet sasuke jab2 8 204 243 84.0 238.0 213.0 0 2 15
@@ -368,7 +380,7 @@ sheet sasuke land 4 180 206 83.0 204.0 213.0 0 -1 15
 sheet sasuke ledge 4 88 224 54.0 160.8 213.0 1 -1 15
 sheet sasuke ledgeattack 8 211 226 88.0 224.0 213.0 0 3 15
 sheet sasuke nair 12 221 229 107.0 235.0 213.0 0 6 15
-sheet sasuke nspecial 12 171 216 71.0 214.0 213.0 0 0 15
+sheet sasuke nspecial 12 171 216 71.0 214.0 213.0 0 4 15
 sheet sasuke pummel 4 161 223 71.0 221.0 213.0 0 0 15
 sheet sasuke roll 8 160 206 72.0 204.0 213.0 0 -1 15
 sheet sasuke run 8 230 198 111.0 199.0 213.0 1 -1 15
@@ -383,10 +395,10 @@ sheet sasuke uspecial 8 202 246 70.0 244.0 213.0 0 4,5,6,7 15
 sheet sasuke uthrow 8 157 238 74.0 236.0 213.0 0 2 15
 sheet sasuke utilt 8 236 237 114.0 235.0 213.0 0 1 15
 sheet sasuke victory 12 151 235 71.0 232.0 213.0 0 -1 15
-sheet sasuke w0_jab 8 224 244 92.0 242.0 213.0 0 5 15
+sheet sasuke w0_jab 8 219 242 91.0 240.0 213.0 0 5 15
 sheet sasuke w0_nspecial 12 224 246 92.0 244.0 213.0 0 5 15
 sheet sasuke w0_ultimate 28 210 243 78.0 241.0 213.0 0 6 15
-sheet sasuke w1_jab 8 234 236 112.0 234.0 213.0 0 0 15
+sheet sasuke w1_jab 8 234 236 112.0 234.0 213.0 0 3 15
 sheet sasuke w1_nspecial 12 151 207 71.0 205.0 213.0 0 5 15
 sheet sasuke w1_ultimate 28 191 237 84.0 235.0 213.0 0 12 15
 sheet sasuke walk 8 151 216 71.0 214.0 213.0 1 -1 15
@@ -396,7 +408,7 @@ sheet sukuna w0_jab 8 139 225 37.0 221.0 130.0 0 0 15
 sheet sukuna w1_jab 8 224 224 112.0 221.0 130.0 0 1 15
 sheet ulquiorra w0_jab 8 209 226 90.0 219.0 130.0 0 7 15
 sheet ulquiorra w1_jab 8 238 141 126.0 134.0 130.0 0 2 15
-sheet yuno airdodge 8 228 203 99.0 244.0 185.0 0 -1 15
+sheet yuno airdodge 8 165 177 84.0 228.0 185.0 0 -1 15
 sheet yuno airjump 8 210 227 104.0 230.0 185.0 0 -1 15
 sheet yuno bair 8 191 189 95.0 228.0 185.0 0 1 15
 sheet yuno bthrow 12 172 218 87.0 217.0 185.0 0 3 15
@@ -407,7 +419,7 @@ sheet yuno dashattack 12 246 251 120.0 239.0 185.0 0 2 15
 sheet yuno dizzy 8 159 205 81.0 204.0 185.0 1 -1 15
 sheet yuno dsmash 12 235 238 116.0 236.0 185.0 0 4 15
 sheet yuno dspecial 12 209 244 103.0 243.0 185.0 0 9 15
-sheet yuno dthrow 12 229 246 103.0 239.0 185.0 0 4 15
+sheet yuno dthrow 12 223 242 103.0 235.0 185.0 0 4 15
 sheet yuno dtilt 8 220 205 109.0 204.0 185.0 0 3 15
 sheet yuno fair 12 235 227 116.0 230.0 185.0 0 2 15
 sheet yuno fall 8 179 224 93.0 228.0 185.0 1 -1 15
@@ -420,7 +432,7 @@ sheet yuno grab 8 221 226 108.0 225.0 185.0 0 2 15
 sheet yuno grabbed 4 159 205 78.0 204.0 185.0 1 -1 15
 sheet yuno helpless 8 174 226 93.0 228.0 185.0 1 -1 15
 sheet yuno hold 4 140 205 62.0 204.0 185.0 1 -1 15
-sheet yuno hurt 4 239 245 110.0 244.0 185.0 0 -1 15
+sheet yuno hurt 4 229 244 110.0 243.0 185.0 0 -1 15
 sheet yuno idle 8 156 205 78.0 204.0 185.0 1 -1 15
 sheet yuno jab 8 230 229 113.0 228.0 185.0 0 4 15
 sheet yuno jab2 8 220 207 106.0 206.0 185.0 0 4 15
@@ -432,7 +444,7 @@ sheet yuno ledge 4 101 236 49.0 139.8 185.0 1 -1 15
 sheet yuno ledgeattack 8 231 205 109.0 204.0 185.0 0 2 15
 sheet yuno nair 12 178 225 89.0 228.0 185.0 0 8 15
 sheet yuno nspecial 12 236 220 115.0 219.0 185.0 0 7 15
-sheet yuno pummel 4 158 205 80.0 204.0 185.0 0 0 15
+sheet yuno pummel 4 158 205 80.0 204.0 185.0 0 1 15
 sheet yuno roll 8 160 205 80.0 204.0 185.0 0 -1 15
 sheet yuno run 8 187 201 94.0 209.0 185.0 1 -1 15
 sheet yuno shield 4 151 205 73.0 204.0 185.0 0 -1 15
@@ -440,11 +452,11 @@ sheet yuno spotdodge 8 246 246 121.0 238.0 185.0 0 -1 15
 sheet yuno sspecial 12 245 231 121.0 230.0 185.0 0 6 15
 sheet yuno tumble 8 249 250 120.0 242.0 185.0 1 -1 15
 sheet yuno uair 8 188 226 93.0 229.0 185.0 0 1 15
-sheet yuno ultimate 28 247 256 127.0 244.0 185.0 0 21 15
+sheet yuno ultimate 28 237 256 117.0 244.0 185.0 0 21 15
 sheet yuno usmash 12 211 235 108.0 233.0 185.0 0 6 15
 sheet yuno uspecial 12 173 249 88.0 244.0 185.0 0 5 15
 sheet yuno uthrow 8 170 230 83.0 229.0 185.0 0 1 15
-sheet yuno utilt 8 174 236 88.0 235.0 185.0 0 2 15
+sheet yuno utilt 8 172 224 88.0 223.0 185.0 0 2 15
 sheet yuno victory 12 157 205 78.0 204.0 185.0 0 -1 15
 sheet yuno w0_jab 8 221 218 109.0 216.0 130.0 0 2 15
 sheet yuno w0_nspecial 12 240 245 115.0 238.0 185.0 0 5 15

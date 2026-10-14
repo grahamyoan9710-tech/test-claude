@@ -2547,9 +2547,8 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
   formLook(L, pose.form);
   Body b{P, X, d, pose, R, B, L, H, scale, time, d.hero, palette & 1};
   if (art::rigged(d.hero) && pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)) {
-    // A generated animation frame: it draws the turns and lifts itself. What the fighter carries and summons around
-    // it (Yuno's grimoire, Starrk's wolves and Lilynette) is drawn beside it.
-    b.grimoire();
+    // A generated animation frame: it draws the turns and lifts itself, and Yuno's grimoire floating by him. What
+    // the fighter summons around it (Starrk's wolves and Lilynette) is drawn beside it.
     if (d.hero == Hero::Starrk) {
       b.wolfPack(false);
       b.lilynette();
