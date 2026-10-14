@@ -7,3 +7,4 @@ dist/
 !assets/fighters/*.png
 !assets/sprites/*.png
 !art/fighters/*.png
+!tools/pixellab/vfx/ult/*.png

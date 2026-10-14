@@ -36,8 +36,33 @@ conflits, chacune a ses propres fichiers.
 - Commits petits et fréquents.
 - Pour toucher aux fichiers de l'autre session, l'écrire d'abord dans le journal ci-dessous.
 - Conflit sur `sheets.txt` : garder les deux lignes. Le fichier est trié, une ligne par clip ou effet.
+- **`fitall.sh` n'est lancé que par la session A**, après ses imports : il réécrit `roster_hitfit.inc` et les
+  impacts de `sheets.txt`, et deux passes en même temps se contredisent. La session B qui a besoin d'un recalage le
+  demande dans le journal.
+- Noter dans le journal ce qui **commence** (« je lance… », « je modifie… »), pas seulement ce qui est fini.
+
+### Verrous
+Avant une tâche longue sur un fichier partagé : `git pull`, vérifier que la ligne est libre, mettre son nom et
+l'heure, commiter et pousser **avant** de commencer. Remettre « libre » à la fin, dans le même commit que le travail.
+Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le notant dans le journal.
+
+| Ressource | Détenteur | Depuis |
+|---|---|---|
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Sortie v10.0 (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 14/10 21 h 20 UTC, session B : règles du travail à deux ajoutées (section « Verrous », `fitall.sh` réservé à la
+  session A, noter ce qui commence). `.gitignore` laisse passer `tools/pixellab/vfx/ult/*.png` : les planches des
+  rayons sont maintenant dans git.
+  - **Proposition pour la session A** (son dossier, et son `sync_repo.sh` écraserait un changement fait ici) : lire
+    le dossier de travail dans une variable au lieu du chemin absolu, par exemple
+    `S=${PIXELLAB_WS:-$(git -C "$(dirname "$0")" rev-parse --show-toplevel)/tools/pixellab}` dans les `.sh` et
+    `os.environ.get("PIXELLAB_WS", ...)` dans les `.py`. Le faire d'abord dans son scratchpad, puis synchroniser :
+    plus de `sed` ni de lien sur une autre machine.
 - 14/10 21 h 10 UTC, session B : équilibrage. Kakashi : puissance 1,26 → 1,08 et Raikiri 14 → 12 (72 % → 54 %).
   Grimmjow : puissance 1,08 → 1,20 (33 % → 44 %). Seuls les dégâts changent, pas l'échelle S : le recalage des
   hitboxes reste valable. Le test balance bouge de ±5 points d'un réglage à l'autre (96 matchs par perso). Encore

@@ -16,7 +16,9 @@ Avant toute chose, lire **REPRISE_PROJET.md** : il donne l'état exact du travai
 - Commits : messages en anglais, clairs. Ne rien fusionner dans `main` sans demande explicite.
 - Deux sessions travaillent en même temps sur `claude/sleepy-goodall-s399kv` : respecter la répartition de
   REPRISE_PROJET.md (section 0). Faire `git pull` (fusion, jamais de rebase ni de `--force`) avant de commencer et
-  avant chaque push, committer et pousser souvent, et noter dans le journal de REPRISE_PROJET.md ce qui a été fait.
+  avant chaque push, committer et pousser souvent, et noter dans le journal de REPRISE_PROJET.md ce qui commence et
+  ce qui a été fait. Prendre le verrou de la section « Verrous » avant une tâche longue sur un fichier partagé.
+  `fitall.sh` n'est lancé que par la session A.
 - Ne pas annoncer qu'un test ou une compilation passe sans l'avoir lancé.
 
 ## Compiler et tester
