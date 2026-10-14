@@ -38,6 +38,9 @@ conflits, chacune a ses propres fichiers.
 - Conflit sur `sheets.txt` : garder les deux lignes. Le fichier est trié, une ligne par clip ou effet.
 
 ### Journal (le plus récent en haut)
+- 14/10 20 h 50 UTC, session B : **lance `fitall.sh`** à la demande du propriétaire. Il réécrit
+  `src/core/roster_hitfit.inc` et la colonne impact des lignes `sheet` de `sheets.txt` (fichiers de la session A).
+  Session A : faire `git pull` avant ton prochain `fitall.sh` ou ton prochain import.
 - 14/10 20 h 45 UTC, session B : rayons d'ultimes du groupe e importés (`gran_rey_cero`, `cero_oscuras`,
   `vasto_cero`, `light_dragon`, `demon_dragon`, chacun avec son `_head`). Leurs PNG n'étaient pas dans git
   (`*.png` ignoré dans `tools/`) : récupérés en réexportant les effets enregistrés (vfx_workbench, gratuit, mêmes
