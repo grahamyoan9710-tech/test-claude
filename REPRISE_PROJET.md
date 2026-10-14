@@ -2,6 +2,45 @@
 
 Ce document dit où en est le travail et comment le reprendre sans rien refaire. Lire aussi **CLAUDE.md**.
 
+## 0. Travail à deux : qui fait quoi
+Deux sessions Claude Code travaillent en même temps sur la branche `claude/sleepy-goodall-s399kv`. Pour éviter les
+conflits, chacune a ses propres fichiers.
+
+**Session A**, celle du propriétaire du compte PixelLab. Elle seule a les images brutes générées et les jobs.
+- Tout ce qui touche aux **clips des combattants** :
+  - génération PixelLab et validation des bases ;
+  - import et relecture des clips ;
+  - corrections images par image, y compris Ulquiorra et Byakuya ;
+  - régénérations.
+- Fichiers concernés :
+  - `assets/sprites/<perso>_<clip>.png` ;
+  - les lignes `sheet` de `assets/sprites/sheets.txt` ;
+  - tout `tools/pixellab/` ;
+  - `src/core/roster_hitfit.inc`, car elle relance `fitall.sh` après ses imports.
+
+**Session B**, l'ami.
+- Les **effets et le code du jeu** :
+  - import des rayons d'ultimes (section 4, point 4) ;
+  - création de `wyvern_fire` avec vfx_workbench (gratuit) ;
+  - vérification des ultimes en jeu ;
+  - **équilibrage** (Kakashi 72 %) ;
+  - IA, menus, README, préparation de la v10.0.
+- Fichiers concernés :
+  - `assets/sprites/fx_*.png` et les lignes `fx` de `sheets.txt` ;
+  - `src/` (sauf `roster_hitfit.inc`) ;
+  - `README.md`.
+
+**Règles communes**
+- Avant de commencer et avant chaque push : `git pull origin claude/sleepy-goodall-s399kv`, en fusion simple.
+  Jamais de `rebase`, jamais de `push --force`.
+- Commits petits et fréquents.
+- Pour toucher aux fichiers de l'autre session, l'écrire d'abord dans le journal ci-dessous.
+- Conflit sur `sheets.txt` : garder les deux lignes. Le fichier est trié, une ligne par clip ou effet.
+
+### Journal (le plus récent en haut)
+- 14/10 19 h 30 UTC, session A : génération PixelLab relancée sur le compte du propriétaire (~3 560 générations
+  restantes). Les régénérations Naruto/Sasuke/Kakashi sont en cours. Ce document reste à jour à chaque push.
+
 - Branche de travail : `claude/sleepy-goodall-s399kv`. Une copie identique est poussée sur `reprise-claude`.
 - PR ouverte : grahamyoan9710-tech/test-claude#1, base `claude/admiring-lamport-jijwx9`.
 - Version affichée dans le jeu : **v9.0**. La prochaine sortie prévue est la **v10.0**, pas encore numérotée.

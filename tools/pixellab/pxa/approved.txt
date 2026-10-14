@@ -74,3 +74,4 @@ sukuna/jump
 sukuna/runstart
 sukuna/knockdown
 sukuna/holdstart
+sukuna/ledgegrab
