@@ -66,5 +66,12 @@
   "helpless": "falls helplessly, exhausted: both arms hang limp and loose straight up above his head, head drooping, eyes half closed, legs dangling loosely below him, the cape fluttering upward, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only Yuno is drawn.",
   "spotdodge": "spot dodge: quickly ducks down low on the spot, bending his knees and leaning his head and torso back so a blow passes over him, then straightens up into the stance, the green grimoire floating by his hand. Only Yuno is drawn: no slash, no attack, no projectile, no fire, no effect.",
   "getupattack": "lying on his back on the ground, spins on the floor and sweeps one leg in a wide circle, kicking low in front of him and then behind him, then springs up into the fighting stance, the green grimoire floating by his hand. Only Yuno is drawn."
+ },
+ "gojo": {
+  "bair": "backward kick in mid-air: keeping his body and head turned to the right, he thrusts one leg straight back behind him to the left at full extension, then tucks back into the mid-air pose. Only Gojo is drawn: no energy, no effect.",
+  "bthrow": "back throw: holding the invisible opponent in front of him with one hand, he spins around to the left and hurls it away behind him with a big arm swing, his throwing arm ending stretched out behind him, then turns back to face right in his relaxed stance. The opponent is invisible, there is no other person in the frame. Only Gojo is drawn.",
+  "fthrow": "forward throw: holding the invisible opponent at arm's length with one hand, he pulls it back to his chest, then shoves it hard straight forward with his open palm at full arm extension, leaning his whole body forward onto the front leg, then returns to his relaxed stance. The opponent is invisible, there is no other person in the frame. Only Gojo is drawn.",
+  "dashattack": "dash attack: runs in and drives a flying kick straight forward to the right at full leg extension, his body leaning back, then lands and returns to his relaxed stance, his black uniform keeping exactly the colours of the first frame. Only Gojo is drawn: no energy, no aura, no streaks, no effect.",
+  "usmash": "rising palm strike: crouches, then springs up on his toes and thrusts one open palm straight up above his head at full arm extension, holds it for an instant, then lands back in his relaxed stance, his black uniform keeping exactly the colours of the first frame. Only Gojo is drawn: no energy, no aura, no effect."
  }
 }
