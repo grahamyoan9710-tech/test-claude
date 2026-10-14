@@ -53,6 +53,39 @@ def with_replaced(d, replace, extra):
     return out
 
 
+def erase(d, spec, extra):
+    """Erases, in the listed frames (sheet numbering), the effect blobs of one colour family drawn over the character:
+    spec = {"frames": [...], "hue": "blue|yellow|red|warm|purple|all", "min": 40} (the logic of tools/fxclean.py:
+    connected blobs of that colour, with the near-white pixels touching them)."""
+    sys.path.insert(0, os.path.join(os.path.dirname(S), "tools"))
+    from greyfix import label
+    idx = [int(n[2:-4]) for n in frames_of(d)]
+    if extra[:1] == ["--only"]:
+        lo, hi = (int(v) for v in extra[1].split("-"))
+        idx = [i for i in idx if lo <= i <= hi]
+    else:
+        idx = [i for i in idx if i > 0] or idx
+    for k in spec["frames"]:
+        p = os.path.join(d, f"f_{idx[k]:02d}.png")
+        a = np.asarray(Image.open(p).convert("RGBA")).copy()
+        rgb = a[..., :3].astype(int); op = a[..., 3] > 0
+        yellow = op & (rgb[..., 0] > 190) & (rgb[..., 1] > 140) & (rgb[..., 2] < rgb[..., 1] - 60)
+        red = op & (rgb[..., 0] > 150) & (rgb[..., 0] > rgb[..., 1] + 70) & (rgb[..., 2] < 100)
+        bluish = op & (rgb[..., 2] > rgb[..., 0] + 50) & (rgb[..., 2] > 120)
+        purple = op & (rgb[..., 2] > 150) & (rgb[..., 0] > 110) & (rgb[..., 1] < rgb[..., 0] - 40)
+        col = {"yellow": yellow, "red": red, "warm": yellow | red, "blue": bluish, "purple": purple,
+               "all": bluish | yellow | red | purple}[spec.get("hue", "all")]
+        fx = col | (op & (rgb.min(-1) > 215))
+        lab, n = label(fx)
+        gone = np.zeros_like(fx)
+        for i in range(1, n + 1):
+            m = lab == i
+            if m.sum() >= spec.get("min", 40) and (col & m).sum() >= 0.25 * m.sum():
+                gone |= m
+        a[gone] = 0
+        Image.fromarray(a).save(p)
+
+
 def degrey(d, frames, extra):
     """Erases the dithered grey slabs (tools/greyscan.py) of the listed frames (sheet numbering); frames is a list,
     or {"frames": [...], "tol": 30} to also catch taupe smoke."""
@@ -167,8 +200,10 @@ def main():
         if fx.get("impact"):
             args = [a for i, a in enumerate(args) if a != "--impact" and (i == 0 or args[i - 1] != "--impact")]
             args += ["--impact", fx["impact"]]
-        if fx.get("replace") or fx.get("trim_right") or fx.get("degrey"):  # fixes of the review, in a copy (sheet numbering)
+        if fx.get("replace") or fx.get("trim_right") or fx.get("degrey") or fx.get("erase"):  # review fixes, in a copy
             args[4] = with_replaced(d, fx.get("replace", {}), extra)
+            if fx.get("erase"):
+                erase(args[4], fx["erase"], extra)
             if fx.get("trim_right"):
                 trim_right(args[4], fx["trim_right"])
             if fx.get("degrey"):

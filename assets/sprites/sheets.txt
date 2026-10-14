@@ -112,7 +112,7 @@ sheet byakuya bthrow 12 223 199 87.0 198.0 180.0 0 6 15
 sheet byakuya climb 8 177 227 51.0 226.0 180.0 0 -1 15 88.0
 sheet byakuya crouch 4 173 168 75.0 166.0 180.0 0 -1 15
 sheet byakuya dair 12 140 226 78.0 230.0 180.0 0 0 15
-sheet byakuya dashattack 12 245 181 103.0 180.0 180.0 0 0 15
+sheet byakuya dashattack 12 180 181 52.0 180.0 180.0 0 3 15
 sheet byakuya dizzy 8 170 181 44.0 180.0 180.0 1 -1 15
 sheet byakuya dsmash 12 229 234 91.0 233.0 180.0 0 0 15
 sheet byakuya dspecial 12 208 254 58.0 242.0 180.0 0 8 15
@@ -145,7 +145,7 @@ sheet byakuya roll 8 194 185 68.0 180.0 180.0 0 -1 15
 sheet byakuya run 8 175 156 77.0 155.0 180.0 1 -1 15
 sheet byakuya shield 4 141 231 76.0 230.0 180.0 0 -1 15
 sheet byakuya spotdodge 8 226 234 85.0 233.0 180.0 0 -1 15
-sheet byakuya sspecial 12 232 244 88.0 235.0 180.0 0 0 15
+sheet byakuya sspecial 12 232 229 88.0 228.0 180.0 0 0 15
 sheet byakuya tumble 8 198 229 79.0 232.0 180.0 1 -1 15
 sheet byakuya uair 12 208 225 78.0 230.0 180.0 0 11 15
 sheet byakuya ultimate 28 256 250 103.0 241.0 180.0 0 6 15
@@ -155,11 +155,11 @@ sheet byakuya uthrow 8 167 235 41.0 234.0 180.0 0 1 15
 sheet byakuya utilt 8 211 233 81.0 232.0 180.0 0 1 15
 sheet byakuya victory 12 201 229 75.0 228.0 180.0 0 -1 15
 sheet byakuya w0_jab 8 154 226 41.0 221.0 130.0 0 2 15
-sheet byakuya w0_nspecial 12 220 239 75.0 237.0 180.0 0 5 15
-sheet byakuya w0_ultimate 28 256 256 103.0 244.0 180.0 0 15 15
+sheet byakuya w0_nspecial 12 219 235 75.0 233.0 180.0 0 5 15
+sheet byakuya w0_ultimate 28 255 244 102.0 238.0 180.0 0 15 15
 sheet byakuya w1_dspecial 16 231 237 91.0 234.0 180.0 0 12 15
 sheet byakuya w1_jab 8 241 247 120.0 233.0 130.0 0 2 15
-sheet byakuya w1_ultimate 28 256 244 103.0 237.0 180.0 0 22 15
+sheet byakuya w1_ultimate 28 255 240 103.0 237.0 180.0 0 22 15
 sheet byakuya walk 8 165 184 39.0 183.0 180.0 1 -1 15
 sheet ganondorf w0_jab 8 225 232 109.0 224.0 130.0 0 2 15
 sheet ganondorf w1_jab 8 236 223 117.0 221.0 130.0 0 1 15

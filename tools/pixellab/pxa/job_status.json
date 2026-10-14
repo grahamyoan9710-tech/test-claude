@@ -414,7 +414,7 @@
    "job_id": "6d0e3c7e-1360-4f2c-bb6e-558f0c1884fe",
    "status": "done"
   },
-  "crouch": {
+  "crouch.qa1": {
    "job_id": "dc252850-b8ea-4f72-96c3-06dc570f36f5",
    "status": "done"
   },
@@ -430,7 +430,7 @@
    "job_id": "341e8d4a-afb9-43f7-bd83-952ebe9948ca",
    "status": "done"
   },
-  "dizzy": {
+  "dizzy.qa1": {
    "job_id": "0ff74534-7a99-427e-8f26-69cee91da891",
    "status": "done"
   },
@@ -494,7 +494,7 @@
    "job_id": "53a4cb3e-0ef4-4d30-934d-f8a892db48d4",
    "status": "done"
   },
-  "helpless": {
+  "helpless.qa1": {
    "job_id": "1fd69e19-dcf7-44be-bf5b-4801c01accad",
    "status": "done"
   },
@@ -610,7 +610,7 @@
    "job_id": "b767d5e5-007e-4677-a9f6-ee0286e1bae7",
    "status": "done"
   },
-  "spotdodge": {
+  "spotdodge.qa1": {
    "job_id": "82eae7b2-5cf4-420b-a7aa-082bb80d7c7f",
    "status": "done"
   },
@@ -3017,8 +3017,8 @@
    "status": "done"
   },
   "hold": {
-   "job_id": null,
-   "status": "submitting"
+   "job_id": "f6ffa51b-f517-4b43-99a6-0419893365ca",
+   "status": "submitted"
   },
   "holdstart": {
    "job_id": "127fda98-0d1a-4e12-aa7f-c0de3746d32c",
@@ -3201,6 +3201,10 @@
   "dsmash": {
    "job_id": "56a37181-b67b-475a-8967-c47bc6c9f37b",
    "status": "submitted"
+  },
+  "dspecial": {
+   "job_id": null,
+   "status": "submitting"
   },
   "dthrow": {
    "job_id": "78895e27-2095-42f6-90ef-ee87c3adc870",
@@ -3392,6 +3396,10 @@
    "job_id": "92e44187-f37e-40a8-8687-c03034629855",
    "status": "done"
   },
+  "crouch": {
+   "job_id": null,
+   "status": "submitting"
+  },
   "crouch.qa1": {
    "job_id": "efd89709-63e5-4e7c-b14e-17ba883ec234",
    "status": "done"
@@ -3400,9 +3408,17 @@
    "job_id": "69c5288f-b4a2-49d4-a029-5af33259b8cd",
    "status": "done"
   },
+  "dashattack": {
+   "job_id": null,
+   "status": "submitting"
+  },
   "dashattack.qa1": {
    "job_id": "16379655-af76-4293-92f7-86cd6013c5dc",
    "status": "done"
+  },
+  "dizzy": {
+   "job_id": null,
+   "status": "submitting"
   },
   "dizzy.qa1": {
    "job_id": "3f885a9b-2f86-49f9-b78a-c9a530a001ab",
@@ -3459,6 +3475,10 @@
   "grabbed": {
    "job_id": "d13f879a-d949-46d2-8bd8-5a8177f1453d",
    "status": "done"
+  },
+  "helpless": {
+   "job_id": null,
+   "status": "submitting"
   },
   "helpless.qa1": {
    "job_id": "a8689a54-04cc-4d38-9a67-c9cbca6e14b5",
