@@ -91,6 +91,7 @@ sheet asta w0_nspecial 12 256 256 78.0 244.0 170.0 0 5 15
 sheet asta w0_ultimate 28 256 256 78.0 244.0 170.0 0 3,4,6,9 15
 sheet asta w1_jab 8 254 224 126.0 221.0 130.0 0 1 15
 sheet asta w1_sspecial 16 250 249 72.0 237.0 170.0 0 5,6,8,10 15
+sheet asta w1_ultimate 28 256 256 78.0 244.0 170.0 0 10 15
 sheet asta walk 8 217 190 55.0 189.0 170.0 1 -1 15
 sheet byakuya w0_jab 8 154 226 41.0 221.0 130.0 0 2 15
 sheet byakuya w1_jab 8 241 247 120.0 233.0 130.0 0 2 15
