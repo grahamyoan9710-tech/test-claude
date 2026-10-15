@@ -87,3 +87,7 @@ kratos/jump
 kratos/knockdown
 kratos/holdstart
 kratos/ledgegrab
+kratos/w0guard
+kratos/w1guard
+hunter/runstart
+hunter/jump
