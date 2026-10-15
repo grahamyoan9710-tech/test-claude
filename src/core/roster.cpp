@@ -1080,7 +1080,7 @@ CharacterDef makeSasuke() {
   c.weapons[1] = weapon("Mangekyō Sharingan", "Amaterasu : des flammes noires sur l'ennemi", WeaponVisual::Mangekyo,
                         F::BlackFlame, 1.25f, 1.1f, 1.0f, 15);
   // Sasuke holds his gaze while the black flames burn (they start at frame 20 and last 70): he stands still and
-  // cannot attack until they die out, and the technique needs five seconds to come back.
+  // cannot attack until they die out, and the technique needs three seconds to come back.
   MoveDef ama = mv("Amaterasu", 96, {});
   ama.projectileFrame = 20;
   ama.projectile = proj({0, 0}, {0, 0}, 0, 70, 30, 2.2f, 8, 6, F::BlackFlame, PV::BlackFlames);
@@ -1090,7 +1090,7 @@ CharacterDef makeSasuke() {
   ama.projectile.rehit = 8;
   ama.projectile.ignoreGround = true;
   ama.channelEnd = 90;
-  ama.cooldown = 300;
+  ama.cooldown = 180;
   ama.allowDrift = false;
   ama.vel = {ve(1, VelMode::Set, 0, 0)};
   ama.pose = PoseHint::HandSign;

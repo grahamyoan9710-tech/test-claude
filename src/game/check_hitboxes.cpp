@@ -316,19 +316,27 @@ int fitHitboxes(const std::string& outPath) {
             const float c0 = coverSeg(hit, H, s0.a, s0.b, h.radius);
             const Vec2 sh{kShoulderX * H, kShoulderY * H};
             // The blade (already drawn in the stance, so not "added"): the drawing far from the shoulder within the
-            // sector the swing sweeps (widened by 30 degrees each side).
-            const float lo = std::min(h.a0, h.a1) - 30.0f - am, hi = std::max(h.a0, h.a1) + 30.0f - am;
-            std::vector<std::pair<float, float>> pts;  // distance from the shoulder, angle from the mid-swing angle
+            // sector the swing sweeps, widened by `wide` degrees each side.
             const float k = H / hit.pxPerH;
-            for (int y = 0; y < hit.h; ++y)
-              for (int x = 0; x < hit.w; ++x) {
-                if (!hit.opaque[size_t(y) * hit.w + x]) continue;
-                const Vec2 v = Vec2{(x - hit.ax) * k, (y - hit.ay) * k + H * 0.5f} - sh;
-                const float l = v.len(), da = std::fmod(rad2deg(std::atan2(-v.y, v.x)) - am + 540.0f, 360.0f) - 180.0f;
-                if (l > kGripDist * H + 0.3f * blade && da >= lo && da <= hi) pts.push_back({l, da});
-              }
-            const float pxArea = (H / hit.pxPerH) * (H / hit.pxPerH);
-            if (pts.size() * pxArea < 0.5f * h.radius * blade * 0.3f) {
+            auto bladeAround = [&](float wide) {
+              const float lo = std::min(h.a0, h.a1) - wide - am, hi = std::max(h.a0, h.a1) + wide - am;
+              std::vector<std::pair<float, float>> pts;  // distance from the shoulder, angle from the mid-swing angle
+              for (int y = 0; y < hit.h; ++y)
+                for (int x = 0; x < hit.w; ++x) {
+                  if (!hit.opaque[size_t(y) * hit.w + x]) continue;
+                  const Vec2 v = Vec2{(x - hit.ax) * k, (y - hit.ay) * k + H * 0.5f} - sh;
+                  const float l = v.len(), da = std::fmod(rad2deg(std::atan2(-v.y, v.x)) - am + 540.0f, 360.0f) - 180.0f;
+                  if (l > kGripDist * H + 0.3f * blade && da >= lo && da <= hi) pts.push_back({l, da});
+                }
+              return pts;
+            };
+            const float pxArea = k * k, enough = 0.5f * h.radius * blade * 0.3f;
+            std::vector<std::pair<float, float>> pts = bladeAround(30.0f);
+            // No blade along the arc: the clip draws it elsewhere. Looked for further around (up to 90 degrees), the
+            // arc is turned onto it below.
+            const bool astray = pts.size() * pxArea < enough;
+            if (astray) pts = bladeAround(90.0f);
+            if (pts.size() * pxArea < enough) {
               report(i, hit.frame, h.offset, h.radius, h.offset, h.radius, c0, c0, "swing, no blade drawn there: kept");
               continue;
             }
@@ -339,24 +347,34 @@ int fitHitboxes(const std::string& outPath) {
               sx += std::cos(deg2rad(pts[k].second));
               sy += std::sin(deg2rad(pts[k].second));
             }
-            const float delta = clampf(rad2deg(std::atan2(sy, sx)), -60.0f, 60.0f);
+            const float turn = astray ? 75.0f : 60.0f;
+            const float delta = clampf(rad2deg(std::atan2(sy, sx)), -turn, turn);
             const float tip = pts[std::min(pts.size() - 1, keep / 10)].first - kGripDist * H;  // grip to the drawn tip
             HitboxDef h1 = h;
             h1.a0 += delta;
             h1.a1 += delta;
             h1.reach1 = clampf(tip / std::max(1.0f, blade), 0.8f * h.reach1, 1.3f * h.reach1);
-            const BladeSeg s1 = swingSegment(h1, swingAngle(h1, float(mid)), H, blade);
-            const float c1 = coverSeg(hit, H, s1.a, s1.b, h.radius);
-            // Kept as written all the same: the clip holds one frame (often the end of the cut) while the swing
-            // sweeps its whole arc, and turning the arc onto that frame made the cuts miss (balance test). The
-            // impact frame (--fit-impacts) is what matches a swing to its clip. Reported only.
-            const bool better = false;
+            // Cover of the drawing over the whole cut: the clip holds this frame while the blade sweeps the arc.
+            auto sweepCover = [&](const HitboxDef& x) {
+              float sum = 0.0f;
+              for (int t = x.start; t < x.end; ++t) {
+                const BladeSeg sg = swingSegment(x, swingAngle(x, float(t)), H, blade);
+                sum += coverSeg(hit, H, sg.a, sg.b, x.radius);
+              }
+              return sum / float(std::max(1, x.end - x.start));
+            };
+            const float w0 = sweepCover(h), w1 = sweepCover(h1);
+            // An arc that sweeps across the drawn blade is kept as written: the clip holds one frame (often the end
+            // of the cut) while the swing sweeps its whole arc, and turning such arcs onto that frame made the cuts
+            // miss (balance test); the impact frame (--fit-impacts) matches them to their clip. Only an arc that
+            // misses the drawn blade altogether is turned onto it, when the sweep then covers it clearly better.
+            const bool better = astray && w1 > w0 + 0.1f;
             char note[96];
             if (better)
-              std::snprintf(note, sizeof note, "swing turned %+.0f deg, reach %.2f", delta, h1.reach1);
+              std::snprintf(note, sizeof note, "swing turned %+.0f deg onto the drawn blade, reach %.2f", delta, h1.reach1);
             else
-              std::snprintf(note, sizeof note, "swing: no better, kept");
-            report(i, hit.frame, h.offset, h.radius, h.offset, h.radius, c0, better ? c1 : c0, note);
+              std::snprintf(note, sizeof note, astray ? "swing off the blade, no better: kept" : "swing: no better, kept");
+            report(i, hit.frame, h.offset, h.radius, h.offset, h.radius, w0, better ? w1 : w0, note);
             if (!better) continue;
             std::fprintf(out, "    {\"%s\", %d, %d, %d, %.2ff, 0, 0, %.1ff, %.1ff, %.1ff, %.3ff},  // %s swing\n", d.name.c_str(),
                          slot, mv, i, h.radius, h.radius, h1.a0, h1.a1, h1.reach1, nm);

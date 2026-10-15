@@ -65,7 +65,7 @@ void Match::step(const std::array<InputState, 4>& inputs) {
     f.in = started() ? inputs[f.port] : InputState{};
     for (int i = 5; i > 0; --i) f.stickHist[i] = f.stickHist[i - 1];
     f.stickHist[0] = f.in.stick;
-    for (int i = 19; i > 0; --i) f.dirHist[i] = f.dirHist[i - 1];
+    for (int i = int(sizeof f.dirHist) - 1; i > 0; --i) f.dirHist[i] = f.dirHist[i - 1];
     {
       const int x = f.in.stick.x > 0.5f ? 1 : f.in.stick.x < -0.5f ? -1 : 0;
       const int y = f.in.stick.y > 0.5f ? 1 : f.in.stick.y < -0.5f ? -1 : 0;

@@ -40,9 +40,11 @@ bool motion(const Fighter& f, std::initializer_list<int> seq, int face) {
   const int* steps = seq.begin();
   const int n = int(seq.size());
   int k = n - 1;
-  for (int i = 0; i < 18 && k >= 0; ++i) {
+  // The whole motion within 26 frames; its last direction held now, or let go at most 3 frames before the button
+  // (a little slack: keyboards and pads alike).
+  for (int i = 0; i < 26 && k >= 0; ++i) {
     if (f.dirHist[i] == mirror(steps[k])) --k;
-    else if (k == n - 1 && i > 1) return false;  // the last step is the stick now
+    else if (k == n - 1 && i > 3) return false;
   }
   return k < 0;
 }

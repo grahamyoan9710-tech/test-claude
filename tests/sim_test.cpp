@@ -267,6 +267,11 @@ static void testCombos() {
         "the quarter circle the other way turns around");
   CHECK(run({{3, key(0, 1)}, {1, key(0, -1)}, {1, key(0, -1, true)}}, &f) == USmash && f.charge > 0,
         "down, up + attack = up smash at full power");
+  CHECK(run({{3, key(0, 1)}, {3, key(1, 1)}, {14, key(1, 0)}, {1, key(1, 0, true)}}, &f) == FSmash && f.charge > 0,
+        "a slow quarter circle (forward held 14 frames) still charges the smash");
+  CHECK(run({{2, key(0, 1)}, {2, key(1, 1)}, {2, key(1, 0)}, {2, key(0, 0)}, {1, key(0, 0, true)}}, &f) == FSmash &&
+            f.charge > 0,
+        "the stick let go 2 frames before the button still charges the smash");
   CHECK(run({{8, key(1, 0)}, {1, key(1, 0, true)}}) == FTilt, "holding forward then attack stays a tilt");
   InputState up = key(0, -1);
   up.tapJump = true;
