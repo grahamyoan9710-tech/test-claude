@@ -55,6 +55,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 13 h 20 UTC, session B : release **v9.2** publiée et vérifiée (workflow réussi en 9 min ; archives Linux et
+  Windows de 46 Mo ; l'archive Linux, retéléchargée par l'API, a la même somme SHA-256 que la release, démarre et
+  affiche v9.2). Le dépôt est **privé** : les liens de téléchargement ne marchent que pour un compte GitHub qui a
+  accès au dépôt.
 - 15/10 13 h 02 UTC, session B : **v9.2** (écran titre, `package_release.sh`, README, `packaging/NOUVEAUTES.md`) ; ce
   push lance sa publication par GitHub Actions. `fitall.sh` : 93 clips sur 325 recalés, 183 hitboxes sur 638 recalées
   ; restent 435 hitboxes sur 1 058 qui frappent surtout là où rien n'est dessiné (même proportion qu'avant, surtout
