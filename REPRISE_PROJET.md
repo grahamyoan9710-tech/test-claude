@@ -52,9 +52,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (Starrk, Sukuna, Ganondorf, Link, Kratos, Hunter) | 15/10 08 h 45 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session B (v9.2) | 15/10 12 h 18 UTC |
 
 ### Journal (le plus récent en haut)
+- 15/10 12 h 18 UTC, session B : tous les clips des six persos sont importés et relus (compilation, tests et
+  ultimes de Hunter et Ganondorf en démo : OK). Je lance `fitall.sh` (verrou déjà pris), puis l'équilibrage, la
+  recherche de bugs et la **v9.2** (verrou « Version et paquets » pris).
 - 15/10 12 h 05 UTC, session B : Hunter importé (54 clips) et relu. Corrigés dans `qa_fixes.json` : l'esquive sur
   place (traînées de feu et explosions inventées), le dégât (étincelle dessinée), le saut, le lancer arrière, la
   bombe-tonneau (le tonneau du clip disparaît quand le jeu lance le sien), les fumées grises (`fair`, `usmash`,
