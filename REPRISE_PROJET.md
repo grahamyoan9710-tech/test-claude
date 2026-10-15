@@ -48,13 +48,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (revue des hitboxes) | 15/10 16 h 20 UTC |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | session B (Amaterasu, commandes, hitboxes) | 15/10 16 h 20 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 16 h 20 UTC, session B, demande du propriétaire : délai de l'Amaterasu à 3 s ; un peu plus de temps pour les
+  commandes des smash chargés (quart de cercle, bas-haut) ; revue des hitboxes. Je modifie `src/core/` (roster,
+  détection des commandes), `src/game/check_hitboxes.cpp` (le recalage des coups d'épée dont l'arc passe où aucune
+  lame n'est dessinée) et je relance `fitall.sh` : verrous « Équilibrage » et `fitall.sh` pris.
 - 15/10 15 h 08 UTC, session B : release **v9.3** publiée et vérifiée (workflow réussi ; l'archive Linux,
   retéléchargée par l'API, a la même somme SHA-256 que la release, démarre et affiche v9.3).
 - 15/10 14 h 57 UTC, session B : **v9.3**, ce push lance sa publication. Fait : délai entre deux utilisations
