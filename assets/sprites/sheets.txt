@@ -340,7 +340,7 @@ sheet grimmjow w0_sspecial 12 245 244 111.5 238.0 185.0 0 3 15
 sheet grimmjow w0_ultimate 28 256 256 119.5 244.0 185.0 0 21 15
 sheet grimmjow w1_jab 8 233 221 116.0 213.0 130.0 0 2 15
 sheet grimmjow walk 8 135 159 74.5 158.0 185.0 1 -1 15
-sheet hunter airdodge 8 212 238 69.0 233.0 165.0 0 -1 15
+sheet hunter airdodge 8 222 230 59.0 229.0 165.0 0 -1 15
 sheet hunter airjump 8 252 256 86.0 245.0 165.0 0 -1 15
 sheet hunter bair 12 219 225 63.0 229.0 165.0 0 5 15
 sheet hunter bthrow 12 209 238 63.0 236.0 165.0 0 5 15
@@ -351,7 +351,7 @@ sheet hunter dashattack 12 234 239 75.0 238.0 165.0 0 2 15
 sheet hunter dizzy 8 176 226 43.0 225.0 165.0 1 -1 15
 sheet hunter dsmash 12 245 253 79.0 245.0 165.0 0 0 15
 sheet hunter dspecial 12 189 224 42.0 223.0 165.0 0 7 15
-sheet hunter dthrow 12 212 235 45.0 234.0 165.0 0 0 15
+sheet hunter dthrow 12 195 235 43.0 233.0 165.0 0 1 15
 sheet hunter dtilt 8 217 236 60.0 227.0 165.0 0 5 15
 sheet hunter fair 12 228 226 59.0 229.0 165.0 0 9 15
 sheet hunter fall 8 202 223 59.0 229.0 165.0 1 -1 15

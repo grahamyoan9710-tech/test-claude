@@ -55,7 +55,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
-- 15/10 12 h 40 UTC, session B : Hunter importé (54 clips) et relu. Corrigés dans `qa_fixes.json` : l'esquive sur
+- 15/10 12 h 05 UTC, session B : Hunter importé (54 clips) et relu. Corrigés dans `qa_fixes.json` : l'esquive sur
   place (traînées de feu et explosions inventées), le dégât (étincelle dessinée), le saut, le lancer arrière, la
   bombe-tonneau (le tonneau du clip disparaît quand le jeu lance le sien), les fumées grises (`fair`, `usmash`,
   `nspecial`, `ultimate`), la Décharge de la Charge Blade et le tir de la lance-canon (leurs explosions sont des

@@ -234,8 +234,9 @@ def main():
             args += ["--impact", fx["impact"]]
         if any(fx.get(k) for k in ("replace", "trim_right", "degrey", "erase", "specks")):  # review fixes, in a copy
             args[4] = with_replaced(d, fx.get("replace", {}), extra)
-            if fx.get("erase"):
-                erase(args[4], fx["erase"], extra)
+            if fx.get("erase"):  # one spec, or a list of them (several colour families)
+                for spec in fx["erase"] if isinstance(fx["erase"], list) else [fx["erase"]]:
+                    erase(args[4], spec, extra)
             if fx.get("trim_right"):
                 trim_right(args[4], fx["trim_right"])
             if fx.get("degrey"):
