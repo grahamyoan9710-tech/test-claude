@@ -374,13 +374,21 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 ## Jouer sans compiler
 
-Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
+**Télécharger la dernière version** (toutes les versions sont sur la page
+[Releases](https://github.com/grahamyoan9710-tech/test-claude/releases)) :
 
-- **Linux 64 bits** (`SuperClashBros-9.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
-  puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-9.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
-  `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
-  complémentaires » puis « Exécuter quand même »).
+- **Linux 64 bits** :
+  [SuperClashBros-linux-x64.tar.gz](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/SuperClashBros-linux-x64.tar.gz)
+  (Ubuntu 24.04 ou plus récent) : décompresser, puis dans un terminal ouvert dans le dossier : `./super_clash`.
+- **Windows 64 bits** :
+  [SuperClashBros-windows-x64.zip](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/SuperClashBros-windows-x64.zip)
+  : décompresser, puis double-cliquer sur `super_clash.exe` (si Windows affiche « Windows a protégé votre
+  ordinateur » : « Informations complémentaires » puis « Exécuter quand même »).
+
+Une version se publie en poussant un tag : `git tag v9.1 && git push origin v9.1`. GitHub Actions
+(`.github/workflows/release.yml`) lance les tests, fabrique les deux archives avec `scripts/package_release.sh` et
+les met dans la release, avec les notes de `packaging/NOUVEAUTES.md`. Le même script fabrique les archives en local,
+dans `dist/` (`SuperClashBros-9.1-linux-x64.tar.gz` et `SuperClashBros-9.1-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64
