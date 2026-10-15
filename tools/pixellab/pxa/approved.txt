@@ -94,3 +94,4 @@ hunter/jump
 hunter/knockdown
 hunter/ledgegrab
 hunter/holdstart
+ganondorf/w0guard
