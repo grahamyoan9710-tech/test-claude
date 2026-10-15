@@ -79,3 +79,10 @@ starrk/holdstart
 link/runstart
 link/jump
 link/holdstart
+link/knockdown
+link/ledgegrab
+link/w1guard
+kratos/runstart
+kratos/jump
+kratos/knockdown
+kratos/holdstart
