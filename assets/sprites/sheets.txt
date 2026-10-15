@@ -799,7 +799,7 @@ sheet starrk bthrow 12 180 184 100.0 183.0 185.0 0 3 15
 sheet starrk climb 8 111 236 46.0 235.0 185.0 0 -1 15 94.2
 sheet starrk crouch 4 110 141 54.0 140.0 185.0 0 -1 15
 sheet starrk dair 12 177 237 80.0 235.0 185.0 0 3 15
-sheet starrk dashattack 12 227 235 93.0 233.0 185.0 0 1 15
+sheet starrk dashattack 12 216 233 93.0 231.0 185.0 0 1 15
 sheet starrk dizzy 8 101 186 36.0 185.0 185.0 1 -1 15
 sheet starrk dsmash 12 216 181 100.0 180.0 185.0 0 3,6 15
 sheet starrk dspecial 16 175 183 44.0 182.0 185.0 0 6 15

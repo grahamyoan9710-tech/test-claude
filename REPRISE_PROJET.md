@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | session B (v9.2) | 15/10 12 h 18 UTC |
 
 ### Journal (le plus récent en haut)
+- 15/10 12 h 39 UTC, session B : **bug trouvé et corrigé** pendant la recherche de bugs. L'op `erase` de
+  `import_all.py` efface aussi les pixels presque blancs qui touchent l'effet, donc un vêtement blanc collé à l'effet
+  : le manteau de Starrk (`dashattack`) et le haori de Byakuya (`nspecial`, `w0_nspecial`) étaient troués. Starrk est
+  réimporté. Pour Byakuya (ses images brutes sont chez la session A), les images abîmées sont remplacées dans les
+  planches par une image intacte du même clip, et `qa_fixes.json` porte la même règle (`replace`), pour que ton
+  prochain import donne le même résultat. Session A : attention à `erase` sur un perso habillé de blanc.
 - 15/10 12 h 18 UTC, session B : tous les clips des six persos sont importés et relus (compilation, tests et
   ultimes de Hunter et Ganondorf en démo : OK). Je lance `fitall.sh` (verrou déjà pris), puis l'équilibrage, la
   recherche de bugs et la **v9.2** (verrou « Version et paquets » pris).
