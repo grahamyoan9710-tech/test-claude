@@ -51,10 +51,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | session B (Amaterasu, ultimes, recul) | 15/10 14 h 04 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 14 h 04 UTC, session B, demande du propriétaire : l'Amaterasu de Sasuke reçoit un délai entre deux
+  utilisations et Sasuke reste immobile, sans attaquer, pendant la technique ; les ultimes éjectent moins mais font
+  quelques % de dégâts en plus et beaucoup plus de dégâts aux boucliers ; moins de recul à bas pourcentage (éjections
+  trop faciles à 50-60 %). Je modifie `src/core/` (moves, combat, roster) et `tests/sim_test.cpp` ; verrou «
+  Équilibrage » pris. Ensuite la v9.3.
 - 15/10 13 h 20 UTC, session B : release **v9.2** publiée et vérifiée (workflow réussi en 9 min ; archives Linux et
   Windows de 46 Mo ; l'archive Linux, retéléchargée par l'API, a la même somme SHA-256 que la release, démarre et
   affiche v9.2). Le dépôt est **privé** : les liens de téléchargement ne marchent que pour un compte GitHub qui a
