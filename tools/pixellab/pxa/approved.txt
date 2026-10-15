@@ -76,3 +76,6 @@ sukuna/knockdown
 sukuna/holdstart
 sukuna/ledgegrab
 starrk/holdstart
+link/runstart
+link/jump
+link/holdstart
