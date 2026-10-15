@@ -272,12 +272,12 @@ Touches et boutons par défaut (modifiables dans **Paramètres → Commandes**) 
 | Bouclier / esquive | `L` | `Maj droite` ou `Pavé 3` | `ZL` / `ZR` (`LT` / `RT`, `L2` / `R2`) |
 | Saisie | `I` (ou bouclier + attaque) | `Ctrl droit` ou `Pavé 5` | `L` / `R` (`LB` / `RB`, `L1` / `R1`) |
 | Attaque smash | `O` (+ direction) | `;` ou `Pavé 4` | Stick droit |
-| **Ultime** (barre pleine) | `U`, ou Spéciale | `'` ou `Pavé 6`, ou Spéciale | Spéciale (`B` sur Switch), ou `−` / `Back` |
+| **Ultime** (barre pleine) | `U` seulement | `'` ou `Pavé 6` | `−` / `Back` |
 | Pause | `Échap` / `P` | `Échap` / `P` | `Start` (`Options`, `+`) |
 
 La manette reprend **les touches de Super Smash Bros. Ultimate**, à la même place : attaque à droite, spéciale en
 bas, saut en haut et à gauche, saisie sur les gâchettes hautes, bouclier sur les gâchettes basses, smash au stick
-droit. Comme le Final Smash, **l'ultime part avec la spéciale** (sans direction) quand la barre est pleine.
+droit. **L'ultime n'a que sa touche** (`U` au clavier) : la spéciale reste la spéciale, même barre pleine.
 
 **Haut saute, et attaque vers le haut** (comme Smash Bros., réglage « Saut avec Haut » dans Paramètres > Jeu) :
 pousser le stick vers le haut, ou appuyer sur la touche Haut, fait sauter. Pendant l'élan du saut (les quelques
@@ -307,7 +307,6 @@ cartes et les résultats prennent la couleur de l'équipe. Ça marche aussi en 2
 | Bouclier + Attaque | saisie |
 | Bas, Bas-avant, Avant + Attaque (quart de cercle) | smash avant **à pleine puissance**, sans le charger (l'écran flashe) |
 | Bas, Haut + Attaque | smash haut à pleine puissance |
-| Spéciale avec la barre d'ulti pleine | ultime |
 
 **Paramètres > Commandes** : « Tout réinitialiser » remet d'un coup les touches des deux claviers et les boutons
 de la manette par défaut (« Réinitialiser » ne remet qu'un clavier, ou que la manette).
