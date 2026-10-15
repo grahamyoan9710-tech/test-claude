@@ -48,13 +48,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (après ces imports) | 15/10 08 h 45 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (Starrk, Sukuna, Ganondorf) | 15/10 08 h 45 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 08 h 45 UTC, session B, **à la demande du propriétaire** (la session A n'a rien poussé depuis le 14/10
+  19 h 52) : je récupère les clips déjà générés et payés de Starrk (59), Sukuna (49) et Ganondorf (26) avec leurs
+  `job_id` de `job_status.json` (`pxcli.py wait`, aucune nouvelle génération), je les importe avec `import_all.py`,
+  puis `fitall.sh`. Session A : `git pull` avant de toucher à ces trois persos ou de lancer `fitall.sh`.
 - 15/10 08 h 15 UTC, session B : les versions se publient sur GitHub. `.github/workflows/release.yml` (sur un tag
   `vX.Y`) teste, fabrique les archives Linux et Windows et les met dans la release, avec les notes de
   `packaging/NOUVEAUTES.md`. Liens directs dans le README (« Jouer sans compiler »). `package_release.sh`
