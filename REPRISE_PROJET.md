@@ -48,13 +48,25 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (recalage du kit d'Ichigo) | 15/10 18 h 21 UTC |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (pilote Ichigo : armes, clips coupés) | 15/10 17 h 41 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab d'Ichigo) | 15/10 17 h 41 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (coups d'armes d'Ichigo) | 15/10 17 h 41 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 18 h 21 UTC, session B, pilote Ichigo en cours :
+  - **fait et poussé (48a5a76)** : kits d'armes dans le code (`WeaponDef::kit` : avec l'arme, tous les coups au sol
+    deviennent le combo M1 jab → jab2 → jab3, tous les aériens le M1 aérien `nair`, les spéciales ses 4
+    compétences) ; feuilles d'états d'une arme qui change l'apparence (`w1_idle`, `w1_run`…, `kSheetWState0/1`) ;
+    `MoveDef::castFx` (effet PixelLab joué derrière le combattant, qui le suit) ; effets PixelLab des impacts
+    `hit_slash`/`hit_reiatsu`/`hit_dark`, de la parade `counter_flash` et du Getsuga (`getsuga`, `getsuga_black`)
+    branchés dès qu'ils sont importés. Prompts des kits : `pxa/wkits/ichigo.json` et `WSTATES` dans `clips.py`.
+  - générés (~60 générations) et en partie importés : 49 clips du kit (Shikai : jab2, jab3, nair, 3 compétences ;
+    Bankai : tous les états, prises, M1, compétences). `w0_jab`, `w1_jab`, `w1_sspecial`, `w1_ledge`, `w1_climb` en
+    cours. Le Shunpo de base n'a plus d'image vide, le Cero de base ne dessine plus d'explosion rouge sur Ichigo
+    (le rayon du jeu s'en charge) : `qa_fixes.json`.
+  - je prends le verrou `fitall.sh` (la session A n'a rien poussé depuis le 14/10) pour recaler les coups du kit.
 - 15/10 17 h 41 UTC, session B, **grand chantier validé par le propriétaire** : (1) seule la touche Ultime (U) lance
   l'ultime (fait) ; (2) chaque arme ramassée se voit dans tous les états (garde, repos, marche, course, saut, chute)
   avec un combo M1 de 3 coups, 4 compétences et un ultime propres, tout en clips PixelLab ; (3) les effets de combat
