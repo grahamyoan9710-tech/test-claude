@@ -51,7 +51,8 @@ bool drawWhole(Hero h, Vec2 feet, float height, int facing, float alpha);
 // Animations generated from the picture (PixelLab, see scripts/import_sheet.py): frame by frame drawings that
 // replace the skeleton for the states and moves they cover. A clip is named after its state ("idle", "run",
 // "roll"...), its move ("jab", "fsmash", "nspecial", "ultimate"...) or a move done with a picked-up weapon
-// ("w0_jab", "w1_nspecial": weapon slot 0 or 1).
+// ("w0_jab", "w1_nspecial": weapon slot 0 or 1). A weapon that changes the fighter's look also has its states
+// ("w1_idle", "w1_run"...).
 enum SheetAnim : int {
   kSheetIdle, kSheetWalk, kSheetRun, kSheetCrouch, kSheetJumpSquat, kSheetJump, kSheetAirJump, kSheetFall,
   kSheetLand, kSheetShield, kSheetRoll, kSheetSpotDodge, kSheetAirDodge, kSheetHurt, kSheetTumble, kSheetKnockdown,
@@ -59,7 +60,9 @@ enum SheetAnim : int {
   kSheetMove0,                                // + MoveId: one clip per move
   kSheetWeapon0 = kSheetMove0 + MOVE_COUNT,   // + MoveId: the move done with weapon slot 0
   kSheetWeapon1 = kSheetWeapon0 + MOVE_COUNT,  // ... with weapon slot 1
-  kSheetCount = kSheetWeapon1 + MOVE_COUNT
+  kSheetWState0 = kSheetWeapon1 + MOVE_COUNT,  // + state: the state while holding weapon slot 0
+  kSheetWState1 = kSheetWState0 + kSheetMove0,  // ... weapon slot 1
+  kSheetCount = kSheetWState1 + kSheetMove0
 };
 const char* sheetName(int anim);  // "idle", "jab", "w0_jab"...
 // Every PNG of assets/sprites is embedded under its name ("naruto_idle", "weapon_zangetsu"); sheets.txt indexes them.

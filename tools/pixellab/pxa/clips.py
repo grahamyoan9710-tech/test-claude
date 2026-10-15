@@ -101,6 +101,67 @@ ARMED_HOLD = ("reaches forward with his free hand and closes it on the collar of
               "opponent is invisible, there is no other person in the frame.")
 
 
+# Weapon kits (pxa/wkits/<fighter>.json): with a picked-up weapon, a 3-hit M1 combo (w<slot>_jab, jab2, jab3), an air
+# M1 (w<slot>_nair), 4 skills and an ultimate. A slot whose "look" is "new" also gets the states below, so the weapon
+# is seen in every animation; their bases are its own (guard -> w<slot>guard@last, jump@last -> w<slot>_jump@last).
+WSTATES = {
+    "idle": (8, "guard", True, True, "none", "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, {held} held ready in front of him, the feet stay planted, returns exactly to the first pose"),
+    "walk": (8, "guard", True, True, "none", "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, {held} held ready in front of him, a seamless two-step walk cycle that ends exactly on the first pose"),
+    "runstart": (8, "guard", None, False, "none", "breaks into a fast run to the right: leans the torso far forward, {held} held low and trailing behind him in one hand, the free arm swept back, legs start a long running stride"),
+    "run": (8, "runstart@last", True, True, "none", "fast run cycle to the right: leaning far forward, {held} held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose"),
+    "jump": (8, "guard", None, False, "none", "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, {held} held ready in one hand, hair and clothes fly upward"),
+    "fall": (8, "jump@last", True, True, "none", "falls through the air: legs reach down, the free arm out for balance, {held} held ready, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose"),
+    "airjump": (8, "jump@last", True, False, "none", "double jump in mid-air: kicks off the air and does a full forward somersault holding {held} close to his body, ending tucked in the same pose"),
+    "land": (4, "guard", True, False, "none", "lands from a jump: absorbs the impact by bending the knees deeply, {held} held ready, then rises back into the stance"),
+    "crouch": (4, "guard", None, False, "none", "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, {held} held low and ready in front of him"),
+    "shield": (4, "guard", None, False, "none", "braces to block: holds {held} crosswise in front of his body like a shield and crouches slightly, a solid defensive guard"),
+    "roll": (8, "guard", True, False, "none", "dodge roll: tucks and rolls in a tight ball along the ground holding {held} close to his body, then springs back up into the same stance"),
+    "spotdodge": (8, "guard", True, False, "none", "spot dodge: quickly ducks down low on the spot, bending his knees and leaning his head and torso back so a blow passes over him, {held} held close, then straightens up into the stance. Only the character is drawn: no slash, no effect"),
+    "airdodge": (8, "jump@last", True, False, "none", "air dodge: curls up tightly in mid-air in the same place holding {held} close to his body, the body staying in the middle of the picture, then opens up again in the same pose"),
+    "hurt": (4, "guard", None, False, "none", "gets hit hard: recoils backwards, head snaps back, the free arm flung up, body bent back, still gripping {held}"),
+    "tumble": (8, "jump@last", True, True, "none", "tumbles head over heels through the air after a heavy blow, spinning out of control, still gripping {held}, a seamless loop"),
+    "knockdown": (8, "guard", None, False, "none", "is knocked off his feet and falls flat on his back on the ground, ending lying down, still gripping {held}"),
+    "getup": (8, "knockdown@last", "guard", False, "none", "gets up from lying on his back: rolls onto his feet and stands back up into the ready stance, {held} in hand"),
+    "helpless": (8, "jump@last", True, True, "none", "falls helplessly, exhausted: the free arm hangs limp above his head, {held} dangling loosely from the other hand, head drooping, legs dangling, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn"),
+    "ledgegrab": (8, "jump@last", None, False, "none", ARMED_LEDGE["ledgegrab"]),
+    "ledge": (4, "ledgegrab@last", True, True, "none", ARMED_LEDGE["ledge"]),
+    "climb": (8, "ledgegrab@last", "guard", False, "none", "from hanging by his raised free hand, he pulls his chest up to the height of that hand, swings one knee up, pushes himself up and stands up in the ready stance, {held} in the other hand; nothing is drawn around him: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground"),
+    "dizzy": (8, "guard", True, True, "none", "dazed and dizzy after his guard breaks: stands slumped on wobbly bent knees, arms hanging limp, {held} dangling from one loose hand with its tip on the ground, head drooping and rolling slowly in a circle, the body swaying from side to side on the spot, a seamless loop that ends exactly on the first pose. Only the character is drawn"),
+    "grabbed": (4, "guard", True, True, "none", "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his free hand clutching at the collar at his throat, the other hand still gripping {held} pointing down, legs kicking and squirming, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "holdstart": (4, "guard", None, False, "none", ARMED_HOLD),
+    "hold": (4, "holdstart@last", True, True, "none", "holds an invisible opponent by the collar at arm's length with his free hand, the other hand keeping {held} ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "grab": (8, "guard", True, False, "forward", "lunging grab: reaches forward with his free hand to seize an opponent, the other hand keeping {held} ready, then pulls back"),
+    "pummel": (4, "holdstart@last", True, False, "forward", "strikes the invisible opponent he is holding with the pommel of {held}: a quick short jab of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "fthrow": (8, "holdstart@last", "guard", False, "forward", "shoves the invisible opponent he is holding forward with his free hand, then slashes straight ahead with {held}, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "bthrow": (12, "holdstart@last", "guard", False, "back", "swings the invisible opponent he is holding around behind him and hurls it away, turning his body, {held} in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "uthrow": (8, "holdstart@last", "guard", False, "up", "hurls the invisible opponent he is holding straight up with his free hand, then slashes upward over his head with {held}, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "dthrow": (12, "holdstart@last", "guard", False, "down", "slams the invisible opponent he is holding down onto the ground in front of him with his free hand, then stabs down at it with {held}, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
+    "ledgeattack": (8, "guard", True, False, "forward", "rises from a low crouch with a quick low horizontal cut of {held} forward at knee height, then back into the ready stance"),
+    "getupattack": (8, "knockdown@last", "guard", False, "around", "from lying on his back, swings {held} low across in front of him, then low behind him while springing to his feet, ending in the ready stance"),
+}
+
+
+def wkit(fighter):
+    p = os.path.join(S, "wkits", f"{fighter}.json")
+    return json.load(open(p)) if os.path.exists(p) else {}
+
+
+def wbase(slot, base):
+    """The base of a clip of a new-look weapon: its own guard and its own stage-B clips."""
+    if base == "guard":
+        return f"w{slot}guard@last"
+    if base.endswith("@last") and not base.startswith("w"):
+        return f"w{slot}_{base}"
+    return base
+
+
+def wslot(fighter, name):
+    """The kit slot a clip belongs to (its spec), or None."""
+    if len(name) > 3 and name[0] == "w" and name[1].isdigit() and name[2] == "_":
+        return wkit(fighter).get("slots", {}).get(name[1])
+    return None
+
+
 QA_PROMPTS = json.load(open(os.path.join(S, "qa_prompts.json"))) if os.path.exists(os.path.join(S, "qa_prompts.json")) else {}
 
 
@@ -285,6 +346,14 @@ def clips(fighter):
                     desc = ARMED_HOLD.format(held=held)
                 c[k] = (n, base, pin, loop, direction,
                         desc + f" He keeps holding {held} the whole time; the weapon stays visible.")
+        for slot, ks in wkit(fighter).get("slots", {}).items():
+            new = ks.get("look") == "new"
+            if new:
+                for k, (n, base, pin, loop, direction, desc) in WSTATES.items():
+                    c[f"w{slot}_{k}"] = (n, wbase(slot, base), pin, loop, direction,
+                                         desc.format(held=ks["held"]) + ". The whole weapon stays inside the picture.")
+            for k, (n, base, pin, loop, direction, desc) in ks.get("clips", {}).items():
+                c[k] = (n, wbase(slot, base) if new else base, pin, loop, direction, desc)
         for k, desc in QA_PROMPTS.get(fighter, {}).items():  # prompts rewritten after the clip review (qa14)
             if k in c:
                 n, base, pin, loop, direction, _ = c[k]
@@ -332,13 +401,19 @@ def jobs(fighter, only=None):
             last = src
         elif pin == "guard":
             last = base_file(fighter, "guard")
-        kind = "sword" if base == "sword" else "air" if base.startswith("jump") else \
-            "airsword" if base.startswith("airsword") else "ledge" if base.startswith("ledge") else \
-            "lying" if base.startswith("knockdown") else "hold" if base.startswith("holdstart") else \
-            "run" if base.startswith("runstart") else "guard"
+        b = base[3:] if wslot(fighter, base) is not None else base  # w1_jump@last: a jump of the weapon kit
+        kind = "sword" if b == "sword" else "air" if b.startswith("jump") else \
+            "airsword" if b.startswith("airsword") else "ledge" if b.startswith("ledge") else \
+            "lying" if b.startswith("knockdown") else "hold" if b.startswith("holdstart") else \
+            "run" if b.startswith("runstart") else "guard"
         pose = pose_of(fighter, kind)
+        subject = subject_of(fighter)
+        ks = wslot(fighter, name)
+        if ks and ks.get("look") == "new":  # the weapon's own look
+            subject = ks.get("subject", subject)
+            pose = ks.get(f"{kind}_pose", pose) if kind in ("guard", "air") else pose
         j = {"out": os.path.join(S, fighter, name), "src": src, "frames": n, "desc": desc + TAIL,
-             "subject": subject_of(fighter), "pose": pose}
+             "subject": subject, "pose": pose}
         if last:
             j["last"] = last
         out.append(j)

@@ -651,7 +651,8 @@ static void testWeaponStrikes() {
       Pad p{m};
       p.run(1, key(0, 0, true));
       const std::string name = f.state == FState::Attack ? f.moveDef(f.move).name : "-";
-      const bool strike = f.state == FState::Attack && f.move == Jab && f.moveDef(Jab).nextMove < 0 &&
+      const bool strike = f.state == FState::Attack && f.move == Jab &&
+                          (f.moveDef(Jab).nextMove < 0 || f.weaponDef()->kit) &&  // a kit's jab starts its combo
                           f.moveDef(Jab).name != r[c].moves[Jab].name;
       bool hit = false;
       for (int i = 0; i < 60 && !hit; ++i) {
@@ -660,6 +661,56 @@ static void testWeaponStrikes() {
       }
       CHECK(strike && hit, "%s weapon %d: the jab becomes the weapon's strike and hits (move \"%s\", hit %d)",
             r[c].name.c_str(), slot, name.c_str(), hit);
+    }
+}
+
+// A weapon kit: every ground attack is its 3-hit M1 combo (the smash flick included), every aerial its air M1, the
+// specials its own skills; bare-handed the flick is still a smash.
+static void testWeaponKits() {
+  std::printf("[weapon kits]\n");
+  const auto& r = roster();
+  for (int c = 0; c < int(r.size()); ++c)
+    for (int slot = -1; slot < 2; ++slot) {
+      if (slot >= 0 && !r[c].weapons[slot].kit) continue;
+      if (slot < 0 && !r[c].weapons[0].kit && !r[c].weapons[1].kit) continue;
+      MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
+      cfg.items = false;
+      cfg.weapons = false;
+      Match m(cfg);
+      skipCountdown(m);
+      Fighter& f = m.fighters[0];
+      Fighter& v = m.fighters[1];
+      f.pos = {-60, 0};
+      f.facing = 1;
+      v.pos = {10, 0};
+      if (slot >= 0) m.equipWeapon(f, slot);
+      Pad p{m};
+      p.idle(10);
+      p.run(1, key(1, 0, true));  // a flick forward + attack
+      if (slot < 0) {
+        CHECK(f.move == FSmash, "%s bare-handed: the flick is a smash (move %d)", r[c].name.c_str(), f.move);
+        continue;
+      }
+      CHECK(f.state == FState::Attack && f.move == Jab, "%s weapon %d: the flick starts the M1 (move %d)",
+            r[c].name.c_str(), slot, f.move);
+      int seen = 1, hits = 0;
+      float pct = v.percent;
+      for (int i = 0; i < 120; ++i) {
+        p.run(1, key(0, 0, i % 4 < 2));  // mashing the attack button
+        if (f.state == FState::Attack && f.move == Jab + seen && seen < 3) ++seen;
+        if (v.percent > pct) ++hits, pct = v.percent;
+      }
+      CHECK(seen == 3 && hits >= 3, "%s weapon %d: the M1 chains its 3 hits (%d moves, %d hits)", r[c].name.c_str(),
+            slot, seen, hits);
+      f.pos = {-60, -200};
+      f.grounded = false;
+      m.setState(f, FState::Air);
+      p.run(1, key(0, -1, true));  // up + attack in the air
+      CHECK(f.state == FState::Attack && f.move == NAir, "%s weapon %d: every aerial is the air M1 (move %d)",
+            r[c].name.c_str(), slot, f.move);
+      for (int id : {NSpecial, SSpecial, USpecial, DSpecial})
+        CHECK(f.moveDef(id).exists() && f.moveDef(id).name != r[c].moves[id].name, "%s weapon %d: skill %d is its own",
+              r[c].name.c_str(), slot, id);
     }
 }
 
@@ -848,7 +899,9 @@ static void testTraining() {
     dm.pos = {100, 0};
     Pad p{t};
     p.idle(20);
-    p.run(1, key(0, 0, false, false, false, true));
+    InputState ult;
+    ult.ultimate = true;
+    p.run(1, ult);
     CHECK(me.move == FinalSmash, "the ultimate goes");
     p.idle(600);
     CHECK(me.finalSmash, "... and the meter fills up again");
@@ -1113,6 +1166,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "combos") testCombos();
   if (only.empty() || only == "step") testAttackStep();
   if (only.empty() || only == "strikes") testWeaponStrikes();
+  if (only.empty() || only == "kits") testWeaponKits();
   if (only.empty() || only == "teams") testTeams();
   if (only.empty() || only == "fs") testFinalSmash();
   if (only.empty() || only == "ult") testUltMeter();

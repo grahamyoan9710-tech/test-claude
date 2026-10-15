@@ -859,13 +859,18 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
   const Hero h = f.def->hero;
   if (!art::hasClips(h)) return;
   const float sf = float(f.stateFrame);
+  // A weapon that changes the look has its own states (w1_idle...): the weapon is seen in every animation.
+  const int wstates = f.weapon == 0 ? art::kSheetWState0 : f.weapon == 1 ? art::kSheetWState1 : -1;
+  auto own = [&](int a) { return wstates >= 0 && art::hasSheet(h, wstates + a) ? wstates + a : a; };
   auto loop = [&](int a) {
+    a = own(a);
     if (!art::hasSheet(h, a)) return false;
     p.sheet = a;
     p.sheetT = tt;
     return true;
   };
   auto once = [&](int a, float t) {
+    a = own(a);
     if (!art::hasSheet(h, a)) return false;
     p.sheet = a;
     p.sheetT = clampf(t, 0.0f, 1.0f);
@@ -910,7 +915,7 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     case FState::LedgeClimb:  // the fighter rises from the ledge to the stage; the clip's first frame hangs lower
       if (once(art::kSheetClimb, sf / 18.0f)) {
         const float t = smoothstep(clampf(sf / 18.0f, 0.0f, 1.0f));  // as the climb moves the fighter
-        p.sheetOffset = {0.0f, (1.0f - t) * art::sheetDrop(*f.def, art::kSheetClimb)};
+        p.sheetOffset = {0.0f, (1.0f - t) * art::sheetDrop(*f.def, p.sheet)};
       }
       break;
     case FState::Holding: loop(art::kSheetHold) || loop(art::kSheetIdle); break;

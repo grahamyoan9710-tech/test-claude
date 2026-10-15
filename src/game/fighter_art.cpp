@@ -1242,7 +1242,11 @@ const char* sheetName(int anim) {
       "uthrow", "dthrow", "ledgeattack", "getupattack", "extra1", "extra2", "extra3", "ultimate"};
   static std::array<std::string, kSheetCount> names = [] {
     std::array<std::string, kSheetCount> n;
-    for (int i = 0; i < kSheetMove0; ++i) n[i] = kStates[i];
+    for (int i = 0; i < kSheetMove0; ++i) {
+      n[i] = kStates[i];
+      n[kSheetWState0 + i] = std::string("w0_") + kStates[i];
+      n[kSheetWState1 + i] = std::string("w1_") + kStates[i];
+    }
     for (int m = 0; m < MOVE_COUNT; ++m) {
       n[kSheetMove0 + m] = kMoves[m];
       n[kSheetWeapon0 + m] = std::string("w0_") + kMoves[m];

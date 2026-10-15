@@ -125,12 +125,27 @@ void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise, Color
 }
 
 // ---- Hit sparks ----------------------------------------------------------------------
+// The PixelLab hit effect of an element, if it has one (it replaces the drawn sparks).
+static const char* hitSprite(HitFx fx) {
+  switch (fx) {
+    case HitFx::Slash: return "hit_slash";
+    case HitFx::Reiatsu: return "hit_reiatsu";
+    case HitFx::Dark: return "hit_dark";
+    default: return nullptr;
+  }
+}
+
 void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
   const float heavy = clampf(kb / 120.0f, 0.12f, 1.6f) * (big ? 1.3f : 1.0f);
+  if (dir.len2() < 0.01f) dir = {1.0f, 0.0f};
+  if (const char* s = hitSprite(fx); s && art::fxInfo(s)) {  // across the blow, near the clips' pixel size (0.6)
+    const bool flip = dir.x < 0.0f;
+    playFx(s, pos, 0.5f + 0.3f * std::min(heavy, 1.2f), flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
+    return;
+  }
   const bool black = fx == HitFx::AntiMagic;
   const Color c = hitFxColor(fx), g = hitFxGlow(fx);
   const Color light = black ? Color{236, 236, 246, 255} : g;
-  if (dir.len2() < 0.01f) dir = {1.0f, 0.0f};
   // Flash disc, white core and a star burst of rays
   add(PK::Flash, pos, {}, 6 + heavy * 3, 14 + 26 * heavy, 36 + 58 * heavy, light);
   add(PK::Flash, pos, {}, 5, 6 + 12 * heavy, 18 + 26 * heavy, WHITE);
@@ -594,9 +609,13 @@ void Fx::onEvents(const Match& m) {
         break;
       case EvType::LedgeGrab: au.play(Sfx::Ledge, 0.6f); break;
       case EvType::Counter:
-        add(PK::Ring, e.pos, {}, 20, 10, 90, {140, 200, 255, 255});
-        add(PK::Star, e.pos, {}, 14, 30, 60, WHITE);
-        add(PK::Flash, e.pos, {}, 10, 30, 110, {170, 215, 255, 255});
+        if (art::fxInfo("counter_flash")) {  // the PixelLab parry, at the clips' pixel size
+          playFx("counter_flash", e.pos, 0.62f);
+        } else {
+          add(PK::Ring, e.pos, {}, 20, 10, 90, {140, 200, 255, 255});
+          add(PK::Star, e.pos, {}, 14, 30, 60, WHITE);
+          add(PK::Flash, e.pos, {}, 10, 30, 110, {170, 215, 255, 255});
+        }
         flash_ = std::max(flash_, 0.15f);
         flashCol_ = {140, 200, 255, 255};
         shake_ = std::max(shake_, 6.0f);
@@ -913,6 +932,26 @@ void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip) {
 
 void Fx::update(const Match& m) {
   for (auto& f : sprites_) ++f.t;
+  // The PixelLab effects of the techniques: started on the move's frame, they follow their fighter.
+  for (size_t i = 0; i < m.fighters.size() && i < castSeen_.size(); ++i) {
+    const Fighter& f = m.fighters[i];
+    const MoveDef* md = f.currentMove();
+    const std::pair<int, int> now{md ? f.move : -1, md ? f.moveFrame : -1};
+    if (md && md->castFx && f.moveFrame == md->castFxFrame && now != castSeen_[i] && art::fxInfo(md->castFx)) {
+      SpriteFx s{md->castFx, f.pos, f.def->height / 170.0f, 0.0f, f.facing < 0, 0};  // the clips' pixel size
+      s.follow = int(i);
+      s.off = md->castFxAt;
+      s.pos = f.pos + Vec2{s.off.x * float(f.facing), s.off.y};
+      if (md->castFxStays) s.follow = -2;  // behind, but left where it began
+      sprites_.push_back(s);
+    }
+    castSeen_[i] = now;
+  }
+  for (auto& s : sprites_)
+    if (s.follow >= 0 && s.follow < int(m.fighters.size())) {
+      const Fighter& f = m.fighters[s.follow];
+      s.pos = f.pos + Vec2{s.off.x * float(f.facing), s.off.y};
+    }
   sprites_.erase(std::remove_if(sprites_.begin(), sprites_.end(),
                                 [](const SpriteFx& f) {
                                   const art::FxInfo* i = art::fxInfo(f.name);
@@ -1052,6 +1091,8 @@ void Fx::update(const Match& m) {
 
 // ---- Drawing ---------------------------------------------------------------------------
 void Fx::drawBack(const Match& m, float time) const {
+  for (const auto& f : sprites_)  // the techniques' effects, behind their fighter
+    if (f.follow != -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip);
   for (const auto& p : parts_) {  // cracks in the ground, under everything that moves
     if (p.kind != PK::Crack) continue;
     const float a = clampf(p.life / 40.0f, 0.0f, 1.0f), grow = clampf((p.maxLife - p.life) / 5.0f, 0.0f, 1.0f);
@@ -1290,7 +1331,8 @@ void Fx::drawWorld() const {
     }
   }
   vfx::additive(false);
-  for (const auto& f : sprites_) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip);
+  for (const auto& f : sprites_)
+    if (f.follow == -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip);
 }
 
 void Fx::drawScreen(const Camera2D& cam) const {

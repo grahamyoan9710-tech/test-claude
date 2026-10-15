@@ -82,6 +82,12 @@ void Match::setState(Fighter& f, FState s, int timer) {
 }
 
 void Match::startMove(Fighter& f, int id) {
+  if (const WeaponDef* w = f.weaponDef(); w && w->kit) {  // the weapon's kit: its M1 on the ground and in the air
+    if (id == FTilt || id == UTilt || id == DTilt || id == DashAttack || id == FSmash || id == USmash || id == DSmash)
+      id = Jab;
+    else if (id == FAir || id == BAir || id == UAir || id == DAir)
+      id = NAir;
+  }
   const MoveDef& m = f.moveDef(id);
   if (!m.exists()) return;
   if (m.cooldown > 0) {  // still recharging: nothing happens

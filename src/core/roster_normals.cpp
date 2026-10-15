@@ -116,6 +116,39 @@ HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1,
   return h;
 }
 
+// The M1 of a blade's weapon kit: a 3-hit combo on the ground (a downward cut, a second cut, a launching finisher)
+// and an air combo of `airCuts` cuts (2 or 3). `speed` < 1 swings faster; `thrust2`: the second hit is a thrust.
+void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed, bool thrust2, int airCuts) {
+  const HitFx sl = HitFx::Slash;
+  auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
+  auto pair = [&](int s0, int e0, float a0, float a1, float r, float dmg, float ang, float bkb, float kbg, int group,
+                  HitFx hfx) {  // a strong tip first, a weaker base, along the same arc
+    return std::vector<HitboxDef>{sw(T(s0), T(e0), a0, a1, 0.55f, 1.0f, r, dmg, ang, bkb, kbg, group, hfx),
+                                  sw(T(s0), T(e0), a0, a1, 0.0f, 0.55f, r, dmg * 0.8f, ang, bkb, kbg, group, hfx)};
+  };
+  MoveDef jab = mv("Taille", T(24), pair(5, 8, 110, -40, 18, 4.5f, 361, 10, 25, 0, sl));
+  jab.nextMove = Jab2, jab.comboStart = T(4), jab.comboEnd = T(22), jab.comboAt = T(12);
+  MoveDef jab2 = thrust2 ? mv("Estoc éclair", T(26), pair(5, 8, 4, 4, 17, 4.5f, 361, 12, 28, 0, sl))
+                         : mv("Revers", T(26), pair(5, 8, 30, -15, 18, 4.5f, 361, 12, 28, 0, sl));
+  jab2.nextMove = Jab3, jab2.comboStart = T(4), jab2.comboEnd = T(24), jab2.comboAt = T(13);
+  MoveDef jab3 = mv("Taille montante", T(36), pair(9, 14, -50, 130, 22, 8.0f, 75, 45, 85, 0, fx));
+  for (auto& h : jab3.hitboxes) h.impact = true;
+  std::vector<HitboxDef> air = pair(5, 8, 100, -60, 24, 5.0f, 70, 20, 35, 0, sl);
+  if (airCuts > 2) {
+    auto up = pair(11, 14, -60, 80, 24, 4.0f, 80, 20, 35, 1, sl);
+    air.insert(air.end(), up.begin(), up.end());
+  }
+  auto last = pair(airCuts > 2 ? 18 : 13, airCuts > 2 ? 23 : 18, -90, 180, 26, 7.0f, 361, 30, 90, airCuts > 2 ? 2 : 1,
+                   fx);
+  air.insert(air.end(), last.begin(), last.end());
+  MoveDef nair = mv("Taille aérienne", T(airCuts > 2 ? 40 : 38), air, 8);
+  for (MoveDef* m : {&jab, &jab2, &jab3, &nair}) {
+    scale(*m, S, P * 0.88f);  // like the sword normals: blades reach far, a little less damage
+    w.moves.push_back({m == &jab ? Jab : m == &jab2 ? Jab2 : m == &jab3 ? Jab3 : NAir, *m});
+  }
+  w.kit = true;
+}
+
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
   const HitFx sl = HitFx::Slash;
   auto& m = c.moves;

@@ -189,6 +189,10 @@ CharacterDef makeIchigo() {
   m[SSpecial].gravityMul = 0.2f;
   m[SSpecial].frictionMul = 0.05f;
   m[SSpecial].pose = PoseHint::Thrust;
+  m[SSpecial].castFx = "shunpo_streak";  // the flash step leaves its blur where it began (its copies too)
+  m[SSpecial].castFxFrame = 4;
+  m[SSpecial].castFxAt = {0, -c.height * 0.5f};
+  m[SSpecial].castFxStays = true;
 
   m[USpecial] = mv("Tsukiyomi", 44, {hb(4, 7, 36, -30, 30, 11, 80, 50, 72, L::Weapon, 0, F::Reiatsu),
                                      hb(7, 14, 20, -64, 26, 6, 85, 40, 60, L::Weapon, 1, F::Reiatsu)});
@@ -219,7 +223,21 @@ CharacterDef makeIchigo() {
   huge.projectile.hit.damage *= 1.25f;
   huge.projectile.grow = 0.6f;
   huge.projectile.hit.impact = true;
-  c.weapons[0].moves = {{NSpecial, huge}};
+  // The Shikai's kit: the M1 combo, a Shunpo cut, a rising Getsuga, and Zangetsu raised as a shield (a counter).
+  MoveDef cut = m[SSpecial];
+  cut.name = "Shunpo tranchant";
+  for (auto& h : cut.hitboxes) h.damage *= 1.15f, h.fx = F::Reiatsu, h.impact = true;
+  MoveDef rise = m[USpecial];
+  rise.name = "Getsuga ascendant";
+  for (auto& h : rise.hitboxes) h.damage *= 1.1f;
+  MoveDef parry = mv("Garde de Zangetsu", 52, {imp(hb(26, 31, 62, -12, 46, 13, 361, 60, 95, L::Weapon, 0, F::Reiatsu))});
+  parry.counterStart = 5;
+  parry.counterEnd = 26;
+  parry.gravityMul = 0.3f;
+  parry.pose = PoseHint::Overhead;
+  sc(parry, S, P);
+  c.weapons[0].moves = {{NSpecial, huge}, {SSpecial, cut}, {USpecial, rise}, {DSpecial, parry}};
+  addBladeKit(c.weapons[0], S, P, F::Reiatsu);
   c.weapons[1] = weapon("Tensa Zangetsu (Bankai)", "Vitesse du Bankai : Getsuga noir", WeaponVisual::TensaZangetsu,
                         F::Dark, 1.1f, 1.05f, 1.05f);
   MoveDef black = m[NSpecial];
@@ -234,7 +252,23 @@ CharacterDef makeIchigo() {
   flash.hitboxes[0].damage *= 1.2f;
   flash.hitboxes[0].fx = F::Dark;
   flash.hitboxes[0].impact = true;
-  c.weapons[1].moves = {{NSpecial, black}, {SSpecial, flash}};
+  // The Bankai's kit: a faster M1 (its second hit a thrust, three cuts in the air), the black Getsuga, the Bankai
+  // Shunpo, a rising drill of black reiatsu, and the Bankai's release (a burst all around him, armored).
+  MoveDef drill = m[USpecial];
+  drill.name = "Tenshō noir ascendant";
+  for (auto& h : drill.hitboxes) h.damage *= 1.15f, h.fx = F::Dark;
+  drill.vel = {ve(4, VelMode::Set, 1.5f, -18.5f, 3.0f)};
+  MoveDef release = mv("Libération du Bankai", 50, {imp(hb(16, 22, 0, -50, 70, 12, 70, 55, 85, L::Body, 0, F::Dark))});
+  release.armorStart = 4;
+  release.armorEnd = 16;
+  release.gravityMul = 0.3f;
+  release.pose = PoseHint::Cast;
+  sc(release, S, P);
+  release.castFx = "bankai_burst";  // the black reiatsu erupts around him as the blow comes out
+  release.castFxFrame = 14;
+  release.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[1].moves = {{NSpecial, black}, {SSpecial, flash}, {USpecial, drill}, {DSpecial, release}};
+  addBladeKit(c.weapons[1], S, P, F::Dark, 0.8f, true, 3);
   return c;
 }
 
@@ -1309,7 +1343,8 @@ MoveDef weaponStrike(const CharacterDef& c, const WeaponDef& w) {
 }
 
 void addWeaponStrikes(CharacterDef& c) {
-  for (auto& w : c.weapons) w.moves.push_back({Jab, weaponStrike(c, w)});
+  for (auto& w : c.weapons)
+    if (!w.kit) w.moves.push_back({Jab, weaponStrike(c, w)});  // a kit has its own M1
 }
 }  // namespace
 

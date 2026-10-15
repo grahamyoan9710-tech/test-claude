@@ -106,8 +106,11 @@ class Fx {
     float size, rot;
     bool flip;
     int t = 0;
+    int follow = -1;  // a technique's effect: on that fighter, behind it (-2: behind, where it began)
+    Vec2 off;
   };
   std::vector<SpriteFx> sprites_;
+  std::array<std::pair<int, int>, 8> castSeen_{};  // each fighter's move and move frame at the last update
   struct Combo {  // hits chained on a fighter that never got out of hitstun in between
     int attacker = -1, hits = 0, lastHit = -1000, since = 0;
     bool live = false;

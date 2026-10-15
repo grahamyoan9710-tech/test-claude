@@ -287,6 +287,12 @@ struct MoveDef {
   int channelEnd = -1;              // the technique is held up to this frame: its clip keeps the cast pose
   // Presentation
   int superFlash = 0;               // frames of "super freeze" when the move starts (cut-in with its name)
+  // A PixelLab effect the renderer plays behind the fighter from that frame, following it (offset from the feet,
+  // facing right): a burst of energy, an aura.
+  const char* castFx = nullptr;
+  int castFxFrame = -1;
+  Vec2 castFxAt;
+  bool castFxStays = false;         // stays where it started (a trail) instead of following the fighter
   PoseHint pose = PoseHint::Auto;
   BeamDef beam;
   bool reflects = false;            // a counter that sends projectiles back instead of taking them
@@ -391,6 +397,9 @@ struct WeaponDef {
   float blade = 0.0f;         // > 0: blade length (grip to tip) while held, else the fighter's blade * reachMul
   int duration = 60 * 18;     // frames before it vanishes
   std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while held (its ultimate included)
+  // A full kit: every ground attack is its M1 combo (jab, jab2, jab3), every aerial its air M1 (nair); its specials
+  // are its 4 skills.
+  bool kit = false;
 };
 
 // A transformation: started by a move (MoveDef::formIndex), lasts `duration` frames (0 = until that move ends).
@@ -439,6 +448,8 @@ MoveDef mv(const char* name, int duration, std::vector<HitboxDef> boxes, int lan
 // Generic normal attacks, scaled by body size (S) and power (P).
 void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx);
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx = HitFx::Slash);
+// A weapon's kit M1 with a blade (WeaponDef::kit): jab, jab2, jab3 and the air M1 (nair).
+void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, bool thrust2 = false, int airCuts = 2);
 // A blade swing hitbox: sweeps from a0 to a1 degrees, hits from reach0 to reach1 of the blade.
 HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1, float radius, float dmg, float angle,
              float bkb, float kbg, int group = 0, HitFx fx = HitFx::Slash);

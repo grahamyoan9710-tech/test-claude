@@ -1671,10 +1671,12 @@ static bool shotSprite(const Projectile& p, const Shot& s, float time) {
   for (const ShotFx& x : kShotFx)
     if (x.v == p.visual) e = &x;
   const bool skyBolt = p.visual == ProjVisual::Lightning && p.vel.len2() < 1.0f;  // Kamutoke: a bolt from the sky
-  const char* name = skyBolt ? "sky_bolt" : e ? e->fx : nullptr;
+  const bool getsuga = p.visual == ProjVisual::Getsuga;  // Ichigo's: blue, black in Bankai
+  const char* name = skyBolt ? "sky_bolt" : getsuga ? (p.hit.fx == HitFx::Dark ? "getsuga_black" : "getsuga")
+                                                    : e ? e->fx : nullptr;
   const art::FxInfo* fx = name ? art::fxInfo(name) : nullptr;
   if (!fx) return false;
-  const FxPlace place = skyBolt ? FxPlace::Sky : e->place;
+  const FxPlace place = skyBolt ? FxPlace::Sky : getsuga ? FxPlace::Travel : e->place;
   const float size = s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
   const float t = time + hash01(s.seed) * fx->duration();  // copies side by side do not pulse together
   if (place == FxPlace::Travel) {
