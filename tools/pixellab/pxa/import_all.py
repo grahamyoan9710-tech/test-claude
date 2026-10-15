@@ -55,8 +55,9 @@ def with_replaced(d, replace, extra):
 
 def erase(d, spec, extra):
     """Erases, in the listed frames (sheet numbering), the effect blobs of one colour family drawn over the character:
-    spec = {"frames": [...], "hue": "blue|yellow|red|warm|purple|all", "min": 40} (the logic of tools/fxclean.py:
-    connected blobs of that colour, with the near-white pixels touching them)."""
+    spec = {"frames": [...], "hue": "blue|yellow|red|warm|purple|scarlet|all", "min": 40} (the logic of
+    tools/fxclean.py: connected blobs of that colour, with the near-white pixels touching them). "scarlet" is only the
+    pure bright red of an effect, for a fighter whose own reds (hair, cape) are darker."""
     sys.path.insert(0, os.path.join(os.path.dirname(S), "tools"))
     from greyfix import label
     idx = [int(n[2:-4]) for n in frames_of(d)]
@@ -73,7 +74,8 @@ def erase(d, spec, extra):
         red = op & (rgb[..., 0] > 150) & (rgb[..., 0] > rgb[..., 1] + 70) & (rgb[..., 2] < 100)
         bluish = op & (rgb[..., 2] > rgb[..., 0] + 50) & (rgb[..., 2] > 120)
         purple = op & (rgb[..., 2] > 150) & (rgb[..., 0] > 110) & (rgb[..., 1] < rgb[..., 0] - 40)
-        col = {"yellow": yellow, "red": red, "warm": yellow | red, "blue": bluish, "purple": purple,
+        scarlet = op & (rgb[..., 0] > 200) & (rgb[..., 1] < 40) & (rgb[..., 2] < 60)
+        col = {"yellow": yellow, "red": red, "warm": yellow | red, "blue": bluish, "purple": purple, "scarlet": scarlet,
                "all": bluish | yellow | red | purple}[spec.get("hue", "all")]
         fx = col | (op & (rgb.min(-1) > 215))
         lab, n = label(fx)
@@ -118,6 +120,36 @@ def trim_right(d, trim):
         p = os.path.join(d, f"f_{idx[k]:02d}.png")
         a = np.asarray(Image.open(p).convert("RGBA")).copy()
         a[:, x_max + 1:, 3] = 0
+        Image.fromarray(a).save(p)
+
+
+def specks(d, spec, extra):
+    """Erases, in the listed frames (sheet numbering), the small bits floating apart from the character (sparks,
+    petals, streaks): spec = {"frames": [...], "max": 150}; pieces of fewer pixels go, the biggest piece stays.
+    Pixels one apart (diagonals, a one-pixel gap) count as touching, so a thin edge of the character is kept."""
+    sys.path.insert(0, os.path.join(os.path.dirname(S), "tools"))
+    from greyfix import label
+    idx = [int(n[2:-4]) for n in frames_of(d)]
+    if extra[:1] == ["--only"]:
+        lo, hi = (int(v) for v in extra[1].split("-"))
+        idx = [i for i in idx if lo <= i <= hi]
+    else:
+        idx = [i for i in idx if i > 0] or idx
+    for k in spec["frames"]:
+        p = os.path.join(d, f"f_{idx[k]:02d}.png")
+        a = np.asarray(Image.open(p).convert("RGBA")).copy()
+        op = a[..., 3] > 0
+        near = op.copy()
+        near[1:] |= op[:-1]
+        near[:-1] |= op[1:]
+        grown = near.copy()
+        grown[:, 1:] |= near[:, :-1]
+        grown[:, :-1] |= near[:, 1:]
+        lab, n = label(grown)
+        sizes = np.bincount(lab[op], minlength=n + 1)
+        big = int(sizes.argmax())
+        small = [i for i in range(1, n + 1) if i != big and sizes[i] < spec.get("max", 150)]
+        a[np.isin(lab, small) & op] = 0
         Image.fromarray(a).save(p)
 
 
@@ -200,7 +232,7 @@ def main():
         if fx.get("impact"):
             args = [a for i, a in enumerate(args) if a != "--impact" and (i == 0 or args[i - 1] != "--impact")]
             args += ["--impact", fx["impact"]]
-        if fx.get("replace") or fx.get("trim_right") or fx.get("degrey") or fx.get("erase"):  # review fixes, in a copy
+        if any(fx.get(k) for k in ("replace", "trim_right", "degrey", "erase", "specks")):  # review fixes, in a copy
             args[4] = with_replaced(d, fx.get("replace", {}), extra)
             if fx.get("erase"):
                 erase(args[4], fx["erase"], extra)
@@ -208,6 +240,8 @@ def main():
                 trim_right(args[4], fx["trim_right"])
             if fx.get("degrey"):
                 degrey(args[4], fx["degrey"], extra)
+            if fx.get("specks"):
+                specks(args[4], fx["specks"], extra)
         r = subprocess.run(args, capture_output=True, text=True)
         print((r.stdout.strip() or r.stderr.strip()[-300:]))
 

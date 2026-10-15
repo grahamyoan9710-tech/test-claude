@@ -95,3 +95,5 @@ hunter/knockdown
 hunter/ledgegrab
 hunter/holdstart
 ganondorf/w0guard
+hunter/w0guard
+hunter/w1guard

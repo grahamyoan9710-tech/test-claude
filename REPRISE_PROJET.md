@@ -49,12 +49,30 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (après ces imports) | 15/10 08 h 45 UTC |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (Starrk, Sukuna, Ganondorf) | 15/10 08 h 45 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (Starrk, Sukuna, Ganondorf, Link, Kratos, Hunter) | 15/10 08 h 45 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 12 h 40 UTC, session B : Hunter importé (54 clips) et relu. Corrigés dans `qa_fixes.json` : l'esquive sur
+  place (traînées de feu et explosions inventées), le dégât (étincelle dessinée), le saut, le lancer arrière, la
+  bombe-tonneau (le tonneau du clip disparaît quand le jeu lance le sien), les fumées grises (`fair`, `usmash`,
+  `nspecial`, `ultimate`), la Décharge de la Charge Blade et le tir de la lance-canon (leurs explosions sont des
+  projectiles du jeu), le Feu du Wyvern (le jeu dessine le rayon). `airdodge` (il devenait une boule) et `dthrow` (son
+  épée disparaissait) sont régénérés avec de nouveaux prompts (`qa_prompts.json`, les anciens dans `*.qa1`). Gardés
+  tels quels : les traînées de lame (rouges pour les coups chargés). Relus aussi : le `bthrow` régénéré de Starrk,
+  le `hold` de Kratos, les deux clips d'épée de Ganondorf (`w0_sspecial` corrigé). Les clips `w0_jab`/`w1_jab` de
+  Hunter datent de la mise à jour du 13/10 et n'ont pas été touchés.
+- 15/10 11 h 55 UTC, session B : **génération PixelLab terminée** pour les six persos (Starrk 58/58, Sukuna 57/57,
+  Link 58/58, Ganondorf 60/60, Kratos 60/60, Hunter 59/59 ; 3 169 générations restantes). Relecture de Ganondorf :
+  `dspecial` régénéré (sa plongée était une silhouette toute rouge, nouveau prompt dans `qa_prompts.json`, l'ancien
+  dans `pxa/ganondorf/dspecial.qa1`) ; `ultimate`, `w1_ultimate`, `sspecial`, `nspecial`, `extra1` corrigés dans
+  `qa_fixes.json` (le rayon, les flammes et les éruptions dessinés dans le clip, que le jeu dessine déjà, sont
+  remplacés par les poses propres du même clip). `import_all.py` sait deux corrections de plus : `specks` (efface
+  les petits morceaux détachés du perso : étincelles, pétales, traînées) et `erase` avec `"hue": "scarlet"` (le
+  rouge vif d'un effet, pour un perso dont les rouges sont plus sombres). Je lance l'import de Hunter (59 clips),
+  puis sa relecture, puis `fitall.sh`, l'équilibrage et la v9.2.
 - 15/10 08 h 55 UTC, session B : le propriétaire a validé la génération de Link, Kratos et Hunter (et du reste de
   Ganondorf et Sukuna), environ 250 générations. `driver.py link kratos hunter` et `rescue_loop.py` tournent dans la
   session B. Les poses de garde `pxa/base/<perso>_guard256.png` (ignorées par git) sont la dernière image des jobs
