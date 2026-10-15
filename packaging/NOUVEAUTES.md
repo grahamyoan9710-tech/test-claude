@@ -8,8 +8,11 @@
 
 ## Nouveautés
 
-- Les rayons des ultimes de Grimmjow (Gran Rey Cero), Ulquiorra (Cero Oscuras), Ichigo (Vasto Lorde), Link (dragon
-  de lumière) et Ganondorf (dragon démoniaque) sont dessinés avec PixelLab et partent de la main dans une lueur.
-- Gojo et Grimmjow ont leurs animations PixelLab complètes.
+- Starrk, Sukuna, Link, Ganondorf, Kratos et Hunter ont leurs animations PixelLab complètes : plus de 320 clips,
+  avec les armes de chacun (la Charge Blade et la lance-canon de Hunter, l'épée du Roi Démon de Ganondorf…).
+- Le Fuga de Sukuna n'a plus d'arc.
+- Les effets que le jeu dessine déjà (rayons, explosions, éruptions, flammes) ne sont plus dessinés en double dans
+  les animations, et les fumées grises ou les étincelles parasites sont effacées.
 - Les instants d'impact et les hitboxes sont recalés sur les nouvelles animations.
-- Équilibrage : Kakashi frappe moins fort, Grimmjow plus fort.
+- Équilibrage : tous les combattants gagnent entre 45 et 58 % de leurs duels (Kratos, Kenpachi, Gojo, Sukuna,
+  Ganondorf et Byakuya frappent moins fort ; Ulquiorra, Yuno et Sasuke plus fort).

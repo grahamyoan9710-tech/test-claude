@@ -48,13 +48,20 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (après ces imports) | 15/10 08 h 45 UTC |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (Starrk, Sukuna, Ganondorf, Link, Kratos, Hunter) | 15/10 08 h 45 UTC |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.2) | 15/10 12 h 18 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 13 h 02 UTC, session B : **v9.2** (écran titre, `package_release.sh`, README, `packaging/NOUVEAUTES.md`) ; ce
+  push lance sa publication par GitHub Actions. `fitall.sh` : 93 clips sur 325 recalés, 183 hitboxes sur 638 recalées
+  ; restent 435 hitboxes sur 1 058 qui frappent surtout là où rien n'est dessiné (même proportion qu'avant, surtout
+  des hitboxes secondaires d'épée et des rayons ; ex. le tilt avant de Hunter frappe au-dessus de sa lame).
+  Équilibrage refait après le recalage (`sim_test balance` de 45 % à 58 %, le détail est dans le commit). Vérifié :
+  compilation, ctest, les 51 ultimes en démo sans plantage, `sheets.txt` cohérent avec les images. Tous les verrous
+  sont libres.
 - 15/10 12 h 39 UTC, session B : **bug trouvé et corrigé** pendant la recherche de bugs. L'op `erase` de
   `import_all.py` efface aussi les pixels presque blancs qui touchent l'effet, donc un vêtement blanc collé à l'effet
   : le manteau de Starrk (`dashattack`) et le haori de Byakuya (`nspecial`, `w0_nspecial`) étaient troués. Starrk est
