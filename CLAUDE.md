@@ -17,6 +17,8 @@ Avant toute chose, lire **REPRISE_PROJET.md** : il donne l'état exact du travai
 - **Versions : +0,1 à chaque mise à jour livrée au propriétaire** (9.1, 9.2, 9.3…), dans
   `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README. Prendre le verrou « Version et paquets »,
   lancer `scripts/package_release.sh X.Y` et lui envoyer l'archive Linux (`dist/SuperClashBros-X.Y-linux-x64.tar.gz`).
+  L'envoi de fichiers est limité à 30 Mo et l'archive en fait environ 32 : la couper avec
+  `split -b 17M -d -a 1 <archive> <archive>.part` et lui rappeler de recoller avec `cat <archive>.part* > <archive>`.
 - Deux sessions travaillent en même temps sur `claude/sleepy-goodall-s399kv` : respecter la répartition de
   REPRISE_PROJET.md (section 0). Faire `git pull` (fusion, jamais de rebase ni de `--force`) avant de commencer et
   avant chaque push, committer et pousser souvent, et noter dans le journal de REPRISE_PROJET.md ce qui commence et

@@ -52,11 +52,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.1) | 15/10 05 h 40 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
 - 15/10 05 h 45 UTC, session B : **v9.1** (écran titre, script de paquets, README). Règle du propriétaire : +0,1 à
-  chaque mise à jour livrée, avec l'archive Linux envoyée. Paquet Linux 9.1 en cours de fabrication.
+  chaque mise à jour livrée, avec l'archive Linux envoyée. Paquet Linux 9.1 fabriqué (`package_release.sh 9.1`,
+  7 min), testé (démarre, affiche v9.1, aucune bibliothèque manquante) et envoyé en 2 morceaux (limite de 30 Mo).
+  Pas d'archive Windows : mingw-w64 n'est pas installé ici, et le propriétaire est sous Linux.
 - 14/10 21 h 45 UTC, session B : recherche de régressions. `sheets.txt` cohérent avec les images (720 lignes, rien
   de manquant ni d'orphelin, impacts dans les clips). Les 51 ultimes (17 persos × 3) joués en démo sans plantage.
   Corrigé : l'avertissement de compilation de `check_hitboxes.cpp`. Restent, connus : 282 hitboxes sur 692 qui
