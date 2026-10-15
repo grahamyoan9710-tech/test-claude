@@ -58,7 +58,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 - 15/10 08 h 15 UTC, session B : les versions se publient sur GitHub. `.github/workflows/release.yml` (sur un tag
   `vX.Y`) teste, fabrique les archives Linux et Windows et les met dans la release, avec les notes de
   `packaging/NOUVEAUTES.md`. Liens directs dans le README (« Jouer sans compiler »). `package_release.sh`
-  recompresse aussi les PNG sans perte quand zopflipng est installé (archives ~8 % plus petites). Tag `v9.1` poussé.
+  recompresse aussi les PNG sans perte quand zopflipng est installé (archives ~8 % plus petites). Le workflow part
+  quand le numéro de version de `screen_title.cpp` est poussé (le proxy de session refuse les tags).
 - 15/10 05 h 45 UTC, session B : **v9.1** (écran titre, script de paquets, README). Règle du propriétaire : +0,1 à
   chaque mise à jour livrée, avec l'archive Linux envoyée. Paquet Linux 9.1 fabriqué (`package_release.sh 9.1`,
   7 min), testé (démarre, affiche v9.1, aucune bibliothèque manquante) et envoyé en 2 morceaux (limite de 30 Mo).
@@ -104,7 +105,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 - Branche de travail : `claude/sleepy-goodall-s399kv`. Une copie identique est poussée sur `reprise-claude`.
 - PR ouverte : grahamyoan9710-tech/test-claude#1, base `claude/admiring-lamport-jijwx9`.
 - Version affichée dans le jeu : **v9.1** (15/10). Le propriétaire veut **+0,1 à chaque mise à jour** (9.2, 9.3…),
-  publiée sur la page Releases de GitHub par un tag vX.Y (voir CLAUDE.md).
+  publiée sur la page Releases de GitHub dès que le nouveau numéro est poussé (voir CLAUDE.md).
 
 ## 1. Vérifié au moment de la passation (réellement exécuté)
 - `cmake --build build` : compile sans erreur ni avertissement.
@@ -199,7 +200,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
    faibles : Ulquiorra, Yuno, Sasuke et Link (41-42 %) ; un peu forts : Asta, Ganondorf et Kratos (60-61 %).
 7. **Chaque mise à jour livrée (prochaine : v9.2) :**
    - version +0,1 dans `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README ;
-   - nouveautés dans `packaging/NOUVEAUTES.md`, puis `git tag vX.Y && git push origin vX.Y` : GitHub publie la release ;
+   - nouveautés dans `packaging/NOUVEAUTES.md`, puis pousser : GitHub Actions publie la release vX.Y ;
    - mise à jour de la description de la PR.
 
 ## 5. Pipeline PixelLab (`tools/pixellab/`)

@@ -1,23 +1,32 @@
-# Publishes a version: pushing a tag vX.Y (or running this workflow by hand with the version) tests the simulation,
-# builds the Linux and Windows archives with scripts/package_release.sh and puts them in the GitHub release vX.Y.
+# Publishes a version on the releases page. It runs when a new version number reaches the work branch (the title
+# screen's "vX.Y" in src/game/screen_title.cpp), when a tag vX.Y is pushed, or by hand with the version: it tests the
+# simulation, builds the Linux and Windows archives with scripts/package_release.sh and puts them in the release vX.Y
+# (GitHub creates the tag). A version already released is left alone, except from a tag or by hand.
 # The assets keep the same names from one version to the next, so the README's links always give the latest one.
 name: Release
 
 on:
   push:
+    branches: ["claude/sleepy-goodall-s399kv", "main"]
     tags: ["v*"]
+    paths: ["src/game/screen_title.cpp", ".github/workflows/release.yml"]
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to publish, e.g. 9.2 (the tag vX.Y is created on the chosen branch)"
+        description: "Version to publish, e.g. 9.2"
         required: true
 
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ github.ref }}
+
 jobs:
   release:
     runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
 
@@ -25,28 +34,36 @@ jobs:
         id: v
         run: |
           v="${{ github.event.inputs.version }}"
-          [ -n "$v" ] || v="${GITHUB_REF_NAME#v}"
+          if [ -z "$v" ] && [ "${{ github.ref_type }}" = tag ]; then v="${GITHUB_REF_NAME#v}"; fi
+          if [ -z "$v" ]; then v=$(grep -oE '"v[0-9]+\.[0-9]+"' src/game/screen_title.cpp | head -1 | tr -d '"v'); fi
           grep -q "\"v$v\"" src/game/screen_title.cpp || { echo "the title screen does not show v$v"; exit 1; }
           echo "version=$v" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = push ] && [ "${{ github.ref_type }}" = branch ] \
+             && gh release view "v$v" > /dev/null 2>&1; then
+            echo "v$v is already released: nothing to do"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Tools
+        if: steps.v.outputs.skip != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev \
             mingw-w64
 
       - name: Tests
+        if: steps.v.outputs.skip != 'true'
         run: |
           cmake -S . -B build-core -DCMAKE_BUILD_TYPE=Release -DCLASH_BUILD_GAME=OFF
           cmake --build build-core -j"$(nproc)"
           ./build-core/sim_test
 
       - name: Archives
+        if: steps.v.outputs.skip != 'true'
         run: scripts/package_release.sh "${{ steps.v.outputs.version }}"
 
       - name: Release
-        env:
-          GH_TOKEN: ${{ github.token }}
+        if: steps.v.outputs.skip != 'true'
         run: |
           v="${{ steps.v.outputs.version }}"
           cp "dist/SuperClashBros-$v-linux-x64.tar.gz" dist/SuperClashBros-linux-x64.tar.gz

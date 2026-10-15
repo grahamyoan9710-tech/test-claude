@@ -385,9 +385,10 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
   : décompresser, puis double-cliquer sur `super_clash.exe` (si Windows affiche « Windows a protégé votre
   ordinateur » : « Informations complémentaires » puis « Exécuter quand même »).
 
-Une version se publie en poussant un tag : `git tag v9.1 && git push origin v9.1`. GitHub Actions
-(`.github/workflows/release.yml`) lance les tests, fabrique les deux archives avec `scripts/package_release.sh` et
-les met dans la release, avec les notes de `packaging/NOUVEAUTES.md`. Le même script fabrique les archives en local,
+Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/screen_title.cpp`) arrive sur la
+branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
+avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
+version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
 dans `dist/` (`SuperClashBros-9.1-linux-x64.tar.gz` et `SuperClashBros-9.1-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
