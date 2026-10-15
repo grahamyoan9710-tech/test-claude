@@ -51,10 +51,19 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | session B (Amaterasu, ultimes, recul) | 15/10 14 h 04 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 14 h 57 UTC, session B : **v9.3**, ce push lance sa publication. Fait : délai entre deux utilisations
+  (`MoveDef::cooldown`, `Fighter::moveCooldown`, remis à zéro au retour ; l'IA ignore une spéciale qui recharge).
+  L'Amaterasu de Sasuke recharge 5 s et dure jusqu'à la fin des flammes (96 images) : Sasuke s'arrête net, ne dérive
+  pas, ne peut ni bouger ni attaquer ; son clip garde la pose (`MoveDef::channelEnd`) et le badge de l'arme dans le
+  HUD affiche les secondes restantes (vérifié en capture). Ultimes (`combat.cpp`) : dégâts ×1,1, recul ×0,8, bouclier
+  250 % des dégâts (49 ultimes sur 51 cassent un bouclier plein). Recul adouci sous 100 % (`softenLowPercent` :
+  au-delà d'un petit coup, jusqu'à 40 % de moins à 0 %) : KO sous 70 % de 9 % à 3 % dans `sim_test balance`, qui
+  affiche maintenant les pourcentages de KO par perso. Équilibrage refait (Yuno, Naruto, Ichigo, Kenpachi) : 43 à 56
+  %. Vérifié : compilation, ctest, test `amaterasu`, les 51 ultimes en démo. Verrous libres.
 - 15/10 14 h 04 UTC, session B, demande du propriétaire : l'Amaterasu de Sasuke reçoit un délai entre deux
   utilisations et Sasuke reste immobile, sans attaquer, pendant la technique ; les ultimes éjectent moins mais font
   quelques % de dégâts en plus et beaucoup plus de dégâts aux boucliers ; moins de recul à bas pourcentage (éjections
