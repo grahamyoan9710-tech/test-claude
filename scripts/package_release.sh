@@ -10,10 +10,34 @@ VERSION="${1:-9.1}"
 rm -rf "$DIST"
 mkdir -p "$DIST"
 
+# Archives small enough to be sent as one file: the PNGs are recompressed losslessly (zopflipng, same pixels) in a
+# copy of the sources, each result cached by the content it came from, so a release only redoes the new images.
+SRC="$ROOT"
+if command -v zopflipng > /dev/null; then
+  SRC="$ROOT/build-release-src"
+  CACHE="$ROOT/build-release-pngcache"
+  rm -rf "$SRC"
+  mkdir -p "$SRC" "$CACHE"
+  (cd "$ROOT" && tar -cf - --exclude='./build*' --exclude=./dist --exclude=./.git --exclude=./tools .) | (cd "$SRC" && tar -xf -)
+  find "$SRC/assets" -name '*.png' -print0 | xargs -0 -P"$(nproc)" -I{} sh -c '
+    c="$2/$(sha1sum "$1" | cut -c1-40).png"
+    if [ ! -f "$c" ]; then
+      zopflipng -y "$1" "$c.$$" > /dev/null 2>&1 && mv "$c.$$" "$c" || { rm -f "$c.$$"; cp "$1" "$c"; }
+    fi
+    [ "$(stat -c%s "$c")" -lt "$(stat -c%s "$1")" ] && cp -p "$c" "$1"
+    exit 0' _ {} "$CACHE"
+else
+  echo "zopflipng not found (package zopfli): images packed as they are" >&2
+fi
+
 build() {  # build dir, extra cmake arguments...
   local dir="$1"
   shift
-  cmake -S "$ROOT" -B "$dir" -DCMAKE_BUILD_TYPE=Release "$@" > /dev/null
+  # A build dir configured for other sources (with or without the recompressed copy) is started again.
+  if [ -f "$dir/CMakeCache.txt" ] && ! grep -qx "CMAKE_HOME_DIRECTORY:INTERNAL=$SRC" "$dir/CMakeCache.txt"; then
+    rm -rf "$dir"
+  fi
+  cmake -S "$SRC" -B "$dir" -DCMAKE_BUILD_TYPE=Release "$@" > /dev/null
   cmake --build "$dir" -j"$(nproc)" --target super_clash
 }
 
