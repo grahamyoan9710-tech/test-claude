@@ -212,6 +212,32 @@ def _submit(out, tool, args, meta):
     print(text[:600])
 
 
+def gallery_frames(asset, out):
+    """Writes the frames of a saved Creator image as OUT/f_NN.png and returns how many. The pixel tools give them as
+    one sheet of frames, row by row, from api.pixellab.ai: the storage hosts of the download links are not reachable
+    from every network (Claude cloud sessions)."""
+    import io, re
+    from PIL import Image
+    for attempt in range(8):
+        text, _, _ = call('pixelart_workbench', {'argv': ['inspect', 'gallery:' + asset], 'mode': 'low'})
+        img = re.search(r'^image_id: (\S+)', text, re.M)
+        size = re.search(r'canvas: (\d+)x(\d+), (\d+) frame', text)
+        if img and size:
+            break
+        time.sleep(5 + 5 * attempt)  # "the pixel tools are busy"
+    else:
+        raise RuntimeError(f'gallery:{asset}: no frames ({text[:200]})')
+    fw, fh, n = (int(v) for v in size.groups())
+    req = urllib.request.Request(f'{URL}/pixel-tools/{img.group(1)}/frames.png',
+                                 headers={'Authorization': 'Bearer ' + TOKEN})
+    sheet = Image.open(io.BytesIO(OPENER.open(req, timeout=300).read())).convert('RGBA')
+    cols = sheet.width // fw
+    for i in range(n):
+        x, y = (i % cols) * fw, (i // cols) * fh
+        sheet.crop((x, y, x + fw, y + fh)).save(os.path.join(out, f'f_{i:02d}.png'))
+    return n
+
+
 def wait(out, timeout=1200):
     jf = os.path.join(out, 'job.json')
     job = json.load(open(jf))
@@ -223,14 +249,24 @@ def wait(out, timeout=1200):
         text, sc, raw = call('get_image', {'job_id': jid})
         status = (sc.get('status') or '').lower() or ('completed' if 'status: completed' in text else
                                                       'failed' if 'status: failed' in text or 'error' in text.lower()[:200] else 'processing')
+        asset = sc.get('asset_id') or next((l.split(':', 1)[1].strip() for l in text.splitlines()
+                                            if l.startswith('asset_id:')), None)
+        if 'completed' in status and not asset and 'asset_status:' in text and time.time() - t0 < timeout:
+            time.sleep(10)  # done, but not saved to the gallery yet
+            continue
         if 'completed' in status:
             json.dump(raw, open(os.path.join(out, 'result.json'), 'w'))
-            urls = sc.get('download_urls') or []
+            if asset:
+                urls = [None] * gallery_frames(asset, out)
+            else:
+                urls = sc.get('download_urls') or []
             if not urls:
                 base = next((w for w in text.split() if '/download?index=0' in w), None)
                 n = int(next((l.split(':')[1] for l in text.splitlines() if l.startswith('frames:')), '1'))
                 urls = [base.replace('index=0', f'index={i}') for i in range(n)] if base else []
             for i, u in enumerate(urls):
+                if u is None:
+                    continue  # already written from the gallery
                 for attempt in range(8):  # TLS hiccups through the proxy: try again
                     r = subprocess.run(['curl', '-sS', '--retry', '4', '--cacert', '/root/.ccr/ca-bundle.crt', '-o',
                                         os.path.join(out, f'f_{i:02d}.png'), u])

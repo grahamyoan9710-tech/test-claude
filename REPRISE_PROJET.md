@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 08 h 55 UTC, session B : le propriétaire a validé la génération de Link, Kratos et Hunter (et du reste de
+  Ganondorf et Sukuna), environ 250 générations. `driver.py link kratos hunter` et `rescue_loop.py` tournent dans la
+  session B. Les poses de garde `pxa/base/<perso>_guard256.png` (ignorées par git) sont la dernière image des jobs
+  `gen14/<perso>_toguard`. **`tools/pxcli.py` modifié** : `wait()` prend les images par la galerie
+  (`pixelart_workbench inspect gallery:<id>` puis `frames.png` sur api.pixellab.ai), car les liens Backblaze sont
+  bloqués dans les sessions cloud. Session A : recopier ce `pxcli.py` dans ton scratchpad avant `sync_repo.sh`.
 - 15/10 08 h 45 UTC, session B, **à la demande du propriétaire** (la session A n'a rien poussé depuis le 14/10
   19 h 52) : je récupère les clips déjà générés et payés de Starrk (59), Sukuna (49) et Ganondorf (26) avec leurs
   `job_id` de `job_status.json` (`pxcli.py wait`, aucune nouvelle génération), je les importe avec `import_all.py`,
