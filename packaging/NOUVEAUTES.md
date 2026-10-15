@@ -8,11 +8,9 @@
 
 ## Nouveautés
 
-- **Amaterasu de Sasuke** (Mangekyō Sharingan) : Sasuke reste immobile et ne peut plus attaquer tant que les
-  flammes noires brûlent, et la technique doit se recharger 5 secondes avant d'être relancée (le badge de l'arme
-  s'assombrit et affiche les secondes restantes).
-- **Ultimes** : 10 % de dégâts en plus, 20 % d'éjection en moins, et ils écrasent les boucliers (250 % de leurs
-  dégâts au lieu de 70 % : un ultime casse presque toujours un bouclier plein).
-- **Moins d'éjections précoces** : sous 100 %, les coups qui envoient loin éjectent moins (jusqu'à 40 % de moins à
-  0 %), les petits coups et les combos ne changent pas. Dans les duels de test, les KO sous 70 % passent de 9 % à 3 %.
-- Équilibrage refait avec ces règles : tous les combattants gagnent entre 43 et 56 % de leurs duels.
+- **Amaterasu de Sasuke** : se recharge en 3 secondes au lieu de 5.
+- **Smashs chargés par commande** (Bas, Bas-avant, Avant + Attaque ; Bas, Haut + Attaque) : plus faciles à sortir.
+  Le mouvement entier peut durer 26 images au lieu de 18 (près d'une demi-seconde), et le stick peut être relâché
+  jusqu'à 3 images avant le bouton au lieu d'une.
+- **Hitboxes revues** : instants d'impact et hitboxes recalés sur les animations actuelles (22 clips retimés,
+  181 hitboxes recalées sur le dessin).
