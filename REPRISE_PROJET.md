@@ -55,6 +55,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | session B (v9.1) | 15/10 05 h 40 UTC |
 
 ### Journal (le plus récent en haut)
+- 15/10 05 h 45 UTC, session B : **v9.1** (écran titre, script de paquets, README). Règle du propriétaire : +0,1 à
+  chaque mise à jour livrée, avec l'archive Linux envoyée. Paquet Linux 9.1 en cours de fabrication.
 - 14/10 21 h 45 UTC, session B : recherche de régressions. `sheets.txt` cohérent avec les images (720 lignes, rien
   de manquant ni d'orphelin, impacts dans les clips). Les 51 ultimes (17 persos × 3) joués en démo sans plantage.
   Corrigé : l'avertissement de compilation de `check_hitboxes.cpp`. Restent, connus : 282 hitboxes sur 692 qui
@@ -95,7 +97,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 - Branche de travail : `claude/sleepy-goodall-s399kv`. Une copie identique est poussée sur `reprise-claude`.
 - PR ouverte : grahamyoan9710-tech/test-claude#1, base `claude/admiring-lamport-jijwx9`.
-- Version affichée dans le jeu : **v9.0**. La prochaine sortie prévue est la **v10.0**, pas encore numérotée.
+- Version affichée dans le jeu : **v9.1** (15/10). Le propriétaire veut **+0,1 à chaque mise à jour** (9.2, 9.3…),
+  avec l'archive Linux envoyée à chaque fois (voir CLAUDE.md).
 
 ## 1. Vérifié au moment de la passation (réellement exécuté)
 - `cmake --build build` : compile sans erreur ni avertissement.
@@ -188,10 +191,9 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
    balance et ctest.
 6. **Équilibrage :** Kakashi ramené à 54 % et Grimmjow remonté à 44 % (14/10, session B). Restent un peu
    faibles : Ulquiorra, Yuno, Sasuke et Link (41-42 %) ; un peu forts : Asta, Ganondorf et Kratos (60-61 %).
-7. **Sortie v10.0 :**
-   - section v10.0 dans le README ;
-   - version dans `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README ;
-   - `scripts/package_release.sh 10.0` ;
+7. **Chaque mise à jour livrée (prochaine : v9.2) :**
+   - version +0,1 dans `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README ;
+   - `scripts/package_release.sh X.Y`, puis envoyer l'archive Linux au propriétaire ;
    - mise à jour de la description de la PR.
 
 ## 5. Pipeline PixelLab (`tools/pixellab/`)

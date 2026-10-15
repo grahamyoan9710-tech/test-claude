@@ -376,9 +376,9 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 
 Deux archives prêtes à lancer se fabriquent avec `scripts/package_release.sh` (dans `dist/`) :
 
-- **Linux 64 bits** (`SuperClashBros-9.0-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
+- **Linux 64 bits** (`SuperClashBros-9.1-linux-x64.tar.gz`, Ubuntu 24.04 ou plus récent) : décompresser,
   puis dans un terminal ouvert dans le dossier : `./super_clash`.
-- **Windows 64 bits** (`SuperClashBros-9.0-windows-x64.zip`) : décompresser, puis double-cliquer sur
+- **Windows 64 bits** (`SuperClashBros-9.1-windows-x64.zip`) : décompresser, puis double-cliquer sur
   `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations
   complémentaires » puis « Exécuter quand même »).
 
