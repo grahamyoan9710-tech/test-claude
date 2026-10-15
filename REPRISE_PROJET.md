@@ -55,6 +55,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 15 h 08 UTC, session B : release **v9.3** publiée et vérifiée (workflow réussi ; l'archive Linux,
+  retéléchargée par l'API, a la même somme SHA-256 que la release, démarre et affiche v9.3).
 - 15/10 14 h 57 UTC, session B : **v9.3**, ce push lance sa publication. Fait : délai entre deux utilisations
   (`MoveDef::cooldown`, `Fighter::moveCooldown`, remis à zéro au retour ; l'IA ignore une spéciale qui recharge).
   L'Amaterasu de Sasuke recharge 5 s et dure jusqu'à la fin des flammes (96 images) : Sasuke s'arrête net, ne dérive
