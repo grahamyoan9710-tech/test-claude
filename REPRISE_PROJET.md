@@ -48,13 +48,23 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (revue des hitboxes) | 15/10 16 h 20 UTC |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | session B (Amaterasu, commandes, hitboxes) | 15/10 16 h 20 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 16 h 40 UTC, session B : **v9.4**, ce push lance sa publication. Amaterasu : délai 3 s. Commandes des smashs
+  chargés : `motion()` regarde 26 images (`dirHist` en garde 30) et le stick peut quitter sa dernière direction
+  jusqu'à 3 images avant le bouton (2 tests qui échouent sur l'ancien code). Revue des hitboxes : `fitall.sh` relancé
+  sur les clips actuels (22 clips retimés, 181 hitboxes recalées), équilibre 43-55 %, KO sous 70 % : 3 %. Le contrôle
+  compte 435 hitboxes sur 1 058 « là où rien n'est dessiné », mais 239 sont des ultimes et 77 des Cero (dessinés par
+  le jeu) ; restent 119, dont 46 à plus de 10 unités du dessin : surtout des coups d'épée dont l'arc balaie pendant
+  que le clip tient la pose finale, et une vingtaine d'arcs qui passent où le clip ne dessine aucune lame (jab2
+  d'Ichigo, bair de Hunter, utilt de Kenpachi…). Essayé puis abandonné : tourner ces arcs vers la lame dessinée dans
+  `--fit-hitboxes` (la recherche de la lame prenait les jambes, des jabs frappaient vers le sol, Sasuke passait de 46
+  à 57 %) ; le recaleur est revenu à l'original. Verrous libres.
 - 15/10 16 h 20 UTC, session B, demande du propriétaire : délai de l'Amaterasu à 3 s ; un peu plus de temps pour les
   commandes des smash chargés (quart de cercle, bas-haut) ; revue des hitboxes. Je modifie `src/core/` (roster,
   détection des commandes), `src/game/check_hitboxes.cpp` (le recalage des coups d'épée dont l'arc passe où aucune
