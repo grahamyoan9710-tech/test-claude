@@ -55,6 +55,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 16 h 53 UTC, session B : release **v9.4** publiée et vérifiée (workflow réussi ; l'archive Linux,
+  retéléchargée par l'API, a la même somme SHA-256 que la release, démarre et affiche v9.4).
 - 15/10 16 h 40 UTC, session B : **v9.4**, ce push lance sa publication. Amaterasu : délai 3 s. Commandes des smashs
   chargés : `motion()` regarde 26 images (`dirHist` en garde 30) et le stick peut quitter sa dernière direction
   jusqu'à 3 images avant le bouton (2 tests qui échouent sur l'ancien code). Revue des hitboxes : `fitall.sh` relancé
