@@ -946,5 +946,117 @@
     "hue": "blue"
    }
   }
+ },
+ "link": {
+  "bair": {
+   "degrey": {
+    "frames": [
+     0
+    ],
+    "tol": 30
+   }
+  },
+  "dashattack": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "dspecial": {
+   "degrey": {
+    "frames": [
+     5
+    ],
+    "tol": 30
+   }
+  },
+  "fsmash": {
+   "degrey": {
+    "frames": [
+     6
+    ],
+    "tol": 30
+   }
+  },
+  "fthrow": {
+   "degrey": {
+    "frames": [
+     0
+    ],
+    "tol": 30
+   }
+  },
+  "ftilt": {
+   "degrey": {
+    "frames": [
+     3
+    ],
+    "tol": 30
+   }
+  },
+  "nair": {
+   "degrey": {
+    "frames": [
+     1,
+     2,
+     5,
+     6
+    ],
+    "tol": 30
+   }
+  },
+  "uair": {
+   "degrey": {
+    "frames": [
+     4
+    ],
+    "tol": 30
+   }
+  },
+  "usmash": {
+   "degrey": {
+    "frames": [
+     2,
+     4
+    ],
+    "tol": 30
+   }
+  },
+  "w0_nspecial": {
+   "degrey": {
+    "frames": [
+     1,
+     2,
+     4,
+     5,
+     6
+    ],
+    "tol": 30
+   }
+  },
+  "w0_ultimate": {
+   "degrey": {
+    "frames": [
+     2,
+     5,
+     7,
+     9,
+     12,
+     13,
+     14,
+     16,
+     17,
+     18
+    ],
+    "tol": 30
+   }
+  },
+  "airdodge": {
+   "replace": {
+    "3": 2
+   }
+  }
  }
 }
