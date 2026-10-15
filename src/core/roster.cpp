@@ -97,7 +97,7 @@ CharacterDef makeYuno() {
   c.groundAccel = 1.4f;
   c.airAccel = 0.55f;
   c.airJumps = 2;
-  const float S = 0.97f, P = 1.1f;
+  const float S = 0.97f, P = 1.16f;  // v9.2: hits harder, 39%
   buildBrawlerNormals(c, S, P, F::Wind);
   auto& m = c.moves;
 
@@ -251,7 +251,7 @@ CharacterDef makeByakuya() {
   stats(c, 44, 106, 92, 4.4f, 9.8f, 5.2f, 0.6f, 10.0f, 15.0f, 15.0f, 10.0f, 14.0f, 3);
   c.groundAccel = 1.4f;
   c.weaponLength = 72;
-  const float S = 1.02f, P = 1.0f;
+  const float S = 1.02f, P = 0.97f;  // v9.2: a little softer, 59%
   buildSwordNormals(c, S, P, F::Petal);
   auto& m = c.moves;
 
@@ -392,7 +392,7 @@ CharacterDef makeGanondorf() {
   c.groundAccel = 0.95f;
   c.friction = 0.7f;
   c.airAccel = 0.36f;
-  const float S = 1.25f, P = 1.56f;
+  const float S = 1.25f, P = 1.52f;  // v9.2: a little softer, 59% after the clip refit
   buildBrawlerNormals(c, S, P, F::Gloom);
   auto& m = c.moves;
 
@@ -472,7 +472,7 @@ CharacterDef makeKratos() {
                 pal({160, 130, 60}, {80, 60, 44}, {196, 40, 36}, {214, 210, 202}, {196, 196, 196}, {200, 160, 80})};
   stats(c, 56, 114, 118, 3.6f, 8.0f, 4.8f, 0.66f, 11.0f, 15.5f, 15.6f, 10.2f, 14.0f, 5);
   c.groundAccel = 1.1f;
-  const float S = 1.14f, P = 1.34f;
+  const float S = 1.14f, P = 1.17f;  // v9.2: toned down, he won 68% of the balance duels after the clip refit
   buildBrawlerNormals(c, S, P, F::Fire);
   auto& m = c.moves;
 
@@ -540,7 +540,7 @@ CharacterDef makeGojo() {
                 pal({236, 236, 240}, {44, 48, 64}, {180, 110, 255}, {244, 222, 206}, {244, 244, 252}, {120, 210, 255})};
   stats(c, 44, 114, 90, 4.4f, 9.4f, 5.4f, 0.58f, 9.6f, 14.5f, 15.4f, 10.0f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.04f, P = 1.26f;
+  const float S = 1.04f, P = 1.22f;  // v9.2: a little softer, 58%
   buildBrawlerNormals(c, S, P, F::Cursed);
   auto& m = c.moves;
 
@@ -604,7 +604,7 @@ CharacterDef makeSukuna() {
                 pal({36, 36, 44}, {120, 30, 40}, {220, 60, 60}, {242, 212, 190}, {240, 150, 170}, {220, 40, 40})};
   stats(c, 46, 104, 100, 4.3f, 9.4f, 5.3f, 0.64f, 10.4f, 15.5f, 15.6f, 10.3f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.0f, P = 1.12f;
+  const float S = 1.0f, P = 1.09f;  // v9.2: toned down, 61% after the clip refit
   buildBrawlerNormals(c, S, P, F::Blood);
   auto& m = c.moves;
 
@@ -672,7 +672,7 @@ CharacterDef makeKenpachi() {
   stats(c, 54, 124, 128, 3.7f, 8.4f, 4.8f, 0.68f, 11.0f, 15.6f, 15.4f, 10.2f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 96;
-  const float S = 1.18f, P = 1.05f;
+  const float S = 1.18f, P = 1.0f;  // v9.2: a little softer, 61%
   buildSwordNormals(c, S, P, F::Berserk);
   auto& m = c.moves;
 
@@ -738,7 +738,7 @@ CharacterDef makeUlquiorra() {
   stats(c, 44, 106, 86, 4.2f, 9.0f, 5.4f, 0.5f, 8.8f, 13.6f, 14.6f, 9.6f, 13.2f, 3);
   c.airJumps = 2;
   c.airAccel = 0.5f;
-  const float S = 1.0f, P = 1.39f;
+  const float S = 1.0f, P = 1.48f;  // v9.2: hits harder, he fell to 38%
   buildBrawlerNormals(c, S, P, F::Hollow);
   auto& m = c.moves;
 
@@ -810,7 +810,7 @@ CharacterDef makeGrimmjow() {
   stats(c, 46, 106, 102, 4.5f, 10.0f, 5.6f, 0.66f, 10.6f, 15.8f, 15.8f, 10.4f, 14.6f, 3);
   c.groundAccel = 1.5f;
   c.weaponLength = 72;
-  const float S = 1.04f, P = 1.20f;  // v10: hits harder, he fell to 33% after the clip refit
+  const float S = 1.04f, P = 1.20f;  // v9.1: hits harder, he fell to 33% after the clip refit
   buildBrawlerNormals(c, S, P, F::Claw);
   auto& m = c.moves;
 
@@ -1030,7 +1030,7 @@ CharacterDef makeSasuke() {
   stats(c, 44, 102, 90, 4.4f, 9.7f, 5.4f, 0.6f, 9.8f, 14.8f, 15.2f, 10.0f, 14.2f, 3);
   c.groundAccel = 1.45f;
   c.weaponLength = 70;
-  const float S = 1.0f, P = 0.82f;
+  const float S = 1.0f, P = 0.86f;  // v9.2: hits a little harder, 42%
   buildSwordNormals(c, S, P, F::Lightning);
   auto& m = c.moves;
 
@@ -1104,7 +1104,7 @@ CharacterDef makeKakashi() {
                 pal({40, 48, 70}, {90, 90, 96}, {120, 170, 230}, {236, 212, 188}, {214, 216, 222}, {40, 40, 44})};
   stats(c, 44, 104, 96, 4.3f, 9.5f, 5.3f, 0.6f, 10.0f, 15.0f, 15.2f, 10.0f, 14.2f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.02f, P = 1.08f;  // v10: toned down, he won 72% of the balance duels
+  const float S = 1.02f, P = 1.08f;  // v9.1: toned down, he won 72% of the balance duels
   buildBrawlerNormals(c, S, P, F::Lightning);
   auto& m = c.moves;
 
