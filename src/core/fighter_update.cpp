@@ -115,9 +115,8 @@ void Match::startChargedSmash(Fighter& f, int id) {
 
 bool Match::tryGroundActions(Fighter& f) {
   const IS& in = f.in;
-  // The ultimate: its button, or the neutral special with a full meter (Smash Bros.' Final Smash).
-  if (f.finalSmash && freezeTimer == 0 &&
-      (f.pressed(&IS::ultimate) || (f.pressed(&IS::special) && in.stick.len() < 0.4f))) {
+  // The ultimate: its own button only (U on the keyboard), never the special.
+  if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
     return true;
   }
@@ -185,8 +184,7 @@ bool Match::tryGroundActions(Fighter& f) {
 }
 
 bool Match::tryAirActions(Fighter& f) {
-  if (f.finalSmash && freezeTimer == 0 &&
-      (f.pressed(&IS::ultimate) || (f.pressed(&IS::special) && f.in.stick.len() < 0.4f))) {
+  if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
     return true;
   }

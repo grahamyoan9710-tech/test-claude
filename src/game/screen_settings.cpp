@@ -692,7 +692,7 @@ void App::drawSettings() {
     }
     drawText("Combos :  Attaque + Spéciale = smash   •   Bas, Bas-avant, Avant + Attaque = smash avant chargé",
              kPanel.x + 46, kPanel.y + 413, 12, ui::kMuted);
-    drawText("Bas, Haut + Attaque = smash haut chargé   •   Spéciale (barre d'ulti pleine) = ultime",
+    drawText("Bas, Haut + Attaque = smash haut chargé   •   Touche Ultime (U) = ultime",
              kPanel.x + 103, kPanel.y + 426, 12, ui::kMuted);
     // Gamepad reference
     const PadFamily f = promptFamily();

@@ -49,12 +49,20 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (pilote Ichigo : armes, clips coupés) | 15/10 17 h 41 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab d'Ichigo) | 15/10 17 h 41 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | session B (coups d'armes d'Ichigo) | 15/10 17 h 41 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 15/10 17 h 41 UTC, session B, **grand chantier validé par le propriétaire** : (1) seule la touche Ultime (U) lance
+  l'ultime (fait) ; (2) chaque arme ramassée se voit dans tous les états (garde, repos, marche, course, saut, chute)
+  avec un combo M1 de 3 coups, 4 compétences et un ultime propres, tout en clips PixelLab ; (3) les effets de combat
+  dessinés par le code sont remplacés par des effets PixelLab accrochés aux mains et aux armes des clips ; (4) les
+  clips coupés au bord du cadre sont refaits ; (5) contrôle des bugs. Résolution gardée (PixelLab plafonne à 256 px).
+  Pilote : Ichigo (Zangetsu Shikai et Tensa Zangetsu), montré au propriétaire avant les 16 autres. Verrous imports,
+  effets et équilibrage pris pour Ichigo. Session A : ne pas toucher aux clips et coups d'Ichigo sans passer par le
+  journal.
 - 15/10 16 h 53 UTC, session B : release **v9.4** publiée et vérifiée (workflow réussi ; l'archive Linux,
   retéléchargée par l'API, a la même somme SHA-256 que la release, démarre et affiche v9.4).
 - 15/10 16 h 40 UTC, session B : **v9.4**, ce push lance sa publication. Amaterasu : délai 3 s. Commandes des smashs

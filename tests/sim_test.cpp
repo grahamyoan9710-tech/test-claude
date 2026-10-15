@@ -431,7 +431,12 @@ static void testFinalSmash() {
   CHECK(f.move != FinalSmash, "an up special does not waste the ultimate");
   p.idle(80);
   p.run(1, key(0, 0, false, false, false, true));
-  CHECK(f.state == FState::Attack && f.move == FinalSmash, "the neutral special with a full meter is the final smash");
+  CHECK(f.move != FinalSmash, "the neutral special with a full meter stays the special (only U unleashes the ultimate)");
+  p.idle(80);
+  InputState ultKey;
+  ultKey.ultimate = true;
+  p.run(1, ultKey);
+  CHECK(f.state == FState::Attack && f.move == FinalSmash, "the ultimate button unleashes the final smash");
   CHECK(f.ult == 0.0f && !f.finalSmash, "the meter is spent (%.0f)", f.ult);
   CHECK(m.freezeTimer > 0, "cinematic freeze");
   int stocks = v.stocks;
