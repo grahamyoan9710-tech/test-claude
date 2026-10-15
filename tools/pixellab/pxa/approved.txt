@@ -86,3 +86,4 @@ kratos/runstart
 kratos/jump
 kratos/knockdown
 kratos/holdstart
+kratos/ledgegrab
