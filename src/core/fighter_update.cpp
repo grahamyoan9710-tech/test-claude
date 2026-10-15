@@ -82,6 +82,10 @@ void Match::setState(Fighter& f, FState s, int timer) {
 void Match::startMove(Fighter& f, int id) {
   const MoveDef& m = f.moveDef(id);
   if (!m.exists()) return;
+  if (m.cooldown > 0) {  // still recharging: nothing happens
+    if (f.moveCooldown[id] > 0) return;
+    f.moveCooldown[id] = m.cooldown;
+  }
   f.state = FState::Attack;
   f.stateFrame = 0;
   f.move = id;
@@ -292,6 +296,8 @@ void Match::updateFighter(Fighter& f) {
   }
   if (f.intangible > 0) f.intangible--;
   if (f.invincible > 0) f.invincible--;
+  for (int& c : f.moveCooldown)
+    if (c > 0) --c;
   if (f.ledgeCooldown > 0) f.ledgeCooldown--;
   if (f.dropThrough > 0) f.dropThrough--;
   if (f.techWindow > 0) f.techWindow--;

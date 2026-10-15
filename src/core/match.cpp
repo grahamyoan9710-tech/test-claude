@@ -196,6 +196,7 @@ void Match::respawnFighter(Fighter& f) {
   f.groundPlat = -1;
   f.airJumps = f.def->airJumps;
   f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
+  for (int& c : f.moveCooldown) c = 0;
   f.lastHitBy = -1;
   f.facing = 1;
   setState(f, FState::Respawn);

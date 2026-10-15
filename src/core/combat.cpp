@@ -6,6 +6,19 @@
 
 namespace {
 constexpr float kLaunchScale = 0.15f;  // knockback units -> px/frame
+// Ultimates: a little more damage, less knockback (they KO'd far too early), and they crush shields.
+constexpr float kUltDamageMul = 1.1f;
+constexpr float kUltKnockbackMul = 0.8f;
+constexpr float kUltShieldMul = 2.5f;  // shield cost per damage (an ordinary blow: 1.1)
+
+// Below 100 % the launches are softened, so that nobody flies out at 50-60 %: the knockback beyond a light hit
+// (combos and jabs keep theirs) shrinks by up to 40 % at 0 %, less and less up to 100 %.
+float softenLowPercent(float kb, float percent) {
+  constexpr float kLight = 60.0f;
+  if (kb <= kLight) return kb;
+  const float low = clampf((100.0f - percent) / 100.0f, 0.0f, 1.0f);
+  return kLight + (kb - kLight) * (1.0f - 0.4f * low);
+}
 
 // Does the hitbox touch the circle / rectangle this frame? hp = contact point (world). Swing hitboxes
 // sweep the blade from its angle on the previous frame to this frame's (no tunnelling through thin
@@ -79,6 +92,7 @@ void Match::resolveHits() {
     if (!m || !a.active() || a.hitlag > 0 || a.charging || m->throwFrame >= 0) continue;
     if (m->counterStart >= 0 && !a.counterTriggered) continue;
     float mul = a.damageMul();
+    if (a.move == FinalSmash) mul *= kUltDamageMul;
     if (m->chargeFrame >= 0) mul *= 1.0f + m->chargeDamageMul * float(a.charge) / float(m->maxCharge);
     // A held weapon: harder hits; the base moves also reach further and take its element (a
     // transformation's element wins).
@@ -243,9 +257,9 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
   const float dmg = h.damage * damageMul;
   const bool shielding = (v.state == FState::Shield || v.state == FState::ShieldStun) && !throwHit;
   if (shielding) {
-    // A shield blocks an ultimate too, but pays for it: about half the damage of each blow (a whole
-    // ultimate nearly empties it); an ordinary blow costs 110 % of its damage.
-    v.shield -= ult ? dmg * 0.7f : dmg * 1.1f;
+    // A shield blocks an ultimate too, but pays dearly: 250 % of the damage of each blow (an ultimate breaks
+    // a full shield); an ordinary blow costs 110 % of its damage.
+    v.shield -= ult ? dmg * kUltShieldMul : dmg * 1.1f;
     int lag = hitlagFor(dmg, 0.0f);
     v.hitlag = lag;
     if (attacker) attacker->hitlag = lag;
@@ -274,7 +288,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
     v.lastHitFrame = frame;
   }
   const FormDef* vf = v.formDef();
-  const float kb = computeKnockback(v.percent, dmg, v.def->weight, h.growth, h.baseKB) * (vf ? vf->kbTakenMul : 1.0f);
+  float kb = computeKnockback(v.percent, dmg, v.def->weight, h.growth, h.baseKB) * (vf ? vf->kbTakenMul : 1.0f);
 
   const MoveDef* vm = v.currentMove();
   const bool moveArmor = vm && vm->armorStart >= 0 && v.moveFrame >= vm->armorStart && v.moveFrame < vm->armorEnd;
@@ -288,6 +302,8 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
     emit(EvType::Hit, hitPos, attacker ? attacker->id : -1, v.id, dmg * 0.5f, {float(dirSign), 0}, h.fx);
     return;
   }
+  if (ult) kb *= kUltKnockbackMul;
+  kb = softenLowPercent(kb, v.percent);
 
   float ang = h.angle;
   if (ang > 360.0f) ang = v.grounded ? (kb < 60.0f ? 5.0f : 40.0f) : 45.0f;
@@ -367,7 +383,7 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
     targets.push_back(-2);  // self
   }
   const bool ult = f.state == FState::Attack && f.move == FinalSmash;
-  const float dmgMul = f.damageMul();
+  const float dmgMul = f.damageMul() * (ult ? kUltDamageMul : 1.0f);
   for (int t : targets) {
     Vec2 origin;
     int side = f.facing;

@@ -97,7 +97,7 @@ CharacterDef makeYuno() {
   c.groundAccel = 1.4f;
   c.airAccel = 0.55f;
   c.airJumps = 2;
-  const float S = 0.97f, P = 1.16f;  // v9.2: hits harder, 39%
+  const float S = 0.97f, P = 1.11f;  // v9.3: 60% with the softer launches (v9.2: 1.16)
   buildBrawlerNormals(c, S, P, F::Wind);
   auto& m = c.moves;
 
@@ -171,7 +171,7 @@ CharacterDef makeIchigo() {
                 pal({240, 240, 244}, {32, 32, 38}, {200, 30, 30}, {232, 228, 226}, {240, 128, 40}, {230, 200, 40})};
   stats(c, 46, 104, 100, 4.1f, 8.9f, 5.1f, 0.64f, 10.2f, 15.0f, 15.4f, 10.2f, 14.0f, 4);
   c.weaponLength = 88;
-  const float S = 1.08f, P = 1.06f;  // v6: toned down, he was far too strong
+  const float S = 1.08f, P = 1.10f;  // v9.3: hits harder again, 42% (v6: 1.06)
   buildSwordNormals(c, S, P, F::Reiatsu);
   auto& m = c.moves;
 
@@ -672,7 +672,7 @@ CharacterDef makeKenpachi() {
   stats(c, 54, 124, 128, 3.7f, 8.4f, 4.8f, 0.68f, 11.0f, 15.6f, 15.4f, 10.2f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 96;
-  const float S = 1.18f, P = 1.0f;  // v9.2: a little softer, 61%
+  const float S = 1.18f, P = 1.04f;  // v9.3: 43% with the softer launches (v9.2: 1.0)
   buildSwordNormals(c, S, P, F::Berserk);
   auto& m = c.moves;
 
@@ -964,7 +964,7 @@ CharacterDef makeNaruto() {
   stats(c, 44, 96, 92, 4.5f, 9.8f, 5.6f, 0.6f, 10.0f, 15.0f, 15.6f, 10.4f, 14.6f, 3);
   c.groundAccel = 1.5f;
   c.airJumps = 2;
-  const float S = 0.98f, P = 1.07f;
+  const float S = 0.98f, P = 1.11f;  // v9.3: hits harder, 41%
   buildBrawlerNormals(c, S, P, F::Chakra);
   auto& m = c.moves;
 
@@ -1079,7 +1079,9 @@ CharacterDef makeSasuke() {
   c.weapons[0].moves = {{NSpecial, arrow}};
   c.weapons[1] = weapon("Mangekyō Sharingan", "Amaterasu : des flammes noires sur l'ennemi", WeaponVisual::Mangekyo,
                         F::BlackFlame, 1.25f, 1.1f, 1.0f, 15);
-  MoveDef ama = mv("Amaterasu", 50, {});
+  // Sasuke holds his gaze while the black flames burn (they start at frame 20 and last 70): he stands still and
+  // cannot attack until they die out, and the technique needs five seconds to come back.
+  MoveDef ama = mv("Amaterasu", 96, {});
   ama.projectileFrame = 20;
   ama.projectile = proj({0, 0}, {0, 0}, 0, 70, 30, 2.2f, 8, 6, F::BlackFlame, PV::BlackFlames);
   ama.projectile.target = ProjTarget::Nearest;
@@ -1087,6 +1089,10 @@ CharacterDef makeSasuke() {
   ama.projectile.piercing = true;
   ama.projectile.rehit = 8;
   ama.projectile.ignoreGround = true;
+  ama.channelEnd = 90;
+  ama.cooldown = 300;
+  ama.allowDrift = false;
+  ama.vel = {ve(1, VelMode::Set, 0, 0)};
   ama.pose = PoseHint::HandSign;
   c.weapons[1].moves = {{NSpecial, ama}};
   return c;

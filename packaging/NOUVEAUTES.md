@@ -8,11 +8,11 @@
 
 ## Nouveautés
 
-- Starrk, Sukuna, Link, Ganondorf, Kratos et Hunter ont leurs animations PixelLab complètes : plus de 320 clips,
-  avec les armes de chacun (la Charge Blade et la lance-canon de Hunter, l'épée du Roi Démon de Ganondorf…).
-- Le Fuga de Sukuna n'a plus d'arc.
-- Les effets que le jeu dessine déjà (rayons, explosions, éruptions, flammes) ne sont plus dessinés en double dans
-  les animations, et les fumées grises ou les étincelles parasites sont effacées.
-- Les instants d'impact et les hitboxes sont recalés sur les nouvelles animations.
-- Équilibrage : tous les combattants gagnent entre 45 et 58 % de leurs duels (Kratos, Kenpachi, Gojo, Sukuna,
-  Ganondorf et Byakuya frappent moins fort ; Ulquiorra, Yuno et Sasuke plus fort).
+- **Amaterasu de Sasuke** (Mangekyō Sharingan) : Sasuke reste immobile et ne peut plus attaquer tant que les
+  flammes noires brûlent, et la technique doit se recharger 5 secondes avant d'être relancée (le badge de l'arme
+  s'assombrit et affiche les secondes restantes).
+- **Ultimes** : 10 % de dégâts en plus, 20 % d'éjection en moins, et ils écrasent les boucliers (250 % de leurs
+  dégâts au lieu de 70 % : un ultime casse presque toujours un bouclier plein).
+- **Moins d'éjections précoces** : sous 100 %, les coups qui envoient loin éjectent moins (jusqu'à 40 % de moins à
+  0 %), les petits coups et les combos ne changent pas. Dans les duels de test, les KO sous 70 % passent de 9 % à 3 %.
+- Équilibrage refait avec ces règles : tous les combattants gagnent entre 43 et 56 % de leurs duels.

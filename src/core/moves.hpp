@@ -282,6 +282,9 @@ struct MoveDef {
   float teleportDist = 0.0f;
   bool teleportForward = false;     // straight ahead instead of the stick direction
   bool turnAfterTeleport = false;   // faces back after it (strikes from behind)
+  // Use limits
+  int cooldown = 0;                 // frames from its start before it can be used again (0: none)
+  int channelEnd = -1;              // the technique is held up to this frame: its clip keeps the cast pose
   // Presentation
   int superFlash = 0;               // frames of "super freeze" when the move starts (cut-in with its name)
   PoseHint pose = PoseHint::Auto;

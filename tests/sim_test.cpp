@@ -581,6 +581,47 @@ static void testWeapons() {
   CHECK(boosted > base * 1.1f, "weapon damage bonus (%.1f vs %.1f)", boosted, base);
 }
 
+// Sasuke's Amaterasu: he stands still and cannot attack while the black flames burn, then it needs time to come back.
+static void testAmaterasu() {
+  std::printf("[amaterasu]\n");
+  MatchConfig cfg = duel(0, charIndex("SASUKE"), charIndex("NARUTO"), false, false);
+  cfg.items = false;
+  cfg.weapons = false;
+  for (int air = 0; air < 2; ++air) {
+    Match m(cfg);
+    skipCountdown(m);
+    Fighter& f = m.fighters[0];
+    Fighter& v = m.fighters[1];
+    f.pos = {-150, air ? -260.0f : 0.0f};
+    f.facing = 1;
+    v.pos = {150, 0};
+    m.equipWeapon(f, 1);  // the Mangekyo Sharingan
+    Pad p{m};
+    if (!air) p.idle(10);
+    p.run(1, key(0, 0, false, false, false, true));
+    CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Amaterasu", "air %d: the neutral special is Amaterasu",
+          air);
+    const MoveDef& ama = f.moveDef(NSpecial);
+    const float x0 = f.pos.x;
+    bool held = true, moved = false;
+    for (int i = 1; i < ama.duration - 1; ++i) {
+      p.run(1, key(1, 0, i % 2 == 0, false, false, i % 3 == 0));  // walks, attacks and casts again: in vain
+      held = held && f.state == FState::Attack && f.move == NSpecial;
+      moved = moved || std::fabs(f.pos.x - x0) > 0.5f;
+    }
+    CHECK(held, "air %d: nothing interrupts the technique (state %d, move %d)", air, int(f.state), f.move);
+    CHECK(!moved, "air %d: he does not move while casting (x %.1f -> %.1f)", air, x0, f.pos.x);
+    if (air) continue;
+    CHECK(v.percent > 5.0f, "the black flames burn (%.1f%%)", v.percent);
+    p.idle(30);
+    p.run(1, key(0, 0, false, false, false, true));
+    CHECK(f.state != FState::Attack, "it cannot be cast again right away (state %d, move %d)", int(f.state), f.move);
+    p.idle(ama.cooldown - ama.duration - 30);
+    p.run(1, key(0, 0, false, false, false, true));
+    CHECK(f.state == FState::Attack && f.move == NSpecial, "it comes back after %d frames", ama.cooldown);
+  }
+}
+
 // With a picked-up weapon the basic attack becomes the weapon's own strike (its clip: w0_jab / w1_jab), and it hits.
 static void testWeaponStrikes() {
   std::printf("[weapon strikes]\n");
@@ -988,7 +1029,8 @@ static void testBalance() {
   std::printf("[balance: round robin duels on stage 0]\n");
   const int n = int(roster().size());
   std::vector<int> wins(n, 0), games(n, 0);
-  int timeouts = 0;
+  std::vector<std::vector<float>> koAt(n);  // per fighter: the victim's percent at each of its KOs
+  int timeouts = 0, earlyUlt = 0;
   for (int a = 0; a < n; ++a)
     for (int b = 0; b < n; ++b) {
       if (a == b) continue;
@@ -997,11 +1039,21 @@ static void testBalance() {
         cfg.seed = 50 + seed;
         Match m(cfg);
         CpuBrain ba(9, seed * 3 + 1), bb(9, seed * 3 + 2);
+        int ultUntil[2] = {-1, -1};  // a KO up to this frame comes from that fighter's ultimate
         for (int i = 0; i < 60 * 60 * 6 && !m.finished; ++i) {
           std::array<InputState, 4> in{};
           in[0] = ba.think(m, 0);
           in[1] = bb.think(m, 1);
+          const float pct[2] = {m.fighters[0].percent, m.fighters[1].percent};
+          const int by[2] = {m.fighters[0].lastHitBy, m.fighters[1].lastHitBy};
+          for (int k = 0; k < 2; ++k)
+            if (m.fighters[k].state == FState::Attack && m.fighters[k].move == FinalSmash) ultUntil[k] = m.frame + 150;
           m.step(in);
+          for (const auto& e : m.events)  // a KO by the opponent's blow (not a fall on its own)
+            if (e.type == EvType::KO && e.a >= 0 && e.a < 2 && by[e.a] == 1 - e.a) {
+              koAt[e.a == 0 ? b : a].push_back(pct[e.a]);
+              earlyUlt += pct[e.a] < 70.0f && m.frame <= ultUntil[1 - e.a];
+            }
         }
         games[a]++;
         games[b]++;
@@ -1013,6 +1065,25 @@ static void testBalance() {
   for (int c = 0; c < n; ++c)
     std::printf("  %-6s win rate %3.0f%%\n", roster()[c].name.c_str(), 100.0f * wins[c] / std::max(1, games[c]));
   CHECK(timeouts <= 3, "%d duels timed out", timeouts);
+  // How early the KOs come (the "win rate" lines above are read by tools/pixellab/fitall.sh: keep them apart).
+  int early = 0, all = 0;
+  for (int c = 0; c < n; ++c) {
+    const auto& k = koAt[c];
+    if (k.empty()) continue;
+    float sum = 0.0f, low = 1e9f;
+    int under = 0;
+    for (float p : k) {
+      sum += p;
+      low = std::min(low, p);
+      under += p < 70.0f;
+    }
+    early += under;
+    all += int(k.size());
+    std::printf("  %-6s KOs at %3.0f%% on average, the earliest at %3.0f%%, %2.0f%% of them under 70%%\n",
+                roster()[c].name.c_str(), sum / float(k.size()), low, 100.0f * float(under) / float(k.size()));
+  }
+  std::printf("  %d KOs, %.0f%% of them under 70%% (%d of those by an ultimate)\n", all,
+              100.0f * float(early) / float(std::max(1, all)), earlyUlt);
 }
 
 static void testDeterminism() {
@@ -1041,6 +1112,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "cpu10") testLevel10();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();
+  if (only.empty() || only == "weapons" || only == "amaterasu") testAmaterasu();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "recovery") testRecoveryStages();
   if (only.empty() || only == "battle") testBattles();

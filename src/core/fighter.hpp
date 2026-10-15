@@ -54,6 +54,7 @@ struct Fighter {
   bool fastFall = false;
   bool airDodgeUsed = false;
   bool sideSpecialUsed = false;
+  int moveCooldown[MOVE_COUNT] = {};  // frames left before a move with a cooldown can be used again
 
   // Current move
   int move = -1;

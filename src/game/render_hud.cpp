@@ -101,6 +101,12 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       WeaponStyle st;
       st.icon = true;
       drawWeaponStyled(w->visual, W(b) - dir * (len * 0.5f), dir, 0.26f, 1.0f, time, st);
+      if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging (Amaterasu)
+        DrawCircleV(b, 13.5f, withAlpha(ui::kInk, 0.65f));
+        char sec[8];
+        std::snprintf(sec, sizeof sec, "%d", (f.moveCooldown[NSpecial] + 59) / 60);
+        drawTextOutlined(sec, b.x - textWidth(sec, 16) * 0.5f, b.y - 9, 16, ui::kCream, ui::kInk, 2.0f);
+      }
     }
 
     char label[16];

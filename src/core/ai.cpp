@@ -37,7 +37,7 @@ struct SpecialUse {
 SpecialUse specialUse(const Fighter& f, int id) {
   const MoveDef& m = f.moveDef(id);
   SpecialUse u;
-  if (!m.exists()) return u;
+  if (!m.exists() || f.moveCooldown[id] > 0) return u;  // recharging: as if it did not exist
   u.projectile = m.projectileFrame >= 0;
   u.counter = m.counterStart >= 0;
   u.grab = m.isGrab;

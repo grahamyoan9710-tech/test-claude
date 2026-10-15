@@ -832,7 +832,8 @@ void clipImpact(const MoveDef& md, float dur, Pose& p) {
     if (h.end > h.start) w.push_back({h.start, h.end});  // (a throw's hitbox is never out: start == end)
   if (w.empty()) {
     if (md.throwFrame >= 0) w.push_back({md.throwFrame, md.throwFrame + 3});
-    else if (md.projectileFrame >= 0) w.push_back({md.projectileFrame, md.projectileFrame + 4});
+    else if (md.projectileFrame >= 0)  // a held technique keeps its cast pose until it ends
+      w.push_back({md.projectileFrame, std::max(md.projectileFrame + 4, md.channelEnd)});
     else if (!md.shots.empty())
       for (const auto& s : md.shots) w.push_back({s.frame, s.frame + 4});
     else if (md.teleportFrame >= 0) w.push_back({md.teleportFrame, md.teleportFrame + 2});
