@@ -48,13 +48,28 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (recalage du kit d'Ichigo) | 15/10 18 h 21 UTC |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (pilote Ichigo : armes, clips coupés) | 15/10 17 h 41 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab d'Ichigo) | 15/10 17 h 41 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (coups d'armes d'Ichigo) | 15/10 17 h 41 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session B (v9.5) | 16/10 01 h 40 UTC |
 
 ### Journal (le plus récent en haut)
+- 16/10 01 h 40 UTC, session B : **v9.5, pilote Ichigo terminé**, ce push lance sa publication.
+  - Kits : 51 clips PixelLab (Shikai : M1 3 coups, M1 aérien, 3 compétences ; Bankai : tous les états, prises,
+    projections, M1, compétences). Un smash avec une arme à kit sort le 3e coup du combo (coup lourd) : sans lui,
+    Ichigo tombait à 29 % (plus de coup pour éjecter), avec lui 48 %.
+  - 9 effets PixelLab (agent vfx_workbench, gratuits) : `hit_slash`, `hit_reiatsu`, `hit_dark`, `counter_flash`,
+    `getsuga_black`, `bankai_burst`, `shunpo_streak`, `reiatsu_aura`, `bankai_aura`. Ils remplacent les
+    étincelles, la parade, le Getsuga, l'anneau d'ultime prêt et le pilier d'ultime dessinés par le code ; les
+    clips PixelLab n'ont plus la traînée blanche du code (tous les combattants) ; les ultimes d'Ichigo ne
+    redessinent plus par-dessus leurs clips la lame géante, la croix et la charge du cero.
+  - `fitall.sh` relancé (22 clips retimés, 181 hitboxes recalées) ; équilibre 43-55 % ; tous les tests passent.
+  - Démos filmées et relues : kit Shikai, kit Bankai, les 3 ultimes. Option de démo `--weapon SLOT`.
+  - Coût PixelLab du pilote : environ 75 générations (dont 10 de clips refaits : bug corrigé dans `clips.py`,
+    les clips d'une arme à nouvelle apparence finissant « en garde » finissaient sur la garde de base).
+  - Suite, après l'avis du propriétaire : les 16 autres combattants (`pxa/wkits/<perso>.json`, même modèle).
+    Verrous imports, effets et équilibrage gardés pour ce chantier ; `fitall.sh` libre.
 - 15/10 18 h 21 UTC, session B, pilote Ichigo en cours :
   - **fait et poussé (48a5a76)** : kits d'armes dans le code (`WeaponDef::kit` : avec l'arme, tous les coups au sol
     deviennent le combo M1 jab → jab2 → jab3, tous les aériens le M1 aérien `nair`, les spéciales ses 4
