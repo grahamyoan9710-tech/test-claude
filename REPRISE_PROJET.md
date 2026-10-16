@@ -52,9 +52,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (pilote Ichigo : armes, clips coupés) | 15/10 17 h 41 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab d'Ichigo) | 15/10 17 h 41 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (coups d'armes d'Ichigo) | 15/10 17 h 41 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.5) | 16/10 01 h 40 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 01 h 50 UTC, session B : release **v9.5** publiée et vérifiée (workflow réussi ; l'archive Linux, retéléchargée
+  par l'API, a la même somme SHA-256 que la release, démarre et affiche v9.5). Verrou de version libre.
 - 16/10 01 h 40 UTC, session B : **v9.5, pilote Ichigo terminé**, ce push lance sa publication.
   - Kits : 51 clips PixelLab (Shikai : M1 3 coups, M1 aérien, 3 compétences ; Bankai : tous les états, prises,
     projections, M1, compétences). Un smash avec une arme à kit sort le 3e coup du combo (coup lourd) : sans lui,
