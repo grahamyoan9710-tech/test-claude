@@ -1,0 +1,235 @@
+{
+ "frames": [
+  {
+   "filename": "demon-dragon-breath-head 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 1.png",
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 2.png",
+   "frame": {
+    "x": 256,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 3.png",
+   "frame": {
+    "x": 0,
+    "y": 112,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 4.png",
+   "frame": {
+    "x": 128,
+    "y": 112,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 5.png",
+   "frame": {
+    "x": 256,
+    "y": 112,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 6.png",
+   "frame": {
+    "x": 0,
+    "y": 224,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "demon-dragon-breath-head 7.png",
+   "frame": {
+    "x": 128,
+    "y": 224,
+    "w": 128,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 128,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 112
+   },
+   "pivot": {
+    "x": 0.0,
+    "y": 0.5
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "demon-dragon-breath-head.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 384,
+   "h": 336
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 0,
+   "y": 56
+  },
+  "frameTags": [
+   {
+    "name": "demon-dragon-breath-head",
+    "from": 0,
+    "to": 7,
+    "direction": "forward"
+   }
+  ]
+ }
+}

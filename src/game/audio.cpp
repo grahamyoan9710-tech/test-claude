@@ -3,10 +3,34 @@
 #include <atomic>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <functional>
 #include <vector>
 
+extern "C" {
+struct ClashAudio {  // assets/audio, embedded by CMakeLists.txt
+  const char* name;
+  const unsigned char* data;
+  const unsigned int* size;
+};
+extern const ClashAudio clash_audio[];  // ends with a null name
+}
+
 namespace {
+const ClashAudio* findAudio(const char* name) {
+  for (const ClashAudio* a = clash_audio; a->name; ++a)
+    if (std::strcmp(a->name, name) == 0) return a;
+  return nullptr;
+}
+const char* const kSfxNames[] = {"hit_light", "hit_medium", "hit_heavy", "hit_fire", "hit_electric", "hit_slash",
+                                 "swing", "jump", "air_jump", "land", "shield_hit", "shield_break", "ko", "crowd",
+                                 "projectile", "grab", "counter", "ledge", "menu_move", "menu_select", "menu_back",
+                                 "beep", "go", "game_set", "ult_ready", "ult_unleash",
+                                 "wind_gust", "ice_crack", "petal_swish", "hit_holy", "hit_gloom",
+                                 "beam_hum", "beam_blast", "explosion", "impact_boom", "cut_in", "domain_drone",
+                                 "weapon_pickup", "weapon_break", "reflect"};
+static_assert(sizeof(kSfxNames) / sizeof(kSfxNames[0]) == int(Sfx::Count), "one name per sound");
+
 constexpr int kRate = 22050;
 constexpr float kTau = 6.2831853f;
 
@@ -405,10 +429,25 @@ bool Audio::init() {
   InitAudioDevice();
   if (!IsAudioDeviceReady()) return false;
   for (int i = 0; i < int(Sfx::Count); ++i) {
-    Wave w = makeSfx(Sfx(i));
+    const ClashAudio* rec = findAudio(TextFormat("sfx_%s", kSfxNames[i]));
+    Wave w = rec ? LoadWaveFromMemory(".mp3", rec->data, int(*rec->size)) : Wave{};
+    if (!w.data) w = makeSfx(Sfx(i));
+    else for (unsigned k = 0; k < w.frameCount * w.channels; ++k) {  // recorded at full scale: like the synthesized
+      if (w.sampleSize == 16) ((short*)w.data)[k] = short(((short*)w.data)[k] * 0.75f);
+      else if (w.sampleSize == 32) ((float*)w.data)[k] *= 0.75f;
+    }
     voices_[i][0] = LoadSoundFromWave(w);
     for (int v = 1; v < kVoices; ++v) voices_[i][v] = LoadSoundAlias(voices_[i][0]);
     UnloadWave(w);
+  }
+  for (const ClashAudio* a = clash_audio; a->name && lineCount_ < 64; ++a) {  // the announcer
+    if (std::strncmp(a->name, "voice_", 6) != 0) continue;
+    Wave w = LoadWaveFromMemory(".mp3", a->data, int(*a->size));
+    if (!w.data) continue;
+    lines_[lineCount_] = LoadSoundFromWave(w);
+    UnloadWave(w);
+    std::strncpy(lineKeys_[lineCount_], a->name + 6, sizeof(lineKeys_[0]) - 1);
+    ++lineCount_;
   }
   SetAudioStreamBufferSizeDefault(2048);
   music_ = LoadAudioStream(kRate, 16, 1);
@@ -422,6 +461,8 @@ bool Audio::init() {
 void Audio::shutdown() {
   if (!ready_) return;
   if (musicLoaded_) UnloadAudioStream(music_);
+  if (trackOn_) UnloadMusicStream(track_);
+  for (int i = 0; i < lineCount_; ++i) UnloadSound(lines_[i]);
   for (int i = 0; i < int(Sfx::Count); ++i) {
     for (int v = 1; v < kVoices; ++v) UnloadSoundAlias(voices_[i][v]);
     UnloadSound(voices_[i][0]);
@@ -440,21 +481,64 @@ void Audio::play(Sfx s, float volume, float pitch) {
   PlaySound(snd);
 }
 
-void Audio::setMusic(int mode) { g_musicMode.store(mode); }
+std::string voiceKey(const std::string& name) {
+  std::string k;
+  for (char c : name)
+    if (c >= 'A' && c <= 'Z') k += char(c - 'A' + 'a');
+    else if (c >= 'a' && c <= 'z') k += c;
+  return k;
+}
+
+void Audio::voice(const char* key, float volume) {
+  if (!ready_ || muted_ || !key) return;
+  for (int i = 0; i < lineCount_; ++i)
+    if (std::strcmp(lineKeys_[i], key) == 0) {
+      if (lastLine_ && IsSoundPlaying(*lastLine_)) StopSound(*lastLine_);
+      SetSoundVolume(lines_[i], std::min(1.0f, volume * std::max(sfxGain_, 0.25f)));
+      PlaySound(lines_[i]);
+      lastLine_ = &lines_[i];
+      return;
+    }
+}
+
+void Audio::setMusic(int mode, const char* world) {
+  // A recorded theme: the menu's, or the world's in a fight.
+  const char* key = mode == 1 ? "menu" : mode == 2 ? world : nullptr;
+  const ClashAudio* rec = (ready_ && key) ? findAudio(TextFormat("music_%s", key)) : nullptr;
+  if (rec && trackOn_ && std::strcmp(trackKey_, key) == 0) {  // already playing
+    g_musicMode.store(0);
+    return;
+  }
+  if (trackOn_) {
+    StopMusicStream(track_);
+    UnloadMusicStream(track_);
+    trackOn_ = false;
+    trackKey_[0] = 0;
+  }
+  if (rec) {
+    track_ = LoadMusicStreamFromMemory(".mp3", rec->data, int(*rec->size));
+    if (track_.frameCount > 0) {
+      track_.looping = true;
+      SetMusicVolume(track_, muted_ ? 0.0f : trackGain_);
+      PlayMusicStream(track_);
+      trackOn_ = true;
+      std::strncpy(trackKey_, key, sizeof(trackKey_) - 1);
+      g_musicMode.store(0);  // the synthesized theme falls silent
+      return;
+    }
+  }
+  g_musicMode.store(mode);
+}
+
+void Audio::update() {
+  if (trackOn_) UpdateMusicStream(track_);
+}
 
 int Audio::exportAll(const char* dir) {
-  static const char* names[] = {"hit_light", "hit_medium", "hit_heavy", "hit_fire", "hit_electric", "hit_slash",
-                                "swing", "jump", "air_jump", "land", "shield_hit", "shield_break", "ko", "crowd",
-                                "projectile", "grab", "counter", "ledge", "menu_move", "menu_select", "menu_back",
-                                "beep", "go", "game_set", "ult_ready", "ult_unleash",
-                                "wind_gust", "ice_crack", "petal_swish", "hit_holy", "hit_gloom",
-                                "beam_hum", "beam_blast", "explosion", "impact_boom", "cut_in", "domain_drone",
-                                "weapon_pickup", "weapon_break", "reflect"};
-  static_assert(sizeof(names) / sizeof(names[0]) == int(Sfx::Count), "one name per sound");
   int written = 0;
   for (int i = 0; i < int(Sfx::Count); ++i) {
     Wave w = makeSfx(Sfx(i));
-    written += ExportWave(w, TextFormat("%s/%s.wav", dir, names[i])) ? 1 : 0;
+    written += ExportWave(w, TextFormat("%s/%s.wav", dir, kSfxNames[i])) ? 1 : 0;
     UnloadWave(w);
   }
   for (int mode = 1; mode <= 2; ++mode) {
@@ -473,10 +557,13 @@ int Audio::exportAll(const char* dir) {
 void Audio::setVolumes(int master, int music, int sfx) {
   if (ready_) SetMasterVolume(master / 100.0f);
   g_musicGain.store(music / 100.0f);
+  trackGain_ = music / 100.0f;
+  if (trackOn_) SetMusicVolume(track_, muted_ ? 0.0f : trackGain_);
   sfxGain_ = sfx / 100.0f;
 }
 
 void Audio::toggleMute() {
   muted_ = !muted_;
   g_musicMuted.store(muted_);
+  if (trackOn_) SetMusicVolume(track_, muted_ ? 0.0f : trackGain_);
 }

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "880a3656-e580-4145-b0b4-d6a525f8b94d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:02a9668e-714d-4ef2-9859-6040ec0dfafc",
+  "description": "breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Kakashi, a tall ninja with spiky silver hair, a dark mask over his lower face, a forehead protector slanted over his left eye and a green flak vest over a navy outfit",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 880a3656-e580-4145-b0b4-d6a525f8b94d\njob_id: 880a3656-e580-4145-b0b4-d6a525f8b94d\ndescription: breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"880a3656-e580-4145-b0b4-d6a525f8b94d\")\nasset_id: 1171f7aa-7a5e-5e29-86f1-dc85a7329ec7\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/kakashi_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

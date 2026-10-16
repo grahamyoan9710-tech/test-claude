@@ -18,6 +18,7 @@ std::vector<int> frenchCodepoints() {
   for (int c = 32; c < 127; ++c) cps.push_back(c);
   for (int c = 160; c < 256; ++c) cps.push_back(c);  // Latin-1: é è à ç ô « » ...
   for (int c : {0x152, 0x153, 0x2013, 0x2014, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0x20AC}) cps.push_back(c);
+  for (int c : {0x14C, 0x14D, 0x16A, 0x16B}) cps.push_back(c);  // Ō ō Ū ū (Tenshō, Bijūdama...)
   return cps;
 }
 

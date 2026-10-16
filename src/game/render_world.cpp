@@ -2,191 +2,16 @@
 // Look: painterly skies, floating islands and ancient ruins carved with glowing teal runes.
 // Static scenery is baked once per theme into textures (premultiplied alpha) and scrolled
 // with parallax; only light things (particles, pulses, water) are drawn every frame.
-#include <initializer_list>
-
+#include "game/fighter_art.hpp"
+#include "game/paint.hpp"
+#include "game/pixel.hpp"
 #include "game/render.hpp"
+#include "game/stage_art.hpp"
 #include "game/ui.hpp"
 
+using namespace paint;
+
 namespace {
-float hash(int i) {
-  uint32_t x = uint32_t(i) * 2654435761u;
-  x ^= x >> 13;
-  x *= 0x5bd1e995u;
-  x ^= x >> 15;
-  return float(x & 0xFFFF) / 65535.0f;
-}
-float wrapf(float v, float m) {
-  v = std::fmod(v, m);
-  return v < 0.0f ? v + m : v;
-}
-
-void tri(Vector2 a, Vector2 b, Vector2 c, Color col) {
-  float cross = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-  if (cross > 0) std::swap(b, c);
-  DrawTriangle(a, b, c, col);
-}
-void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color col) {
-  tri(a, b, c, col);
-  tri(a, c, d, col);
-}
-
-// One colour per corner: smooth gradients for free.
-void vtx(Vector2 p, Color c) {
-  rlColor4ub(c.r, c.g, c.b, c.a);
-  rlVertex2f(p.x, p.y);
-}
-void gtri(Vector2 a, Vector2 b, Vector2 c, Color ca, Color cb, Color cc) {
-  rlBegin(RL_TRIANGLES);
-  vtx(a, ca);
-  vtx(b, cb);
-  vtx(c, cc);
-  rlEnd();
-}
-void gquad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color ca, Color cb, Color cc, Color cd) {
-  rlBegin(RL_TRIANGLES);
-  vtx(a, ca);
-  vtx(b, cb);
-  vtx(c, cc);
-  vtx(a, ca);
-  vtx(c, cc);
-  vtx(d, cd);
-  rlEnd();
-}
-void vgrad(float x, float y, float w, float h, Color top, Color bottom) {
-  gquad({x, y}, {x + w, y}, {x + w, y + h}, {x, y + h}, top, top, bottom, bottom);
-}
-// Radial (elliptic) gradient; with in == out it is a plain ellipse.
-// (seg = 0 picks a segment count from the size: software GL pays for every tiny triangle.)
-void glow(Vector2 c, float rx, float ry, Color in, Color out, int seg = 0) {
-  if (seg <= 0) seg = std::clamp(int(std::max(rx, ry) * 0.6f), 8, 40);
-  rlBegin(RL_TRIANGLES);
-  for (int i = 0; i < seg; ++i) {
-    float a0 = 2.0f * kPi * i / seg, a1 = 2.0f * kPi * (i + 1) / seg;
-    vtx(c, in);
-    vtx({c.x + std::cos(a0) * rx, c.y + std::sin(a0) * ry}, out);
-    vtx({c.x + std::cos(a1) * rx, c.y + std::sin(a1) * ry}, out);
-  }
-  rlEnd();
-}
-void glow(Vector2 c, float r, Color col, float a, int seg = 0) {
-  glow(c, r, r, withAlpha(col, a), withAlpha(col, 0.0f), seg);
-}
-void ellipse(Vector2 c, float rx, float ry, Color col) { glow(c, rx, ry, col, col); }
-void dot(Vector2 c, float r, Color col) { glow(c, r, r, col, col, 8); }
-// Ellipse with a feathered rim of `fpx` pixels: soft, painterly edges that never alias.
-void softEllipse(Vector2 c, float rx, float ry, Color col, float fpx, int seg = 28) {
-  const Color out = withAlpha(col, 0.0f);
-  const float k = 1.0f - std::min(0.6f, fpx / std::max(1.0f, std::min(rx, ry)));
-  rlBegin(RL_TRIANGLES);
-  for (int i = 0; i < seg; ++i) {
-    float a0 = 2.0f * kPi * i / seg, a1 = 2.0f * kPi * (i + 1) / seg;
-    Vector2 o0{c.x + std::cos(a0) * rx, c.y + std::sin(a0) * ry}, o1{c.x + std::cos(a1) * rx, c.y + std::sin(a1) * ry};
-    Vector2 i0{c.x + (o0.x - c.x) * k, c.y + (o0.y - c.y) * k}, i1{c.x + (o1.x - c.x) * k, c.y + (o1.y - c.y) * k};
-    vtx(c, col);
-    vtx(i0, col);
-    vtx(i1, col);
-    vtx(i0, col);
-    vtx(o0, out);
-    vtx(o1, out);
-    vtx(i0, col);
-    vtx(o1, out);
-    vtx(i1, col);
-  }
-  rlEnd();
-}
-
-void star(Vector2 c, float rOut, float rIn, float rot, Color col) {
-  Vector2 pts[10];
-  for (int i = 0; i < 10; ++i) {
-    float a = rot + i * kPi / 5.0f - kPi / 2.0f;
-    float r = (i % 2 == 0) ? rOut : rIn;
-    pts[i] = {c.x + std::cos(a) * r, c.y + std::sin(a) * r};
-  }
-  for (int i = 0; i < 10; ++i) tri(c, pts[i], pts[(i + 1) % 10], col);
-}
-
-// Thick polyline with round joints.
-void stroke(const Vector2* p, int n, float w0, float w1, Color col) {
-  for (int i = 0; i + 1 < n; ++i) {
-    float w = lerpf(w0, w1, float(i) / std::max(1, n - 2));
-    DrawLineEx(p[i], p[i + 1], w, col);
-    if (i + 2 < n && w > 3.0f) glow(p[i + 1], w * 0.5f, w * 0.5f, col, col, 8);
-  }
-}
-
-// ---- Painterly scenery ----------------------------------------------------------------
-struct Stop {
-  float t;
-  Color c;
-};
-void gradient(float w, float h, std::initializer_list<Stop> stops) {
-  const Stop* prev = nullptr;
-  for (const Stop& s : stops) {
-    if (prev) vgrad(0, prev->t * h, w, (s.t - prev->t) * h, prev->c, s.c);
-    prev = &s;
-  }
-}
-
-// Repeats an element across the seam of a band that tiles every `period` pixels.
-template <class F>
-void wrapX(float x, float halfW, float period, F fn) {
-  fn(x);
-  if (x - halfW < 0.0f) fn(x + period);
-  if (x + halfW > period) fn(x - period);
-}
-
-// Cumulus from puffs: shadowed base, lit body, soft highlights toward the light (lx = -1..1).
-void cumulus(Vector2 c, float w, float h, int seed, Color shadow, Color body, Color hi, float lx) {
-  constexpr int kMax = 24;
-  Vector2 p[kMax];
-  float r[kMax];
-  const int n = std::min(kMax, 5 + int(w / 45.0f));
-  for (int i = 0; i < n; ++i) {
-    float u = (i + 0.5f) / n;
-    float bump = std::sin(u * kPi);
-    r[i] = h * (0.26f + 0.44f * bump) * (0.8f + 0.4f * hash(seed + i * 7));
-    p[i] = {c.x + (u - 0.5f) * (w - r[i]), c.y - bump * h * 0.3f + (hash(seed + i * 3) - 0.5f) * h * 0.2f};
-  }
-  softEllipse({c.x, c.y + h * 0.12f}, w * 0.5f, h * 0.22f, shadow, 4.0f);
-  for (int i = 0; i < n; ++i) softEllipse({p[i].x - lx * r[i] * 0.06f, p[i].y + r[i] * 0.14f}, r[i], r[i], shadow, 3.0f);
-  for (int i = 0; i < n; ++i) softEllipse({p[i].x + lx * r[i] * 0.16f, p[i].y - r[i] * 0.1f}, r[i] * 0.84f, r[i] * 0.84f, body, 4.0f);
-  for (int i = 0; i < n; ++i)
-    softEllipse({p[i].x + lx * r[i] * 0.34f, p[i].y - r[i] * 0.36f}, r[i] * 0.42f, r[i] * 0.42f, hi, r[i] * 0.2f);
-}
-
-// Long evening cloud lit from below: ragged dark body over a thin glowing rim, soft haze around.
-void stratus(Vector2 c, float w, float h, int seed, Color body, Color rim) {
-  const int n = 6 + int(w / 28.0f);
-  glow(c, w * 0.62f, h * 1.1f, withAlpha(body, 0.3f), withAlpha(body, 0.0f));
-  for (int pass = 0; pass < 2; ++pass)
-    for (int i = 0; i < n; ++i) {
-      float u = hash(seed + i * 13), k = std::sin(u * kPi);
-      float rx = h * (0.5f + 1.2f * k) * (0.6f + 0.6f * hash(seed + i * 5));
-      Vector2 p{c.x + (u - 0.5f) * w, c.y - k * h * 0.25f + (hash(seed + i) - 0.5f) * h * 0.5f};
-      if (pass == 0) softEllipse({p.x, p.y + rx * 0.07f}, rx, rx * 0.3f, rim, 3.0f);
-      else softEllipse({p.x - rx * 0.03f, p.y - rx * 0.03f}, rx * 0.97f, rx * 0.29f, body, 4.0f);
-    }
-}
-
-// Ridge profile 0..1, tileable over `period` (integer harmonics), with sharp peaks.
-float ridge(float x, float period, int seed) {
-  float u = x / period * 2.0f * kPi, s = float(seed);
-  return 0.5f * (1.0f - std::fabs(std::sin(u * 2.5f + s))) + 0.32f * (0.5f + 0.5f * std::sin(u * 3.0f + s * 1.7f)) +
-         0.18f * (0.5f + 0.5f * std::sin(u * 11.0f + s * 2.3f));
-}
-// Mountain range with faceted light and a glowing rim on the faces turned to the light.
-void range(float w, float base, float amp, int seed, Color top, Color low, float lowY, Color rim, bool lightRight) {
-  const float step = 6.0f, fade = amp * 0.45f;
-  for (float x = 0; x < w; x += step) {
-    float y0 = base - amp * ridge(x, w, seed), y1 = base - amp * ridge(x + step, w, seed);
-    gquad({x, y0}, {x + step, y1}, {x + step, lowY}, {x, lowY}, top, top, low, low);
-    if (lightRight ? y1 > y0 : y1 < y0) {  // sunlit face: glow fading down from the crest
-      gquad({x, y0}, {x + step, y1}, {x + step, y1 + fade}, {x, y0 + fade}, withAlpha(rim, 0.22f), withAlpha(rim, 0.22f),
-            withAlpha(rim, 0.0f), withAlpha(rim, 0.0f));
-      DrawLineEx({x, y0}, {x + step, y1}, 2.0f, withAlpha(rim, 0.55f));
-    }
-  }
-}
 
 // Zonai spiral rune.
 void spiral(Vector2 c, float r, float turns, float thick, Color col, float rot = 0.0f) {
@@ -327,129 +152,7 @@ void tendril(Vector2 base, float len, float thick, int seed, Color core, Color r
   stroke(p, 8, thick, thick * 0.25f, core);
 }
 
-// ---- Baked layers -----------------------------------------------------------------------
-bool g_preview = false;  // drawing a scaled-down stage preview
-
-struct Layer {
-  RenderTexture2D rt{};
-  float w = 0, h = 0, scale = 1;
-  std::vector<Rectangle> tiles;  // parts with content (virtual units): the rest is never drawn
-};
-
-// Software GL pays for every covered pixel, even transparent ones: read the layer back once
-// and keep only the 32-px tiles that hold something (runs of tiles merged per row).
-void findTiles(Layer& L) {
-  Image img = LoadImageFromTexture(L.rt.texture);
-  const auto* px = static_cast<const unsigned char*>(img.data);
-  const float t = 32.0f;
-  for (float ty = 0; ty < L.h; ty += t) {
-    float run = -1;
-    for (float tx = 0;; tx += t) {
-      bool used = false;
-      if (tx < L.w && px) {
-        int x0 = int(tx * L.scale), x1 = std::min(img.width, int((tx + t) * L.scale) + 1);
-        int y0 = std::max(0, img.height - int((ty + t) * L.scale) - 1), y1 = img.height - int(ty * L.scale);
-        for (int y = y0; y < y1 && !used; ++y)
-          for (int x = x0; x < x1; ++x)
-            if (px[(y * img.width + x) * 4 + 3] > 1) {
-              used = true;
-              break;
-            }
-      }
-      if (used && run < 0) run = tx;
-      if (!used && run >= 0) {
-        L.tiles.push_back({run, ty, std::min(tx, L.w) - run, std::min(t, L.h - ty)});
-        run = -1;
-      }
-      if (tx >= L.w) break;
-    }
-  }
-  UnloadImage(img);
-}
-
-// Renders `draw` into a new transparent texture (premultiplied alpha), even in the middle of
-// a frame: the frame's own target, viewport and transform are put back afterwards.
-template <class F>
-Layer bake(float w, float h, float scale, F draw, bool sparse = true) {
-  Layer L;
-  L.w = w;
-  L.h = h;
-  L.scale = scale;
-  rlDrawRenderBatchActive();
-  const unsigned int fbo = rlGetActiveFramebuffer();
-  const int fw = rlGetFramebufferWidth(), fh = rlGetFramebufferHeight();
-  const Matrix view = rlGetMatrixModelview();
-  L.rt = LoadRenderTexture(int(w * scale), int(h * scale));
-  SetTextureFilter(L.rt.texture, TEXTURE_FILTER_BILINEAR);
-  SetTextureWrap(L.rt.texture, TEXTURE_WRAP_CLAMP);
-  BeginTextureMode(L.rt);
-  ClearBackground(BLANK);
-  rlScalef(scale, scale, 1.0f);
-  ui::frameBlend();
-  draw();
-  if (fbo != 0) {
-    RenderTexture2D outer{};
-    outer.id = fbo;
-    outer.texture.width = fw;
-    outer.texture.height = fh;
-    BeginTextureMode(outer);
-  } else {
-    EndTextureMode();
-  }
-  rlSetMatrixModelview(view);
-  if (sparse) findTiles(L);
-  return L;
-}
-// A fully opaque backdrop, drawn without blending and point-sampled in matches (as cheap as
-// a flat fill on software GL; the scenery in it is soft and hazy anyway).
-template <class F>
-Layer bakeOpaque(float w, float h, float scale, F draw) {
-  return bake(w, h, scale, draw, false);
-}
-
-// Draws an opaque backdrop at (x, y), cut at `maxY` where something opaque covers the rest.
-void drawBackdrop(const Layer& L, float x, float y, float maxY = kScreenH) {
-  const float h = std::min(L.h, maxY - y), th = float(L.rt.texture.height);
-  if (L.rt.id == 0 || h <= 0.0f) return;
-  rlDrawRenderBatchActive();
-  SetTextureFilter(L.rt.texture, g_preview ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
-  rlDisableColorBlend();
-  DrawTexturePro(L.rt.texture, {0, th - h * L.scale, float(L.rt.texture.width), -h * L.scale}, {x, y, L.w, h}, {0, 0}, 0.0f,
-                 WHITE);
-  rlDrawRenderBatchActive();
-  rlEnableColorBlend();
-}
-
-// Draws a sparse layer at (x, y); a wrapping layer repeats horizontally across the screen.
-void drawLayer(const Layer& L, float x, float y, bool wrap, float alpha = 1.0f) {
-  if (L.rt.id == 0) return;
-  const unsigned char a = (unsigned char)(clampf(alpha, 0.0f, 1.0f) * 255.0f);
-  const float th = float(L.rt.texture.height);
-  BeginBlendMode(BLEND_ALPHA_PREMULTIPLY);  // (flushes: safe to change the filter)
-  const bool crisp = !g_preview && std::fabs(L.scale - g_renderScale) < 0.01f;
-  SetTextureFilter(L.rt.texture, crisp ? TEXTURE_FILTER_POINT : TEXTURE_FILTER_BILINEAR);
-  if (wrap) x = wrapf(x, L.w) - L.w;
-  for (; x < kScreenW; x += L.w) {
-    for (const Rectangle& t : L.tiles) {
-      Rectangle d{x + t.x, y + t.y, t.width, t.height};
-      if (d.x > kScreenW || d.x + d.width < 0 || d.y > kScreenH || d.y + d.height < 0) continue;
-      Rectangle s{t.x * L.scale, th - (t.y + t.height) * L.scale, t.width * L.scale, -t.height * L.scale};
-      DrawTexturePro(L.rt.texture, s, d, {0, 0}, 0.0f, {a, a, a, a});
-    }
-    if (!wrap) break;
-  }
-  ui::frameBlend();
-}
-// Screen x of a point of a wrapping layer drawn at x0 (first repeat after -margin).
-float wrapPos(float x0, float bx, float w, float margin) { return wrapf(x0 + bx + margin, w) - margin; }
-
-Layer g_dot;
-
-struct Art {
-  bool ready = false;
-  Layer sky, mid, near, extra;
-};
-Art g_art[3];
+Art g_art[kStageThemeCount];
 
 // ---- Îles Célestes: bright day, sea of clouds, distant islands -------------------------------
 constexpr Color kSkyHaze{206, 228, 243, 255}, kSea{214, 228, 246, 255}, kSeaDeep{190, 208, 236, 255};
@@ -711,54 +414,21 @@ void bakeDepths(Art& a) {
   });
 }
 
-const Art& art(StageTheme theme) {
-  if (g_dot.rt.id == 0)  // particle sprite: soft halo around a bright core
-    g_dot = bake(32, 32, 2.0f, [] {
-      glow({16, 16}, 16, 16, withAlpha(WHITE, 0.3f), withAlpha(WHITE, 0.0f), 32);
-      glow({16, 16}, 4.6f, 4.6f, WHITE, withAlpha(WHITE, 0.85f), 16);
-    }, false);
-  Art& a = g_art[int(theme) % 3];
+const Art& themeArt(StageTheme theme) {
+  ensureParticleSprite();
+  Art& a = g_art[int(theme) % kStageThemeCount];
   if (!a.ready) {
     a.ready = true;
     switch (theme) {
       case StageTheme::Cosmic: bakeDepths(a); break;
       case StageTheme::Sunset: bakeSanctuary(a); break;
       case StageTheme::Sky: bakeSky(a); break;
+      default: stageart::bake(theme, a); break;  // the anime worlds (render_stages.cpp)
     }
   }
   return a;
 }
 
-// Gentle particles in screen space: motes and spores (vy < 0 rises) with a soft halo.
-void motes(int count, int seed, Vec2 cam, float time, float vx, float vy, Color c0, Color c1, float size) {
-  const Texture2D& tex = g_dot.rt.texture;
-  if (g_dot.rt.id == 0) return;
-  BeginBlendMode(BLEND_ALPHA_PREMULTIPLY);
-  for (int i = 0; i < count; ++i) {
-    float depth = 0.15f + 0.5f * hash(seed + i * 3);
-    float x = wrapf(hash(seed + i) * 1500.0f + time * vx * (0.5f + depth) - cam.x * depth, 1500.0f) - 110.0f;
-    float y = wrapf(hash(seed + i + 77) * 900.0f + time * vy * (0.5f + depth) - cam.y * depth, 900.0f) - 90.0f;
-    x += std::sin(time * 0.7f + i) * 14.0f;
-    float k = 0.55f + 0.45f * std::sin(time * (1.0f + hash(seed + i * 5) * 2.0f) + i);
-    Color c = mixColor(c0, c1, hash(seed + i * 9));
-    float r = size * (0.6f + depth) * 3.5f;
-    Color t{(unsigned char)(c.r * k), (unsigned char)(c.g * k), (unsigned char)(c.b * k), (unsigned char)(255 * k)};
-    DrawTexturePro(tex, {0, 0, float(tex.width), float(tex.height)}, {x - r, y - r, r * 2, r * 2}, {0, 0}, 0.0f, t);
-  }
-  ui::frameBlend();
-}
-void leaves(int count, int seed, Vec2 cam, float time, Color c0, Color c1) {
-  for (int i = 0; i < count; ++i) {
-    float depth = 0.25f + 0.5f * hash(seed + i * 3);
-    float x = wrapf(hash(seed + i) * 1500.0f - time * 30.0f * (0.6f + depth) - cam.x * depth, 1500.0f) - 110.0f;
-    float y = wrapf(hash(seed + i + 31) * 900.0f + time * 22.0f * (0.6f + depth) - cam.y * depth, 900.0f) - 90.0f;
-    x += std::sin(time * 1.3f + i * 2) * 20.0f;
-    float rot = time * (1.5f + hash(i) * 2.0f) + i;
-    float s = 4.0f + 4.0f * depth;
-    Vec2 d = rotate({s, 0}, rot), n = rotate({0, s * 0.4f * std::cos(time * 3.0f + i)}, rot);
-    quad({x - d.x, y - d.y}, {x + n.x, y + n.y}, {x + d.x, y + d.y}, {x - n.x, y - n.y}, mixColor(c0, c1, hash(i * 7)));
-  }
-}
 
 // ---- Platforms ---------------------------------------------------------------------------------
 struct PlatLook {
@@ -1015,7 +685,7 @@ void drawThin(const Rect& r, StageTheme th, float time, int seed) {
 
 void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
   (void)zoom;
-  const Art& a = art(stage.theme);
+  const Art& a = themeArt(stage.theme);
   const float dx = clampf(cam.x, -1200.0f, 1200.0f), dy = clampf(cam.y + 150.0f, -500.0f, 500.0f);
   const Vec2 pc{dx, dy};
   const float skyX = -40.0f + clampf(-dx * 0.03f, -40.0f, 40.0f), skyY = -40.0f + clampf(-dy * 0.03f, -40.0f, 40.0f);
@@ -1055,7 +725,13 @@ void drawBackground(const StageDef& stage, Vec2 cam, float zoom, float time) {
       motes(40, 37, pc, time, 3.0f, -14.0f, {110, 255, 220, 255}, {220, 255, 150, 255}, 1.5f);
       break;
     }
+    default: stageart::drawBackground(stage.theme, a, pc, skyX, skyY, time); break;
   }
+}
+
+void drawStageForeground(const StageDef& stage, Vec2 cam, float time) {
+  const Vec2 pc{clampf(cam.x, -1200.0f, 1200.0f), clampf(cam.y + 150.0f, -500.0f, 500.0f)};
+  stageart::drawForeground(stage.theme, pc, time);
 }
 
 void drawPlatforms(const Match& m, float time) { drawPlatformList(m.platforms, m.stage().theme, time); }
@@ -1064,6 +740,7 @@ void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, 
   int seed = 0;
   for (const auto& p : platforms) {
     seed += 101;
+    if (stageart::drawPlatform(p, theme, time, seed)) continue;
     if (p.solid) drawSolid(p.rect, theme, time, seed);
     else drawThin(p.rect, theme, time, seed);
   }
@@ -1173,6 +850,97 @@ void shotGetsuga(const Shot& s, bool dark, float time) {
     const float l = R * (0.5f + 0.4f * std::sin(time * 30.0f + i));
     vfx::streak(p0 - s.d * l, p0, 0.0f, 4.0f, Ap(b, 0.0f), Ap({220, 240, 255, 255}, 0.7f * s.k));
   }
+  vfx::additive(false);
+}
+
+// Getsuga Jujisho: two black crescents edged with red, crossing in an X, flying as one.
+void shotGetsugaCross(const Shot& s, float time) {
+  const float R = s.r * 2.1f, th = R * 0.46f;
+  for (float tilt : {-0.62f, 0.62f}) {
+    const Vec2 d = rotate(s.d, tilt);
+    vfx::additive(true);
+    for (int i = 3; i >= 1; --i)
+      crescentAt(s.c - s.d * (i * s.r * 0.55f), d, R, th, 1.25f, Ap({200, 20, 40, 255}, 0.0f), Ap({230, 20, 40, 255}, 0.28f * s.k / i));
+    crescentAt(s.c + s.d * 5.0f, d, R * 1.06f, th * 1.2f, 1.32f, Ap({255, 40, 60, 255}, 0.2f * s.k), Ap({255, 70, 80, 255}, s.k));
+    vfx::additive(false);
+    crescentAt(s.c, d, R, th, 1.25f, Ap({6, 2, 6, 255}, 0.97f * s.k), Ap({24, 4, 10, 255}, s.k));
+  }
+  vfx::additive(true);  // where the two blades cross: a hot red core
+  vfx::glow(s.c, s.r * 0.9f, Ap({255, 60, 70, 255}, 0.7f * s.k), Ap({255, 20, 40, 255}, 0.0f));
+  vfx::glow(s.c, s.r * 0.35f, Ap(WHITE, 0.8f * s.k), Ap({255, 140, 140, 255}, 0.0f));
+  for (int i = 0; i < 4; ++i) {  // red sparks torn off the edges
+    const float a = std::atan2(s.d.y, s.d.x) + kPi + (hash01(s.seed + i) - 0.5f) * 1.6f;
+    const Vec2 p0 = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * (0.6f + 0.6f * std::fmod(time * 3.0f + i * 0.25f, 1.0f)));
+    vfx::streak(p0, p0 - s.d * (s.r * 0.8f), 3.0f, 0.0f, Ap({255, 80, 90, 255}, 0.7f * s.k), Ap({255, 80, 90, 255}, 0.0f));
+  }
+  vfx::additive(false);
+}
+
+// Desgarron: five claws of cyan reiatsu raking forward, the middle ones leading.
+void shotDesgarron(const Shot& s) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.4f, Ap({60, 214, 240, 255}, 0.22f * s.k), Ap({60, 214, 240, 255}, 0.0f));
+  for (int i = 0; i < 5; ++i) {
+    const float o = (i - 2) * s.r * 0.34f, lag = std::fabs(i - 2.0f) * s.r * 0.14f;
+    const Vec2 tip = s.c + s.n * o + s.d * (s.r * 0.85f - lag);
+    const Vec2 mid = tip - s.d * (s.r * 0.55f) + s.n * (o * 0.08f), tail = tip - s.d * (s.r * 2.0f) + s.n * (o * 0.3f);
+    vfx::streak(tail, mid, 0.0f, s.r * 0.17f, Ap({60, 214, 240, 255}, 0.0f), Ap({120, 240, 255, 255}, 0.9f * s.k));
+    vfx::streak(tip, mid, 0.0f, s.r * 0.17f, Ap({200, 250, 255, 255}, s.k), Ap({120, 240, 255, 255}, 0.9f * s.k));
+    vfx::streak(tail + s.d * (s.r * 0.8f), tip, 0.0f, s.r * 0.05f, Ap(WHITE, 0.0f), Ap(WHITE, s.k));
+  }
+  vfx::additive(false);
+}
+
+// Garra de la Pantera: a bone blade flying point first, a cyan wake behind it.
+void shotPanteraDart(const Shot& s) {
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 3.6f), s.c, 0.0f, s.r * 0.9f, Ap({60, 214, 240, 255}, 0.0f), Ap({120, 240, 255, 255}, 0.7f * s.k));
+  vfx::additive(false);
+  vfx::wedge(s.c - s.d * (s.r * 1.5f), s.c + s.d * (s.r * 1.5f), s.r * 0.6f, 0.0f, Ap({220, 222, 214, 255}, s.k),
+             Ap(WHITE, s.k));
+  vfx::wedge(s.c - s.d * (s.r * 1.2f), s.c + s.d * (s.r * 1.0f), s.r * 0.22f, 0.0f, Ap({150, 230, 245, 255}, s.k),
+             Ap(WHITE, s.k));
+}
+
+// A wolf of Los Lobos: a spirit of pale blue cero running on the ground, or leaping on its prey from above.
+void shotCeroWolf(const Match& m, const Projectile& p, const Shot& s, float time) {
+  const bool strike = p.vel.len2() < 0.5f;
+  float dir = s.d.x >= 0.0f ? 1.0f : -1.0f;
+  if (strike && p.owner >= 0 && p.owner < int(m.fighters.size())) dir = m.fighters[p.owner].pos.x <= p.pos.x ? 1.0f : -1.0f;
+  const float sz = s.r * (strike ? 1.3f : 1.6f);
+  Vec2 c = s.c;
+  float tilt = 0.0f;
+  if (strike) {  // the leap: from up behind, jaws first
+    const float u = clampf((p.age - p.armDelay) / 7.0f, 0.0f, 1.0f);
+    c = s.c + Vec2{-dir * sz * 1.6f * (1.0f - u), -sz * 2.2f * (1.0f - u)};
+    tilt = 0.55f * dir * (1.0f - u * 0.5f);
+  }
+  auto at = [&](float x, float y) { return c + rotate(Vec2{x * dir, y} * sz, tilt); };
+  const Color fur = Ap({140, 190, 255, 255}, 0.75f * s.k), core = Ap({235, 244, 255, 255}, s.k);
+  vfx::additive(true);
+  vfx::glow(c, sz * 1.9f, Ap({110, 170, 255, 255}, 0.28f * s.k), Ap({110, 170, 255, 255}, 0.0f));
+  const float ph = time * 18.0f + float(s.seed % 7);
+  for (int i = 0; i < 4; ++i) {
+    const float hx = i < 2 ? 0.45f : -0.45f, a = ph + (i % 2) * kPi + (i < 2 ? 0.0f : 0.8f);
+    const Vec2 paw = strike ? at(hx + 0.3f, 0.5f) : at(hx + std::sin(a) * 0.36f, 0.62f - std::max(0.0f, std::cos(a)) * 0.16f);
+    vfx::wedge(at(hx, 0.08f), paw, sz * 0.17f, sz * 0.06f, fur, fur);
+  }
+  vfx::wedge(at(-0.7f, 0.0f), at(0.6f, -0.05f), sz * 0.52f, sz * 0.46f, fur, fur);
+  vfx::wedge(at(-0.7f, -0.05f), at(-1.4f, -0.32f + 0.1f * std::sin(ph * 0.5f)), sz * 0.22f, sz * 0.04f, fur, fur);
+  vfx::glow(at(0.85f, -0.3f), sz * 0.33f, fur, fur, 14);
+  vfx::tri(at(1.0f, -0.42f), at(1.0f, -0.16f), at(1.58f, strike ? -0.1f : -0.26f), fur, fur, fur);
+  vfx::tri(at(0.66f, -0.48f), at(0.86f, -0.56f), at(0.7f, -0.92f), fur, fur, fur);
+  vfx::tri(at(0.9f, -0.54f), at(1.04f, -0.48f), at(0.98f, -0.88f), fur, fur, fur);
+  vfx::glow(at(0.98f, -0.34f), sz * 0.09f, core, core, 8);
+  vfx::additive(false);
+}
+
+// Cero Metralleta: one of a thousand small blue ceros.
+void shotStarrkCero(const Shot& s) {
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 3.2f), s.c, 0.0f, s.r * 1.2f, Ap({90, 150, 255, 255}, 0.0f), Ap({130, 185, 255, 255}, 0.6f * s.k));
+  vfx::glow(s.c, s.r * 1.9f, Ap({110, 170, 255, 255}, 0.55f * s.k), Ap({110, 170, 255, 255}, 0.0f));
+  vfx::glow(s.c, s.r * 0.7f, Ap(WHITE, s.k), Ap({200, 225, 255, 255}, 0.0f));
   vfx::additive(false);
 }
 
@@ -1438,16 +1206,19 @@ void shotDismantle(const Projectile& p, const Shot& s) {
   vfx::additive(false);
 }
 
+// Fuga: Sukuna's arrow of fire (the PixelLab effect fx_fuga_arrow: a white-hot head, flames streaming back).
 void shotFireArrow(const Shot& s, float time) {
   vfx::additive(true);
-  vfx::glow(s.c, s.r * 2.4f, Ap({255, 110, 30, 255}, 0.4f * s.k), Ap({255, 80, 20, 255}, 0.0f));
-  for (int i = 0; i < 6; ++i) {  // flames licking back from the head
+  vfx::glow(s.c, s.r * 2.6f, Ap({255, 110, 30, 255}, 0.45f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  vfx::additive(false);
+  if (art::drawFx("fuga_arrow", time, s.c, s.r * 9.0f / 110.0f, std::atan2(s.d.y, s.d.x), false, s.k)) return;
+  vfx::additive(true);
+  for (int i = 0; i < 6; ++i) {  // without the effect: flames licking back from the head
     const float l = s.r * (3.0f + 2.5f * hash01(s.seed + i) + std::sin(time * 30.0f + i * 1.7f));
     const Vec2 tail = s.c - s.d * l + s.n * (std::sin(time * 25.0f + i * 2.3f) * s.r * 0.55f);
     vfx::streak(s.c + s.d * (s.r * 0.4f), tail, s.r * 1.1f, 0.0f, Ap(i % 2 ? Color{255, 140, 40, 255} : Color{255, 70, 20, 255}, 0.7f * s.k),
                 Ap({255, 40, 10, 255}, 0.0f));
   }
-  vfx::streak(s.c - s.d * (s.r * 2.5f), s.c + s.d * (s.r * 1.4f), 2.0f, 6.0f, Ap({255, 240, 190, 255}, 0.6f * s.k), Ap(WHITE, s.k));
   vfx::glow(s.c + s.d * (s.r * 0.8f), s.r * 0.9f, Ap({255, 250, 220, 255}, s.k), Ap({255, 200, 120, 255}, 0.0f));
   vfx::additive(false);
 }
@@ -1469,7 +1240,457 @@ void shotLightning(const Shot& s, float time) {
   vfx::glow(b, s.r * 0.9f, Ap(WHITE, s.k), Ap({190, 220, 255, 255}, 0.0f));
   vfx::additive(false);
 }
+
+// ---- v5 shots --------------------------------------------------------------------------------------
+
+// The warning before a strike lands (armDelay): a ring on the spot, a thin line from the sky.
+void shotWarning(const Projectile& p, const Shot& s, float time, bool fromSky) {
+  const float u = std::min(1.0f, float(p.age) / std::max(1, p.armDelay));
+  const Color c = p.hit.fx == HitFx::BlackFlame ? Color{200, 40, 70, 255} : hitFxGlow(p.hit.fx);
+  vfx::additive(true);
+  const float pulse = 0.6f + 0.4f * std::sin(time * 30.0f);
+  vfx::softRing(s.c, s.r * (1.6f - 0.6f * u), 5.0f, Ap(c, (0.3f + 0.5f * u) * pulse));
+  vfx::glow(s.c, s.r * 0.6f * u, Ap(c, 0.35f * u), Ap(c, 0.0f));
+  if (fromSky) {
+    const Rect v = vfx::viewRect(40.0f);
+    vfx::streak({s.c.x, v.y}, s.c, 2.0f + 6.0f * u, 2.0f + 10.0f * u, Ap(c, 0.05f), Ap(c, 0.35f * u * pulse));
+  }
+  vfx::additive(false);
+}
+
+void shotReiatsuWave(const Shot& s, float time) {
+  const Color y{255, 226, 80, 255};
+  const float R = s.r * 2.2f, th = R * 0.55f;
+  vfx::additive(true);
+  vfx::glow(s.c - s.d * (R * 0.3f), R * 1.2f, Ap(y, 0.25f * s.k), Ap(y, 0.0f));
+  for (int i = 3; i >= 1; --i)
+    crescentAt(s.c - s.d * (i * s.r * 0.5f), s.d, R, th, 1.35f, Ap(y, 0.0f), Ap(y, 0.3f * s.k / i));
+  vfx::additive(false);
+  crescentAt(s.c, s.d, R, th, 1.35f, Ap({40, 30, 10, 255}, 0.9f * s.k), Ap({60, 46, 12, 255}, s.k));
+  vfx::additive(true);
+  crescentAt(s.c + s.d * 3.0f, s.d, R * 1.03f, th * 0.4f, 1.3f, Ap(y, 0.5f * s.k), Ap({255, 250, 200, 255}, s.k));
+  const uint32_t fs = s.seed + uint32_t(time * 24.0f) * 37u;
+  for (int i = 0; i < 7; ++i) {  // wild spikes of reiatsu
+    const float a = std::atan2(s.d.y, s.d.x) + (hash01(fs + i) - 0.5f) * 2.6f;
+    const Vec2 o = s.c - s.d * R + Vec2{std::cos(a), std::sin(a)} * (R * 0.95f);
+    vfx::wedge(o, o + Vec2{std::cos(a), std::sin(a)} * (R * (0.2f + 0.3f * hash01(fs + 9 + i))), 5.0f, 0.0f, Ap(y, 0.8f * s.k),
+               Ap(WHITE, 0.6f * s.k));
+  }
+  vfx::additive(false);
+}
+
+void shotCeroOscuras(const Shot& s, float time) {
+  const Color g{80, 240, 140, 255};
+  vfx::streak(s.c - s.d * (s.r * 4.0f), s.c, 0.0f, s.r * 1.5f, Ap({8, 14, 10, 255}, 0.0f), Ap({8, 14, 10, 255}, 0.6f * s.k));
+  vfx::glow(s.c, s.r * 1.4f, Ap({6, 10, 8, 255}, 0.95f * s.k), Ap({6, 10, 8, 255}, 0.0f));
+  vfx::additive(true);
+  vfx::burst(s.c, 8, s.r * 0.6f, s.r * 1.9f, 0.32f, time * 10.0f, Ap(g, 0.7f * s.k), Ap(g, 0.0f), s.seed);
+  vfx::softRing(s.c, s.r * 0.9f, s.r * 0.3f, Ap(g, 0.9f * s.k));
+  vfx::additive(false);
+  vfx::glow(s.c, s.r * 0.55f, Ap({0, 0, 0, 255}, s.k), Ap({10, 30, 16, 255}, s.k));
+}
+
+void spear(const Shot& s, float len, float w, Color body, Color core, Color glow) {
+  const Vec2 tip = s.c + s.d * (len * 0.45f), tail = s.c - s.d * (len * 0.55f);
+  vfx::additive(true);
+  vfx::streak(tail - s.d * (len * 0.6f), tail, 0.0f, w * 1.6f, Ap(glow, 0.0f), Ap(glow, 0.35f * s.k));
+  vfx::streak(tail, tip, w * 2.4f, w * 2.4f, Ap(glow, 0.3f * s.k), Ap(glow, 0.3f * s.k));
+  vfx::additive(false);
+  vfx::wedge(tail, tip - s.d * (w * 2.0f), w * 0.7f, w * 0.7f, Ap(body, s.k), Ap(body, s.k));
+  vfx::tri(tip, tip - s.d * (w * 3.4f) + s.n * (w * 1.4f), tip - s.d * (w * 3.4f) - s.n * (w * 1.4f), Ap(body, s.k), Ap(body, s.k),
+           Ap(body, s.k));
+  vfx::additive(true);
+  vfx::wedge(tail, tip, w * 0.25f, w * 0.1f, Ap(core, s.k), Ap(core, s.k));
+  vfx::glow(tip, w * 1.6f, Ap(core, 0.8f * s.k), Ap(glow, 0.0f));
+  vfx::additive(false);
+}
+
+void shotLuzDeLaLuna(const Shot& s, float time) {  // a smaller javelin of the same teal light as the Lanza
+  if (art::drawFx("lanza", time, s.c, s.r * 8.0f / 194.0f, std::atan2(s.d.y, s.d.x), false, s.k)) return;
+  spear(s, s.r * 7.0f, s.r * 0.45f, {90, 240, 150, 255}, {230, 255, 236, 255}, {70, 255, 140, 255});
+}
+
+// Lanza del Relámpago: the PixelLab javelin (fx_lanza: a barbed head of teal light, a crackling shaft).
+void shotLanza(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap({60, 230, 200, 255}, 0.4f * s.k), Ap({60, 230, 200, 255}, 0.0f));
+  vfx::additive(false);
+  if (art::drawFx("lanza", time, s.c, s.r * 10.0f / 194.0f, std::atan2(s.d.y, s.d.x), false, s.k)) return;
+  spear(s, s.r * 6.0f, s.r * 0.55f, {60, 220, 120, 255}, {230, 255, 236, 255}, {70, 255, 140, 255});
+  const uint32_t fs = s.seed + uint32_t(time * 40.0f) * 71u;
+  vfx::additive(true);
+  for (int i = 0; i < 4; ++i) {  // green lightning wrapping the javelin
+    const Vec2 a = s.c - s.d * (s.r * (3.0f - i * 1.2f)), b = a + s.d * (s.r * 1.6f) + s.n * ((hash01(fs + i) - 0.5f) * s.r * 2.0f);
+    vfx::bolt(a, b, s.r * 0.4f, 5, fs + i * 7u, 2.5f, Ap({120, 255, 170, 255}, 0.9f * s.k), Ap(WHITE, s.k));
+  }
+  vfx::additive(false);
+}
+
+void shotBarrel(const Projectile& p, const Shot& s, float time) {
+  const float r = s.r, rot = p.age * 0.18f * (p.vel.x >= 0 ? 1.0f : -1.0f);
+  const Vec2 u{std::cos(rot), std::sin(rot)}, n{-u.y, u.x};
+  auto P = [&](float x, float y) { return s.c + u * (x * r) + n * (y * r); };
+  const Color wood{150, 96, 56, 255}, dark{90, 56, 34, 255}, red{200, 44, 36, 255};
+  vfx::quad(P(-1.0f, -0.8f), P(1.0f, -0.8f), P(1.0f, 0.8f), P(-1.0f, 0.8f), Ap(dark, s.k), Ap(dark, s.k), Ap(dark, s.k), Ap(dark, s.k));
+  vfx::quad(P(-0.9f, -0.72f), P(0.9f, -0.72f), P(0.9f, 0.72f), P(-0.9f, 0.72f), Ap(wood, s.k), Ap(wood, s.k), Ap(wood, s.k), Ap(wood, s.k));
+  vfx::quad(P(-0.15f, -0.72f), P(0.15f, -0.72f), P(0.15f, 0.72f), P(-0.15f, 0.72f), Ap(red, s.k), Ap(red, s.k), Ap(red, s.k), Ap(red, s.k));
+  const Vec2 fuse = P(0.0f, -0.8f) + n * (-r * 0.3f);
+  DrawLineEx(V(P(0.0f, -0.8f)), V(fuse), 2.0f, Ap({60, 50, 40, 255}, s.k));
+  vfx::additive(true);
+  vfx::glow(fuse, r * (0.35f + 0.15f * std::sin(time * 40.0f)), Ap({255, 220, 120, 255}, s.k), Ap({255, 120, 40, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotFlash(const Shot& s, Color c) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 3.0f, Ap(c, 0.8f), Ap(c, 0.0f));
+  vfx::glow(s.c, s.r * 1.2f, Ap(WHITE, 0.9f), Ap(WHITE, 0.0f));
+  vfx::additive(false);
+}
+
+void shotShell(const Shot& s, float time) {  // gunlance shelling: a cone of fire
+  vfx::additive(true);
+  for (int i = 0; i < 5; ++i) {
+    const float l = s.r * (2.0f + 1.5f * hash01(s.seed + i)) * (1.0f + 0.2f * std::sin(time * 40.0f + i));
+    const Vec2 e = s.c + s.d * l + s.n * ((i - 2) * s.r * 0.35f);
+    vfx::streak(s.c - s.d * (s.r * 0.8f), e, s.r * 0.6f, s.r * 1.1f, Ap({255, 220, 120, 255}, 0.9f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  }
+  vfx::glow(s.c, s.r * 1.4f, Ap({255, 240, 200, 255}, s.k), Ap({255, 120, 40, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotRasengan(const Shot& s, float time) {
+  const Color b{90, 170, 255, 255};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.0f, Ap(b, 0.35f * s.k), Ap(b, 0.0f));
+  for (int arm = 0; arm < 4; ++arm) {
+    Vec2 prev{};
+    for (int k = 0; k <= 8; ++k) {
+      const float u = k / 8.0f, a = time * 18.0f + arm * kPi * 0.5f + u * 2.5f;
+      const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * (0.3f + 0.75f * u));
+      if (k > 0) vfx::wedge(prev, q, 3.0f * (1.0f - u) + 1.0f, 3.0f * (1.0f - u) + 1.0f, Ap({220, 240, 255, 255}, 0.8f * s.k), Ap(b, 0.6f * s.k));
+      prev = q;
+    }
+  }
+  vfx::glow(s.c, s.r * 0.5f, Ap(WHITE, s.k), Ap(b, 0.0f));
+  vfx::additive(false);
+}
+
+void shotRasenshuriken(const Shot& s, float time) {
+  shotRasengan(s, time);
+  vfx::additive(true);
+  const float rot = time * 22.0f;
+  for (int i = 0; i < 4; ++i) {  // the four great blades of wind
+    const float a = rot + i * kPi * 0.5f;
+    const Vec2 d{std::cos(a), std::sin(a)}, n{-d.y, d.x};
+    const Vec2 b0 = s.c + d * (s.r * 0.6f), tip = s.c + d * (s.r * 3.0f) + n * (s.r * 0.9f);
+    vfx::tri(b0 + n * (s.r * 0.35f), b0 - n * (s.r * 0.35f), tip, Ap(WHITE, 0.85f * s.k), Ap({200, 230, 255, 255}, 0.7f * s.k),
+             Ap(WHITE, 0.2f * s.k));
+  }
+  vfx::softRing(s.c, s.r * 2.6f, s.r * 0.25f, Ap({230, 245, 255, 255}, 0.55f * s.k));  // ring of micro-blades
+  vfx::additive(false);
+}
+
+void shotBijudama(const Shot& s, float time) {
+  const Color v{120, 60, 200, 255};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap(v, 0.4f * s.k), Ap(v, 0.0f));
+  vfx::additive(false);
+  vfx::glow(s.c, s.r, Ap({10, 0, 16, 255}, 0.97f * s.k), Ap({40, 10, 60, 255}, 0.97f * s.k), 36);
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i) {
+    const float ph = std::fmod(time * 2.0f + i / 3.0f, 1.0f);
+    vfx::softRing(s.c, s.r * (0.4f + 0.7f * ph), 4.0f, Ap({200, 150, 255, 255}, 0.6f * (1.0f - ph) * s.k));
+  }
+  vfx::softRing(s.c, s.r, s.r * 0.2f, Ap({180, 120, 255, 255}, 0.8f * s.k));
+  vfx::additive(false);
+}
+
+void shotGreatFireball(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.2f, Ap({255, 120, 30, 255}, 0.45f * s.k), Ap({255, 80, 20, 255}, 0.0f));
+  for (int i = 0; i < 8; ++i) {  // rolling flames
+    const float a = time * 6.0f + i * kPi / 4.0f;
+    const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * 0.55f);
+    vfx::glow(q, s.r * (0.6f + 0.15f * std::sin(time * 20.0f + i)), Ap(i % 2 ? Color{255, 170, 50, 255} : Color{255, 90, 20, 255}, 0.8f * s.k),
+              Ap({255, 60, 10, 255}, 0.0f));
+  }
+  vfx::streak(s.c - s.d * (s.r * 2.8f), s.c, 0.0f, s.r * 1.3f, Ap({255, 80, 20, 255}, 0.0f), Ap({255, 140, 40, 255}, 0.6f * s.k));
+  vfx::glow(s.c, s.r * 0.7f, Ap({255, 250, 210, 255}, s.k), Ap({255, 200, 100, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotChidori(const Shot& s, float time) {
+  spear(s, s.r * 6.0f, s.r * 0.35f, {170, 210, 255, 255}, WHITE, {120, 170, 255, 255});
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 31u;
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i)
+    vfx::bolt(s.c - s.d * (s.r * 3.0f), s.c + s.d * (s.r * 2.6f), s.r * 0.8f, 7, fs + i * 9u, 2.0f, Ap({200, 230, 255, 255}, 0.8f * s.k));
+  vfx::additive(false);
+}
+
+// Kirin: the thunder dragon falling from the storm on its target.
+void shotKirin(const Shot& s, float time) {
+  const Rect v = vfx::viewRect(40.0f);
+  const Vec2 top{s.c.x + s.r * 1.2f, v.y - 40.0f};
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 97u;
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.6f, Ap({150, 190, 255, 255}, 0.55f * s.k), Ap({150, 190, 255, 255}, 0.0f));
+  for (int k = 0; k < 3; ++k) {  // the dragon's body: braided bolts
+    vfx::bolt(top + Vec2{(k - 1) * s.r * 0.4f, 0}, s.c, s.r * 0.8f, 14, fs + k * 13u, 26.0f - k * 6.0f, Ap({120, 140, 255, 255}, 0.35f * s.k));
+    vfx::bolt(top + Vec2{(k - 1) * s.r * 0.4f, 0}, s.c, s.r * 0.8f, 14, fs + k * 13u, 8.0f, Ap({200, 230, 255, 255}, 0.9f * s.k), Ap(WHITE, s.k));
+  }
+  // the head: jaws of lightning opening on the target
+  const Vec2 h = s.c + Vec2{0.0f, -s.r * 0.8f};
+  vfx::wedge(h + Vec2{-s.r * 1.2f, -s.r * 0.6f}, h + Vec2{s.r * 0.2f, s.r * 0.6f}, 14.0f, 2.0f, Ap({200, 230, 255, 255}, s.k), Ap(WHITE, s.k));
+  vfx::wedge(h + Vec2{s.r * 1.2f, -s.r * 0.6f}, h + Vec2{-s.r * 0.2f, s.r * 0.6f}, 14.0f, 2.0f, Ap({200, 230, 255, 255}, s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c, s.r * 1.2f, Ap(WHITE, s.k), Ap({200, 230, 255, 255}, 0.0f));
+  vfx::additive(false);
+}
+
+void shotIndraArrow(const Shot& s, float time) {
+  const Color v{170, 90, 255, 255};
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 9.0f), s.c, 0.0f, s.r * 1.6f, Ap(v, 0.0f), Ap(v, 0.55f * s.k));
+  for (int i = 0; i < 6; ++i) {  // purple flames streaming back
+    const Vec2 tail = s.c - s.d * (s.r * (3.0f + 3.0f * hash01(s.seed + i))) + s.n * (std::sin(time * 25.0f + i * 2.0f) * s.r * 0.8f);
+    vfx::streak(s.c, tail, s.r * 0.9f, 0.0f, Ap({210, 150, 255, 255}, 0.7f * s.k), Ap(v, 0.0f));
+  }
+  vfx::additive(false);
+  spear(s, s.r * 3.0f, s.r * 0.3f, {200, 140, 255, 255}, WHITE, v);
+}
+
+// Amaterasu: black flames with glowing sandy edges burning on the ground under the target (the PixelLab effect
+// fx_amaterasu). They rise out of the ground during the warning, burn while it lasts and sink as it ends.
+void shotBlackFlames(const Projectile& p, const Shot& s, float time) {
+  const float grow = smoothstep(clampf((p.age + 1.0f) / std::max(8.0f, float(p.armDelay)), 0.0f, 1.0f));
+  const float end = clampf(p.life / 16.0f, 0.0f, 1.0f);
+  const float h = s.r * 2.7f * (0.25f + 0.75f * grow) * (0.4f + 0.6f * end);  // flame height, world units
+  const Vec2 base = s.c + Vec2{0.0f, s.r};
+  const float a = std::min(1.0f, 2.0f * grow) * std::min(1.0f, 2.0f * end);
+  vfx::additive(true);
+  vfx::glow(base, s.r * 1.6f, Ap({240, 150, 70, 255}, 0.35f * a), Ap({240, 150, 70, 255}, 0.0f));
+  vfx::additive(false);
+  if (art::drawFx("amaterasu", float(p.age) / 60.0f + hash01(s.seed) * 2.0f, base, h / 100.0f, 0.0f, (s.seed & 1u) != 0, a))
+    return;
+  for (int i = 0; i < 10; ++i) {  // without the effect: tongues of black fire
+    const float x = (hash01(s.seed + i * 3u) - 0.5f) * s.r * 1.6f;
+    const float th = h * 0.6f * (1.0f + 0.5f * hash01(s.seed + i * 3u + 1)) * (0.8f + 0.3f * std::sin(time * 14.0f + i * 1.7f));
+    const Vec2 b = base + Vec2{x, 0.0f}, tip = b + Vec2{std::sin(time * 9.0f + i) * s.r * 0.25f, -th};
+    vfx::wedge(b, tip, s.r * 0.4f, 1.0f, Ap({10, 4, 12, 255}, 0.92f * a), Ap({10, 4, 12, 255}, 0.4f * a));
+  }
+}
+
+void shotKunai(const Shot& s) {
+  const Vec2 tip = s.c + s.d * (s.r * 1.6f), back = s.c - s.d * (s.r * 1.2f);
+  vfx::tri(tip, s.c + s.n * (s.r * 0.55f), s.c - s.n * (s.r * 0.55f), Ap({170, 176, 190, 255}, s.k), Ap({110, 116, 130, 255}, s.k),
+           Ap({110, 116, 130, 255}, s.k));
+  DrawLineEx(V(s.c), V(back), std::max(2.0f, s.r * 0.35f), Ap({40, 40, 46, 255}, s.k));
+  DrawRing(V(back), s.r * 0.25f, s.r * 0.4f, 0, 360, 12, Ap({150, 156, 168, 255}, s.k));
+}
+
+void shotWaterDragon(const Projectile& p, const Shot& s, float time) {
+  const Color w{70, 160, 240, 255}, foam{220, 240, 255, 255};
+  Vec2 pts[10];
+  for (int i = 0; i < 10; ++i) {
+    const float u = i / 9.0f;
+    pts[i] = s.c - s.d * (u * s.r * 5.0f) + s.n * (std::sin(time * 8.0f + u * 6.0f + p.age * 0.1f) * s.r * 0.7f * u);
+  }
+  for (int i = 9; i > 0; --i) {
+    const float w0 = s.r * (1.0f - 0.08f * i), w1 = s.r * (1.0f - 0.08f * (i - 1));
+    vfx::wedge(pts[i], pts[i - 1], w0 * 1.1f, w1 * 1.1f, Ap(shade(w, 0.7f), 0.9f * s.k), Ap(shade(w, 0.7f), 0.9f * s.k));
+    vfx::wedge(pts[i], pts[i - 1], w0 * 0.8f, w1 * 0.8f, Ap(w, 0.95f * s.k), Ap(w, 0.95f * s.k));
+  }
+  // head: jaws and eyes
+  const Vec2 h = pts[0];
+  vfx::tri(h + s.n * (s.r * 0.8f), h - s.n * (s.r * 0.8f), h + s.d * (s.r * 1.6f), Ap(w, s.k), Ap(w, s.k), Ap(foam, s.k));
+  DrawCircleV(V(h + s.d * (s.r * 0.3f) - s.n * (s.r * 0.4f)), std::max(1.5f, s.r * 0.12f), Ap(WHITE, s.k));
+  vfx::additive(true);
+  for (int i = 0; i < 6; ++i) vfx::glow(pts[i + 2] + s.n * (s.r * 0.6f), s.r * 0.25f, Ap(foam, 0.5f * s.k), Ap(foam, 0.0f));
+  vfx::additive(false);
+}
+
+// Kamui: space itself twists into a point and sucks in what stands there (the frame drawn so far is swirled,
+// pix::swirl), with the PixelLab rift turning on top (fx_kamui: a spiral collapsing into a black hole). It opens
+// during the warning, keeps pulling inwards while it lasts and collapses into a dot as it ends.
+void shotKamuiVortex(const Projectile& p, const Shot& s) {
+  const float open = smoothstep(clampf((p.age + 1.0f) / std::max(8.0f, float(p.armDelay)), 0.0f, 1.0f));
+  const float end = clampf(p.life / 14.0f, 0.0f, 1.0f);  // 1 until its last 14 frames
+  const float R = s.r * 2.4f * open * (0.3f + 0.7f * end);
+  pix::swirl(s.c, R * 1.25f, (2.5f + 0.12f * p.age) * open, 0.3f + 0.5f * open, 0.6f * open, std::min(1.0f, 2.0f * open));
+  const art::FxInfo* fx = art::fxInfo("kamui");
+  if (!fx || R < 1.0f) return;
+  const int frame = end >= 1.0f ? (p.age / 3) % 4 : std::min(fx->frames - 1, 4 + int((1.0f - end) * (fx->frames - 4)));
+  art::drawFxFrame("kamui", frame, s.c, R / (fx->fw * 0.46f), -p.age * 0.12f, false, 0.6f * std::min(1.0f, 2.0f * open));
+}
+
+void shuriken4(const Shot& s, float time, float R, Color body, Color edge) {
+  const float rot = time * 18.0f;
+  for (int i = 0; i < 4; ++i) {
+    const float a = rot + i * kPi * 0.5f;
+    const Vec2 d{std::cos(a), std::sin(a)}, n{-d.y, d.x};
+    vfx::tri(s.c + n * (R * 0.32f), s.c - n * (R * 0.32f), s.c + d * R + n * (R * 0.25f), Ap(body, s.k), Ap(body, s.k), Ap(edge, s.k));
+  }
+  DrawCircleV(V(s.c), R * 0.22f, Ap(shade(body, 0.6f), s.k));
+}
+
+void shotKamuiShuriken(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.6f, Ap({90, 140, 255, 255}, 0.35f * s.k), Ap({90, 140, 255, 255}, 0.0f));
+  vfx::additive(false);
+  shuriken4(s, time, s.r * 1.3f, {60, 80, 140, 255}, {170, 210, 255, 255});
+}
+
+void shotLightPillar(const Shot& s, float time) {
+  const Rect v = vfx::viewRect(40.0f);
+  const Color g{255, 220, 120, 255};
+  vfx::additive(true);
+  vfx::quad({s.c.x - s.r * 0.9f, v.y}, {s.c.x + s.r * 0.9f, v.y}, {s.c.x + s.r, s.c.y + s.r}, {s.c.x - s.r, s.c.y + s.r}, Ap(g, 0.15f * s.k),
+            Ap(g, 0.15f * s.k), Ap(g, 0.7f * s.k), Ap(g, 0.7f * s.k));
+  vfx::quad({s.c.x - s.r * 0.3f, v.y}, {s.c.x + s.r * 0.3f, v.y}, {s.c.x + s.r * 0.4f, s.c.y + s.r}, {s.c.x - s.r * 0.4f, s.c.y + s.r},
+            Ap(WHITE, 0.4f * s.k), Ap(WHITE, 0.4f * s.k), Ap(WHITE, s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c + Vec2{0, s.r * 0.6f}, s.r * 1.8f, Ap(g, 0.6f * s.k), Ap(g, 0.0f));
+  vfx::burst(s.c, 10, s.r * 0.5f, s.r * 2.2f, 0.2f, time * 3.0f, Ap(WHITE, 0.6f * s.k), Ap(g, 0.0f), s.seed);
+  vfx::additive(false);
+}
+
+void shotGloomPillar(const Shot& s, float time) {
+  const Color r{200, 20, 50, 255}, ink{14, 2, 8, 255};
+  const float h = s.r * 3.4f;
+  const Vec2 base = s.c + Vec2{0, s.r * 1.2f};
+  vfx::additive(true);
+  vfx::glow(base, s.r * 1.6f, Ap(r, 0.5f * s.k), Ap(r, 0.0f));
+  vfx::additive(false);
+  for (int i = 0; i < 7; ++i) {  // a column of malice erupting
+    const float x = (i - 3) * s.r * 0.22f + std::sin(time * 8.0f + i) * s.r * 0.08f;
+    const float hh = h * (0.7f + 0.3f * hash01(s.seed + i)) * (0.85f + 0.15f * std::sin(time * 12.0f + i));
+    vfx::wedge(base + Vec2{x, 0}, base + Vec2{x * 0.6f, -hh}, s.r * 0.45f, 2.0f, Ap(ink, 0.95f * s.k), Ap(ink, 0.4f * s.k));
+    vfx::additive(true);
+    vfx::wedge(base + Vec2{x, 0}, base + Vec2{x * 0.6f, -hh}, s.r * 0.15f, 1.0f, Ap(r, 0.8f * s.k), Ap(r, 0.0f));
+    vfx::additive(false);
+  }
+}
+
+void shotPetalSphere(const Shot& s, float time) {
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 1.3f, Ap({255, 140, 190, 255}, 0.3f * s.k), Ap({255, 140, 190, 255}, 0.0f));
+  vfx::additive(false);
+  for (int i = 0; i < 46; ++i) {  // a sphere of blades closing in, turning on several axes
+    const float a = hash01(i * 7 + 1) * 2.0f * kPi + time * (2.0f + hash01(i * 7 + 2) * 2.0f);
+    const float b = hash01(i * 7 + 3) * kPi;
+    const float rr = s.r * (0.95f + 0.1f * std::sin(time * 6.0f + i));
+    const Vec2 q = s.c + Vec2{std::cos(a) * std::sin(b), std::cos(b) * 0.9f + std::sin(a) * std::sin(b) * 0.2f} * rr;
+    const Vec2 d = Vec2{-std::sin(a), std::cos(a) * 0.3f}.norm();
+    const Color col = i % 3 == 0 ? Color{255, 236, 244, 255} : Color{255, 150, 196, 255};
+    petalShape(q, d, 5.0f, 2.2f, Ap(col, 0.92f * s.k));
+  }
+}
+
+void shotWindRain(const Shot& s) {
+  const Color g{140, 240, 180, 255};
+  const float R = s.r * 2.2f;
+  vfx::additive(true);
+  vfx::streak(s.c - s.d * (s.r * 5.0f), s.c, 0.0f, s.r * 1.0f, Ap(g, 0.0f), Ap(g, 0.4f * s.k));
+  crescentAt(s.c, s.d, R, R * 0.28f, 1.0f, Ap(g, 0.15f * s.k), Ap({230, 255, 240, 255}, 0.95f * s.k));
+  vfx::additive(false);
+}
+
+void shotZephyrSpear(const Shot& s, float time) {
+  spear(s, s.r * 5.0f, s.r * 0.4f, {150, 240, 190, 255}, WHITE, {120, 255, 180, 255});
+  vfx::additive(true);
+  for (int k = 0; k < 3; ++k) {  // wind spiralling round the spear
+    Vec2 prev{};
+    for (int i = 0; i <= 12; ++i) {
+      const float u = i / 12.0f;
+      const Vec2 q = s.c - s.d * (s.r * (3.0f - 5.0f * u)) + s.n * (std::sin(u * 10.0f - time * 20.0f + k * 2.1f) * s.r * (0.5f + 0.4f * u));
+      if (i > 0) vfx::wedge(prev, q, 2.0f, 3.0f, Ap({220, 255, 235, 255}, 0.6f * s.k), Ap({220, 255, 235, 255}, 0.6f * s.k));
+      prev = q;
+    }
+  }
+  vfx::additive(false);
+}
+
+void shotMaxBlue(const Shot& s, float time) {
+  shotBlueOrb(s, time);
+  vfx::additive(true);
+  for (int i = 0; i < 3; ++i) {  // the stage itself drawn into it
+    const float ph = std::fmod(time * 1.2f + i / 3.0f, 1.0f);
+    vfx::softRing(s.c, s.r * (4.0f - 3.0f * ph), 8.0f, Ap({120, 180, 255, 255}, 0.5f * ph * s.k));
+  }
+  vfx::additive(false);
+  for (int i = 0; i < 14; ++i) {  // debris spiralling in
+    const float u = std::fmod(time * 0.8f + hash01(i * 3 + 1), 1.0f);
+    const float a = hash01(i * 3 + 2) * 2.0f * kPi + u * 6.0f;
+    const Vec2 q = s.c + Vec2{std::cos(a), std::sin(a)} * (s.r * 3.5f * (1.0f - u));
+    DrawPoly(V(q), 4, 4.0f + 3.0f * hash01(i), a * 90.0f, Ap({90, 80, 80, 255}, s.k));
+  }
+}
+
+// Kamutoke strike: a vertical bolt from the sky onto the spot.
+void shotSkyBolt(const Shot& s, float time) {
+  const Rect v = vfx::viewRect(40.0f);
+  const uint32_t fs = s.seed + uint32_t(time * 60.0f) * 101u;
+  const Vec2 a{s.c.x + (hash01(fs) - 0.5f) * s.r, v.y - 20.0f};
+  vfx::additive(true);
+  vfx::glow(s.c, s.r * 2.0f, Ap({150, 200, 255, 255}, 0.5f * s.k), Ap({150, 200, 255, 255}, 0.0f));
+  vfx::bolt(a, s.c, s.r * 0.6f, 12, fs, 18.0f, Ap({120, 140, 255, 255}, 0.4f * s.k));
+  vfx::bolt(a, s.c, s.r * 0.6f, 12, fs, 6.0f, Ap({200, 230, 255, 255}, 0.95f * s.k), Ap(WHITE, s.k));
+  vfx::glow(s.c, s.r * 0.9f, Ap(WHITE, s.k), Ap({200, 230, 255, 255}, 0.0f));
+  vfx::additive(false);
+}
 }  // namespace
+
+// Projectiles drawn by a PixelLab effect (assets/sprites/fx_<name>.png), sized on their hitbox: the effect's hit
+// radius (its fx line in sheets.txt) is the projectile's radius. Without the effect the procedural drawing stays.
+enum class FxPlace : uint8_t {
+  Travel,  // flies along its velocity (drawn to the right, turned and mirrored to its course); origin on the hitbox
+  Area,    // stays upright, origin on the hitbox centre
+  Sky,     // comes down from above onto the hitbox centre
+  Ground,  // rises from the ground under the hitbox (origin on the column's foot)
+};
+struct ShotFx {
+  ProjVisual v;
+  const char* fx;
+  FxPlace place;
+};
+constexpr ShotFx kShotFx[] = {
+    {ProjVisual::BlackSlash, "black_divider", FxPlace::Travel},  {ProjVisual::WindRain, "wind_rain", FxPlace::Travel},
+    {ProjVisual::ZephyrSpear, "zephyr_spear", FxPlace::Travel},  {ProjVisual::GiantGetsuga, "getsuga", FxPlace::Travel},
+    {ProjVisual::GetsugaCross, "getsuga_cross", FxPlace::Travel}, {ProjVisual::PetalSphere, "petal_sphere", FxPlace::Area},
+    {ProjVisual::SwordBeam, "sword_beam", FxPlace::Travel},      {ProjVisual::LightPillar, "light_pillar", FxPlace::Sky},
+    {ProjVisual::GloomPillar, "gloom_pillar", FxPlace::Ground},  {ProjVisual::PurpleOrb, "hollow_purple", FxPlace::Travel},
+    {ProjVisual::MaxBlue, "max_blue", FxPlace::Area},            {ProjVisual::ReiatsuWave, "reiatsu_wave", FxPlace::Travel},
+    {ProjVisual::Rasenshuriken, "rasenshuriken", FxPlace::Travel}, {ProjVisual::Bijudama, "bijudama", FxPlace::Travel},
+    {ProjVisual::KirinBolt, "kirin", FxPlace::Sky},              {ProjVisual::IndraArrow, "indra_arrow", FxPlace::Travel},
+    {ProjVisual::KamuiShuriken, "susanoo_shuriken", FxPlace::Travel}, {ProjVisual::StarrkCero, "starrk_cero", FxPlace::Travel},
+    {ProjVisual::CeroWolf, "cero_wolf", FxPlace::Travel},         {ProjVisual::GreatFireball, "great_fireball", FxPlace::Travel},
+    {ProjVisual::WaterDragon, "water_dragon", FxPlace::Travel},   {ProjVisual::LightningHound, "lightning_hound", FxPlace::Travel},
+    {ProjVisual::Dismantle, "dismantle", FxPlace::Travel},       {ProjVisual::Lightning, "kamutoke_bolt", FxPlace::Travel},
+    {ProjVisual::LightArrow, "light_arrow", FxPlace::Travel},    {ProjVisual::RedOrb, "red_orb", FxPlace::Travel},
+    {ProjVisual::BlueOrb, "blue_orb", FxPlace::Travel},
+};
+
+static bool shotSprite(const Projectile& p, const Shot& s, float time) {
+  const ShotFx* e = nullptr;
+  for (const ShotFx& x : kShotFx)
+    if (x.v == p.visual) e = &x;
+  const bool skyBolt = p.visual == ProjVisual::Lightning && p.vel.len2() < 1.0f;  // Kamutoke: a bolt from the sky
+  const bool getsuga = p.visual == ProjVisual::Getsuga;  // Ichigo's: blue, black in Bankai
+  const char* name = skyBolt ? "sky_bolt" : getsuga ? (p.hit.fx == HitFx::Dark ? "getsuga_black" : "getsuga")
+                                                    : e ? e->fx : nullptr;
+  const art::FxInfo* fx = name ? art::fxInfo(name) : nullptr;
+  if (!fx) return false;
+  const FxPlace place = skyBolt ? FxPlace::Sky : getsuga ? FxPlace::Travel : e->place;
+  const float size = s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
+  const float t = time + hash01(s.seed) * fx->duration();  // copies side by side do not pulse together
+  if (place == FxPlace::Travel) {
+    const bool flip = s.d.x < 0.0f;  // mirrored, not upside down, when it flies to the left
+    const float rot = flip ? std::atan2(-s.d.y, -s.d.x) : std::atan2(s.d.y, s.d.x);
+    return art::drawFx(name, t, s.c, size, rot, flip, s.k);
+  }
+  const Vec2 at = place == FxPlace::Ground ? s.c + Vec2{0.0f, s.r * 1.2f} : s.c;
+  return art::drawFx(name, t, at, size, 0.0f, (s.seed & 1u) != 0 && place == FxPlace::Area, s.k);
+}
 
 void drawProjectiles(const Match& m, float time) {
   for (size_t i = 0; i < m.projectiles.size(); ++i) {
@@ -1482,6 +1703,22 @@ void drawProjectiles(const Match& m, float time) {
     s.k = std::min(1.0f, p.life / 8.0f) * std::min(1.0f, (p.age + 1) / 3.0f);
     s.age = float(p.age);
     s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
+    if (p.visual == ProjVisual::KamuiVortex) {  // the rift opening is its own warning
+      shotKamuiVortex(p, s);
+      continue;
+    }
+    if (p.visual == ProjVisual::BlackFlames) {  // so are the flames rising out of the ground
+      shotBlackFlames(p, s, time);
+      continue;
+    }
+    if (!p.armed()) {  // the warning before the strike
+      const bool sky = p.visual == ProjVisual::LightPillar || p.visual == ProjVisual::KirinBolt ||
+                       p.visual == ProjVisual::Lightning || p.visual == ProjVisual::WindRain;
+      shotWarning(p, s, time, sky);
+      continue;
+    }
+    if (p.armDelay > 0) s.k = std::min(s.k, 1.0f);
+    if (shotSprite(p, s, time)) continue;
     switch (p.visual) {
       case ProjVisual::BlackSlash: shotBlackSlash(s, time); continue;
       case ProjVisual::WindBlade: shotWindBlade(s); continue;
@@ -1502,7 +1739,62 @@ void drawProjectiles(const Match& m, float time) {
       case ProjVisual::PurpleOrb: shotPurpleOrb(s, time); continue;
       case ProjVisual::Dismantle: shotDismantle(p, s); continue;
       case ProjVisual::FireArrow: shotFireArrow(s, time); continue;
-      case ProjVisual::Lightning: shotLightning(s, time); continue;
+      case ProjVisual::Lightning:
+        if (p.vel.len2() < 1.0f) shotSkyBolt(s, time);
+        else shotLightning(s, time);
+        continue;
+      case ProjVisual::ReiatsuWave: shotReiatsuWave(s, time); continue;
+      case ProjVisual::CeroOscuras: shotCeroOscuras(s, time); continue;
+      case ProjVisual::LuzDeLaLuna: shotLuzDeLaLuna(s, time); continue;
+      case ProjVisual::Lanza: shotLanza(s, time); continue;
+      case ProjVisual::BarrelBomb: shotBarrel(p, s, time); continue;
+      case ProjVisual::Phial: shotFlash(s, {255, 230, 90, 255}); continue;
+      case ProjVisual::GunlanceShell: shotShell(s, time); continue;
+      case ProjVisual::Rasengan: shotRasengan(s, time); continue;
+      case ProjVisual::Rasenshuriken: shotRasenshuriken(s, time); continue;
+      case ProjVisual::ShadowClone: {
+        const Fighter& o = m.fighters[std::clamp(p.owner, 0, int(m.fighters.size()) - 1)];
+        Pose pose = restPose(*o.def, time * 1.6f + float(i));
+        const float H = o.def->height, ph = std::sin(p.age * 0.45f);
+        pose.footF = {0.12f * H * ph, 0.5f * H};
+        pose.footB = {-0.12f * H * ph, 0.5f * H};
+        pose.handF = {0.2f * H, -0.05f * H};
+        pose.handB = {-0.25f * H, 0.05f * H};
+        pose.lean = 0.35f;
+        const int facing = p.vel.x >= 0.0f ? 1 : -1;
+        runClip(*o.def, pose, std::fmod(p.age * 0.06f, 1.0f));  // the clone runs like its owner, in its look
+        const int wrun = o.weapon == 0 ? art::kSheetWState0 : o.weapon == 1 ? art::kSheetWState1 : -1;
+        if (wrun >= 0 && art::hasSheet(o.def->hero, wrun + art::kSheetRun)) pose.sheet = wrun + art::kSheetRun;
+        drawCharacterSprite(*o.def, o.palette, pose, {p.pos.x, p.pos.y + H * 0.5f}, facing, 1.0f, std::min(1.0f, s.k) * 0.92f,
+                            {255, 240, 200, 255}, 0.12f, time);
+        if (const art::FxInfo* puff = art::fxInfo("smoke_puff"); puff && p.age / 60.0f < puff->duration())
+          art::drawFx("smoke_puff", p.age / 60.0f, p.pos, H / 170.0f);  // it pops out of a puff of smoke
+        else if (!puff && p.age < 6)
+          shotFlash(s, {240, 240, 240, 255});
+        continue;
+      }
+      case ProjVisual::Bijudama: shotBijudama(s, time); continue;
+      case ProjVisual::GreatFireball: shotGreatFireball(s, time); continue;
+      case ProjVisual::ChidoriSpear: shotChidori(s, time); continue;
+      case ProjVisual::KirinBolt: shotKirin(s, time); continue;
+      case ProjVisual::IndraArrow: shotIndraArrow(s, time); continue;
+      case ProjVisual::BlackFlames: shotBlackFlames(p, s, time); continue;
+      case ProjVisual::Kunai: shotKunai(s); continue;
+      case ProjVisual::WaterDragon: shotWaterDragon(p, s, time); continue;
+      case ProjVisual::KamuiShuriken: shotKamuiShuriken(s, time); continue;
+      case ProjVisual::GiantGetsuga: shotGetsuga(s, false, time); continue;
+      case ProjVisual::GetsugaCross: shotGetsugaCross(s, time); continue;
+      case ProjVisual::Desgarron: shotDesgarron(s); continue;
+      case ProjVisual::PanteraDart: shotPanteraDart(s); continue;
+      case ProjVisual::CeroWolf: shotCeroWolf(m, p, s, time); continue;
+      case ProjVisual::StarrkCero: shotStarrkCero(s); continue;
+      case ProjVisual::LightPillar: shotLightPillar(s, time); continue;
+      case ProjVisual::GloomPillar: shotGloomPillar(s, time); continue;
+      case ProjVisual::PetalSphere: shotPetalSphere(s, time); continue;
+      case ProjVisual::WindRain: shotWindRain(s); continue;
+      case ProjVisual::ZephyrSpear: shotZephyrSpear(s, time); continue;
+      case ProjVisual::IceAxe: shotAxe(p, s); continue;
+      case ProjVisual::MaxBlue: shotMaxBlue(s, time); continue;
       default: break;
     }
     Vector2 c = V(p.pos);
@@ -1596,7 +1888,7 @@ void drawOrb(const Match& m, float time) {
 }
 
 void drawStagePreview(const StageDef& s, Rectangle area, float time) {
-  art(s.theme);  // bake outside of the clip and transform below
+  themeArt(s.theme);  // bake outside of the clip and transform below
   // The real stage, scaled down and cropped to the area.
   const float sc = std::max(area.width / kScreenW, area.height / kScreenH);
   beginClip(area);
@@ -1614,4 +1906,17 @@ void drawStagePreview(const StageDef& s, Rectangle area, float time) {
   drawPlatformList(plats, s.theme, time);
   rlPopMatrix();
   endClip();
+}
+
+void drawStageThumb(int index, const StageDef& s, Rectangle area) {
+  static std::vector<Layer> cache;
+  if (index < 0) return;
+  if (int(cache.size()) <= index) cache.resize(index + 1);
+  Layer& L = cache[index];
+  if (L.rt.id == 0 || L.w != area.width || L.h != area.height || std::fabs(L.scale - g_renderScale) > 0.01f) {
+    if (L.rt.id != 0) UnloadRenderTexture(L.rt);
+    themeArt(s.theme);  // (bakes its own layers first, outside of this one)
+    L = bake(area.width, area.height, g_renderScale, [&] { drawStagePreview(s, {0, 0, area.width, area.height}, 2.0f); }, false);
+  }
+  drawBackdrop(L, area.x, area.y, area.y + area.height);
 }

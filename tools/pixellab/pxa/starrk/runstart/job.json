@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "fd560085-3877-4374-9cbf-4b35c4c6a0e8",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6a87ee82-8f5e-4f75-ac14-1989d94b6002",
+  "description": "breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Coyote Starrk from Bleach, a tall lazy-looking arrancar with wavy brown hair and a goatee, a white open-collared jacket and white pants with a black sash",
+  "initial_pose": "loose relaxed stance facing right, the right arm stretched forward at shoulder height pointing one finger like a pistol, the left arm hanging loose, long white coat"
+ },
+ "reply": "id: fd560085-3877-4374-9cbf-4b35c4c6a0e8\njob_id: fd560085-3877-4374-9cbf-4b35c4c6a0e8\ndescription: breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fd560085-3877-4374-9cbf-4b35c4c6a0e8\")\nasset_id: 0867b291-aa87-515d-b0bc-49fd87cd9454\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/starrk_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

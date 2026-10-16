@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "black-meteorite-asta 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 1.png",
+   "frame": {
+    "x": 267,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 2.png",
+   "frame": {
+    "x": 534,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 3.png",
+   "frame": {
+    "x": 801,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 4.png",
+   "frame": {
+    "x": 0,
+    "y": 161,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 5.png",
+   "frame": {
+    "x": 267,
+    "y": 161,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 6.png",
+   "frame": {
+    "x": 534,
+    "y": 161,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 7.png",
+   "frame": {
+    "x": 801,
+    "y": 161,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 8.png",
+   "frame": {
+    "x": 0,
+    "y": 322,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 9.png",
+   "frame": {
+    "x": 267,
+    "y": 322,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 10.png",
+   "frame": {
+    "x": 534,
+    "y": 322,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  },
+  {
+   "filename": "black-meteorite-asta 11.png",
+   "frame": {
+    "x": 801,
+    "y": 322,
+    "w": 267,
+    "h": 161
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 267,
+    "h": 161
+   },
+   "sourceSize": {
+    "w": 267,
+    "h": 161
+   },
+   "pivot": {
+    "x": 0.4794007490636704,
+    "y": 0.84472049689441
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "black-meteorite-asta.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1068,
+   "h": 483
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 128,
+   "y": 136
+  },
+  "frameTags": [
+   {
+    "name": "black-meteorite-asta",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

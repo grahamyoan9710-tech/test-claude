@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "f76b83b8-a637-4854-9fdb-af4b832b2345",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0307a443-faf3-4811-888c-adc792014074",
+  "description": "is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ryomen Sukuna from Jujutsu Kaisen, a man with spiky pink hair, black tattoo lines on his face and arms, a white kimono with a dark sash",
+  "initial_pose": "relaxed menacing stance facing right, upright in a white kimono with a dark sash, one arm hanging at his side, the other hand held open forward at waist height, palm up"
+ },
+ "reply": "id: f76b83b8-a637-4854-9fdb-af4b832b2345\njob_id: f76b83b8-a637-4854-9fdb-af4b832b2345\ndescription: is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f76b83b8-a637-4854-9fdb-af4b832b2345\")\nasset_id: f9de0f62-db90-56a0-bbf3-ecd3d4714d23\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/sukuna_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

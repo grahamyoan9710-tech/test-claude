@@ -1,6 +1,7 @@
 // Application shell: window, main loop, screen flow and transitions.
 #include "game/app.hpp"
 
+#include "game/pixel.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -30,6 +31,17 @@ App::App(Options opt) : opt_(std::move(opt)) {
   if (opt_.stage >= 0) stage_ = opt_.stage % int(stageList().size());
 }
 
+bool App::teamBattle() const { return !training_ && (settings().teams || teamsForced_); }
+
+bool App::readyToFight() const {
+  if (activeSlots() < 2) return false;
+  if (!teamBattle()) return true;
+  bool seen[2] = {false, false};
+  for (int i = 0; i < 4; ++i)
+    if (slots_[i].type != 0) seen[slotTeam(i)] = true;
+  return seen[0] && seen[1];
+}
+
 int App::activeSlots() const {
   if (training_) return 2;
   int n = 0;
@@ -48,7 +60,12 @@ void App::goTo(Screen s, bool instant) {
 }
 
 void App::enterScreen(Screen s) {
-  if (s == Screen::CharSelect && screen_ != Screen::StageSelect) padLeft_ = {};  // a fresh visit
+  if (s == Screen::CharSelect && screen_ != Screen::StageSelect) {  // a fresh visit
+    padLeft_ = {};
+    for (int d = 0; d < kDeviceCount; ++d) cssCur_[d] = {ownedCard(d) >= 0, std::max(0, ownedCard(d)), 1, 0};
+    audio_.voice(training_ ? "training" : "choose");
+  }
+  if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
   if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
   screen_ = s;
   screenFrames_ = 0;
@@ -81,11 +98,12 @@ void App::applyDisplaySettings() {
 void App::startMatch() {
   const Settings& st = settings();
   MatchConfig cfg;
-  cfg.stage = stage_;
+  cfg.stage = stageRandom_ ? GetRandomValue(0, int(stageList().size()) - 1) : stage_;
   cfg.stocks = st.stocks;
   cfg.items = training_ ? false : st.items;
   cfg.weapons = st.weapons;
   cfg.training = training_;
+  cfg.teams = teamBattle();
   cfg.seed = uint32_t(frames_) * 2654435761u + 12345u;
   std::array<int, 4> devices{};
   for (int i = 0; i < 4; ++i) {
@@ -95,7 +113,8 @@ void App::startMatch() {
       s.type = i == 0 ? 1 : 2;
     }
     if (s.type == 0) continue;
-    cfg.slots[i] = {true, s.character, s.type == 2, s.level};
+    const int fighter = s.random ? GetRandomValue(0, int(roster().size()) - 1) : s.character;
+    cfg.slots[i] = {true, fighter, s.type == 2, s.level, slotTeam(i)};
     devices[i] = s.device;
   }
   match_ = std::make_unique<MatchScreen>(cfg, devices, audio_, st.showHitboxes || opt_.debug);
@@ -107,11 +126,12 @@ void App::finishMatch() {
   results_.clear();
   for (int id : m.ranking()) {
     const Fighter& f = m.fighters[id];
-    results_.push_back({f.charIndex, f.palette, f.port, f.cpu, f.kos, f.falls, f.damageDealt});
+    results_.push_back({f.charIndex, f.palette, f.port, f.cpu, f.kos, f.falls, f.damageDealt, f.inTeam ? f.team : -1});
   }
   winnerChar_ = -1;
-  if (m.winner >= 0) {
-    const Fighter& w = m.fighters[m.winner];
+  winnerTeam_ = m.cfg.teams ? m.winnerTeam : -1;
+  if (m.winner >= 0) {  // a team battle shows the best of the winning team (ranked first)
+    const Fighter& w = m.fighters[m.cfg.teams ? m.ranking()[0] : m.winner];
     winnerChar_ = w.charIndex;
     winnerPalette_ = w.palette;
     winnerPort_ = w.port;
@@ -132,6 +152,7 @@ void App::run() {
   loadFonts();
   ui::bakeSprites();
   loadSettings();
+  teamsForced_ = opt_.teams;  // --teams: for this run only (never saved)
   audio_.init();
   applyDisplaySettings();
   for (auto& s : slots_) s.level = settings().cpuLevel;
@@ -145,12 +166,17 @@ void App::run() {
                      i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, n - 1) : 0, 9 - i};
     if (opt_.stage < 0) stage_ = 1;
     startMatch();
+    if (opt_.ultShow >= -1) match_->showUltimate(opt_.ultShow);
+    if (opt_.weaponShow >= 0) match_->showWeapon(opt_.weaponShow);
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "menu") {
     enterScreen(Screen::MainMenu);
   } else if (opt_.screen == "css") {
     training_ = opt_.training;
+    const int n = int(roster().size());
+    for (int i = 0; i < int(std::min<size_t>(4, opt_.fighters.size())); ++i)  // --fighters: who is picked
+      slots_[i] = {i == 0 ? 1 : 2, kKeyboard1, std::clamp(opt_.fighters[i], 0, n - 1), 9};
     enterScreen(Screen::CharSelect);
   } else if (opt_.screen == "stage") {
     enterScreen(Screen::StageSelect);
@@ -158,13 +184,22 @@ void App::run() {
     setTab_ = std::clamp(opt_.tab, 0, 3);
     setRow_ = opt_.tab >= 0 ? 0 : -1;
     enterScreen(Screen::Settings);
+  } else if (opt_.screen == "poses") {
+    setTab_ = std::max(0, opt_.tab);
+    enterScreen(Screen::Poses);
+  } else if (opt_.screen == "anim") {
+    setTab_ = std::max(0, opt_.tab);
+    enterScreen(Screen::Anim);
   } else if (opt_.screen == "training") {
     training_ = true;
+    for (int i = 0; i < int(std::min<size_t>(2, opt_.fighters.size())); ++i)  // --fighters: player 1, the dummy
+      slots_[i].character = std::clamp(opt_.fighters[i], 0, int(roster().size()) - 1);
     startMatch();
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "results") {
-    for (int i = 0; i < 4; ++i) slots_[i] = {2, kKeyboard1, i, 9};
+    for (int i = 0; i < 4; ++i)
+      slots_[i] = {2, kKeyboard1, i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, int(roster().size()) - 1) : i, 9};
     startMatch();
     while (match_->update() != MatchScreen::Result::Finished) {}
     finishMatch();
@@ -180,10 +215,11 @@ void App::run() {
     time_ += 1.0f / 60.0f;
     if (toastTimer_ > 0) --toastTimer_;
     updatePads();
+    audio_.update();
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
     // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once.
-    const bool testRun = !opt_.shots.empty() || opt_.quitAfter > 0;
+    const bool testRun = !opt_.shots.empty() || !opt_.recordDir.empty() || opt_.quitAfter > 0;
     if (!testRun && settings().highQuality && !autoQualityDone_ && frames_ > 120) {
       const float dt = GetFrameTime();
       slowTime_ = dt > 1.0f / 45.0f ? slowTime_ + dt : std::max(0.0f, slowTime_ - dt * 0.5f);
@@ -216,6 +252,9 @@ void App::run() {
         case Screen::StageSelect: updateStage(nav); break;
         case Screen::Results: updateResults(nav); break;
         case Screen::Settings: updateSettings(nav); break;
+        case Screen::Poses: case Screen::Anim:
+          if (nav.back) quit_ = true;
+          break;
         case Screen::Match: {
           MatchScreen::Result r = match_->update();
           if (r == MatchScreen::Result::Finished) finishMatch();
@@ -226,6 +265,7 @@ void App::run() {
     }
 
     BeginTextureMode(target_);
+    pix::setFrameTarget(&target_);
     rlScalef(g_renderScale, g_renderScale, 1.0f);
     ClearBackground(BLACK);
     // Standard alpha blending for colours, but the frame itself stays opaque: overlapping
@@ -238,6 +278,8 @@ void App::run() {
       case Screen::StageSelect: drawStage(); break;
       case Screen::Results: drawResults(); break;
       case Screen::Settings: drawSettings(); break;
+      case Screen::Poses: drawPoses(); break;
+      case Screen::Anim: drawAnimSheet(); break;
       case Screen::Match: if (match_) match_->draw(); break;
     }
     if (toastTimer_ > 0) {
@@ -252,15 +294,20 @@ void App::run() {
     if (transition_ >= 0) ui::wipe(transition_ / float(kHalfTransition * 2));
     EndBlendMode();
     EndTextureMode();
+    pix::setFrameTarget(nullptr);
 
-    for (const auto& [frame, path] : opt_.shots) {
-      if (frame != frames_) continue;
+    auto saveFrame = [&](const std::string& path) {
       Image img = LoadImageFromTexture(target_.texture);
       ImageFlipVertical(&img);
-      if (img.width != kScreenW) ImageResize(&img, kScreenW, kScreenH);
+      if (img.width != kScreenW && !opt_.fullRes) ImageResize(&img, kScreenW, kScreenH);
       ExportImage(img, path.c_str());
       UnloadImage(img);
-    }
+    };
+    for (const auto& [frame, path] : opt_.shots)
+      if (frame == frames_) saveFrame(path);
+    if (!opt_.recordDir.empty() && frames_ >= opt_.recordFrom && frames_ <= opt_.recordTo &&
+        (frames_ - opt_.recordFrom) % opt_.recordEvery == 0)
+      saveFrame(opt_.recordDir + TextFormat("/f_%05d.png", frames_));
     if (opt_.quitAfter > 0 && frames_ >= opt_.quitAfter) quit_ = true;
     if (opt_.pauseAt == frames_ && match_) match_->forcePause();
 
@@ -277,6 +324,7 @@ void App::run() {
   }
   saveSettings();
   match_.reset();
+  pix::unload();
   UnloadRenderTexture(target_);
   ui::unloadSprites();
   unloadFonts();

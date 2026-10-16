@@ -1,0 +1,148 @@
+{
+ "notes": "Sukuna's kits (v9.7). Slot 0, Kamutoke, changes the look: the long dark staff with its golden crescent blade stays in his right hand in every state (guard picture w0guard). Slot 1, his finger, is a power with nothing in hand: his look stays, the kit clips show crimson cursed energy (the game draws its aura). Lightning bolts, Dismantle slashes and the bursts are drawn by the game; both ultimates keep their clips.",
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "Kamutoke, a long dark staff topped with a golden crescent blade",
+   "wguard": "golden lightning crackles in his right hand and forms Kamutoke, a long dark staff topped with a golden crescent blade, which he holds upright beside him in his right hand, a little yellow lightning crackling on the crescent; his white kimono with the dark sash keeps exactly its colours",
+   "subject": "Ryomen Sukuna from Jujutsu Kaisen, a man with spiky pink hair, black tattoo lines on his face and arms, a white kimono with a dark sash, holding Kamutoke (a long dark staff topped with a golden crescent blade, crackling with yellow lightning) in his right hand",
+   "guard_pose": "relaxed menacing stance facing right in a white kimono, holding the long dark staff Kamutoke upright in his right hand, its golden crescent blade at the top",
+   "air_pose": "in mid-air facing right, knees tucked, the long dark staff Kamutoke in his right hand",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first hit of a fast three-hit staff combo: a quick diagonal downward swing of Kamutoke from high in front of him to low in front of him, its golden crescent blade leading, a thin yellow lightning trail, then back into the stance"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second hit: a fast straight thrust of Kamutoke forward at chest height, the golden crescent blade at its tip crackling with yellow lightning, then back into the stance"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "finisher: swings Kamutoke in a wide powerful rising arc from low in front of him up above his head, yellow lightning crackling on the crescent blade, then back into the stance"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "air combo in mid-air: swings Kamutoke down in front of him, then spins it in a full circle around his body, thin yellow lightning trails, then back to the tucked pose"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Kamutoke strike: raises the staff Kamutoke above his head, yellow lightning gathering on its golden crescent blade, then points it straight forward, holds it there, then back into the stance. Only Sukuna and his staff are drawn: no lightning bolt flying away"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "lightning lunge: crouches, then dashes forward, stabbing Kamutoke straight ahead at full arm extension, yellow lightning crackling around the crescent blade, then back into the stance"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "rising thunder: crouches, then leaps straight up holding Kamutoke high above his head, yellow lightning crackling around the staff, rising the whole time"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "none",
+     "thunder call: raises Kamutoke high above his head, its crescent blade pointing at the sky, braces and holds, then plants the end of the staff on the ground, then back into the stance. Only Sukuna and his staff are drawn: no lightning bolt, no effect"
+    ]
+   }
+  },
+  "1": {
+   "look": "same",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first hit of a fast three-hit combo: a sharp open-hand strike forward, a thin crimson slash line flashing in front of his hand, then back into the stance. His face, pink hair and skin keep exactly their colours"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second hit: a fast spinning back kick at chest height, a thin trail of crimson cursed energy following his foot, then back into the stance"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "finisher: sweeps his open hand across in a wide arc and a big thin crimson slash of cursed energy cuts the air in front of him, then back into the stance"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "air combo in mid-air: a spinning kick, then a second spinning kick the other way, thin trails of crimson cursed energy, then back to the tucked pose"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Dismantle barrage: flicks his right hand forward again and again with two fingers extended, crimson cursed energy flickering on his fingertips, then back into the stance. Only Sukuna is drawn: no slashes flying away"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Cleave rush: dashes forward low and cuts across with his open hand at full arm extension, a burst of crimson cursed energy around the hand, then settles back into the stance"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "cursed ascent: crouches, then leaps high into the air with a rising open-hand slash above his head, crimson cursed energy swirling around him, rising the whole time"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "King's counter: stands perfectly still with his arms loose and a calm smirk, watchful, then answers with a fast crimson slash of his open hand to the front, then back into the stance"
+    ]
+   }
+  }
+ }
+}

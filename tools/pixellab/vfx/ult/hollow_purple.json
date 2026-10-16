@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "hollow-purple 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 1.png",
+   "frame": {
+    "x": 248,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 2.png",
+   "frame": {
+    "x": 496,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 3.png",
+   "frame": {
+    "x": 744,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 4.png",
+   "frame": {
+    "x": 0,
+    "y": 248,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 5.png",
+   "frame": {
+    "x": 248,
+    "y": 248,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 6.png",
+   "frame": {
+    "x": 496,
+    "y": 248,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 7.png",
+   "frame": {
+    "x": 744,
+    "y": 248,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 8.png",
+   "frame": {
+    "x": 0,
+    "y": 496,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 9.png",
+   "frame": {
+    "x": 248,
+    "y": 496,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 10.png",
+   "frame": {
+    "x": 496,
+    "y": 496,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "hollow-purple 11.png",
+   "frame": {
+    "x": 744,
+    "y": 496,
+    "w": 248,
+    "h": 248
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 248,
+    "h": 248
+   },
+   "sourceSize": {
+    "w": 248,
+    "h": 248
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "hollow-purple.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 992,
+   "h": 744
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 124,
+   "y": 124
+  },
+  "frameTags": [
+   {
+    "name": "hollow-purple",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

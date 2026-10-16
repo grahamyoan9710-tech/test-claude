@@ -1,9 +1,13 @@
 // Results screen: the winner celebrates, then the scoreboard.
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/ui.hpp"
 
 void App::updateResults(const MenuNav& nav) {
+  if (screenFrames_ == 25) audio_.voice("winner");  // "The winner is..." then the name
+  if (screenFrames_ == 105 && winnerTeam_ >= 0) audio_.voice(winnerTeam_ == 1 ? "blueteam" : "redteam");
+  else if (screenFrames_ == 105 && winnerChar_ >= 0) audio_.voice(voiceKey(roster()[winnerChar_].name).c_str());
   if (screenFrames_ > 40 && (nav.confirm || nav.start || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
     audio_.play(Sfx::MenuSelect);
     goTo(Screen::CharSelect);
@@ -13,7 +17,8 @@ void App::updateResults(const MenuNav& nav) {
 void App::drawResults() {
   const float t = time_;
   const auto& r = roster();
-  Color wc = winnerChar_ >= 0 ? (winnerCpu_ ? cpuColor() : portColor(winnerPort_)) : Color{180, 184, 176, 255};
+  Color wc = winnerTeam_ >= 0 ? teamColor(winnerTeam_)
+             : winnerChar_ >= 0 ? (winnerCpu_ ? cpuColor() : portColor(winnerPort_)) : Color{180, 184, 176, 255};
   ui::stageBackdrop(1, t, 0.4f);  // the sanctuary at golden hour
   for (int i = 0; i < 90; ++i) {  // confetti
     float x = std::fmod(i * 97.0f + std::sin(t + i) * 30.0f, float(kScreenW));
@@ -34,12 +39,20 @@ void App::drawResults() {
     p.handB = {-0.32f * H, -0.44f * H};
     p.weaponDir = Vec2{0.35f, -1.0f}.norm();
     if (d.style == BodyStyle::Puff) p.handF = {0.32f * H, -0.2f * H}, p.handB = {-0.32f * H, -0.2f * H};
+    if (art::hasSheet(d.hero, art::kSheetVictory)) {  // its own victory pose, played once then held
+      p.sheet = art::kSheetVictory;
+      p.sheetT = clampf(screenFrames_ / 90.0f, 0.0f, 1.0f);
+    }
     float hop = std::fabs(std::sin(t * 4.0f)) * 18.0f;
     DrawEllipse(330, 632, 70.0f - hop, 11.0f, withAlpha(ui::kInk, 0.3f));
-    drawCharacter(d, winnerPalette_, p, {330, 630 - hop}, 1, 250.0f / H, 1.0f, WHITE, 0.0f, t);
+    drawShowcase(d, winnerPalette_, p, {330, 630 - hop}, 1, 250.0f, t);
     ui::drawSprite(ui::Sprite::Victory, 330 - ui::spriteWidth(ui::Sprite::Victory, 92) * 0.5f, 26, 92);
     drawTextCentered(d.name.c_str(), 330, 134, 44, wc, true, FontKind::Title);
-    drawTextCentered(winnerCpu_ ? "Ordinateur" : TextFormat("Joueur %d", winnerPort_ + 1), 330, 186, 22, ui::kCream);
+    if (winnerTeam_ >= 0)
+      drawTextCentered(TextFormat("Victoire de l'équipe %s !", winnerTeam_ == 1 ? "bleue" : "rouge"), 330, 186, 24, wc,
+                       true);
+    else
+      drawTextCentered(winnerCpu_ ? "Ordinateur" : TextFormat("Joueur %d", winnerPort_ + 1), 330, 186, 22, ui::kCream);
   } else {
     ui::drawSprite(ui::Sprite::Draw, 330 - ui::spriteWidth(ui::Sprite::Draw, 80) * 0.5f, 60, 80);
   }
@@ -56,7 +69,7 @@ void App::drawResults() {
     float enter = clampf((screenFrames_ - 20 - i * 8) / 16.0f, 0.0f, 1.0f);
     float y = ty + 36 + i * 96.0f;
     float x = tx + (1.0f - enter) * 700.0f;
-    Color pc = row.cpu ? cpuColor() : portColor(row.port);
+    Color pc = row.team >= 0 ? teamColor(row.team) : row.cpu ? cpuColor() : portColor(row.port);
     const Rectangle rr{x, y, 570, 84};
     ui::slanted(rr, 16, withAlpha(mixColor(pc, ui::kInk, 0.55f), 0.95f), withAlpha(mixColor(pc, ui::kInk, 0.82f), 0.95f));
     ui::slanted({x + 16 - 5, y, 9, 84}, 16, pc, shade(pc, 0.6f));  // player colour edge
@@ -69,7 +82,9 @@ void App::drawResults() {
     while (ns > 16.0f && textWidth(r[row.charIndex].name.c_str(), ns, FontKind::Title) > 140.0f) ns -= 1.0f;
     drawTextOutlined(r[row.charIndex].name.c_str(), x + 146, y + 12 + (30 - ns) * 0.5f, ns, ui::kCream, ui::kInk, 3.0f,
                      FontKind::Title);
-    drawText(row.cpu ? "Ordinateur" : TextFormat("Joueur %d", row.port + 1), x + 148, y + 50, 16, ui::kMuted);
+    drawText(TextFormat("%s%s", row.cpu ? "Ordinateur" : TextFormat("Joueur %d", row.port + 1),
+                        row.team < 0 ? "" : row.team == 1 ? "  •  équipe bleue" : "  •  équipe rouge"),
+             x + 148, y + 50, 16, ui::kMuted);
     drawTextCentered(TextFormat("%d", row.kos), x + 330, y + 22, 38, ui::kCream, true, FontKind::Title);
     drawTextCentered(TextFormat("%d", row.falls), x + 430, y + 22, 38, ui::kCream, true, FontKind::Title);
     drawTextCentered(TextFormat("%d%%", int(row.damage)), x + 525, y + 22, 34, ui::kCream, true, FontKind::Title);

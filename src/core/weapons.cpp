@@ -43,9 +43,12 @@ void Match::loseWeapon(Fighter& f, bool broken) {
 
 void Match::updateItems() {
   if (!started()) return;
-  // Held weapons wear out
-  for (auto& f : fighters)
-    if (f.weapon >= 0 && --f.weaponTimer <= 0) loseWeapon(f, true);
+  // Held weapons wear out (not in the middle of a move: the weapon may be what that move is made of)
+  for (auto& f : fighters) {
+    if (f.weapon < 0) continue;
+    if (f.weaponTimer > 0) --f.weaponTimer;
+    if (f.weaponTimer <= 0 && f.state != FState::Attack) loseWeapon(f, true);
+  }
 
   // A new drop now and then, for a fighter who has no weapon
   if (cfg.weapons && --itemTimer <= 0) {
@@ -100,8 +103,13 @@ void Match::updateItems() {
     for (auto& f : fighters) {
       if (f.charIndex != it.character || !f.active() || f.weapon >= 0) continue;
       if (f.state == FState::Respawn || f.state == FState::Grabbed || f.state == FState::Holding ||
-          f.state == FState::LedgeHang || f.state == FState::Hitstun)
+          f.state == FState::LedgeHang || f.state == FState::Hitstun || f.state == FState::Captured)
         continue;
+      if (f.state == FState::Attack) {  // not if it would change the move being performed
+        bool changes = false;
+        for (const auto& mm : f.def->weapons[it.slot].moves) changes = changes || mm.first == f.move;
+        if (changes) continue;
+      }
       Rect hurt = f.hurtbox();
       if (!circleRect({it.pos.x, it.pos.y - 18.0f}, 26.0f, hurt)) continue;
       equipWeapon(f, it.slot);

@@ -11,12 +11,14 @@ struct MatchConfig {
     int character = 0;
     bool cpu = false;
     int level = 5;
+    int team = 0;  // with `teams`: fighters of one team cannot hurt each other
   };
   int stage = 0;
   int stocks = 3;
   bool items = true;  // Clash Orb
   bool weapons = true;  // weapons drop from the sky (each one for a given character)
   bool training = false;  // infinite lives, the match never ends
+  bool teams = false;     // team battle (2 v 2...): the last team standing wins
   std::array<Slot, 4> slots;
   uint32_t seed = 12345;
 };
@@ -29,9 +31,9 @@ enum class EvType : uint8_t {
   SuperFlash,  // a = fighter, b = move id: freeze + cut-in
   Explosion,   // strength = radius
   Reflect,
-  Capture,       // a = attacker, b = victim caught by a cinematic ultimate
-  Transform,     // a = fighter, b = Form
-  TransformEnd   // a = fighter, b = Form
+  Transform,   // a = fighter, b = form index: a transformation begins
+  FormEnd,     // a = fighter: it wears off
+  Capture      // a = attacker, b = victim: caught by a cinematic ultimate
 };
 
 // A weapon lying on the stage (or falling on it).
@@ -64,6 +66,7 @@ struct GameEvent {
   int b = -1;             // other fighter (victim)
   HitFx fx = HitFx::Normal;
   bool impact = false;    // signature hit (impact frames)
+  int visual = -1;        // explosions: the ProjVisual of the projectile that blew up
 };
 
 struct Projectile {
@@ -88,11 +91,13 @@ struct Projectile {
   HitboxDef explode;
   int age = 0;
   float spawnRadius = 10.0f;
-  int follow = -1;          // stays on this fighter (offset followOffset from its center)
-  Vec2 followOffset;
-  int armDelay = 0;         // harmless while age < armDelay
+  bool follow = false;      // sticks to the first fighter it hits (stuckTo) for the rest of its life
+  int stuckTo = -1;
+  Vec2 stickOffset;         // from the victim's center
+  int armDelay = 0;         // harmless and motionless while age < armDelay
   bool ignoreGround = false;
-  bool unblockable = false; // fired by an ultimate: shields do not stop it
+  bool ult = false;         // fired by an ultimate: cannot be blocked, countered or reflected
+  bool armed() const { return age >= armDelay; }
 };
 
 class Match {
@@ -133,6 +138,16 @@ class Match {
   int countdown = 200;
   bool finished = false;
   int winner = -1;
+  int winnerTeam = -1;  // team battles: the team left standing
+
+  // Training options (the pause menu of Entraînement), changed during the session.
+  bool trainInfiniteUlt = false;  // the ultimate meter fills up again at once
+  bool trainZeroPercent = false;  // every fighter stays at 0 %
+  bool trainFight = false;        // 3 stocks each; when someone runs out, the fight starts over
+  int trainRestart = 0;           // frames before the fight starts over (after the last stock)
+  static constexpr int kTrainStocks = 3;
+  void setTrainFight(bool on);
+  void restartTrainingFight();    // everyone back to 3 stocks, 0 % and the starting positions
   int finishFrame = 0;
   Rng rng;
 
@@ -163,23 +178,32 @@ class Match {
   // combat.cpp
   void resolveHits();
   void updateProjectiles();
+  // ult: a blow of an ultimate (it goes through super armor; a shield blocks it but takes heavy damage).
   void applyHit(Fighter* attacker, Fighter& victim, const HitboxDef& h, Vec2 hitPos, int dirSign,
-                float damageMul, bool throwHit);
+                float damageMul, bool throwHit, bool ult = false);
   void spawnProjectiles(Fighter& f, const ProjectileDef& p);
   bool tryCounter(Fighter& victim, Fighter* attacker);
-  void captureHit(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 pos, float mul);
-  void lockedHit(Fighter& a, Fighter& v, const HitboxDef& h, float mul);
-  const Fighter* nearestOpponent(const Fighter& f) const;
-  void startForm(Fighter& f, int index);
-  void endForm(Fighter& f);
+  // Cinematic ultimates: catches the victim / lands a hit on a held victim (no knockback).
+  void captureFighter(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 hitPos, float damageMul);
+  void holdHit(Fighter& a, Fighter& v, const HitboxDef& h, Vec2 hitPos, float damageMul);
+  int nearestOpponent(const Fighter& f) const;  // -1 if nobody can be targeted
+  // Can a hurt b (not itself, not a teammate)? `owner` -1: nobody's (the stage, an orb...).
+  bool foes(const Fighter& a, const Fighter& b) const { return a.id != b.id && a.team != b.team; }
+  bool foes(int owner, const Fighter& b) const {
+    return owner < 0 || owner >= int(fighters.size()) || foes(fighters[owner], b);
+  }
   // match.cpp
   void checkBlastZones();
   void koFighter(Fighter& f);
   void respawnFighter(Fighter& f);
   void checkEnd();
+  void updateTraining();
   void updateOrb();
   void hitOrb(int attacker, float damage, Vec2 from, HitFx fx);
   void startFinalSmash(Fighter& f);
+  void startChargedSmash(Fighter& f, int id);  // a smash at full power (command inputs)
+  void startForm(Fighter& f, int form);
+  void endForm(Fighter& f);
   // weapons.cpp
   void updateItems();
   void spawnWeapon(int character, int slot, Vec2 pos);

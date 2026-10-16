@@ -19,10 +19,15 @@ constexpr float kUltMax = 100.0f;
 constexpr float kUltPerDamageDealt = 0.45f;
 constexpr float kUltPerDamageTaken = 0.35f;
 constexpr float kUltPerShieldHit = 0.15f;  // attacker, per damage blocked by a shield
+// CPU levels go from 1 to 10; level 10 plays like a perfect level 9 and hits twice as hard.
+constexpr int kMaxCpuLevel = 10;
+constexpr float kLevel10Power = 2.0f;
 
 struct Fighter {
   int id = 0;          // index in Match::fighters
   int port = 0;        // controller slot (0..3)
+  int team = 0;        // fighters of one team cannot hurt each other (free for all: its own id)
+  bool inTeam = false; // a team battle: the fighter wears its team's colour
   int charIndex = 0;
   int palette = 0;
   const CharacterDef* def = nullptr;
@@ -49,6 +54,7 @@ struct Fighter {
   bool fastFall = false;
   bool airDodgeUsed = false;
   bool sideSpecialUsed = false;
+  int moveCooldown[MOVE_COUNT] = {};  // frames left before a move with a cooldown can be used again
 
   // Current move
   int move = -1;
@@ -96,6 +102,7 @@ struct Fighter {
   // Input
   InputState in, prev;
   Vec2 stickHist[6];
+  uint8_t dirHist[30] = {};  // the stick's direction over the last frames, newest first (numpad: 5 = neutral)
 
   // Stats
   int kos = 0;
@@ -105,6 +112,7 @@ struct Fighter {
 
   // Visual helpers (read by the renderer)
   int flash = 0;
+  HitFx flashFx = HitFx::Normal;  // element of the blow that made it flash
   int airJumpFrame = -1000;  // frame of the last air jump (for the flip)
   float spin = 0.0f;
 
@@ -142,7 +150,7 @@ struct Fighter {
     float m = 1.0f;
     if (const WeaponDef* w = weaponDef()) m *= w->damageMul;
     if (const FormDef* fd = formDef()) m *= fd->damageMul;
-    if (cpu && cpuLevel >= 10) m *= 2.0f;  // level 10: twice the power of level 9
+    if (cpu && cpuLevel >= kMaxCpuLevel) m *= kLevel10Power;
     return m;
   }
   const MoveDef* currentMove() const {

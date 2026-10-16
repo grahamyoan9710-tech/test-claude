@@ -4,13 +4,20 @@
 //                    [--screen title|menu|css|stage|results|settings|training]
 //                    [--tab N] [--training] [--pause-at FRAME]
 //                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
-//                    [--shot FRAME FILE.png]... [--quit-after FRAMES] [--debug]
+//                    [--shot FRAME FILE.png]... [--record FROM TO EVERY DIR] [--fullres] [--quit-after FRAMES] [--debug]
+//                    [--ult SLOT]   (with --demo: the first fighter unleashes its ultimate, SLOT -1/0/1)
+//                    [--teams]   (team battle: red against blue)
+//                    [--palette N]   (colours of the menus, see menu_theme.hpp; 0 = the game's)
 //                    [--export-audio DIR]
+//                    [--export-pose FIGHTER SLOT OUT.png [--anchor AX AY] [--pxh P] [--size N]]
+//                    [--check-hitboxes OUT.tsv] [--fit-impacts OUT.tsv]
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 #include "game/app.hpp"
+#include "game/render.hpp"
+#include "game/menu_theme.hpp"
 
 int main(int argc, char** argv) {
   Options opt;
@@ -25,6 +32,11 @@ int main(int argc, char** argv) {
       }
     }
     else if (is("--debug")) opt.debug = true;
+    else if (is("--teams")) opt.teams = true;
+    else if (is("--palette") && i + 1 < argc) g_menuTheme = std::atoi(argv[++i]);
+    else if (is("--fullres")) opt.fullRes = true;
+    else if (is("--ult") && i + 1 < argc) opt.ultShow = std::atoi(argv[++i]);
+    else if (is("--weapon") && i + 1 < argc) opt.weaponShow = std::atoi(argv[++i]);
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);
     else if (is("--screen") && i + 1 < argc) opt.screen = argv[++i];
     else if (is("--tab") && i + 1 < argc) opt.tab = std::atoi(argv[++i]);
@@ -36,6 +48,24 @@ int main(int argc, char** argv) {
       opt.padGlyphs = int(std::strcmp(f, "ps") == 0       ? PadFamily::PlayStation
                           : std::strcmp(f, "switch") == 0 ? PadFamily::Nintendo
                                                           : PadFamily::Xbox);
+    } else if (is("--export-pose") && i + 3 < argc) {  // FIGHTER SLOT OUT.png [--anchor AX AY] [--pxh P] [--size N]
+      ExportPose e;
+      e.fighter = argv[++i];
+      e.slot = std::atoi(argv[++i]);
+      e.out = argv[++i];
+      for (int k = i + 1; k < argc; ++k) {
+        if (std::strcmp(argv[k], "--anchor") == 0 && k + 2 < argc) e.ax = float(std::atof(argv[++k])), e.ay = float(std::atof(argv[++k]));
+        else if (std::strcmp(argv[k], "--pxh") == 0 && k + 1 < argc) e.pxh = float(std::atof(argv[++k]));
+        else if (std::strcmp(argv[k], "--size") == 0 && k + 1 < argc) e.size = std::atoi(argv[++k]);
+      }
+      return exportPose(e);
+    } else if (is("--check-hitboxes") && i + 1 < argc) {  // OUT.tsv: hitboxes against the drawn clips
+      return checkHitboxes(argv[++i]);
+    } else if (is("--fit-impacts") && i + 1 < argc) {  // OUT.tsv: each blow against every frame of its clip
+      return fitImpacts(argv[++i]);
+    } else if (is("--fit-hitboxes") && i + 1 < argc) {  // OUT.inc: the hitboxes moved onto the clips' drawing
+      g_rawHitboxes = true;  // fitted from the roster as written
+      return fitHitboxes(argv[++i]);
     } else if (is("--export-audio") && i + 1 < argc) {
       int n = Audio::exportAll(argv[++i]);
       std::printf("%d audio files written\n", n);
@@ -43,6 +73,11 @@ int main(int argc, char** argv) {
     } else if (is("--shot") && i + 2 < argc) {
       int frame = std::atoi(argv[++i]);
       opt.shots.push_back({frame, argv[++i]});
+    } else if (is("--record") && i + 4 < argc) {  // FROM TO EVERY DIR
+      opt.recordFrom = std::atoi(argv[++i]);
+      opt.recordTo = std::atoi(argv[++i]);
+      opt.recordEvery = std::max(1, std::atoi(argv[++i]));
+      opt.recordDir = argv[++i];
     }
   }
   App app(opt);

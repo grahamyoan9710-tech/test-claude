@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "raylib.h"
 
 enum class Sfx : int {
@@ -13,14 +15,22 @@ enum class Sfx : int {
   Count
 };
 
-// Every sound is synthesized at start-up: the game ships without asset files.
+// Sounds recorded in assets/audio (sfx_<name>.mp3, embedded at build time) replace the synthesized ones; the
+// others are synthesized at start-up. The announcer's lines are voice_<key>.mp3, the themes music_<key>.mp3.
+// The announcer's key for a fighter's name: lower case letters ("NARUTO" -> "naruto").
+std::string voiceKey(const std::string& name);
+
 class Audio {
  public:
   bool init();
   void shutdown();
   void play(Sfx s, float volume = 1.0f, float pitch = 1.0f);
-  // 0 = silence, 1 = menu theme, 2 = battle theme
-  void setMusic(int mode);
+  // The announcer: "three", "go", "game", "winner", a fighter's name ("naruto")... A new line cuts the last one.
+  void voice(const char* key, float volume = 1.0f);
+  // 0 = silence, 1 = menu theme, 2 = battle theme; `world`: the theme of a series (music_<world>.mp3, e.g.
+  // "naruto"), the synthesized battle theme when there is none.
+  void setMusic(int mode, const char* world = nullptr);
+  void update();  // feeds the recorded theme (call once a frame)
   void toggleMute();
   // Volumes in percent (0..100), applied immediately.
   void setVolumes(int master, int music, int sfx);
@@ -38,4 +48,12 @@ class Audio {
   int next_[int(Sfx::Count)] = {};
   AudioStream music_ = {};
   bool musicLoaded_ = false;
+  Sound lines_[64] = {};
+  char lineKeys_[64][24] = {};
+  int lineCount_ = 0;
+  Sound* lastLine_ = nullptr;
+  Music track_ = {};
+  bool trackOn_ = false;
+  char trackKey_[24] = {};
+  float trackGain_ = 0.6f;
 };

@@ -1,0 +1,221 @@
+{
+ "fighter": "naruto",
+ "defects": [
+  {
+   "clip": "dizzy",
+   "frames": "all",
+   "severity": "high",
+   "problem": "The dazed state is missing. All 8 frames are just the idle guard stance with fists raised and only the scarf moving. There is no sway, no wobbling head and no limp arms, so a stunned Naruto looks like he is standing ready to fight.",
+   "fix": "regenerate",
+   "detail": "dazed and dizzy after his guard breaks: stands slumped on wobbly bent knees, both arms hanging limp at his sides with open hands, head drooping and rolling slowly in a circle, eyes half closed, the whole body swaying from side to side on the spot, a seamless loop that ends exactly on the first pose. Only Naruto is drawn"
+  },
+  {
+   "clip": "airdodge",
+   "frames": "2-4",
+   "severity": "medium",
+   "problem": "The blur is a glitch: frames 2 and 4 turn Naruto into a striped orange and black barrel, and frame 4 is wider than the character. Frame 3 is completely empty, so in the middle of every air dodge the player sees a garbled stripe blob and then nothing.",
+   "fix": "replace_frames",
+   "detail": "frame 2 <- frame 1, frame 3 <- frame 1, frame 4 <- frame 1 (he holds the tight curl, then opens in frames 5-7; the game draws the dodge transparency itself)"
+  },
+  {
+   "clip": "dsmash",
+   "frames": "4-7",
+   "severity": "medium",
+   "problem": "The second kick never goes behind him. After the forward ground kick (frames 2-3), he turns his back and kicks to the right again (frames 5-6), so both kicks hit in front. Nothing is drawn on the left, where the behind hit of a down smash lands.",
+   "fix": "regenerate",
+   "detail": "low split kicks: drops into a deep crouch and sweeps the right leg fast along the ground far out in front of him to the right, then pivots on the spot and sweeps the other leg along the ground far out behind him to the left, the foot at ground level on the left side, then rises back into the fighting stance. Only Naruto is drawn"
+  },
+  {
+   "clip": "crouch",
+   "frames": "1-3",
+   "severity": "medium",
+   "problem": "He hardly crouches. Frames 1-3 are a wide half squat only about 20% lower than standing, with the hips well above the knees. It reads as a slightly lower guard, not a duck, so attacks a crouch should avoid will look like they hit his head.",
+   "fix": "regenerate",
+   "detail": "crouches down as low as he can on the spot, facing right: knees fully bent, hips dropped right down onto his heels, torso folded forward over the knees, head ducked low, fists raised in front of his face, the whole body about half its standing height, then holds the low crouch. Only Naruto is drawn"
+  },
+  {
+   "clip": "fsmash",
+   "frames": "4",
+   "severity": "high",
+   "problem": "Frame 4 has a huge blue-and-white beam streak that runs the full width of the frame. It starts at the left edge, so it is cut by the frame, and it passes over Naruto's face, shoulders and arm. It flashes like a laser just before the impact frame. The blue rings in frames 5-7 are fine: they stay small and inside the frame.",
+   "fix": "replace_frames",
+   "detail": "Replace frame 4 with frame 5 (the same lunge at full extension, with only the small ring and no beam). Erasing the colour would leave holes, because the beam is blue and white and covers his head and arm."
+  },
+  {
+   "clip": "getupattack",
+   "frames": "3,6",
+   "severity": "high",
+   "problem": "The second impact frame, 6, is Naruto standing in his fighting stance with no kick, so the hitbox comes out while he is idle. The kick behind him (leg straight out to the left along the floor, head on the right) is frame 4, right after the front kick in frame 3.",
+   "fix": "retime",
+   "detail": "Use impact frames 3,4: frame 3 is the front kick and frame 4 is the kick behind him."
+  },
+  {
+   "clip": "fall",
+   "frames": "0,6,7",
+   "severity": "medium",
+   "problem": "The fall loop goes back into the tucked jump pose every cycle. Frames 0, 6 and 7 are tucked, frames 1-5 have the legs reaching down, and frame 7 is also about 10px higher than frame 0. During a long fall Naruto keeps pulling his knees up and dropping them again, and his body bobs up and down, instead of falling steadily with his legs down.",
+   "fix": "replace_frames",
+   "detail": "Replace frame 0 with frame 1, frame 6 with frame 3 and frame 7 with frame 2. The loop then plays 1,1,2,3,4,5,3,2 and stays legs-down with a gentle sway."
+  },
+  {
+   "clip": "jab3",
+   "frames": "3",
+   "severity": "medium",
+   "problem": "The impact frame has a huge yellow-white crescent burst. It is almost as tall as Naruto, runs from head height down to the knees, and hides the kicking foot, so the frame the game holds while the hitbox is out shows a flash instead of the kick. Frame 4 shows the same kick at full extension with only a few small specks.",
+   "fix": "replace_frames",
+   "detail": "Frame 3 <- frame 4 (clean full-extension front kick). Keep impact on 3."
+  },
+  {
+   "clip": "jab",
+   "frames": "1",
+   "severity": "medium",
+   "problem": "On the impact frame the punching arm is not drawn. A white speed-streak smear runs from his chest to where the fist should be, so the frame held during the hitbox shows a white streak instead of a fist. Frame 3 is the same jab, clean and at full extension.",
+   "fix": "replace_frames",
+   "detail": "Frame 1 <- frame 3 (clean full-extension jab). Frame 2 only has a thin trail and can stay. Keep impact on 1."
+  },
+  {
+   "clip": "jab2",
+   "frames": "1",
+   "severity": "medium",
+   "problem": "On the impact frame the rear arm is drawn as an orange-tan motion smear with no fist, so the frame held during the hitbox shows a streak instead of the cross punch. Frame 2 is the same lunge with a clean, fully extended fist.",
+   "fix": "replace_frames",
+   "detail": "Frame 1 <- frame 2 (clean full-extension cross). Keep impact on 1."
+  },
+  {
+   "clip": "hurt",
+   "frames": "0",
+   "severity": "medium",
+   "problem": "Frame 0 has a large baked-in red and white hit spark that sits in front of his face and sprays out to the right. The white core covers the front of the face, so erasing it would leave a hole in the head. The game draws its own hit sparks.",
+   "fix": "replace_frames",
+   "detail": "Frame 0 <- frame 1 (after frame 1's red splatter is erased; see the next entry)."
+  },
+  {
+   "clip": "hurt",
+   "frames": "1-2",
+   "severity": "medium",
+   "problem": "Frame 1 has a red blood-like splatter burst in front of his chin and raised fist, and frame 2 has leftover red specks. It is a baked-in hit effect on top of the character that would show every time he is hit.",
+   "fix": "erase_effect",
+   "detail": "red"
+  },
+  {
+   "clip": "helpless",
+   "frames": "all",
+   "severity": "medium",
+   "problem": "Wrong action. Instead of falling exhausted with limp arms above his head and dangling legs, he holds the active jump tuck with both arms thrust forward like a punch. His legs pump from tucked to fully straight (frame 3) and back, so it reads as an energetic hop rather than the helpless free-fall state.",
+   "fix": "regenerate",
+   "detail": "falls helplessly, exhausted: both arms hang limp and loose straight up above his head, head drooping, eyes half closed, legs dangling loosely below him, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only Naruto is drawn"
+  },
+  {
+   "clip": "nspecial",
+   "frames": "5",
+   "severity": "high",
+   "problem": "The impact frame (5) is not the hit. Naruto's right fist is still at his chest, the Rasengan floats far ahead of his hand, and a thin blue streak runs across his face back to a dot behind him. The game holds this frame while the hitbox is out, so the sphere looks thrown, not thrust. The real thrust, with the arm at full extension and the sphere in the palm, is frame 8.",
+   "fix": "retime",
+   "detail": "8"
+  },
+  {
+   "clip": "nspecial",
+   "frames": "5-6",
+   "severity": "medium",
+   "problem": "In the two lunge frames the sphere has already left his hand and sits ahead of a bent arm, joined to the back by a long blue beam that crosses his head. In frame 7 the hand catches up again. Players see the Rasengan fly off and then come back to his palm.",
+   "fix": "replace_frames",
+   "detail": "frame 5 -> frame 4 (one more charging frame, sphere still held behind), frame 6 -> frame 7 (arm extending toward the sphere), so the clip goes charge 1-5, lunge 6-7, thrust at 8"
+  },
+  {
+   "clip": "usmash",
+   "frames": "2-6",
+   "severity": "high",
+   "problem": "Huge effects: frame 2 has a blue starburst as wide as the frame, and frames 3-4 have a giant blue beam that hides Naruto and is cut by the top edge. Under the effect there is no clear upward strike: in frames 5-6 he just stands upright with his arm bent behind his head. The impact frame 3 is mostly beam, with the character barely visible.",
+   "fix": "regenerate",
+   "detail": "upward smash: crouches low, then springs up on his toes and punches straight up with the right fist, the arm fully extended above his head pointing at the sky, then lands back in the stance. Only Naruto is drawn."
+  },
+  {
+   "clip": "w0_nspecial",
+   "frames": "2-9",
+   "severity": "high",
+   "problem": "The prompt said no effect, but a large orange/yellow flame burst comes out of his palms for the whole push (8 frames), and the right frame edge cuts it off with a flat vertical line. It is the same orange as his trousers and covers his hands, so it cannot be erased by colour. The words 'as if driving something huge' probably caused it.",
+   "fix": "regenerate",
+   "detail": "Sage mode, orange pigment around his eyes, his exact orange and black outfit: plants his feet wide and pushes both open palms straight forward at chest height, arms fully extended, hands empty, holds the push, then returns to the stance. Only Naruto is drawn."
+  },
+  {
+   "clip": "w1_jab",
+   "frames": "0-5",
+   "severity": "high",
+   "problem": "Off model and a huge effect. In frames 0-4 Naruto is an all-red/orange flaming silhouette, with none of his black jacket, and in frame 5 he suddenly goes back to his normal outfit mid-move. The claw swipe on the impact frames 3-4 is a giant yellow-white crescent that fills the right half of the frame and touches the top and right edges. The game should draw the cloak and claw itself.",
+   "fix": "regenerate",
+   "detail": "Kurama chakra strike, in his exact orange and black outfit: steps forward and swipes his right hand forward in a big clawing arc at chest height, fingers curled like claws, the arm fully extended at the end, then back into the stance. Only Naruto is drawn."
+  },
+  {
+   "clip": "w1_sspecial",
+   "frames": "0-9",
+   "severity": "high",
+   "problem": "Off model in frames 1-4: Naruto is an all-yellow silhouette in a long coat, and in frames 3-4 he is replaced by three overlapping golden copies. Extra clone figures overlap him in frames 5-6. The impact frame 7 has a huge yellow speed-streak blast that the right frame edge cuts off flat, and orange speed lines remain in frames 8-9. The game should draw the clones and the dash effect itself.",
+   "fix": "regenerate",
+   "detail": "Kyuubi mode clone dash, in his exact orange and black outfit: crouches slightly, then swings both arms forward from behind his hips and thrusts both open palms straight ahead at chest height, holds the pose, then returns to the stance. Only Naruto is drawn."
+  },
+  {
+   "clip": "ultimate",
+   "frames": "10-22",
+   "severity": "medium",
+   "problem": "The impact frames are wrong. Frame 15 is a recoil with the fist pulled back, not a blow. The finishing rising kick (frame 20: leg fully extended straight up) is the clearest blow in the clip but is not a hit frame. Frame 10, the dash punch at full extension, is also left out.",
+   "fix": "retime",
+   "detail": "10,12,13,14,20"
+  },
+  {
+   "clip": "uspecial",
+   "frames": "1",
+   "severity": "medium",
+   "problem": "Impact frame 1 is the crouched wind-up, so the game holds Naruto crouching on the ground while the up-special hitbox is out. The blow is the launch with the fist raised above his head.",
+   "fix": "retime",
+   "detail": "3"
+  },
+  {
+   "clip": "utilt",
+   "frames": "2-4",
+   "severity": "medium",
+   "problem": "Impact frame 4 shows him standing upright with his arm bent behind his head, which looks like a stretch rather than an uppercut. Frame 3 is the one that shows the upward swing, with the arc trail rising in front of him. Frame 2 also has a stray grey patch on his belly under the swoosh.",
+   "fix": "retime",
+   "detail": "3"
+  },
+  {
+   "clip": "w0_ultimate",
+   "frames": "16",
+   "severity": "medium",
+   "problem": "Impact frame 16 is covered by a large orange swoosh that runs from the left edge to the right edge and hides his throwing arm. It is the same orange as his outfit, the prompt said no effect, and the game holds this frame.",
+   "fix": "replace_frames",
+   "detail": "replace frame 16 with frame 17 (the arm fully extended forward with only a small trail)"
+  },
+  {
+   "clip": "ultimate",
+   "frames": "24-26",
+   "severity": "low",
+   "problem": "Stray red/orange streak pixels next to his legs while he returns to the stance: an orange streak by the right foot in frame 24, specks in frame 25 and red streaks along both legs in frame 26.",
+   "fix": "replace_frames",
+   "detail": "replace 24, 25 and 26 each with 27 (the same stance, clean)"
+  },
+  {
+   "clip": "ultimate",
+   "frames": "12-17",
+   "severity": "low",
+   "problem": "The prompt said no smoke, but white smoke puffs appear at every punch and kick and drift away until frame 17. In frames 14-16 they touch the right frame edge, and they would double up with the game's own barrage VFX.",
+   "fix": "erase_effect",
+   "detail": "white"
+  },
+  {
+   "clip": "uthrow",
+   "frames": "3-4",
+   "severity": "low",
+   "problem": "Impact frame 3 is mid-swing, with one arm going up and the face hidden behind it. The release that clearly reads as throwing straight up is frame 4, with both fists high above his head.",
+   "fix": "retime",
+   "detail": "4"
+  },
+  {
+   "clip": "w1_ultimate",
+   "frames": "3-22",
+   "severity": "high",
+   "problem": "In frames 3-19, PixelLab draws a huge fireball and then a giant dark-red chakra sphere that covers the whole right half of the frame and Naruto's hands and face. In frames 20-22 a giant yellow and red beam fires out of his mouth and runs off the right edge of the frame. The game draws the tailed beast bomb itself. In frames 3-19 the cloak is also drawn as big flames that turn his whole body flat orange, so the black jacket and the outfit detail disappear (off model). At frame 20 the cloak vanishes all at once, so he pops from a flaming silhouette back to his plain outfit at the moment of the blast. The effects are warm colours over an orange character and fill 20 of the 28 frames, so neither erase_effect nor replace_frames can save the clip. Frames 0-2 and 23-27 are fine.",
+   "fix": "regenerate",
+   "detail": "Tailed beast bomb pose, the exact orange and black outfit the whole time with only a thin golden glow outlining his body: crouches with the feet wide, brings both cupped hands together in front of his mouth and holds them there gathering power, then leans forward and thrusts both open palms straight ahead at full arm extension, holds the push, then returns to the stance. Only Naruto is drawn: no sphere, no ball, no beam, no fire, no flames, no effect"
+  }
+ ]
+}

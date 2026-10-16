@@ -1,5 +1,6 @@
 // Big move effects: the VFX drawing kit, beams and the ultimates' cinematic domains.
 // Everything is made of a few large gradient triangles (cheap on software GL), additive where it glows.
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/ui.hpp"
 
@@ -210,12 +211,20 @@ BeamStyle beamStyle(HitFx fx) {
   switch (fx) {
     case HitFx::Blood:  // Cero: crimson blast, black rim
       return {{190, 10, 30, 255}, {222, 26, 46, 255}, {255, 236, 236, 255}, {26, 0, 6, 255}, false, false};
-    case HitFx::Dark:  // Mugetsu: pure darkness edged with red
+    case HitFx::Dark:  // pure darkness edged with red
       return {{235, 24, 44, 255}, {6, 3, 8, 255}, {34, 0, 10, 255}, {255, 60, 70, 255}, true, false};
     case HitFx::Light:  // Seal of light: gold and white
       return {{255, 186, 70, 255}, {255, 214, 120, 255}, {255, 255, 246, 255}, {255, 248, 200, 255}, false, false};
     case HitFx::Gloom:  // malice breath: red-black smoke
       return {{200, 16, 46, 255}, {54, 2, 14, 255}, {255, 96, 116, 255}, {255, 70, 90, 255}, true, true};
+    case HitFx::Hollow:  // Cero Oscuras: black, edged with green
+      return {{60, 230, 120, 255}, {6, 12, 8, 255}, {30, 80, 46, 255}, {120, 255, 170, 255}, true, false};
+    case HitFx::Fire:  // Wyvern's Fire
+      return {{255, 90, 20, 255}, {255, 140, 40, 255}, {255, 248, 210, 255}, {255, 200, 90, 255}, false, true};
+    case HitFx::Wolf:  // Starrk's cero: pale blue, white heart
+      return {{60, 120, 255, 255}, {120, 176, 255, 255}, {246, 250, 255, 255}, {200, 226, 255, 255}, false, false};
+    case HitFx::Claw:  // Gran Rey Cero: cyan, his blood swirling in it
+      return {{20, 170, 230, 255}, {70, 220, 250, 255}, {240, 255, 255, 255}, {170, 250, 255, 255}, false, false};
     default: {
       const Color c = hitFxColor(fx), g = hitFxGlow(fx);
       return {c, c, WHITE, g, false, false};
@@ -514,57 +523,6 @@ void petalFront(const Fighter& f, float k, float t) {
   vfx::additive(false);
 }
 
-// ICHIGO: Mugetsu. Darkness swallows the world, black flames edged with red.
-void mugetsuBack(const Fighter& f, float k, int mf, float t, const Rect& v) {
-  const Vec2 c = f.center();
-  const float R = 120.0f + 2600.0f * smoothstep(mf / 46.0f);
-  const Color ink{4, 2, 6, 255};
-  fillView(v, A({20, 0, 4, 255}, 0.5f * k), A({10, 0, 2, 255}, 0.5f * k));
-  vfx::additive(true);
-  vfx::softRing(c, R + 30.0f, 120.0f, A({220, 20, 40, 255}, 0.5f * k));
-  vfx::additive(false);
-  vfx::glow(c, R, A(ink, 0.97f * k), A(ink, 0.97f * k), 48);
-  // Ragged black flames on the edge of the darkness
-  rlBegin(RL_TRIANGLES);
-  for (int i = 0; i < 40; ++i) {
-    const float a = i * 2.0f * kPi / 40.0f, a1 = (i + 1) * 2.0f * kPi / 40.0f;
-    const float l = 60.0f + 140.0f * hash01(i * 13 + int(t * 12.0f));
-    const Color col = A(ink, 0.97f * k);
-    rlColor4ub(col.r, col.g, col.b, col.a);
-    rlVertex2f(c.x + std::cos(a) * R, c.y + std::sin(a) * R);
-    rlVertex2f(c.x + std::cos(a1) * R, c.y + std::sin(a1) * R);
-    rlVertex2f(c.x + std::cos((a + a1) * 0.5f) * (R + l), c.y + std::sin((a + a1) * 0.5f) * (R + l));
-  }
-  rlEnd();
-  vfx::additive(true);  // faint red cracks in the void
-  for (int i = 0; i < 7; ++i) {
-    const float a = hash01(i * 17 + 5) * 2.0f * kPi;
-    vfx::bolt(c + dirOf(a) * 160.0f, c + dirOf(a) * std::min(R, 1500.0f), 60.0f, 9, i * 31u + uint32_t(t * 4.0f), 3.0f,
-              A({200, 20, 40, 255}, 0.4f * k));
-  }
-  vfx::additive(false);
-}
-
-void mugetsuFront(const Fighter& f, float k, float t, const Rect& v) {
-  const Vec2 c = f.center();
-  const float H = f.height();
-  fillView(v, A({0, 0, 0, 255}, 0.45f * k), A({0, 0, 0, 255}, 0.55f * k));  // the stage sinks into the dark too
-  for (int i = 0; i < 12; ++i) {  // black flames rising from him
-    const float x = (hash01(i * 7 + 1) - 0.5f) * H * 0.9f;
-    const float h = H * (0.9f + 0.9f * hash01(i * 7 + 2)) * (0.8f + 0.2f * std::sin(t * 9.0f + i));
-    const Vec2 b = c + Vec2{x, H * 0.45f}, tip = b + Vec2{std::sin(t * 4.0f + i) * 22.0f, -h};
-    vfx::additive(true);
-    vfx::wedge(b, tip, 34.0f, 2.0f, A({255, 30, 50, 255}, 0.45f * k), A({255, 30, 50, 255}, 0.0f));
-    vfx::additive(false);
-    vfx::wedge(b, tip, 24.0f, 1.0f, A({4, 2, 6, 255}, 0.9f * k), A({4, 2, 6, 255}, 0.2f * k));
-  }
-  for (int i = 0; i < 40; ++i) {  // ash
-    const float u = std::fmod(t * 0.3f + hash01(i * 3 + 9), 1.0f);
-    const Vec2 p{v.x + hash01(i * 5 + 1) * v.w + std::sin(t + i) * 20.0f, v.bottom() - u * v.h};
-    DrawPoly(V(p), 4, 3.0f + 3.0f * hash01(i), t * 90.0f + i * 20.0f, A(i % 3 ? Color{20, 6, 10, 255} : Color{230, 40, 50, 255}, k));
-  }
-}
-
 // ASTA: the black storm of anti-magic, the five-leaf clover.
 void stormBack(const Fighter& f, float k, float t, const Rect& v, int frame) {
   const Vec2 c = f.center();
@@ -839,6 +797,40 @@ void rageFront(const Fighter& f, float k, float t, const Rect& v) {
 }
 }  // namespace
 
+// Beams drawn by a PixelLab effect: a segment that tiles along the beam (fx_<name>) and its end (fx_<name>_head), both
+// sized on the beam's width (the effect's hit radius is half the beam's width). The beams by element.
+static const char* beamSprite(HitFx fx) {
+  switch (fx) {
+    case HitFx::Claw: return "gran_rey_cero";
+    case HitFx::Hollow: return "cero_oscuras";
+    case HitFx::Blood: return "vasto_cero";
+    case HitFx::Light: return "light_dragon";
+    case HitFx::Gloom: return "demon_dragon";
+    case HitFx::Fire: return "wyvern_fire";
+    default: return nullptr;
+  }
+}
+
+static bool drawSpriteBeam(Vec2 a, Vec2 dir, float len, float w, HitFx fx, float time) {
+  const char* name = beamSprite(fx);
+  const art::FxInfo* seg = name ? art::fxInfo(name) : nullptr;
+  if (!seg) return false;
+  const float size = 0.5f * w / (seg->hit > 0.0f ? seg->hit : 0.4f * seg->fh);
+  art::drawFxStrip(name, time, a, dir, len, size, 1.0f, std::min(len, 0.6f * w));
+  const std::string head = std::string(name) + "_head";
+  if (art::fxInfo(head.c_str())) {
+    const bool flip = dir.x < 0.0f;
+    art::drawFx(head.c_str(), time, a + dir * len, size, flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
+  }
+  // The flare at the hand, as on the drawn beams: the segment fades in under it.
+  const BeamStyle s = beamStyle(fx);
+  vfx::additive(true);
+  vfx::glow(a, w * 0.5f, A(s.halo, 0.35f), Z(s.halo));
+  vfx::glow(a, w * 0.24f, A(s.dark ? s.edge : s.core, 0.6f), Z(s.dark ? s.edge : s.core));
+  vfx::additive(false);
+  return true;
+}
+
 void drawBeams(const Match& m, float time) {
   for (const auto& f : m.fighters) {
     const MoveDef* mv = f.currentMove();
@@ -852,6 +844,7 @@ void drawBeams(const Match& m, float time) {
     env *= std::min(1.0f, left / 5.0f + 0.2f);
     const float pulse = 1.0f + 0.06f * std::sin(time * 47.0f) + 0.04f * std::sin(time * 91.0f + f.id);
     const float len = b.length * std::min(1.0f, (u + 1) / 3.0f);
+    if (drawSpriteBeam(a, dir, len, b.width * env * pulse, b.fx, time)) continue;
     drawBeam(a, dir, len, b.width * env * pulse, beamStyle(b.fx), time, uint32_t(f.id * 977 + 13));
   }
 }
@@ -859,19 +852,59 @@ void drawBeams(const Match& m, float time) {
 void drawUltimateBackdrop(const Match& m, float time) {
   const Rect v = vfx::viewRect(40.0f);
   forEachUltimate(m, [&](const Fighter& f, float k, int mf) {
-    switch (f.def->hero) {
-      case Hero::Gojo: voidBack(f, k, time, v); break;
-      case Hero::Sukuna: shrineBack(f, k, time, v); break;
-      case Hero::Byakuya: petalBack(f, k, time, v); break;
-      case Hero::Ichigo: mugetsuBack(f, k, mf, time, v); break;
-      case Hero::Asta: stormBack(f, k, time, v, m.frame); break;
-      case Hero::Yuno: windBack(f, k, time, v); break;
-      case Hero::Link: sealBack(f, k, mf, time, v); break;
-      case Hero::Ganondorf: gloomBack(f, k, time, v); break;
-      case Hero::Kratos: rageBack(f, k, time, v); break;
-      default: break;
+    const UltFx fx = f.moveDef(FinalSmash).ultFx;
+    switch (fx) {
+      case UltFx::InfiniteVoid: voidBack(f, k, time, v); break;
+      case UltFx::MalevolentShrine: shrineBack(f, k, time, v); break;
+      case UltFx::Kageyoshi: case UltFx::Gokei: petalBack(f, k, time, v); break;
+      case UltFx::BlackDivider: stormBack(f, k, time, v, m.frame); break;
+      case UltFx::SpiritStorm: case UltFx::WindBladeShower: case UltFx::ZephyrSpear: windBack(f, k, time, v); break;
+      case UltFx::LightDragon: case UltFx::MasterSwordBeam:
+        sealBack(f, k, mf, time, v);
+        drawUltCinematic(m, f, fx, k, mf, time, v, false);
+        break;
+      case UltFx::DemonDragon: gloomBack(f, k, time, v); break;
+      case UltFx::SpartanRage: case UltFx::ChaosWhip: rageBack(f, k, time, v); break;
+      default: drawUltCinematic(m, f, fx, k, mf, time, v, false); break;
     }
   });
+}
+
+// Ultimates whose own hitboxes are drawn by a PixelLab effect: a storm over its active hitbox (each hit's circle,
+// kept on screen until the next hit), or an explosion played once from its biggest hitbox; sized on the hitbox (the
+// effect's hit radius is the hitbox's radius). True when the effect exists and was drawn.
+static bool ultSprite(const Fighter& f, UltFx fx, int mf, float k, float time) {
+  const char* name = nullptr;
+  bool burst = false;
+  switch (fx) {
+    case UltFx::Kageyoshi: name = "kageyoshi"; break;
+    case UltFx::MalevolentShrine: name = "malevolent_shrine"; break;
+    case UltFx::ChaosWhip: name = "chaos_whip"; break;
+    case UltFx::BlackMeteorite: name = "black_meteorite"; burst = true; break;
+    case UltFx::Fimbulwinter: name = "fimbulwinter"; burst = true; break;
+    default: return false;
+  }
+  const art::FxInfo* info = art::fxInfo(name);
+  if (!info) return false;
+  const auto& hbs = f.moveDef(FinalSmash).hitboxes;
+  const float hitR = info->hit > 0.0f ? info->hit : 0.4f * std::min(info->fw, info->fh);
+  auto at = [&](const HitboxDef& h) { return f.center() + Vec2{h.offset.x * f.facing, h.offset.y}; };
+  if (burst) {
+    const HitboxDef* big = nullptr;
+    for (const auto& h : hbs)
+      if (!h.capture && (!big || h.radius > big->radius)) big = &h;
+    if (!big || mf < big->start || (mf - big->start) / 60.0f >= info->duration()) return true;
+    return art::drawFx(name, (mf - big->start) / 60.0f, at(*big), big->radius / hitR, 0.0f, f.facing < 0, k);
+  }
+  const HitboxDef* cur = nullptr;  // the hit going on, or the last one until the next starts
+  for (const auto& h : hbs)
+    if (!h.capture && h.start <= mf && (!cur || h.start >= cur->start)) cur = &h;
+  if (!cur) return true;
+  int next = 1 << 30;
+  for (const auto& h : hbs)
+    if (h.start > cur->start) next = std::min(next, h.start);
+  if (mf >= std::max(cur->end, next == (1 << 30) ? cur->end : next)) return true;
+  return art::drawFx(name, time, at(*cur), cur->radius / hitR, 0.0f, f.facing < 0, k);
 }
 
 void drawUltimateFront(const Match& m, float time) {
@@ -879,16 +912,29 @@ void drawUltimateFront(const Match& m, float time) {
   bool any = false;
   forEachUltimate(m, [&](const Fighter& f, float k, int mf) {
     any = true;
-    switch (f.def->hero) {
-      case Hero::Sukuna: shrineFront(m, f, k, mf, v); break;
-      case Hero::Byakuya: petalFront(f, k, time); break;
-      case Hero::Ichigo: mugetsuFront(f, k, time, v); break;
-      case Hero::Asta: stormFront(f, k, time); break;
-      case Hero::Yuno: windFront(f, k, time, v); break;
-      case Hero::Link: sealFront(f, k, time); break;
-      case Hero::Ganondorf: gloomFront(f, k, time, v); break;
-      case Hero::Kratos: rageFront(f, k, time, v); break;
-      default: break;
+    const UltFx fx = f.moveDef(FinalSmash).ultFx;
+    if (ultSprite(f, fx, mf, k, time) && (fx == UltFx::Kageyoshi || fx == UltFx::MalevolentShrine)) return;
+    switch (fx) {
+      case UltFx::MalevolentShrine: shrineFront(m, f, k, mf, v); break;
+      case UltFx::Kageyoshi: case UltFx::Gokei: petalFront(f, k, time); break;
+      case UltFx::BlackDivider: stormFront(f, k, time); break;
+      case UltFx::SpiritStorm: case UltFx::ZephyrSpear: windFront(f, k, time, v); break;
+      case UltFx::WindBladeShower:
+        windFront(f, k, time, v);
+        drawUltCinematic(m, f, fx, k, mf, time, v, true);
+        break;
+      case UltFx::LightDragon: case UltFx::MasterSwordBeam:
+        sealFront(f, k, time);
+        drawUltCinematic(m, f, fx, k, mf, time, v, true);
+        break;
+      case UltFx::DemonDragon: case UltFx::DemonKingRampage: case UltFx::GloomPillars: gloomFront(f, k, time, v); break;
+      case UltFx::SpartanRage: rageFront(f, k, time, v); break;
+      case UltFx::ChaosWhip:
+        rageFront(f, k, time, v);
+        drawUltCinematic(m, f, fx, k, mf, time, v, true);
+        break;
+      case UltFx::InfiniteVoid: break;
+      default: drawUltCinematic(m, f, fx, k, mf, time, v, true); break;
     }
   });
   if (!any) return;

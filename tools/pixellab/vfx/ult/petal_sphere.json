@@ -1,0 +1,443 @@
+{
+ "frames": [
+  {
+   "filename": "gokei-petal-sphere 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 1.png",
+   "frame": {
+    "x": 148,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 2.png",
+   "frame": {
+    "x": 296,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 3.png",
+   "frame": {
+    "x": 444,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 4.png",
+   "frame": {
+    "x": 0,
+    "y": 130,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 5.png",
+   "frame": {
+    "x": 148,
+    "y": 130,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 6.png",
+   "frame": {
+    "x": 296,
+    "y": 130,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 7.png",
+   "frame": {
+    "x": 444,
+    "y": 130,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 8.png",
+   "frame": {
+    "x": 0,
+    "y": 260,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 9.png",
+   "frame": {
+    "x": 148,
+    "y": 260,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 10.png",
+   "frame": {
+    "x": 296,
+    "y": 260,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 11.png",
+   "frame": {
+    "x": 444,
+    "y": 260,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 12.png",
+   "frame": {
+    "x": 0,
+    "y": 390,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 13.png",
+   "frame": {
+    "x": 148,
+    "y": 390,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 14.png",
+   "frame": {
+    "x": 296,
+    "y": 390,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "gokei-petal-sphere 15.png",
+   "frame": {
+    "x": 444,
+    "y": 390,
+    "w": 148,
+    "h": 130
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 148,
+    "h": 130
+   },
+   "sourceSize": {
+    "w": 148,
+    "h": 130
+   },
+   "pivot": {
+    "x": 0.49324324324324326,
+    "y": 0.5
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "gokei-petal-sphere.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 592,
+   "h": 520
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 73,
+   "y": 65
+  },
+  "frameTags": [
+   {
+    "name": "gokei-petal-sphere",
+    "from": 0,
+    "to": 15,
+    "direction": "forward"
+   }
+  ]
+ }
+}

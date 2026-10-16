@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "fb91fe44-33c9-44bb-88ad-4a39a940eb34",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a4f7c91a-44a8-4393-af20-1f9b8885c6ba",
+  "description": "reaches up with both arms and grabs an invisible ledge above his head, hanging from it by both hands with the legs dangling below; only the character is drawn: no cliff, no rock, no wall, no ground The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Sasuke, a young ninja with spiky dark blue hair, an open white kimono shirt, a thick purple rope belt and dark blue pants",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: fb91fe44-33c9-44bb-88ad-4a39a940eb34\njob_id: fb91fe44-33c9-44bb-88ad-4a39a940eb34\ndescription: reaches up with both arms and grabs an invisible ledge above his head, hanging from it by both hands with the legs dangling below; only the character is drawn: no cliff, no rock, no wall, no ground The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fb91fe44-33c9-44bb-88ad-4a39a940eb34\")\nasset_id: ff428110-31b1-50d8-bbb5-33dc69c2e2f1\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/sasuke/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

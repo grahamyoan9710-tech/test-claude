@@ -2,9 +2,145 @@
 // Every weapon is drawn in a frame tied to its grip: `a` runs along the weapon (grip -> tip),
 // `b` across it (+ = cutting edge side). Two passes, like the bodies: warm umber outlines, then fills
 // with a bevel / highlight; energy (glows, petals, lightning, chains of fire) goes on top.
+#include <cstdio>
+#include <cstring>
+#include <map>
+#include <string>
+
+#include "game/fighter_art.hpp"
+#include "game/pixel.hpp"
 #include "game/render.hpp"
+#include "rlgl.h"
 
 namespace {
+// ---- Pictures (PixelLab) ------------------------------------------------------------------------
+// A weapon drawn from its picture, assets/sprites/weapon_<key>.png, indexed in sheets.txt by one line:
+//   weapon <key> w h ox oy tx ty            a hand weapon, lying flat: pixel of the grip (a = 0) and of the tip
+//                                           (a = its length); the pommel, chain or cloth sit left of the grip
+//   icon <key> w h                          a power (items, HUD), upright, as wide as its 30 weapon units
+//   bow <key> w h hx hy ux uy dx dy         a bow, standing, its back to the right: grip and the two tips
+//   shield <key> w h cx cy r                a shield seen from the front: its centre and radius
+// The code keeps drawing what moves: the auras, the folding of a shield.
+struct WSprite {
+  bool ok = false;
+  Texture2D tex{};
+  float w = 0, h = 0;
+  float p[6] = {};
+};
+
+const WSprite* weaponSprite(const char* kind, const char* key) {
+  static std::map<std::string, WSprite> cache;
+  const std::string id = std::string(kind) + " " + key;
+  auto it = cache.find(id);
+  if (it != cache.end()) return it->second.ok ? &it->second : nullptr;
+  WSprite& S = cache[id];
+  const std::string& index = art::spriteIndex();
+  size_t pos = 0;
+  while (pos < index.size()) {
+    size_t end = index.find('\n', pos);
+    if (end == std::string::npos) end = index.size();
+    const std::string line = index.substr(pos, end - pos);
+    pos = end + 1;
+    char k[16] = {}, name[48] = {};
+    float v[8] = {};
+    const int n = std::sscanf(line.c_str(), "%15s %47s %f %f %f %f %f %f %f %f", k, name, &v[0], &v[1], &v[2], &v[3],
+                              &v[4], &v[5], &v[6], &v[7]);
+    if (n < 4 || std::strcmp(k, kind) != 0 || std::strcmp(name, key) != 0) continue;
+    const unsigned char* data = nullptr;
+    unsigned size = 0;
+    if (!art::embeddedSprite(("weapon_" + std::string(key)).c_str(), &data, &size)) break;
+    Image img = LoadImageFromMemory(".png", data, int(size));
+    if (!img.data) break;
+    S.tex = LoadTextureFromImage(img);
+    UnloadImage(img);
+    if (S.tex.id == 0) break;
+    GenTextureMipmaps(&S.tex);
+    SetTextureFilter(S.tex, TEXTURE_FILTER_TRILINEAR);
+    S.w = v[0];
+    S.h = v[1];
+    for (int i = 0; i < 6; ++i) S.p[i] = v[2 + i];
+    S.ok = true;
+    break;
+  }
+  return S.ok ? &S : nullptr;
+}
+
+const char* handKey(WeaponVisual v) {
+  switch (v) {
+    case WeaponVisual::AstaSword: return "asta_sword";
+    case WeaponVisual::DemonSlayer: return "demon_slayer";
+    case WeaponVisual::DemonDweller: return "demon_dweller";
+    case WeaponVisual::WindSpear: return "wind_spear";
+    case WeaponVisual::Zangetsu: return "zangetsu";
+    case WeaponVisual::TensaZangetsu: return "tensa_zangetsu";
+    case WeaponVisual::Katana: return "katana";
+    case WeaponVisual::Senbonzakura: return "senbonzakura";
+    case WeaponVisual::Kageyoshi: return "kageyoshi";
+    case WeaponVisual::MasterSword: return "master_sword";
+    case WeaponVisual::DemonKingSword: return "demon_king_sword";
+    case WeaponVisual::GloomSpear: return "gloom_spear";
+    case WeaponVisual::LeviathanAxe: return "leviathan_axe";
+    case WeaponVisual::BladesOfChaos: return "chaos_blade";
+    case WeaponVisual::Kamutoke: return "kamutoke";
+    case WeaponVisual::ShieldAndSword: return "link_sword";
+    case WeaponVisual::KenpachiSword: return "kenpachi_sword";
+    case WeaponVisual::Nozarashi: return "nozarashi";
+    case WeaponVisual::RedBankai: return "red_bankai";
+    case WeaponVisual::LuzDeLaLuna: return "luz_de_la_luna";
+    case WeaponVisual::GreatSword: return "great_sword";
+    case WeaponVisual::ChargeBlade: return "charge_blade";
+    case WeaponVisual::Gunlance: return "gunlance";
+    case WeaponVisual::Kusanagi: return "kusanagi";
+    case WeaponVisual::KakashiKunai: return "kakashi_kunai";
+    case WeaponVisual::Pantera: return "pantera";
+    case WeaponVisual::LobosPistol: return "lobos_pistol";
+    default: return nullptr;
+  }
+}
+const char* iconKey(WeaponVisual v, float open) {
+  switch (v) {
+    case WeaponVisual::Grimoire: return open > 0.5f ? "grimoire_open" : "grimoire_closed";
+    case WeaponVisual::HollowPurple: return "hollow_purple";
+    case WeaponVisual::SixEyes: return "six_eyes";
+    case WeaponVisual::CursedFinger: return "cursed_finger";
+    case WeaponVisual::SegundaCore: return "segunda_core";
+    case WeaponVisual::SageScroll: return "sage_scroll";
+    case WeaponVisual::KuramaChakra: return "kurama_chakra";
+    case WeaponVisual::SharinganEye: return "sharingan";
+    case WeaponVisual::Mangekyo: return "mangekyo";
+    case WeaponVisual::DoubleMangekyo: return "double_mangekyo";
+    case WeaponVisual::PanteraClaws: return "pantera_claws";
+    case WeaponVisual::LobosPack: return "lobos_pack";
+    case WeaponVisual::Lilynette: return "lilynette";
+    default: return nullptr;
+  }
+}
+const char* bowKey(int variant) {
+  switch (variant) {
+    case 1: return "bow_wood";
+    case 2: return "bow_flame";
+    case 3: return "bow_susanoo";
+    default: return "bow_light";
+  }
+}
+
+// The picture as a quad: `at` maps a picture pixel to the screen. A ghost (afterimage) takes the tint's colour.
+template <class At>
+void drawPicture(const WSprite& S, At at, float alpha, bool ghost, Color tint) {
+  const Vector2 q[4] = {at(0.0f, 0.0f), at(S.w, 0.0f), at(S.w, S.h), at(0.0f, S.h)};
+  const float uv[4][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+  const Color c = ghost ? tint : WHITE;
+  const unsigned char a = (unsigned char)(255.0f * clampf(alpha * (ghost ? tint.a / 255.0f : 1.0f), 0.0f, 1.0f));
+  rlSetTexture(S.tex.id);
+  rlBegin(RL_QUADS);
+  for (int i = 0; i < 4; ++i) {
+    rlColor4ub(c.r, c.g, c.b, a);
+    rlTexCoord2f(uv[i][0], uv[i][1]);
+    rlVertex2f(q[i].x, q[i].y);
+  }
+  rlEnd();
+  rlSetTexture(0);
+}
 const Color kInk = {56, 35, 28, 255};
 constexpr int kMaxPts = 12;
 
@@ -45,10 +181,11 @@ float hash(float x) { return x - std::floor(x); }
 
 // Weapon painter: coordinates in weapon units (a along, b across), scaled.
 struct WP {
-  Vec2 o, u, v;
+  Vec2 o, u, v;  // v: across the weapon, already scaled by the style's slimness
   float s = 1.0f, alpha = 1.0f, ow = 2.0f, time = 0.0f;
   bool line = false, ghost = false;
   Color tint = WHITE;
+  Color ink = kInk;  // outline colour (the near-black sprite ink in pixel art)
 
   Vec2 at(float x, float y) const { return o + u * (x * s) + v * (y * s); }
   Vec2 at(Vec2 p) const { return at(p.x, p.y); }
@@ -63,7 +200,7 @@ struct WP {
       if (ghost) return;
       Vec2 g[kMaxPts];
       grow(q, n, ow, g);
-      fan(g, n, col(kInk));
+      fan(g, n, col(ink));
     } else {
       fan(q, n, col(k));
     }
@@ -88,14 +225,14 @@ struct WP {
     if (line && ghost) return;
     const Vec2 A = at(a), B = at(b);
     const float th = w * s + (line ? 2.0f * ow : 0.0f);
-    const Color c = line ? col(kInk) : col(k);
+    const Color c = line ? col(ink) : col(k);
     DrawLineEx(V(A), V(B), th, c);
     discW(A, th * 0.5f, c);
     discW(B, th * 0.5f, c);
   }
   void dot(Vec2 p, float r, Color k) const {
     if (line && ghost) return;
-    discW(at(p), r * s + (line ? ow : 0.0f), line ? col(kInk) : col(k));
+    discW(at(p), r * s + (line ? ow : 0.0f), line ? col(ink) : col(k));
   }
   void stroke(Vec2 a, Vec2 b, float w, Color k) const {
     if (details()) DrawLineEx(V(at(a)), V(at(b)), std::max(0.7f, w * s), col(k));
@@ -358,25 +495,33 @@ void masterSword(const WP& p) {
 // Bow centred on a = 20 (limbs across the aim, belly forward): golden bow of light, plain wooden bow
 // (variant 1) or a bow of flames (variant 2).
 void bowOfLight(const WP& p, float pull, int variant) {
-  const Color body = variant == 1 ? Color{132, 90, 54, 255} : variant == 2 ? Color{255, 120, 36, 255} : Color{246, 206, 96, 255};
-  const Color core = variant == 1 ? Color{176, 128, 80, 255} : variant == 2 ? Color{255, 230, 140, 255} : Color{255, 248, 210, 255};
+  const Color body = variant == 1   ? Color{132, 90, 54, 255}
+                     : variant == 2 ? Color{255, 120, 36, 255}
+                     : variant == 3 ? Color{150, 70, 230, 255}
+                                    : Color{246, 206, 96, 255};
+  const Color core = variant == 1   ? Color{176, 128, 80, 255}
+                     : variant == 2 ? Color{255, 230, 140, 255}
+                     : variant == 3 ? Color{230, 190, 255, 255}
+                                    : Color{255, 248, 210, 255};
   Vec2 pts[7];
   for (int i = 0; i < 7; ++i) {
     float t = -1.0f + i / 3.0f;
     pts[i] = {23.0f - 10.0f * t * t, 24.0f * t};
   }
-  if (p.details() && variant != 1) discW(p.at(20, 0), 26.0f * p.s, p.col(variant == 2 ? Color{255, 100, 30, 50} : Color{255, 220, 120, 40}));
+  if (p.details() && variant != 1)
+    discW(p.at(20, 0), 26.0f * p.s,
+          p.col(variant == 2 ? Color{255, 100, 30, 50} : variant == 3 ? Color{170, 80, 255, 60} : Color{255, 220, 120, 40}));
   for (int i = 0; i < 6; ++i) p.seg(pts[i], pts[i + 1], 3.4f - std::fabs(i - 2.5f) * 0.4f, body);
   p.seg(pts[0], pts[0] + Vec2{3.5f, -2.5f}, 2.0f, body);
   p.seg(pts[6], pts[6] + Vec2{3.5f, 2.5f}, 2.0f, body);
   p.seg({23, -3.5f}, {23, 3.5f}, 4.4f, variant == 1 ? Color{90, 60, 40, 255} : Color{176, 122, 60, 255});
   if (p.details()) {
     for (int i = 0; i < 6; ++i) p.stroke(pts[i] + Vec2{0.6f, 0}, pts[i + 1] + Vec2{0.6f, 0}, 1.1f, core);
-    if (variant == 2)
+    if (variant == 2 || variant == 3)
       for (int i = 0; i < 5; ++i) {  // flames licking off the limbs
         float ph = hash(p.time * 1.7f + i * 0.21f);
         Vec2 b = pts[1 + i % 5] + Vec2{-ph * 6.0f, std::sin(i * 2.0f + p.time * 9.0f) * 1.5f};
-        p.spot(b, 2.2f * (1.0f - ph), {255, 200, 80, 220});
+        p.spot(b, 2.2f * (1.0f - ph), variant == 3 ? Color{200, 140, 255, 220} : Color{255, 200, 80, 220});
       }
     const Vec2 nock{13.0f - 24.0f * std::max(0.0f, pull), 0.0f};
     const Color str = variant == 1 ? Color{220, 214, 200, 255} : Color{255, 252, 230, 255};
@@ -589,6 +734,285 @@ void cursedFinger(const WP& p) {
   }
 }
 
+
+// ---- Bleach (2) ----------------------------------------------------------------------------------
+// Kenpachi's sword: long, notched and chipped, a plain guard and a bare grip.
+void kenpachiSword(const WP& p) {
+  const Color steel{182, 186, 196, 255}, dull{128, 130, 142, 255};
+  p.dot({-14, 0}, 2.4f, {60, 58, 64, 255});
+  handle(p, -13, 5, 4.6f, {92, 88, 92, 255}, {150, 146, 150, 255}, 4.6f);
+  p.poly({{4.5f, -4.6f}, {8, -4.6f}, {8, 4.6f}, {4.5f, 4.6f}}, {64, 62, 70, 255});
+  p.poly({{8, -2.2f}, {60, -2.6f}, {60, 2.9f}, {8, 2.7f}}, steel);
+  p.poly({{60, -2.6f}, {94, -3.4f}, {96, -2.8f}, {90, 1.0f}, {60, 2.9f}}, steel);
+  if (p.details()) {
+    p.stroke({9, -0.6f}, {88, -1.6f}, 0.9f, dull);
+    p.stroke({9, 2.0f}, {60, 2.1f}, 0.9f, {236, 240, 248, 255});
+    for (float a : {21.0f, 38.0f, 52.0f, 71.0f, 83.0f}) p.paint({{a - 1.6f, 3.2f}, {a, 1.0f}, {a + 1.4f, 3.2f}}, kInk);
+    p.spot({30, 0.4f}, 1.0f, {150, 60, 54, 255});
+  }
+}
+
+// Nozarashi: a giant cleaver-axe on a long haft.
+void nozarashi(const WP& p) {
+  const Color steel{170, 174, 184, 255}, edge{232, 236, 244, 255}, haft{70, 64, 70, 255};
+  handle(p, -16, 30, 5.2f, haft, {150, 140, 120, 255}, 5.0f);
+  p.poly({{28, -6}, {104, -9}, {110, -4}, {106, 14}, {94, 24}, {40, 22}, {28, 10}}, steel);
+  if (p.details()) {
+    p.paint({{30, -5}, {103, -8}, {104, -4.5f}, {30, -1.5f}}, {120, 124, 136, 255});
+    p.stroke({42, 20.6f}, {93, 22.4f}, 2.2f, edge);
+    p.stroke({94, 22.4f}, {105, 13}, 2.0f, edge);
+    p.spot({36, 4}, 3.2f, {48, 46, 54, 255});
+    p.spot({36, 4}, 1.4f, {200, 190, 140, 255});
+    for (float a : {58.0f, 79.0f}) p.paint({{a - 2.0f, 23.6f}, {a, 20.0f}, {a + 2.0f, 23.4f}}, kInk);
+  }
+}
+
+// Bankai: a huge crimson cleaver dripping red reiatsu.
+void redBankai(const WP& p) {
+  const Color body{150, 18, 30, 255}, dark{70, 6, 14, 255}, glow{255, 70, 70, 255};
+  p.halo({30, 6}, {108, 6}, 34.0f, glow, 1.0f);
+  handle(p, -16, 30, 5.6f, {40, 12, 18, 255}, {200, 40, 50, 255}, 4.6f);
+  p.poly({{28, -8}, {106, -11}, {113, -5}, {109, 16}, {96, 27}, {40, 24}, {28, 11}}, body);
+  if (p.details()) {
+    p.paint({{30, -7}, {105, -10}, {106, -5}, {30, -2}}, dark);
+    p.stroke({42, 22.6f}, {95, 24.8f}, 2.4f, {255, 150, 140, 255});
+    for (int i = 0; i < 4; ++i) {  // drops of reiatsu falling off the edge
+      const float ph = hash(p.time * 1.3f + i * 0.29f);
+      p.spot({48.0f + i * 15.0f, 25.0f + ph * 14.0f}, 1.8f * (1.0f - ph * 0.6f), {255, 60, 60, 230});
+    }
+  }
+}
+
+// Murcielago's spear of green light.
+void luzDeLaLuna(const WP& p) {
+  const Color core{214, 255, 226, 255}, body{80, 230, 140, 255};
+  p.halo({-12, 0}, {104, 0}, 14.0f, {90, 255, 150, 255}, 1.2f);
+  p.seg({-14, 0}, {80, 0}, 3.0f, body);
+  p.poly({{78, -3.5f}, {104, 0}, {78, 3.5f}}, body);
+  p.poly({{70, -1.6f}, {78, -9}, {82, -1.6f}}, body);
+  p.poly({{70, 1.6f}, {78, 9}, {82, 1.6f}}, body);
+  if (p.details()) {
+    p.stroke({-12, 0}, {100, 0}, 1.0f, core);
+    for (int i = 0; i < 3; ++i) p.spot({hash(p.time * 0.8f + i * 0.33f) * 90.0f, 0}, 1.6f, WHITE);
+  }
+}
+
+// Segunda Etapa: a black-green crystal of power floating over the hand.
+void segundaCore(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 9.0f * p.s, pulse = 1.0f + 0.08f * std::sin(p.time * 8.0f);
+  discW(c, r * 2.2f * pulse, p.col({60, 255, 140, 40}));
+  const Vec2 up{0, -1}, rt{1, 0};
+  triW(V(c + up * (r * 1.6f)), V(c + rt * r), V(c - rt * r), p.col({20, 30, 24, 255}));
+  triW(V(c - up * (r * 1.3f)), V(c + rt * r), V(c - rt * r), p.col({10, 16, 12, 255}));
+  if (!p.ghost) {
+    DrawLineEx(V(c + up * (r * 1.4f)), V(c - up * (r * 1.1f)), std::max(0.8f, r * 0.18f), p.col({120, 255, 170, 255}));
+    discW(c, r * 0.3f, p.col({200, 255, 220, 255}));
+  }
+}
+
+// ---- Monster Hunter ------------------------------------------------------------------------------
+// Great sword: a slab of steel framed in wyvern bone.
+void greatSword(const WP& p) {
+  const Color steel{168, 172, 180, 255}, bone{226, 214, 186, 255}, leather{96, 64, 44, 255};
+  p.dot({-15, 0}, 3.2f, {120, 100, 70, 255});
+  handle(p, -14, 8, 5.6f, leather, {170, 130, 84, 255}, 3.6f);
+  p.poly({{7, -10}, {15, -12}, {15, 12}, {7, 10}}, bone);
+  p.poly({{15, -8}, {96, -8.5f}, {108, 0}, {96, 9}, {15, 9}}, steel);
+  if (p.details()) {
+    p.paint({{17, -6.5f}, {94, -7}, {94, -3.5f}, {17, -3}}, bone);
+    p.stroke({17, 7.2f}, {95, 7.4f}, 1.6f, {236, 240, 246, 255});
+    p.stroke({20, 1.0f}, {86, 1.0f}, 1.2f, {120, 124, 134, 255});
+    for (float a : {30.0f, 55.0f, 78.0f}) p.spot({a, -5}, 1.4f, {170, 140, 100, 255});
+  }
+}
+
+// Charge blade: sword mode, glowing phials at the guard.
+void chargeBlade(const WP& p) {
+  const Color steel{196, 200, 210, 255}, body{60, 74, 96, 255}, phial{255, 220, 90, 255};
+  p.dot({-13, 0}, 2.6f, body);
+  handle(p, -12, 5, 4.6f, {54, 50, 56, 255}, {150, 150, 160, 255}, 3.6f);
+  p.poly({{5, -6}, {16, -6}, {16, 7}, {5, 7}}, body);
+  p.poly({{16, -3.6f}, {70, -4.2f}, {82, 0}, {70, 4.6f}, {16, 4.2f}}, steel);
+  if (p.details()) {
+    const float g = 0.6f + 0.4f * std::sin(p.time * 6.0f);
+    for (int i = 0; i < 3; ++i) p.spot({7.5f + i * 3.6f, 0.5f}, 1.4f, withAlpha(phial, 0.6f + 0.4f * g));
+    p.stroke({18, 3.0f}, {70, 3.3f}, 1.0f, {240, 244, 250, 255});
+    p.stroke({20, 0}, {68, 0}, 1.4f, {90, 110, 150, 255});
+  }
+}
+
+// Gunlance: a heavy lance with a shell chamber.
+void gunlance(const WP& p) {
+  const Color steel{150, 156, 168, 255}, dark{70, 74, 84, 255}, brass{200, 160, 80, 255};
+  handle(p, -12, 6, 5.0f, {60, 50, 46, 255}, {140, 120, 90, 255}, 3.4f);
+  p.poly({{6, -7}, {26, -7}, {26, 8}, {6, 8}}, dark);  // shell chamber
+  p.poly({{26, -5}, {92, -3.5f}, {108, 0.5f}, {92, 4.5f}, {26, 6}}, steel);
+  if (p.details()) {
+    p.stroke({8, -3}, {24, -3}, 1.4f, brass);
+    p.stroke({8, 3.5f}, {24, 3.5f}, 1.4f, brass);
+    p.stroke({28, -2.4f}, {92, -1.6f}, 1.0f, {214, 220, 230, 255});
+    p.spot({100, 0.5f}, 1.2f, {255, 200, 120, 255});
+  }
+}
+
+// ---- Naruto -----------------------------------------------------------------------------------------
+// Sasuke's Kusanagi: a straight sword without a guard.
+void kusanagi(const WP& p) {
+  const Color steel{210, 214, 226, 255};
+  handle(p, -12, 3, 4.0f, {36, 32, 40, 255}, {120, 110, 130, 255}, 3.0f, true);
+  p.poly({{3, -3.2f}, {5, -3.2f}, {5, 3.2f}, {3, 3.2f}}, {60, 56, 64, 255});
+  p.poly({{5, -1.8f}, {64, -1.9f}, {70, 0.2f}, {64, 2.2f}, {5, 2.1f}}, steel);
+  if (p.details()) {
+    p.stroke({6, 1.2f}, {64, 1.3f}, 0.9f, {250, 252, 255, 255});
+    p.stroke({6, -0.8f}, {62, -0.9f}, 0.7f, {150, 156, 172, 255});
+  }
+}
+
+// Kakashi's kunai: ring pommel, wrapped grip, leaf blade.
+void kunai(const WP& p) {
+  const Color steel{150, 156, 168, 255};
+  if (!p.line || !p.ghost) {
+    p.dot({-7, 0}, 3.0f, steel);
+    p.spot({-7, 0}, 1.6f, {40, 40, 46, 255});
+  }
+  handle(p, -4, 7, 3.0f, {40, 40, 46, 255}, {120, 120, 130, 255}, 2.2f);
+  p.poly({{7, -1.2f}, {12, -4.2f}, {28, 0}, {12, 4.2f}, {7, 1.2f}}, steel);
+  if (p.details()) p.stroke({9, 0}, {26, 0}, 0.9f, {220, 226, 236, 255});
+}
+
+// Eyes and chakra worn as power-ups (drawn by the body: see render_body.cpp).
+// Sharingan / Mangekyo as an item: a glowing red eye in a dark orb.
+void eyeOrb(const WP& p, int pattern) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  discW(c, r * 2.0f, p.col({200, 20, 30, 50}));
+  discW(c, r * 1.15f, p.col({16, 4, 6, 255}));
+  discW(c, r, p.col({210, 20, 30, 255}));
+  if (p.ghost) return;
+  const float rot = p.time * 2.0f;
+  if (pattern == 0) {  // three tomoe
+    for (int i = 0; i < 3; ++i) {
+      const float a = rot + i * 2.0f * kPi / 3.0f;
+      discW(c + Vec2{std::cos(a), std::sin(a)} * (r * 0.55f), r * 0.17f, p.col({10, 2, 4, 255}));
+    }
+  } else {  // the blades of the Mangekyo
+    for (int i = 0; i < 3; ++i) {
+      const float a = rot + i * 2.0f * kPi / 3.0f;
+      Vec2 prev = c;
+      for (int j = 1; j <= 5; ++j) {
+        const float u = j / 5.0f;
+        const Vec2 q = c + Vec2{std::cos(a + u * 1.5f), std::sin(a + u * 1.5f)} * (r * 0.9f * u);
+        DrawLineEx(V(prev), V(q), std::max(1.0f, r * 0.22f * (1.0f - u * 0.7f)), p.col({10, 2, 4, 255}));
+        prev = q;
+      }
+    }
+  }
+  discW(c, r * 0.18f, p.col({10, 2, 4, 255}));
+  if (pattern == 2) discW(c + Vec2{r * 0.9f, -r * 0.9f}, r * 0.35f, p.col({210, 20, 30, 255}));  // the second eye
+}
+
+// Kurama's chakra as an item: a flame of golden chakra with two fox ears.
+void kuramaFlame(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  discW(c, r * 2.2f, p.col({255, 170, 40, 60}));
+  for (int i = 0; i < 5; ++i) {
+    const float ph = hash(p.time * 1.5f + i * 0.2f);
+    discW(c + Vec2{std::sin(p.time * 5.0f + i) * r * 0.3f, -ph * r * 1.6f}, r * (0.8f - 0.5f * ph), p.col({255, 190, 60, 200}));
+  }
+  discW(c, r, p.col({255, 200, 70, 255}));
+  for (int s2 = -1; s2 <= 1; s2 += 2)
+    triW(V(c + Vec2{s2 * r * 0.3f, -r * 0.6f}), V(c + Vec2{s2 * r * 0.9f, -r * 0.4f}), V(c + Vec2{s2 * r * 0.8f, -r * 1.5f}),
+         p.col({255, 170, 40, 255}));
+  discW(c + Vec2{-r * 0.3f, -r * 0.1f}, r * 0.12f, p.col({200, 30, 20, 255}));
+  discW(c + Vec2{r * 0.3f, -r * 0.1f}, r * 0.12f, p.col({200, 30, 20, 255}));
+}
+
+// ---- Bleach (3): Grimmjow and Starrk ------------------------------------------------------------------
+// Pantera: a plain katana, a teal grip and a square guard.
+void pantera(const WP& p) {
+  const Color steel{212, 218, 230, 255}, silver{170, 176, 188, 255};
+  p.dot({-13, 0}, 2.2f, silver);
+  handle(p, -12, 3, 4.2f, {22, 112, 132, 255}, {170, 240, 250, 255}, 3.3f, true);
+  p.poly({{3, -5.4f}, {6.2f, -5.4f}, {6.2f, 5.4f}, {3, 5.4f}}, silver);
+  p.poly({{6, -1.6f}, {40, -2.0f}, {40, 2.3f}, {6, 2.4f}}, steel);
+  p.poly({{40, -2.0f}, {72, -3.4f}, {74, -3.0f}, {68, 0.6f}, {40, 2.3f}}, steel);
+  if (p.details()) {
+    p.stroke({7, 1.4f}, {40, 1.3f}, 0.9f, {252, 253, 255, 255});
+    p.stroke({40, 1.3f}, {68, -0.2f}, 0.9f, {252, 253, 255, 255});
+    p.stroke({7, -1.0f}, {40, -1.3f}, 0.8f, {150, 156, 172, 255});
+    p.paint({{3.4f, -4.6f}, {5.8f, -4.6f}, {5.8f, -2.4f}, {3.4f, -2.4f}}, {230, 236, 244, 255});
+  }
+}
+
+// Grimmjow's claws as an item: a bone gauntlet and four claws of cyan reiatsu.
+void panteraClaws(const WP& p) {
+  p.halo({0, 0}, {32, 0}, 18.0f, {60, 214, 240, 255}, 1.2f);
+  p.poly({{-2, -6}, {10, -7}, {14, -2}, {14, 4}, {8, 7}, {-2, 6}}, {236, 236, 230, 255});
+  for (int i = 0; i < 4; ++i) {
+    const float b = -4.5f + i * 3.0f;
+    p.poly({{12, b - 1.1f}, {31, b * 1.35f}, {12, b + 1.1f}}, {120, 240, 255, 255});
+  }
+  if (p.details()) p.stroke({0, -3}, {10, -4}, 1.0f, {180, 180, 172, 255});
+}
+
+// The pack of Los Lobos as an item: the head of a spectral wolf, eyes of white light.
+void lobosHead(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  const Color fur = p.col({120, 176, 255, 230}), pale = p.col({214, 232, 255, 255});
+  discW(c, r * 2.3f, p.col({110, 170, 255, 50}));
+  discW(c, r * 0.95f, fur);
+  triW(V(c + Vec2{r * 0.4f, -r * 0.45f}), V(c + Vec2{r * 0.4f, r * 0.45f}), V(c + Vec2{r * 1.7f, r * 0.15f}), fur);  // snout
+  triW(V(c + Vec2{-r * 0.6f, -r * 0.5f}), V(c + Vec2{-r * 0.05f, -r * 0.8f}), V(c + Vec2{-r * 0.5f, -r * 1.7f}), fur);
+  triW(V(c + Vec2{-r * 0.1f, -r * 0.7f}), V(c + Vec2{r * 0.4f, -r * 0.6f}), V(c + Vec2{r * 0.15f, -r * 1.6f}), fur);
+  if (p.ghost) return;
+  discW(c + Vec2{r * 0.25f, -r * 0.15f}, r * 0.18f, pale);
+  discW(c + Vec2{r * 1.55f, r * 0.12f}, r * 0.14f, p.col({30, 40, 70, 255}));
+}
+
+// Lilynette as an item: her broken mask, one horn, a pink eye shining in the hole.
+void lilynetteMask(const WP& p) {
+  if (p.line) return;
+  const Vec2 c = p.at(15, 0);
+  const float r = 10.0f * p.s;
+  const Color bone = p.col({244, 242, 234, 255});
+  discW(c, r * 2.1f, p.col({200, 225, 255, 50}));
+  triW(V(c + Vec2{-r, -r * 0.2f}), V(c + Vec2{r * 0.6f, -r * 0.9f}), V(c + Vec2{r * 0.4f, r}), bone);
+  triW(V(c + Vec2{-r, -r * 0.2f}), V(c + Vec2{r * 0.4f, r}), V(c + Vec2{-r * 0.6f, r * 0.8f}), bone);
+  triW(V(c + Vec2{-r * 0.2f, -r * 0.6f}), V(c + Vec2{r * 0.4f, -r * 0.8f}), V(c + Vec2{-r * 0.3f, -r * 2.0f}), bone);  // horn
+  if (p.ghost) return;
+  discW(c + Vec2{-r * 0.1f, 0.0f}, r * 0.32f, p.col({30, 20, 30, 255}));
+  discW(c + Vec2{-r * 0.05f, 0.0f}, r * 0.16f, p.col({255, 130, 190, 255}));
+}
+
+// A pistol of Los Lobos: a long-barrelled revolver, steel and white grip, cero light at the muzzle.
+void lobosPistol(const WP& p) {
+  const Color steel{176, 182, 196, 255}, dark{70, 74, 86, 255}, grip{236, 234, 226, 255};
+  p.poly({{-3, -1}, {4, -1}, {3, 10}, {-4, 9}}, grip);
+  p.poly({{-2, -4}, {9, -4}, {9, 2}, {-2, 2}}, steel);
+  p.poly({{9, -3.4f}, {27, -3.0f}, {27, -0.4f}, {9, 0.2f}}, steel);
+  p.poly({{3, 1}, {8, 1}, {6, 5}}, dark);  // trigger guard
+  if (p.details()) {
+    p.stroke({10, -2.6f}, {26, -2.3f}, 0.8f, {236, 240, 250, 255});
+    p.spot({4, -1}, 2.0f, dark);
+    p.spot({28, -1.7f}, 1.6f + 0.4f * std::sin(p.time * 12.0f), {170, 210, 255, 255});
+  }
+}
+
+void sageScroll(const WP& p) {
+  const Color paper{236, 220, 180, 255}, wood{150, 60, 40, 255};
+  p.seg({2, 0}, {28, 0}, 9.0f, paper);
+  p.seg({0, 0}, {2, 0}, 10.5f, wood);
+  p.seg({28, 0}, {30, 0}, 10.5f, wood);
+  if (p.details()) p.stroke({8, -1.5f}, {22, -1.5f}, 1.2f, {60, 40, 30, 255});
+}
+
 void guardianShieldDisc(Vec2 c, float r, float open, Vec2 fold, float alpha, float ow, bool ghost, Color tint,
                         float time);
 void roundShieldDisc(Vec2 c, float r, float alpha, float ow, bool ghost, Color tint);
@@ -636,6 +1060,27 @@ void drawVisual(WeaponVisual v, const WP& p, const WeaponStyle& st) {
     case WeaponVisual::GuardianShield:
       if (p.line) guardianShieldDisc(p.at(18, 0), 17.0f * p.s, 1.0f, p.u, p.alpha, p.ow, p.ghost, p.tint, p.time);
       break;
+    case WeaponVisual::KenpachiSword: kenpachiSword(p); break;
+    case WeaponVisual::Nozarashi: nozarashi(p); break;
+    case WeaponVisual::RedBankai: redBankai(p); break;
+    case WeaponVisual::LuzDeLaLuna: luzDeLaLuna(p); break;
+    case WeaponVisual::SegundaCore: segundaCore(p); break;
+    case WeaponVisual::GreatSword: greatSword(p); break;
+    case WeaponVisual::ChargeBlade: chargeBlade(p); break;
+    case WeaponVisual::Gunlance: gunlance(p); break;
+    case WeaponVisual::Kusanagi: kusanagi(p); break;
+    case WeaponVisual::KakashiKunai: kunai(p); break;
+    case WeaponVisual::SageScroll: sageScroll(p); break;
+    case WeaponVisual::SharinganEye: eyeOrb(p, 0); break;
+    case WeaponVisual::Mangekyo: eyeOrb(p, 1); break;
+    case WeaponVisual::DoubleMangekyo: eyeOrb(p, 2); break;
+    case WeaponVisual::KuramaChakra: kuramaFlame(p); break;
+    case WeaponVisual::SusanooBow: bowOfLight(p, st.pull, 3); break;
+    case WeaponVisual::Pantera: pantera(p); break;
+    case WeaponVisual::PanteraClaws: panteraClaws(p); break;
+    case WeaponVisual::LobosPack: lobosHead(p); break;
+    case WeaponVisual::Lilynette: lilynetteMask(p); break;
+    case WeaponVisual::LobosPistol: lobosPistol(p); break;
     default: break;
   }
 }
@@ -732,9 +1177,80 @@ float weaponVisualLength(WeaponVisual v) {
     case WeaponVisual::CursedFinger: return 28.0f;
     case WeaponVisual::ShieldAndSword: return 65.0f;
     case WeaponVisual::GuardianShield: return 36.0f;
-    default: return 60.0f;
+    case WeaponVisual::KenpachiSword: return 96.0f;
+    case WeaponVisual::Nozarashi: return 110.0f;
+    case WeaponVisual::RedBankai: return 113.0f;
+    case WeaponVisual::LuzDeLaLuna: return 104.0f;
+    case WeaponVisual::SegundaCore: return 30.0f;
+    case WeaponVisual::GreatSword: return 108.0f;
+    case WeaponVisual::ChargeBlade: return 82.0f;
+    case WeaponVisual::Gunlance: return 108.0f;
+    case WeaponVisual::Kusanagi: return 70.0f;
+    case WeaponVisual::KakashiKunai: return 28.0f;
+    case WeaponVisual::SageScroll: return 30.0f;
+    case WeaponVisual::SusanooBow: return 40.0f;
+    case WeaponVisual::Pantera: return 74.0f;
+    case WeaponVisual::PanteraClaws: return 31.0f;
+    case WeaponVisual::LobosPistol: return 27.0f;
+    default: return 30.0f;
   }
 }
+
+namespace {
+// The weapon from its picture, if it has one. False: draw it with code.
+bool drawWeaponPicture(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time, const WeaponStyle& st) {
+  const float side = st.side >= 0 ? 1.0f : -1.0f;
+  const Vec2 n = Vec2{-dir.y, dir.x} * side;
+  // A power (and Yuno's book): its icon, upright, centred where the code draws its orb (a = 15).
+  if (const char* key = iconKey(v, st.open); key && (st.icon || v == WeaponVisual::Grimoire)) {
+    const WSprite* S = weaponSprite("icon", key);
+    if (!S) return false;
+    const Vec2 c = grip + dir * (15.0f * scale);
+    const float k = 30.0f * scale * (st.icon ? 1.35f : 1.0f) / std::max(1.0f, S->w);
+    drawPicture(*S, [&](float x, float y) { return V(c + Vec2{(x - S->w * 0.5f) * k, (y - S->h * 0.5f) * k}); }, alpha,
+                st.ghost, st.tint);
+    return true;
+  }
+  if (v == WeaponVisual::BowOfLight || v == WeaponVisual::SusanooBow) {  // the bow as drawn (string included)
+    const WSprite* S = weaponSprite("bow", bowKey(v == WeaponVisual::SusanooBow ? 3 : st.variant));
+    if (!S) return false;
+    const float hx = S->p[0], hy = S->p[1];
+    const Vec2 e1{S->p[2] - hx, S->p[3] - hy}, e2{S->p[4] - hx, S->p[5] - hy};
+    const float det = e1.x * e2.y - e2.x * e1.y;
+    if (std::fabs(det) < 1e-3f) return false;
+    // pixel -> weapon units: the grip at (23, 0), the tips at (13, -24) and (13, 24), as the code's bow
+    auto units = [&](float x, float y) {
+      const float dx = x - hx, dy = y - hy;
+      const float u = (e2.y * dx - e2.x * dy) / det, w = (-e1.y * dx + e1.x * dy) / det;
+      return Vec2{23.0f - 10.0f * u - 10.0f * w, -24.0f * u + 24.0f * w};
+    };
+    auto at = [&](Vec2 ab) { return grip + dir * (ab.x * scale) + n * (ab.y * scale); };
+    drawPicture(*S, [&](float x, float y) { return V(at(units(x, y))); }, alpha, st.ghost, st.tint);
+    return true;
+  }
+  const char* key = handKey(v);
+  if (!key) return false;
+  const WSprite* S = weaponSprite("weapon", key);
+  if (!S) return false;
+  if (v == WeaponVisual::BladesOfChaos && !st.single) {  // a crossed pair (items, HUD)
+    WeaponStyle one = st;
+    one.single = true;
+    drawWeaponPicture(v, grip + dir * (-2.0f * scale) + n * (7.0f * scale), rotate(dir, -0.35f), scale, alpha, time, one);
+    one.side = -st.side;
+    drawWeaponPicture(v, grip + dir * (4.0f * scale) + n * (-7.0f * scale), rotate(dir, 0.35f), scale, alpha, time, one);
+    return true;
+  }
+  if (v == WeaponVisual::ShieldAndSword && !st.single) {  // Link's kit: the shield behind the sword
+    drawShieldVisual(false, grip + dir * (30.0f * scale) + n * (-2.0f * scale), 17.0f * scale, 1.0f, {1, 0}, alpha,
+                     time, st);
+  }
+  const float len = weaponVisualLength(v);
+  const float ox = S->p[0], oy = S->p[1], k = len / std::max(1.0f, S->p[2] - ox) * scale;
+  drawPicture(*S, [&](float x, float y) { return V(grip + dir * ((x - ox) * k) + n * ((y - oy) * k)); }, alpha,
+              st.ghost, st.tint);
+  return true;
+}
+}  // namespace
 
 void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
                       const WeaponStyle& st) {
@@ -744,14 +1260,19 @@ void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float al
   WP p;
   p.o = grip;
   p.u = dir;
-  p.v = Vec2{-dir.y, dir.x} * (st.side >= 0 ? 1.0f : -1.0f);
+  p.v = Vec2{-dir.y, dir.x} * ((st.side >= 0 ? 1.0f : -1.0f) * st.slim);
   p.s = scale;
   p.alpha = alpha;
   p.time = time;
   p.ghost = st.ghost;
   p.tint = st.tint;
   p.ow = std::max(1.0f, 2.3f * scale);
+  if (const float px = pix::artUnit(); px > 0.0f) {  // pixel art: one-pixel ink
+    p.ow = px * 0.9f;
+    p.ink = pix::kInk;
+  }
   if (st.glow > 0.0f && !st.ghost) elementAura(p, v, st.fx, st.glow);
+  if (drawWeaponPicture(v, grip, dir, scale, alpha, time, st)) return;
   for (int pass = 0; pass < 2; ++pass) {
     p.line = pass == 0;
     drawVisual(v, p, st);
@@ -764,6 +1285,13 @@ void drawWeaponVisual(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float al
 
 void drawShieldVisual(bool guardian, Vec2 center, float radius, float open, Vec2 fold, float alpha, float time,
                       const WeaponStyle& st) {
+  // The picture, seen from the front; the Guardian Shield folded into a bracer stays drawn by code.
+  if (const WSprite* S = weaponSprite("shield", guardian ? "guardian_shield" : "link_shield"); S && (!guardian || open > 0.5f)) {
+    const float k = radius / std::max(1.0f, S->p[2]);
+    drawPicture(*S, [&](float x, float y) { return V(center + Vec2{(x - S->p[0]) * k, (y - S->p[1]) * k}); }, alpha,
+                st.ghost, st.tint);
+    return;
+  }
   const float ow = std::max(1.0f, radius * 0.12f);
   if (guardian) guardianShieldDisc(center, radius, open, fold.norm(), alpha, ow, st.ghost, st.tint, time);
   else roundShieldDisc(center, radius, alpha, ow, st.ghost, st.tint);
@@ -773,7 +1301,10 @@ bool isHandWeapon(WeaponVisual v) {
   switch (v) {
     case WeaponVisual::None: case WeaponVisual::Grimoire: case WeaponVisual::HollowPurple:
     case WeaponVisual::SixEyes: case WeaponVisual::CursedFinger: case WeaponVisual::GuardianShield:
-    case WeaponVisual::BowOfLight:
+    case WeaponVisual::BowOfLight: case WeaponVisual::SegundaCore: case WeaponVisual::SageScroll:
+    case WeaponVisual::KuramaChakra: case WeaponVisual::SusanooBow: case WeaponVisual::Mangekyo:
+    case WeaponVisual::SharinganEye: case WeaponVisual::DoubleMangekyo: case WeaponVisual::PanteraClaws:
+    case WeaponVisual::LobosPack: case WeaponVisual::Lilynette:
       return false;
     default: return true;
   }

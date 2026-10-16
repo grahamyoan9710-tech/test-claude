@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "48c07f8b-6d84-4019-b6cf-0223cf88b049",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e0474ba8-b681-47ea-af45-5694125717eb",
+  "description": "reaches forward with both hands and closes them on the collar of an invisible opponent in front of him, then holds it at arm's length, the hands closed on empty air Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ganondorf from Zelda Tears of the Kingdom, a towering warlord with red hair, dark skin, black and gold armor and a long dark red cape",
+  "initial_pose": "heavy fighting stance facing right, fists clenched at chest height, cape behind him"
+ },
+ "reply": "id: 48c07f8b-6d84-4019-b6cf-0223cf88b049\njob_id: 48c07f8b-6d84-4019-b6cf-0223cf88b049\ndescription: reaches forward with both hands and closes them on the collar of an invisible opponent in front of him, then holds it at arm's length, the hands closed on empty air Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"48c07f8b-6d84-4019-b6cf-0223cf88b049\")\nasset_id: ff174685-1e80-53e9-9af3-c37b4019584c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/ganondorf_guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

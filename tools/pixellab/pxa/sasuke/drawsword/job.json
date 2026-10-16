@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "a0a3acfa-3eb8-4a20-9cc7-13cbd2907c82",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5ba36e98-4c97-4005-9b39-485c42137ea2",
+  "description": "reaches over his shoulder and draws a straight thin chokuto sword, holding it forward in his right hand in a ready stance The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Sasuke, a young ninja with spiky dark blue hair, an open white kimono shirt, a thick purple rope belt and dark blue pants",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: a0a3acfa-3eb8-4a20-9cc7-13cbd2907c82\njob_id: a0a3acfa-3eb8-4a20-9cc7-13cbd2907c82\ndescription: reaches over his shoulder and draws a straight thin chokuto sword, holding it forward in his right hand in a ready stance The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a0a3acfa-3eb8-4a20-9cc7-13cbd2907c82\")\nasset_id: b4d72b1e-f314-513e-8b8d-1b30e46a4cc3\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/sasuke_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

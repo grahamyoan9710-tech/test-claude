@@ -14,10 +14,19 @@ struct Platform {
   Vec2 delta;              // displacement during the last frame
 };
 
-enum class StageTheme : uint8_t { Cosmic, Sunset, Sky };
+enum class StageTheme : uint8_t {
+  Cosmic, Sunset, Sky,                  // the Zonai worlds: the Depths, the Sanctuary, the Sky Islands
+  LasNoches, Seireitei,                 // Bleach
+  BlackBulls, GrimoireTower,            // Black Clover
+  Shibuya, JujutsuHigh,                 // Jujutsu Kaisen
+  Konoha, ValleyOfTheEnd                // Naruto
+};
+constexpr int kStageThemeCount = 11;
 
 struct StageDef {
   std::string name;
+  std::string series;      // where the world comes from (stage select)
+  std::string blurb;       // a line about it (stage select)
   StageTheme theme = StageTheme::Cosmic;
   std::vector<Platform> platforms;
   Rect blast;              // leaving this rectangle = KO

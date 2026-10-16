@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <array>
 #include <vector>
 
@@ -12,6 +13,7 @@ struct Pose {
   float rot = 0.0f;       // whole body rotation (radians, + = forward flip)
   Vec2 shift;             // body center offset
   float lean = 0.0f;      // torso lean (+ = forward)
+  float twist = 0.0f;     // shoulders turned: > 0 the back shoulder comes forward (a cross), < 0 the front one
   float crouch = 0.0f;    // 0..1, lowers the hips
   float squash = 1.0f;    // vertical scale
   float sx = 1.0f;        // horizontal scale (squash & stretch)
@@ -41,18 +43,55 @@ struct Pose {
   HitFx chargeFx = HitFx::Normal;
   bool shout = false;      // roaring / shouting face
   float bladeLen = 0.0f;   // > 0: the blade in hand is drawn this long (grip to tip, px at scale 1) = its hitbox
+  Form form = Form::None;  // transformation (Vasto Lorde, Segunda Etapa...)
+  int sheet = -1;          // a generated animation shows this pose instead (see SheetAnim in fighter_art.hpp)
+  float sheetT = 0.0f;     // looping animations: seconds; the others: 0..1 through the move
+  bool sheetFlip = false;  // the clip is drawn mirrored (a roll backwards)
+  float sheetPhase = -1.0f;  // looping clips driven by the distance covered (walk, run): 0..1 through the cycle
+  Vec2 sheetOffset;          // the clip is drawn from here instead of the feet (climbing a ledge: from the top)
+  // When the move's blows are out (0..1 through the move: windows [sheetHitA, sheetHitB)), to show each drawn blow
+  // (the clip's impact frames, in order) while its hitboxes are.
+  static constexpr int kSheetHits = 4;
+  float sheetHitA[kSheetHits] = {-1.0f, -1.0f, -1.0f, -1.0f}, sheetHitB[kSheetHits] = {-1.0f, -1.0f, -1.0f, -1.0f};
+  int sheetHits = 0;
 };
 
-Pose restPose(const CharacterDef& def, float time);
+// Standing guard; `held` is the weapon picked up during the match (carried in hand), if any.
+Pose restPose(const CharacterDef& def, float time, WeaponVisual held = WeaponVisual::None);
 Pose computePose(const Fighter& f, const Match& m, float time);
 void drawCharacter(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing,
                    float scale, float alpha, Color flashColor, float flash, float time);
+// The same as a pixel-art sprite when the characters are drawn in pixel art (see pixel.hpp).
+void drawCharacterSprite(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing, float scale,
+                         float alpha, Color flashColor, float flash, float time);
 // Where the rig really puts a limb end (IK reach applied) / the weapon tip, in world space.
 Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb,
                bool weaponTip = false);
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
 void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
+// --export-pose (export_pose.cpp): a fighter alone, rest pose, facing right, feet at (ax, ay), pxh pixels tall,
+// optionally holding its weapon `slot`, on a transparent size x size PNG (the first frame of a PixelLab clip).
+struct ExportPose {
+  std::string fighter, out;
+  int slot = -1, size = 256;
+  float ax = 100.0f, ay = 236.0f, pxh = 150.0f;
+};
+int exportPose(const ExportPose& e);
+// --check-hitboxes (check_hitboxes.cpp): the hitboxes of every clip-drawn move against the frames shown with them.
+int checkHitboxes(const std::string& outPath);
+int fitImpacts(const std::string& outPath);  // --fit-impacts: every blow against every frame of its clip
+int fitHitboxes(const std::string& outPath);  // --fit-hitboxes: hitboxes moved onto what the clips draw
 void drawPortrait(const CharacterDef& def, int palette, Vec2 center, float size, float time);
+// A pose shown by the fighter's run clip (if it has one) at `phase` 0..1 of the cycle: running clones.
+void runClip(const CharacterDef& def, Pose& pose, float phase);
+// The same close up, cut to a box slanted like ui::slanted (the roster tiles).
+void drawPortraitIn(const CharacterDef& def, int palette, Vec2 center, float size, Rectangle box, float slant,
+                    float time);
+// A fighter shown big in a menu, feet at `feet`, about `height` tall: its picture when it has one.
+void drawShowcase(const CharacterDef& def, int palette, const Pose& pose, Vec2 feet, int facing, float height,
+                  float time);
+// The same in a disc of `radius` (HUD medallions, weapon tags).
+void drawPortraitDisc(const CharacterDef& def, int palette, Vec2 center, float radius, float time);
 
 // ---- Weapons (render_weapons.cpp) ---------------------------------------------
 // A weapon held at `grip`, pointing along `dir` (unit), at `scale` (1 = a 100 px fighter).
@@ -69,6 +108,8 @@ struct WeaponStyle {
   int variant = 0;        // bows: 0 golden bow of light, 1 plain wooden bow, 2 bow of flames
   bool ghost = false;     // afterimage: flat silhouette in `tint`
   Color tint = WHITE;
+  float slim = 1.0f;      // cross-section of the weapon (< 1: slimmer, for the illustrated fighters' realistic builds)
+  bool icon = false;      // items and HUD: a power is shown by its icon (in a fight its effect is drawn on the body)
 };
 void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
                       const WeaponStyle& style);
@@ -87,6 +128,11 @@ void drawBeams(const Match& m, float time);              // beams of the moves b
 void drawUltimateBackdrop(const Match& m, float time);   // domain / cinematic behind the fighters (world space)
 // The domain's foreground layer (petal storm, slashes, embers...): after the platforms, before the fighters.
 void drawUltimateFront(const Match& m, float time);
+// v5 cinematics (render_ult.cpp): draws the backdrop (front = false) or the foreground layer of an ultimate.
+// Returns true when it replaces the hero's classic domain.
+bool drawUltCinematic(const Match& m, const Fighter& f, UltFx fx, float k, int mf, float time, const Rect& view, bool front);
+// Transformations: Susanoo, Kurama's cloak, wings... behind (front = false) and over the fighter.
+void drawFormAvatar(const Fighter& f, float time, bool front);
 
 // Signature element of each hero (auras, cut-ins, domains).
 inline HitFx heroElement(Hero h) {
@@ -100,6 +146,14 @@ inline HitFx heroElement(Hero h) {
     case Hero::Kratos: return HitFx::Fire;
     case Hero::Gojo: return HitFx::Cursed;
     case Hero::Sukuna: return HitFx::Blood;
+    case Hero::Kenpachi: return HitFx::Berserk;
+    case Hero::Ulquiorra: return HitFx::Hollow;
+    case Hero::Hunter: return HitFx::Slash;
+    case Hero::Naruto: return HitFx::Chakra;
+    case Hero::Sasuke: return HitFx::Lightning;
+    case Hero::Kakashi: return HitFx::Lightning;
+    case Hero::Starrk: return HitFx::Wolf;
+    case Hero::Grimmjow: return HitFx::Claw;
     default: return HitFx::Normal;
   }
 }
@@ -130,11 +184,15 @@ Rect viewRect(float margin = 0.0f);                       // world rectangle on 
 
 // ---- World (render_world.cpp) -----------------------------------------------
 void drawBackground(const StageDef& stage, Vec2 camTarget, float camZoom, float time);
+// Over the whole scene, in screen space (rain, drifting petals...) after the world is drawn.
+void drawStageForeground(const StageDef& stage, Vec2 camTarget, float time);
 void drawPlatforms(const Match& m, float time);
 void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, float time);
 void drawProjectiles(const Match& m, float time);
 void drawOrb(const Match& m, float time);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);
+// A still of stage `index` in `area`, rendered once and kept (the stage select's thumbnails).
+void drawStageThumb(int index, const StageDef& stage, Rectangle area);
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------
 // devices (indexed by port, optional): shows each human's ultimate button once the meter is full.

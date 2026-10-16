@@ -1,0 +1,309 @@
+{
+ "fighter": "asta",
+ "defects": [
+  {
+   "clip": "dsmash",
+   "frames": "0-8",
+   "severity": "high",
+   "problem": "Frames 0-1: a huge white slash arc and a flat grey smoke slab with straight edges hide his legs, so he looks legless. Frame 2 is a spiky starburst ring about twice his size, and its outline stays through frames 3-5, with stray dots in 5-6. The blade is barely visible and neither the low front cut nor the low back cut ever reads. The effects are black, white and grey like the sword, so erase_effect cannot separate them. The impacts (sheets.txt 0,2) need to be set again on the new front and back sweeps.",
+   "fix": "regenerate",
+   "detail": "low spinning cut, facing right: drops into a wide low stance, sweeps the huge black broken-edged greatsword flat at ankle height in front of him to the right, then spins around on the spot and sweeps it flat at ankle height behind him to the left, then turns back to face right and rises into the fighting stance. Both legs and the whole blade stay visible and inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "bair",
+   "frames": "all",
+   "severity": "high",
+   "problem": "The back air swings the blade down in FRONT of him (blade pointing down-right in frames 1-8) and never goes behind him, while the hitbox is behind him on the left. The blow is drawn on the opposite side from where it hits, and the clip is almost identical to dair. Impact 7 is also only the held follow-through; the slash happens at frame 1.",
+   "fix": "regenerate",
+   "detail": "backward cut in mid-air, his face and body staying turned to the right: knees tucked, he twists his torso and swings the huge black broken-edged greatsword behind his back, the blade sweeping down in an arc on the left side of the picture and ending pointing down-left behind him, then he brings it back to the tucked pose. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "fthrow",
+   "frames": "all",
+   "severity": "high",
+   "problem": "No throw happens. Frame 0 is the hold pose and frames 1-7 are the plain guard stance, with only a few orange sparks on the blade. There is no heave and no push, so the victim flies off while he stands still. The old prompt asked for a two-handed heave while one hand holds the sword, which probably made PixelLab skip the move.",
+   "fix": "regenerate",
+   "detail": "forward throw, facing right: holding the invisible opponent by the collar in front of him with his free hand, he pulls it back to his chest, then shoves it hard straight forward with the palm open at full arm extension, leaning his whole body forward onto the front leg with a big step, then returns to the fighting stance. His other hand holds the huge black broken-edged greatsword the whole time; the weapon stays visible. The opponent is invisible, there is no other person in the frame. Only Asta is drawn."
+  },
+  {
+   "clip": "ledge",
+   "frames": "all",
+   "severity": "high",
+   "problem": "A stray brown striped log is drawn across the top of every frame, touching the top-left edge, and both fists clamp around it. The greatsword floats at his waist with no hand on it. The log comes from the base ledgegrab@last, which climb also uses, so regenerate ledgegrab first with this wording (or use a log-free base) and then ledge from it. Otherwise the log comes back.",
+   "fix": "regenerate",
+   "detail": "hangs by his left hand from an invisible ledge above him, the left arm stretched straight up with the empty hand closed on nothing near the top of the picture but fully inside it, his right hand holding the huge black broken-edged greatsword pointing down beside his dangling legs, which sway gently, a seamless loop; nothing is in his raised hand: no log, no bar, no branch, no cliff, no rock, no wall. Only Asta is drawn."
+  },
+  {
+   "clip": "sspecial",
+   "frames": "1-10",
+   "severity": "high",
+   "problem": "In frames 1-10 Asta is recoloured into a black silhouette with cyan outlines, so his skin, hair, cape and trousers are gone and he is off model for most of the move. Frames 1-7 are also buried under huge swirling black and cyan vortexes and flat grey cloud slabs that fill the frame.",
+   "fix": "regenerate",
+   "detail": "Black Meteorite rush, facing right: crouches, then charges forward low with a long stride, thrusting the huge black broken-edged greatsword straight ahead, strikes three fast forward cuts in front of him, then a final rising slash, then skids to a stop and settles back into the stance. His skin, spiky hair, black cape, navy trousers and the sword keep exactly the colours of the first frame in every frame. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "uspecial",
+   "frames": "2-10",
+   "severity": "high",
+   "problem": "A giant black tornado, larger than his body, covers him in 9 of 12 frames. Only his head and a hand show and the sword cannot be read. Frame 7 also has a flat grey patch cut by the left edge. The game draws the tornado itself.",
+   "fix": "regenerate",
+   "detail": "Black Hurricane, facing right: crouches, then springs straight upward spinning like a drill with the huge black broken-edged greatsword held out at arm's length and whirling around him, his body and the blade visible in every frame, ending in mid-air with the sword raised above his head, legs dangling. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "usmash",
+   "frames": "0-4",
+   "severity": "high",
+   "problem": "There is no crouch or wind-up. Frame 0, the impact, is a huge black, white and taupe fan smear with no blade drawn, cut flat by the top and right edges, and the game freezes on it for the whole startup and active window. In frames 1-2 a lightning bolt runs off the top and right edges, and in frames 1-4 the blade tip is cut by the top edge. Frames 5-11 are just the stance.",
+   "fix": "regenerate",
+   "detail": "rising smash, facing right: crouches low holding the huge black broken-edged greatsword low in front of him with both hands, then swings it up in a big arc in front of him until the blade points straight up above his head, holds it there for a moment, then lowers it back into the fighting stance. The whole blade stays inside the picture with empty space above it in every frame. Only Asta is drawn."
+  },
+  {
+   "clip": "ultimate",
+   "frames": "6-8, 10-12, 14-17, 20-22",
+   "severity": "high",
+   "problem": "Giant black-and-white slash crescents, two to three times his size, appear in about 13 of 28 frames. In frames 15-17 they cover his legs and the ground, and in frame 20 a white crescent hides his whole front. The game draws the Black Divider crescent itself, so these would double up and hide the fighter. The impacts (sheets.txt 7,11,15,20) must be refitted on the new slashes.",
+   "fix": "regenerate",
+   "detail": "Black Divider: dashes forward and slashes the huge black broken-edged greatsword four times in quick succession in front of him, then winds up and swings one huge horizontal cut to the front at full extension, then returns to the stance. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "w0_ultimate",
+   "frames": "3-10, 18-22",
+   "severity": "high",
+   "problem": "Every slash is a large black and white smear cut flat by the right or top edge (frames 3, 4, 6, 7, 9, 10, 18, 19). Frames 20-22 are a black and white spike explosion that covers his front half and is cut by the right edge, and impact 21 sits inside it. The upward spring is never shown: his feet stay on the ground throughout.",
+   "fix": "regenerate",
+   "detail": "Black Meteorite: springs upward off the ground, slashing the huge black broken-edged Demon-Slayer greatsword upward three times, then raises it over his head with both hands and drops straight down, slamming the blade down to the ground in front of him, then rises back into the stance. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "w1_sspecial",
+   "frames": "3-11",
+   "severity": "high",
+   "problem": "Every slash frame is a huge black and white smear covering most of the frame and Asta's body. The edges cut them off: frames 4, 6 and 8 on the left, frames 3 and 8 on the right, frame 11 at the top. At impact frame 8 the katana is hidden and he is half covered.",
+   "fix": "regenerate",
+   "detail": "Black Divider: crouches, then dashes forward low, slashing the slim black katana-like Demon Dweller Sword five times in quick succession in front of him, then one final rising cut, then skids to a stop and settles back into the ready stance holding the sword forward. The sword stays in his hand and visible in every frame. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "w1_jab",
+   "frames": "0-2",
+   "severity": "high",
+   "problem": "Frames 0-2 are giant black and white swing smears and the katana is never in his hand. Frame 0 shows him empty-handed under a smear cut by the top-left edge, and the game freezes it for the whole startup. Impact frame 1 is a giant flat white crescent that covers his legs, touches the left and right edges and sits mostly behind and below him, while the hitbox is in front of his chest. Base: w1guard@last.",
+   "fix": "regenerate",
+   "detail": "quick katana cut, facing right: holding the slim black katana-like Demon Dweller Sword with a dark guard forward in a ready stance, he draws it back, then slashes it in one fast horizontal cut in front of him at chest height, then returns to the ready stance holding it forward. The sword stays in his hand, visible and fully inside the picture in every frame. Only Asta is drawn."
+  },
+  {
+   "clip": "w0_jab",
+   "frames": "all",
+   "severity": "high",
+   "problem": "Impact frame 4 is a huge black and white swing smear cut off by the top and right edges, and frame 5 is a large spiky black smear running to the right edge. In every frame he swings a grey serrated sword, while his idle, walk and the same weapon's w0_nspecial and w0_ultimate all show the black-and-white broken-edged greatsword, so in game the sword changes shape and colour between moves. He is also turned to the camera in frames 0-3. Replacing frames 4-5 would only fix the smear.",
+   "fix": "regenerate",
+   "detail": "heavy weapon strike, facing right: raises the huge black broken-edged greatsword high over his right shoulder with both hands, then brings it down in one heavy diagonal cut to low in front of him, then back into the stance. The sword looks exactly like the one in his idle pose. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "spotdodge",
+   "frames": "0-2",
+   "severity": "high",
+   "problem": "Wrong action. He never ducks or leans back: he blocks with the sword upright while a big yellow burst and a taupe slab explode in front of him (frame 0), and an invented pink projectile and yellow sparks fly in (frames 1-2). It reads as a parry, not a dodge.",
+   "fix": "regenerate",
+   "detail": "spot dodge: quickly ducks down low on the spot, bending his knees and leaning his head and torso back so a blow passes over him, then straightens up into the stance. He keeps holding the huge black broken-edged greatsword low at his side the whole time; the weapon stays visible. Only Asta is drawn."
+  },
+  {
+   "clip": "jump",
+   "frames": "0",
+   "severity": "high",
+   "problem": "The take-off frame 0 is off model. He stands stiff and front-facing in a closed black shirt with gold emblems instead of the bare chest and short cape, with thinner, taller proportions and the sword held flat at his hip. Frames 1-7 are the on-model tucked pose, so every jump starts with a flash of a different character design.",
+   "fix": "replace_frames",
+   "detail": "frame 0 <- frame 1"
+  },
+  {
+   "clip": "jab",
+   "frames": "2-5",
+   "severity": "high",
+   "problem": "Frame 2 has an opaque flat grey slab under the thrust smear, reaching down to the floor and cut by the bottom edge. sheets.txt uses frame 2 as the impact, so the game holds this grey block on the most-used move. The blade reaches full extension at frame 3 and stays out through 4. The clip's old impact 5 was already tilting back up.",
+   "fix": "replace_frames",
+   "detail": "frame 2 <- frame 3; keep impact 2 (as in sheets.txt), which then shows the full forward thrust"
+  },
+  {
+   "clip": "jab2",
+   "frames": "3",
+   "severity": "high",
+   "problem": "The impact frame 3 is covered by a huge flat taupe/brown blob that fills the upper right, is cut flat by the top and right edges, and hides his arms and the blade. It looks like a brown paper cut-out instead of a slash, and the game holds it while the hitbox is out.",
+   "fix": "replace_frames",
+   "detail": "frame 3 <- frame 4 (blade landed low in front, down-right; keep impact 3)"
+  },
+  {
+   "clip": "nspecial",
+   "frames": "4-5",
+   "severity": "high",
+   "problem": "Impact frame 4 is filled by a flat taupe rectangle with straight edges and a giant black-and-white crescent cut by the frame edges, hiding his arms and the sword. Frame 5 has a large taupe blob. Both read as a brown box behind him, and the game holds frame 4 while the hitbox is out.",
+   "fix": "replace_frames",
+   "detail": "frame 4 <- frame 6, frame 5 <- frame 6 (blade down in front with only a medium black crescent leaving; impact stays 4)"
+  },
+  {
+   "clip": "fsmash",
+   "frames": "5-6",
+   "severity": "high",
+   "problem": "Impact frame 5 is a large black, white and taupe smear covering half the frame, close to the right edge, with flat brown slabs inside the arc that hide the blade. Frame 6 still has a taupe fill. In game they look like brown cardboard pieces at the moment of impact. Frame 7 shows the blade level in front with only the spiky black streak.",
+   "fix": "replace_frames",
+   "detail": "frame 5 <- frame 7, frame 6 <- frame 7 (keep impact 5)"
+  },
+  {
+   "clip": "w0_nspecial",
+   "frames": "5-7",
+   "severity": "high",
+   "problem": "Impact frame 5 and frame 6 are filled by a huge black crescent with a big flat taupe disc, cut by the top and right edges, which hides the blade. Frame 7 still has a large crescent tail running to the edge. The game draws the crescent projectile itself.",
+   "fix": "replace_frames",
+   "detail": "frame 5 <- frame 8, frame 6 <- frame 8, frame 7 <- frame 8 (blade cut down low in front with only a small black flick; impact stays 5)"
+  },
+  {
+   "clip": "climb",
+   "frames": "0-2",
+   "severity": "medium",
+   "problem": "Frames 0-1 still show the brown log from the ledgegrab@last base, which he hangs from. Frame 2 snaps straight from hanging to the full standing stance, so as the game lifts him over the ledge he stands in mid-air with his feet sunk into the platform face. No pull-up is drawn. Regenerate after the new ledgegrab/ledge, from a log-free hanging frame.",
+   "fix": "regenerate",
+   "detail": "pulls himself up over the invisible ledge he is hanging from: hauls his chest up to the top of the picture, swings one knee up, then rises and stands up in the fighting stance, holding the huge black broken-edged greatsword in one hand the whole time; the pull-up takes most of the frames; no log, no bar, no branch, no cliff, no rock, no wall, no ground. Only Asta is drawn."
+  },
+  {
+   "clip": "dair",
+   "frames": "1-7",
+   "severity": "medium",
+   "problem": "The down air is a diagonal chop in front: the blade points down-right at about 60 degrees with its tip ahead of his feet, never straight down beneath him. It looks the same as bair and fair, and the blade does not cover the space under him where a dair hits.",
+   "fix": "regenerate",
+   "detail": "downward stab in mid-air: grips the huge black broken-edged greatsword with both hands and turns it to point straight down, the blade vertical directly beneath his feet, plunges it down, then pulls it back up to the tucked pose. The whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "bthrow",
+   "frames": "1-5",
+   "severity": "medium",
+   "problem": "There is no throw. From the hold pose he does a sword sweep with a huge white arc across the whole frame width (frame 1), then holds the sword upright behind his head with a trail (frame 2), and stands facing the camera in frames 2-5. His free hand never swings anyone behind him, so it reads as a slash, not a back throw.",
+   "fix": "regenerate",
+   "detail": "back throw: grips the invisible opponent in front of him with his free hand, twists his whole body around to the left and hurls it away behind him with a big arm swing, his throwing arm ending stretched out behind him, then turns back to face right into the fighting stance; the huge black broken-edged greatsword stays in his other hand the whole time, no slash trail; the opponent is invisible, there is no other person in the frame. Only Asta is drawn."
+  },
+  {
+   "clip": "dizzy",
+   "frames": "0-5",
+   "severity": "medium",
+   "problem": "In frames 0-5 he turns to face the camera and stands upright in a wide stance. Nothing looks dazed: no sway, no droop. Frames 6-7 snap back to the right-facing guard, so the sprite visibly turns front and back on every loop.",
+   "fix": "regenerate",
+   "detail": "dazed and dizzy, staying in side profile facing right the whole time: knees sagging, sways slowly forward and back on the spot, head drooping and wobbling, free arm hanging loose, the huge black broken-edged greatsword held loosely in one hand with its tip lowered toward the ground, a seamless loop that ends exactly on the first pose. Only Asta is drawn."
+  },
+  {
+   "clip": "helpless",
+   "frames": "all",
+   "severity": "medium",
+   "problem": "The clip is the jump/fall tuck with the legs stretching and re-tucking. There are no limp arms above the head and no exhausted slump, so a player cannot tell the helpless state from a normal fall.",
+   "fix": "regenerate",
+   "detail": "falls helplessly, exhausted: body limp and slumped, head drooping, both arms hanging loose above his head, legs dangling straight down, the body turning slowly, a seamless loop that ends exactly on the first pose. He keeps holding the huge black broken-edged greatsword loosely in one hand the whole time; the whole blade stays inside the picture. Only Asta is drawn."
+  },
+  {
+   "clip": "roll",
+   "frames": "1-4",
+   "severity": "medium",
+   "problem": "The huge greatsword disappears for half the roll (frames 1-4) and pops back into his hands in frame 5. That is off model against the idle, where the sword is always visible.",
+   "fix": "regenerate",
+   "detail": "dodge roll: tucks and rolls forward in a tight ball along the ground, hugging the huge black broken-edged greatsword flat against his body so the blade stays visible in every frame, then springs back up into the same stance holding it in front of him. Only Asta is drawn."
+  },
+  {
+   "clip": "walk",
+   "frames": "2-5",
+   "severity": "medium",
+   "problem": "In the middle of each cycle his torso twists to face the camera: bare chest and abs out front, the cape open over both shoulders. Frames 0, 1, 6 and 7 match the idle three-quarter view with the cape over his back, so his chest flickers in and out every step.",
+   "fix": "regenerate",
+   "detail": "walks forward to the right in side profile: the body, chest and head stay turned to the right exactly like the first frame with the cape kept over his back, the back leg steps past the front leg, then the other, a seamless two-step walk cycle that ends exactly on the first pose. He keeps holding the huge black broken-edged greatsword pointed up and forward the whole time; the weapon stays visible."
+  },
+  {
+   "clip": "dspecial",
+   "frames": "1, 7",
+   "severity": "medium",
+   "problem": "Impact frame 7 is a huge white slash crescent over an opaque flat grey rectangle with square corners, filling the top two thirds of the frame and cut by the top and right edges, right where the hitbox is. Frame 1 has an oversized white and black flare covering the upper half of the frame above the sword.",
+   "fix": "replace_frames",
+   "detail": "frame 7 <- frame 8 (bat swing forward with a small trail; keep impact 7); frame 1 <- frame 2"
+  },
+  {
+   "clip": "fair",
+   "frames": "1",
+   "severity": "medium",
+   "problem": "Impact frame 1 has a large flat grey disc, bigger than his body, behind big white arcs. It is cut by the top edge and the arcs touch the right edge, so in game it reads as a grey plate hanging under him. Frame 2 shows the same downward cut in front with a thin arc inside the frame.",
+   "fix": "replace_frames",
+   "detail": "frame 1 <- frame 2 (keep impact 1)"
+  },
+  {
+   "clip": "getupattack",
+   "frames": "0",
+   "severity": "medium",
+   "problem": "Frame 0, where he is still lying down and the first impact in sheets.txt (0,3), has a huge white and grey crescent that fills most of the frame and is cut at the top and bottom. Frame 1 shows the low front cut cleanly.",
+   "fix": "replace_frames",
+   "detail": "frame 0 <- frame 1 (impacts stay 0,3)"
+  },
+  {
+   "clip": "getup",
+   "frames": "1",
+   "severity": "medium",
+   "problem": "getup is not an attack, but frame 1 shows a slash: a big solid grey-brown oval plus white sword arcs, cut by the right edge and covering half the frame. It reads as a get-up attack.",
+   "fix": "replace_frames",
+   "detail": "frame 1 <- frame 2"
+  },
+  {
+   "clip": "uair",
+   "frames": "4, 8",
+   "severity": "medium",
+   "problem": "A large flat tan blob, about half the frame, with grey streaks sits behind the downswing in frame 4 and the upswing in frame 8. It reads as a brown disc pasted next to him, and frame 8 is the impact held in sheets.txt.",
+   "fix": "replace_frames",
+   "detail": "frame 4 <- frame 5, frame 8 <- frame 9 (same poses without the blob; impact stays 8)"
+  },
+  {
+   "clip": "dashattack",
+   "frames": "2-3",
+   "severity": "medium",
+   "problem": "sheets.txt holds frame 6 for the hit: a recovery pose, standing with the blade raised, so he is shown recovering while both blows are out. The lunge with the blade straight forward is frames 2 (low sweep) and 3 (chest height). The first blow's hitbox, which rises above his head, should also be refitted onto the horizontal blade in front.",
+   "fix": "retime",
+   "detail": "2,3"
+  },
+  {
+   "clip": "dtilt",
+   "frames": "0-2",
+   "severity": "medium",
+   "problem": "The impact is frame 0, the very first frame: standing upright with the blade at waist height and no startup. The game holds it through the first active frames while the hitbox runs down to the floor. He reaches the crouched low cut, blade at shin height along the floor, at frame 2.",
+   "fix": "retime",
+   "detail": "2"
+  },
+  {
+   "clip": "dthrow",
+   "frames": "0",
+   "severity": "medium",
+   "problem": "The impact is frame 0, the standing hold pose before any motion. The slam, crouched with both hands on the ground in front, lands at frame 3.",
+   "fix": "retime",
+   "detail": "3"
+  },
+  {
+   "clip": "pummel",
+   "frames": "1-3",
+   "severity": "medium",
+   "problem": "The impact is frame 3, the plain holding stance with no knee. The knee strike with the swoosh is frame 1.",
+   "fix": "retime",
+   "detail": "1"
+  },
+  {
+   "clip": "uthrow",
+   "frames": "2-3",
+   "severity": "low",
+   "problem": "A stray grey-brown rag is drawn in his raised hand in frame 2 and flying above his fist in frame 3, where the top edge cuts it off. The opponent should be invisible.",
+   "fix": "replace_frames",
+   "detail": "frame 2 <- frame 1, frame 3 <- frame 4 (same raised-fist pose without the rag; impact 3 then shows the fist high)"
+  },
+  {
+   "clip": "grab",
+   "frames": "0-6",
+   "severity": "low",
+   "problem": "The clip sheet labels impact 6, the recovered idle stance, so the grab box comes out while he stands still (the in-game page shows this). The forward lunge with both arms pushed out is frames 0-3. sheets.txt already holds 1, so keep it and do not let it go back to 6. He pushes the sword upright instead of reaching with an open hand, but the lunge reads as a grab once the box comes out on it.",
+   "fix": "retime",
+   "detail": "1"
+  },
+  {
+   "clip": "ftilt",
+   "frames": "2-5",
+   "severity": "low",
+   "problem": "The clip sheet labels impact 5, where the blade is already back at waist height in recovery. The in-game page shows the hitbox capsule above his head, far from the drawn blade. The overhead cut sweeps from above his head to low in front at frame 2 and lands at frame 3. sheets.txt already holds 2, whose arc covers the hitbox, so keep it and do not let it go back to 5.",
+   "fix": "retime",
+   "detail": "2"
+  }
+ ]
+}

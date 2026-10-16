@@ -1,0 +1,339 @@
+{
+ "frames": [
+  {
+   "filename": "kamutoke-sky-bolt 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 1.png",
+   "frame": {
+    "x": 112,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 2.png",
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 3.png",
+   "frame": {
+    "x": 336,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 4.png",
+   "frame": {
+    "x": 0,
+    "y": 272,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 5.png",
+   "frame": {
+    "x": 112,
+    "y": 272,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 6.png",
+   "frame": {
+    "x": 224,
+    "y": 272,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 7.png",
+   "frame": {
+    "x": 336,
+    "y": 272,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 8.png",
+   "frame": {
+    "x": 0,
+    "y": 544,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 9.png",
+   "frame": {
+    "x": 112,
+    "y": 544,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 10.png",
+   "frame": {
+    "x": 224,
+    "y": 544,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  },
+  {
+   "filename": "kamutoke-sky-bolt 11.png",
+   "frame": {
+    "x": 336,
+    "y": 544,
+    "w": 112,
+    "h": 272
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 272
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 272
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 0.9117647058823529
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "kamutoke-sky-bolt.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 448,
+   "h": 816
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 56,
+   "y": 248
+  },
+  "frameTags": [
+   {
+    "name": "kamutoke-sky-bolt",
+    "from": 0,
+    "to": 11,
+    "direction": "forward"
+   }
+  ]
+ }
+}

@@ -1,8 +1,11 @@
 // Fighter state machine: reads the controller and decides what happens.
+#include <initializer_list>
+
 #include "core/match.hpp"
 
 namespace {
 using IS = InputState;
+constexpr float kAttackStep = 0.5f;  // jabs and tilts: how fast the stick moves the fighter (share of its walk)
 
 bool isAerial(int m) { return m >= NAir && m <= DAir; }
 bool isSpecialMove(int m) { return (m >= NSpecial && m <= DSpecial) || m >= Extra1; }
@@ -30,6 +33,30 @@ int aerialFor(const Fighter& f, Vec2 d) {
   return (d.x > 0 ? 1 : -1) == f.facing ? FAir : BAir;
 }
 
+// Command inputs, read on the stick's history (numpad notation, `face` = 1 facing right): the steps of `seq` in
+// order within the last 18 frames, the last one held now or a frame ago.
+bool motion(const Fighter& f, std::initializer_list<int> seq, int face) {
+  auto mirror = [&](int d) { return face > 0 ? d : (d % 3 == 1 ? d + 2 : d % 3 == 0 ? d - 2 : d); };
+  const int* steps = seq.begin();
+  const int n = int(seq.size());
+  int k = n - 1;
+  // The whole motion within 26 frames; its last direction held now, or let go at most 3 frames before the button
+  // (a little slack: keyboards and pads alike).
+  for (int i = 0; i < 26 && k >= 0; ++i) {
+    if (f.dirHist[i] == mirror(steps[k])) --k;
+    else if (k == n - 1 && i > 3) return false;
+  }
+  return k < 0;
+}
+
+// Tap jump: the stick flicked up (gamepads, the setting on).
+bool tapJumped(const Fighter& f) { return f.in.tapJump && f.in.stick.y < -0.6f && f.flickY(); }
+
+// A + B together: a smash attack (as Smash Bros.' "A+B smash" option).
+bool abPressed(const Fighter& f) {
+  return (f.pressed(&IS::attack) && f.in.special) || (f.pressed(&IS::special) && f.in.attack);
+}
+
 int specialFor(Fighter& f) {
   Vec2 s = f.in.stick;
   if (s.y < -0.5f && std::fabs(s.y) >= std::fabs(s.x) * 0.7f) return USpecial;
@@ -55,8 +82,20 @@ void Match::setState(Fighter& f, FState s, int timer) {
 }
 
 void Match::startMove(Fighter& f, int id) {
+  if (const WeaponDef* w = f.weaponDef(); w && w->kit) {  // the weapon's kit: its M1 on the ground and in the air
+    if (id == FTilt || id == UTilt || id == DTilt || id == DashAttack)
+      id = Jab;
+    else if (id == FSmash || id == USmash || id == DSmash)  // the heavy attack: the combo's finisher at once
+      id = Jab3;
+    else if (id == FAir || id == BAir || id == UAir || id == DAir)
+      id = NAir;
+  }
   const MoveDef& m = f.moveDef(id);
   if (!m.exists()) return;
+  if (m.cooldown > 0) {  // still recharging: nothing happens
+    if (f.moveCooldown[id] > 0) return;
+    f.moveCooldown[id] = m.cooldown;
+  }
   f.state = FState::Attack;
   f.stateFrame = 0;
   f.move = id;
@@ -72,8 +111,19 @@ void Match::startMove(Fighter& f, int id) {
   if (id == SSpecial && !f.grounded) f.sideSpecialUsed = true;
 }
 
+// A smash attack at full power without charging it (the command inputs): the screen flashes.
+void Match::startChargedSmash(Fighter& f, int id) {
+  startMove(f, id);
+  const MoveDef& m = f.moveDef(id);
+  if (f.move != id) return;
+  if (m.chargeFrame >= 0) f.charge = m.maxCharge;
+  f.charging = false;
+  emit(EvType::SuperFlash, f.center(), f.id);
+}
+
 bool Match::tryGroundActions(Fighter& f) {
   const IS& in = f.in;
+  // The ultimate: its own button only (U on the keyboard), never the special.
   if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
     return true;
@@ -84,6 +134,22 @@ bool Match::tryGroundActions(Fighter& f) {
   }
   if (f.pressed(&IS::grab) || (in.shield && f.pressed(&IS::attack))) {
     startMove(f, Grab);
+    return true;
+  }
+  if (f.pressed(&IS::attack)) {  // command inputs: a smash at full power
+    for (int face : {f.facing, -f.facing})
+      if (motion(f, {2, 3, 6}, face)) {  // quarter circle forward: forward smash
+        f.facing = face;
+        startChargedSmash(f, FSmash);
+        return true;
+      }
+    if (motion(f, {2, 8}, 1)) {  // down then up: up smash
+      startChargedSmash(f, USmash);
+      return true;
+    }
+  }
+  if (abPressed(f)) {  // attack + special together: a smash attack
+    startMove(f, smashFor(f, in.stick.len() > 0.3f ? in.stick : Vec2{float(f.facing), 0.0f}));
     return true;
   }
   if (f.pressed(&IS::special)) {
@@ -118,12 +184,20 @@ bool Match::tryGroundActions(Fighter& f) {
     setState(f, FState::Shield);
     return true;
   }
+  if (tapJumped(f)) {  // on keys, a slightly longer crouch leaves the time to add the attack (up tilt)
+    setState(f, FState::JumpSquat, f.in.digital ? std::max(f.def->jumpSquat, 5) : f.def->jumpSquat);
+    return true;
+  }
   return false;
 }
 
 bool Match::tryAirActions(Fighter& f) {
   if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
+    return true;
+  }
+  if (abPressed(f)) {  // attack + special together: an aerial
+    startMove(f, aerialFor(f, f.in.stick.len() > 0.3f ? f.in.stick : Vec2{float(f.facing), 0.0f}));
     return true;
   }
   if (f.pressed(&IS::special)) {
@@ -145,7 +219,7 @@ bool Match::tryAirActions(Fighter& f) {
     startMove(f, aerialFor(f, f.in.stick));
     return true;
   }
-  if (f.pressed(&IS::jump) && f.airJumps > 0) {
+  if ((f.pressed(&IS::jump) || tapJumped(f)) && f.airJumps > 0) {
     airJump(f);
     return true;
   }
@@ -190,7 +264,7 @@ void Match::groundFriction(Fighter& f, float mul) {
 
 void Match::startJump(Fighter& f) {
   const CharacterDef& d = *f.def;
-  f.vel.y = -(f.in.jump ? d.jumpVel : d.shortHopVel);
+  f.vel.y = -(f.in.jump || (f.in.tapJump && f.in.stick.y < -0.6f) ? d.jumpVel : d.shortHopVel);
   f.vel.x = clampf(f.vel.x + f.in.stick.x * 1.5f, -d.airSpeed, d.airSpeed);
   f.grounded = false;
   f.groundPlat = -1;
@@ -217,20 +291,21 @@ void Match::updateFighter(Fighter& f) {
     return;
   }
   if (f.flash > 0) f.flash--;
-  if (f.form >= 0) {  // transformation running out
-    const FormDef* fd = f.formDef();
-    bool over = !fd;
-    if (fd && fd->duration > 0) over = --f.formTimer <= 0;
-    else if (fd) over = f.state != FState::Attack || f.move != f.formMove;
-    if (over) endForm(f);
-  }
   if (f.hitlag > 0) {
     f.hitlag--;
     return;
   }
   f.stateFrame++;
+  if (f.form >= 0) {  // transformations wear off (never in the middle of a move they change)
+    const bool moveLong = f.formTimer <= 0 && f.formMove >= 0;
+    if (!moveLong && f.formTimer > 0) --f.formTimer;
+    const bool over = moveLong ? !(f.state == FState::Attack && f.move == f.formMove) : f.formTimer <= 0;
+    if (over && f.state != FState::Attack) endForm(f);
+  }
   if (f.intangible > 0) f.intangible--;
   if (f.invincible > 0) f.invincible--;
+  for (int& c : f.moveCooldown)
+    if (c > 0) --c;
   if (f.ledgeCooldown > 0) f.ledgeCooldown--;
   if (f.dropThrough > 0) f.dropThrough--;
   if (f.techWindow > 0) f.techWindow--;
@@ -308,6 +383,21 @@ void Match::updateFighter(Fighter& f) {
       break;
     case FState::JumpSquat:
       groundFriction(f, 0.5f);
+      // As in Smash Bros., the jump's crouch can still turn into an up attack: up + special is the up special,
+      // up + attack the up smash (on keys, the attack a little after the up key: the up tilt), the smash key or
+      // the smash stick up the up smash. So up jumps and attacks upward on the same direction.
+      if (in.stick.y < -0.5f && f.pressed(&IS::special)) {
+        startMove(f, USpecial);
+        break;
+      }
+      if (in.stick.y < -0.5f && (f.pressed(&IS::attack) || f.pressed(&IS::smash))) {
+        startMove(f, in.digital && !f.pressed(&IS::smash) && !in.special ? UTilt : USmash);
+        break;
+      }
+      if (f.cstickPressed() && in.cstick.y < -0.5f && std::fabs(in.cstick.y) > std::fabs(in.cstick.x)) {
+        startMove(f, USmash);
+        break;
+      }
       if (f.stateFrame >= f.timer) startJump(f);
       break;
     case FState::Air:
@@ -335,7 +425,7 @@ void Match::updateFighter(Fighter& f) {
         emit(EvType::ShieldBreak, f.center(), f.id);
         break;
       }
-      if (f.pressed(&IS::jump)) { setState(f, FState::JumpSquat, d.jumpSquat); break; }
+      if (f.pressed(&IS::jump) || tapJumped(f)) { setState(f, FState::JumpSquat, d.jumpSquat); break; }  // out of shield
       if (f.pressed(&IS::attack) || f.pressed(&IS::grab)) { startMove(f, Grab); break; }
       if (f.flickX()) {
         setState(f, FState::Roll, 28);
@@ -475,6 +565,16 @@ void Match::updateFighter(Fighter& f) {
 }
 
 void Match::updateMove(Fighter& f) {
+  // Attack and special a frame or two apart still make an A+B smash: the move just started becomes the smash.
+  if (f.grounded && !f.moveStartedAir && f.moveFrame <= 3 && abPressed(f)) {
+    const bool normal = f.move == Jab || f.move == Jab2 || f.move == Jab3 || f.move == FTilt || f.move == UTilt ||
+                        f.move == DTilt;
+    const bool special = f.move == NSpecial || f.move == SSpecial || f.move == USpecial || f.move == DSpecial;
+    if (normal || special) {
+      startMove(f, smashFor(f, f.in.stick.len() > 0.3f ? f.in.stick : Vec2{float(f.facing), 0.0f}));
+      return;
+    }
+  }
   const MoveDef& m = f.moveDef(f.move);
   const IS& in = f.in;
   if (f.charging && f.moveFrame == m.chargeFrame) {
@@ -516,16 +616,24 @@ void Match::updateMove(Fighter& f) {
     }
     if (f.vel.y < -0.5f) f.grounded = false;
   }
-  if (m.projectileFrame == t) spawnProjectiles(f, m.projectile);
+  if (m.projectileFrame >= 0 && t >= m.projectileFrame) {
+    const int k = t - m.projectileFrame;
+    if (k == 0 || (m.projectileEvery > 0 && k % m.projectileEvery == 0 && k / m.projectileEvery <= m.projectileRepeat))
+      spawnProjectiles(f, m.projectile);
+  }
+  for (const auto& sh : m.shots)
+    if (sh.frame == t) spawnProjectiles(f, sh.def);
   if (m.formIndex >= 0 && m.formFrame == t) startForm(f, m.formIndex);
   if (m.intangibleStart >= 0 && t == std::max(1, m.intangibleStart))  // t starts at 1
     f.intangible = m.intangibleEnd - t;
-  if (m.teleportFrame == t && (m.counterStart < 0 || f.counterTriggered)) {
-    const Fighter* tg = m.teleportToTarget ? nearestOpponent(f) : nullptr;
-    if (tg) {  // right in front of the nearest opponent
-      const int side = tg->pos.x >= f.pos.x ? 1 : -1;
-      f.pos = {tg->pos.x - side * m.teleportDist, tg->pos.y};
-      f.facing = side;
+  if (m.teleportFrame == t) {
+    const Vec2 from = f.pos;
+    const int target = m.teleportToTarget ? nearestOpponent(f) : -1;
+    if (target >= 0) {  // right in front of the nearest opponent, on the side it came from, facing it
+      const Fighter& o = fighters[target];
+      const int side = f.pos.x <= o.pos.x ? -1 : 1;
+      f.pos = {o.pos.x + side * (o.width() * 0.5f + f.width() * 0.5f + 14.0f), o.pos.y};
+      f.facing = -side;
     } else {
       Vec2 dir = m.teleportForward || m.teleportToTarget ? Vec2{float(f.facing), 0.0f}
                  : in.stick.len() > 0.3f                 ? in.stick.norm()
@@ -536,9 +644,9 @@ void Match::updateMove(Fighter& f) {
     if (m.turnAfterTeleport) f.facing = -f.facing;
     f.grounded = false;
     f.vel = {0, 0};
-    for (const auto& p : platforms) {  // never end up inside the stage
+    for (const auto& p : platforms) {  // never end up inside the stage: out on top, unless coming from below it
       if (p.solid && p.rect.contains({f.pos.x, f.pos.y - 1.0f})) {
-        if (f.pos.y - p.rect.top() < p.rect.h * 0.6f) f.pos.y = p.rect.top();
+        if (from.y <= p.rect.bottom() || f.pos.y - p.rect.top() < p.rect.h * 0.6f) f.pos.y = p.rect.top();
         else f.pos.y = p.rect.bottom() + f.height() + 1.0f;
       }
     }
@@ -574,6 +682,18 @@ void Match::updateMove(Fighter& f) {
 
   if (f.grounded) {
     groundFriction(f, m.frictionMul);
+    // Jabs and tilts: the stick shuffles the fighter forward or back while it hits (a little, without turning
+    // around), but never off the edge of its platform.
+    if (f.move <= DTilt && std::fabs(in.stick.x) > 0.3f && f.groundPlat >= 0) {
+      const float want = clampf(in.stick.x, -1.0f, 1.0f) * f.def->walkSpeed * kAttackStep;
+      float v = f.vel.x;
+      if (want > 0.0f ? v < want : v > want)
+        v = approach(v, want, f.def->groundAccel * 0.5f + f.def->friction * m.frictionMul);
+      const Rect& r = platforms[f.groundPlat].rect;  // pushed towards an edge: stops right before it
+      if (want > 0.0f) v = std::min(v, std::max(0.0f, r.right() - 2.0f - f.pos.x));
+      else v = std::max(v, std::min(0.0f, r.left() + 2.0f - f.pos.x));
+      f.vel.x = v;
+    }
   } else {
     if (m.allowDrift) airControl(f, (isAerial(f.move) || f.moveStartedAir) ? 1.0f : 0.6f);
     applyGravity(f, m.gravityMul);
@@ -674,34 +794,13 @@ void Match::updateGrabbed(Fighter& f) {
   if (f.escapeTimer <= 0 && g->state == FState::Holding) releaseGrab(f, true);
 }
 
-void Match::startForm(Fighter& f, int index) {
-  if (index < 0 || index >= int(f.def->forms.size())) return;
-  if (f.form >= 0) endForm(f);
-  const FormDef& fd = f.def->forms[index];
-  f.form = index;
-  f.formTimer = fd.duration;
-  f.formMove = fd.duration > 0 ? -1 : f.move;
-  emit(EvType::Transform, f.center(), f.id, int(fd.form));
-}
-
-void Match::endForm(Fighter& f) {
-  if (f.form < 0) return;
-  const FormDef* fd = f.formDef();
-  emit(EvType::TransformEnd, f.center(), f.id, fd ? int(fd->form) : 0);
-  f.form = -1;
-  f.formTimer = 0;
-  f.formMove = -1;
-}
-
 // Held by an opponent's cinematic ultimate: pulled to the hold point (or frozen where it was caught).
 void Match::updateCaptured(Fighter& f) {
   Fighter* c = f.captor >= 0 && f.captor < int(fighters.size()) ? &fighters[f.captor] : nullptr;
   const MoveDef* m = c ? c->currentMove() : nullptr;
-  if (!c || !c->active() || !m || c->move != FinalSmash) {  // the cinematic is over: let go
+  if (!c || !c->active() || !m || c->move != FinalSmash) {
     f.captor = -1;
-    setState(f, FState::Air);
-    f.vel = {0.0f, -4.0f};
-    f.grounded = false;
+    setState(f, f.grounded ? FState::Idle : FState::Air);
     return;
   }
   f.vel = f.kbVel = {0, 0};

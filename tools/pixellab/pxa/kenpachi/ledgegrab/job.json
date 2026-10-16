@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "f2034821-cea7-4c4b-a476-cac75d052bfa",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5d0fb9cf-1473-4634-a352-5a3468e36144",
+  "description": "jumps up and stretches his free arm straight up above his head, the empty hand closing on nothing near the top of the picture but fully inside it, then hangs still from that raised hand with the legs dangling below, his other hand holding a long jagged katana pointing down beside his legs; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Kenpachi Zaraki from Bleach, a very tall man with spiky black hair tied with bells, an eyepatch, a torn white captain haori over a black robe, holding a long jagged katana",
+  "initial_pose": "in mid-air facing right, knees tucked, weapon in hand"
+ },
+ "reply": "id: f2034821-cea7-4c4b-a476-cac75d052bfa\njob_id: f2034821-cea7-4c4b-a476-cac75d052bfa\ndescription: jumps up and stretches his free arm straight up above his head, the empty hand closing on nothing near the top of the picture but fully inside it, then hangs still from that raised hand with the legs dangling below, his other hand holding a long jagged katana pointing down beside his legs; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f2034821-cea7-4c4b-a476-cac75d052bfa\")\nasset_id: 199eab01-9989-5aba-adf9-f05ddf0af57b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/kenpachi/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

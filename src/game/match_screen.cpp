@@ -14,7 +14,7 @@ const char* dummyName(const CpuBrain& b, int level) {
   }
 }
 Rectangle pauseItemRect(int i, int n) {
-  float h = 52, gap = 12;
+  const float h = n > 6 ? 44.0f : 52.0f, gap = n > 6 ? 8.0f : 12.0f;  // the training menu is longer
   float top = kScreenH * 0.5f - (n * (h + gap)) * 0.5f + 40;
   return {kScreenW * 0.5f - 260, top + i * (h + gap), 520, h};
 }
@@ -58,7 +58,7 @@ void drawImpactFrame(const Match& m, const Fx::Impact& im, const Camera2D& cam, 
   beginWorld(cam);
   for (const auto& f : m.fighters) {
     if (!((im.mask >> f.id) & 1u) || !f.active()) continue;
-    drawCharacter(*f.def, f.palette, computePose(f, m, time), f.pos, f.facing, 1.0f, 1.0f, ink, 1.0f, time);
+    drawCharacterSprite(*f.def, f.palette, computePose(f, m, time), f.pos, f.facing, 1.0f, 1.0f, ink, 1.0f, time);
   }
   if (im.attacker >= 0 && im.attacker < int(m.fighters.size())) {  // its projectiles and beam are in the shot
     for (const auto& p : m.projectiles)
@@ -166,7 +166,11 @@ MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devic
   comboStart_.assign(m_.fighters.size(), 0.0f);
   comboShow_.assign(m_.fighters.size(), 0);
   updateCamera(true);
-  audio_.setMusic(2);
+  // the theme of the stage's world (music_<world>.mp3), else the synthesized battle theme
+  const std::string& series = m_.stage().series;
+  const char* world = series == "Naruto" ? "naruto" : series == "Bleach" ? "bleach" : series == "Black Clover" ? "blackclover"
+                      : series == "Jujutsu Kaisen" ? "jjk" : series.rfind("Zelda", 0) == 0 ? "zelda" : "battle";
+  audio_.setMusic(2, world);
 }
 
 std::vector<std::string> MatchScreen::pauseItems() const {
@@ -176,9 +180,17 @@ std::vector<std::string> MatchScreen::pauseItems() const {
     if (f.cpu) dummy = f.id;
   std::string mode = dummy >= 0 ? dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel) : "-";
   const Fighter& me = m_.fighters[0];
-  std::string weapon = upperFr("ARME : " + me.def->weapons[dropSlot_ & 1].name);
-  return {"REPRENDRE", "RÉINITIALISER LES POSITIONS", "MANNEQUIN : " + mode,
-          std::string("ZONES DE COUP : ") + (debug_ ? "OUI" : "NON"), weapon, "QUITTER L'ENTRAÎNEMENT"};
+  std::string weapon = upperFr("ARME " + std::to_string((dropSlot_ & 1) + 1) + "/2 : " + me.def->weapons[dropSlot_ & 1].name);
+  auto onOff = [](bool b) { return std::string(b ? "OUI" : "NON"); };
+  return {"REPRENDRE",
+          "RÉINITIALISER LES POSITIONS",
+          "MANNEQUIN : " + mode,
+          "ULTI INFINIE : " + onOff(m_.trainInfiniteUlt),
+          "RESTER À 0 % : " + onOff(m_.trainZeroPercent),
+          "MODE COMBAT (3 VIES) : " + onOff(m_.trainFight),
+          "ZONES DE COUP : " + onOff(debug_),
+          weapon,
+          "QUITTER L'ENTRAÎNEMENT"};
 }
 
 MatchScreen::Result MatchScreen::updatePause() {
@@ -189,12 +201,16 @@ MatchScreen::Result MatchScreen::updatePause() {
   if (nav.up) pauseSel_ = (pauseSel_ + n - 1) % n;
   if (nav.down) pauseSel_ = (pauseSel_ + 1) % n;
   bool click = false;
+  int clickSide = 0;  // a click on the left (-1) or right (+1) arrow of a training setting
   for (int i = 0; i < n; ++i) {
-    if (!ui::hovered(pauseItemRect(i, n))) continue;
+    const Rectangle r = pauseItemRect(i, n);
+    if (!ui::hovered(r)) continue;
     if (ui::mouseMoved()) pauseSel_ = i;
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       pauseSel_ = i;
       click = true;
+      const float mx = GetMousePosition().x;
+      if (training() && i >= 2 && i <= 7) clickSide = mx < r.x + 70.0f ? -1 : mx > r.x + r.width - 70.0f ? 1 : 0;
     }
   }
   if (pauseSel_ != before) audio_.play(Sfx::MenuMove);
@@ -206,21 +222,39 @@ MatchScreen::Result MatchScreen::updatePause() {
     audio_.play(Sfx::MenuBack);
     return Result::Running;
   }
-  const bool activate = nav.confirm || click;
-  const bool cycle = activate || nav.left || nav.right;
+  const bool left = nav.left || clickSide < 0, right = nav.right || clickSide > 0;
+  const bool activate = nav.confirm || (click && clickSide == 0);
+  const bool cycle = activate || left || right;
   if (training()) {
     if (pauseSel_ == 2 && cycle) {
-      int d = nav.left ? -1 : 1;
+      int d = left ? -1 : 1;
       for (auto& b : brains_) b.setDummy((b.dummy() + d + CpuBrain::kDummyCount) % CpuBrain::kDummyCount);
       audio_.play(Sfx::MenuMove);
       return Result::Running;
     }
     if (pauseSel_ == 3 && cycle) {
+      m_.trainInfiniteUlt = !m_.trainInfiniteUlt;
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 4 && cycle) {
+      m_.trainZeroPercent = !m_.trainZeroPercent;
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 5 && cycle) {  // a 3-stock fight against the dummy, starting over at each end
+      m_.setTrainFight(!m_.trainFight);
+      std::fill(combo_.begin(), combo_.end(), 0);
+      std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
+      audio_.play(Sfx::MenuMove);
+      return Result::Running;
+    }
+    if (pauseSel_ == 6 && cycle) {
       debug_ = !debug_;
       audio_.play(Sfx::MenuMove);
       return Result::Running;
     }
-    if (pauseSel_ == 4 && (nav.left || nav.right)) {  // which weapon
+    if (pauseSel_ == 7 && (left || right)) {  // which weapon: its arrows (ENTRÉE or a click in the middle drops it)
       dropSlot_ ^= 1;
       audio_.play(Sfx::MenuMove);
       return Result::Running;
@@ -237,7 +271,7 @@ MatchScreen::Result MatchScreen::updatePause() {
     std::fill(combo_.begin(), combo_.end(), 0);
     std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
     resume();
-  } else if (training() && pauseSel_ == 4) {  // the weapon falls in front of the player
+  } else if (training() && pauseSel_ == 7) {  // the weapon falls in front of the player
     m_.loseWeapon(m_.fighters[0], false);
     m_.dropWeaponFor(0, dropSlot_);
     resume();
@@ -276,6 +310,11 @@ void MatchScreen::trackCombos() {
     if (comboShow_[i] > 0) --comboShow_[i];
     prevPercent_[i] = f.percent;
   }
+}
+
+void MatchScreen::showUltimate(int slot) {
+  ultShow_ = std::clamp(slot, -1, 1);
+  if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
 }
 
 MatchScreen::Result MatchScreen::update() {
@@ -320,6 +359,29 @@ MatchScreen::Result MatchScreen::update() {
     inputs[f.port] = readDevice(devices_[f.port]);
     maskHeld(inputs[f.port], held_[f.port]);
   }
+  if (weaponShow_ >= 0 && m_.started() && !m_.fighters.empty()) {  // the demo's weapon kit: never lost
+    Fighter& f = m_.fighters[0];
+    if (f.weapon != weaponShow_ && f.active() && f.state != FState::Attack) m_.equipWeapon(f, weaponShow_);
+    f.weaponTimer = std::max(f.weaponTimer, 60);
+  }
+  if (ultShow_ >= -1 && !ultFired_ && m_.started() && m_.fighters.size() >= 2) {
+    Fighter& f = m_.fighters[0];
+    Fighter& v = m_.fighters[1];
+    if (m_.frame > 260 && m_.frame % 30 == 0 && f.grounded && v.grounded) {  // after "GO!", both standing
+      if (ultShow_ >= 0 && f.weapon != ultShow_) m_.equipWeapon(f, ultShow_);
+      f.pos = {-170.0f, 0.0f};
+      f.facing = 1;
+      v.pos = {30.0f, 0.0f};
+      v.percent = 60.0f;
+      f.ult = kUltMax;
+      f.finalSmash = true;
+      inputs[f.port] = InputState{};
+      inputs[f.port].ultimate = true;
+      ultFired_ = true;
+    } else if (f.cpu) {
+      inputs[f.port] = InputState{};
+    }
+  }
   m_.step(inputs);
   fx_.onEvents(m_);
   fx_.update(m_);
@@ -348,8 +410,38 @@ void MatchScreen::updateCamera(bool snap) {
     maxY = std::max(maxY, c.y + 130.0f);
   }
   float w = maxX - minX, h = maxY - minY;
-  float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
+  float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.32f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
+  // An ultimate: the camera tightens on its user and on the fighters it is dealing with.
+  int ultUser = -1;
+  for (const auto& f : m_.fighters)
+    if (f.active() && f.state == FState::Attack && f.move == FinalSmash) ultUser = f.id;
+  if (ultUser >= 0) {
+    const Fighter& u = m_.fighters[ultUser];
+    auto clampIn = [&](Vec2 c) {
+      return Vec2{clampf(c.x, blast.left() + 250.0f, blast.right() - 250.0f), clampf(c.y, blast.top() + 250.0f, blast.bottom() - 150.0f)};
+    };
+    const Vec2 uc = clampIn(u.center());
+    float x0 = uc.x - 150.0f, x1 = uc.x + 150.0f, y0 = uc.y - 160.0f, y1 = uc.y + 120.0f;
+    for (const auto& o : m_.fighters) {
+      if (o.id == ultUser || !o.active()) continue;
+      const float d = (o.center() - u.center()).len();
+      const bool involved = (o.state == FState::Captured && o.captor == ultUser) ||
+                            (o.state == FState::Hitstun && o.lastHitBy == ultUser && d < 760.0f) || d < 380.0f;
+      if (!involved) continue;
+      const Vec2 c = clampIn(o.center());
+      x0 = std::min(x0, c.x - 130.0f);
+      x1 = std::max(x1, c.x + 130.0f);
+      y0 = std::min(y0, c.y - 150.0f);
+      y1 = std::max(y1, c.y + 110.0f);
+    }
+    const float uz = clampf(std::min(kScreenW / (x1 - x0), (kScreenH - 140.0f) / (y1 - y0)), 0.62f, 1.4f);
+    const Vec2 ut{(x0 + x1) * 0.5f, (y0 + y1) * 0.5f + 30.0f / uz};
+    const float dur = float(std::max(1, u.moveDef(FinalSmash).duration)), t = float(u.moveFrame);
+    const float k = smoothstep(t / 18.0f) * (1.0f - smoothstep((t - (dur - 24.0f)) / 24.0f));
+    target = lerpv(target, ut, k);
+    zoom = lerpf(zoom, std::max(zoom, uz), k);
+  }
   if (m_.freezeTimer > 0 && m_.freezeOwner >= 0) {  // final smash close-up
     target = m_.fighters[m_.freezeOwner].center();
     zoom = 1.45f;
@@ -365,9 +457,9 @@ void MatchScreen::updateCamera(bool snap) {
     camPos_ = target;
     camZoom_ = zoom;
   } else {
-    float speed = m_.freezeTimer > 0 ? 0.2f : 0.08f;
+    const float speed = m_.freezeTimer > 0 ? 0.2f : ultUser >= 0 ? 0.12f : 0.08f;  // keeps up with an ultimate
     camPos_ += (target - camPos_) * speed;
-    camZoom_ += (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : 0.05f);
+    camZoom_ += (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : ultUser >= 0 ? 0.08f : 0.05f);
   }
 }
 
@@ -413,6 +505,17 @@ void MatchScreen::drawTrainingPanel() {
     std::string mode = std::string("Mannequin : ") + dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel);
     drawText(mode.c_str(), p.x + 16, p.y + 142, 15, withAlpha(ui::kCream, 0.85f));
   }
+  // The options on, under the panel
+  std::string on;
+  if (m_.trainFight) on += "Combat 3 vies";
+  if (m_.trainInfiniteUlt) on += std::string(on.empty() ? "" : "  •  ") + "Ulti infinie";
+  if (m_.trainZeroPercent) on += std::string(on.empty() ? "" : "  •  ") + "0 %";
+  if (!on.empty()) drawTextOutlined(on.c_str(), p.x + 4, p.y + p.height + 8, 16, {156, 206, 128, 255}, ui::kInk, 2.0f);
+  if (m_.trainRestart > 0) {  // the fight is over: it starts over
+    const float a = clampf(m_.trainRestart / 30.0f, 0.0f, 1.0f);
+    drawTextOutlined("Le combat recommence...", kScreenW * 0.5f - textWidth("Le combat recommence...", 34, FontKind::Title) * 0.5f,
+                     kScreenH * 0.5f + 70, 34, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 3.0f, FontKind::Title);
+  }
 }
 
 void MatchScreen::drawPause() {
@@ -440,7 +543,7 @@ void MatchScreen::drawPause() {
     }
     drawTextCentered(items[i].c_str(), r.x + r.width * 0.5f, r.y + r.height * 0.5f - 12, 24,
                      sel ? ui::kCream : ui::kMuted, true);
-    if (sel && training() && (i == 2 || i == 3 || i == 4)) {
+    if (sel && training() && i >= 2 && i <= 7) {
       ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, ui::kGold);
       ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
     }
@@ -460,8 +563,12 @@ void MatchScreen::drawPause() {
                                    : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
                      b.x + b.width * 0.5f, b.y + 48, 17, {250, 218, 200, 255}, false);
   }
-  ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
-              {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
+  if (training())
+    ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"GAUCHE/DROITE", ui::Btn::DPadLR, "Changer"},
+                {"ENTRÉE", ui::Btn::A, "Valider"}, {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
+  else
+    ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
+                {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
 }
 
 void MatchScreen::draw() {
@@ -498,6 +605,7 @@ void MatchScreen::draw() {
       if (m_.ledgeValid(l)) DrawCircleV(V(m_.ledgePoint(l)), 6, ORANGE);
   }
   endWorld();
+  drawStageForeground(m_.stage(), W(cam.target), time_);
   fx_.drawScreen(cam);
   if (const Fx::Impact* im = fx_.impact()) drawImpactFrame(m_, *im, cam, time_);
   drawOffscreenBubbles(m_, cam, time_);

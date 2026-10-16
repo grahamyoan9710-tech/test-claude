@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "b6603607-6a13-44e9-85f4-56cb950edf84",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ae2bfc0f-b301-4a76-825c-1c15f4adb242",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Kenpachi Zaraki from Bleach, a very tall man with spiky black hair tied with bells, an eyepatch, a torn white captain haori over a black robe, holding a long jagged katana",
+  "initial_pose": "hunched leaning stance facing right, a long jagged notched katana held low and forward in his right hand, torn white haori hanging from his shoulders"
+ },
+ "reply": "id: b6603607-6a13-44e9-85f4-56cb950edf84\njob_id: b6603607-6a13-44e9-85f4-56cb950edf84\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b6603607-6a13-44e9-85f4-56cb950edf84\")\nasset_id: 1b074be3-7f0b-5368-9e68-110d929a46f0\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/kenpachi_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

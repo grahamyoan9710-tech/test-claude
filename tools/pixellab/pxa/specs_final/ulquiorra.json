@@ -1,0 +1,162 @@
+{
+ "guard_pose": "calm upright stance facing right, arms lowered with both hands in the pockets of his long white coat",
+ "armed": "none",
+ "skip": [],
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "fast open-hand strike: keeps one hand in his pocket and snaps the other hand straight forward in a precise flat-handed thrust, then returns it to his pocket"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "backhand swat: sweeps the same hand forward in a cold backhand strike with a slight twist of the hips, the other hand still in his pocket, then back into the stance"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "precise kick: lifts the front leg and kicks straight forward at belly height with a flash of green spiritual energy, hands in his pockets, then back into the stance"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "stepping kick: steps forward and kicks straight ahead at chest height with no wasted motion, hands staying in his pockets, then back into the stance"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising hand strike: takes one hand out of his pocket and swings it in an arc from low in front straight up above his head, then puts it back in his pocket"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "Sonido rush: glides forward in a blur and rams ahead shoulder first wrapped in a flash of green spiritual energy, then stops and stands back in the calm stance with his hands in his pockets"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "charged palm strike: draws one hand back as green spiritual energy gathers around it, then thrusts the flat hand straight forward at full extension with a burst of green energy, then puts the hand back in his pocket"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "upward strike: crouches slightly, then springs up on his toes and strikes straight above his head with one hand in a burst of green spiritual energy, then lands back in the calm stance"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "low split kicks: drops low and kicks fast in front at foot level, then spins and kicks behind him, green energy flashing, hands in his pockets, then back into the stance"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "neutral aerial: spins once in mid-air with his coat flaring as a ring of green spiritual energy flashes close around his body, then opens up again"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "down aerial: stomps straight down beneath him with both feet in mid-air with a burst of green spiritual energy, then pulls the legs back up"
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Cero: calmly takes his right hand out of his pocket and points one finger forward, a sphere of green spiritual energy gathers at the fingertip, then a short thick green Cero beam fires straight forward, then he lowers the hand back into his pocket"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Sonido: vanishes in a flicker leaving a fading afterimage, reappears and drives a flat-handed thrust straight forward with a flash of green spiritual energy, then returns to the calm stance"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   null,
+   false,
+   "up",
+   "upward Sonido: vanishes in a flicker from the stance, then reappears in mid-air with a flash of green energy around his body, coat fluttering, hands still in his pockets, legs hanging"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Bala: takes one hand out of his pocket and snaps the fist straight forward, two small compact bullets of green spiritual energy shoot out from his knuckles, then he puts the hand back in his pocket"
+  ],
+  "ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Cero Oscuras: raises his right hand and points one finger forward, a black sphere edged with green gathers and swells at the fingertip, crackling, then a thick black beam outlined in green blasts straight forward, then he lowers the hand back into the calm stance"
+  ],
+  "w0_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Luz de la Luna: a long javelin of bright green light forms in his right hand, he draws it back over his shoulder and hurls it straight forward with an overhand throw, then returns to the stance"
+  ],
+  "w0_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Lanza del Relampago: in his Segunda Etapa, black bat wings unfold behind him, he raises his right hand and a long crackling spear of cyan energy forms in his grip, sparks of cyan lightning dancing along it, he leans back and hurls it forward with a powerful overhand throw, then the wings fold away and he returns to the stance"
+  ],
+  "w1_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "around",
+   "Segunda Etapa: a pillar of black and green spiritual energy rises around him, his hair grows long, black fur covers his legs, black bat wings and a long thin tail unfold behind him, a ring of green-black energy blasts outward close around him, then the burst settles, the form fades and he returns to the calm stance"
+  ]
+ },
+ "notes": "makeUlquiorra: buildBrawlerNormals(S=1.0, P=1.39, fx=Hollow) -> jab3 exists; no baseWeapon, 2 air jumps. Overrides make the hand moves one-handed and economical (the other hand in his pocket, as in the guard picture) and colour the Hollow energy green; dtilt/fair/bair/uair stay the generic kicks. Specials: nspecial Cero beam f18-30/48 (270 px, pose Point = one finger); sspecial teleports 150 px forward at f8, strike f14-18/40; uspecial teleports 270 px at f18/38 (stick direction), body hit f20-24, helpless -> pin None, ends in the air; dspecial Bala: 2 fast shots at f8/30. w0 'Murcielago (Resurreccion)' replaces nspecial (Luz de la Luna, green javelin at f14/40), jab (exists) and ultimate (LANZA DEL RELAMPAGO: projectile at f60/100, explodes radius 280). w1 'Segunda Etapa' replaces only jab (exists) and ultimate (awaken burst f38-44, Segunda form 12 s whose nspecial becomes Cero Oscuras and plays the plain nspecial clip): w1_ultimate is the only w1 clip. The awaken pose is Roar in the game; the clip keeps him calm (in character). GUARD14 says 'the other hand raised loosely': the picture shows both hands in the pockets, hence the new guard_pose. Source inconsistencies: Lanza del Relampago is a Segunda Etapa technique in Bleach but sits on the Resurreccion pickup (w0), so the prompt brings the Segunda Etapa wings in (cyan spear as asked); Cero Oscuras is a Resurreccion technique in Bleach but is his bare-handed ultimate here; the Bala uses the CeroOscuras projectile picture."
+}

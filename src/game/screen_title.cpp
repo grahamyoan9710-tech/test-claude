@@ -1,5 +1,6 @@
 // Title screen ("appuyez sur ENTRÉE") and main menu.
 #include "game/app.hpp"
+#include "game/menu_theme.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -61,17 +62,29 @@ struct Tile {
   const char* desc;
 };
 
-// Earthy tiles: terracotta, moss, slate blue, dusk plum.
+// Jewel tiles under the gold trims: ruby, emerald, sapphire, amethyst.
 const Tile kTiles[4] = {
-    {{60, 126, 640, 474}, 70, {178, 82, 58, 255}, {86, 30, 32, 255}, "COMBAT",
+    {{60, 126, 640, 474}, 70, {218, 52, 70, 255}, {86, 12, 42, 255}, "COMBAT",
      "Affrontez jusqu'à 3 adversaires, humains ou ordinateurs."},
-    {{728, 126, 500, 142}, 21, {98, 136, 76, 255}, {36, 62, 44, 255}, "ENTRAÎNEMENT",
+    {{728, 126, 500, 142}, 21, {30, 164, 116, 255}, {6, 62, 58, 255}, "ENTRAÎNEMENT",
      "Vies infinies, mannequin, compteur de combos : idéal pour apprendre."},
-    {{704, 292, 500, 142}, 21, {66, 112, 132, 255}, {24, 46, 62, 255}, "PARAMÈTRES",
+    {{704, 292, 500, 142}, 21, {48, 116, 230, 255}, {14, 32, 104, 255}, "PARAMÈTRES",
      "Son, affichage, règles du jeu, touches et manettes."},
-    {{680, 458, 500, 142}, 21, {112, 86, 110, 255}, {46, 34, 52, 255}, "QUITTER",
+    {{680, 458, 500, 142}, 21, {146, 74, 210, 255}, {48, 20, 92, 255}, "QUITTER",
      "Quitter Super Clash Bros."},
 };
+// Speed streaks: long thin strokes rushing from right to left behind the tiles, bright head, fading tail.
+void speedStreaks(float time, Color col) {
+  if (col.a == 0) return;
+  for (int i = 0; i < 9; ++i) {
+    const float len = 260.0f + 420.0f * hash(i * 7 + 1), th = 3.0f + 20.0f * hash(i * 13 + 5);
+    const float speed = 700.0f + 900.0f * hash(i * 3 + 2), y = 110.0f + 520.0f * hash(i * 11 + 3);
+    const float span = kScreenW + len + 200.0f;
+    const float x = kScreenW + 100.0f - std::fmod(time * speed + hash(i * 5) * span, span), s = th * 1.2f;
+    const Color tail = withAlpha(col, 0.0f);
+    ui::quad({x + s, y}, {x + len + s, y}, {x + len, y + th}, {x, y + th}, col, tail, tail, col);
+  }
+}
 }  // namespace
 
 // ---------------------------------------------------------------------------
@@ -79,6 +92,7 @@ const Tile kTiles[4] = {
 // ---------------------------------------------------------------------------
 void App::updateTitle(const MenuNav& nav) {
   if (screenFrames_ == 22) audio_.play(Sfx::HitHeavy, 0.9f, 0.8f);
+  if (screenFrames_ == 30) audio_.voice("title");
   if (screenFrames_ == 24) audio_.play(Sfx::Crowd, 0.5f, 1.1f);
   bool go = nav.confirm || nav.start || IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
   if (go && screenFrames_ > 20) {
@@ -110,7 +124,7 @@ void App::drawTitle() {
     int facing = left ? 1 : -1;
     DrawEllipse(int(x), 610, 40.0f - hop, 8.0f, withAlpha(ui::kInk, 0.3f));
     Pose p = restPose(r[i], t + i);
-    drawCharacter(r[i], 0, p, {x, 608 - hop}, facing, std::min(1.3f, 150.0f / r[i].height * (n > 6 ? 1.0f : 1.15f)),
+    drawCharacterSprite(r[i], 0, p, {x, 608 - hop}, facing, std::min(1.3f, 150.0f / r[i].height * (n > 6 ? 1.0f : 1.15f)),
                   1.0f, WHITE, 0.0f, t + i);
   }
 
@@ -157,7 +171,7 @@ void App::drawTitle() {
     drawTextOutlined(txt, x, 368, 26, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.5f);
     ui::prompt("ENTRÉE", ui::Btn::Start, x + textWidth(txt, 26) + 14, 381 - ph * 0.5f, ph, true);
   }
-  drawTextOutlined("v4.0", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
+  drawTextOutlined("v9.9", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
   drawTextOutlined("C++ & raylib", 16, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
   if (f >= 22 && f < 40) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({255, 248, 228, 255}, (40 - f) / 18.0f * 0.7f));
 }
@@ -228,8 +242,12 @@ void App::updateMainMenu(const MenuNav& nav) {
 
 void App::drawMainMenu() {
   const float t = time_;
-  ui::stageBackdrop(2, t, 0.58f);
-  ui::header("MENU PRINCIPAL", nullptr, kTiles[0].top, t);
+  const MenuTheme& th = menuTheme();
+  ui::stageBackdrop(2, t, th.dim);
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, th.skyTop, th.skyLow);
+  ui::glow({kScreenW * 0.5f, kScreenH + 60.0f}, 520, th.sun, 8);  // the sun just set
+  speedStreaks(t, th.streaks);
+  ui::header("MENU PRINCIPAL", nullptr, th.tiles[0][0], t);
   // small logo, top right
   ui::drawSprite(ui::Sprite::Logo, kScreenW - 360, 30, 52);
 
@@ -244,8 +262,9 @@ void App::drawMainMenu() {
     const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
     // shadow, body, sheen
     ui::slanted({rr.x + 10, rr.y + 12, rr.width, rr.height}, tile.slant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    Color top = sel ? mixColor(tile.top, ui::kCream, 0.08f) : shade(tile.top, 0.72f);
-    Color bottom = sel ? tile.bottom : shade(tile.bottom, 0.7f);
+    const Color ttop = th.tiles[i][0], tbottom = th.tiles[i][1];
+    Color top = sel ? mixColor(ttop, ui::kCream, 0.08f) : shade(ttop, 0.72f);
+    Color bottom = sel ? tbottom : shade(tbottom, 0.7f);
     ui::slanted(rr, tile.slant, withAlpha(top, 0.96f), withAlpha(bottom, 0.96f));
     ui::slanted({rr.x + tile.slant * 0.9f, rr.y, rr.width - tile.slant * 0.9f, rr.height * 0.18f}, tile.slant * 0.18f,
                 withAlpha(ui::kCream, 0.14f), withAlpha(ui::kCream, 0.0f));
@@ -261,7 +280,7 @@ void App::drawMainMenu() {
     ui::slantedOutline(rr, tile.slant, sel ? 3.0f : 2.5f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
     ui::corners(rr, tile.slant, big ? 30.0f : 18.0f, 3.0f, sel ? ui::kGold : withAlpha(ui::kGold, 0.45f));
     if (sel) {
-      ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(ui::kTeal, 0.18f + 0.16f * pulse));
+      ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(th.glow, 0.18f + 0.16f * pulse));
       ui::corners(ui::grow(rr, 9 + pulse * 3), tile.slant, big ? 34.0f : 20.0f, 3.0f, ui::kGold);
     }
 
@@ -274,11 +293,11 @@ void App::drawMainMenu() {
         float hop = sel ? std::max(0.0f, std::sin(t * 5.0f + k * 1.6f)) * 10.0f : 0.0f;
         float scale = 170.0f / d.height * (d.style == BodyStyle::Brute ? 1.1f : 1.0f);
         float x = rr.x + 120 + k * 140;
-        drawCharacter(d, 0, p, {x, rr.y + rr.height - 132 - hop}, k < 2 ? 1 : -1, scale, 1.0f, WHITE, 0.0f, t + k);
+        drawCharacterSprite(d, 0, p, {x, rr.y + rr.height - 132 - hop}, k < 2 ? 1 : -1, scale, 1.0f, WHITE, 0.0f, t + k);
       }
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 6.0f : 0.0f;
       ui::drawSprite(ui::Sprite::Combat, rr.x + 36, rr.y + rr.height - 118 - bounce, 92);
-      drawTextOutlined("Jusqu'à 4 joueurs  •  Ordinateurs niveaux 1 à 9", rr.x + 40, rr.y + rr.height - 30, 18,
+      drawTextOutlined("Jusqu'à 4 joueurs  •  Ordinateurs niveaux 1 à 10", rr.x + 40, rr.y + rr.height - 30, 18,
                        ui::kCream, ui::kInk, 2.0f);
     } else {
       float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 4.0f : 0.0f;
