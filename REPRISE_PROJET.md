@@ -52,9 +52,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.9) | 16/10 19 h 05 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 19 h 25 UTC, session B : **v9.9 publiée et vérifiée** (workflow réussi ; l'archive Linux téléchargée par
+  l'API a la même somme SHA-256 que la release, affiche v9.9, et Link y a son Arc de lumière en match). Verrou de
+  version libre. Tous les verrous sont libres.
 - 16/10 19 h 05 UTC, session B : **lot 3 terminé, v9.9 en cours de publication** (kits de Link et de Gojo).
   `fitall.sh` : 28 clips retimés, 204 hitboxes recalées. Équilibre : Link 1.06 (36 % à 0.92), Gojo 1.26, Kratos
   1.10, chasseur 1.20 ; tous entre 45 et 55 %, 3 % des K.O. sous 70 %. Tests passés. Démos regardées (les 4 kits et
