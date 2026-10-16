@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 2 : Kratos, Hunter, Sukuna) | 16/10 08 h 25 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 2) | 16/10 08 h 25 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 2) | 16/10 08 h 25 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session B (v9.7) | 16/10 12 h 35 UTC |
 
 ### Journal (le plus récent en haut)
 - 16/10 12 h 20 UTC, session B, lot 2 : `fitall.sh` relancé (38 clips retimés, 197 hitboxes recalées), tous les
