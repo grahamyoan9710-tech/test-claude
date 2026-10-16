@@ -223,7 +223,7 @@ sheet byakuya w1_ultimate 28 255 240 103.0 237.0 180.0 0 10,13,22,23 15
 sheet byakuya walk 8 165 184 39.0 183.0 180.0 1 -1 15
 sheet ganondorf airdodge 8 138 169 60.0 236.0 175.0 0 -1 15
 sheet ganondorf airjump 8 205 218 93.0 236.0 175.0 0 -1 15
-sheet ganondorf bair 8 173 174 95.0 236.0 175.0 0 3 15
+sheet ganondorf bair 8 173 174 95.0 236.0 175.0 0 4 15
 sheet ganondorf bthrow 12 183 156 86.0 155.0 175.0 0 4 15
 sheet ganondorf climb 8 141 240 66.0 239.0 175.0 0 -1 15 106.8
 sheet ganondorf crouch 4 117 134 53.0 132.0 175.0 0 -1 15
@@ -329,22 +329,22 @@ sheet gojo uspecial 12 195 226 68.0 225.0 190.0 0 7 15
 sheet gojo uthrow 8 125 234 35.0 233.0 190.0 0 3 15
 sheet gojo utilt 8 155 234 49.0 233.0 190.0 0 2 15
 sheet gojo victory 12 143 214 50.0 213.0 190.0 0 -1 15
-sheet gojo w0_dspecial 12 242 240 90.0 239.0 190.0 0 -1 15
+sheet gojo w0_dspecial 12 242 240 90.0 239.0 190.0 0 7 15
 sheet gojo w0_jab 8 151 203 22.0 201.0 190.0 0 2 15
 sheet gojo w0_jab2 8 180 201 47.0 200.0 190.0 0 1 15
 sheet gojo w0_jab3 12 205 234 48.0 233.0 190.0 0 7 15
-sheet gojo w0_nair 12 232 240 87.0 237.0 190.0 0 2 15
+sheet gojo w0_nair 12 232 240 87.0 237.0 190.0 0 2,6 15
 sheet gojo w0_nspecial 12 180 192 23.0 191.0 190.0 0 7 15
 sheet gojo w0_sspecial 12 175 234 22.0 233.0 190.0 0 7 15
 sheet gojo w0_ultimate 28 249 242 92.0 241.0 190.0 0 20 15
-sheet gojo w0_uspecial 12 99 234 22.0 233.0 190.0 0 10 15
+sheet gojo w0_uspecial 12 99 234 22.0 233.0 190.0 0 8 15
 sheet gojo w1_airdodge 8 123 113 33.0 205.0 190.0 0 -1 15
 sheet gojo w1_airjump 8 161 172 46.0 205.0 190.0 0 -1 15
 sheet gojo w1_bthrow 12 172 192 81.0 191.0 190.0 0 1 15
 sheet gojo w1_climb 8 101 228 25.0 227.0 190.0 0 -1 15 83.5
 sheet gojo w1_crouch 4 97 140 20.0 139.0 190.0 0 -1 15
 sheet gojo w1_dizzy 8 77 192 22.0 191.0 190.0 1 -1 15
-sheet gojo w1_dspecial 12 74 192 22.0 191.0 190.0 0 -1 15
+sheet gojo w1_dspecial 12 74 192 22.0 191.0 190.0 0 0 15
 sheet gojo w1_dthrow 12 131 193 22.0 191.0 190.0 0 0 15
 sheet gojo w1_fall 8 126 185 36.0 208.0 190.0 1 -1 15
 sheet gojo w1_fthrow 8 120 192 22.0 191.0 190.0 0 0 15
@@ -364,7 +364,7 @@ sheet gojo w1_knockdown 8 185 207 65.0 205.0 190.0 0 -1 15
 sheet gojo w1_land 4 170 232 46.0 231.0 190.0 0 -1 15
 sheet gojo w1_ledge 4 65 224 16.0 143.5 190.0 1 -1 15
 sheet gojo w1_ledgeattack 8 234 192 88.0 191.0 190.0 0 2 15
-sheet gojo w1_nair 12 230 180 84.0 208.0 190.0 0 1 15
+sheet gojo w1_nair 12 230 180 84.0 208.0 190.0 0 5,6 15
 sheet gojo w1_nspecial 12 195 234 68.0 233.0 190.0 0 5 15
 sheet gojo w1_pummel 4 149 200 45.0 193.0 190.0 0 1 15
 sheet gojo w1_roll 8 152 192 45.0 191.0 190.0 0 -1 15
@@ -374,7 +374,7 @@ sheet gojo w1_spotdodge 8 186 192 66.0 191.0 190.0 0 -1 15
 sheet gojo w1_sspecial 12 167 192 38.0 191.0 190.0 0 4 15
 sheet gojo w1_tumble 8 145 145 46.0 205.0 190.0 1 -1 15
 sheet gojo w1_ultimate 28 256 256 99.0 244.0 190.0 0 9 15
-sheet gojo w1_uspecial 12 73 192 22.0 191.0 190.0 0 -1 15
+sheet gojo w1_uspecial 12 73 192 22.0 191.0 190.0 0 6 15
 sheet gojo w1_uthrow 8 121 234 26.0 233.0 190.0 0 4 15
 sheet gojo w1_walk 8 78 194 24.0 193.0 190.0 1 -1 15
 sheet gojo walk 8 83 194 22.0 193.0 190.0 1 -1 15
@@ -724,7 +724,7 @@ sheet kakashi w1_jab2 8 162 220 79.0 219.0 213.0 0 1 15
 sheet kakashi w1_jab3 12 199 256 71.0 244.0 213.0 0 4 15
 sheet kakashi w1_nair 12 254 249 126.0 241.0 213.0 0 1,4 15
 sheet kakashi w1_nspecial 12 209 237 92.0 236.0 213.0 0 3 15
-sheet kakashi w1_sspecial 16 236 236 117.0 235.0 213.0 0 6 15
+sheet kakashi w1_sspecial 16 236 236 117.0 235.0 213.0 0 5 15
 sheet kakashi w1_ultimate 28 227 219 112.0 218.0 213.0 0 12 15
 sheet kakashi w1_uspecial 12 132 240 81.0 237.0 213.0 0 10 15
 sheet kakashi walk 8 137 217 70.0 216.0 213.0 1 -1 15
@@ -966,11 +966,11 @@ sheet link w0_dspecial 12 221 234 66.0 233.0 175.0 0 7 15
 sheet link w0_jab 8 226 238 69.0 236.0 175.0 0 2 15
 sheet link w0_jab2 8 236 219 82.0 218.0 175.0 0 1 15
 sheet link w0_jab3 12 235 242 80.0 233.0 175.0 0 2 15
-sheet link w0_nair 12 220 234 70.0 234.0 175.0 0 1 15
+sheet link w0_nair 12 220 234 70.0 234.0 175.0 0 1,5 15
 sheet link w0_nspecial 12 239 235 74.0 234.0 175.0 0 5 15
-sheet link w0_sspecial 12 244 240 84.0 235.0 175.0 0 5 15
+sheet link w0_sspecial 12 244 240 84.0 235.0 175.0 0 6 15
 sheet link w0_ultimate 28 240 253 82.0 241.0 175.0 0 13,16,17,18 15
-sheet link w0_uspecial 12 240 240 79.0 238.0 175.0 0 2 15
+sheet link w0_uspecial 12 240 240 79.0 238.0 175.0 0 1 15
 sheet link w1_airdodge 8 117 211 50.0 231.0 175.0 0 -1 15
 sheet link w1_airjump 8 197 213 87.0 231.0 175.0 0 -1 15
 sheet link w1_bthrow 12 210 234 75.0 233.0 175.0 0 3 15
@@ -996,7 +996,7 @@ sheet link w1_jump 8 185 233 55.0 231.0 175.0 0 -1 15
 sheet link w1_knockdown 8 209 235 67.0 233.0 175.0 0 -1 15
 sheet link w1_land 4 191 234 56.0 233.0 175.0 0 -1 15
 sheet link w1_ledge 4 103 225 19.0 132.2 175.0 1 -1 15
-sheet link w1_ledgeattack 8 225 234 71.0 233.0 175.0 0 3 15
+sheet link w1_ledgeattack 8 225 234 71.0 233.0 175.0 0 2 15
 sheet link w1_nair 12 210 231 57.0 231.0 175.0 0 3 15
 sheet link w1_nspecial 12 208 234 60.0 233.0 175.0 0 7 15
 sheet link w1_pummel 4 144 233 35.0 232.0 175.0 0 3 15

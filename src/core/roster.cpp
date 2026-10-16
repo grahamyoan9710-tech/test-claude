@@ -362,7 +362,7 @@ CharacterDef makeLink() {
                 pal({70, 128, 70}, {120, 88, 58}, {222, 184, 90}, {244, 210, 176}, {214, 164, 92}, {70, 130, 200})};
   stats(c, 44, 98, 98, 4.2f, 8.9f, 5.1f, 0.62f, 10.2f, 15.0f, 15.2f, 10.0f, 14.2f, 4);
   c.weaponLength = 64;
-  const float S = 1.0f, P = 0.92f;
+  const float S = 1.0f, P = 1.06f;  // v9.9: 36% with the kits at 0.92
   buildSwordNormals(c, S, P, F::Light);
   auto& m = c.moves;
 
@@ -584,7 +584,7 @@ CharacterDef makeKratos() {
                 pal({160, 130, 60}, {80, 60, 44}, {196, 40, 36}, {214, 210, 202}, {196, 196, 196}, {200, 160, 80})};
   stats(c, 56, 114, 118, 3.6f, 8.0f, 4.8f, 0.66f, 11.0f, 15.5f, 15.6f, 10.2f, 14.0f, 5);
   c.groundAccel = 1.1f;
-  const float S = 1.14f, P = 1.13f;  // v9.6: 58% (v9.2: 1.17)
+  const float S = 1.14f, P = 1.10f;  // v9.9: 58% at 1.13 once the lot 3 kits came in (v9.6: 58% at 1.17)
   buildBrawlerNormals(c, S, P, F::Fire);
   auto& m = c.moves;
 
@@ -704,7 +704,7 @@ CharacterDef makeGojo() {
                 pal({236, 236, 240}, {44, 48, 64}, {180, 110, 255}, {244, 222, 206}, {244, 244, 252}, {120, 210, 255})};
   stats(c, 44, 114, 90, 4.4f, 9.4f, 5.4f, 0.58f, 9.6f, 14.5f, 15.4f, 10.0f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.04f, P = 1.22f;  // v9.2: a little softer, 58%
+  const float S = 1.04f, P = 1.26f;  // v9.9: 45% with the kits at 1.22
   buildBrawlerNormals(c, S, P, F::Cursed);
   auto& m = c.moves;
 
@@ -1635,7 +1635,7 @@ CharacterDef makeHunter() {
   stats(c, 52, 108, 120, 3.6f, 8.2f, 4.8f, 0.66f, 10.8f, 15.4f, 15.2f, 10.0f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 100;
-  const float S = 1.08f, P = 1.15f;  // v9.7: 45% with the kits (v9.6: 43% at 1.11)
+  const float S = 1.08f, P = 1.20f;  // v9.9: 41% at 1.15 once the lot 3 kits came in (v9.7: 45%)
   buildSwordNormals(c, S, P, F::Slash);
   auto& m = c.moves;
 
