@@ -1496,7 +1496,7 @@ CharacterDef makeHunter() {
   stats(c, 52, 108, 120, 3.6f, 8.2f, 4.8f, 0.66f, 10.8f, 15.4f, 15.2f, 10.0f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 100;
-  const float S = 1.08f, P = 1.14f;  // v9.6: 43% (1.11)
+  const float S = 1.08f, P = 1.15f;  // v9.7: 45% with the kits (v9.6: 43% at 1.11)
   buildSwordNormals(c, S, P, F::Slash);
   auto& m = c.moves;
 
