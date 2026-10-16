@@ -1144,18 +1144,11 @@
    }
   },
   "w0_nspecial": {
-   "replace": {
-    "2": 1,
-    "3": 4,
-    "8": 6,
-    "9": 6
-   },
-   "erase": {
+   "degrey": {
     "frames": [
-     7,
-     10
+     2
     ],
-    "hue": "blue"
+    "tol": 30
    }
   },
   "uspecial": {
@@ -1206,6 +1199,60 @@
     "22": 25,
     "23": 25,
     "24": 25
+   }
+  },
+  "w0_fthrow": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w0_jab3": {
+   "degrey": {
+    "frames": [
+     2,
+     7
+    ],
+    "tol": 30
+   }
+  },
+  "w0_spotdodge": {
+   "replace": {
+    "0": 2,
+    "1": 2
+   }
+  },
+  "w0_land": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "w0_crouch": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "w0_shield": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "w0_uthrow": {
+   "specks": {
+    "frames": [
+     0
+    ],
+    "max": 150
+   }
+  },
+  "w0_dthrow": {
+   "erase": {
+    "frames": [
+     0
+    ],
+    "hue": "red"
    }
   }
  },
@@ -1344,6 +1391,94 @@
     "8": 11,
     "9": 11,
     "10": 11
+   }
+  },
+  "w0_spotdodge": {
+   "replace": {
+    "1": 0,
+    "2": 3
+   }
+  },
+  "w0_fthrow": {
+   "degrey": {
+    "frames": [
+     0
+    ],
+    "tol": 30
+   }
+  },
+  "w0_jab": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w0_nair": {
+   "degrey": {
+    "frames": [
+     5,
+     7,
+     8
+    ],
+    "tol": 30
+   }
+  },
+  "w0_uspecial": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w0_dthrow": {
+   "degrey": {
+    "frames": [
+     3
+    ],
+    "tol": 30
+   }
+  },
+  "w0_airjump": {
+   "specks": {
+    "frames": [
+     0,
+     1,
+     2
+    ],
+    "max": 150
+   }
+  },
+  "w1_spotdodge": {
+   "replace": {
+    "2": 1,
+    "3": 4
+   }
+  },
+  "w1_ledgeattack": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w1_dthrow": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w1_uthrow": {
+   "degrey": {
+    "frames": [
+     4
+    ],
+    "tol": 30
    }
   }
  },
@@ -1742,6 +1877,179 @@
      10
     ],
     "max": 400
+   }
+  },
+  "w0_airdodge": {
+   "degrey": {
+    "frames": [
+     5
+    ],
+    "tol": 30
+   }
+  },
+  "w0_bthrow": {
+   "degrey": {
+    "frames": [
+     0,
+     1,
+     2,
+     9
+    ],
+    "tol": 30
+   }
+  },
+  "w0_dizzy": {
+   "degrey": {
+    "frames": [
+     3,
+     4
+    ],
+    "tol": 30
+   }
+  },
+  "w0_dthrow": {
+   "degrey": {
+    "frames": [
+     1
+    ],
+    "tol": 30
+   }
+  },
+  "w0_hold": {
+   "degrey": {
+    "frames": [
+     1,
+     3
+    ],
+    "tol": 30
+   }
+  },
+  "w0_holdstart": {
+   "degrey": {
+    "frames": [
+     3
+    ],
+    "tol": 30
+   }
+  },
+  "w0_idle": {
+   "degrey": {
+    "frames": [
+     0,
+     3,
+     4
+    ],
+    "tol": 30
+   }
+  },
+  "w0_jab2": {
+   "degrey": {
+    "frames": [
+     0
+    ],
+    "tol": 30
+   }
+  },
+  "w0_jab3": {
+   "degrey": {
+    "frames": [
+     2,
+     3,
+     4
+    ],
+    "tol": 30
+   }
+  },
+  "w0_nair": {
+   "degrey": {
+    "frames": [
+     4,
+     5,
+     6
+    ],
+    "tol": 30
+   }
+  },
+  "w0_pummel": {
+   "degrey": {
+    "frames": [
+     0,
+     1,
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w0_spotdodge": {
+   "replace": {
+    "1": 0
+   }
+  },
+  "w0_uspecial": {
+   "degrey": {
+    "frames": [
+     2,
+     3
+    ],
+    "tol": 30
+   }
+  },
+  "w0_uthrow": {
+   "degrey": {
+    "frames": [
+     0,
+     1,
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w0_dspecial": {
+   "replace": {
+    "3": 2,
+    "4": 2
+   },
+   "specks": {
+    "frames": [
+     5,
+     6
+    ],
+    "max": 400
+   }
+  },
+  "w0_fthrow": {
+   "replace": {
+    "1": 0
+   }
+  },
+  "w1_bthrow": {
+   "degrey": {
+    "frames": [
+     1
+    ],
+    "tol": 30
+   }
+  },
+  "w1_fthrow": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w1_ledgeattack": {
+   "degrey": {
+    "frames": [
+     0,
+     1
+    ],
+    "tol": 30
+   }
+  },
+  "w1_spotdodge": {
+   "replace": {
+    "0": 1
    }
   }
  }

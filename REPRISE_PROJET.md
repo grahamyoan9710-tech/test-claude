@@ -48,13 +48,19 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (lot 2) | 16/10 11 h 35 UTC |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 2 : Kratos, Hunter, Sukuna) | 16/10 08 h 25 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 2) | 16/10 08 h 25 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 2) | 16/10 08 h 25 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 11 h 35 UTC, session B, lot 2 : les 218 clips sont générés et importés (~260 générations, il en reste
+  2 640), 14 effets PixelLab importés. Relecture : 38 retouches dans `qa_fixes.json` (fumée grise, effets dans les
+  esquives, éclairs parasites) ; 3 clips refaits (silhouette noire dans la projection haute des Lames du Chaos,
+  bouclier posé au sol dans la projection basse, tête de Sukuna devenue rouge). **Bug corrigé dans
+  `import_all.py`** : les clips `w*_ledge` et `w*_climb` d'une arme à nouvelle apparence étaient ancrés aux pieds,
+  pas aux mains comme `ledge` et `climb` (Ichigo, Naruto et Sasuke réimportés). Je prends `fitall.sh`.
 - 16/10 08 h 55 UTC, session B, lot 2 en cours :
   - Code des 6 kits poussé (11f88b7), tous les tests passent. Nouveau `addLanceKit` (M1 de la lance-canon).
   - Les 22 clips des Lames du Chaos ont été **refusés sans être facturés** : description du perso au-delà de

@@ -154,6 +154,11 @@ def specks(d, spec, extra):
         Image.fromarray(a).save(p)
 
 
+def wslot_name(name):
+    """w0_ledge, w1_climb...: a clip of a weapon's look."""
+    return len(name) > 3 and name[0] == "w" and name[1].isdigit() and name[2] == "_"
+
+
 def frames_of(d):
     return sorted(f for f in os.listdir(d) if f.startswith("f_") and f.endswith(".png"))
 
@@ -206,7 +211,8 @@ def main():
             continue
         subprocess.run(["python3", os.path.join(os.path.dirname(S), "tools", "greyfix.py"), d, "--fix"], check=True)
         cax, cay = ax, ay
-        if name == "ledge":  # the hands on the ledge
+        state = name[3:] if wslot_name(name) else name  # a weapon's look: w1_ledge is anchored like the ledge
+        if state == "ledge":  # the hands on the ledge
             a = np.asarray(Image.open(os.path.join(d, "f_01.png")).convert("RGBA"))[..., 3] > 0
             cay = float(np.nonzero(a.any(axis=1))[0].min()) + 0.75 * pxh
         args = ["python3", os.path.join(REPO, "scripts", "import_clip.py"), fighter, name, d,
@@ -214,7 +220,7 @@ def main():
         if loop:
             args.append("--loop")
         extra = list(EXTRA.get((fighter, name), []))
-        if name == "climb":  # starts hanging (hands on the ledge, as in the ledge clip), ends standing on the anchor
+        if state == "climb":  # starts hanging (hands on the ledge, as in the ledge clip), ends standing on the anchor
             a0 = np.asarray(Image.open(os.path.join(d, "f_00.png")).convert("RGBA"))[..., 3] > 0
             hands = float(np.nonzero(a0.any(axis=1))[0].min())
             extra += ["--drop", f"{ay - (hands + 0.75 * pxh):.1f}"]

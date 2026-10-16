@@ -192,6 +192,22 @@
      true,
      "none",
      "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his left forearm with the round shield pressed against his chest, his hands still gripping the Blades of Chaos pointing down, legs kicking and squirming, a seamless loop. Only Kratos is drawn: the opponent is invisible, there is no other person in the frame"
+    ],
+    "w1_uthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "up",
+     "throw upward: heaves his shield arm up hard as if flinging something into the air, then slashes upward over his head with both Blades of Chaos in a fiery arc, then returns to the ready stance. Only Kratos is drawn: no person, no silhouette, no shadow figure, nothing flying"
+    ],
+    "w1_dthrow": [
+     12,
+     "holdstart@last",
+     "guard",
+     false,
+     "down",
+     "throw downward: shoves his shield arm down hard toward the ground in front of him, then lashes both Blades of Chaos down at the ground in front of him in a fiery arc, then returns to the ready stance. The shield stays on his left forearm the whole time. Only Kratos is drawn: no person, no silhouette, nothing lying on the ground"
     ]
    }
   }

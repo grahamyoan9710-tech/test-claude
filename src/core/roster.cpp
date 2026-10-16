@@ -1548,6 +1548,9 @@ CharacterDef makeHunter() {
   shell.projectile.explode = hb(0, 0, 0, 0, 80, 11, 45, 55, 82, L::None, 0, F::Fire);
   shell.pose = PoseHint::Thrust;
   sc(shell, S, P);
+  shell.castFx = "gun_blast";  // the shell leaves the tip in a cone of fire
+  shell.castFxFrame = 14;
+  shell.castFxAt = {shell.projectile.spawnOffset.x, shell.projectile.spawnOffset.y - c.height * 0.5f};
   c.weapons[1].moves = {{NSpecial, shell}};
 
   // The charge blade's kit: the sword's M1 (a roundslash to finish), the discharge, a charged thrust, a rising slash
@@ -1598,15 +1601,6 @@ CharacterDef makeHunter() {
   fullBurst.gravityMul = 0.3f;
   fullBurst.pose = PoseHint::Thrust;
   for (MoveDef* d : {&gDash, &blast, &fullBurst}) sc(*d, S, P);
-  blast.castFx = "explosion_fire";  // the shell bursts on the ground under him
-  blast.castFxFrame = 6;
-  blast.castFxAt = {0, 0};
-  blast.castFxStays = true;
-  blast.castFxScale = 0.7f;
-  fullBurst.castFx = "gun_blast";  // every shell fires from the tip
-  fullBurst.castFxFrame = 17;
-  fullBurst.castFxAt = {64, -c.height * 0.5f};
-  fullBurst.castFxScale = 1.2f;
   c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, gDash}, {USpecial, blast}, {DSpecial, fullBurst}});
   addLanceKit(c.weapons[1], S, P, F::Fire);
   return c;

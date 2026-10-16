@@ -14,10 +14,16 @@ fx cero_oscuras 8 96 62 0.0 31.0 14.9254 1 17
 fx cero_oscuras_head 8 112 107 0.0 53.0 14.9254 1 30
 fx cero_wolf 8 120 64 87.0 32.0 18 1 24
 fx chaos_whip 12 228 229 114.0 115.0 14.9254 1 96
+fx cleave_flurry 8 104 97 48.0 45.0 14.9254 0 52
 fx counter_flash 8 117 110 60.0 55.0 14.9254 0 50
+fx cursed_aura 8 134 248 67.0 246.0 14.9254 1 64
 fx demon_dragon 8 96 59 0.0 29.0 14.9254 1 17
 fx demon_dragon_head 8 112 107 0.0 53.0 14.9254 1 30
+fx dismantle 8 97 59 64.0 31.0 14.9254 1 26
+fx explosion_electric 10 200 200 100.0 100.0 14.9254 0 72
+fx explosion_fire 11 196 205 98.0 101.0 14.9254 0 70
 fx fimbulwinter 12 201 193 99.0 94.0 14.9254 0 84
+fx frost_burst 12 220 113 108.0 95.0 14.9254 0 70
 fx fuga_arrow 8 124 32 115.0 16.0 14.9254 1
 fx fuga_blast 12 218 213 106.0 107.0 14.0845 0
 fx getsuga 12 100 166 81.0 83.0 14.9254 1 58
@@ -27,10 +33,15 @@ fx gloom_pillar 12 80 222 41.0 198.0 14.9254 1 35
 fx gran_rey_cero 8 96 56 0.0 28.0 14.9254 1 20
 fx gran_rey_cero_head 8 112 107 0.0 53.0 14.9254 1 32
 fx great_fireball 10 136 99 93.0 50.0 14.9254 1 38
+fx gun_blast 8 156 92 8.0 44.0 14.9254 0 34
 fx hit_blackflame 9 104 105 52.0 52.0 14.9254 0 44
+fx hit_blood 8 88 81 42.0 43.0 14.9254 0 40
 fx hit_chakra 9 88 97 44.0 51.0 14.9254 0 44
+fx hit_cursed 8 90 90 45.0 45.0 14.9254 0 42
 fx hit_dark 9 95 100 46.0 45.0 14.9254 0 46
 fx hit_fire 9 91 102 46.0 59.0 14.9254 0 44
+fx hit_ice 8 91 87 45.0 42.0 14.9254 0 40
+fx hit_impact 7 84 83 42.0 43.0 14.9254 0 36
 fx hit_lightning 8 95 94 46.0 48.0 14.9254 0 44
 fx hit_reiatsu 9 95 97 47.0 45.0 14.9254 0 46
 fx hit_slash 7 80 75 38.0 30.0 14.9254 0 38
@@ -41,6 +52,7 @@ fx indra_arrow 8 216 46 195.0 23.0 14.9254 1 22
 fx kageyoshi 12 239 215 119.0 107.0 14.9254 1 100
 fx kamui 12 132 132 68.0 66.0 14.9254 0
 fx kamui_swirl 10 132 132 66.0 66.0 14.9254 0 50
+fx kamutoke_bolt 8 192 41 165.0 22.0 14.9254 1 22
 fx kirin 8 141 266 75.0 258.0 14.9254 1 42
 fx kurama_aura 8 132 242 67.0 240.0 14.9254 1
 fx lanza 8 194 32 171.0 16.0 14.9254 1
@@ -54,6 +66,7 @@ fx malevolent_shrine 12 211 226 107.0 114.0 14.9254 1 112
 fx max_blue 12 174 170 88.0 85.0 14.9254 1 76
 fx odama_ball 8 174 154 87.0 77.0 14.9254 1 58
 fx petal_sphere 16 144 126 71.0 63.0 14.9254 1 58
+fx rage_aura 8 129 235 65.0 231.0 14.9254 1 64
 fx raikiri_aura 8 118 221 59.0 220.0 14.9254 1
 fx rasenshuriken 8 132 132 66.0 66.0 14.9254 1 60
 fx reiatsu_aura 8 130 249 65.0 247.0 14.9254 1
@@ -67,6 +80,7 @@ fx susanoo_aura 8 129 244 64.0 242.0 14.9254 1
 fx susanoo_ribs 12 187 222 94.0 119.0 14.9254 0 70
 fx susanoo_shuriken 8 132 132 66.0 66.0 14.9254 1 55
 fx sword_beam 8 164 30 101.0 15.0 14.9254 1 30
+fx thunder_burst 12 214 272 108.0 159.0 14.9254 0 92
 fx vasto_cero 8 96 54 0.0 27.0 14.9254 1 16
 fx vasto_cero_head 8 112 107 0.0 53.0 14.9254 1 30
 fx water_dragon 12 213 78 180.0 34.0 14.9254 1 26
@@ -368,7 +382,7 @@ sheet grimmjow w0_ultimate 28 256 256 119.5 244.0 185.0 0 21 15
 sheet grimmjow w1_jab 8 233 221 116.0 213.0 130.0 0 2 15
 sheet grimmjow walk 8 135 159 74.5 158.0 185.0 1 -1 15
 sheet hunter airdodge 8 222 230 59.0 229.0 165.0 0 -1 15
-sheet hunter airjump 8 252 256 86.0 245.0 165.0 0 -1 15
+sheet hunter airjump 8 251 240 83.0 241.0 165.0 0 -1 15
 sheet hunter bair 12 219 225 63.0 229.0 165.0 0 5 15
 sheet hunter bthrow 12 209 238 63.0 236.0 165.0 0 5 15
 sheet hunter climb 8 191 232 42.0 231.0 165.0 0 -1 15 106.2
@@ -408,7 +422,7 @@ sheet hunter run 8 211 204 66.0 236.0 165.0 1 -1 15
 sheet hunter shield 4 107 234 49.0 234.0 165.0 0 -1 15
 sheet hunter spotdodge 8 179 239 46.0 237.0 165.0 0 -1 15
 sheet hunter sspecial 12 176 242 43.0 241.0 165.0 0 2 15
-sheet hunter tumble 8 256 255 86.0 245.0 165.0 1 -1 15
+sheet hunter tumble 8 256 256 86.0 245.0 165.0 1 -1 15
 sheet hunter uair 12 255 256 85.0 245.0 165.0 0 11 15
 sheet hunter ultimate 28 252 253 82.0 242.0 165.0 0 20 15
 sheet hunter usmash 12 225 244 71.0 240.0 165.0 0 6 15
@@ -416,12 +430,84 @@ sheet hunter uspecial 12 208 237 58.0 236.0 165.0 0 11 15
 sheet hunter uthrow 8 174 236 42.0 235.0 165.0 0 0 15
 sheet hunter utilt 8 240 237 77.0 236.0 165.0 0 2 15
 sheet hunter victory 12 205 194 59.0 193.0 165.0 0 -1 15
-sheet hunter w0_jab 8 252 236 124.0 221.0 130.0 0 0 15
+sheet hunter w0_airdodge 8 223 238 64.0 236.0 165.0 0 -1 15
+sheet hunter w0_airjump 8 234 247 72.0 240.0 165.0 0 -1 15
+sheet hunter w0_bthrow 12 203 195 78.0 184.0 165.0 0 2 15
+sheet hunter w0_climb 8 186 232 50.0 224.0 165.0 0 -1 15 120.2
+sheet hunter w0_crouch 4 178 149 47.0 148.0 165.0 0 -1 15
+sheet hunter w0_dizzy 8 179 173 50.0 173.0 165.0 1 -1 15
+sheet hunter w0_dspecial 12 211 222 57.0 219.0 165.0 0 4 15
+sheet hunter w0_dthrow 12 227 249 58.0 241.0 165.0 0 5 15
+sheet hunter w0_fall 8 148 237 70.0 236.0 165.0 1 -1 15
+sheet hunter w0_fthrow 8 197 232 50.0 232.0 165.0 0 2 15
+sheet hunter w0_getup 8 193 184 50.0 173.0 165.0 0 -1 15
+sheet hunter w0_getupattack 8 174 195 58.0 185.0 165.0 0 1 15
+sheet hunter w0_grab 8 188 179 52.0 173.0 165.0 0 3 15
+sheet hunter w0_grabbed 4 179 182 56.0 181.0 165.0 1 -1 15
+sheet hunter w0_helpless 8 141 239 70.0 236.0 165.0 1 -1 15
+sheet hunter w0_hold 4 197 180 42.0 180.0 165.0 1 -1 15
+sheet hunter w0_hurt 4 182 183 60.0 182.0 165.0 0 -1 15
+sheet hunter w0_idle 8 170 177 50.0 176.0 165.0 1 -1 15
+sheet hunter w0_jab 8 203 236 61.0 235.0 165.0 0 2 15
+sheet hunter w0_jab2 8 204 237 63.0 236.0 165.0 0 0 15
+sheet hunter w0_jab3 12 249 253 82.0 243.0 165.0 0 3 15
+sheet hunter w0_jump 8 195 236 70.0 236.0 165.0 0 -1 15
+sheet hunter w0_knockdown 8 191 238 53.0 237.0 165.0 0 -1 15
+sheet hunter w0_land 4 187 175 51.0 173.0 165.0 0 -1 15
+sheet hunter w0_ledge 4 140 256 52.0 124.8 165.0 1 -1 15
+sheet hunter w0_ledgeattack 8 225 175 69.0 173.0 165.0 0 3 15
+sheet hunter w0_nair 12 238 242 76.0 238.0 165.0 0 4 15
 sheet hunter w0_nspecial 12 221 248 72.0 244.0 165.0 0 3 15
+sheet hunter w0_pummel 4 212 182 42.0 181.0 165.0 0 0 15
+sheet hunter w0_roll 8 199 179 58.0 173.0 165.0 0 -1 15
+sheet hunter w0_run 8 208 178 71.0 176.0 165.0 1 -1 15
+sheet hunter w0_shield 4 172 174 62.0 173.0 165.0 0 -1 15
+sheet hunter w0_spotdodge 8 230 234 73.0 233.0 165.0 0 -1 15
+sheet hunter w0_sspecial 12 252 242 84.0 238.0 165.0 0 2 15
+sheet hunter w0_tumble 8 253 256 86.0 245.0 165.0 1 -1 15
 sheet hunter w0_ultimate 28 254 245 84.0 237.0 165.0 0 3 15
-sheet hunter w1_jab 8 163 219 35.0 218.0 130.0 0 0 15
+sheet hunter w0_uspecial 12 241 239 78.0 236.0 165.0 0 2 15
+sheet hunter w0_uthrow 8 253 245 86.0 245.0 165.0 0 1 15
+sheet hunter w0_walk 8 170 178 53.0 177.0 165.0 1 -1 15
+sheet hunter w1_airdodge 8 238 201 74.0 237.0 165.0 0 -1 15
+sheet hunter w1_airjump 8 256 256 86.0 245.0 165.0 0 -1 15
+sheet hunter w1_bthrow 12 240 237 78.0 236.0 165.0 0 2 15
+sheet hunter w1_climb 8 249 238 80.0 237.0 165.0 0 -1 15 92.2
+sheet hunter w1_crouch 4 233 222 74.0 221.0 165.0 0 -1 15
+sheet hunter w1_dizzy 8 237 234 78.0 233.0 165.0 1 -1 15
+sheet hunter w1_dspecial 12 256 237 86.0 235.0 165.0 0 7 15
+sheet hunter w1_dthrow 12 256 243 86.0 240.0 165.0 0 3 15
+sheet hunter w1_fall 8 233 236 74.0 235.0 165.0 1 -1 15
+sheet hunter w1_fthrow 8 240 234 77.0 233.0 165.0 0 2 15
+sheet hunter w1_getup 8 234 232 74.0 231.0 165.0 0 -1 15
+sheet hunter w1_getupattack 8 244 234 81.0 231.0 165.0 0 4 15
+sheet hunter w1_grab 8 237 232 75.0 231.0 165.0 0 1 15
+sheet hunter w1_grabbed 4 235 243 76.0 235.0 165.0 1 -1 15
+sheet hunter w1_helpless 8 233 209 74.0 235.0 165.0 1 -1 15
+sheet hunter w1_hold 4 233 232 74.0 231.0 165.0 1 -1 15
+sheet hunter w1_hurt 4 234 231 75.0 231.0 165.0 0 -1 15
+sheet hunter w1_idle 8 236 234 76.0 233.0 165.0 1 -1 15
+sheet hunter w1_jab 8 241 232 78.0 231.0 165.0 0 0 15
+sheet hunter w1_jab2 8 241 223 78.0 222.0 165.0 0 2 15
+sheet hunter w1_jab3 12 233 240 74.0 237.0 165.0 0 5 15
+sheet hunter w1_jump 8 236 237 74.0 236.0 165.0 0 -1 15
+sheet hunter w1_knockdown 8 238 239 78.0 237.0 165.0 0 -1 15
+sheet hunter w1_land 4 238 232 76.0 231.0 165.0 0 -1 15
+sheet hunter w1_ledge 4 235 209 74.0 124.8 165.0 1 -1 15
+sheet hunter w1_ledgeattack 8 241 239 77.0 238.0 165.0 0 0 15
+sheet hunter w1_nair 12 251 238 83.0 235.0 165.0 0 1 15
 sheet hunter w1_nspecial 12 243 233 78.0 232.0 165.0 0 3 15
+sheet hunter w1_pummel 4 233 232 74.0 231.0 165.0 0 0 15
+sheet hunter w1_roll 8 244 242 74.0 231.0 165.0 0 -1 15
+sheet hunter w1_run 8 246 154 81.0 170.0 165.0 1 -1 15
+sheet hunter w1_shield 4 237 221 76.0 221.0 165.0 0 -1 15
+sheet hunter w1_spotdodge 8 236 247 77.0 243.0 165.0 0 -1 15
+sheet hunter w1_sspecial 12 242 232 76.0 231.0 165.0 0 6 15
+sheet hunter w1_tumble 8 256 256 86.0 245.0 165.0 1 -1 15
 sheet hunter w1_ultimate 28 240 233 78.0 231.0 165.0 0 19 15
+sheet hunter w1_uspecial 12 246 249 76.0 242.0 165.0 0 7 15
+sheet hunter w1_uthrow 8 238 247 75.0 244.0 165.0 0 2 15
+sheet hunter w1_walk 8 233 234 74.0 234.0 165.0 1 -1 15
 sheet hunter walk 8 173 227 40.0 227.0 165.0 1 -1 15
 sheet ichigo airdodge 8 176 211 64.0 215.0 170.0 0 -1 15
 sheet ichigo airjump 8 211 228 66.0 231.0 170.0 0 -1 15
@@ -484,7 +570,7 @@ sheet ichigo w0_uspecial 12 233 238 88.0 236.0 170.0 0 7 15
 sheet ichigo w1_airdodge 8 231 122 92.0 208.0 170.0 0 -1 15
 sheet ichigo w1_airjump 8 241 250 94.0 244.0 170.0 0 -1 15
 sheet ichigo w1_bthrow 12 170 233 61.0 232.0 170.0 0 0 15
-sheet ichigo w1_climb 8 209 234 82.0 233.0 170.0 0 -1 15
+sheet ichigo w1_climb 8 209 234 82.0 233.0 170.0 0 -1 15 104.5
 sheet ichigo w1_crouch 4 205 136 79.0 135.0 170.0 0 -1 15
 sheet ichigo w1_dizzy 8 175 216 58.0 215.0 170.0 1 -1 15
 sheet ichigo w1_dspecial 12 176 232 81.0 231.0 170.0 0 8 15
@@ -505,7 +591,7 @@ sheet ichigo w1_jab3 12 246 248 98.0 240.0 170.0 0 4 15
 sheet ichigo w1_jump 8 231 209 92.0 208.0 170.0 0 -1 15
 sheet ichigo w1_knockdown 8 231 171 91.0 166.0 170.0 0 -1 15
 sheet ichigo w1_land 4 176 216 67.0 215.0 170.0 0 -1 15
-sheet ichigo w1_ledge 4 107 233 45.0 233.0 170.0 1 -1 15
+sheet ichigo w1_ledge 4 107 233 45.0 128.5 170.0 1 -1 15
 sheet ichigo w1_ledgeattack 8 239 237 94.0 235.0 170.0 0 2 15
 sheet ichigo w1_nair 12 248 246 101.0 241.0 170.0 0 1,5,8 15
 sheet ichigo w1_nspecial 12 245 238 103.0 234.0 170.0 0 2 15
@@ -696,12 +782,84 @@ sheet kratos uspecial 12 187 237 80.0 236.0 180.0 0 5 15
 sheet kratos uthrow 8 157 217 60.0 216.0 180.0 0 1 15
 sheet kratos utilt 8 152 237 63.0 236.0 180.0 0 2 15
 sheet kratos victory 12 142 182 57.0 181.0 180.0 0 -1 15
-sheet kratos w0_jab 8 235 194 116.0 193.0 130.0 0 3 15
+sheet kratos w0_airdodge 8 132 144 53.0 220.0 180.0 0 -1 15
+sheet kratos w0_airjump 8 171 165 71.0 223.0 180.0 0 -1 15
+sheet kratos w0_bthrow 12 197 244 82.0 243.0 180.0 0 6 15
+sheet kratos w0_climb 8 162 225 71.0 224.0 180.0 0 -1 15 88.0
+sheet kratos w0_crouch 4 150 131 63.0 130.0 180.0 0 -1 15
+sheet kratos w0_dizzy 8 131 212 69.0 211.0 180.0 1 -1 15
+sheet kratos w0_dspecial 12 228 237 98.0 236.0 180.0 0 -1 15
+sheet kratos w0_dthrow 12 231 237 95.0 236.0 180.0 0 3 15
+sheet kratos w0_fall 8 124 206 49.0 219.0 180.0 1 -1 15
+sheet kratos w0_fthrow 8 201 234 67.0 233.0 180.0 0 0 15
+sheet kratos w0_getup 8 209 212 95.0 211.0 180.0 0 -1 15
+sheet kratos w0_getupattack 8 216 234 89.0 233.0 180.0 0 0 15
+sheet kratos w0_grab 8 170 211 67.0 210.0 180.0 0 0 15
+sheet kratos w0_grabbed 4 168 212 73.0 211.0 180.0 1 -1 15
+sheet kratos w0_helpless 8 133 207 58.0 219.0 180.0 1 -1 15
+sheet kratos w0_hold 4 160 233 65.0 232.0 180.0 1 -1 15
+sheet kratos w0_hurt 4 209 208 104.0 207.0 180.0 0 -1 15
+sheet kratos w0_idle 8 131 214 70.0 213.0 180.0 1 -1 15
+sheet kratos w0_jab 8 223 233 98.0 232.0 180.0 0 2 15
+sheet kratos w0_jab2 8 238 230 103.0 229.0 180.0 0 2 15
+sheet kratos w0_jab3 12 248 237 109.0 236.0 180.0 0 6 15
+sheet kratos w0_jump 8 148 220 62.0 219.0 180.0 0 -1 15
+sheet kratos w0_knockdown 8 225 233 97.0 232.0 180.0 0 -1 15
+sheet kratos w0_land 4 157 212 67.0 211.0 180.0 0 -1 15
+sheet kratos w0_ledge 4 102 216 47.0 136.0 180.0 1 -1 15
+sheet kratos w0_ledgeattack 8 178 228 66.0 227.0 180.0 0 0 15
+sheet kratos w0_nair 12 251 245 112.0 236.0 180.0 0 5 15
 sheet kratos w0_nspecial 12 237 231 106.0 230.0 180.0 0 6 15
+sheet kratos w0_pummel 4 159 231 64.0 230.0 180.0 0 0 15
+sheet kratos w0_roll 8 172 211 66.0 210.0 180.0 0 -1 15
+sheet kratos w0_run 8 198 175 82.0 180.0 180.0 1 -1 15
+sheet kratos w0_shield 4 161 159 67.0 158.0 180.0 0 -1 15
+sheet kratos w0_spotdodge 8 174 234 97.0 233.0 180.0 0 -1 15
+sheet kratos w0_sspecial 12 242 234 103.0 233.0 180.0 0 1 15
+sheet kratos w0_tumble 8 164 171 70.0 228.0 180.0 1 -1 15
 sheet kratos w0_ultimate 28 256 256 114.0 244.0 180.0 0 11 15
-sheet kratos w1_jab 8 218 226 109.0 218.0 130.0 0 2 15
+sheet kratos w0_uspecial 12 237 246 106.0 244.0 180.0 0 4 15
+sheet kratos w0_uthrow 8 237 233 105.0 232.0 180.0 0 3 15
+sheet kratos w0_walk 8 134 218 67.0 217.0 180.0 1 -1 15
+sheet kratos w1_airdodge 8 221 185 98.0 225.0 180.0 0 -1 15
+sheet kratos w1_airjump 8 225 211 99.0 223.0 180.0 0 -1 15
+sheet kratos w1_bthrow 12 220 181 97.0 180.0 180.0 0 11 15
+sheet kratos w1_climb 8 232 232 101.0 231.0 180.0 0 -1 15 95.0
+sheet kratos w1_crouch 4 224 157 98.0 156.0 180.0 0 -1 15
+sheet kratos w1_dizzy 8 234 187 105.0 186.0 180.0 1 -1 15
+sheet kratos w1_dspecial 12 244 214 106.0 213.0 180.0 0 7 15
+sheet kratos w1_dthrow 12 247 248 111.0 241.0 180.0 0 3 15
+sheet kratos w1_fall 8 220 214 97.0 223.0 180.0 1 -1 15
+sheet kratos w1_fthrow 8 224 232 98.0 231.0 180.0 0 2 15
+sheet kratos w1_getup 8 225 174 98.0 172.0 180.0 0 -1 15
+sheet kratos w1_getupattack 8 233 235 103.0 233.0 180.0 0 1 15
+sheet kratos w1_grab 8 227 181 97.0 180.0 180.0 0 3 15
+sheet kratos w1_grabbed 4 221 198 98.0 197.0 180.0 1 -1 15
+sheet kratos w1_helpless 8 240 212 106.0 223.0 180.0 1 -1 15
+sheet kratos w1_hold 4 224 170 97.0 169.0 180.0 1 -1 15
+sheet kratos w1_hurt 4 171 231 97.0 230.0 180.0 0 -1 15
+sheet kratos w1_idle 8 230 182 100.0 181.0 180.0 1 -1 15
+sheet kratos w1_jab 8 228 236 100.0 234.0 180.0 0 2 15
+sheet kratos w1_jab2 8 228 203 100.0 202.0 180.0 0 6 15
+sheet kratos w1_jab3 12 231 236 99.0 235.0 180.0 0 2 15
+sheet kratos w1_jump 8 221 224 97.0 223.0 180.0 0 -1 15
+sheet kratos w1_knockdown 8 217 230 96.0 228.0 180.0 0 -1 15
+sheet kratos w1_land 4 250 183 112.0 180.0 180.0 0 -1 15
+sheet kratos w1_ledge 4 192 228 82.0 136.0 180.0 1 -1 15
+sheet kratos w1_ledgeattack 8 241 232 106.0 231.0 180.0 0 2 15
+sheet kratos w1_nair 12 249 252 109.0 242.0 180.0 0 4 15
 sheet kratos w1_nspecial 12 250 239 109.0 236.0 180.0 0 6,7,8,9 15
+sheet kratos w1_pummel 4 233 181 101.0 180.0 180.0 0 1 15
+sheet kratos w1_roll 8 236 184 97.0 172.0 180.0 0 -1 15
+sheet kratos w1_run 8 246 163 109.0 167.0 180.0 1 -1 15
+sheet kratos w1_shield 4 217 170 94.0 169.0 180.0 0 -1 15
+sheet kratos w1_spotdodge 8 227 179 99.0 178.0 180.0 0 -1 15
+sheet kratos w1_sspecial 12 250 229 109.0 228.0 180.0 0 1 15
+sheet kratos w1_tumble 8 250 191 111.0 240.0 180.0 1 -1 15
 sheet kratos w1_ultimate 28 251 241 112.0 237.0 180.0 0 21 15
+sheet kratos w1_uspecial 12 231 236 100.0 235.0 180.0 0 11 15
+sheet kratos w1_uthrow 8 234 233 103.0 232.0 180.0 0 4 15
+sheet kratos w1_walk 8 220 177 97.0 176.0 180.0 1 -1 15
 sheet kratos walk 8 143 163 57.0 162.0 180.0 1 -1 15
 sheet link airdodge 8 210 153 68.0 225.0 175.0 0 -1 15
 sheet link airjump 8 249 232 87.0 244.0 175.0 0 -1 15
@@ -811,7 +969,7 @@ sheet naruto utilt 8 219 235 86.0 234.0 213.0 0 3 15
 sheet naruto victory 12 162 240 92.0 236.0 213.0 0 -1 15
 sheet naruto w0_airjump 8 229 229 92.0 232.0 213.0 0 -1 15
 sheet naruto w0_bthrow 12 224 233 85.0 232.0 213.0 0 6 15
-sheet naruto w0_climb 8 248 246 104.0 242.0 213.0 0 -1 15
+sheet naruto w0_climb 8 248 246 104.0 242.0 213.0 0 -1 15 80.2
 sheet naruto w0_crouch 4 201 175 77.0 173.0 213.0 0 -1 15
 sheet naruto w0_dizzy 8 203 234 79.0 233.0 213.0 1 -1 15
 sheet naruto w0_dspecial 12 229 233 91.0 232.0 213.0 0 4 15
@@ -832,7 +990,7 @@ sheet naruto w0_jab3 12 237 233 94.0 232.0 213.0 0 2 15
 sheet naruto w0_jump 8 235 238 95.0 235.0 213.0 0 -1 15
 sheet naruto w0_knockdown 8 238 233 95.0 232.0 213.0 0 -1 15
 sheet naruto w0_land 4 254 233 103.0 232.0 213.0 0 -1 15
-sheet naruto w0_ledge 4 130 251 7.0 241.0 213.0 1 -1 15
+sheet naruto w0_ledge 4 130 251 7.0 160.8 213.0 1 -1 15
 sheet naruto w0_ledgeattack 8 241 234 96.0 232.0 213.0 0 2 15
 sheet naruto w0_nair 12 236 232 96.0 232.0 213.0 0 5,8 15
 sheet naruto w0_nspecial 12 205 233 80.0 232.0 213.0 0 3 15
@@ -850,7 +1008,7 @@ sheet naruto w0_walk 8 204 242 80.0 237.0 213.0 1 -1 15
 sheet naruto w1_airdodge 8 186 193 70.0 235.0 213.0 0 -1 15
 sheet naruto w1_airjump 8 202 233 77.0 236.0 213.0 0 -1 15
 sheet naruto w1_bthrow 12 192 237 79.0 236.0 213.0 0 3 15
-sheet naruto w1_climb 8 157 245 76.0 244.0 213.0 0 -1 15
+sheet naruto w1_climb 8 157 245 76.0 244.0 213.0 0 -1 15 79.2
 sheet naruto w1_crouch 4 198 224 75.0 223.0 213.0 0 -1 15
 sheet naruto w1_dizzy 8 156 234 76.0 233.0 213.0 1 -1 15
 sheet naruto w1_dspecial 12 216 233 76.0 232.0 213.0 0 4 15
@@ -871,7 +1029,7 @@ sheet naruto w1_jab3 12 222 233 87.0 232.0 213.0 0 4 15
 sheet naruto w1_jump 8 192 236 75.0 235.0 213.0 0 -1 15
 sheet naruto w1_knockdown 8 229 233 91.0 232.0 213.0 0 -1 15
 sheet naruto w1_land 4 156 233 76.0 232.0 213.0 0 -1 15
-sheet naruto w1_ledge 4 130 253 48.0 244.0 213.0 1 -1 15
+sheet naruto w1_ledge 4 130 253 48.0 159.8 213.0 1 -1 15
 sheet naruto w1_ledgeattack 8 227 234 91.0 233.0 213.0 0 2 15
 sheet naruto w1_nair 12 227 237 90.0 237.0 213.0 0 4,5 15
 sheet naruto w1_nspecial 12 237 233 94.0 232.0 213.0 0 4 15
@@ -939,7 +1097,7 @@ sheet sasuke victory 12 151 235 71.0 232.0 213.0 0 -1 15
 sheet sasuke w0_airdodge 8 213 192 98.0 236.0 213.0 0 -1 15
 sheet sasuke w0_airjump 8 191 242 83.0 239.0 213.0 0 -1 15
 sheet sasuke w0_bthrow 12 215 249 103.0 241.0 213.0 0 3 15
-sheet sasuke w0_climb 8 187 252 77.0 243.0 213.0 0 -1 15
+sheet sasuke w0_climb 8 187 252 77.0 243.0 213.0 0 -1 15 81.2
 sheet sasuke w0_crouch 4 172 138 85.0 136.0 213.0 0 -1 15
 sheet sasuke w0_dizzy 8 176 243 77.0 241.0 213.0 1 -1 15
 sheet sasuke w0_dspecial 12 182 250 88.0 241.0 213.0 0 -1 15
@@ -960,7 +1118,7 @@ sheet sasuke w0_jab3 12 229 243 97.0 241.0 213.0 0 7 15
 sheet sasuke w0_jump 8 173 244 84.0 238.0 213.0 0 -1 15
 sheet sasuke w0_knockdown 8 242 245 117.0 237.0 213.0 0 -1 15
 sheet sasuke w0_land 4 178 243 80.0 241.0 213.0 0 -1 15
-sheet sasuke w0_ledge 4 185 253 113.0 242.0 213.0 1 -1 15
+sheet sasuke w0_ledge 4 185 253 113.0 160.8 213.0 1 -1 15
 sheet sasuke w0_ledgeattack 8 254 244 123.0 241.0 213.0 0 1 15
 sheet sasuke w0_nair 12 224 242 108.0 236.0 213.0 0 2 15
 sheet sasuke w0_nspecial 12 235 244 104.0 242.0 213.0 0 5 15
@@ -1091,11 +1249,54 @@ sheet sukuna uspecial 12 166 236 68.0 234.0 190.0 0 11 15
 sheet sukuna uthrow 8 136 236 51.0 235.0 190.0 0 3 15
 sheet sukuna utilt 8 154 235 65.0 234.0 190.0 0 2 15
 sheet sukuna victory 12 111 194 45.0 193.0 190.0 0 -1 15
-sheet sukuna w0_jab 8 139 225 37.0 221.0 130.0 0 0 15
-sheet sukuna w0_nspecial 12 238 236 106.0 235.0 190.0 0 8 15
+sheet sukuna w0_airdodge 8 246 178 108.0 241.0 190.0 0 -1 15
+sheet sukuna w0_airjump 8 213 229 90.0 236.0 190.0 0 -1 15
+sheet sukuna w0_bthrow 12 251 239 114.0 235.0 190.0 0 1 15
+sheet sukuna w0_climb 8 210 239 93.0 235.0 190.0 0 -1 15 91.5
+sheet sukuna w0_crouch 4 212 238 95.0 233.0 190.0 0 -1 15
+sheet sukuna w0_dizzy 8 165 247 91.0 243.0 190.0 1 -1 15
+sheet sukuna w0_dspecial 12 199 248 79.0 240.0 190.0 0 -1 15
+sheet sukuna w0_dthrow 12 188 245 73.0 236.0 190.0 0 1 15
+sheet sukuna w0_fall 8 211 232 88.0 232.0 190.0 1 -1 15
+sheet sukuna w0_fthrow 8 247 245 111.0 240.0 190.0 0 2 15
+sheet sukuna w0_getup 8 223 245 107.0 240.0 190.0 0 -1 15
+sheet sukuna w0_getupattack 8 239 241 107.0 237.0 190.0 0 0 15
+sheet sukuna w0_grab 8 205 241 64.0 237.0 190.0 0 2 15
+sheet sukuna w0_grabbed 4 182 239 82.0 235.0 190.0 1 -1 15
+sheet sukuna w0_helpless 8 205 199 88.0 233.0 190.0 1 -1 15
+sheet sukuna w0_hold 4 139 243 58.0 239.0 190.0 1 -1 15
+sheet sukuna w0_hurt 4 203 241 87.0 237.0 190.0 0 -1 15
+sheet sukuna w0_idle 8 119 241 51.0 237.0 190.0 1 -1 15
+sheet sukuna w0_jab 8 244 239 109.0 235.0 190.0 0 1 15
+sheet sukuna w0_jab2 8 233 239 103.0 235.0 190.0 0 0 15
+sheet sukuna w0_jab3 12 232 240 94.0 236.0 190.0 0 7 15
+sheet sukuna w0_jump 8 205 238 89.0 235.0 190.0 0 -1 15
+sheet sukuna w0_knockdown 8 238 242 106.0 237.0 190.0 0 -1 15
+sheet sukuna w0_land 4 136 240 55.0 236.0 190.0 0 -1 15
+sheet sukuna w0_ledge 4 177 236 77.0 143.5 190.0 1 -1 15
+sheet sukuna w0_ledgeattack 8 237 240 105.0 235.0 190.0 0 0 15
+sheet sukuna w0_nair 12 240 244 107.0 237.0 190.0 0 8 15
+sheet sukuna w0_nspecial 12 235 239 105.0 235.0 190.0 0 2 15
+sheet sukuna w0_pummel 4 151 240 57.0 236.0 190.0 0 0 15
+sheet sukuna w0_roll 8 217 240 101.0 236.0 190.0 0 -1 15
+sheet sukuna w0_run 8 232 164 103.0 172.0 190.0 1 -1 15
+sheet sukuna w0_shield 4 225 235 91.0 234.0 190.0 0 -1 15
+sheet sukuna w0_spotdodge 8 211 245 90.0 240.0 190.0 0 -1 15
+sheet sukuna w0_sspecial 12 232 240 103.0 236.0 190.0 0 2 15
+sheet sukuna w0_tumble 8 240 235 106.0 242.0 190.0 1 -1 15
 sheet sukuna w0_ultimate 28 248 256 107.0 244.0 190.0 0 19 15
-sheet sukuna w1_jab 8 224 224 112.0 221.0 130.0 0 1 15
+sheet sukuna w0_uspecial 12 212 240 94.0 236.0 190.0 0 8 15
+sheet sukuna w0_uthrow 8 201 243 92.0 239.0 190.0 0 2 15
+sheet sukuna w0_walk 8 117 241 51.0 236.0 190.0 1 -1 15
+sheet sukuna w1_dspecial 12 166 233 46.0 232.0 190.0 0 8 15
+sheet sukuna w1_jab 8 195 238 84.0 237.0 190.0 0 2 15
+sheet sukuna w1_jab2 8 222 233 97.0 232.0 190.0 0 3 15
+sheet sukuna w1_jab3 12 229 241 104.0 233.0 190.0 0 3 15
+sheet sukuna w1_nair 12 242 186 108.0 235.0 190.0 0 4 15
+sheet sukuna w1_nspecial 12 194 212 53.0 211.0 190.0 0 9 15
+sheet sukuna w1_sspecial 12 255 235 114.0 234.0 190.0 0 3 15
 sheet sukuna w1_ultimate 28 216 203 86.0 202.0 190.0 0 14 15
+sheet sukuna w1_uspecial 12 213 238 92.0 237.0 190.0 0 4 15
 sheet sukuna walk 8 110 190 44.0 189.0 190.0 1 -1 15
 sheet ulquiorra airdodge 8 139 163 65.0 236.0 185.0 0 -1 15
 sheet ulquiorra airjump 8 190 230 71.0 236.0 185.0 0 -1 15
