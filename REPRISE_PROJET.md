@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 06 h 34 UTC, session B, lot 1 en cours : ~134 générations faites, ~100 clips importés (états du mode Ermite et du
+  Kurama de Naruto, arc de Sasuke, kits de Kakashi et du Mangekyō de Sasuke), 17 effets PixelLab importés.
+  - **Incident évité** : mon script d'enchaînement a construit une vague avec tous les clips de base de Kakashi
+    (`jobs(f, [])` traitait une liste vide comme « tous les clips »). Arrêté avant qu'il n'atteigne Kakashi :
+    **aucun job en trop n'a été soumis** (vérifié : aucun `job.json` nouveau dans `pxa/kakashi/`). Corrigé dans
+    `clips.py` (`only is not None`) et dans le script.
+  - Refaits : la contre-attaque du mode Ermite (le prompt « posture de crapaud » transformait Naruto en crapaud)
+    et l'Ōdama (la boule n'était pas dessinée) ; le Kagutsuchi de Sasuke (lame verticale).
 - 16/10 05 h 36 UTC, session B, **lot 1 du grand chantier : Naruto, Kakashi, Sasuke** (demande du propriétaire), en cours.
   - Kits dans le code (poussés) : `addFistKit` (M1 poing / pied / finisseur, M1 aérien) ; Naruto mode Ermite
     (Kawazu Kumite, bond, contre du crapaud, Ōdama) et Kurama (Rasengan de Kurama, clones, éclair doré, bras de

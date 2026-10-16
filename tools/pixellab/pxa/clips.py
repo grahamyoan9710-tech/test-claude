@@ -411,7 +411,7 @@ def base_file(fighter, base):
 def jobs(fighter, only=None):
     out = []
     for name, (n, base, pin, loop, direction, desc) in clips(fighter).items():
-        if only and name not in only:
+        if only is not None and name not in only:  # an empty list is no clip at all, never every clip
             continue
         src = base_file(fighter, base)
         if not src or not os.path.exists(src):

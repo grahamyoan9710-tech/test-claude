@@ -1759,10 +1759,15 @@ void drawProjectiles(const Match& m, float time) {
         pose.handB = {-0.25f * H, 0.05f * H};
         pose.lean = 0.35f;
         const int facing = p.vel.x >= 0.0f ? 1 : -1;
-        runClip(*o.def, pose, std::fmod(p.age * 0.06f, 1.0f));  // the clone runs like its owner
+        runClip(*o.def, pose, std::fmod(p.age * 0.06f, 1.0f));  // the clone runs like its owner, in its look
+        const int wrun = o.weapon == 0 ? art::kSheetWState0 : o.weapon == 1 ? art::kSheetWState1 : -1;
+        if (wrun >= 0 && art::hasSheet(o.def->hero, wrun + art::kSheetRun)) pose.sheet = wrun + art::kSheetRun;
         drawCharacterSprite(*o.def, o.palette, pose, {p.pos.x, p.pos.y + H * 0.5f}, facing, 1.0f, std::min(1.0f, s.k) * 0.92f,
                             {255, 240, 200, 255}, 0.12f, time);
-        if (p.age < 6) shotFlash(s, {240, 240, 240, 255});
+        if (const art::FxInfo* puff = art::fxInfo("smoke_puff"); puff && p.age / 60.0f < puff->duration())
+          art::drawFx("smoke_puff", p.age / 60.0f, p.pos, H / 170.0f);  // it pops out of a puff of smoke
+        else if (!puff && p.age < 6)
+          shotFlash(s, {240, 240, 240, 255});
         continue;
       }
       case ProjVisual::Bijudama: shotBijudama(s, time); continue;
