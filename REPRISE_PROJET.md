@@ -49,12 +49,16 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (pilote Ichigo : armes, clips coupés) | 15/10 17 h 41 UTC |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab d'Ichigo) | 15/10 17 h 41 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | session B (coups d'armes d'Ichigo) | 15/10 17 h 41 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.6) | 16/10 07 h 59 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 08 h 00 UTC, session B : **v9.6 publiée** (lot 1 : kits d'armes de Naruto, Sasuke et Kakashi, effets
+  PixelLab). Démos de contrôle regardées (les 6 kits et les 3 ultimes) : armes visibles, effets bien placés.
+  Workflow « Release » réussi ; l'archive Linux téléchargée par l'API a la même somme SHA-256 que la release,
+  démarre et affiche v9.6. Tous les verrous libres. Suite : attendre le propriétaire pour les 13 autres.
 - 16/10 07 h 46 UTC, session B, lot 1 : génération finie (~200 générations au total, il en reste 2 896), tout importé
   (Naruto 77 clips, Sasuke 44, Kakashi 12 ; 18 effets). `fitall.sh` relancé : 34 clips retimés, 193 hitboxes
   recalées. Le combo M1 à mains nues poussait trop (le 3e coup ratait après recalage) : les 2 premiers coups
