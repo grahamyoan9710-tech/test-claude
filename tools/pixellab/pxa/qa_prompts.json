@@ -80,6 +80,8 @@
  },
  "hunter": {
   "airdodge": "air dodge: in mid-air he quickly tucks his knees up to his chest and turns his shoulders a little, holding the enormous greatsword close along his body, then opens up again into the same airborne pose. His whole body and the greatsword stay sharp, solid and fully visible in every frame: no blur, no smear, no ball, no glow, no effect. He keeps holding the enormous greatsword the whole time; the weapon stays visible. Only the hunter is drawn.",
-  "dthrow": "slams the invisible opponent he is holding down onto the ground in front of him with his free hand, crouching low, then returns to the fighting stance. His other hand keeps gripping the enormous greatsword, which rests over his shoulder and stays visible and fully inside the picture in every frame. No slash trail, no dust, no effect. Only the character is drawn: the opponent is invisible, there is no other person in the frame."
+  "dthrow": "slams the invisible opponent he is holding down onto the ground in front of him with his free hand, crouching low, then returns to the fighting stance. His other hand keeps gripping the enormous greatsword, which rests over his shoulder and stays visible and fully inside the picture in every frame. No slash trail, no dust, no effect. Only the character is drawn: the opponent is invisible, there is no other person in the frame.",
+  "airjump": "double jump in mid-air: kicks off the air and does a tight forward somersault holding the enormous greatsword close against his body, the blade pointing down along his back, ending tucked in the same pose. He keeps holding the greatsword the whole time; the whole sword stays inside the picture.",
+  "tumble": "tumbles head over heels through the air after a heavy blow, spinning out of control, the enormous greatsword held tight against his body, a seamless loop. He keeps holding the greatsword the whole time; the whole sword stays inside the picture."
  }
 }

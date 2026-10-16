@@ -8,31 +8,191 @@
    "guard_pose": "brawling stance facing right, the frost-blue Leviathan Axe raised in his right hand, the round shield held forward on his left forearm",
    "air_pose": "in mid-air facing right, knees tucked, the Leviathan Axe in his right hand, the round shield on his left forearm",
    "clips": {
-    "w0_shield": [4, "guard", null, false, "none", "braces to block: raises the round shield on his left forearm in front of his face and crouches slightly behind it, the Leviathan Axe held low in his right hand, a solid defensive guard"],
-    "w0_jab": [8, "guard", true, false, "forward", "first hit of a fast three-hit axe combo: a quick diagonal downward chop of the Leviathan Axe from high in front of him to low in front of him, a thin pale-blue frost trail following the blade, then back into the stance"],
-    "w0_jab2": [8, "guard", true, false, "forward", "second hit: a fast flat backhand sweep of the Leviathan Axe straight across in front of him at chest height, a thin pale-blue frost trail following the blade, then back into the stance"],
-    "w0_jab3": [12, "guard", true, false, "forward", "finisher: steps forward and swings the Leviathan Axe in a powerful rising arc from low in front of him up above his head, a few ice shards flying off the blade, then back into the stance"],
-    "w0_nair": [12, "jump@last", true, false, "around", "air combo in mid-air: chops the Leviathan Axe down in front of him, then swings it back up over his head in a full circle around his body, pale-blue frost trails following the blade, then back to the tucked pose"],
-    "w0_sspecial": [12, "guard", true, false, "forward", "Frost Giant's Frenzy: steps forward and strikes three times in quick succession with the Leviathan Axe, a chop, a backhand, a chop, frost flying off the blade, then back into the stance"],
-    "w0_uspecial": [12, "guard", null, false, "up", "Leviathan leap: crouches, then leaps straight up spinning once, swinging the Leviathan Axe in a big vertical circle from low in front up over his head, a pale-blue frost trail, rising the whole time, ending in mid-air with the axe raised"],
-    "w0_dspecial": [12, "guard", true, false, "none", "Hel's Touch: raises the Leviathan Axe high above his head, then slams it down into the ground in front of his feet, crouching low with the impact, holds an instant, then rises back into the stance. Only Kratos, his axe and his shield are drawn: no ice, no effect on the ground"]
+    "w0_shield": [
+     4,
+     "guard",
+     null,
+     false,
+     "none",
+     "braces to block: raises the round shield on his left forearm in front of his face and crouches slightly behind it, the Leviathan Axe held low in his right hand, a solid defensive guard"
+    ],
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first hit of a fast three-hit axe combo: a quick diagonal downward chop of the Leviathan Axe from high in front of him to low in front of him, a thin pale-blue frost trail following the blade, then back into the stance"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second hit: a fast flat backhand sweep of the Leviathan Axe straight across in front of him at chest height, a thin pale-blue frost trail following the blade, then back into the stance"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "finisher: steps forward and swings the Leviathan Axe in a powerful rising arc from low in front of him up above his head, a few ice shards flying off the blade, then back into the stance"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "air combo in mid-air: chops the Leviathan Axe down in front of him, then swings it back up over his head in a full circle around his body, pale-blue frost trails following the blade, then back to the tucked pose"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Frost Giant's Frenzy: steps forward and strikes three times in quick succession with the Leviathan Axe, a chop, a backhand, a chop, frost flying off the blade, then back into the stance"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "Leviathan leap: crouches, then leaps straight up spinning once, swinging the Leviathan Axe in a big vertical circle from low in front up over his head, a pale-blue frost trail, rising the whole time, ending in mid-air with the axe raised"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "none",
+     "Hel's Touch: raises the Leviathan Axe high above his head, then slams it down into the ground in front of his feet, crouching low with the impact, holds an instant, then rises back into the stance. Only Kratos, his axe and his shield are drawn: no ice, no effect on the ground"
+    ],
+    "w0_runstart": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "breaks into a fast run to the right: leans the torso far forward, the Leviathan Axe held low and trailing behind him in his right hand, the round shield kept on his left forearm in front of his chest, legs start a long running stride"
+    ],
+    "w0_run": [
+     8,
+     "runstart@last",
+     true,
+     true,
+     "none",
+     "fast run cycle to the right: leaning far forward, the Leviathan Axe held low and trailing behind him in his right hand, the round shield kept on his left forearm in front of his chest, long fast strides, a seamless loop that ends exactly on the first pose"
+    ],
+    "w0_grabbed": [
+     4,
+     "guard",
+     true,
+     true,
+     "none",
+     "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his left forearm with the round shield pressed against his chest, his right hand still gripping the Leviathan Axe pointing down, legs kicking and squirming, a seamless loop. Only Kratos is drawn: the opponent is invisible, there is no other person in the frame"
+    ]
    }
   },
   "1": {
    "look": "new",
    "held": "the Blades of Chaos, two curved fiery blades on chains, one in each hand",
-   "subject": "Kratos from God of War, a huge bald warrior with ashen skin, a red tattoo, a thick beard, leather armour, a fur-lined kilt and boots, wielding the Blades of Chaos (two curved runed blades glowing with embers, on long chains wrapped around his forearms), one in each hand, a round wooden shield with a gold rim on his left forearm",
+   "subject": "Kratos from God of War, a huge bald warrior with ashen skin, a red tattoo, a thick beard, leather armour and a fur-lined kilt, wielding the Blades of Chaos (two curved runed blades on chains), one in each hand, a round wooden shield with a gold rim on his left forearm",
    "guard_pose": "brawling stance facing right, a curved fiery Blade of Chaos in each hand, the round shield on his left forearm",
    "air_pose": "in mid-air facing right, knees tucked, a curved Blade of Chaos in each hand",
    "clips": {
-    "w1_shield": [4, "guard", null, false, "none", "braces to block: raises the round shield on his left forearm in front of his face and crouches slightly behind it, the Blades of Chaos held low, a solid defensive guard"],
-    "w1_jab": [8, "guard", true, false, "forward", "first hit of a fast three-hit chain combo: lashes the right Blade of Chaos forward on its chain in a quick downward arc in front of him, a thin fiery trail, the chain pulling it back into his hand, then back into the stance. The whole chain stays inside the picture"],
-    "w1_jab2": [8, "guard", true, false, "forward", "second hit: lashes the left Blade of Chaos across in front of him at chest height on its chain, a thin fiery trail, the chain pulling it back, then back into the stance. The whole chain stays inside the picture"],
-    "w1_jab3": [12, "guard", true, false, "forward", "finisher: whirls both Blades of Chaos on their chains in a big rising arc from low in front of him up over his head, thin fiery trails, then back into the stance. The whole chains stay inside the picture"],
-    "w1_nair": [12, "jump@last", true, false, "around", "air combo in mid-air: spins and whips both Blades of Chaos around his body on their chains in a full circle, thin fiery trails, then back to the tucked pose. The whole chains stay inside the picture"],
-    "w1_sspecial": [12, "guard", true, false, "forward", "Chaos hooks: hurls both Blades of Chaos straight forward on their chains at chest height, the blades hooking on something in front of him, then pulls the chains back hard with both arms, then back into the stance. The whole chains stay inside the picture. Only Kratos is drawn: no opponent"],
-    "w1_uspecial": [12, "guard", null, false, "up", "Chaos ascent: crouches, then leaps straight up while whirling both Blades of Chaos above his head on their chains like a propeller, thin fiery trails, rising the whole time. The whole chains stay inside the picture"],
-    "w1_dspecial": [12, "guard", true, false, "forward", "shield counter: raises the round shield in front of him and braces behind it, perfectly still and watchful, then lashes both Blades of Chaos forward on their chains in a fiery strike, then back into the stance. The whole chains stay inside the picture"]
+    "w1_shield": [
+     4,
+     "guard",
+     null,
+     false,
+     "none",
+     "braces to block: raises the round shield on his left forearm in front of his face and crouches slightly behind it, the Blades of Chaos held low, a solid defensive guard"
+    ],
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first hit of a fast three-hit chain combo: lashes the right Blade of Chaos forward on its chain in a quick downward arc in front of him, a thin fiery trail, the chain pulling it back into his hand, then back into the stance. The whole chain stays inside the picture"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second hit: lashes the left Blade of Chaos across in front of him at chest height on its chain, a thin fiery trail, the chain pulling it back, then back into the stance. The whole chain stays inside the picture"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "finisher: whirls both Blades of Chaos on their chains in a big rising arc from low in front of him up over his head, thin fiery trails, then back into the stance. The whole chains stay inside the picture"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "air combo in mid-air: spins and whips both Blades of Chaos around his body on their chains in a full circle, thin fiery trails, then back to the tucked pose. The whole chains stay inside the picture"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Chaos hooks: hurls both Blades of Chaos straight forward on their chains at chest height, the blades hooking on something in front of him, then pulls the chains back hard with both arms, then back into the stance. The whole chains stay inside the picture. Only Kratos is drawn: no opponent"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "Chaos ascent: crouches, then leaps straight up while whirling both Blades of Chaos above his head on their chains like a propeller, thin fiery trails, rising the whole time. The whole chains stay inside the picture"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "shield counter: raises the round shield in front of him and braces behind it, perfectly still and watchful, then lashes both Blades of Chaos forward on their chains in a fiery strike, then back into the stance. The whole chains stay inside the picture"
+    ],
+    "w1_runstart": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "breaks into a fast run to the right: leans the torso far forward, the Blades of Chaos held low and trailing behind him, the round shield kept on his left forearm in front of his chest, legs start a long running stride"
+    ],
+    "w1_run": [
+     8,
+     "runstart@last",
+     true,
+     true,
+     "none",
+     "fast run cycle to the right: leaning far forward, the Blades of Chaos held low and trailing behind him, the round shield kept on his left forearm in front of his chest, long fast strides, a seamless loop that ends exactly on the first pose"
+    ],
+    "w1_grabbed": [
+     4,
+     "guard",
+     true,
+     true,
+     "none",
+     "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his left forearm with the round shield pressed against his chest, his hands still gripping the Blades of Chaos pointing down, legs kicking and squirming, a seamless loop. Only Kratos is drawn: the opponent is invisible, there is no other person in the frame"
+    ]
    }
   }
  }
