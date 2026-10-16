@@ -52,9 +52,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 3 : Link, Gojo) | 16/10 14 h 50 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 3) | 16/10 14 h 50 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 3) | 16/10 14 h 50 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.8) | 16/10 14 h 50 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 17 h 50 UTC, session B :
+  - **v9.8 publiée et vérifiée** (workflow réussi ; l'archive Linux téléchargée par l'API a la même somme SHA-256
+    que la release, affiche v9.8, et les persos y sont nets en match). Verrou de version libre.
+  - Lot 3 : code des kits de Link et Gojo poussé (e3a1f85), tests passés. Redémarrage du worker vers 17 h 40 :
+    9 jobs de Link « submitted » seulement téléchargés (aucun « submitting »), chaînes relancées (Link : 4 clips
+    restants ; Gojo : tout, garde des Six Yeux faite).
 - 16/10 14 h 50 UTC, session B :
   - **Netteté des persos** (4fe2888) : la passe « pixel art » (`pix::sprite`, faite pour les persos dessinés par
     le code) réduisait chaque clip PixelLab à ~87 px de haut, écrasait ses couleurs et le recontournait : les
