@@ -1733,13 +1733,19 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     box = {l, t, std::max(box.right(), g.feet.x + rx) - l, std::max(box.bottom(), g.feet.y + H * 0.6f) - t};
   }
   drawFormAvatar(f, at, false);
-  pix::sprite(box, alpha, [&](float a) {
+  auto drawAll = [&](float a) {
     for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
       const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
       if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
     }
     drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, a, flashCol, flash, at);
-  });
+  };
+  // A PixelLab clip is pixel art already: drawn straight into the frame, at its full resolution (the pixel layer
+  // would shrink it, flatten its colours and outline it again). Poses still drawn by the code keep the layer.
+  if (pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet))
+    drawAll(alpha);
+  else
+    pix::sprite(box, alpha, drawAll);
 
   drawFormAvatar(f, at, true);
   if (!(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail

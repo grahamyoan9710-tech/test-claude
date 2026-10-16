@@ -553,6 +553,8 @@ void loadSheets(Art& A, const char* fighter) {
       if (S.tex.id == 0) break;
       GenTextureMipmaps(&S.tex);
       SetTextureFilter(S.tex, TEXTURE_FILTER_TRILINEAR);
+      // Drawn smaller than its pixels, a clip leans on the sharper mipmap: crisp, not mushy (still no shimmer).
+      rlTextureParameters(S.tex.id, RL_TEXTURE_MIPMAP_BIAS_RATIO, -60);
       S.frames = frames;
       S.fw = fw, S.fh = fh, S.ax = ax, S.ay = ay, S.pxPerH = pxh;
       S.loop = loop != 0;

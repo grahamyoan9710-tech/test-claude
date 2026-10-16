@@ -2586,6 +2586,10 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
 void drawCharacterSprite(const CharacterDef& d, int palette, const Pose& pose, Vec2 feet, int facing, float scale,
                          float alpha, Color flashColor, float flash, float time) {
   const float h = d.height * scale, rx = std::max(h * 1.7f, 200.0f * scale);
+  if (pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)) {  // a PixelLab clip: straight, at full resolution
+    drawCharacter(d, palette, pose, feet, facing, scale, alpha, flashColor, flash, time);
+    return;
+  }
   const bool illustrated = art::rigged(d.hero);  // a detailed picture: finer pixels, more colour bands
   pix::sprite({feet.x - rx, feet.y - h * 2.3f, rx * 2.0f, h * 2.9f}, alpha, [&](float a) {
     drawCharacter(d, palette, pose, feet, facing, scale, a, flashColor, flash, time);
