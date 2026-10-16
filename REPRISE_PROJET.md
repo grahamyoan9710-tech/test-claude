@@ -49,12 +49,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 2 : Kratos, Hunter, Sukuna) | 16/10 08 h 35 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 2) | 16/10 08 h 35 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 2) | 16/10 08 h 35 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 08 h 35 UTC, session B : **lot 2 commencé (Kratos, Hunter, Sukuna)**, comme le lot 1. Fiches des kits dans
+  `pxa/wkits/kratos.json`, `hunter.json`, `sukuna.json` : 209 clips à générer (les 4 armes de Kratos et du
+  chasseur changent l'apparence, Kamutoke aussi ; le doigt de Sukuna est un pouvoir). Je lance d'abord la garde de
+  Kamutoke (`sukuna/w0guard`), puis les vagues avec `chain.py`. Les anciens clips `sukuna/w0_nspecial` (il
+  rangeait le bâton) sont mis de côté dans `sukuna/old_w0_nspecial`.
 - 16/10 08 h 00 UTC, session B : **v9.6 publiée** (lot 1 : kits d'armes de Naruto, Sasuke et Kakashi, effets
   PixelLab). Démos de contrôle regardées (les 6 kits et les 3 ultimes) : armes visibles, effets bien placés.
   Workflow « Release » réussi ; l'archive Linux téléchargée par l'API a la même somme SHA-256 que la release,
