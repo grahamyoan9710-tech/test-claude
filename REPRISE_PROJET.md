@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (pilote Ichigo : armes, clips coupés) | 15/10 17 h 41 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab d'Ichigo) | 15/10 17 h 41 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (coups d'armes d'Ichigo) | 15/10 17 h 41 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.6) | 16/10 08 h 05 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | session B (v9.6) | 16/10 07 h 59 UTC |
 
 ### Journal (le plus récent en haut)
 - 16/10 07 h 46 UTC, session B, lot 1 : génération finie (~200 générations au total, il en reste 2 896), tout importé

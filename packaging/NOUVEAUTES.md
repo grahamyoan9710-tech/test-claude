@@ -35,4 +35,5 @@ chacune de leurs armes, tout animé avec PixelLab, et leurs effets passent en Pi
   des clones, boule de l'Ōdama. Le Raikiri et les clones de l'ultime de Naruto sont maintenant dessinés depuis
   leurs clips PixelLab.
 - **Animations corrigées** : une dizaine d'images ratées remplacées (couleurs qui changent, éclats parasites).
-- **Équilibre** : revu après ces kits (détails dans le README).
+- **Équilibre** : revu après ces kits : sur 816 duels simulés (tous contre tous), chaque combattant gagne entre 45
+  et 56 % de ses combats, et les K.O. sous 70 % restent rares (3 %).
