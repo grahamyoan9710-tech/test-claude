@@ -131,14 +131,14 @@ void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed, bool thr
   MoveDef jab2 = thrust2 ? mv("Estoc éclair", T(26), pair(5, 8, 4, 4, 17, 4.5f, 361, 12, 28, 0, sl))
                          : mv("Revers", T(26), pair(5, 8, 30, -15, 18, 4.5f, 361, 12, 28, 0, sl));
   jab2.nextMove = Jab3, jab2.comboStart = T(4), jab2.comboEnd = T(24), jab2.comboAt = T(13);
-  MoveDef jab3 = mv("Taille montante", T(36), pair(9, 14, -50, 130, 22, 8.0f, 75, 45, 85, 0, fx));
+  MoveDef jab3 = mv("Taille montante", T(36), pair(9, 14, -50, 130, 22, 9.5f, 55, 50, 98, 0, fx));  // it ejects
   for (auto& h : jab3.hitboxes) h.impact = true;
   std::vector<HitboxDef> air = pair(5, 8, 100, -60, 24, 5.0f, 70, 20, 35, 0, sl);
   if (airCuts > 2) {
     auto up = pair(11, 14, -60, 80, 24, 4.0f, 80, 20, 35, 1, sl);
     air.insert(air.end(), up.begin(), up.end());
   }
-  auto last = pair(airCuts > 2 ? 18 : 13, airCuts > 2 ? 23 : 18, -90, 180, 26, 7.0f, 361, 30, 90, airCuts > 2 ? 2 : 1,
+  auto last = pair(airCuts > 2 ? 18 : 13, airCuts > 2 ? 23 : 18, -90, 180, 26, 8.0f, 361, 35, 98, airCuts > 2 ? 2 : 1,
                    fx);
   air.insert(air.end(), last.begin(), last.end());
   MoveDef nair = mv("Taille aérienne", T(airCuts > 2 ? 40 : 38), air, 8);

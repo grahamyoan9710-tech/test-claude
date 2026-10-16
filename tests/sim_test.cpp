@@ -664,8 +664,8 @@ static void testWeaponStrikes() {
     }
 }
 
-// A weapon kit: every ground attack is its 3-hit M1 combo (the smash flick included), every aerial its air M1, the
-// specials its own skills; bare-handed the flick is still a smash.
+// A weapon kit: every ground attack is its 3-hit M1 combo, a smash its finisher at once (the heavy attack), every
+// aerial its air M1, the specials its own skills; bare-handed the flick is still a smash.
 static void testWeaponKits() {
   std::printf("[weapon kits]\n");
   const auto& r = roster();
@@ -691,7 +691,15 @@ static void testWeaponKits() {
         CHECK(f.move == FSmash, "%s bare-handed: the flick is a smash (move %d)", r[c].name.c_str(), f.move);
         continue;
       }
-      CHECK(f.state == FState::Attack && f.move == Jab, "%s weapon %d: the flick starts the M1 (move %d)",
+      CHECK(f.state == FState::Attack && f.move == Jab3, "%s weapon %d: the flick is the heavy attack, the finisher (move %d)",
+            r[c].name.c_str(), slot, f.move);
+      for (int i = 0; i < 120 && f.state != FState::Idle; ++i) p.idle(1);
+      f.pos = {-60, 0};
+      f.facing = 1;
+      v.pos = {10, 0};
+      p.idle(30);
+      p.run(1, key(0, 0, true));  // a plain attack
+      CHECK(f.state == FState::Attack && f.move == Jab, "%s weapon %d: the attack starts the M1 (move %d)",
             r[c].name.c_str(), slot, f.move);
       int seen = 1, hits = 0;
       float pct = v.percent;

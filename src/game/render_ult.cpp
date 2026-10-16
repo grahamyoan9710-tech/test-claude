@@ -150,6 +150,13 @@ struct Ctx {
   float fc;  // facing
 };
 
+// The ultimate has its PixelLab clip: what the clip draws (the blade of light, the cuts, the charge) is not drawn
+// again here, nor what the hero's PixelLab aura replaces.
+bool clipDrawn(const Ctx& x) {
+  const int base = x.f.weapon == 0 ? art::kSheetWeapon0 : x.f.weapon == 1 ? art::kSheetWeapon1 : art::kSheetMove0;
+  return art::hasSheet(x.f.def->hero, base + FinalSmash);
+}
+
 const Fighter* heldVictim(const Ctx& x) {
   for (const auto& o : x.m.fighters)
     if (o.state == FState::Captured && o.captor == x.f.id) return &o;
@@ -238,6 +245,8 @@ void converge(const Ctx& x, Vec2 at, Color col, int n, float r0) {
 void giantGetsuga(const Ctx& x, bool front) {
   const MoveDef& mv = x.f.moveDef(FinalSmash);
   const int fire = mv.projectileFrame;
+  const bool drawn = clipDrawn(x);
+  if (front && drawn) return;
   if (front) {  // Zangetsu becomes a blade of reiatsu as tall as a building, then the swing
     const float grow = smoothstep(float(x.mf - 24) / 20.0f);
     const float fade = clampf(float(fire + 8 - x.mf) / 8.0f, 0.0f, 1.0f);
@@ -254,6 +263,7 @@ void giantGetsuga(const Ctx& x, bool front) {
   }
   sky(x.v, {4, 10, 30, 255}, {20, 40, 90, 255}, x.k);
   moon(x.c + Vec2{x.fc * 260.0f, -330.0f}, 150.0f, {220, 236, 255, 255}, {6, 14, 40, 255}, 0.42f * x.fc, x.k);
+  if (drawn) return;  // his PixelLab aura instead of the column of light
   vfx::additive(true);
   vfx::streak(x.c + Vec2{0.0f, 200.0f}, x.c + Vec2{0.0f, -900.0f}, 120.0f, 40.0f, A({90, 170, 255, 255}, 0.45f * x.k),
               A({90, 170, 255, 255}, 0.0f));
@@ -265,6 +275,8 @@ void giantGetsuga(const Ctx& x, bool front) {
 void getsugaJujisho(const Ctx& x, bool front) {
   const MoveDef& mv = x.f.moveDef(FinalSmash);
   const int fire = mv.projectileFrame;
+  const bool drawn = clipDrawn(x);  // the clip draws the blade and the cross, the aura the black flames
+  if (front && drawn) return;
   if (front) {
     const float grow = smoothstep(float(x.mf - 26) / 18.0f);
     const float fade = clampf(float(fire + 6 - x.mf) / 6.0f, 0.0f, 1.0f);
@@ -289,6 +301,7 @@ void getsugaJujisho(const Ctx& x, bool front) {
   vfx::glow(mc, 330.0f, A({200, 20, 40, 255}, 0.35f * x.k), A({200, 20, 40, 255}, 0.0f));
   vfx::additive(false);
   glowE(mc, 140.0f, 140.0f, A({4, 0, 2, 255}, x.k), A({4, 0, 2, 255}, x.k), 36);
+  if (drawn) return;
   // the mask, faint and huge, behind him
   const Vec2 h = x.c + Vec2{-x.fc * 30.0f, -230.0f};
   const Color bone = A({240, 236, 228, 255}, 0.14f * x.k), red = A({200, 20, 30, 255}, 0.28f * x.k);
@@ -309,8 +322,9 @@ void getsugaJujisho(const Ctx& x, bool front) {
 }
 
 void vastoLorde(const Ctx& x, bool front) {
+  const bool drawn = clipDrawn(x);  // the clip charges the cero, the aura is his PixelLab one
   if (front) {
-    if (x.mf >= 44 && x.mf < 58) {  // the cero charging between the horns
+    if (!drawn && x.mf >= 44 && x.mf < 58) {  // the cero charging between the horns
       vfx::additive(true);
       const Vec2 p = x.c + Vec2{x.fc * 30.0f, -46.0f};
       const float r = 20.0f + (x.mf - 44) * 4.0f;
@@ -321,6 +335,7 @@ void vastoLorde(const Ctx& x, bool front) {
     return;
   }
   sky(x.v, {20, 0, 4, 255}, {70, 6, 16, 255}, x.k);
+  if (drawn) return;
   // the hollow mask, enormous and faint, behind him
   const Vec2 h = x.c + Vec2{0.0f, -200.0f};
   const Color bone = A({240, 236, 228, 255}, 0.18f * x.k), red = A({200, 20, 30, 255}, 0.3f * x.k);

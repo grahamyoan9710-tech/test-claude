@@ -4,6 +4,8 @@ bow bow_light 58 180 57.0 89.5 6.0 0.0 5.5 179.0
 bow bow_susanoo 32 166 31.0 82.5 1.0 0.0 1.0 165.0
 bow bow_wood 37 177 36.0 88.0 7.0 0.0 7.0 176.0
 fx amaterasu 12 99 114 50.0 108.0 12.0482 1
+fx bankai_aura 8 130 251 65.0 249.0 14.9254 1
+fx bankai_burst 12 248 258 121.0 148.0 14.9254 0 95
 fx bijudama 8 122 122 61.0 61.0 14.9254 1 50
 fx black_divider 12 118 154 68.0 77.0 14.9254 1 56
 fx black_meteorite 12 263 157 126.0 134.0 14.9254 0 95
@@ -11,16 +13,21 @@ fx cero_oscuras 8 96 62 0.0 31.0 14.9254 1 17
 fx cero_oscuras_head 8 112 107 0.0 53.0 14.9254 1 30
 fx cero_wolf 8 120 64 87.0 32.0 18 1 24
 fx chaos_whip 12 228 229 114.0 115.0 14.9254 1 96
+fx counter_flash 8 117 110 60.0 55.0 14.9254 0 50
 fx demon_dragon 8 96 59 0.0 29.0 14.9254 1 17
 fx demon_dragon_head 8 112 107 0.0 53.0 14.9254 1 30
 fx fimbulwinter 12 201 193 99.0 94.0 14.9254 0 84
 fx fuga_arrow 8 124 32 115.0 16.0 14.9254 1
 fx fuga_blast 12 218 213 106.0 107.0 14.0845 0
 fx getsuga 12 100 166 81.0 83.0 14.9254 1 58
+fx getsuga_black 12 100 166 81.0 83.0 14.9254 1 58
 fx getsuga_cross 12 124 146 72.0 73.0 14.9254 1 58
 fx gloom_pillar 12 80 222 41.0 198.0 14.9254 1 35
 fx gran_rey_cero 8 96 56 0.0 28.0 14.9254 1 20
 fx gran_rey_cero_head 8 112 107 0.0 53.0 14.9254 1 32
+fx hit_dark 9 95 100 46.0 45.0 14.9254 0 46
+fx hit_reiatsu 9 95 97 47.0 45.0 14.9254 0 46
+fx hit_slash 7 80 75 38.0 30.0 14.9254 0 38
 fx hollow_purple 12 247 246 124.0 123.0 14.9254 1 82
 fx indra_arrow 8 216 46 195.0 23.0 14.9254 1 22
 fx kageyoshi 12 239 215 119.0 107.0 14.9254 1 100
@@ -36,7 +43,9 @@ fx malevolent_shrine 12 211 226 107.0 114.0 14.9254 1 112
 fx max_blue 12 174 170 88.0 85.0 14.9254 1 76
 fx petal_sphere 16 144 126 71.0 63.0 14.9254 1 58
 fx rasenshuriken 8 132 132 66.0 66.0 14.9254 1 60
+fx reiatsu_aura 8 130 249 65.0 247.0 14.9254 1
 fx reiatsu_wave 12 115 180 98.0 93.0 14.9254 1 58
+fx shunpo_streak 8 186 126 1.0 63.0 14.9254 0
 fx sky_bolt 12 103 272 48.0 248.0 14.9254 1 26
 fx starrk_cero 8 84 56 59.0 27.0 14.9254 1 21
 fx susanoo_shuriken 8 132 132 66.0 66.0 14.9254 1 55
@@ -173,7 +182,7 @@ sheet byakuya w1_ultimate 28 255 240 103.0 237.0 180.0 0 10,13,22,23 15
 sheet byakuya walk 8 165 184 39.0 183.0 180.0 1 -1 15
 sheet ganondorf airdodge 8 138 169 60.0 236.0 175.0 0 -1 15
 sheet ganondorf airjump 8 205 218 93.0 236.0 175.0 0 -1 15
-sheet ganondorf bair 8 173 174 95.0 236.0 175.0 0 4 15
+sheet ganondorf bair 8 173 174 95.0 236.0 175.0 0 3 15
 sheet ganondorf bthrow 12 183 156 86.0 155.0 175.0 0 4 15
 sheet ganondorf climb 8 141 240 66.0 239.0 175.0 0 -1 15 106.8
 sheet ganondorf crouch 4 117 134 53.0 132.0 175.0 0 -1 15
@@ -385,7 +394,7 @@ sheet hunter tumble 8 256 255 86.0 245.0 165.0 1 -1 15
 sheet hunter uair 12 255 256 85.0 245.0 165.0 0 11 15
 sheet hunter ultimate 28 252 253 82.0 242.0 165.0 0 20 15
 sheet hunter usmash 12 225 244 71.0 240.0 165.0 0 6 15
-sheet hunter uspecial 12 208 237 58.0 236.0 165.0 0 10 15
+sheet hunter uspecial 12 208 237 58.0 236.0 165.0 0 11 15
 sheet hunter uthrow 8 174 236 42.0 235.0 165.0 0 0 15
 sheet hunter utilt 8 240 237 77.0 236.0 165.0 0 2 15
 sheet hunter victory 12 205 194 59.0 193.0 165.0 0 -1 15
@@ -406,7 +415,7 @@ sheet ichigo dair 12 180 230 68.0 218.0 170.0 0 2 15
 sheet ichigo dashattack 12 241 232 96.0 231.0 170.0 0 5 15
 sheet ichigo dizzy 8 193 232 73.0 231.0 170.0 1 -1 15
 sheet ichigo dsmash 12 235 240 92.0 235.0 170.0 0 5,6 15
-sheet ichigo dspecial 12 195 232 57.0 231.0 170.0 0 6 15
+sheet ichigo dspecial 12 177 232 57.0 231.0 170.0 0 6 15
 sheet ichigo dthrow 12 200 235 74.0 232.0 170.0 0 4 15
 sheet ichigo dtilt 8 211 235 73.0 231.0 170.0 0 0 15
 sheet ichigo fair 12 203 236 68.0 233.0 170.0 0 1 15
@@ -445,13 +454,54 @@ sheet ichigo uspecial 12 234 235 91.0 234.0 170.0 0 3 15
 sheet ichigo uthrow 8 179 234 56.0 233.0 170.0 0 0 15
 sheet ichigo utilt 8 198 234 78.0 233.0 170.0 0 6 15
 sheet ichigo victory 12 169 232 55.0 231.0 170.0 0 -1 15
-sheet ichigo w0_jab 8 253 226 101.0 220.0 130.0 0 1 15
+sheet ichigo w0_dspecial 12 236 244 93.0 236.0 170.0 0 7 15
+sheet ichigo w0_jab 8 220 238 67.0 237.0 170.0 0 0 15
+sheet ichigo w0_jab2 8 239 232 94.0 231.0 170.0 0 3 15
+sheet ichigo w0_jab3 12 253 251 102.0 242.0 170.0 0 7 15
+sheet ichigo w0_nair 12 237 240 93.0 235.0 170.0 0 2,5 15
 sheet ichigo w0_nspecial 12 252 250 102.0 241.0 170.0 0 7 15
+sheet ichigo w0_sspecial 12 241 247 96.0 235.0 170.0 0 2 15
 sheet ichigo w0_ultimate 28 243 240 95.0 237.0 170.0 0 18 15
-sheet ichigo w1_jab 8 254 229 126.0 223.0 130.0 0 2 15
+sheet ichigo w0_uspecial 12 233 238 88.0 236.0 170.0 0 7 15
+sheet ichigo w1_airdodge 8 231 122 92.0 208.0 170.0 0 -1 15
+sheet ichigo w1_airjump 8 241 250 94.0 244.0 170.0 0 -1 15
+sheet ichigo w1_bthrow 12 170 233 61.0 232.0 170.0 0 0 15
+sheet ichigo w1_climb 8 209 234 82.0 233.0 170.0 0 -1 15
+sheet ichigo w1_crouch 4 205 136 79.0 135.0 170.0 0 -1 15
+sheet ichigo w1_dizzy 8 175 216 58.0 215.0 170.0 1 -1 15
+sheet ichigo w1_dspecial 12 176 232 81.0 231.0 170.0 0 -1 15
+sheet ichigo w1_dthrow 12 216 242 77.0 237.0 170.0 0 4 15
+sheet ichigo w1_fall 8 232 183 92.0 208.0 170.0 1 -1 15
+sheet ichigo w1_fthrow 8 221 216 79.0 215.0 170.0 0 0 15
+sheet ichigo w1_getup 8 227 219 87.0 215.0 170.0 0 -1 15
+sheet ichigo w1_getupattack 8 225 220 91.0 216.0 170.0 0 0,2 15
+sheet ichigo w1_grab 8 200 236 76.0 235.0 170.0 0 0 15
+sheet ichigo w1_grabbed 4 172 230 75.0 229.0 170.0 1 -1 15
+sheet ichigo w1_helpless 8 235 176 92.0 208.0 170.0 1 -1 15
+sheet ichigo w1_hold 4 170 217 61.0 216.0 170.0 1 -1 15
+sheet ichigo w1_hurt 4 181 208 73.0 207.0 170.0 0 -1 15
+sheet ichigo w1_idle 8 158 221 63.0 220.0 170.0 1 -1 15
+sheet ichigo w1_jab 8 239 237 94.0 236.0 170.0 0 1 15
+sheet ichigo w1_jab2 8 227 223 74.0 222.0 170.0 0 3 15
+sheet ichigo w1_jab3 12 246 248 98.0 240.0 170.0 0 4 15
+sheet ichigo w1_jump 8 231 209 92.0 208.0 170.0 0 -1 15
+sheet ichigo w1_knockdown 8 231 171 91.0 166.0 170.0 0 -1 15
+sheet ichigo w1_land 4 176 216 67.0 215.0 170.0 0 -1 15
+sheet ichigo w1_ledge 4 107 233 45.0 233.0 170.0 1 -1 15
+sheet ichigo w1_ledgeattack 8 239 237 94.0 235.0 170.0 0 2 15
+sheet ichigo w1_nair 12 248 246 101.0 241.0 170.0 0 1,5,8 15
 sheet ichigo w1_nspecial 12 245 238 103.0 234.0 170.0 0 2 15
-sheet ichigo w1_sspecial 12 246 244 99.0 239.0 170.0 0 1 15
+sheet ichigo w1_pummel 4 198 235 70.0 234.0 170.0 0 0 15
+sheet ichigo w1_roll 8 177 224 64.0 215.0 170.0 0 -1 15
+sheet ichigo w1_run 8 248 138 100.0 143.0 170.0 1 -1 15
+sheet ichigo w1_shield 4 123 234 64.0 233.0 170.0 0 -1 15
+sheet ichigo w1_spotdodge 8 152 217 55.0 215.0 170.0 0 -1 15
+sheet ichigo w1_sspecial 12 252 248 102.0 240.0 170.0 0 2 15
+sheet ichigo w1_tumble 8 251 246 103.0 244.0 170.0 1 -1 15
 sheet ichigo w1_ultimate 28 235 230 82.0 228.0 170.0 0 16 15
+sheet ichigo w1_uspecial 12 243 241 92.0 237.0 170.0 0 4 15
+sheet ichigo w1_uthrow 8 160 234 63.0 233.0 170.0 0 0 15
+sheet ichigo w1_walk 8 151 221 56.0 220.0 170.0 1 -1 15
 sheet ichigo walk 8 173 235 53.0 234.0 170.0 1 -1 15
 sheet kakashi airdodge 8 135 161 68.0 229.0 213.0 0 -1 15
 sheet kakashi airjump 8 163 181 78.0 234.0 213.0 0 -1 15

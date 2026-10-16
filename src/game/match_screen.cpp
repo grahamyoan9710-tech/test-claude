@@ -359,6 +359,11 @@ MatchScreen::Result MatchScreen::update() {
     inputs[f.port] = readDevice(devices_[f.port]);
     maskHeld(inputs[f.port], held_[f.port]);
   }
+  if (weaponShow_ >= 0 && m_.started() && !m_.fighters.empty()) {  // the demo's weapon kit: never lost
+    Fighter& f = m_.fighters[0];
+    if (f.weapon != weaponShow_ && f.active() && f.state != FState::Attack) m_.equipWeapon(f, weaponShow_);
+    f.weaponTimer = std::max(f.weaponTimer, 60);
+  }
   if (ultShow_ >= -1 && !ultFired_ && m_.started() && m_.fighters.size() >= 2) {
     Fighter& f = m_.fighters[0];
     Fighter& v = m_.fighters[1];

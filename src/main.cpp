@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
     else if (is("--palette") && i + 1 < argc) g_menuTheme = std::atoi(argv[++i]);
     else if (is("--fullres")) opt.fullRes = true;
     else if (is("--ult") && i + 1 < argc) opt.ultShow = std::atoi(argv[++i]);
+    else if (is("--weapon") && i + 1 < argc) opt.weaponShow = std::atoi(argv[++i]);
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);
     else if (is("--screen") && i + 1 < argc) opt.screen = argv[++i];
     else if (is("--tab") && i + 1 < argc) opt.tab = std::atoi(argv[++i]);

@@ -1487,6 +1487,13 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
 
 // Ultimate ready: soft glow of the hero's element, a turning hexagon and a tilted rune ring
 // orbiting the body (its front half passes in front of the fighter).
+// The hero's aura drawn by PixelLab (behind it, from its feet), if it has one.
+const char* auraSprite(const Fighter& f) {
+  if (f.def->hero == Hero::Ichigo)  // blue reiatsu; black and red in Bankai and in the masked Getsuga Jujisho
+    return f.weapon == 1 || (f.weapon == 0 && f.move == FinalSmash) ? "bankai_aura" : "reiatsu_aura";
+  return nullptr;
+}
+
 void drawUltAura(Vec2 c, float H, float t, bool front, float k, Color z) {
   if (!front) {
     additive(true);
@@ -1647,7 +1654,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   const Anim& anim = animFor(f, m);
   const float at = anim.clock + f.id;  // animation time (stops in hit-stop)
   Pose pose = anim.pose;
-  const bool usingFs = f.state == FState::Attack && f.move == FinalSmash;
+  bool usingFs = f.state == FState::Attack && f.move == FinalSmash;
   if (f.finalSmash) pose.glow = std::max(pose.glow, 0.8f + 0.3f * std::sin(at * 5.0f));
 
   float alpha = 1.0f;
@@ -1695,8 +1702,16 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       DrawCircleV({feet.x + std::cos(a) * 55.0f, feet.y + 6 + std::sin(a) * 10.0f}, 4, withAlpha(WHITE, 0.9f));
     }
   }
-  const float ultK = f.finalSmash ? alpha : 0.0f;
+  float ultK = f.finalSmash ? alpha : 0.0f;
   const Color ultCol = hitFxGlow(heroElement(d.hero));
+  // The hero's PixelLab aura (its reiatsu...) replaces the drawn ring and pillar when it has one: the ultimate
+  // ready, then unleashed (bigger).
+  const char* aura = auraSprite(f);
+  if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs)) {
+    art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0, usingFs ? 1.0f : ultK);
+    ultK = 0.0f;
+    usingFs = false;
+  }
   if (ultK > 0.0f) drawUltAura(c, H, at, false, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, false);
 
@@ -1718,7 +1733,8 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   });
 
   drawFormAvatar(f, at, true);
-  drawSmear(anim, pose, alpha);
+  if (!(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
+    drawSmear(anim, pose, alpha);
   if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, true);
   if (f.state == FState::Shield || f.state == FState::ShieldStun) {

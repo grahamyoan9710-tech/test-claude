@@ -258,13 +258,13 @@ CharacterDef makeIchigo() {
   drill.name = "Tenshō noir ascendant";
   for (auto& h : drill.hitboxes) h.damage *= 1.15f, h.fx = F::Dark;
   drill.vel = {ve(4, VelMode::Set, 1.5f, -18.5f, 3.0f)};
-  MoveDef release = mv("Libération du Bankai", 50, {imp(hb(16, 22, 0, -50, 70, 12, 70, 55, 85, L::Body, 0, F::Dark))});
+  MoveDef release = mv("Libération du Bankai", 50, {imp(hb(16, 22, 0, -50, 56, 12, 70, 55, 85, L::Body, 0, F::Dark))});
   release.armorStart = 4;
   release.armorEnd = 16;
   release.gravityMul = 0.3f;
   release.pose = PoseHint::Cast;
   sc(release, S, P);
-  release.castFx = "bankai_burst";  // the black reiatsu erupts around him as the blow comes out
+  release.castFx = "bankai_burst";  // the black reiatsu erupts around him as the blow comes out (its size)
   release.castFxFrame = 14;
   release.castFxAt = {0, -c.height * 0.5f};
   c.weapons[1].moves = {{NSpecial, black}, {SSpecial, flash}, {USpecial, drill}, {DSpecial, release}};

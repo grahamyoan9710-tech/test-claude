@@ -26,6 +26,7 @@ struct Options {
   bool teams = false;  // --teams: team battle (red against blue) for this run
   bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
+  int weaponShow = -1;           // --weapon SLOT: the demo's first fighter keeps that weapon in hand (its kit)
 };
 
 class MatchScreen {
@@ -39,6 +40,7 @@ class MatchScreen {
   void forcePause() { paused_ = true; }
   // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
   void showUltimate(int slot);
+  void showWeapon(int slot) { weaponShow_ = slot; }
 
  private:
   void updateCamera(bool snap);
@@ -66,6 +68,7 @@ class MatchScreen {
   int endTimer_ = 0;
   bool debug_ = false;
   int ultShow_ = -2;
+  int weaponShow_ = -1;
   bool ultFired_ = false;
   float time_ = 0.0f;
   // Training: combo counter per fighter

@@ -399,8 +399,9 @@ def jobs(fighter, only=None):
         last = None
         if pin is True:
             last = src
-        elif pin == "guard":
-            last = base_file(fighter, "guard")
+        elif pin == "guard":  # a weapon that changes the look ends on its own guard
+            ks = wslot(fighter, name)
+            last = base_file(fighter, wbase(name[1], "guard") if ks and ks.get("look") == "new" else "guard")
         b = base[3:] if wslot(fighter, base) is not None else base  # w1_jump@last: a jump of the weapon kit
         kind = "sword" if b == "sword" else "air" if b.startswith("jump") else \
             "airsword" if b.startswith("airsword") else "ledge" if b.startswith("ledge") else \

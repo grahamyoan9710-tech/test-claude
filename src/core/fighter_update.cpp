@@ -83,8 +83,10 @@ void Match::setState(Fighter& f, FState s, int timer) {
 
 void Match::startMove(Fighter& f, int id) {
   if (const WeaponDef* w = f.weaponDef(); w && w->kit) {  // the weapon's kit: its M1 on the ground and in the air
-    if (id == FTilt || id == UTilt || id == DTilt || id == DashAttack || id == FSmash || id == USmash || id == DSmash)
+    if (id == FTilt || id == UTilt || id == DTilt || id == DashAttack)
       id = Jab;
+    else if (id == FSmash || id == USmash || id == DSmash)  // the heavy attack: the combo's finisher at once
+      id = Jab3;
     else if (id == FAir || id == BAir || id == UAir || id == DAir)
       id = NAir;
   }

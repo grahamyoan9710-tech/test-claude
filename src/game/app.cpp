@@ -167,6 +167,7 @@ void App::run() {
     if (opt_.stage < 0) stage_ = 1;
     startMatch();
     if (opt_.ultShow >= -1) match_->showUltimate(opt_.ultShow);
+    if (opt_.weaponShow >= 0) match_->showWeapon(opt_.weaponShow);
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "menu") {
