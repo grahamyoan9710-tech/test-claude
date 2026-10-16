@@ -1,5 +1,5 @@
 {
- "notes": "Link's kits (v9.9). Slot 0, the Master Sword, keeps his look (the guard picture already holds a sword and the shield): its kit swings the glowing blade. Slot 1, the Bow of Light, changes the look (guard picture w1guard: the golden bow in his left hand, the shield on his back): its states are generated too. Arrows of light, the rain of light and the sword beam are drawn by the game; the beam, the arrow and both ultimates keep their clips.",
+ "notes": "Link's kits (v9.9). Slot 0, the Master Sword, keeps his look (the guard picture already holds a sword and the shield): its kit swings the glowing blade. Slot 1, the Bow of Light, changes the look (guard picture w1guard: the golden bow in his left hand, the shield on his back): its states are generated too. Arrows of light, the rain of light and the sword beam are drawn by the game; the beam and both ultimates keep their clips; the arrow (w1_nspecial) is redone in the new look.",
  "slots": {
   "0": {
    "look": "same",
@@ -125,6 +125,30 @@
      false,
      "up",
      "rain of light: aims the Bow of Light straight up at the sky, draws and looses an arrow of light upward, then back into the stance. Only Link and his bow are drawn: no arrow flying away"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "arrow of light: nocks one golden arrow of light, draws the Bow of Light fully back to his cheek and holds the aim an instant, then looses it with a sharp recoil, then back into the stance. Only Link and his bow are drawn: no arrow flying away"
+    ],
+    "w1_bthrow": [
+     12,
+     "holdstart@last",
+     "guard",
+     false,
+     "back",
+     "throw backward: turns and heaves the invisible opponent over his shoulder behind him with his free right hand, the golden Bow of Light kept in his left hand, then returns to the ready stance, no arrow nocked. Only Link is drawn: no person, no sack, no dust, nothing flying"
+    ],
+    "w1_grabbed": [
+     4,
+     "guard",
+     true,
+     true,
+     "none",
+     "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his right hand clutching at the collar at his throat, his left hand still gripping the golden Bow of Light hanging down, no arrow, legs kicking and squirming, a seamless loop. Only Link is drawn: the opponent is invisible"
     ]
    }
   }

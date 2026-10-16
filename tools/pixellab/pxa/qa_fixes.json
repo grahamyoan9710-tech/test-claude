@@ -1075,6 +1075,54 @@
     "hue": "warm",
     "min": 6
    }
+  },
+  "w0_dspecial": {
+   "degrey": {
+    "frames": [
+     7
+    ],
+    "tol": 30
+   }
+  },
+  "w1_uspecial": {
+   "replace": {
+    "3": 2,
+    "4": 2,
+    "5": 2,
+    "7": 6,
+    "8": 9
+   }
+  },
+  "w1_spotdodge": {
+   "replace": {
+    "2": 1,
+    "3": 4
+   },
+   "specks": {
+    "frames": [
+     0,
+     1,
+     2
+    ],
+    "max": 300
+   }
+  },
+  "w1_hurt": {
+   "erase": {
+    "frames": [
+     0
+    ],
+    "hue": "red",
+    "min": 6
+   },
+   "specks": {
+    "frames": [
+     0,
+     1,
+     2
+    ],
+    "max": 400
+   }
   }
  },
  "starrk": {
@@ -1375,6 +1423,100 @@
      23
     ],
     "tol": 30
+   }
+  },
+  "w0_jab": {
+   "degrey": {
+    "frames": [
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w0_jab2": {
+   "degrey": {
+    "frames": [
+     1,
+     4,
+     5
+    ],
+    "tol": 30
+   }
+  },
+  "w0_jab3": {
+   "degrey": {
+    "frames": [
+     2,
+     3
+    ],
+    "tol": 30
+   }
+  },
+  "w0_nair": {
+   "degrey": {
+    "frames": [
+     5,
+     6,
+     7
+    ],
+    "tol": 30
+   }
+  },
+  "w0_sspecial": {
+   "degrey": {
+    "frames": [
+     5,
+     6
+    ],
+    "tol": 30
+   }
+  },
+  "w0_uspecial": {
+   "degrey": {
+    "frames": [
+     1,
+     2
+    ],
+    "tol": 30
+   }
+  },
+  "w1_spotdodge": {
+   "replace": {
+    "0": 2,
+    "1": 2
+   }
+  },
+  "w1_shield": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "w1_hurt": {
+   "replace": {
+    "0": 1
+   }
+  },
+  "w1_fthrow": {
+   "replace": {
+    "2": 3
+   }
+  },
+  "w1_uthrow": {
+   "replace": {
+    "5": 6
+   }
+  },
+  "w1_dthrow": {
+   "replace": {
+    "0": 2,
+    "1": 2
+   },
+   "specks": {
+    "frames": [
+     2,
+     6
+    ],
+    "max": 300
    }
   }
  },

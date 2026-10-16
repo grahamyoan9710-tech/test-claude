@@ -1716,7 +1716,8 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   // The hero's PixelLab aura (its reiatsu...) replaces the drawn ring and pillar when it has one: the ultimate
   // ready, then unleashed (bigger).
   const char* aura = auraSprite(f);
-  const bool power = d.hero == Hero::Sukuna && f.weapon == 1;  // his finger, nothing in hand: its aura, fainter
+  // Sukuna's finger and Gojo's Six Eyes, nothing in hand: their aura stays on, fainter
+  const bool power = (d.hero == Hero::Sukuna || d.hero == Hero::Gojo) && f.weapon == 1;
   if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs || power)) {
     art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0,
                 usingFs ? 1.0f : std::max(ultK, power ? 0.7f : 0.0f));
