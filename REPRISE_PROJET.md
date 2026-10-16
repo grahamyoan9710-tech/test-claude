@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 13 h 00 UTC, session B : **prototype Godot** demandé par le propriétaire, dans `prototype_godot/` (ne touche
+  pas au jeu). Godot 4.4, rendu Compatibility : Naruto contre Sasuke avec les clips du jeu lus dans
+  `assets/sprites`, lueur (WorldEnvironment), lumières 2D (boule de feu, Rasengan, Chidori, Kurama), décor en
+  parallaxe. La logique C++ n'y est pas branchée. Vérifié sous xvfb (`--demo --record`), aucune erreur de script.
+  Aucune génération PixelLab.
 - 16/10 12 h 30 UTC, session B : **v9.7 publiée** (lot 2 : kits de Kratos, du chasseur et de Sukuna, 14 effets
   PixelLab, rebords des armes à nouvelle apparence recalés sur les mains). Démos de contrôle regardées (les 6 kits,
   2 ultimes pour les auras). Workflow « Release » réussi ; l'archive Linux téléchargée par l'API a la même somme
