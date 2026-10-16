@@ -48,13 +48,19 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (lot 3) | 16/10 18 h 40 UTC |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 3 : Link, Gojo) | 16/10 14 h 50 UTC |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 3) | 16/10 14 h 50 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 3) | 16/10 14 h 50 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session B (v9.9) | 16/10 19 h 05 UTC |
 
 ### Journal (le plus récent en haut)
+- 16/10 19 h 05 UTC, session B : **lot 3 terminé, v9.9 en cours de publication** (kits de Link et de Gojo).
+  `fitall.sh` : 28 clips retimés, 204 hitboxes recalées. Équilibre : Link 1.06 (36 % à 0.92), Gojo 1.26, Kratos
+  1.10, chasseur 1.20 ; tous entre 45 et 55 %, 3 % des K.O. sous 70 %. Tests passés. Démos regardées (les 4 kits et
+  les ultimes de Link et de Gojo) : armes visibles, flèches et orbes en place, aura des Six Yeux visible avec
+  l'arme. Verrous imports, effets, équilibrage et `fitall.sh` libérés ; je prends « Version et paquets ».
+  Prochain : les 8 combattants restants (Asta, Yuno, Byakuya, Kenpachi, Ulquiorra, Grimmjow, Starrk, Ganondorf).
 - 16/10 18 h 40 UTC, session B : lot 3 généré et relu (Link 45 clips, Gojo 45 clips ; le tir à l'arc, la projection
   arrière et la pose saisie de Link refaits dans le nouveau look ; retouches dans `qa_fixes.json`, `degrey` sait
   maintenant prendre une fumée enfermée par les traits d'un effet : `"open": 0`, `"min"`). Clips importés. Je prends
