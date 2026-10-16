@@ -141,6 +141,7 @@ static const char* hitSprite(HitFx fx) {
     case HitFx::Blood: return "hit_blood";
     case HitFx::Cursed: return "hit_cursed";
     case HitFx::Normal: return "hit_impact";
+    case HitFx::Light: return "hit_light";
     default: return nullptr;
   }
 }

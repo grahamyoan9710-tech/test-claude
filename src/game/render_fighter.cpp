@@ -1497,6 +1497,8 @@ const char* auraSprite(const Fighter& f) {
     case Hero::Kakashi: return "raikiri_aura";
     case Hero::Kratos: return "rage_aura";
     case Hero::Sukuna: return "cursed_aura";
+    case Hero::Link: return "light_aura";
+    case Hero::Gojo: return "six_eyes_aura";
     default: return nullptr;
   }
 }

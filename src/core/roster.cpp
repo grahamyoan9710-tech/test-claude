@@ -410,6 +410,84 @@ CharacterDef makeLink() {
   light.pose = PoseHint::Bow;
   sc(light, S, P);
   c.weapons[1].moves = {{NSpecial, light}};
+
+  // The Master Sword's kit: the glowing blade's M1, the sword beam, the spin attack, a rising jump slash and a
+  // perfect guard with the shield.
+  MoveDef spin = mv("Attaque tournoyante", 46, {imp(sw(10, 18, 180, -180, 0.2f, 1.05f, 24, 11, 45, 55, 85, 0, F::Light))});
+  spin.pose = PoseHint::Spin;
+  MoveDef jumpSlash = mv("Saut de l'épée", 44, {sw(5, 12, -40, 120, 0.2f, 1.0f, 24, 8, 85, 50, 70, 0, F::Light)});
+  jumpSlash.vel = {ve(5, VelMode::Set, 1.5f, -17.0f, 3.5f)};
+  jumpSlash.gravityMul = 0.5f;
+  jumpSlash.helplessAfter = true;
+  jumpSlash.pose = PoseHint::Uppercut;
+  MoveDef guard = mv("Parade parfaite", 50, {imp(sw(26, 30, 30, -20, 0.3f, 1.0f, 22, 12, 361, 60, 95, 0, F::Light))});
+  guard.counterStart = 4;
+  guard.counterEnd = 26;
+  guard.reflects = true;  // the shield
+  guard.gravityMul = 0.3f;
+  guard.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&spin, &jumpSlash, &guard}) sc(*d, S, P);
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, spin}, {USpecial, jumpSlash}, {DSpecial, guard}});
+  addBladeKit(c.weapons[0], S, P, F::Light);
+  // The Bow of Light's kit: the M1 shoots (a quick arrow of light, two arrows, a charged arrow that ejects), the air
+  // M1 shoots down in front, three arrows in a fan, a leap that shoots down, and a rain of light falling ahead.
+  const float PK = P * 1.5f;  // only arrows left (no smashes): they hit harder
+  MoveDef quick = light;
+  quick.name = "Flèche rapide";
+  quick.duration = 26;
+  quick.projectileFrame = 9;
+  quick.projectile.hit.damage *= 0.4f * PK / P;
+  quick.projectile.hit.baseKB = 10, quick.projectile.hit.growth = 25;
+  quick.projectile.hit.impact = false;
+  quick.nextMove = Jab2, quick.comboStart = 4, quick.comboEnd = 22, quick.comboAt = 13;
+  MoveDef twin = quick;
+  twin.name = "Double flèche";
+  twin.duration = 28;
+  twin.projectile.count = 2;
+  twin.projectile.spreadDeg = 6;
+  twin.nextMove = Jab3, twin.comboStart = 4, twin.comboEnd = 24, twin.comboAt = 14;
+  MoveDef charged = light;
+  charged.name = "Flèche chargée";
+  charged.duration = 40;
+  charged.projectileFrame = 20;
+  charged.projectile.radius *= 1.3f;
+  charged.projectile.hit.radius = charged.projectile.radius;
+  charged.projectile.hit.damage *= PK / P;
+  charged.projectile.hit.baseKB = 50, charged.projectile.hit.growth = 95;
+  MoveDef airShot = quick;
+  airShot.name = "Tir aérien";
+  airShot.duration = 34;
+  airShot.nextMove = -1;
+  airShot.projectileFrame = 12;
+  airShot.projectile.velocity = {15, 9};  // down in front
+  airShot.projectile.hit.damage *= 1.5f;
+  airShot.landingLag = 8;
+  MoveDef fan = light;
+  fan.name = "Triple flèche";
+  fan.projectile.count = 3;
+  fan.projectile.spreadDeg = 14;
+  fan.projectile.hit.damage *= 0.6f * PK / P;
+  MoveDef rise = mv("Envol de lumière", 44, {});
+  rise.vel = {ve(4, VelMode::Set, 1.5f, -17.5f, 3.0f)};
+  rise.gravityMul = 0.5f;
+  rise.helplessAfter = true;
+  rise.projectileFrame = 14;
+  rise.projectile = light.projectile;
+  rise.projectile.velocity = {3, 17};  // straight down below him
+  rise.projectile.hit.damage *= 0.7f;
+  rise.pose = PoseHint::Raise;
+  MoveDef rain = mv("Pluie de lumière", 50, {});
+  rain.projectileFrame = 18;
+  rain.projectile = light.projectile;
+  rain.projectile.spawnOffset = {150, -340};  // from the sky, ahead of him
+  rain.projectile.velocity = {0, 15};
+  rain.projectile.count = 3;
+  rain.projectile.spreadDeg = 10;
+  rain.projectile.hit.damage *= 0.8f * PK / P;
+  rain.pose = PoseHint::Bow;
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{Jab, quick}, {Jab2, twin}, {Jab3, charged}, {NAir, airShot},
+                                                       {SSpecial, fan}, {USpecial, rise}, {DSpecial, rain}});
+  c.weapons[1].kit = true;
   return c;
 }
 
@@ -676,6 +754,67 @@ CharacterDef makeGojo() {
   c.weapons[0].moves = {{NSpecial, purple}};
   c.weapons[1] = weapon("Six Yeux", "Bandeau retiré : tout frappe plus fort", WeaponVisual::SixEyes, F::Cursed, 1.35f,
                         1.2f, 1.0f, 15);
+
+  // Hollow Purple's kit: blows of cursed energy, Purple, Reversal Red at point-blank, a lift on Blue, and a burst of
+  // both techniques around him.
+  MoveDef rRed = mv("Rouge inversé", 44, {imp(hb(12, 16, 52, -10, 38, 12, 40, 70, 95, L::ArmFront, 0, F::Cursed))});
+  rRed.pose = PoseHint::Point;
+  MoveDef lift = mv("Envol du Bleu", 44, {hb(6, 14, 0, -50, 34, 6, 85, 45, 60, L::Body, 0, F::Cursed)});
+  lift.vel = {ve(5, VelMode::Set, 1.0f, -17.5f, 3.0f)};
+  lift.gravityMul = 0.45f;
+  lift.helplessAfter = true;
+  lift.pose = PoseHint::Raise;
+  MoveDef both = mv("Rouge et Bleu", 52, {imp(hb(20, 26, 0, -45, 64, 13, 70, 60, 90, L::Body, 0, F::Cursed))});
+  both.armorStart = 6;
+  both.armorEnd = 20;
+  both.gravityMul = 0.3f;
+  both.pose = PoseHint::HandSign;
+  for (MoveDef* d : {&rRed, &lift, &both}) sc(*d, S, P);
+  rRed.castFx = "red_blast";  // the Red bursts from his fingertips
+  rRed.castFxFrame = 11;
+  rRed.castFxAt = {48, -c.height * 0.5f};
+  rRed.castFxScale = 0.7f;
+  lift.castFx = "blue_orb";  // the Blue above his hand pulls him up
+  lift.castFxFrame = 4;
+  lift.castFxAt = {6, -c.height * 1.15f};
+  lift.castFxScale = 0.55f;
+  both.castFx = "cursed_burst";
+  both.castFxFrame = 14;
+  both.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, rRed}, {USpecial, lift}, {DSpecial, both}});
+  addFistKit(c.weapons[0], S, P, F::Cursed, 1.0f, 1.1f);
+  // The Six Eyes' kit (the blindfold off): faster blows, a maximum Red, a maximum Blue, an instant teleport, and
+  // Infinity as a counter.
+  MoveDef mRed = m[NSpecial];
+  mRed.name = "Rouge maximal";
+  mRed.projectile.hit.damage *= 1.3f;
+  mRed.projectile.radius *= 1.2f;
+  mRed.projectile.hit.radius = mRed.projectile.radius;
+  mRed.projectile.explodeRadius *= 1.3f;
+  mRed.projectile.explode.radius = mRed.projectile.explodeRadius;
+  mRed.projectile.explode.damage *= 1.25f;
+  MoveDef mBlue = m[SSpecial];
+  mBlue.name = "Bleu maximal";
+  mBlue.duration = 48;
+  mBlue.projectile.pull *= 1.4f;
+  mBlue.projectile.pullRadius *= 1.3f;
+  mBlue.projectile.radius *= 1.2f;
+  mBlue.projectile.hit.radius = mBlue.projectile.radius;
+  MoveDef blink = m[USpecial];
+  blink.name = "Téléportation instantanée";
+  blink.teleportDist *= 1.25f;
+  blink.castFx = "teleport_flicker";  // where he vanishes
+  blink.castFxFrame = 6;
+  blink.castFxAt = {0, -c.height * 0.5f};
+  blink.castFxStays = true;
+  MoveDef infinity = m[DSpecial];
+  infinity.name = "Infini des Six Yeux";
+  for (auto& h : infinity.hitboxes) h.damage *= 1.2f;
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(),
+                            {{NSpecial, mRed}, {SSpecial, mBlue}, {USpecial, blink}, {DSpecial, infinity}});
+  addFistKit(c.weapons[1], S, P, F::Cursed, 0.85f, 1.15f);
+  for (auto& [id, mdef] : c.weapons[1].moves)
+    if (id == Jab) mdef.name = "Frappe des Six Yeux";
   return c;
 }
 
