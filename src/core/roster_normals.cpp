@@ -154,9 +154,10 @@ void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed, bool thr
 void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed, float reach, bool upper) {
   using L = Limb;
   auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
-  MoveDef jab = mv("Frappe", T(20), {hb(T(4), T(7), 38 * reach, -8, 18, 4.0f, 361, 10, 25, L::ArmFront, 0, fx)});
+  // The first two hits barely push (like the bare-handed jabs): the combo stays connected.
+  MoveDef jab = mv("Frappe", T(20), {hb(T(4), T(7), 38 * reach, -8, 18, 4.0f, 361, 6, 18, L::ArmFront, 0, fx)});
   jab.nextMove = Jab2, jab.comboStart = T(3), jab.comboEnd = T(18), jab.comboAt = T(10);
-  MoveDef jab2 = mv("Enchaînement", T(22), {hb(T(5), T(8), 42 * reach, -10, 20, 4.5f, 361, 12, 28, L::LegFront, 0, fx)});
+  MoveDef jab2 = mv("Enchaînement", T(22), {hb(T(5), T(8), 42 * reach, -10, 20, 4.5f, 361, 7, 20, L::LegFront, 0, fx)});
   jab2.nextMove = Jab3, jab2.comboStart = T(3), jab2.comboEnd = T(20), jab2.comboAt = T(11);
   HitboxDef fin = hb(T(9), T(13), 46 * reach, upper ? -40.0f : -8.0f, 26, 9.5f, upper ? 80.0f : 50.0f, 50, 98,
                      L::ArmFront, 0, fx);

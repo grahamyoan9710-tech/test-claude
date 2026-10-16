@@ -944,7 +944,7 @@ void Fx::update(const Match& m) {
     const MoveDef* md = f.currentMove();
     const std::pair<int, int> now{md ? f.move : -1, md ? f.moveFrame : -1};
     if (md && md->castFx && f.moveFrame == md->castFxFrame && now != castSeen_[i] && art::fxInfo(md->castFx)) {
-      SpriteFx s{md->castFx, f.pos, f.def->height / 170.0f, 0.0f, f.facing < 0, 0};  // the clips' pixel size
+      SpriteFx s{md->castFx, f.pos, f.def->height / 170.0f * md->castFxScale, 0.0f, f.facing < 0, 0};
       s.follow = int(i);
       s.off = md->castFxAt;
       s.pos = f.pos + Vec2{s.off.x * float(f.facing), s.off.y};

@@ -8,26 +8,31 @@
 
 ## Nouveautés
 
-Version 9.5 : **le pilote du grand chantier, sur Ichigo**. Les 16 autres combattants suivront le même modèle
-une fois ce pilote validé.
+Version 9.6 : **lot 1 du grand chantier : Naruto, Sasuke et Kakashi** reçoivent, comme Ichigo, un kit complet pour
+chacune de leurs armes, tout animé avec PixelLab, et leurs effets passent en PixelLab.
 
-- **Touche Ultime seulement** : l'ultime ne part plus avec la touche Spéciale (K), seulement avec sa touche
-  (U au clavier).
-- **Kit complet pour les armes d'Ichigo**, tout animé avec PixelLab :
-  - **Zangetsu (Shikai)** : combo M1 en 3 coups, M1 aérien, Shunpo tranchant, Getsuga ascendant, Garde de
-    Zangetsu (parade et contre-attaque), Getsuga Tenshō géant, ultime Getsuga Jūjishō ;
-  - **Tensa Zangetsu (Bankai)** : Ichigo garde son manteau noir et son katana noir **dans toutes ses
-    animations** (garde, marche, course, sauts, bouclier, esquives, rebord, chopes, projections) ; combo M1
-    plus rapide (taille, estoc, taille tournoyante), M1 aérien en 3 coupes, Getsuga noir, Shunpo du Bankai,
-    Tenshō noir ascendant, Libération du Bankai (explosion de reiatsu noir), ultime Vasto Lorde.
-  - Avec une arme : **Attaque** = combo M1, **smash** = coup lourd (le 3e coup, qui éjecte), attaque en
-    l'air = M1 aérien, les 4 spéciales = les compétences de l'arme.
-- **Effets PixelLab au lieu des effets dessinés par le code** (pour Ichigo et pour tous les coups tranchants) :
-  étincelles d'impact (tranchant, reiatsu bleu, reiatsu noir et rouge), parade, Getsuga bleu et noir,
-  explosion du Bankai, traînée du Shunpo, auras bleue et noire (ultime prêt, ultime lancé). Ces effets suivent
-  le personnage et sont dessinés à la même taille de pixel que ses animations. Les clips PixelLab dessinent
-  leurs propres traînées : la traînée blanche ajoutée par le code a disparu.
-- **Animations corrigées** : le Shunpo d'Ichigo n'a plus d'image vide, son Cero ne recouvre plus son corps
-  d'une explosion rouge (le rayon PixelLab s'en charge).
-- **Équilibre** : 43 à 55 % de victoires pour tous ; Ichigo 48 %. Hitboxes et instants d'impact recalés sur
-  les nouvelles animations.
+- **Naruto**
+  - **Mode Ermite** : pigments orange autour des yeux et long manteau rouge à flammes noires, **dans toutes ses
+    animations**. Combo M1 (poing, coup de pied tournant, double paume), M1 aérien, Ōdama Rasengan (la boule
+    géante est maintenant visible), ruée Kawazu Kumite, bond de l'ermite, contre-attaque, ultime Rasenshuriken.
+  - **Chakra de Kurama** : corps doré et marques de sceau, **dans toutes ses animations**. Combo M1 aux bras de
+    chakra, M1 aérien, Rasengan de Kurama, clones dorés (ils courent en mode Kurama et sortent d'un nuage de
+    fumée), éclair doré, **bras de chakra qui attrape de loin**, ultime Bijūdama.
+- **Sasuke**
+  - **Arc du Susanoo** : l'arc violet reste dans sa main **dans toutes ses animations**. M1 en flèches (rapide,
+    double, chargée qui éjecte), tir aérien, éventail de 3 flèches, envol sur les ailes du Susanoo, **garde du
+    Susanoo** (la cage thoracique se forme autour de lui, contre et renvoie les projectiles), Flèche d'Indra.
+  - **Mangekyō Sharingan** : combo M1 à l'épée enflammée de noir, Amaterasu, **Enton : Kagutsuchi** (ruée, lame de
+    flammes noires), envol d'Enton, **barrière de flammes noires**.
+- **Kakashi**
+  - **Sharingan** : combo M1 de taijutsu finissant par une paume de foudre, Kamui, **chien de foudre** qui court au
+    sol, **téléportation Kamui**, contre du Sharingan.
+  - **Double Mangekyō** : combo M1 finissant par un **Kamui Raikiri** violet, shuriken du Susanoo, ruée Kamui
+    Raikiri, bond, **garde du Susanoo**.
+- **Effets PixelLab** (au lieu des effets dessinés par le code) : impacts de chakra, de foudre, de feu, de flammes
+  noires, d'eau et de vent (pour tous les combattants qui utilisent ces éléments), Katon : boule de feu, dragon
+  aqueux, chien de foudre, auras (Ermite, Kurama, Susanoo, foudre), cage du Susanoo, flammes noires, Kamui, fumée
+  des clones, boule de l'Ōdama. Le Raikiri et les clones de l'ultime de Naruto sont maintenant dessinés depuis
+  leurs clips PixelLab.
+- **Animations corrigées** : une dizaine d'images ratées remplacées (couleurs qui changent, éclats parasites).
+- **Équilibre** : revu après ces kits (détails dans le README).

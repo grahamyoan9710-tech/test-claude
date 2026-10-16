@@ -97,7 +97,7 @@ CharacterDef makeYuno() {
   c.groundAccel = 1.4f;
   c.airAccel = 0.55f;
   c.airJumps = 2;
-  const float S = 0.97f, P = 1.11f;  // v9.3: 60% with the softer launches (v9.2: 1.16)
+  const float S = 0.97f, P = 1.13f;  // v9.6: 41% (v9.3: 1.11)
   buildBrawlerNormals(c, S, P, F::Wind);
   auto& m = c.moves;
 
@@ -171,7 +171,7 @@ CharacterDef makeIchigo() {
                 pal({240, 240, 244}, {32, 32, 38}, {200, 30, 30}, {232, 228, 226}, {240, 128, 40}, {230, 200, 40})};
   stats(c, 46, 104, 100, 4.1f, 8.9f, 5.1f, 0.64f, 10.2f, 15.0f, 15.4f, 10.2f, 14.0f, 4);
   c.weaponLength = 88;
-  const float S = 1.08f, P = 1.10f;  // v9.3: hits harder again, 42% (v6: 1.06)
+  const float S = 1.08f, P = 1.13f;  // v9.6: 44% with the kits (v9.3: 1.10)
   buildSwordNormals(c, S, P, F::Reiatsu);
   auto& m = c.moves;
 
@@ -285,7 +285,7 @@ CharacterDef makeByakuya() {
   stats(c, 44, 106, 92, 4.4f, 9.8f, 5.2f, 0.6f, 10.0f, 15.0f, 15.0f, 10.0f, 14.0f, 3);
   c.groundAccel = 1.4f;
   c.weaponLength = 72;
-  const float S = 1.02f, P = 0.97f;  // v9.2: a little softer, 59%
+  const float S = 1.02f, P = 0.98f;  // v9.6: 42% at 0.97, 61% at 1.0
   buildSwordNormals(c, S, P, F::Petal);
   auto& m = c.moves;
 
@@ -506,7 +506,7 @@ CharacterDef makeKratos() {
                 pal({160, 130, 60}, {80, 60, 44}, {196, 40, 36}, {214, 210, 202}, {196, 196, 196}, {200, 160, 80})};
   stats(c, 56, 114, 118, 3.6f, 8.0f, 4.8f, 0.66f, 11.0f, 15.5f, 15.6f, 10.2f, 14.0f, 5);
   c.groundAccel = 1.1f;
-  const float S = 1.14f, P = 1.17f;  // v9.2: toned down, he won 68% of the balance duels after the clip refit
+  const float S = 1.14f, P = 1.13f;  // v9.6: 58% (v9.2: 1.17)
   buildBrawlerNormals(c, S, P, F::Fire);
   auto& m = c.moves;
 
@@ -638,7 +638,7 @@ CharacterDef makeSukuna() {
                 pal({36, 36, 44}, {120, 30, 40}, {220, 60, 60}, {242, 212, 190}, {240, 150, 170}, {220, 40, 40})};
   stats(c, 46, 104, 100, 4.3f, 9.4f, 5.3f, 0.64f, 10.4f, 15.5f, 15.6f, 10.3f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.0f, P = 1.09f;  // v9.2: toned down, 61% after the clip refit
+  const float S = 1.0f, P = 1.05f;  // v9.6: 58% (v9.2: 1.09)
   buildBrawlerNormals(c, S, P, F::Blood);
   auto& m = c.moves;
 
@@ -772,7 +772,7 @@ CharacterDef makeUlquiorra() {
   stats(c, 44, 106, 86, 4.2f, 9.0f, 5.4f, 0.5f, 8.8f, 13.6f, 14.6f, 9.6f, 13.2f, 3);
   c.airJumps = 2;
   c.airAccel = 0.5f;
-  const float S = 1.0f, P = 1.48f;  // v9.2: hits harder, he fell to 38%
+  const float S = 1.0f, P = 1.40f;  // v9.6: 61% (v9.2: 1.48)
   buildBrawlerNormals(c, S, P, F::Hollow);
   auto& m = c.moves;
 
@@ -844,7 +844,7 @@ CharacterDef makeGrimmjow() {
   stats(c, 46, 106, 102, 4.5f, 10.0f, 5.6f, 0.66f, 10.6f, 15.8f, 15.8f, 10.4f, 14.6f, 3);
   c.groundAccel = 1.5f;
   c.weaponLength = 72;
-  const float S = 1.04f, P = 1.20f;  // v9.1: hits harder, he fell to 33% after the clip refit
+  const float S = 1.04f, P = 1.18f;  // v9.6: 59% at 1.20, 40% at 1.14
   buildBrawlerNormals(c, S, P, F::Claw);
   auto& m = c.moves;
 
@@ -1039,6 +1039,13 @@ CharacterDef makeNaruto() {
     h.offset.x *= 1.2f;
     h.damage *= 1.3f;
   }
+  // PixelLab will not draw the giant sphere in his Sage Mode clip: the game draws it on his palm (where the clip
+  // holds it out, frames 2-9: x 227, y 86 of the 256 frame, 213 px for his 96 units), the hit on the sphere.
+  odama.castFx = "odama_ball";
+  odama.castFxFrame = 7;
+  odama.castFxAt = {67, -71};
+  odama.castFxScale = 1.26f;  // its drawn radius (58 px) on the hitbox's (41)
+  for (auto& h : odama.hitboxes) h.offset = {67, -71 + c.height * 0.5f};
   c.weapons[0].moves = {{NSpecial, odama}};
   c.weapons[1] = weapon("Chakra de Kurama", "Le manteau de chakra du renard", WeaponVisual::KuramaChakra, F::Chakra, 1.3f,
                         1.15f, 1.2f, 15);
@@ -1066,7 +1073,7 @@ CharacterDef makeNaruto() {
   frog.counterEnd = 26;
   frog.gravityMul = 0.3f;
   frog.pose = PoseHint::Kneel;
-  const float PK = P * 1.12f;  // the kits hit a little harder than his bare-handed normals: they lose the smashes
+  const float PK = P * 1.28f;  // the kits hit harder than his bare-handed normals: they lose the smashes
   for (MoveDef* d : {&rush, &leap, &frog}) sc(*d, S, PK);
   c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, rush}, {USpecial, leap}, {DSpecial, frog}});
   addFistKit(c.weapons[0], S, PK, F::Chakra, 1.0f, 1.15f);
@@ -1171,7 +1178,7 @@ CharacterDef makeSasuke() {
   // Susanoo's bow kit: the M1 shoots (a quick arrow, two arrows, a charged arrow that ejects), the air M1 shoots down
   // in front, a fan of three arrows, a leap on chakra wings, and the ribcage of Susanoo as a counter. The kits hit
   // harder than his sword normals (P is low for them: they reach far).
-  const float PK = 1.3f;
+  const float PK = 1.36f;
   MoveDef quick = arrow;
   quick.name = "Flèche rapide";
   quick.duration = 26;
@@ -1382,7 +1389,7 @@ CharacterDef makeHunter() {
   stats(c, 52, 108, 120, 3.6f, 8.2f, 4.8f, 0.66f, 10.8f, 15.4f, 15.2f, 10.0f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 100;
-  const float S = 1.08f, P = 1.11f;
+  const float S = 1.08f, P = 1.14f;  // v9.6: 43% (1.11)
   buildSwordNormals(c, S, P, F::Slash);
   auto& m = c.moves;
 

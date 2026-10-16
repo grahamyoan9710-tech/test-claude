@@ -659,6 +659,10 @@ void uzumaki(const Ctx& x, bool front) {
     pose.footF = {0.3f * H, 0.1f * H};  // a flying kick
     pose.handF = {0.15f * H, -0.2f * H};
     pose.lean = 0.4f;
+    if (art::hasSheet(x.f.def->hero, art::kSheetMove0 + FAir)) {  // his own PixelLab flying kick
+      pose.sheet = art::kSheetMove0 + FAir;
+      pose.sheetT = std::fmod(x.t * 1.5f + i * 0.2f, 1.0f);
+    }
     drawCharacterSprite(*x.f.def, x.f.palette, pose, p + Vec2{0.0f, H * 0.5f}, std::cos(a) > 0 ? -1 : 1, 0.85f, 0.85f * x.k,
                         WHITE, 0.0f, x.t);
   }
@@ -732,6 +736,7 @@ void raikiri(const Ctx& x, bool front) {
     if (x.mf >= 40) speedLines(x.v, x.c, x.t, x.k, {200, 230, 255, 255}, 50);
     return;
   }
+  if (clipDrawn(x)) return;  // the clip's own lightning is on his hand
   const uint32_t fs = uint32_t(x.m.frame) * 37u;  // the chirping of a thousand birds in his hand
   const Vec2 hand = x.c + Vec2{x.fc * 34.0f, -6.0f};
   vfx::additive(true);

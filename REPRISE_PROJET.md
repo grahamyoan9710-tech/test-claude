@@ -55,6 +55,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 07 h 46 UTC, session B, lot 1 : génération finie (~200 générations au total, il en reste 2 896), tout importé
+  (Naruto 77 clips, Sasuke 44, Kakashi 12 ; 18 effets). `fitall.sh` relancé : 34 clips retimés, 193 hitboxes
+  recalées. Le combo M1 à mains nues poussait trop (le 3e coup ratait après recalage) : les 2 premiers coups
+  poussent moins. Équilibre réglé : 45-56 % pour tous (Yuno 1,13 ; Ichigo 1,13 ; Byakuya 0,98 ; Kratos 1,13 ;
+  Sukuna 1,05 ; Ulquiorra 1,40 ; Grimmjow 1,18 ; Hunter 1,14 ; kits de Naruto ×1,28, de Sasuke 1,36), KO sous
+  70 % : 3 %. Tous les tests passent. L'Ōdama est dessiné par le jeu (`odama_ball`) sur la paume mesurée dans le
+  clip : PixelLab refusait de dessiner la boule. Verrou `fitall.sh` libre.
 - 16/10 06 h 34 UTC, session B, lot 1 en cours : ~134 générations faites, ~100 clips importés (états du mode Ermite et du
   Kurama de Naruto, arc de Sasuke, kits de Kakashi et du Mangekyō de Sasuke), 17 effets PixelLab importés.
   - **Incident évité** : mon script d'enchaînement a construit une vague avec tous les clips de base de Kakashi
