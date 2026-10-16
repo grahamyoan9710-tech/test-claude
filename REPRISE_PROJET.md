@@ -49,12 +49,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 2 : Kratos, Hunter, Sukuna) | 16/10 08 h 25 UTC |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 2) | 16/10 08 h 25 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 2) | 16/10 08 h 25 UTC |
-| Version et paquets (README, numéros de version, `dist/`) | session B (v9.7) | 16/10 12 h 09 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 12 h 30 UTC, session B : **v9.7 publiée** (lot 2 : kits de Kratos, du chasseur et de Sukuna, 14 effets
+  PixelLab, rebords des armes à nouvelle apparence recalés sur les mains). Démos de contrôle regardées (les 6 kits,
+  2 ultimes pour les auras). Workflow « Release » réussi ; l'archive Linux téléchargée par l'API a la même somme
+  SHA-256 que la release, démarre et affiche v9.7. Tous les verrous libres. Suite : attendre le propriétaire pour
+  les 10 autres (Asta, Yuno, Byakuya, Kenpachi, Ulquiorra, Grimmjow, Starrk, Gojo, Link, Ganondorf).
 - 16/10 12 h 00 UTC, session B, lot 2 : `fitall.sh` relancé (38 clips retimés, 197 hitboxes recalées), tous les
   tests passent. Équilibre : 45-55 % pour tous (chasseur 1,15 ; les autres inchangés), KO sous 70 % : 3 %.
   Verrou `fitall.sh` libre. Reste : démos de contrôle, puis v9.7.
