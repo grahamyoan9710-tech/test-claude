@@ -1495,6 +1495,8 @@ const char* auraSprite(const Fighter& f) {
     case Hero::Naruto: return f.weapon == 1 ? "kurama_aura" : "sage_aura";  // nature energy, or Kurama's golden flames
     case Hero::Sasuke: return "susanoo_aura";
     case Hero::Kakashi: return "raikiri_aura";
+    case Hero::Kratos: return "rage_aura";
+    case Hero::Sukuna: return "cursed_aura";
     default: return nullptr;
   }
 }
@@ -1712,8 +1714,10 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   // The hero's PixelLab aura (its reiatsu...) replaces the drawn ring and pillar when it has one: the ultimate
   // ready, then unleashed (bigger).
   const char* aura = auraSprite(f);
-  if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs)) {
-    art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0, usingFs ? 1.0f : ultK);
+  const bool power = d.hero == Hero::Sukuna && f.weapon == 1;  // his finger, nothing in hand: its aura, fainter
+  if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs || power)) {
+    art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0,
+                usingFs ? 1.0f : std::max(ultK, power ? 0.7f : 0.0f));
     ultK = 0.0f;
     usingFs = false;
   }

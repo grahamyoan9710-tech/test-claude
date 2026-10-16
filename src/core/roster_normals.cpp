@@ -149,6 +149,33 @@ void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed, bool thr
   w.kit = true;
 }
 
+// The M1 of a lance's weapon kit: a thrust, a longer thrust, a wide rising sweep that ejects, and in the air a thrust
+// down in front then one straight ahead.
+void addLanceKit(WeaponDef& w, float S, float P, HitFx fx, float speed) {
+  const HitFx sl = HitFx::Slash;
+  auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
+  auto pair = [&](int s0, int e0, float a0, float a1, float r, float dmg, float ang, float bkb, float kbg, int group,
+                  HitFx hfx) {  // the point first, then the shaft
+    return std::vector<HitboxDef>{sw(T(s0), T(e0), a0, a1, 0.6f, 1.0f, r, dmg, ang, bkb, kbg, group, hfx),
+                                  sw(T(s0), T(e0), a0, a1, 0.2f, 0.6f, r, dmg * 0.8f, ang, bkb, kbg, group, hfx)};
+  };
+  MoveDef jab = mv("Coup de lance", T(24), pair(5, 8, 4, 4, 17, 4.5f, 361, 10, 25, 0, sl));
+  jab.nextMove = Jab2, jab.comboStart = T(4), jab.comboEnd = T(22), jab.comboAt = T(12);
+  MoveDef jab2 = mv("Estoc appuyé", T(26), pair(6, 9, 2, 2, 18, 5.0f, 361, 12, 28, 0, sl));
+  jab2.nextMove = Jab3, jab2.comboStart = T(4), jab2.comboEnd = T(24), jab2.comboAt = T(13);
+  MoveDef jab3 = mv("Balayage", T(38), pair(9, 15, -50, 130, 22, 9.5f, 55, 50, 98, 0, fx));  // it ejects
+  for (auto& h : jab3.hitboxes) h.impact = true;
+  std::vector<HitboxDef> air = pair(5, 8, -35, -35, 20, 5.0f, 70, 20, 35, 0, sl);
+  auto last = pair(13, 17, 0, 0, 22, 8.0f, 361, 35, 98, 1, fx);
+  air.insert(air.end(), last.begin(), last.end());
+  MoveDef nair = mv("Estoc aérien", T(38), air, 8);
+  for (MoveDef* m : {&jab, &jab2, &jab3, &nair}) {
+    scale(*m, S, P * 0.88f);  // like the blades
+    w.moves.push_back({m == &jab ? Jab : m == &jab2 ? Jab2 : m == &jab3 ? Jab3 : NAir, *m});
+  }
+  w.kit = true;
+}
+
 // The M1 of a fighting style's kit (fists, feet, chakra): a 3-hit combo (a punch, a kick, a finisher that ejects) and
 // a 2-hit air combo. `reach` stretches the blows (chakra arms, nature energy), `upper`: the finisher launches upward.
 void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed, float reach, bool upper) {

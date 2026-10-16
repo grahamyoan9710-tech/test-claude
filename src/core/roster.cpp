@@ -557,6 +557,58 @@ CharacterDef makeKratos() {
   chaos.pose = PoseHint::Spin;
   sc(chaos, S, P);
   c.weapons[1].moves = {{NSpecial, chaos}};
+
+  // The Leviathan Axe's kit: the axe's M1, the throw, the Frost Giant's Frenzy (three chops), a spinning leap and
+  // Hel's Touch (the axe slammed into the ground, ice bursting all around him). The shield stays on his arm.
+  c.weapons[0].blade = 0.72f * c.height;
+  MoveDef frenzy = mv("Frénésie du géant du givre", 46,
+                      {sw(6, 9, 110, -40, 0.3f, 1.0f, 22, 4, 361, 10, 25, 0, F::Ice),
+                       sw(14, 17, 30, -15, 0.3f, 1.0f, 22, 4, 361, 10, 25, 1, F::Ice),
+                       imp(sw(22, 26, 110, -40, 0.3f, 1.0f, 26, 9, 45, 55, 85, 2, F::Ice))});
+  frenzy.vel = {ve(4, VelMode::SetX, 5.5f, 0), ve(26, VelMode::Scale, 0.2f, 1.0f)};
+  frenzy.frictionMul = 0.3f;
+  frenzy.pose = PoseHint::Rush;
+  MoveDef axeLeap = mv("Bond de la Léviathan", 46, {sw(5, 14, -60, 180, 0.2f, 1.0f, 26, 9, 85, 50, 70, 0, F::Ice)});
+  axeLeap.vel = {ve(5, VelMode::Set, 1.5f, -16.5f, 3.5f)};
+  axeLeap.gravityMul = 0.5f;
+  axeLeap.helplessAfter = true;
+  axeLeap.pose = PoseHint::Uppercut;
+  MoveDef hel = mv("Toucher de Hel", 52, {imp(hb(20, 26, 26, 30, 64, 13, 70, 60, 90, L::Body, 0, F::Ice))});
+  hel.armorStart = 6;
+  hel.armorEnd = 20;
+  hel.gravityMul = 0.3f;
+  hel.pose = PoseHint::Overhead;
+  for (MoveDef* d : {&frenzy, &axeLeap, &hel}) sc(*d, S, P);
+  hel.castFx = "frost_burst";  // ice spikes burst from the ground where the axe lands
+  hel.castFxFrame = 19;
+  hel.castFxAt = {26, 0};
+  hel.castFxStays = true;
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, frenzy}, {USpecial, axeLeap}, {DSpecial, hel}});
+  addBladeKit(c.weapons[0], S, P, F::Ice);
+  // The Blades of Chaos's kit: lashes on their chains, the whirl, the chains hooking a foe from afar, a propeller
+  // leap and a shield counter answered by both blades.
+  c.weapons[1].blade = 1.0f * c.height;  // the chains: the fit stretches it to the drawn lash
+  MoveDef hooks = mv("Crochets du Chaos", 48, {hb(10, 18, 120, -14, 30, 0, 0, 0, 0, L::ArmFront)});
+  hooks.isGrab = true;
+  hooks.pose = PoseHint::Thrust;
+  std::vector<HitboxDef> prop;
+  multi(prop, 5, 3, 4, 0, -50, 50, 3.0f, L::Weapon, F::Fire);
+  prop.push_back(hb(17, 21, 0, -62, 54, 6, 85, 50, 72, L::Weapon, 3, F::Fire));
+  MoveDef ascent = mv("Envol du Chaos", 46, prop);
+  ascent.vel = {ve(5, VelMode::Set, 1.5f, -16.5f, 3.5f)};
+  ascent.gravityMul = 0.5f;
+  ascent.helplessAfter = true;
+  ascent.pose = PoseHint::Spin;
+  MoveDef chaosCounter = mv("Contre du Chaos", 52, {imp(hb(26, 31, 70, -10, 40, 13, 361, 60, 95, L::Weapon, 0, F::Fire))});
+  chaosCounter.counterStart = 4;
+  chaosCounter.counterEnd = 26;
+  chaosCounter.reflects = true;  // the shield
+  chaosCounter.gravityMul = 0.3f;
+  chaosCounter.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&hooks, &ascent, &chaosCounter}) sc(*d, S, P);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(),
+                            {{SSpecial, hooks}, {USpecial, ascent}, {DSpecial, chaosCounter}});
+  addBladeKit(c.weapons[1], S, P, F::Fire, 0.9f);
   return c;
 }
 
@@ -687,6 +739,61 @@ CharacterDef makeSukuna() {
   c.weapons[0].moves = {{NSpecial, bolt}};
   c.weapons[1] = weapon("Doigt de Sukuna", "Puissance maudite : tout frappe plus fort", WeaponVisual::CursedFinger,
                         F::Blood, 1.35f, 1.2f, 1.0f, 15);
+
+  // Kamutoke's kit: the staff's M1 (its second hit a thrust of the crescent blade), the bolt, a lightning lunge, a
+  // rising thunder and the thunder called down all around him.
+  c.weapons[0].blade = 0.95f * c.height;
+  MoveDef lunge = mv("Ruée foudroyante", 44, {imp(sw(12, 18, 4, 4, 0.3f, 1.1f, 24, 11, 40, 55, 86, 0, F::Electric))});
+  lunge.vel = {ve(10, VelMode::SetX, 15, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(22, VelMode::Scale, 0.2f, 1.0f)};
+  lunge.gravityMul = 0.3f;
+  lunge.frictionMul = 0.1f;
+  lunge.pose = PoseHint::Thrust;
+  MoveDef rise = mv("Tonnerre ascendant", 44, {hb(4, 8, 10, -30, 30, 8, 80, 50, 70, L::Weapon, 0, F::Electric),
+                                               hb(8, 15, 0, -70, 30, 5, 85, 40, 60, L::Weapon, 1, F::Electric)});
+  rise.vel = {ve(4, VelMode::Set, 1.5f, -17.5f, 3.0f)};
+  rise.gravityMul = 0.5f;
+  rise.helplessAfter = true;
+  rise.pose = PoseHint::Raise;
+  MoveDef call = mv("Appel du tonnerre", 54, {imp(hb(24, 30, 0, -20, 70, 13, 80, 60, 90, L::Body, 0, F::Electric))});
+  call.armorStart = 6;
+  call.armorEnd = 24;
+  call.gravityMul = 0.3f;
+  call.pose = PoseHint::Raise;
+  for (MoveDef* d : {&lunge, &rise, &call}) sc(*d, S, P);
+  call.castFx = "thunder_burst";  // the bolt from the sky and its dome of lightning
+  call.castFxFrame = 22;
+  call.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, lunge}, {USpecial, rise}, {DSpecial, call}});
+  addBladeKit(c.weapons[0], S, P, F::Electric, 1.0f, true);
+  m[SSpecial].castFx = "cleave_flurry";  // the web of slashes in front of his hand
+  m[SSpecial].castFxFrame = 6;
+  m[SSpecial].castFxAt = {48, -c.height * 0.5f};
+  // The finger's kit: crimson taijutsu, a barrage of Dismantles, the King's Cleave, a cursed ascent and the King's
+  // counter.
+  MoveDef barrage = m[NSpecial];
+  barrage.name = "Rafale de Démantèlements";
+  barrage.projectile.count = 4;
+  barrage.projectile.spreadDeg = 16;
+  barrage.projectile.hit.damage *= 0.85f;
+  barrage.duration = 34;
+  MoveDef kCleave = m[SSpecial];
+  kCleave.name = "Clivage du Roi";
+  for (auto& h : kCleave.hitboxes) h.damage *= 1.2f;
+  MoveDef kRise = m[USpecial];
+  kRise.name = "Envol du Roi";
+  for (auto& h : kRise.hitboxes) h.damage *= 1.15f;
+  kRise.vel = {ve(4, VelMode::Set, 1.5f, -18.0f, 3.0f)};
+  MoveDef kCounter = mv("Contre du Roi", 50, {imp(hb(26, 30, 48, -10, 36, 13, 361, 60, 95, L::ArmFront, 0, F::Blood))});
+  kCounter.counterStart = 4;
+  kCounter.counterEnd = 26;
+  kCounter.gravityMul = 0.3f;
+  kCounter.pose = PoseHint::Point;
+  sc(kCounter, S, P);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(),
+                            {{NSpecial, barrage}, {SSpecial, kCleave}, {USpecial, kRise}, {DSpecial, kCounter}});
+  addFistKit(c.weapons[1], S, P, F::Blood, 1.0f, 1.2f);  // the crimson slash lines reach past the hand
+  for (auto& [id, mdef] : c.weapons[1].moves)
+    if (id == Jab) mdef.name = "Frappe maudite";
   return c;
 }
 
@@ -1442,6 +1549,66 @@ CharacterDef makeHunter() {
   shell.pose = PoseHint::Thrust;
   sc(shell, S, P);
   c.weapons[1].moves = {{NSpecial, shell}};
+
+  // The charge blade's kit: the sword's M1 (a roundslash to finish), the discharge, a charged thrust, a rising slash
+  // and the guard point (a counter with the shield, a phial bursts as it bashes).
+  c.weapons[0].blade = 0.82f * c.height;
+  MoveDef cThrust = mv("Estoc chargé", 44, {imp(sw(12, 18, 4, 4, 0.3f, 1.1f, 22, 11, 40, 55, 85, 0, F::Electric))});
+  cThrust.vel = {ve(10, VelMode::SetX, 13, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(22, VelMode::Scale, 0.2f, 1.0f)};
+  cThrust.gravityMul = 0.3f;
+  cThrust.frictionMul = 0.1f;
+  cThrust.pose = PoseHint::Thrust;
+  MoveDef rSlash = mv("Taille ascendante", 46, {sw(6, 13, -40, 120, 0.2f, 1.0f, 26, 9, 85, 50, 72, 0, F::Electric)});
+  rSlash.vel = {ve(6, VelMode::Set, 1.5f, -17.0f, 3.5f)};
+  rSlash.gravityMul = 0.5f;
+  rSlash.helplessAfter = true;
+  rSlash.pose = PoseHint::Uppercut;
+  MoveDef gPoint = mv("Garde parfaite", 50, {imp(hb(26, 31, 50, -10, 44, 13, 361, 60, 95, L::Body, 0, F::Electric))});
+  gPoint.counterStart = 4;
+  gPoint.counterEnd = 26;
+  gPoint.reflects = true;
+  gPoint.gravityMul = 0.3f;
+  gPoint.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&cThrust, &rSlash, &gPoint}) sc(*d, S, P);
+  gPoint.castFx = "explosion_electric";  // the phial bursts against the shield
+  gPoint.castFxFrame = 26;
+  gPoint.castFxAt = {50, -c.height * 0.5f};
+  gPoint.castFxScale = 0.6f;
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, cThrust}, {USpecial, rSlash}, {DSpecial, gPoint}});
+  addBladeKit(c.weapons[0], S, P, F::Electric);
+  // The gunlance's kit: thrusts and a sweep that fires a shell, the shell shot, a guard dash behind the shield, a
+  // blast that throws him upward and a full burst of every shell.
+  MoveDef gDash = mv("Charge au bouclier", 46, {hb(8, 20, 40, -8, 32, 6, 40, 40, 50, L::Body, 0, F::Normal),
+                                                imp(sw(22, 26, 4, 4, 0.3f, 1.1f, 22, 10, 40, 55, 85, 1, F::Slash))});
+  gDash.armorStart = 4;
+  gDash.armorEnd = 20;
+  gDash.vel = {ve(6, VelMode::SetX, 10, 0), ve(26, VelMode::Scale, 0.2f, 1.0f)};
+  gDash.gravityMul = 0.45f;
+  gDash.frictionMul = 0.12f;
+  gDash.pose = PoseHint::Rush;
+  MoveDef blast = mv("Saut explosif", 46, {imp(hb(6, 10, 0, 50, 48, 10, 80, 50, 75, L::None, 0, F::Fire))});
+  blast.vel = {ve(7, VelMode::Set, 1.0f, -19.0f, 3.0f)};
+  blast.gravityMul = 0.5f;
+  blast.helplessAfter = true;
+  blast.pose = PoseHint::Raise;
+  MoveDef fullBurst = mv("Salve complète", 54, {imp(hb(18, 24, 96, -6, 52, 15, 40, 60, 92, L::Weapon, 0, F::Fire))});
+  fullBurst.armorStart = 4;
+  fullBurst.armorEnd = 18;
+  fullBurst.vel = {ve(18, VelMode::SetX, -5, 0), ve(26, VelMode::Scale, 0.3f, 1.0f)};  // the recoil
+  fullBurst.gravityMul = 0.3f;
+  fullBurst.pose = PoseHint::Thrust;
+  for (MoveDef* d : {&gDash, &blast, &fullBurst}) sc(*d, S, P);
+  blast.castFx = "explosion_fire";  // the shell bursts on the ground under him
+  blast.castFxFrame = 6;
+  blast.castFxAt = {0, 0};
+  blast.castFxStays = true;
+  blast.castFxScale = 0.7f;
+  fullBurst.castFx = "gun_blast";  // every shell fires from the tip
+  fullBurst.castFxFrame = 17;
+  fullBurst.castFxAt = {64, -c.height * 0.5f};
+  fullBurst.castFxScale = 1.2f;
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, gDash}, {USpecial, blast}, {DSpecial, fullBurst}});
+  addLanceKit(c.weapons[1], S, P, F::Fire);
   return c;
 }
 // The basic attack (jab) with a picked-up weapon: one big strike, drawn by its own clip (w0_jab / w1_jab). A blade

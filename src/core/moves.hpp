@@ -452,6 +452,8 @@ void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx);
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx = HitFx::Slash);
 // A weapon's kit M1 with a blade (WeaponDef::kit): jab, jab2, jab3 and the air M1 (nair).
 void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, bool thrust2 = false, int airCuts = 2);
+// ... with a lance: two thrusts, a rising sweep and two thrusts in the air.
+void addLanceKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f);
 // ... with fists, feet or chakra.
 void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, float reach = 1.0f, bool upper = false);
 // A blade swing hitbox: sweeps from a0 to a1 degrees, hits from reach0 to reach1 of the blade.

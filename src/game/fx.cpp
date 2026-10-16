@@ -137,6 +137,19 @@ static const char* hitSprite(HitFx fx) {
     case HitFx::BlackFlame: return "hit_blackflame";
     case HitFx::Water: return "hit_water";
     case HitFx::Wind: return "hit_wind";
+    case HitFx::Ice: return "hit_ice";
+    case HitFx::Blood: return "hit_blood";
+    case HitFx::Cursed: return "hit_cursed";
+    case HitFx::Normal: return "hit_impact";
+    default: return nullptr;
+  }
+}
+
+// The PixelLab blast of an element's explosions (nullptr: the particles alone).
+static const char* explosionSprite(HitFx fx) {
+  switch (fx) {
+    case HitFx::Fire: case HitFx::Normal: case HitFx::Slash: return "explosion_fire";
+    case HitFx::Electric: case HitFx::Lightning: return "explosion_electric";
     default: return nullptr;
   }
 }
@@ -724,6 +737,10 @@ void Fx::onEvents(const Match& m) {
           playFx("fuga_blast", e.pos, 2.0f * e.strength / 170.0f);
         else if (e.visual == int(ProjVisual::Lanza))  // the Lanza: a dome of teal light
           playFx("lanza_blast", e.pos, 2.0f * e.strength / 200.0f);
+        else if (const char* x = explosionSprite(e.fx); x && art::fxInfo(x)) {  // its radius on the blast's
+          const art::FxInfo* fi = art::fxInfo(x);
+          playFx(x, e.pos, std::max(20.0f, e.strength) / (fi->hit > 0.0f ? fi->hit : 0.4f * std::min(fi->fw, fi->fh)));
+        }
         explosion(e.pos, std::max(20.0f, e.strength), e.fx, !sprites_.empty() && sprites_.back().t == 0);
         break;
       case EvType::WeaponSpawn: {  // a pillar of light guides the weapon down from the sky
