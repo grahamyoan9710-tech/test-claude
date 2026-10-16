@@ -49,13 +49,23 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 2 : Kratos, Hunter, Sukuna) | 16/10 08 h 35 UTC |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 2) | 16/10 08 h 35 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 2) | 16/10 08 h 35 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 2 : Kratos, Hunter, Sukuna) | 16/10 08 h 25 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 2) | 16/10 08 h 25 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 2) | 16/10 08 h 25 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
-- 16/10 08 h 35 UTC, session B : **lot 2 commencé (Kratos, Hunter, Sukuna)**, comme le lot 1. Fiches des kits dans
+- 16/10 08 h 55 UTC, session B, lot 2 en cours :
+  - Code des 6 kits poussé (11f88b7), tous les tests passent. Nouveau `addLanceKit` (M1 de la lance-canon).
+  - Les 22 clips des Lames du Chaos ont été **refusés sans être facturés** : description du perso au-delà de
+    300 caractères (limite de PixelLab). Raccourcie, ils repartent.
+  - Le bouclier de Kratos disparaissait au départ de course et quand il est saisi : prompts corrigés,
+    `w0_runstart` et `w0_grabbed` refaits (anciens dans `kratos/old_*`). `hunter/airjump` et `tumble` refaits
+    (l'épée sortait du cadre ; anciens dans `hunter/old_*`).
+  - **Redémarrage du conteneur** vers 08 h 45 : scripts arrêtés. Vérifié chez PixelLab (jobs actifs et récents) :
+    aucun job inconnu, donc les 5 dossiers restés « submitting » n'avaient jamais été envoyés ; leur `job.json`
+    est effacé et ils repartent. Les 12 jobs « submitted » sont seulement téléchargés (`jobs_l2_resume.json`).
+- 16/10 08 h 25 UTC, session B : **lot 2 commencé (Kratos, Hunter, Sukuna)**, comme le lot 1. Fiches des kits dans
   `pxa/wkits/kratos.json`, `hunter.json`, `sukuna.json` : 209 clips à générer (les 4 armes de Kratos et du
   chasseur changent l'apparence, Kamutoke aussi ; le doigt de Sukuna est un pouvoir). Je lance d'abord la garde de
   Kamutoke (`sukuna/w0guard`), puis les vagues avec `chain.py`. Les anciens clips `sukuna/w0_nspecial` (il
