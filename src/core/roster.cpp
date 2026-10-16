@@ -1048,6 +1048,44 @@ CharacterDef makeNaruto() {
   clones.projectile.spreadDeg = 8;
   clones.projectile.hit.damage *= 1.25f;
   c.weapons[1].moves = {{SSpecial, clones}};
+
+  // Sage Mode's kit: frog kata (nature energy hits beyond the fist), the Odama, a frog kata rush, a sage leap and a
+  // frog kata counter.
+  MoveDef rush = mv("Kawazu Kumite", 40, {imp(hb(10, 15, 46, -10, 30, 11, 45, 55, 88, L::ArmFront, 0, F::Chakra))});
+  rush.vel = {ve(6, VelMode::SetX, 13, 0), ve(6, VelMode::SetY, 0, -1, 0, true), ve(16, VelMode::Scale, 0.2f, 1.0f)};
+  rush.gravityMul = 0.3f;
+  rush.frictionMul = 0.1f;
+  rush.pose = PoseHint::Rush;
+  MoveDef leap = mv("Bond de l'ermite", 42, {hb(4, 12, 10, -40, 30, 8, 85, 55, 70, L::LegFront, 0, F::Chakra)});
+  leap.vel = {ve(4, VelMode::Set, 1.5f, -18.0f, 3.0f)};
+  leap.gravityMul = 0.5f;
+  leap.helplessAfter = true;
+  leap.pose = PoseHint::Uppercut;
+  MoveDef frog = mv("Contre du crapaud", 50, {imp(hb(26, 31, 50, -10, 36, 13, 361, 60, 95, L::ArmFront, 0, F::Chakra))});
+  frog.counterStart = 4;
+  frog.counterEnd = 26;
+  frog.gravityMul = 0.3f;
+  frog.pose = PoseHint::Kneel;
+  const float PK = P * 1.12f;  // the kits hit a little harder than his bare-handed normals: they lose the smashes
+  for (MoveDef* d : {&rush, &leap, &frog}) sc(*d, S, PK);
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, rush}, {USpecial, leap}, {DSpecial, frog}});
+  addFistKit(c.weapons[0], S, PK, F::Chakra, 1.0f, 1.15f);
+  // Kurama's kit: faster blows stretched by chakra arms, a Rasengan spun by the chakra arms, the clones, a golden
+  // flash upward and a chakra arm that grabs from afar.
+  MoveDef kRasengan = m[NSpecial];
+  kRasengan.name = "Rasengan de Kurama";
+  for (auto& h : kRasengan.hitboxes) h.radius *= 1.3f, h.offset.x *= 1.2f, h.damage *= 1.3f;
+  MoveDef flashUp = mv("Éclair doré", 40, {hb(4, 12, 0, -40, 32, 8, 85, 55, 72, L::Body, 0, F::Chakra)});
+  flashUp.vel = {ve(4, VelMode::Set, 2.0f, -19.0f, 3.5f)};
+  flashUp.gravityMul = 0.5f;
+  flashUp.helplessAfter = true;
+  flashUp.pose = PoseHint::Uppercut;
+  MoveDef arm = mv("Bras de chakra", 46, {hb(10, 18, 90, -20, 30, 0, 0, 0, 0, L::ArmFront)});
+  arm.isGrab = true;
+  arm.pose = PoseHint::Thrust;
+  for (MoveDef* d : {&flashUp, &arm}) sc(*d, S, PK);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{NSpecial, kRasengan}, {USpecial, flashUp}, {DSpecial, arm}});
+  addFistKit(c.weapons[1], S, PK, F::Chakra, 0.85f, 1.35f, true);
   return c;
 }
 
@@ -1129,6 +1167,85 @@ CharacterDef makeSasuke() {
   ama.vel = {ve(1, VelMode::Set, 0, 0)};
   ama.pose = PoseHint::HandSign;
   c.weapons[1].moves = {{NSpecial, ama}};
+
+  // Susanoo's bow kit: the M1 shoots (a quick arrow, two arrows, a charged arrow that ejects), the air M1 shoots down
+  // in front, a fan of three arrows, a leap on chakra wings, and the ribcage of Susanoo as a counter. The kits hit
+  // harder than his sword normals (P is low for them: they reach far).
+  const float PK = 1.3f;
+  MoveDef quick = arrow;
+  quick.name = "Flèche rapide";
+  quick.duration = 26;
+  quick.projectileFrame = 9;
+  quick.projectile.hit.damage *= 0.4f * PK / P;
+  quick.projectile.hit.baseKB = 10, quick.projectile.hit.growth = 25;
+  quick.nextMove = Jab2, quick.comboStart = 4, quick.comboEnd = 22, quick.comboAt = 13;
+  MoveDef twin = quick;
+  twin.name = "Double flèche";
+  twin.duration = 28;
+  twin.projectile.count = 2;
+  twin.projectile.spreadDeg = 6;
+  twin.nextMove = Jab3, twin.comboStart = 4, twin.comboEnd = 24, twin.comboAt = 14;
+  MoveDef charged = arrow;
+  charged.name = "Flèche chargée";
+  charged.duration = 40;
+  charged.projectileFrame = 20;
+  charged.projectile.radius *= 1.3f;
+  charged.projectile.hit.damage *= PK / P;
+  charged.projectile.hit.radius = charged.projectile.radius;
+  charged.projectile.hit.baseKB = 50, charged.projectile.hit.growth = 95;
+  charged.projectile.hit.impact = true;
+  MoveDef airShot = quick;
+  airShot.name = "Tir aérien";
+  airShot.duration = 34;
+  airShot.nextMove = -1;
+  airShot.projectileFrame = 12;
+  airShot.projectile.velocity = {15, 9};  // down in front
+  airShot.projectile.hit.damage *= 1.5f;
+  airShot.landingLag = 8;
+  MoveDef fan = arrow;
+  fan.name = "Éventail de flèches";
+  fan.projectile.count = 3;
+  fan.projectile.spreadDeg = 14;
+  fan.projectile.hit.damage *= 0.6f * PK / P;
+  MoveDef wings = m[USpecial];
+  wings.name = "Envol du Susanoo";
+  for (auto& h : wings.hitboxes) h.fx = F::Dark;
+  MoveDef ribs = mv("Garde du Susanoo", 50, {imp(hb(26, 30, 50, -40, 50, 12, 361, 60, 92, L::Body, 0, F::Dark))});
+  ribs.counterStart = 4;
+  ribs.counterEnd = 26;
+  ribs.reflects = true;
+  ribs.gravityMul = 0.3f;
+  ribs.pose = PoseHint::Bow;
+  sc(ribs, S, PK);
+  ribs.castFx = "susanoo_ribs";  // the ribcage rises around him while he guards
+  ribs.castFxFrame = 3;
+  ribs.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{Jab, quick}, {Jab2, twin}, {Jab3, charged}, {NAir, airShot},
+                                                       {SSpecial, fan}, {USpecial, wings}, {DSpecial, ribs}});
+  c.weapons[0].kit = true;
+  // The Mangekyo's kit: the sword wreathed in black flames (the M1, its thrust, a rising spin), Amaterasu, the
+  // Kagutsuchi lunge, a rising black flame slash and a barrier of black flames.
+  MoveDef kagu = mv("Enton : Kagutsuchi", 44, {imp(sw(12, 18, 5, 5, 0.3f, 1.15f, 24, 11, 40, 55, 88, 0, F::BlackFlame))});
+  kagu.vel = {ve(10, VelMode::SetX, 15, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(22, VelMode::Scale, 0.2f, 1.0f)};
+  kagu.gravityMul = 0.3f;
+  kagu.frictionMul = 0.1f;
+  kagu.pose = PoseHint::Thrust;
+  MoveDef rising = mv("Envol d'Enton", 44, {sw(4, 14, -30, 100, 0.2f, 1.0f, 26, 9, 85, 50, 70, 0, F::BlackFlame)});
+  rising.vel = {ve(4, VelMode::Set, 1.5f, -17.0f, 3.0f)};
+  rising.gravityMul = 0.5f;
+  rising.helplessAfter = true;
+  rising.pose = PoseHint::Uppercut;
+  MoveDef barrier = mv("Barrière d'Enton", 50, {imp(hb(14, 22, 0, -50, 56, 11, 70, 55, 85, L::Body, 0, F::BlackFlame))});
+  barrier.armorStart = 4;
+  barrier.armorEnd = 14;
+  barrier.gravityMul = 0.3f;
+  barrier.pose = PoseHint::Cast;
+  for (MoveDef* d : {&kagu, &rising, &barrier}) sc(*d, S, PK);
+  barrier.castFx = "black_flame_burst";
+  barrier.castFxFrame = 12;
+  barrier.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, kagu}, {USpecial, rising}, {DSpecial, barrier}});
+  addBladeKit(c.weapons[1], S, PK, F::BlackFlame, 0.9f, true);
   return c;
 }
 
@@ -1201,6 +1318,51 @@ CharacterDef makeKakashi() {
   shuri.pose = PoseHint::Throw;
   sc(shuri, S, P);
   c.weapons[1].moves = {{NSpecial, shuri}};
+
+  // The Sharingan's kit: copied taijutsu ending in a lightning palm, Kamui, the Lightning Hound running along the
+  // ground, a Kamui warp upward and a counter read by the Sharingan.
+  MoveDef hound = mv("Raiton : Chien de foudre", 44, {});
+  hound.projectileFrame = 16;
+  hound.projectile = proj({30, 10}, {11, 0}, 0, 50, 22, 9, 45, 75, F::Lightning, PV::LightningHound);
+  hound.projectile.piercing = true;
+  hound.pose = PoseHint::Kneel;
+  MoveDef warp = m[USpecial];
+  warp.name = "Kamui : téléportation";
+  for (auto& h : warp.hitboxes) h.fx = F::Dark;
+  warp.castFx = "kamui_swirl";  // space twists where he vanishes
+  warp.castFxFrame = 6;
+  warp.castFxAt = {0, -c.height * 0.5f};
+  warp.castFxStays = true;
+  MoveDef read = mv("Contre du Sharingan", 50, {imp(hb(26, 30, 46, -10, 34, 12, 361, 60, 92, L::ArmFront, 0, F::Lightning))});
+  read.counterStart = 4;
+  read.counterEnd = 26;
+  read.gravityMul = 0.3f;
+  read.pose = PoseHint::Point;
+  for (MoveDef* d : {&hound, &read}) sc(*d, S, P);
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, hound}, {USpecial, warp}, {DSpecial, read}});
+  addFistKit(c.weapons[0], S, P, F::Lightning, 0.95f);
+  // Both Mangekyo's kit: taijutsu ending in a Kamui Raikiri, the Kamui shuriken, the Kamui Raikiri dash, a leap and
+  // the ribcage of Susanoo as a counter.
+  MoveDef kRaikiri = m[SSpecial];
+  kRaikiri.name = "Kamui Raikiri";
+  for (auto& h : kRaikiri.hitboxes) h.damage *= 1.2f, h.fx = F::Dark;
+  MoveDef sLeap = mv("Bond du Susanoo", 40, {hb(4, 10, 0, -40, 30, 6, 80, 50, 60, L::Body, 0, F::Dark)});
+  sLeap.vel = {ve(4, VelMode::Set, 1.5f, -18.0f, 3.0f)};
+  sLeap.gravityMul = 0.5f;
+  sLeap.helplessAfter = true;
+  sLeap.pose = PoseHint::Uppercut;
+  MoveDef guard = mv("Garde du Susanoo", 50, {imp(hb(26, 30, 50, -40, 50, 12, 361, 60, 92, L::Body, 0, F::Dark))});
+  guard.counterStart = 4;
+  guard.counterEnd = 26;
+  guard.reflects = true;
+  guard.gravityMul = 0.3f;
+  guard.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&sLeap, &guard}) sc(*d, S, P);
+  guard.castFx = "susanoo_ribs";
+  guard.castFxFrame = 3;
+  guard.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, kRaikiri}, {USpecial, sLeap}, {DSpecial, guard}});
+  addFistKit(c.weapons[1], S, P, F::Dark, 0.9f);
   return c;
 }
 

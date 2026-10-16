@@ -686,18 +686,11 @@ static void testWeaponKits() {
       if (slot >= 0) m.equipWeapon(f, slot);
       Pad p{m};
       p.idle(10);
-      p.run(1, key(1, 0, true));  // a flick forward + attack
       if (slot < 0) {
+        p.run(1, key(1, 0, true));  // a flick forward + attack
         CHECK(f.move == FSmash, "%s bare-handed: the flick is a smash (move %d)", r[c].name.c_str(), f.move);
         continue;
       }
-      CHECK(f.state == FState::Attack && f.move == Jab3, "%s weapon %d: the flick is the heavy attack, the finisher (move %d)",
-            r[c].name.c_str(), slot, f.move);
-      for (int i = 0; i < 120 && f.state != FState::Idle; ++i) p.idle(1);
-      f.pos = {-60, 0};
-      f.facing = 1;
-      v.pos = {10, 0};
-      p.idle(30);
       p.run(1, key(0, 0, true));  // a plain attack
       CHECK(f.state == FState::Attack && f.move == Jab, "%s weapon %d: the attack starts the M1 (move %d)",
             r[c].name.c_str(), slot, f.move);
@@ -710,9 +703,14 @@ static void testWeaponKits() {
       }
       CHECK(seen == 3 && hits >= 3, "%s weapon %d: the M1 chains its 3 hits (%d moves, %d hits)", r[c].name.c_str(),
             slot, seen, hits);
+      for (int i = 0; i < 120 && f.state != FState::Idle; ++i) p.idle(1);
+      p.run(1, key(1, 0, true));  // a flick forward + attack
+      CHECK(f.state == FState::Attack && f.move == Jab3, "%s weapon %d: the flick is the heavy attack, the finisher (move %d)",
+            r[c].name.c_str(), slot, f.move);
       f.pos = {-60, -200};
       f.grounded = false;
       m.setState(f, FState::Air);
+      p.idle(1);  // the attack button let go
       p.run(1, key(0, -1, true));  // up + attack in the air
       CHECK(f.state == FState::Attack && f.move == NAir, "%s weapon %d: every aerial is the air M1 (move %d)",
             r[c].name.c_str(), slot, f.move);

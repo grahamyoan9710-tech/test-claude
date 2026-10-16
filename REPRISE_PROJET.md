@@ -55,6 +55,20 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 05 h 36 UTC, session B, **lot 1 du grand chantier : Naruto, Kakashi, Sasuke** (demande du propriétaire), en cours.
+  - Kits dans le code (poussés) : `addFistKit` (M1 poing / pied / finisseur, M1 aérien) ; Naruto mode Ermite
+    (Kawazu Kumite, bond, contre du crapaud, Ōdama) et Kurama (Rasengan de Kurama, clones, éclair doré, bras de
+    chakra qui attrape) ; Sasuke arc du Susanoo (M1 en flèches : rapide, double, chargée ; éventail ; envol ; garde
+    du Susanoo qui renvoie) et Mangekyō (M1 d'épée aux flammes noires, Amaterasu, Kagutsuchi, envol d'Enton,
+    barrière d'Enton) ; Kakashi Sharingan (taijutsu, Kamui, chien de foudre, téléportation Kamui, contre) et double
+    Mangekyō (Kamui Raikiri, shuriken, bond, garde du Susanoo). Nouveau projectile `LightningHound`.
+  - Prompts : `pxa/wkits/naruto.json`, `sasuke.json`, `kakashi.json` ; `clips.py` applique maintenant les kits aux
+    trois (avant : seulement aux 14 autres). Naruto (mode Ermite : manteau rouge à flammes ; Kurama : corps doré) et
+    l'arc de Sasuke changent l'apparence : tous leurs états sont générés.
+  - Génération PixelLab en cours (~110 générations prévues) ; effets PixelLab par un agent (vfx_workbench).
+  - Équilibre provisoire (avant recalage) : Naruto 42 %, Sasuke 45 % (26 % sans réglage : ses kits étaient à sa
+    puissance de base 0,86).
+  - Reprise automatique programmée (message `send_later`) si la session est coupée.
 - 16/10 01 h 50 UTC, session B : release **v9.5** publiée et vérifiée (workflow réussi ; l'archive Linux, retéléchargée
   par l'API, a la même somme SHA-256 que la release, démarre et affiche v9.5). Verrou de version libre.
 - 16/10 01 h 40 UTC, session B : **v9.5, pilote Ichigo terminé**, ce push lance sa publication.

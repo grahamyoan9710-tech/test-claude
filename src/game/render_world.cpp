@@ -1663,7 +1663,8 @@ constexpr ShotFx kShotFx[] = {
     {ProjVisual::Rasenshuriken, "rasenshuriken", FxPlace::Travel}, {ProjVisual::Bijudama, "bijudama", FxPlace::Travel},
     {ProjVisual::KirinBolt, "kirin", FxPlace::Sky},              {ProjVisual::IndraArrow, "indra_arrow", FxPlace::Travel},
     {ProjVisual::KamuiShuriken, "susanoo_shuriken", FxPlace::Travel}, {ProjVisual::StarrkCero, "starrk_cero", FxPlace::Travel},
-    {ProjVisual::CeroWolf, "cero_wolf", FxPlace::Travel},
+    {ProjVisual::CeroWolf, "cero_wolf", FxPlace::Travel},         {ProjVisual::GreatFireball, "great_fireball", FxPlace::Travel},
+    {ProjVisual::WaterDragon, "water_dragon", FxPlace::Travel},   {ProjVisual::LightningHound, "lightning_hound", FxPlace::Travel},
 };
 
 static bool shotSprite(const Projectile& p, const Shot& s, float time) {

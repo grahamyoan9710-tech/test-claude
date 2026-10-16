@@ -149,6 +149,29 @@ void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed, bool thr
   w.kit = true;
 }
 
+// The M1 of a fighting style's kit (fists, feet, chakra): a 3-hit combo (a punch, a kick, a finisher that ejects) and
+// a 2-hit air combo. `reach` stretches the blows (chakra arms, nature energy), `upper`: the finisher launches upward.
+void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed, float reach, bool upper) {
+  using L = Limb;
+  auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
+  MoveDef jab = mv("Frappe", T(20), {hb(T(4), T(7), 38 * reach, -8, 18, 4.0f, 361, 10, 25, L::ArmFront, 0, fx)});
+  jab.nextMove = Jab2, jab.comboStart = T(3), jab.comboEnd = T(18), jab.comboAt = T(10);
+  MoveDef jab2 = mv("Enchaînement", T(22), {hb(T(5), T(8), 42 * reach, -10, 20, 4.5f, 361, 12, 28, L::LegFront, 0, fx)});
+  jab2.nextMove = Jab3, jab2.comboStart = T(3), jab2.comboEnd = T(20), jab2.comboAt = T(11);
+  HitboxDef fin = hb(T(9), T(13), 46 * reach, upper ? -40.0f : -8.0f, 26, 9.5f, upper ? 80.0f : 50.0f, 50, 98,
+                     L::ArmFront, 0, fx);
+  fin.impact = true;
+  MoveDef jab3 = mv("Coup final", T(34), {fin});  // it ejects: the heavy attack
+  MoveDef nair = mv("Combo aérien", T(36), {hb(T(5), T(8), 30 * reach, -10, 30, 5.0f, 70, 20, 35, L::LegFront, 0, fx),
+                                            hb(T(12), T(17), -26 * reach, -10, 30, 7.5f, 361, 35, 98, L::LegBack, 1, fx)},
+                    8);
+  for (MoveDef* m : {&jab, &jab2, &jab3, &nair}) {
+    scale(*m, S, P * 1.14f);  // like the bare-handed normals
+    w.moves.push_back({m == &jab ? Jab : m == &jab2 ? Jab2 : m == &jab3 ? Jab3 : NAir, *m});
+  }
+  w.kit = true;
+}
+
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
   const HitFx sl = HitFx::Slash;
   auto& m = c.moves;

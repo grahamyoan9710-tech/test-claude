@@ -1,0 +1,125 @@
+{
+ "notes": "Sasuke's kits (v9.6). Slot 0, Susanoo's bow, changes the look (the bow in his left hand in every state). Slot 1, the Mangekyo Sharingan, keeps his sword: its kit swings the sword wreathed in black flames. Arrows, the Susanoo ribcage and the black flame barrier are drawn by the game.",
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "a glowing purple chakra bow in his left hand",
+   "wguard": "purple Susanoo chakra flares in his left hand and forms a glowing purple bow, which he holds forward in a ready archer stance",
+   "subject": "Sasuke, a young ninja with spiky dark blue hair, an open white kimono shirt, a thick purple rope belt and dark blue pants, holding a glowing purple chakra bow (Susanoo's bow) in his left hand",
+   "guard_pose": "ready archer stance facing right, a glowing purple chakra bow held forward in his left hand",
+   "air_pose": "in mid-air facing right, knees tucked, the purple chakra bow in his left hand",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first shot of a fast three-shot combo: draws and looses a single purple chakra arrow straight forward in one quick motion, the bow staying in his left hand, then back into the stance. Only Sasuke and his bow are drawn: no arrow flying away"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second shot: quickly nocks two purple chakra arrows and looses them forward together, then back into the stance. Only Sasuke and his bow are drawn: no arrows flying away"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "finisher: draws a big blazing purple arrow back to his cheek, holds the aim an instant, then looses it with a strong recoil, then back into the stance. Only Sasuke and his bow are drawn: no arrow flying away"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "forward",
+     "air shot: turns in mid-air and looses a purple chakra arrow diagonally down in front of him, then back to the tucked pose. Only Sasuke and his bow are drawn: no arrow flying away"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "arrow fan: draws three purple chakra arrows at once and looses them in a spread forward, then back into the stance. Only Sasuke and his bow are drawn: no arrows flying away"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "Susanoo leap: purple chakra wings flare up behind him and lift him straight up, the bow in his left hand, rising the whole time"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "none",
+     "Susanoo guard: raises the bow crosswise in front of him and braces, glaring, holds that guard, then returns to the stance. Only Sasuke and his bow are drawn: no ribcage, no effect"
+    ]
+   }
+  },
+  "1": {
+   "look": "same",
+   "held": "the straight sword",
+   "clips": {
+    "w1_jab2": [
+     8,
+     "sword",
+     true,
+     false,
+     "forward",
+     "second hit: his eyes glow red with the Mangekyo, a fast thrust of the straight sword wreathed in black flames straight forward, then back to the ready stance"
+    ],
+    "w1_jab3": [
+     12,
+     "sword",
+     true,
+     false,
+     "forward",
+     "finisher: spins once and swings the straight sword in a wide rising arc wreathed in black flames with a dark purple rim, then back to the ready stance"
+    ],
+    "w1_nair": [
+     12,
+     "airsword@last",
+     true,
+     false,
+     "around",
+     "air combo: two fast cuts of the straight sword wreathed in black flames, one down in front, then a spin cut around his body, then back to the tucked pose"
+    ],
+    "w1_sspecial": [
+     12,
+     "sword",
+     true,
+     false,
+     "forward",
+     "Enton Kagutsuchi: crouches, then lunges forward with the straight sword held level at full arm extension, pointing straight ahead at chest height, the blade wrapped in black flames with a dark purple rim streaming backward along it, then back to the ready stance. The sword stays level, pointing forward"
+    ],
+    "w1_uspecial": [
+     12,
+     "sword",
+     null,
+     false,
+     "up",
+     "rising black flame slash: leaps straight up slashing the straight sword wreathed in black flames in an upward arc, rising the whole time"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "none",
+     "Enton barrier: glares with the Mangekyo Sharingan, one hand raised beside his eye, braces, holds, then returns to the stance. Only Sasuke is drawn: no flames, no effect"
+    ]
+   }
+  }
+ }
+}

@@ -119,6 +119,7 @@ enum class ProjVisual : uint8_t {
   PanteraDart,  // Grimmjow: Garra de la Pantera, a forearm blade fired like a missile
   CeroWolf,     // Starrk: a wolf of blue cero running (or leaping on its prey)
   StarrkCero,   // Starrk: a small blue cero (Cero Metralleta)
+  LightningHound,  // Kakashi: a hound of lightning running along the ground
   Count
 };
 
@@ -450,6 +451,8 @@ void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx);
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx = HitFx::Slash);
 // A weapon's kit M1 with a blade (WeaponDef::kit): jab, jab2, jab3 and the air M1 (nair).
 void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, bool thrust2 = false, int airCuts = 2);
+// ... with fists, feet or chakra.
+void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, float reach = 1.0f, bool upper = false);
 // A blade swing hitbox: sweeps from a0 to a1 degrees, hits from reach0 to reach1 of the blade.
 HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1, float radius, float dmg, float angle,
              float bkb, float kbg, int group = 0, HitFx fx = HitFx::Slash);

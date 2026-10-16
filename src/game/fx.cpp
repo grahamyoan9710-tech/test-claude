@@ -131,6 +131,12 @@ static const char* hitSprite(HitFx fx) {
     case HitFx::Slash: return "hit_slash";
     case HitFx::Reiatsu: return "hit_reiatsu";
     case HitFx::Dark: return "hit_dark";
+    case HitFx::Chakra: return "hit_chakra";
+    case HitFx::Lightning: case HitFx::Electric: return "hit_lightning";
+    case HitFx::Fire: return "hit_fire";
+    case HitFx::BlackFlame: return "hit_blackflame";
+    case HitFx::Water: return "hit_water";
+    case HitFx::Wind: return "hit_wind";
     default: return nullptr;
   }
 }

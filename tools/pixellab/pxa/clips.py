@@ -346,35 +346,55 @@ def clips(fighter):
                     desc = ARMED_HOLD.format(held=held)
                 c[k] = (n, base, pin, loop, direction,
                         desc + f" He keeps holding {held} the whole time; the weapon stays visible.")
-        for slot, ks in wkit(fighter).get("slots", {}).items():
-            new = ks.get("look") == "new"
-            if new:
-                for k, (n, base, pin, loop, direction, desc) in WSTATES.items():
-                    c[f"w{slot}_{k}"] = (n, wbase(slot, base), pin, loop, direction,
-                                         desc.format(held=ks["held"]) + ". The whole weapon stays inside the picture.")
-            for k, (n, base, pin, loop, direction, desc) in ks.get("clips", {}).items():
-                c[k] = (n, wbase(slot, base) if new else base, pin, loop, direction, desc)
+        add_kits(fighter, c)
         for k, desc in QA_PROMPTS.get(fighter, {}).items():  # prompts rewritten after the clip review (qa14)
             if k in c:
                 n, base, pin, loop, direction, _ = c[k]
                 c[k] = (n, base, pin, loop, direction, desc)
-        for slot, swap in WGUARD.get(fighter, {}).items():
-            c[f"w{slot}guard"] = (8, "guard", None, False, "none",
-                                  swap + ". Ends standing still in that stance, the weapon fully inside the picture")
-            for k, (n, base, pin, loop, direction, desc) in list(c.items()):
-                if k.startswith(f"w{slot}_") and base == "guard":
-                    c[k] = (n, f"w{slot}guard@last", True if pin is True else pin, loop, direction, desc)
+        add_guards(fighter, c)
         return c
     if fighter == "sasuke":
         c.pop("jab3", None)
         c.update(SASUKE_PREP)
         c.update(SASUKE_PREP_B)
     c.update(SPECIFIC.get(fighter, {}))
+    add_kits(fighter, c)
     for k, desc in QA_PROMPTS.get(fighter, {}).items():  # prompts rewritten after the clip review (qa14)
         if k in c:
             n, base, pin, loop, direction, _ = c[k]
             c[k] = (n, base, pin, loop, direction, desc)
+    add_guards(fighter, c)
     return c
+
+
+def add_kits(fighter, c):
+    """The clips of the fighter's weapon kits (pxa/wkits): a new look gets every state too, holding the weapon
+    (WSTATES), or, for a power with nothing in hand (a mode, a cloak), the fighter's own state prompts."""
+    for slot, ks in wkit(fighter).get("slots", {}).items():
+        new = ks.get("look") == "new"
+        if new:
+            for k, (n, base, pin, loop, direction, desc) in WSTATES.items():
+                if ks.get("held"):
+                    desc = desc.format(held=ks["held"]) + ". The whole weapon stays inside the picture."
+                elif k in c:
+                    n, base, pin, loop, direction, desc = c[k]
+                else:
+                    continue
+                c[f"w{slot}_{k}"] = (n, wbase(slot, base), pin, loop, direction, desc)
+        for k, (n, base, pin, loop, direction, desc) in ks.get("clips", {}).items():
+            c[k] = (n, wbase(slot, base) if new else base, pin, loop, direction, desc)
+
+
+def add_guards(fighter, c):
+    """The w<slot>guard helper clips (the swap to a weapon that changes the look) and the kit clips based on them."""
+    swaps = dict(WGUARD.get(fighter, {}))
+    swaps.update({int(slot): ks["wguard"] for slot, ks in wkit(fighter).get("slots", {}).items() if ks.get("wguard")})
+    for slot, swap in swaps.items():
+        c[f"w{slot}guard"] = (8, "guard", None, False, "none",
+                              swap + ". Ends standing still in that stance, the weapon fully inside the picture")
+        for k, (n, base, pin, loop, direction, desc) in list(c.items()):
+            if k.startswith(f"w{slot}_") and base == "guard":
+                c[k] = (n, f"w{slot}guard@last", True if pin is True else pin, loop, direction, desc)
 
 
 def base_file(fighter, base):

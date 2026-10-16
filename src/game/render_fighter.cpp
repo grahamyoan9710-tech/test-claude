@@ -1489,9 +1489,14 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
 // orbiting the body (its front half passes in front of the fighter).
 // The hero's aura drawn by PixelLab (behind it, from its feet), if it has one.
 const char* auraSprite(const Fighter& f) {
-  if (f.def->hero == Hero::Ichigo)  // blue reiatsu; black and red in Bankai and in the masked Getsuga Jujisho
-    return f.weapon == 1 || (f.weapon == 0 && f.move == FinalSmash) ? "bankai_aura" : "reiatsu_aura";
-  return nullptr;
+  switch (f.def->hero) {
+    case Hero::Ichigo:  // blue reiatsu; black and red in Bankai and in the masked Getsuga Jujisho
+      return f.weapon == 1 || (f.weapon == 0 && f.move == FinalSmash) ? "bankai_aura" : "reiatsu_aura";
+    case Hero::Naruto: return f.weapon == 1 ? "kurama_aura" : "sage_aura";  // nature energy, or Kurama's golden flames
+    case Hero::Sasuke: return "susanoo_aura";
+    case Hero::Kakashi: return "raikiri_aura";
+    default: return nullptr;
+  }
 }
 
 void drawUltAura(Vec2 c, float H, float t, bool front, float k, Color z) {
