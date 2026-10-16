@@ -186,14 +186,15 @@ Chaos, Dragon de lumière...
   ultime devient celui de l'arme**. Un K.O. fait perdre l'arme. Les
   ordinateurs vont chercher les leurs. Réglage : **ARMES : OUI/NON** dans la sélection des combattants ou
   dans Paramètres → Jeu.
-  - **Kit complet d'arme** (Ichigo, Naruto, Sasuke et Kakashi pour l'instant, les 13 autres suivent) : avec
-    l'arme, **Attaque** enchaîne le **combo M1 en 3 coups**, un **smash** (pichenette, C-stick, Attaque + Spéciale ou touche Smash) sort
-    directement le **coup lourd** (le 3e coup, qui éjecte), toute attaque aérienne est le **M1 aérien**, les
-    4 spéciales sont **les 4 compétences de l'arme**, et l'ultime celui de l'arme. Une arme qui change
-    l'apparence (le Bankai d'Ichigo, le mode Ermite et le chakra de Kurama de Naruto, l'arc du Susanoo de
-    Sasuke) se voit dans **toutes** les animations : garde, marche, course, sauts, bouclier, esquives, rebord, chopes et projections. Tout est animé avec
-    PixelLab, et les effets (impacts, parade, Getsuga, explosion du Bankai, Shunpo, auras) sont des effets
-    PixelLab accrochés au personnage.
+  - **Kit complet d'arme** (Ichigo, Naruto, Sasuke, Kakashi, Kratos, le chasseur et Sukuna pour l'instant, les 10
+    autres suivent) : avec l'arme, **Attaque** enchaîne le **combo M1 en 3 coups**, un **smash** (pichenette, C-stick,
+    Attaque + Spéciale ou touche Smash) sort directement le **coup lourd** (le 3e coup, qui éjecte), toute attaque
+    aérienne est le **M1 aérien**, les 4 spéciales sont **les 4 compétences de l'arme**, et l'ultime celui de l'arme.
+    Une arme qui change l'apparence (le Bankai d'Ichigo, le mode Ermite et le chakra de Kurama de Naruto, l'arc du
+    Susanoo de Sasuke, la hache et les lames de Kratos, la lame chargée et la lancecanon du chasseur, Kamutoke de
+    Sukuna) se voit dans **toutes** les animations : garde, marche, course, sauts, bouclier, esquives, rebord, chopes
+    et projections. Tout est animé avec PixelLab, et les effets (impacts, parade, Getsuga, explosion du Bankai,
+    Shunpo, auras) sont des effets PixelLab accrochés au personnage.
 - **Les ultimes** : chacun a sa cinématique (cut-in avec son nom, décor plein écran : Hueco Mundo, le
   Sanctuaire démoniaque, le crâne de reiatsu de Kenpachi, un wyvern, le Mangekyō...). Certains
   **attrapent** la victime (elle est tenue pendant le combo puis éjectée), d'autres **frappent chaque
@@ -396,7 +397,7 @@ Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`SuperClashBros-9.6-linux-x64.tar.gz` et `SuperClashBros-9.6-windows-x64.zip`).
+dans `dist/` (`SuperClashBros-9.7-linux-x64.tar.gz` et `SuperClashBros-9.7-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64

@@ -8,32 +8,38 @@
 
 ## Nouveautés
 
-Version 9.6 : **lot 1 du grand chantier : Naruto, Sasuke et Kakashi** reçoivent, comme Ichigo, un kit complet pour
-chacune de leurs armes, tout animé avec PixelLab, et leurs effets passent en PixelLab.
+Version 9.7 : **lot 2 du grand chantier : Kratos, le chasseur et Sukuna** reçoivent un kit complet pour chacune de
+leurs armes, tout animé avec PixelLab, et de nouveaux effets PixelLab.
 
-- **Naruto**
-  - **Mode Ermite** : pigments orange autour des yeux et long manteau rouge à flammes noires, **dans toutes ses
-    animations**. Combo M1 (poing, coup de pied tournant, double paume), M1 aérien, Ōdama Rasengan (la boule
-    géante est maintenant visible), ruée Kawazu Kumite, bond de l'ermite, contre-attaque, ultime Rasenshuriken.
-  - **Chakra de Kurama** : corps doré et marques de sceau, **dans toutes ses animations**. Combo M1 aux bras de
-    chakra, M1 aérien, Rasengan de Kurama, clones dorés (ils courent en mode Kurama et sortent d'un nuage de
-    fumée), éclair doré, **bras de chakra qui attrape de loin**, ultime Bijūdama.
-- **Sasuke**
-  - **Arc du Susanoo** : l'arc violet reste dans sa main **dans toutes ses animations**. M1 en flèches (rapide,
-    double, chargée qui éjecte), tir aérien, éventail de 3 flèches, envol sur les ailes du Susanoo, **garde du
-    Susanoo** (la cage thoracique se forme autour de lui, contre et renvoie les projectiles), Flèche d'Indra.
-  - **Mangekyō Sharingan** : combo M1 à l'épée enflammée de noir, Amaterasu, **Enton : Kagutsuchi** (ruée, lame de
-    flammes noires), envol d'Enton, **barrière de flammes noires**.
-- **Kakashi**
-  - **Sharingan** : combo M1 de taijutsu finissant par une paume de foudre, Kamui, **chien de foudre** qui court au
-    sol, **téléportation Kamui**, contre du Sharingan.
-  - **Double Mangekyō** : combo M1 finissant par un **Kamui Raikiri** violet, shuriken du Susanoo, ruée Kamui
-    Raikiri, bond, **garde du Susanoo**.
-- **Effets PixelLab** (au lieu des effets dessinés par le code) : impacts de chakra, de foudre, de feu, de flammes
-  noires, d'eau et de vent (pour tous les combattants qui utilisent ces éléments), Katon : boule de feu, dragon
-  aqueux, chien de foudre, auras (Ermite, Kurama, Susanoo, foudre), cage du Susanoo, flammes noires, Kamui, fumée
-  des clones, boule de l'Ōdama. Le Raikiri et les clones de l'ultime de Naruto sont maintenant dessinés depuis
-  leurs clips PixelLab.
-- **Animations corrigées** : une dizaine d'images ratées remplacées (couleurs qui changent, éclats parasites).
+- **Kratos**
+  - **Hache Léviathan** : la hache givrée et le bouclier se voient **dans toutes ses animations**. Combo M1 à la
+    hache (taille, revers, taille montante qui éjecte), M1 aérien, lancer de la Léviathan, **Frénésie du géant du
+    givre** (trois coups), bond de la Léviathan, **Toucher de Hel** (la hache frappe le sol, des pics de glace
+    jaillissent autour de lui).
+  - **Lames du Chaos** : les deux lames enflammées et le bouclier **dans toutes ses animations**. Combo M1 aux
+    chaînes, M1 aérien, Fléau du Chaos, **Crochets du Chaos** (les chaînes attrapent de loin), envol en hélice,
+    **contre au bouclier** (il renvoie aussi les projectiles).
+- **Le chasseur**
+  - **Lame chargée** : l'épée et le bouclier **dans toutes ses animations**. Combo M1 à l'épée, M1 aérien,
+    décharge élémentaire, estoc chargé, taille ascendante, **garde parfaite** (contre au bouclier, une fiole
+    explose).
+  - **Lancecanon** : la lance-canon et son grand bouclier **dans toutes ses animations**. Combo M1 de lance (deux
+    estocs, puis un balayage qui tire un obus), M1 aérien, tir d'obus, charge au bouclier, **saut explosif**,
+    **salve complète**.
+- **Sukuna**
+  - **Kamutoke** : le bâton au croissant doré **dans toutes ses animations**. Combo M1 au bâton, M1 aérien, éclair
+    de Kamutoke, ruée foudroyante, tonnerre ascendant, **appel du tonnerre** (la foudre tombe sur lui et frappe tout
+    autour).
+  - **Doigt de Sukuna** : son aura d'énergie maudite reste visible tant qu'il a le doigt. Combo M1 aux entailles
+    pourpres, M1 aérien, **rafale de 4 Démantèlements**, Clivage du Roi, envol du Roi, **contre du Roi**.
+- **Effets PixelLab** (au lieu des effets dessinés par le code) : impacts de glace, d'entailles pourpres et
+  d'énergie maudite (Gojo aussi), **impact des coups simples (tous les combattants)**, explosions de feu et
+  électriques (toutes les explosions de ces éléments : bombes, obus, fioles...), pics de glace, tir d'obus,
+  Démantèlement, éclair de Kamutoke, dôme de foudre, Clivage, auras de rage (Kratos) et d'énergie maudite (Sukuna).
+- **Corrections**
+  - Avec une arme qui change l'apparence (le Bankai d'Ichigo, les modes de Naruto, l'arc de Sasuke...), le
+    personnage suspendu au rebord ou qui remonte dessus était mal placé : il est maintenant calé sur ses mains.
+  - Le double saut et la culbute du chasseur ne coupent plus son épée au bord de l'image.
+  - Une trentaine d'images ratées corrigées (fumée grise, effets dessinés dans les esquives).
 - **Équilibre** : revu après ces kits : sur 816 duels simulés (tous contre tous), chaque combattant gagne entre 45
-  et 56 % de ses combats, et les K.O. sous 70 % restent rares (3 %).
+  et 55 % de ses combats, et les K.O. sous 70 % restent rares (3 %).
