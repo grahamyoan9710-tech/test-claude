@@ -49,12 +49,21 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
-| Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 3 : Link, Gojo) | 16/10 14 h 50 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 3) | 16/10 14 h 50 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 3) | 16/10 14 h 50 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | session B (v9.8) | 16/10 14 h 50 UTC |
 
 ### Journal (le plus récent en haut)
+- 16/10 14 h 50 UTC, session B :
+  - **Netteté des persos** (4fe2888) : la passe « pixel art » (`pix::sprite`, faite pour les persos dessinés par
+    le code) réduisait chaque clip PixelLab à ~87 px de haut, écrasait ses couleurs et le recontournait : les
+    persos étaient flous et pixelisés. Une pose tirée d'un clip est maintenant dessinée directement (match et
+    menus), avec un biais de mipmap de -0,6. Je publie la **v9.8** pour ça seule.
+  - **Lot 3 commencé (Link, Gojo)** : `pxa/wkits/link.json`, `gojo.json`. La garde de Gojo manquait dans `base/` :
+    reprise de l'image 0 de son clip `idle` (galerie, gratuit). Chaînes : `chainl3.py` (saute
+    `gojo/w1_ultimate`, déjà dans le jeu). Godot laissé de côté à la demande du propriétaire
+    (`prototype_godot/` reste en l'état).
 - 16/10 13 h 00 UTC, session B : **prototype Godot** demandé par le propriétaire, dans `prototype_godot/` (ne touche
   pas au jeu). Godot 4.4, rendu Compatibility : Naruto contre Sasuke avec les clips du jeu lus dans
   `assets/sprites`, lueur (WorldEnvironment), lumières 2D (boule de feu, Rasengan, Chidori, Kurama), décor en
