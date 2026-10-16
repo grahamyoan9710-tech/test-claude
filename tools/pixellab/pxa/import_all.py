@@ -91,10 +91,12 @@ def erase(d, spec, extra):
 
 def degrey(d, frames, extra):
     """Erases the dithered grey slabs (tools/greyscan.py) of the listed frames (sheet numbering); frames is a list,
-    or {"frames": [...], "tol": 30} to also catch taupe smoke."""
-    tol = 16
+    or {"frames": [...], "tol": 30} to also catch taupe smoke ("open": 0 also catches a slab walled in by an effect's
+    strokes, "min": 100 a smaller leftover)."""
+    tol, open_min, min_area = 16, 0.25, 400
     if isinstance(frames, dict):
-        tol, frames = frames.get("tol", 16), frames["frames"]
+        tol, open_min, min_area = frames.get("tol", 16), frames.get("open", 0.25), frames.get("min", 400)
+        frames = frames["frames"]
     sys.path.insert(0, os.path.join(os.path.dirname(S), "tools"))
     from greyscan import slabs2
     idx = [int(n[2:-4]) for n in frames_of(d)]
@@ -106,7 +108,7 @@ def degrey(d, frames, extra):
     for k in frames:
         p = os.path.join(d, f"f_{idx[k]:02d}.png")
         a = np.asarray(Image.open(p).convert("RGBA")).copy()
-        a[slabs2(a, 400, tol)] = 0
+        a[slabs2(a, min_area, tol, open_min)] = 0
         Image.fromarray(a).save(p)
 
 

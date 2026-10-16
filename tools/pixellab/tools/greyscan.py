@@ -8,7 +8,7 @@ from greyfix import label
 
 R = '/home/user/test-claude/assets/sprites/'
 
-def slabs2(a, min_area=800, tol=16):
+def slabs2(a, min_area=800, tol=16, open_min=0.25):
     rgb = a[..., :3].astype(int); op = a[..., 3] > 0
     mx, mn = rgb.max(-1), rgb.min(-1)
     grey = op & (mx - mn < tol) & (mx > 95) & (mx < 215)
@@ -25,7 +25,7 @@ def slabs2(a, min_area=800, tol=16):
         rim[1:] |= m[:-1]; rim[:-1] |= m[1:]; rim[:, 1:] |= m[:, :-1]; rim[:, :-1] |= m[:, 1:]
         rim &= ~m
         open_rim = (~op[rim]).mean() if rim.any() else 0
-        if top[:3].sum() / area > 0.9 and (open_rim > 0.25 or area > 3000):
+        if top[:3].sum() / area > 0.9 and (open_rim > open_min or area > 3000):
             out |= m
     return out
 

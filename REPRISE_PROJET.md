@@ -48,13 +48,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session B (lot 3) | 16/10 18 h 40 UTC |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session B (lot 3 : Link, Gojo) | 16/10 14 h 50 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session B (effets PixelLab du lot 3) | 16/10 14 h 50 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | session B (kits du lot 3) | 16/10 14 h 50 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 16/10 18 h 40 UTC, session B : lot 3 généré et relu (Link 45 clips, Gojo 45 clips ; le tir à l'arc, la projection
+  arrière et la pose saisie de Link refaits dans le nouveau look ; retouches dans `qa_fixes.json`, `degrey` sait
+  maintenant prendre une fumée enfermée par les traits d'un effet : `"open": 0`, `"min"`). Clips importés. Je prends
+  `fitall.sh` (session A inactive depuis le 14/10) : recalage, équilibre, puis v9.9.
 - 16/10 17 h 50 UTC, session B :
   - **v9.8 publiée et vérifiée** (workflow réussi ; l'archive Linux téléchargée par l'API a la même somme SHA-256
     que la release, affiche v9.8, et les persos y sont nets en match). Verrou de version libre.
