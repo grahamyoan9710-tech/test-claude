@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "347feaa1-8205-4e16-9589-5f18926ea332",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 347feaa1-8205-4e16-9589-5f18926ea332\njob_id: 347feaa1-8205-4e16-9589-5f18926ea332\ndescription: swings the invisible opponent he is holding around behind him and hurls it away, turning his body, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"347feaa1-8205-4e16-9589-5f18926ea332\")\nasset_id: 59061a9b-51a5-50b3-9d07-2f23255269d5\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p03/holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }

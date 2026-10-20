@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "875ad2b0-a962-4ab6-bd2b-ba695ceb69bf",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:240d4011-d053-412b-bf50-60aed4200e4c",
+  "last_frame_url": "upload:c667e663-e660-4190-9a34-bebcaa931ff2",
+  "description": "tumbles head over heels through the air after a heavy blow, spinning out of control, still gripping a long silver spear with white ribbons, a seamless loop. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: 875ad2b0-a962-4ab6-bd2b-ba695ceb69bf\njob_id: 875ad2b0-a962-4ab6-bd2b-ba695ceb69bf\ndescription: tumbles head over heels through the air after a heavy blow, spinning out of control, still gripping a long silver spear with white ribbons, a seamless loop. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"875ad2b0-a962-4ab6-bd2b-ba695ceb69bf\")\nasset_id: 34ef3905-6282-5741-ac8e-2636f61260e7\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/w0_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/w0_jump/f_08.png"
+}
