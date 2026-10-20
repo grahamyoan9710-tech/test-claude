@@ -16,3 +16,4 @@ p02/holdstart
 p01/w1_jump
 p01/w1_ledgegrab
 p02/ledgegrab
+p02/w0_runstart
