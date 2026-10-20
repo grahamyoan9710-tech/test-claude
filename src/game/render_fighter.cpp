@@ -6,7 +6,9 @@
 #include <cstdio>
 
 #include "core/swing.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
+#include "game/pixel.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
@@ -65,15 +67,173 @@ void additive(bool on) {
   else ui::frameBlend();
 }
 
+// ---- Carrying a weapon --------------------------------------------------------
+// Outside of attacks the blade never points at the ground in front like a walking stick: big blades
+// rest on the shoulder, swords and katanas are held up in guard, spears and axes stand upright.
+enum class Carry { None, Shoulder, Guard, Upright, Haft, Kunai };
+Carry carryOf(WeaponVisual v) {
+  switch (v) {
+    case WeaponVisual::AstaSword: case WeaponVisual::DemonSlayer: case WeaponVisual::DemonKingSword:
+    case WeaponVisual::KenpachiSword: case WeaponVisual::Nozarashi: case WeaponVisual::RedBankai:
+    case WeaponVisual::GreatSword:
+      return Carry::Shoulder;
+    case WeaponVisual::WindSpear: case WeaponVisual::GloomSpear: case WeaponVisual::Kamutoke:
+    case WeaponVisual::LuzDeLaLuna: case WeaponVisual::Gunlance:
+      return Carry::Upright;
+    case WeaponVisual::LeviathanAxe: return Carry::Haft;
+    case WeaponVisual::KakashiKunai: return Carry::Kunai;
+    default: return isHandWeapon(v) ? Carry::Guard : Carry::None;
+  }
+}
+// The weapon in hand outside of attacks: a picked-up one, else the fighter's own blade if it keeps it drawn.
+WeaponVisual carriedWeapon(const CharacterDef& d, WeaponVisual held) {
+  if (isHandWeapon(held)) return held;
+  switch (d.hero) {
+    case Hero::Asta: case Hero::Ichigo: case Hero::Byakuya: case Hero::Link: case Hero::Kenpachi: case Hero::Hunter:
+      return d.baseWeapon;
+    default: return WeaponVisual::None;
+  }
+}
+WeaponVisual heldVisual(const Fighter& f) { return f.weaponDef() ? f.weaponDef()->visual : WeaponVisual::None; }
+enum class Gait { Stand, Walk, Run, Air };
+// Sets the front hand and the blade for the way the fighter moves (the other states keep the standing blade).
+void carryWeapon(Pose& p, WeaponVisual v, float H, Gait g, float bob = 0.0f) {
+  const Carry c = carryOf(v);
+  if (c == Carry::None) return;
+  p.weapon = true;
+  auto at = [&](float x, float y) { return Vec2{x * H, y * H + bob}; };
+  switch (c) {
+    case Carry::Shoulder:  // the flat of the blade on the shoulder, the tip up behind the head
+      p.handF = g == Gait::Run ? at(0.12f, -0.07f) : at(0.13f, -0.05f);
+      p.weaponDir = g == Gait::Run ? Vec2{-1.0f, -0.3f} : Vec2{-1.0f, -0.38f};
+      break;
+    case Carry::Guard:  // blade up at the opponent; trailing behind when running
+      if (g == Gait::Stand) p.handF = at(0.19f, -0.03f), p.weaponDir = {1.0f, -0.8f};
+      if (g == Gait::Run) p.weaponDir = {-1.0f, -0.12f};
+      break;
+    case Carry::Upright:  // spear standing by the side; levelled forward in a charge
+      if (g == Gait::Stand) p.handF = at(0.17f, 0.0f), p.weaponDir = {0.2f, -1.0f};
+      if (g == Gait::Run) p.handF = at(0.14f, -0.05f), p.weaponDir = {1.0f, -0.4f};
+      break;
+    case Carry::Haft:  // axe in a low fist, the head up by the shoulder
+      if (g == Gait::Stand) p.handF = at(0.17f, 0.05f), p.weaponDir = {0.55f, -1.0f};
+      if (g == Gait::Run) p.weaponDir = {0.3f, -1.0f};
+      break;
+    case Carry::Kunai:
+      if (g == Gait::Stand) p.handF = at(0.18f, -0.06f), p.weaponDir = {1.0f, -0.25f};
+      break;
+    case Carry::None: break;
+  }
+}
+
+// ---- Gaits ----------------------------------------------------------------------
+// Walking and running cycles are driven by the distance covered, not by time: a planted foot slides back
+// under the body exactly as fast as the ground goes by (no skating), and the legs slow down with the body.
+float wrap01(float v) { return v - std::floor(v); }
+Vec2 catmullRom(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, float t) {
+  const float t2 = t * t, t3 = t2 * t;
+  return (p1 * 2.0f + (p2 - p0) * t + (p0 * 2.0f - p1 * 5.0f + p2 * 4.0f - p3) * t2 + (p1 * 3.0f - p0 - p2 * 3.0f + p3) * t3) * 0.5f;
+}
+// A foot along the gait cycle (u in [0, 1)): planted for u < duty (from +S/2 back to -S/2), then the swing
+// through the five keys (x, lift) spaced evenly in time. Returns the foot target (feet on the ground: y = H/2).
+Vec2 gaitFoot(float u, float duty, float S, const Vec2 (&keys)[5], float H) {
+  if (u < duty) return {S * (0.5f - u / duty), 0.5f * H};
+  const float v = (u - duty) / (1.0f - duty) * 4.0f;
+  const int i = std::min(3, int(v));
+  const Vec2 k0 = keys[std::max(0, i - 1)], k1 = keys[i], k2 = keys[i + 1], k3 = keys[std::min(4, i + 2)];
+  const Vec2 q = catmullRom(k0, k1, k2, k3, v - i);
+  return {q.x, 0.5f * H - std::max(0.0f, q.y)};
+}
+enum class RunStyle { Normal, Ninja, Heavy };
+RunStyle runStyle(Hero h) {
+  switch (h) {
+    case Hero::Naruto: case Hero::Sasuke: case Hero::Kakashi: return RunStyle::Ninja;  // arms swept back
+    case Hero::Ganondorf: case Hero::Kratos: case Hero::Kenpachi: case Hero::Hunter: return RunStyle::Heavy;
+    default: return RunStyle::Normal;
+  }
+}
+
+void walkPose(Pose& p, const Fighter& f, float H) {
+  const float D = 0.76f * H, duty = 0.6f, S = duty * D;  // one cycle (two steps), the stance stroke
+  const float u = wrap01(f.pos.x * float(f.facing) / D);
+  const Vec2 keys[5] = {{-S * 0.5f, 0.0f}, {-S * 0.22f, 0.07f * H}, {S * 0.14f, 0.08f * H}, {S * 0.5f + 0.02f * H, 0.035f * H},
+                        {S * 0.5f, 0.0f}};
+  p.footF = gaitFoot(u, duty, S, keys, H);
+  p.footB = gaitFoot(wrap01(u + 0.5f), duty, S, keys, H);
+  const float c = std::cos(2.0f * kPi * u), c2 = std::cos(4.0f * kPi * u);
+  p.shift.y = 0.018f * H * c2;  // lowest with both feet down, highest passing over the planted foot
+  p.lean = 0.09f + 0.02f * c2;
+  p.twist = 0.32f * c;          // shoulders against the hips
+  p.handF.x -= 0.1f * H * c;    // arms swing against the legs, a little higher in front
+  p.handB.x += 0.1f * H * c;
+  p.handF.y -= 0.025f * H * std::max(0.0f, -c);
+  p.handB.y -= 0.025f * H * std::max(0.0f, c);
+}
+
+void runPose(Pose& p, const Fighter& f, float H, float sf) {
+  const RunStyle st = runStyle(f.def->hero);
+  const float D = (st == RunStyle::Heavy ? 1.15f : 1.32f) * H, duty = st == RunStyle::Heavy ? 0.42f : 0.36f, S = duty * D;
+  const float u = wrap01(f.pos.x * float(f.facing) / D);
+  const float kick = st == RunStyle::Heavy ? 0.16f : 0.25f;  // how high the heel comes up behind
+  const Vec2 keys[5] = {{-S * 0.5f, 0.0f}, {-S * 0.5f - 0.05f * H, kick * H}, {0.03f * H, 0.27f * H},
+                        {S * 0.5f + 0.08f * H, 0.12f * H}, {S * 0.5f, 0.0f}};
+  p.footF = gaitFoot(u, duty, S, keys, H);
+  p.footB = gaitFoot(wrap01(u + 0.5f), duty, S, keys, H);
+  // Bounce: squashed over the planted foot, up in the air between the steps.
+  const float half = wrap01(u * 2.0f);  // the same for both steps
+  const float bob = half < duty * 2.0f ? 0.035f * H * std::sin(kPi * half / (duty * 2.0f))
+                                       : -0.045f * H * std::sin(kPi * (half - duty * 2.0f) / (1.0f - duty * 2.0f));
+  const float heavy = st == RunStyle::Heavy ? 1.4f : 1.0f;
+  p.shift.y = bob * heavy;
+  p.squash = 1.0f - bob / H * 1.2f;
+  p.sx = 1.0f + bob / H * 0.8f;
+  const float c = std::cos(2.0f * kPi * u);
+  switch (st) {
+    case RunStyle::Ninja:  // leaning far over, both arms swept straight back
+      p.lean = 0.6f;
+      p.twist = 0.12f * c;
+      p.handF = {-0.27f * H + 0.02f * H * c, 0.03f * H};
+      p.handB = {-0.24f * H - 0.02f * H * c, -0.01f * H};
+      break;
+    case RunStyle::Heavy:  // a charging bull: shoulders rolling, arms swinging wide
+      p.lean = 0.3f;
+      p.twist = 0.45f * c;
+      p.handF = {0.1f * H - 0.19f * H * c, -0.02f * H - 0.07f * H * std::max(0.0f, -c)};
+      p.handB = {0.02f * H + 0.19f * H * c, 0.02f * H - 0.07f * H * std::max(0.0f, c)};
+      break;
+    case RunStyle::Normal:  // arms pumping, elbows bent, against the legs
+      p.lean = 0.36f;
+      p.twist = 0.5f * c;
+      p.handF = {0.08f * H - 0.17f * H * c, -0.07f * H - 0.07f * H * std::max(0.0f, -c)};
+      p.handB = {0.02f * H + 0.17f * H * c, -0.03f * H - 0.07f * H * std::max(0.0f, c)};
+      break;
+  }
+  if (sf < 8) {  // dash start: a lunge, the first step pushed hard
+    const float k = 1.0f - sf / 8.0f;
+    p.lean += 0.25f * k;
+    p.shift.x += 0.05f * H * k;
+    p.squash -= 0.07f * k;
+    p.sx += 0.07f * k;
+  }
+}
+
 // flip: the air-jump somersault (never for attacks: the striking limb must stay on its hitbox).
 Pose airPose(const Fighter& f, const Match& m, float time, bool flip = true) {
   const float H = f.height();
-  Pose p = restPose(*f.def, time);
+  Pose p = restPose(*f.def, time, heldVisual(f));
   float k = smoothstep((f.vel.y + 3.0f) / 6.0f);  // rising -> falling, no pop at the apex
-  p.footF = lerpv({0.10f * H, 0.34f * H}, {0.08f * H, 0.46f * H}, k);
-  p.footB = lerpv({-0.08f * H, 0.42f * H}, {-0.10f * H + std::sin(time * 8.0f) * 0.02f * H, 0.50f * H}, k);
-  p.handF = lerpv({0.22f * H, -0.10f * H}, {0.24f * H, -0.17f * H}, k);
-  p.handB = lerpv({-0.16f * H, -0.08f * H}, {-0.19f * H, -0.15f * H}, k);
+  const float fast = clampf((f.vel.y - 4.0f) / 6.0f, 0.0f, 1.0f);  // falling fast: arms flung up
+  const float sw = std::sin(time * 9.0f);
+  // Rising: the front knee driven up, arms pulled back; falling: legs reaching down, arms out for balance.
+  p.footF = lerpv({0.12f * H, 0.29f * H}, {0.09f * H + 0.015f * H * sw, 0.47f * H}, k);
+  p.footB = lerpv({-0.06f * H, 0.41f * H}, {-0.11f * H - 0.015f * H * sw, 0.5f * H}, k);
+  p.handF = lerpv({0.16f * H, -0.06f * H}, {0.25f * H, -0.18f * H - 0.06f * H * fast}, k);
+  p.handB = lerpv({-0.2f * H, -0.02f * H}, {-0.21f * H, -0.17f * H - 0.07f * H * fast}, k);
+  p.handF.y += 0.02f * H * sw * fast;
+  p.handB.y -= 0.02f * H * sw * fast;
+  p.lean += clampf(f.vel.x * float(f.facing) * 0.025f, -0.12f, 0.18f) - 0.06f * fast;  // into the drift
+  p.twist = 0.25f * (1.0f - k);
+  carryWeapon(p, carriedWeapon(*f.def, heldVisual(f)), H, Gait::Air);
   float st = f.vel.y < 0.0f ? std::min(0.12f, -f.vel.y * 0.009f) : std::min(0.05f, f.vel.y * 0.004f);
   p.squash = 1.0f + st;  // stretched along the vertical speed
   p.sx = 1.0f - st * 0.6f;
@@ -122,11 +282,13 @@ Strike limbPhase(const MoveDef& m, Limb limb, int t, bool charging) {
     return s;
   }
   if (last && (!next || t - last->end < (next->start - last->end) / 2)) {
-    int rec = std::max(6, std::min(16, (next ? next->start : m.duration) - last->end - 2));
+    // Follow-through: pushed a little past the target, then snapped back (quick at first, settling in).
+    int rec = std::max(5, std::min(12, (next ? next->start : m.duration) - last->end - 2));
     s.phase = Phase::Follow;
     s.hb = last;
     s.k = clampf(float(t - last->end) / rec, 0.0f, 1.0f);
-    s.e = (1.0f - smoothstep(s.k)) + 0.2f * std::sin(kPi * std::min(1.0f, s.k * 2.0f)) * (1.0f - s.k);
+    const float back = clampf((s.k - 0.15f) / 0.85f, 0.0f, 1.0f);
+    s.e = (1.0f - easeOut(back) * (0.6f + 0.4f * back)) + 0.16f * std::sin(kPi * std::min(1.0f, s.k * 3.0f)) * (1.0f - s.k);
     return s;
   }
   if (!next) return s;
@@ -165,12 +327,180 @@ Vec2 strikePath(Vec2 rest, Vec2 target, float e) {
   return pos;
 }
 
+// ---- Body language of the specials and the ultimates (MoveDef::pose) ----------------------------------
+// A hint is a "ready" pose held until the key frame of the move (the shot, the beam, the teleport, the
+// first blow, the transformation), then a "release" pose that relaxes back to rest.
+bool limbDriven(const MoveDef& m) {
+  for (const auto& h : m.hitboxes)
+    if (h.limb != Limb::None && h.limb != Limb::Body) return true;
+  return false;
+}
+int keyFrame(const MoveDef& m) {
+  int k = 1 << 20;
+  if (m.projectileFrame >= 0) k = std::min(k, m.projectileFrame);
+  for (const auto& sh : m.shots) k = std::min(k, sh.frame);
+  if (m.beam.start >= 0) k = std::min(k, m.beam.start);
+  if (m.teleportFrame >= 0) k = std::min(k, m.teleportFrame);
+  if (m.formFrame >= 0) k = std::min(k, m.formFrame);
+  for (const auto& h : m.hitboxes) k = std::min(k, h.start);
+  return k == (1 << 20) ? m.duration / 2 : k;
+}
+HitFx moveFx(const Fighter& f, const MoveDef& m) {
+  if (m.projectileFrame >= 0) return m.projectile.hit.fx;
+  if (!m.shots.empty()) return m.shots.front().def.hit.fx;
+  if (m.beam.start >= 0) return m.beam.fx;
+  if (!m.hitboxes.empty()) return m.hitboxes.front().fx;
+  return heroElement(f.def->hero);
+}
+
+void applyHint(Pose& p, const Fighter& f, const MoveDef& m, float time, bool whole) {
+  const PoseHint hint = m.pose;
+  if (hint == PoseHint::Auto) return;
+  const float H = f.height();
+  const float t = float(f.moveFrame);
+  const float key = float(keyFrame(m));
+  const bool ult = f.move == FinalSmash;
+  if (!whole && t >= key) return;  // hitbox moves: the hint only shapes the wind-up
+  const float start = ult ? 14.0f : 0.0f;
+  const float ready = smoothstep((t - start) / std::max(4.0f, key - start - 2.0f));
+  const float rel = clampf((t - key) / 14.0f, 0.0f, 1.0f);   // 0 before the key frame
+  const float relax = clampf((t - key - 18.0f) / std::max(8.0f, float(m.duration) - key - 18.0f), 0.0f, 1.0f);
+  const float on = t < key ? ready : 1.0f - smoothstep(relax);  // weight of the hint over the base pose
+  if (on <= 0.001f) return;
+  const bool armed = f.def->baseWeapon != WeaponVisual::None || (f.weaponDef() && isHandWeapon(f.weaponDef()->visual));
+  auto at = [&](float x, float y) { return Vec2{x * H, y * H}; };
+  Vec2 hF = p.handF, hB = p.handB;
+  float lean = p.lean, crouch = p.crouch;
+  const float rk = easeOut(rel);
+  switch (hint) {
+    case PoseHint::Cast:  // gather at the chest, then both palms thrust forward
+      hF = lerpv(at(0.12f, -0.12f), at(0.4f, -0.12f), rk);
+      hB = lerpv(at(0.08f, -0.08f), at(0.36f, -0.06f), rk);
+      crouch += 0.15f * (1.0f - rk);
+      lean += 0.15f * rk - 0.08f * (1.0f - rk);
+      p.charge = std::max(p.charge, t < key ? ready : 1.0f - rel);
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Overhead: case PoseHint::TwoHanded: {  // raised high in both hands, then the cleave
+      hF = lerpv(at(0.03f, -0.4f), at(0.32f, -0.04f), rk);
+      hB = lerpv(at(0.0f, -0.37f), at(0.26f, -0.02f), rk);
+      lean += -0.14f * (1.0f - rk) + 0.28f * rk;
+      crouch += 0.12f * rk + (hint == PoseHint::TwoHanded ? 0.1f : 0.0f);
+      if (armed) {
+        p.weapon = true;
+        p.twoHanded = true;
+        const float a = lerpf(-2.1f, 0.55f, rk);  // screen angle of the blade
+        p.weaponDir = {std::cos(a), std::sin(a)};
+      } else {
+        p.charge = std::max(p.charge, 0.6f * on);
+        p.chargeFx = moveFx(f, m);
+      }
+      break;
+    }
+    case PoseHint::Thrust:  // drawn back, then the lunge
+      hF = lerpv(at(-0.04f, -0.1f), at(0.44f, -0.08f), rk);
+      hB = lerpv(at(-0.12f, -0.02f), at(-0.2f, 0.0f), rk);
+      lean += -0.12f * (1.0f - rk) + 0.38f * rk;
+      crouch += 0.3f * (1.0f - rk);
+      if (armed) {
+        p.weapon = true;
+        p.weaponDir = Vec2{1.0f, 0.05f}.norm();
+      }
+      break;
+    case PoseHint::Spin:
+      p.rot += (t < key ? 0.0f : (t - key) * 0.5f) * (1.0f - relax);
+      hF = at(0.3f, -0.06f);
+      hB = at(-0.26f, -0.04f);
+      crouch += 0.3f;
+      break;
+    case PoseHint::HandSign:  // hands joined in front of the face, then one hand released forward
+      hF = lerpv(at(0.15f, -0.3f), at(0.36f, -0.16f), rk);
+      hB = lerpv(at(0.12f, -0.28f), at(0.1f, -0.22f), rk);
+      hF.y += std::sin(time * 14.0f) * 0.006f * H * (1.0f - rk);
+      crouch += 0.1f;
+      p.charge = std::max(p.charge, 0.55f * (t < key ? ready : 1.0f - rel));
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Bow: {  // the bow in the back hand, the string drawn to the cheek
+      hB = at(0.38f, -0.18f);
+      hF = lerpv(at(0.3f, -0.18f), at(0.04f, -0.2f), t < key ? ready : 0.0f);
+      if (t >= key) hF = lerpv(at(0.04f, -0.2f), at(-0.06f, -0.22f), rk);  // release: the hand flies back
+      p.bow = t < key ? ready : 0.0f;
+      lean -= 0.05f;
+      p.weapon = false;
+      break;
+    }
+    case PoseHint::Throw:  // overhand
+      hF = lerpv(at(-0.14f, -0.42f), at(0.38f, -0.04f), rk);
+      hB = lerpv(at(0.2f, -0.12f), at(-0.16f, 0.02f), rk);
+      lean += -0.16f * (1.0f - rk) + 0.22f * rk;
+      if (armed && !f.weaponDef()) p.weapon = false;
+      break;
+    case PoseHint::Uppercut:
+      hF = lerpv(at(0.16f, 0.08f), at(0.12f, -0.52f), rk);
+      crouch += 0.4f * (1.0f - rk);
+      p.squash *= 1.0f + 0.06f * rk;
+      break;
+    case PoseHint::Stomp:
+      p.footF = lerpv(at(0.12f, 0.2f), at(0.16f, 0.5f), rk);
+      hF = lerpv(at(0.16f, -0.36f), at(0.24f, 0.08f), rk);
+      hB = lerpv(at(-0.1f, -0.34f), at(-0.18f, 0.08f), rk);
+      crouch += 0.45f * rk;
+      break;
+    case PoseHint::Roar:  // arms wide, chest out
+      hF = at(0.32f, -0.28f);
+      hB = at(-0.3f, -0.26f);
+      lean -= 0.16f;
+      p.shout = true;
+      p.weapon = false;
+      break;
+    case PoseHint::Rush:
+      hF = at(0.32f, -0.05f);
+      hB = at(-0.24f, 0.02f);
+      lean += 0.36f;
+      crouch += 0.2f;
+      break;
+    case PoseHint::Raise:  // one arm raised to the sky, power gathering in the hand
+      hF = at(0.08f, -0.56f);
+      hB = at(-0.06f, 0.04f);
+      lean -= 0.06f;
+      p.charge = std::max(p.charge, t < key ? ready : 1.0f - rel * 0.6f);
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Point:  // a finger pointed at the target
+      hF = at(0.42f, -0.15f);
+      hB = at(0.0f, 0.05f);
+      lean += 0.04f;
+      p.charge = std::max(p.charge, 0.45f * (t < key ? ready : 1.0f - rel));
+      p.chargeFx = moveFx(f, m);
+      p.weapon = false;
+      break;
+    case PoseHint::Kneel:
+      crouch += 0.55f;
+      p.footF = at(0.18f, 0.5f);
+      hF = lerpv(at(0.2f, 0.18f), at(0.3f, 0.3f), rk);
+      hB = at(0.06f, 0.12f);
+      break;
+    case PoseHint::Auto: break;
+  }
+  p.handF = lerpv(p.handF, hF, on);
+  p.handB = lerpv(p.handB, hB, on);
+  p.lean = lerpf(p.lean, lean, on);
+  p.crouch = lerpf(p.crouch, crouch, on);
+}
+
 void applyMove(Pose& p, const Fighter& f, float time) {
   const CharacterDef& d = *f.def;
   const MoveDef& m = f.moveDef(f.move);
   const float H = f.height();
   const int t = f.moveFrame;
   const Vec2 shoulder{0.03f * H, -0.17f * H};
+  // Blade swings start from and settle back into the guard the fighter stands in.
+  const float guard = p.weapon ? std::atan2(p.weaponDir.y, p.weaponDir.x) : -0.5f;
+  auto toward = [](float a, float b, float k) { return a + wrapPi(b - a) * k; };
 
   if (m.isGrab || m.throwFrame >= 0) {
     float k = m.isGrab ? smoothstep(t / 6.0f) : smoothstep(float(t) / std::max(1, m.throwFrame));
@@ -196,6 +526,10 @@ void applyMove(Pose& p, const Fighter& f, float time) {
       p.lean += 0.2f * l;
       p.sx *= 1.0f + 0.06f * l;
     }
+    return;
+  }
+  if (m.pose != PoseHint::Auto && !limbDriven(m)) {  // specials with their own body language
+    applyHint(p, f, m, time, true);
     return;
   }
   if (m.hitboxes.empty()) {  // projectile throw: wind up, thrust, follow through
@@ -276,15 +610,15 @@ void applyMove(Pose& p, const Fighter& f, float time) {
       case Limb::Weapon: {
         p.weapon = true;
         if (s.hb->swing) {  // the blade sits exactly where its hitbox is (core/swing.hpp)
-          const float rest = 0.6f, A0 = -deg2rad(s.hb->a0), A1 = -deg2rad(s.hb->a1);
+          const float A0 = -deg2rad(s.hb->a0), A1 = -deg2rad(s.hb->a1);
           const float way = A1 >= A0 ? 1.0f : -1.0f;  // sweep direction (screen angles)
-          float a = rest;
+          float a = guard;
           switch (s.phase) {
-            case Phase::Wind: a = lerpf(rest, A0 - 0.45f * way, f.charging ? 1.0f : easeOut(s.k)); break;
+            case Phase::Wind: a = toward(guard, A0 - 0.45f * way, f.charging ? 1.0f : easeOut(s.k)); break;
             case Phase::Strike: a = lerpf(A0 - 0.45f * way, A0, s.k); break;
             case Phase::Active: a = -deg2rad(swingAngle(*s.hb, float(t))); break;
             case Phase::Follow:
-              a = lerpf(A1 + 0.3f * way * std::sin(kPi * std::min(1.0f, s.k * 1.8f)), rest, smoothstep(s.k));
+              a = toward(A1 + 0.3f * way * std::sin(kPi * std::min(1.0f, s.k * 1.8f)), guard, smoothstep(s.k));
               break;
             case Phase::None: break;
           }
@@ -296,15 +630,14 @@ void applyMove(Pose& p, const Fighter& f, float time) {
         float tgt = std::atan2(rel.y, rel.x);
         // The swing goes from the wind-up angle to a little past the target: the blade
         // sweeps through the hitbox during the active frames.
-        float rest = 0.6f;
         float wind = tgt - 2.0f, end = tgt + 0.3f;
-        float a = rest;
+        float a = guard;
         switch (s.phase) {
-          case Phase::Wind: a = lerpf(rest, wind, f.charging ? 1.0f : easeOut(s.k)); break;
+          case Phase::Wind: a = toward(guard, wind, f.charging ? 1.0f : easeOut(s.k)); break;
           case Phase::Strike: a = lerpf(wind, end, 0.6f * s.k); break;
           case Phase::Active: a = lerpf(wind, end, 0.6f + 0.4f * smoothstep(s.k)); break;
           case Phase::Follow:
-            a = lerpf(end, rest, smoothstep(s.k)) + 0.35f * std::sin(kPi * std::min(1.0f, s.k * 1.6f)) * (1.0f - s.k);
+            a = toward(end, guard, smoothstep(s.k)) + 0.35f * std::sin(kPi * std::min(1.0f, s.k * 1.6f)) * (1.0f - s.k);
             break;
           case Phase::None: break;
         }
@@ -326,11 +659,40 @@ void applyMove(Pose& p, const Fighter& f, float time) {
     case Phase::Follow: drive = 1.0f - smoothstep(pr.k); break;
     default: break;
   }
-  p.lean -= 0.22f * pr.antic * dirX;
-  p.crouch += 0.18f * pr.antic;
+  const bool smash = f.move == FSmash || f.move == USmash || f.move == DSmash;
+  const float coil = pr.antic * (smash ? 1.7f : 1.0f);  // smashes wind up much further
+  p.lean -= 0.22f * coil * dirX;
+  p.crouch += 0.18f * coil;
   if (!hb->swing) {
     p.squash *= 1.0f - 0.06f * pr.antic;
     p.sx *= 1.0f + 0.05f * pr.antic;
+  }
+  // The whole body throws the blow: the shoulders turn into it, the free arm pulls back the other way,
+  // the front foot steps in on a blow straight ahead, the arms balance a kick.
+  switch (hb->limb) {
+    case Limb::ArmFront:  // a jab: the front shoulder reaches, the other fist goes back to the hip
+      p.twist += 0.5f * coil - 0.8f * drive;
+      p.handB = lerpv(p.handB, {-0.11f * H, 0.03f * H}, 0.85f * drive);
+      break;
+    case Limb::ArmBack:  // a cross: hips and back shoulder turn through, the lead hand guards the chin
+      p.twist += -0.45f * coil + 1.0f * drive;
+      p.handF = lerpv(p.handF, {0.1f * H, -0.13f * H}, 0.85f * drive);
+      break;
+    case Limb::LegFront: case Limb::LegBack:  // a kick: arms thrown out for balance
+      p.handF = lerpv(p.handF, {0.17f * H, -0.2f * H}, 0.75f * drive);
+      p.handB = lerpv(p.handB, {-0.21f * H, -0.13f * H}, 0.75f * drive);
+      p.twist += (hb->limb == Limb::LegBack ? 0.7f : -0.25f) * drive + 0.3f * coil;
+      break;
+    case Limb::Weapon:  // a swing turns the shoulders with it; the free hand balances behind
+      p.twist += 0.45f * coil - 0.65f * drive;
+      if (!p.twoHanded) p.handB = lerpv(p.handB, {-0.17f * H, -0.03f * H}, 0.7f * drive);
+      break;
+    default: break;
+  }
+  const bool ahead = target.x > 0.15f * H && std::fabs(target.y) < 0.38f * H;
+  if (f.grounded && ahead && hb->limb != Limb::LegFront && hb->limb != Limb::LegBack) {  // step into it
+    p.footF.x += 0.1f * H * drive - 0.04f * H * coil;
+    p.footB.x -= 0.035f * H * drive - 0.02f * H * coil;
   }
   if (hb->swing) {  // no squash & stretch: it would move the blade off its hitbox
     p.lean += 0.12f * drive;
@@ -357,7 +719,9 @@ void applyMove(Pose& p, const Fighter& f, float time) {
   if (pr.phase == Phase::Active) p.trail = 1.0f;
   else if (pr.phase == Phase::Strike) p.trail = 0.5f;
   else if (pr.phase == Phase::Follow) p.trail = clampf(1.0f - pr.k / 0.4f, 0.0f, 1.0f) * 0.9f;
+  applyHint(p, f, m, time, false);  // the wind-up of a special takes its body language
 }
+
 
 // SUPER CLASH: gather (curled up), rise (arms raised), then a star burst on every shock wave.
 Pose finalSmashPose(const Fighter& f, Pose p) {
@@ -367,7 +731,8 @@ Pose finalSmashPose(const Fighter& f, Pose p) {
     Vec2 hF, hB, fF, fB;
     float crouch, lean, squash;
   };
-  const Key gather{{0.10f, -0.02f}, {0.06f, 0.0f}, {0.12f, 0.36f}, {-0.06f, 0.4f}, 0.75f, 0.25f, 0.9f};
+  // Gather: the anime power-up, feet planted wide, fists clenched at the hips, chest out, a shout.
+  const Key gather{{0.13f, 0.06f}, {-0.11f, 0.07f}, {0.18f, 0.5f}, {-0.16f, 0.5f}, 0.62f, -0.16f, 0.94f};
   const Key raise{{0.2f, -0.52f}, {-0.18f, -0.5f}, {0.06f, 0.48f}, {-0.05f, 0.5f}, 0.0f, -0.15f, 1.08f};
   const Key curl{{0.12f, -0.1f}, {0.03f, -0.06f}, {0.12f, 0.34f}, {-0.08f, 0.38f}, 0.55f, 0.15f, 0.92f};
   const Key star{{0.42f, -0.3f}, {-0.4f, -0.28f}, {0.22f, 0.46f}, {-0.2f, 0.46f}, 0.0f, -0.08f, 1.06f};
@@ -401,11 +766,13 @@ Pose finalSmashPose(const Fighter& f, Pose p) {
   p.squash = k.squash;
   p.sx = 2.0f - k.squash;
   p.glow = 1.4f;
+  p.shout = p.shout || (t >= 4.0f && t < 30.0f);
+  if (t < 28.0f) p.shift.x += std::sin(t * 2.3f) * 0.006f * H * std::min(1.0f, t / 6.0f);  // trembling with power
   return p;
 }
 }  // namespace
 
-Pose restPose(const CharacterDef& d, float time) {
+Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
   const float H = d.height;
   Pose p;
   const float br = std::sin(time * 2.6f);  // breathing
@@ -426,64 +793,174 @@ Pose restPose(const CharacterDef& d, float time) {
     p.lean += lean;
     p.crouch += crouch;
   };
-  auto blade = [&](Vec2 dir) {
-    p.weapon = true;
-    p.weaponDir = rotate(dir.norm(), br * 0.03f);
-  };
-  switch (d.hero) {  // each hero's guard
-    case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); blade({1.0f, 0.62f}); break;
+  if (!art::stance(d, p, bob)) switch (d.hero) {  // each hero's guard (drawn from a picture: its stance)
+    case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); break;
     case Hero::Yuno: stance({0.11f, 0.07f}, {-0.05f, 0.07f}, 0.08f, -0.07f, -0.02f, 0.0f); break;
-    case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); blade({1.0f, 0.42f}); break;
-    case Hero::Byakuya: stance({0.12f, 0.07f}, {-0.03f, 0.08f}, 0.08f, -0.07f, -0.06f, 0.0f); blade({0.4f, 1.0f}); break;
-    case Hero::Link: stance({0.17f, 0.05f}, {0.17f, -0.07f}, 0.12f, -0.12f, 0.04f, 0.1f); blade({1.0f, 0.28f}); break;
+    case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); break;
+    case Hero::Byakuya: stance({0.12f, 0.07f}, {-0.03f, 0.08f}, 0.08f, -0.07f, -0.06f, 0.0f); break;
+    case Hero::Link: stance({0.17f, 0.05f}, {0.17f, -0.07f}, 0.12f, -0.12f, 0.04f, 0.1f); break;
     case Hero::Ganondorf: stance({0.17f, 0.05f}, {-0.12f, 0.05f}, 0.12f, -0.13f, 0.0f, 0.06f); break;
     case Hero::Kratos: stance({0.16f, 0.02f}, {0.03f, 0.05f}, 0.13f, -0.12f, 0.06f, 0.1f); break;
     case Hero::Gojo: stance({0.04f, 0.09f}, {-0.05f, 0.09f}, 0.07f, -0.07f, -0.1f, 0.0f); break;
     case Hero::Sukuna: stance({0.1f, 0.08f}, {-0.06f, 0.08f}, 0.1f, -0.09f, 0.04f, 0.04f); break;
+    case Hero::Grimmjow: stance({0.05f, 0.11f}, {-0.03f, 0.11f}, 0.12f, -0.11f, 0.1f, 0.06f); break;  // hands in his pockets
+    case Hero::Starrk: stance({0.07f, 0.14f}, {-0.03f, 0.14f}, 0.07f, -0.06f, -0.08f, 0.0f); break;  // lazy, leaning back
     default: break;
   }
+  const WeaponVisual v = carriedWeapon(d, held);
+  carryWeapon(p, v, H, Gait::Stand, bob);
+  if (v == d.baseWeapon) {
+    switch (d.hero) {  // personal touches
+      case Hero::Ichigo: p.handF = {0.21f * H, -0.05f * H + bob}; p.weaponDir = {1.0f, -0.62f}; break;  // pointed at the foe
+      case Hero::Byakuya: p.weaponDir = {0.5f, -1.0f}; break;  // upright, composed
+      case Hero::Link: p.weaponDir = {1.0f, -0.5f}; break;
+      default: break;
+    }
+  }
+  if (p.weapon) p.weaponDir = rotate(p.weaponDir.norm(), br * 0.03f);
   float bl = std::fmod(time + d.height, 3.7f);
   p.blink = bl < 0.12f || (std::fmod(time * 0.37f + d.height, 3.0f) < 0.4f && bl > 0.3f && bl < 0.4f);  // sometimes twice
   return p;
+}
+
+namespace {
+// When a move's drawn blows land (0..1 through the move): the windows where its hitboxes are out (hitboxes that
+// overlap or follow each other merge into one blow), else what it throws, casts or fires. None: the clip plays evenly.
+void clipImpact(const MoveDef& md, float dur, Pose& p) {
+  std::vector<std::pair<int, int>> w;
+  for (const auto& h : md.hitboxes)
+    if (h.end > h.start) w.push_back({h.start, h.end});  // (a throw's hitbox is never out: start == end)
+  if (w.empty()) {
+    if (md.throwFrame >= 0) w.push_back({md.throwFrame, md.throwFrame + 3});
+    else if (md.projectileFrame >= 0)  // a held technique keeps its cast pose until it ends
+      w.push_back({md.projectileFrame, std::max(md.projectileFrame + 4, md.channelEnd)});
+    else if (!md.shots.empty())
+      for (const auto& s : md.shots) w.push_back({s.frame, s.frame + 4});
+    else if (md.teleportFrame >= 0) w.push_back({md.teleportFrame, md.teleportFrame + 2});
+  }
+  std::sort(w.begin(), w.end());
+  p.sheetHits = 0;
+  for (const auto& [a, b] : w) {
+    if (p.sheetHits > 0 && float(a) / dur <= p.sheetHitB[p.sheetHits - 1]) {  // overlaps or touches: the same blow
+      p.sheetHitB[p.sheetHits - 1] = std::max(p.sheetHitB[p.sheetHits - 1], float(b) / dur);
+      continue;
+    }
+    if (p.sheetHits == Pose::kSheetHits) break;
+    p.sheetHitA[p.sheetHits] = float(a) / dur;
+    p.sheetHitB[p.sheetHits] = float(b) / dur;
+    ++p.sheetHits;
+  }
+}
+
+// Frame-by-frame clips generated for the fighter (art::drawSheet) replace the skeleton for the states and moves
+// they cover. A fighter drawn entirely in clips has one for (nearly) everything; the others only have the strike
+// they make with each picked-up weapon. A state without its clip keeps the skeleton.
+void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
+  const Hero h = f.def->hero;
+  if (!art::hasClips(h)) return;
+  const float sf = float(f.stateFrame);
+  // A weapon that changes the look has its own states (w1_idle...): the weapon is seen in every animation.
+  const int wstates = f.weapon == 0 ? art::kSheetWState0 : f.weapon == 1 ? art::kSheetWState1 : -1;
+  auto own = [&](int a) { return wstates >= 0 && art::hasSheet(h, wstates + a) ? wstates + a : a; };
+  auto loop = [&](int a) {
+    a = own(a);
+    if (!art::hasSheet(h, a)) return false;
+    p.sheet = a;
+    p.sheetT = tt;
+    return true;
+  };
+  auto once = [&](int a, float t) {
+    a = own(a);
+    if (!art::hasSheet(h, a)) return false;
+    p.sheet = a;
+    p.sheetT = clampf(t, 0.0f, 1.0f);
+    return true;
+  };
+  switch (f.state) {
+    case FState::Idle: case FState::Respawn: loop(art::kSheetIdle); break;
+    case FState::Walk: case FState::Run: {  // the steps follow the ground covered (no skating)
+      const bool run = f.state == FState::Run;
+      if (loop(run ? art::kSheetRun : art::kSheetWalk)) {
+        const float cycle = f.def->height * (run ? 1.4f : 0.8f), u = f.pos.x * float(f.facing) / cycle;
+        p.sheetPhase = u - std::floor(u);
+      }
+      break;
+    }
+    case FState::Crouch: once(art::kSheetCrouch, (sf + 1.0f) / 5.0f); break;
+    case FState::JumpSquat:
+      once(art::kSheetJumpSquat, (sf + 1.0f) / std::max(1, f.timer)) || once(art::kSheetCrouch, 1.0f);
+      break;
+    case FState::Air: {
+      if (f.tumble && loop(art::kSheetTumble)) break;  // still flying from a heavy blow
+      const int since = m.frame - f.airJumpFrame;
+      if (since >= 0 && since < 24 && once(art::kSheetAirJump, since / 24.0f)) break;
+      if (f.vel.y < 0.0f && once(art::kSheetJump, sf / 20.0f)) break;
+      loop(art::kSheetFall);
+      break;
+    }
+    case FState::Landing: once(art::kSheetLand, sf / std::max(1, f.timer)); break;
+    case FState::Shield: case FState::ShieldStun: once(art::kSheetShield, (sf + 1.0f) / 6.0f); break;
+    case FState::Roll:
+      if (once(art::kSheetRoll, sf / 28.0f)) p.sheetFlip = f.actionDir * f.facing < 0;  // rolls the way it goes
+      break;
+    case FState::SpotDodge: once(art::kSheetSpotDodge, sf / 24.0f); break;
+    case FState::AirDodge: once(art::kSheetAirDodge, sf / 34.0f); break;
+    case FState::Hitstun:
+      if (!(f.tumble && sf > 10.0f && loop(art::kSheetTumble))) once(art::kSheetHurt, sf / 14.0f);
+      break;
+    case FState::Knockdown: once(art::kSheetKnockdown, 0.5f + sf / 20.0f); break;  // already falling: its second half
+    case FState::GetUp: once(art::kSheetGetUp, sf / std::max(1, f.timer)); break;
+    case FState::Helpless: loop(art::kSheetHelpless) || loop(art::kSheetFall); break;
+    case FState::LedgeHang: loop(art::kSheetLedge); break;
+    case FState::LedgeClimb:  // the fighter rises from the ledge to the stage; the clip's first frame hangs lower
+      if (once(art::kSheetClimb, sf / 18.0f)) {
+        const float t = smoothstep(clampf(sf / 18.0f, 0.0f, 1.0f));  // as the climb moves the fighter
+        p.sheetOffset = {0.0f, (1.0f - t) * art::sheetDrop(*f.def, p.sheet)};
+      }
+      break;
+    case FState::Holding: loop(art::kSheetHold) || loop(art::kSheetIdle); break;
+    case FState::Grabbed: case FState::Captured: loop(art::kSheetGrabbed) || once(art::kSheetHurt, 0.5f); break;
+    case FState::ShieldBreak: loop(art::kSheetDizzy) || loop(art::kSheetIdle); break;
+    case FState::Attack: {
+      const MoveDef* md = f.currentMove();
+      if (!md || f.move < 0 || f.move >= MOVE_COUNT) break;
+      const int withWeapon = f.weapon == 0 ? art::kSheetWeapon0 : f.weapon == 1 ? art::kSheetWeapon1 : -1;
+      int clip = withWeapon >= 0 && art::hasSheet(h, withWeapon + f.move) ? withWeapon + f.move
+                                                                            : art::kSheetMove0 + f.move;
+      if (!art::hasSheet(h, clip)) break;
+      const float dur = float(std::max(1, md->duration));
+      p.sheet = clip;
+      p.sheetT = clampf(float(f.moveFrame) / dur, 0.0f, 1.0f);
+      clipImpact(*md, dur, p);
+      break;
+    }
+    default: break;
+  }
+}
+}  // namespace
+
+void runClip(const CharacterDef& def, Pose& pose, float phase) {
+  if (!art::hasSheet(def.hero, art::kSheetRun)) return;
+  pose.sheet = art::kSheetRun;
+  pose.sheetPhase = phase - std::floor(phase);
 }
 
 Pose computePose(const Fighter& f, const Match& m, float time) {
   const CharacterDef& d = *f.def;
   const float H = d.height;
   const float tt = time + f.id * 1.7f;
-  Pose p = restPose(d, tt);
+  const WeaponVisual carried = carriedWeapon(d, heldVisual(f));
+  Pose p = restPose(d, tt, heldVisual(f));
   const float sf = float(f.stateFrame);
   switch (f.state) {
     case FState::Walk: {
-      float ph = tt * 10.0f;
-      p.footF = {0.12f * H * std::sin(ph), 0.5f * H - std::max(0.0f, -std::cos(ph)) * 0.06f * H};
-      p.footB = {-0.12f * H * std::sin(ph), 0.5f * H - std::max(0.0f, std::cos(ph)) * 0.06f * H};
-      p.handF.x -= 0.07f * H * std::sin(ph);
-      p.handB.x += 0.07f * H * std::sin(ph);
-      p.shift.y = -std::fabs(std::cos(ph)) * 0.015f * H;  // up when a foot passes under the body
-      p.lean = 0.1f;
+      walkPose(p, f, H);
+      carryWeapon(p, carried, H, Gait::Walk);
       break;
     }
     case FState::Run: {
-      float ph = sf * 0.42f;
-      float s1 = std::sin(ph), c1 = std::cos(ph);
-      p.lean = 0.38f;
-      p.footF = {0.21f * H * s1, 0.5f * H - std::max(0.0f, -c1) * 0.16f * H};
-      p.footB = {-0.21f * H * s1, 0.5f * H - std::max(0.0f, c1) * 0.16f * H};
-      // arms pump against the legs, elbows bent
-      p.handF = {0.10f * H - 0.15f * H * s1, -0.06f * H - std::max(0.0f, -s1) * 0.06f * H};
-      p.handB = {0.04f * H + 0.15f * H * s1, -0.02f * H - std::max(0.0f, s1) * 0.06f * H};
-      float up = std::fabs(c1);  // a leg passes under the body: highest point
-      p.shift.y = -up * 0.04f * H;
-      p.squash = 0.97f + 0.05f * up;
-      p.sx = 1.02f - 0.03f * up;
-      if (sf < 8) {  // dash start: lunge
-        float k = 1.0f - sf / 8.0f;
-        p.lean += 0.2f * k;
-        p.shift.x += 0.04f * H * k;
-        p.squash -= 0.06f * k;
-        p.sx += 0.06f * k;
-      }
+      runPose(p, f, H, sf);
+      if (runStyle(d.hero) != RunStyle::Ninja || isHandWeapon(heldVisual(f))) carryWeapon(p, carried, H, Gait::Run);
       break;
     }
     case FState::Crouch: {
@@ -542,26 +1019,37 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.lean = -0.1f + std::sin(tt * 3.0f) * 0.08f;
       break;
     }
-    case FState::Hitstun:
+    case FState::Hitstun: {
       p.hurt = true;
+      const Vec2 kb{f.kbVel.x * float(f.facing), f.kbVel.y};  // the flight, facing right
+      const float kl = kb.len();
+      const Vec2 dir = kl > 0.5f ? kb * (1.0f / kl) : Vec2{-1.0f, 0.0f};
       if (f.tumble) {
-        float w = std::sin(tt * 16.0f);
-        p.rot = f.spin;
-        p.crouch = 0.2f;
-        p.handF = {0.25f * H, -0.3f * H + w * 0.05f * H};
-        p.handB = {-0.25f * H, -0.25f * H - w * 0.05f * H};
-        p.footF = {0.18f * H, 0.45f * H - w * 0.04f * H};
-        p.footB = {-0.15f * H, 0.40f * H + w * 0.04f * H};
-      } else {  // flinch: head snaps back, arms fly up, then it recovers
-        float k = 1.0f - clampf(sf / 14.0f, 0.0f, 1.0f);
-        p.lean = -0.35f - 0.15f * k;
-        p.handF = {-0.02f * H, -0.18f * H - 0.06f * H * k};
-        p.handB = {-0.14f * H, -0.10f * H - 0.04f * H * k};
-        p.footF.x += 0.03f * H * k;
+        // Launched: first folded around the blow with the limbs trailing after the flight, then the tumble.
+        const float fold = 1.0f - smoothstep((sf - 4.0f) / 14.0f);
+        const float w = std::sin(tt * 16.0f);
+        const Vec2 tr = dir * (-1.0f);
+        p.rot = f.spin * (1.0f - fold);
+        p.crouch = 0.2f + 0.2f * fold;
+        p.lean = clampf(-dir.x * 0.6f, -0.6f, 0.6f) * fold;
+        p.squash = 1.0f + 0.08f * fold * std::fabs(dir.y);
+        p.handF = lerpv({0.25f * H, -0.3f * H + w * 0.05f * H}, Vec2{0.12f * H, -0.1f * H} + tr * (0.24f * H), fold);
+        p.handB = lerpv({-0.25f * H, -0.25f * H - w * 0.05f * H}, Vec2{-0.08f * H, -0.08f * H} + tr * (0.22f * H), fold);
+        p.footF = lerpv({0.18f * H, 0.45f * H - w * 0.04f * H}, Vec2{0.05f * H, 0.42f * H} + tr * (0.13f * H), fold);
+        p.footB = lerpv({-0.15f * H, 0.40f * H + w * 0.04f * H}, Vec2{-0.05f * H, 0.45f * H} + tr * (0.1f * H), fold);
+      } else {  // flinch: the head snaps away from the blow, the arms fly up, then it recovers
+        const float k = 1.0f - clampf(sf / 14.0f, 0.0f, 1.0f);
+        const float away = dir.x <= 0.2f ? 1.0f : -1.0f;  // hit from the front: bent back; from behind: forward
+        p.lean = away * (-0.35f - 0.15f * k);
+        p.twist = 0.35f * k * away;
+        p.handF = {-0.02f * H * away, -0.18f * H - 0.06f * H * k};
+        p.handB = {-0.14f * H * away, -0.10f * H - 0.04f * H * k};
+        p.footF.x += 0.03f * H * k * away;
         p.squash = 1.0f - 0.06f * k;
         p.sx = 1.0f + 0.05f * k;
       }
       break;
+    }
     case FState::Knockdown: {
       float bounce = sf < 10 ? std::sin(sf / 10.0f * kPi) * 0.06f * H : 0.0f;  // bounces on the floor
       p.rot = -kPi * 0.5f;
@@ -649,7 +1137,40 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       break;
     case FState::Attack:
       if (f.move == FinalSmash) {
-        p = finalSmashPose(f, f.grounded ? p : airPose(f, m, tt, false));
+        const MoveDef& fs = f.moveDef(FinalSmash);
+        Pose base = f.grounded ? p : airPose(f, m, tt, false);
+        if (fs.pose == PoseHint::Auto) {
+          p = finalSmashPose(f, base);
+        } else {  // each ultimate has its own body language; its blows are animated like any move
+          p = finalSmashPose(f, base);
+          if (f.moveFrame >= 20) {
+            Pose q = base;
+            applyMove(q, f, tt);
+            if (!limbDriven(fs)) applyHint(q, f, fs, tt, true);
+            const float k = smoothstep((f.moveFrame - 20) / 10.0f);
+            p.handF = lerpv(p.handF, q.handF, k);
+            p.handB = lerpv(p.handB, q.handB, k);
+            p.footF = lerpv(p.footF, q.footF, k);
+            p.footB = lerpv(p.footB, q.footB, k);
+            p.lean = lerpf(p.lean, q.lean, k);
+            p.crouch = lerpf(p.crouch, q.crouch, k);
+            p.squash = lerpf(p.squash, q.squash, k);
+            p.sx = lerpf(p.sx, q.sx, k);
+            p.rot = lerpf(p.rot, q.rot, k);
+            p.weapon = q.weapon;
+            p.weaponDir = q.weaponDir;
+            p.twoHanded = q.twoHanded;
+            p.bow = q.bow;
+            p.charge = q.charge;
+            p.chargeFx = q.chargeFx;
+            p.shout = q.shout;
+            p.trail = q.trail;
+            p.trailLimb = q.trailLimb;
+            p.trailFx = q.trailFx;
+            p.trailPos = q.trailPos;
+            p.trailRadius = q.trailRadius;
+          }
+        }
         break;
       }
       if (!f.grounded) p = airPose(f, m, tt, false);
@@ -663,10 +1184,12 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
     p.heldFx = w->fx;
     if (isHandWeapon(w->visual) && !p.weapon) {
       p.weapon = true;
-      p.weaponDir = Vec2{1.0f, 0.5f}.norm();
+      p.weaponDir = Vec2{1.0f, -0.45f}.norm();
     }
   }
   p.bladeLen = f.bladeLength();
+  p.form = f.formKind();
+  pickClip(p, f, m, tt);
   return p;
 }
 
@@ -674,13 +1197,13 @@ namespace {
 // ---- Animation memory ---------------------------------------------------------
 // Per fighter: the pose shown last frame. On a state change the new pose is reached through
 // critically damped offsets (inertial blending); strikes snap exactly on their hitboxes.
-constexpr int kChan = 16;
+constexpr int kChan = 17;
 constexpr int kTrail = 7;
 
 void packPose(const Pose& p, float* v) {
   const float c[kChan] = {p.rot, p.shift.x, p.shift.y, p.lean, p.crouch, p.squash, p.sx, p.handF.x, p.handF.y,
                           p.handB.x, p.handB.y, p.footF.x, p.footF.y, p.footB.x, p.footB.y,
-                          std::atan2(p.weaponDir.y, p.weaponDir.x)};
+                          std::atan2(p.weaponDir.y, p.weaponDir.x), p.twist};
   std::copy(c, c + kChan, v);
 }
 void unpackPose(Pose& p, const float* v) {
@@ -695,12 +1218,13 @@ void unpackPose(Pose& p, const float* v) {
   p.footF = {v[11], v[12]};
   p.footB = {v[13], v[14]};
   p.weaponDir = {std::cos(v[15]), std::sin(v[15])};
+  p.twist = v[16];
 }
 bool isAngle(int i) { return i == 0 || i == 15; }
 // Per-frame jump above which a channel counts as a discontinuity to blend over.
 float jumpLimit(int i, float H) {
   if (isAngle(i)) return 0.9f;
-  if (i == 3 || i == 4) return 0.25f;
+  if (i == 3 || i == 4 || i == 16) return 0.25f;
   if (i == 5 || i == 6) return 0.1f;
   return 0.1f * H;
 }
@@ -963,6 +1487,22 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
 
 // Ultimate ready: soft glow of the hero's element, a turning hexagon and a tilted rune ring
 // orbiting the body (its front half passes in front of the fighter).
+// The hero's aura drawn by PixelLab (behind it, from its feet), if it has one.
+const char* auraSprite(const Fighter& f) {
+  switch (f.def->hero) {
+    case Hero::Ichigo:  // blue reiatsu; black and red in Bankai and in the masked Getsuga Jujisho
+      return f.weapon == 1 || (f.weapon == 0 && f.move == FinalSmash) ? "bankai_aura" : "reiatsu_aura";
+    case Hero::Naruto: return f.weapon == 1 ? "kurama_aura" : "sage_aura";  // nature energy, or Kurama's golden flames
+    case Hero::Sasuke: return "susanoo_aura";
+    case Hero::Kakashi: return "raikiri_aura";
+    case Hero::Kratos: return "rage_aura";
+    case Hero::Sukuna: return "cursed_aura";
+    case Hero::Link: return "light_aura";
+    case Hero::Gojo: return "six_eyes_aura";
+    default: return nullptr;
+  }
+}
+
 void drawUltAura(Vec2 c, float H, float t, bool front, float k, Color z) {
   if (!front) {
     additive(true);
@@ -1123,7 +1663,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   const Anim& anim = animFor(f, m);
   const float at = anim.clock + f.id;  // animation time (stops in hit-stop)
   Pose pose = anim.pose;
-  const bool usingFs = f.state == FState::Attack && f.move == FinalSmash;
+  bool usingFs = f.state == FState::Attack && f.move == FinalSmash;
   if (f.finalSmash) pose.glow = std::max(pose.glow, 0.8f + 0.3f * std::sin(at * 5.0f));
 
   float alpha = 1.0f;
@@ -1133,7 +1673,8 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     if (mv->teleportFrame >= 0 && f.moveFrame >= mv->intangibleStart && f.moveFrame < mv->teleportFrame)
       alpha = 0.12f;
   }
-  Color flashCol = WHITE;
+  // A blow lights the victim up in its element (fire orange, lightning blue, darkness violet...).
+  Color flashCol = f.flashFx == HitFx::Normal ? WHITE : mixColor(hitFxGlow(f.flashFx), WHITE, 0.3f);
   float flash = f.flash > 0 ? f.flash / 12.0f : 0.0f;
   if (const MoveDef* mv = f.currentMove()) {
     if (f.charging) {
@@ -1170,18 +1711,48 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       DrawCircleV({feet.x + std::cos(a) * 55.0f, feet.y + 6 + std::sin(a) * 10.0f}, 4, withAlpha(WHITE, 0.9f));
     }
   }
-  for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
-    const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
-    if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
-  }
-  const float ultK = f.finalSmash ? alpha : 0.0f;
+  float ultK = f.finalSmash ? alpha : 0.0f;
   const Color ultCol = hitFxGlow(heroElement(d.hero));
+  // The hero's PixelLab aura (its reiatsu...) replaces the drawn ring and pillar when it has one: the ultimate
+  // ready, then unleashed (bigger).
+  const char* aura = auraSprite(f);
+  // Sukuna's finger and Gojo's Six Eyes, nothing in hand: their aura stays on, fainter
+  const bool power = (d.hero == Hero::Sukuna || d.hero == Hero::Gojo) && f.weapon == 1;
+  if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs || power)) {
+    art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0,
+                usingFs ? 1.0f : std::max(ultK, power ? 0.7f : 0.0f));
+    ultK = 0.0f;
+    usingFs = false;
+  }
   if (ultK > 0.0f) drawUltAura(c, H, at, false, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, false);
 
-  drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, alpha, flashCol, flash, at);
+  // The character and its afterimages: one pixel-art sprite (big enough for the longest weapons).
+  const float rx = std::max(H * 1.7f, 200.0f);
+  Rect box{feet.x - rx, feet.y - H * 2.3f, rx * 2.0f, H * 2.9f};
+  for (const Ghost& g : anim.ghosts) {
+    if (g.life <= 0) continue;
+    const float l = std::min(box.x, g.feet.x - rx), t = std::min(box.y, g.feet.y - H * 2.3f);
+    box = {l, t, std::max(box.right(), g.feet.x + rx) - l, std::max(box.bottom(), g.feet.y + H * 0.6f) - t};
+  }
+  drawFormAvatar(f, at, false);
+  auto drawAll = [&](float a) {
+    for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
+      const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
+      if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
+    }
+    drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, a, flashCol, flash, at);
+  };
+  // A PixelLab clip is pixel art already: drawn straight into the frame, at its full resolution (the pixel layer
+  // would shrink it, flatten its colours and outline it again). Poses still drawn by the code keep the layer.
+  if (pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet))
+    drawAll(alpha);
+  else
+    pix::sprite(box, alpha, drawAll);
 
-  drawSmear(anim, pose, alpha);
+  drawFormAvatar(f, at, true);
+  if (!(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
+    drawSmear(anim, pose, alpha);
   if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK, ultCol);
   if (usingFs) drawFinalSmashFx(f, c, at, true);
   if (f.state == FState::Shield || f.state == FState::ShieldStun) {

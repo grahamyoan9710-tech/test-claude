@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "b1faf5f0-df6c-47b4-9613-f6a52c0f0790",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:21c752e9-a03a-4f1a-89e9-501caf4154b9",
+  "description": "reaches up with both arms and grabs the edge of a cliff above his head, hanging from it by both hands with the legs dangling below The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Kakashi, a tall ninja with spiky silver hair, a dark mask over his lower face, a forehead protector slanted over his left eye and a green flak vest over a navy outfit",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: b1faf5f0-df6c-47b4-9613-f6a52c0f0790\njob_id: b1faf5f0-df6c-47b4-9613-f6a52c0f0790\ndescription: reaches up with both arms and grabs the edge of a cliff above his head, hanging from it by both hands with the legs dangling below The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b1faf5f0-df6c-47b4-9613-f6a52c0f0790\")\nasset_id: 1bc1f7cb-6e65-57f1-a275-b74b3d9e9ef9\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/kakashi/jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

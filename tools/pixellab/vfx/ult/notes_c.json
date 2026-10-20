@@ -1,0 +1,82 @@
+[
+ {
+  "effect": "hollow_purple",
+  "kind": "projectile",
+  "loop": true,
+  "frames": 12,
+  "fps": 15,
+  "frame_w": 248,
+  "frame_h": 248,
+  "origin": [
+   124,
+   124
+  ],
+  "hit_radius_px": 82,
+  "pixellab_effect_id": "a046257b-1a81-4e35-9945-6408f955c1bf",
+  "comment": "Gojo Hollow Purple: 164 px violet sphere (white-hot core, deep purple banded body with a turning 2-arm swirl, bright lavender rim), two expanding distortion ripples out to ~208 px, purple-white lightning arcs crackling off the rim, grey debris pulled in and erased, faint purple speed streaks trailing left. Origin = sphere centre; hit radius 82 = the sphere body (ripples and arcs are decoration). Flies right (game moves it slowly)."
+ },
+ {
+  "effect": "max_blue",
+  "kind": "area",
+  "loop": true,
+  "frames": 12,
+  "fps": 15,
+  "frame_w": 184,
+  "frame_h": 184,
+  "origin": [
+   92,
+   92
+  ],
+  "hit_radius_px": 76,
+  "pixellab_effect_id": "102197c5-5095-409a-bd4c-b6cf075955fc",
+  "comment": "Gojo Blue (maximum output): a small near-black singularity orb (r 15) with a white-blue rim inside a bright blue glow (r ~38), three blue spiral arms out to r 74 turning inward, curved white-blue light streaks spiralling into the orb along the arms, grey rocks and debris pulled in from r 84 and swallowed. Origin = singularity centre. Hit radius 76 = the spiral arms (use it as the pull radius; a damage core of ~38 matches the glow)."
+ },
+ {
+  "effect": "sky_bolt",
+  "kind": "sky_strike",
+  "loop": true,
+  "frames": 12,
+  "fps": 15,
+  "frame_w": 112,
+  "frame_h": 272,
+  "origin": [
+   56,
+   248
+  ],
+  "hit_radius_px": 26,
+  "pixellab_effect_id": "79bf3def-a40c-4dc7-af82-c94d05e861b3",
+  "comment": "Sukuna Kamutoke: a 248 px jagged white lightning bolt with a blue edge, coming straight down from the top edge of the frame (the sky: let the top sit off-screen or at the top of the view), 4-5 forking branches (60-80 px wide overall), a thin crackling strand, re-rolling its shape every 2 frames; at the bottom a white-blue impact flash, two expanding flat shock rings (up to 88 px wide) and sparks. ORIGIN = the impact point at the bottom (place it on the target). Hit radius 26 at the origin (impact flash); for the column use a vertical capsule 20 px wide from origin up to the top if the game supports it."
+ },
+ {
+  "effect": "malevolent_shrine",
+  "kind": "area",
+  "loop": true,
+  "frames": 12,
+  "fps": 15,
+  "frame_w": 256,
+  "frame_h": 256,
+  "origin": [
+   128,
+   128
+  ],
+  "hit_radius_px": 112,
+  "pixellab_effect_id": "ebd73130-98d4-4961-a861-713f620ce588",
+  "comment": "Sukuna Malevolent Shrine: about 11-13 thin straight slash lines per frame inside a 236 px disc, every direction, crimson cuts (Dismantle, short) and long black cuts with a crimson rim (Cleave), each shown for 1 frame (a quarter for 2, the 2nd worn thinner), all re-placed every frame so the whole area flickers; a few red sparkles. Airy: the scene stays visible between the cuts. Origin = centre of the area; hit radius 112 covers the cut zone (good for a multi-hit tick)."
+ },
+ {
+  "effect": "reiatsu_wave",
+  "kind": "projectile",
+  "loop": true,
+  "frames": 12,
+  "fps": 15,
+  "frame_w": 150,
+  "frame_h": 186,
+  "origin": [
+   118,
+   93
+  ],
+  "hit_radius_px": 58,
+  "pixellab_effect_id": "91e64bbd-5552-4bc6-a834-d0f3054d1224",
+  "comment": "Kenpachi Nozarashi cleave: a 160 px tall gold crescent (convex side right) with a white-hot leading edge and a pale-yellow inner band, a ragged back edge, eleven flickering yellow-gold flame tongues streaming back to the left and fanning out at the tips (up to ~60 px long), embers drifting left. Origin = centre of the crescent body (middle of its thickness at mid-height); the crescent spans origin.y -80..+80 and x -40..+16 from the origin, so radius 58 is a compromise (a vertical capsule half-height 76, half-width 18 matches it better). Flies right."
+ }
+]

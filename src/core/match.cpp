@@ -7,7 +7,7 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
   stageDef = &stages[std::clamp(cfg.stage, 0, int(stages.size()) - 1)];
   platforms = stageDef->platforms;
   const auto& chars = roster();
-  std::array<int, 16> used{};
+  std::vector<int> used(chars.size(), 0);  // fighters picked twice alternate their colours
   for (int port = 0; port < 4; ++port) {
     const auto& slot = cfg.slots[port];
     if (!slot.active) continue;
@@ -19,6 +19,8 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
     f.palette = used[f.charIndex]++ % 2;  // mirror match: alternate colours
     f.cpu = slot.cpu;
     f.cpuLevel = slot.level;
+    f.team = cfg.teams ? slot.team : f.id;
+    f.inTeam = cfg.teams;
     f.stocks = cfg.stocks;
     Vec2 spawn = stageDef->spawns[fighters.size() % stageDef->spawns.size()];
     f.pos = spawn;
@@ -63,6 +65,12 @@ void Match::step(const std::array<InputState, 4>& inputs) {
     f.in = started() ? inputs[f.port] : InputState{};
     for (int i = 5; i > 0; --i) f.stickHist[i] = f.stickHist[i - 1];
     f.stickHist[0] = f.in.stick;
+    for (int i = int(sizeof f.dirHist) - 1; i > 0; --i) f.dirHist[i] = f.dirHist[i - 1];
+    {
+      const int x = f.in.stick.x > 0.5f ? 1 : f.in.stick.x < -0.5f ? -1 : 0;
+      const int y = f.in.stick.y > 0.5f ? 1 : f.in.stick.y < -0.5f ? -1 : 0;
+      f.dirHist[0] = uint8_t(5 + x - 3 * y);  // numpad notation: 2 down, 6 right, 3 down-right...
+    }
   }
   if (freezeTimer > 0) {  // final smash cinematic: only its user moves
     --freezeTimer;
@@ -76,7 +84,32 @@ void Match::step(const std::array<InputState, 4>& inputs) {
   resolveHits();
   checkBlastZones();
   checkEnd();
+  if (cfg.training) updateTraining();
   ++frame;
+}
+
+void Match::updateTraining() {
+  for (auto& f : fighters) {
+    if (trainZeroPercent) f.percent = 0.0f;  // after the hits: each blow only knocks back by its own damage
+    const bool usingUlt = f.state == FState::Attack && f.move == FinalSmash;
+    if (trainInfiniteUlt && f.active() && !f.eliminated && !f.finalSmash && !usingUlt && freezeTimer == 0)
+      gainUlt(f, kUltMax);
+  }
+  if (trainRestart > 0 && --trainRestart == 0) restartTrainingFight();
+}
+
+void Match::setTrainFight(bool on) {
+  trainFight = on;
+  restartTrainingFight();
+}
+
+void Match::restartTrainingFight() {
+  trainRestart = 0;
+  for (auto& f : fighters) {
+    f.stocks = kTrainStocks;
+    f.eliminated = false;
+  }
+  resetPositions();
 }
 
 bool Match::ledgeValid(int ledge) const {
@@ -120,12 +153,12 @@ void Match::koFighter(Fighter& f) {
   emit(EvType::KO, p, f.id, f.lastHitBy, f.lastKnockback, dir);
   if (f.grabPartner >= 0) releaseGrab(f, false);
   loseWeapon(f, false);
-  endForm(f);
+  if (f.form >= 0) endForm(f);
   f.captor = -1;
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;
-  if (!cfg.training) f.stocks--;
+  if (!cfg.training || trainFight) f.stocks--;
   if (freezeTimer > 0 && freezeOwner == f.id) freezeTimer = 0;  // the ultimate meter itself is kept
   f.state = FState::Dead;
   f.stateFrame = 0;
@@ -139,6 +172,10 @@ void Match::koFighter(Fighter& f) {
     f.koFrame = frame;
     f.finalSmash = false;  // nothing left to unleash it with
     f.ult = 0.0f;
+    if (cfg.training && trainFight && trainRestart == 0) {  // training fight: "GAME!", then it starts over
+      emit(EvType::GameSet, {}, -1);
+      trainRestart = 150;
+    }
   }
 }
 
@@ -159,6 +196,7 @@ void Match::respawnFighter(Fighter& f) {
   f.groundPlat = -1;
   f.airJumps = f.def->airJumps;
   f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
+  for (int& c : f.moveCooldown) c = 0;
   f.lastHitBy = -1;
   f.facing = 1;
   setState(f, FState::Respawn);
@@ -167,15 +205,18 @@ void Match::respawnFighter(Fighter& f) {
 
 void Match::checkEnd() {
   if (fighters.size() < 2 || cfg.training) return;
-  int alive = 0, last = -1;
+  int alive = 0, last = -1;  // teams still standing (a fighter is its own team out of team battles)
   for (const auto& f : fighters)
     if (!f.eliminated) {
-      ++alive;
+      bool counted = false;
+      for (const auto& g : fighters) counted = counted || (g.id < f.id && !g.eliminated && g.team == f.team);
+      if (!counted) ++alive;
       last = f.id;
     }
   if (alive <= 1) {
     finished = true;
     winner = alive == 1 ? last : -1;
+    winnerTeam = alive == 1 ? fighters[last].team : -1;
     finishFrame = frame;
     emit(EvType::GameSet, {}, winner);
   }
@@ -253,6 +294,22 @@ void Match::startFinalSmash(Fighter& f) {
   emit(EvType::FinalSmash, f.center(), f.id, -1, 0.0f, {}, fx);
 }
 
+void Match::startForm(Fighter& f, int form) {
+  if (form < 0 || form >= int(f.def->forms.size())) return;
+  f.form = form;
+  f.formTimer = f.def->forms[form].duration;
+  f.formMove = f.formTimer > 0 ? -1 : f.move;
+  emit(EvType::Transform, f.center(), f.id, form, 0.0f, {}, f.def->forms[form].fx);
+}
+
+void Match::endForm(Fighter& f) {
+  if (f.form < 0) return;
+  f.form = -1;
+  f.formTimer = 0;
+  f.formMove = -1;
+  emit(EvType::FormEnd, f.center(), f.id);
+}
+
 void Match::resetPositions() {
   projectiles.clear();
   items.clear();
@@ -274,9 +331,9 @@ void Match::resetPositions() {
     f.fastFall = f.airDodgeUsed = f.sideSpecialUsed = false;
     f.finalSmash = false;
     f.ult = 0.0f;
-    loseWeapon(f, false);
-    endForm(f);
     f.captor = -1;
+    loseWeapon(f, false);
+    if (f.form >= 0) endForm(f);
     setState(f, FState::Air);
   }
   freezeTimer = 0;
@@ -288,6 +345,8 @@ std::vector<int> Match::ranking() const {
   std::stable_sort(ids.begin(), ids.end(), [&](int a, int b) {
     const Fighter& fa = fighters[a];
     const Fighter& fb = fighters[b];
+    if (cfg.teams && winnerTeam >= 0 && (fa.team == winnerTeam) != (fb.team == winnerTeam))
+      return fa.team == winnerTeam;  // the winning team first
     if (fa.eliminated != fb.eliminated) return !fa.eliminated;
     if (fa.eliminated) return fa.koFrame > fb.koFrame;
     if (fa.stocks != fb.stocks) return fa.stocks > fb.stocks;

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "c584fa3b-40ad-4a01-9c31-071f562d5f20",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:cf71ec25-f5d3-4f6a-a13e-dacd81593850",
+  "description": "jumps straight up holding the straight sword, tucks the knees up in mid-air, the sword held ready The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Sasuke, a young ninja with spiky dark blue hair, an open white kimono shirt, a thick purple rope belt and dark blue pants",
+  "initial_pose": "fighting stance facing right, holding a straight sword forward in the right hand"
+ },
+ "reply": "id: c584fa3b-40ad-4a01-9c31-071f562d5f20\njob_id: c584fa3b-40ad-4a01-9c31-071f562d5f20\ndescription: jumps straight up holding the straight sword, tucks the knees up in mid-air, the sword held ready The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c584fa3b-40ad-4a01-9c31-071f562d5f20\")\nasset_id: c8cb0ca7-036f-577c-bfa4-b142aad4d15b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/sasuke/drawsword/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

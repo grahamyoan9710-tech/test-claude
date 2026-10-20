@@ -15,12 +15,18 @@ struct Options {
   bool training = false;         // with --screen css: training character select
   int stage = -1;
   int tab = 0;                   // with --screen settings: tab to open
-  std::string screen;            // title | menu | css | stage | results | settings
+  std::string screen;            // title | menu | css | stage | results | settings | poses | anim
   std::vector<std::pair<int, std::string>> shots;  // frame -> screenshot path
+  int recordFrom = -1, recordTo = -1, recordEvery = 1;  // --record: a run of frames saved as DIR/f_NNNNN.png
+  std::string recordDir;
   int quitAfter = -1;
   int pauseAt = -1;              // open the pause menu at this frame (screenshots)
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
+  bool teams = false;  // --teams: team battle (red against blue) for this run
+  bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
+  int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
+  int weaponShow = -1;           // --weapon SLOT: the demo's first fighter keeps that weapon in hand (its kit)
 };
 
 class MatchScreen {
@@ -32,6 +38,9 @@ class MatchScreen {
   const Match& match() const { return m_; }
   bool training() const { return m_.cfg.training; }
   void forcePause() { paused_ = true; }
+  // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
+  void showUltimate(int slot);
+  void showWeapon(int slot) { weaponShow_ = slot; }
 
  private:
   void updateCamera(bool snap);
@@ -58,6 +67,9 @@ class MatchScreen {
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;
   bool debug_ = false;
+  int ultShow_ = -2;
+  int weaponShow_ = -1;
+  bool ultFired_ = false;
   float time_ = 0.0f;
   // Training: combo counter per fighter
   std::vector<float> prevPercent_;
@@ -69,13 +81,22 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { Title, MainMenu, CharSelect, StageSelect, Match, Results, Settings };
+enum class Screen { Title, MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
   int device = kKeyboard1;
   int character = 0;
   int level = 5;
+  bool random = false;  // a fighter drawn at random when the match starts
+  int team = -1;        // team battles: 0 red, 1 blue (-1: cards 1-2 red, 3-4 blue)
+};
+
+// A cursor on the character select, one per input device: each player moves their own.
+struct CssCursor {
+  bool on = false;
+  int col = 0, row = 1;  // card and field (-1: the rules on top, 0 type, 1 fighter, 2 device / level)
+  int rule = 0;          // which rule, on row -1
 };
 
 class App {
@@ -110,12 +131,21 @@ class App {
   void changeField(int col, int row, int delta, int by = -1);
   bool padJoins();
   int activeSlots() const;
+  bool readyToFight() const;  // enough fighters (and, in a team battle, two teams)
+  int slotTeam(int i) const { return slots_[i].team >= 0 ? (slots_[i].team & 1) : i / 2; }
+  int ownedCard(int device) const;          // the card this device plays (-1: none)
+  void layoutCss() const;                   // where each player stands on the character select
+  bool teamBattle() const;                  // a team battle (the rule, or --teams)
+  bool canPick(int col, int device) const;  // may this device change the fighter of that card
+  void stepFighter(int col, int delta);     // next / previous fighter of a card ("?" = random included)
   // screens (screen_results.cpp)
   void updateResults(const MenuNav& nav);
   void drawResults();
   // screens (screen_settings.cpp)
   void updateSettings(const MenuNav& nav);
   void drawSettings();
+  void drawPoses();      // development sheet (--screen poses)
+  void drawAnimSheet();  // development filmstrips (--screen anim)
   int settingsRowCount() const;
   void changeSetting(int row, int delta);
 
@@ -143,8 +173,11 @@ class App {
   bool training_ = false;
   std::array<SlotSetup, 4> slots_;
   int stage_ = 0;
-  int cssCol_ = 0, cssRow_ = 1;
+  int cssCol_ = 0, cssRow_ = 1;  // the card and field under the mouse
   int rulesCol_ = 0;
+  std::array<CssCursor, kDeviceCount> cssCur_{};
+  bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random
+  bool teamsForced_ = false;  // --teams
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
@@ -164,8 +197,10 @@ class App {
     bool cpu;
     int kos, falls;
     float damage;
+    int team = -1;  // team battles: the fighter's team
   };
   std::vector<ResultRow> results_;
   int winnerChar_ = -1, winnerPalette_ = 0, winnerPort_ = 0;
   bool winnerCpu_ = false;
+  int winnerTeam_ = -1;  // team battles: the team that won
 };

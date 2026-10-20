@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "c9a80d81-3cbf-4b03-b3c4-36654ac91336",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a0f00551-6201-4641-9629-93a84ab78b06",
+  "description": "breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Kenpachi Zaraki from Bleach, a very tall man with spiky black hair tied with bells, an eyepatch, a torn white captain haori over a black robe, holding a long jagged katana",
+  "initial_pose": "hunched leaning stance facing right, a long jagged notched katana held low and forward in his right hand, torn white haori hanging from his shoulders"
+ },
+ "reply": "id: c9a80d81-3cbf-4b03-b3c4-36654ac91336\njob_id: c9a80d81-3cbf-4b03-b3c4-36654ac91336\ndescription: breaks into a fast ninja run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c9a80d81-3cbf-4b03-b3c4-36654ac91336\")\nasset_id: 13e9e069-233d-55cf-8a7d-67a0ab3933ab\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/kenpachi_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

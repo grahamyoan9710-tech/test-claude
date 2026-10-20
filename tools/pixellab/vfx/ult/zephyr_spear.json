@@ -1,0 +1,287 @@
+{
+ "frames": [
+  {
+   "filename": "zephyr-wind-spear-yuno 0.png",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 1.png",
+   "frame": {
+    "x": 226,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 2.png",
+   "frame": {
+    "x": 452,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 3.png",
+   "frame": {
+    "x": 678,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 4.png",
+   "frame": {
+    "x": 0,
+    "y": 48,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 5.png",
+   "frame": {
+    "x": 226,
+    "y": 48,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 6.png",
+   "frame": {
+    "x": 452,
+    "y": 48,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 7.png",
+   "frame": {
+    "x": 678,
+    "y": 48,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 8.png",
+   "frame": {
+    "x": 0,
+    "y": 96,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  },
+  {
+   "filename": "zephyr-wind-spear-yuno 9.png",
+   "frame": {
+    "x": 226,
+    "y": 96,
+    "w": 226,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 226,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 226,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.8672566371681416,
+    "y": 0.5
+   },
+   "duration": 67
+  }
+ ],
+ "meta": {
+  "app": "PixelLab VFX Creator",
+  "image": "zephyr-wind-spear-yuno.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 904,
+   "h": 144
+  },
+  "scale": "1",
+  "anchor": {
+   "kind": "origin",
+   "x": 196,
+   "y": 24
+  },
+  "frameTags": [
+   {
+    "name": "zephyr-wind-spear-yuno",
+    "from": 0,
+    "to": 9,
+    "direction": "forward"
+   }
+  ]
+ }
+}

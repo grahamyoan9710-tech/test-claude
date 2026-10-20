@@ -31,5 +31,10 @@ class CpuBrain {
   int chargeHold_ = 0;
   Vec2 chargeDir_;
   int waitTimer_ = -1;
+  int projCooldown_ = 0;  // frames before firing another projectile special (no spamming)
+  int crossTimer_ = 0;    // jumping over a gap toward the target: make for the ledges on that side
+  int ultKey_ = -1;       // the opponent's ultimate already seen, and whether to shield it
+  bool ultBlock_ = false;
+  float crossDir_ = 0.0f;
   int dummy_ = kDummyCpu;
 };

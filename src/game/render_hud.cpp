@@ -86,7 +86,7 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     DrawCircleV({x + 50, y + 46}, 36, withAlpha(ui::kInk, 0.5f));
     DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
     DrawRing({x + 50, y + 46}, 37, 38.5f, 0, 360, 36, withAlpha(ui::kGold, 0.5f));
-    drawPortrait(*f.def, f.palette, {x + 50, y + 44}, 62, time + f.id);
+    drawPortraitDisc(*f.def, f.palette, {x + 50, y + 46}, 36, time + f.id);
     if (const WeaponDef* w = f.weaponDef()) {  // held weapon: badge on the portrait, ring = time left
       const Vector2 b{x + 80, y + 72};
       const Color c = hitFxColor(w->fx), g = hitFxGlow(w->fx);
@@ -98,7 +98,15 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       DrawRing(b, 13.5f, 16.5f, -90, -90 + 360 * left, 32, blink ? WHITE : g);
       const float len = std::max(12.0f, weaponVisualLength(w->visual)) * 0.26f;
       const Vec2 dir = Vec2{0.7f, -0.7f}.norm();
-      drawWeaponVisual(w->visual, W(b) - dir * (len * 0.5f), dir, 0.26f, 1.0f, time);
+      WeaponStyle st;
+      st.icon = true;
+      drawWeaponStyled(w->visual, W(b) - dir * (len * 0.5f), dir, 0.26f, 1.0f, time, st);
+      if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging (Amaterasu)
+        DrawCircleV(b, 13.5f, withAlpha(ui::kInk, 0.65f));
+        char sec[16];
+        std::snprintf(sec, sizeof sec, "%d", (f.moveCooldown[NSpecial] + 59) / 60);
+        drawTextOutlined(sec, b.x - textWidth(sec, 16) * 0.5f, b.y - 9, 16, ui::kCream, ui::kInk, 2.0f);
+      }
     }
 
     char label[16];
@@ -125,7 +133,7 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       float w = textWidth(pct, size, FontKind::Title);
       drawTextOutlined(pct, x + 180 - w + jx, y + 30 + jy, size, col, ui::kInk, 4.0f, FontKind::Title);
       drawTextOutlined("%", x + 184 + jx, y + 50 + jy, 26, col, ui::kInk, 3.0f, FontKind::Title);
-      if (!m.cfg.training) {
+      if (!m.cfg.training || m.trainFight) {
         for (int i = 0; i < std::min(f.stocks, 6); ++i) {
           Vector2 c{x + 104.0f + i * 17.0f, y + 78.0f};
           DrawCircleV(c, 7, ui::kInk);
@@ -159,8 +167,8 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
     DrawCircleV(b, 39, withAlpha({235, 240, 250, 255}, 0.9f));
     float scale = 52.0f / f.def->height;
     Pose pose = computePose(f, m, time);
-    drawCharacter(*f.def, f.palette, pose, {b.x, b.y + f.def->height * scale * 0.5f}, f.facing, scale, 1.0f, WHITE,
-                  f.flash > 0 ? 0.5f : 0.0f, time);
+    drawCharacterSprite(*f.def, f.palette, pose, {b.x, b.y + f.def->height * scale * 0.5f}, f.facing, scale, 1.0f, WHITE,
+                        f.flash > 0 ? 0.5f : 0.0f, time);
     float dist = (W(sp) - W(b)).len();
     if (dist > 200.0f) drawTextCentered(TextFormat("%dm", int(dist / 30.0f)), b.x, b.y + 46, 14, WHITE);
   }

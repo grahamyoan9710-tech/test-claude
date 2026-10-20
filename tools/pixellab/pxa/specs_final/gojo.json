@@ -1,0 +1,172 @@
+{
+ "guard_pose": "relaxed upright stance facing right, one hand raised in front of his chest with the index and middle fingers up, the other arm hanging loose, black blindfold over his eyes",
+ "armed": "magic",
+ "skip": [],
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "effortless jab: snaps the raised hand forward into a fast straight punch, then brings it back up with two fingers raised into the relaxed stance"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "fast cross punch: throws the other fist straight forward with a light twist of the hips, then back into the relaxed stance"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "fast front kick: lifts the front knee and kicks straight forward at belly height with a flash of blue cursed energy, then back into the stance"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "Blue-boosted rush: is pulled forward in a blur by blue cursed energy and drives a flying knee straight ahead with a burst of blue light, then lands and stands back up in the relaxed stance"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Blue-charged punch: draws one fist far back as blue cursed energy swirls around it, then drives it straight forward at full extension with a burst of blue cursed energy, then recovers into the relaxed stance"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "upward smash: crouches slightly, then springs up on his toes and strikes straight upward above his head with a burst of blue cursed energy, then lands back in the stance"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "low split kicks: drops low and kicks fast in front at foot level, then spins and kicks behind him, flashes of blue cursed energy at each foot, then back into the stance"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "neutral aerial: spins once in mid-air with a ring of blue cursed energy flashing around his body, then opens up again"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "forward aerial: a powerful flying kick straight forward in mid-air with a burst of blue cursed energy at the foot, then pulls the leg back in"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "down aerial: stomps straight down beneath him with both feet in mid-air with a burst of blue cursed energy, then pulls the legs back up"
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Reversal Red: raises his hand and points the index finger forward, a small bright red orb of cursed energy condenses at the fingertip, then it shoots straight forward with a red flash and his hand snaps back from the recoil, then he lowers the hand into the relaxed stance"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Lapse Blue: holds one hand forward with the index and middle fingers raised, a swirling blue orb of cursed energy forms just in front of the fingertips, tugging his hair and clothes toward it, he nudges it forward and lets it drift away, then he slowly lowers the hand into the relaxed stance"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   null,
+   false,
+   "up",
+   "teleport: stands calmly, then vanishes instantly in a flicker of blue cursed energy leaving a fading afterimage, and reappears in mid-air with a small burst of blue light around his body, arms relaxed, clothes fluttering"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Infinity: raises one hand in front of him with two fingers up, perfectly calm, a faint transparent shimmering ripple of blue-white cursed energy hangs in the air just in front of his hand, he holds it, then pushes the hand forward and the ripple bursts outward in a short blue shockwave, then returns to the relaxed stance"
+  ],
+  "ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Maximum output Blue: raises one hand high with the index and middle fingers up as blue cursed energy spirals up his arm, then points the two fingers forward, a crackling swirling blue orb of cursed energy grows at his fingertips, pulling his hair and clothes toward it, it spins faster and faster while he holds the pose, then it collapses in a burst of blue light, then he lowers the hand into the relaxed stance"
+  ],
+  "w0_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Hollow Purple: a small blue orb of cursed energy glows at the fingertips of one hand and a small red orb in the other, he brings both hands together in front of his chest and the orbs merge into a crackling purple sphere, then he flicks two fingers forward and the purple sphere shoots straight ahead, then he lowers the hand into the relaxed stance"
+  ],
+  "w0_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Hollow technique, Purple: stretches one arm back as a blue orb of cursed energy forms at its fingertips, stretches the other arm forward as a red orb forms at its fingertips, then brings both hands together in front of his chest, the two orbs collide into a crackling purple sphere about the size of his torso while his hair and clothes whip around, he holds it, then points two fingers forward and the purple sphere launches straight ahead, then he lowers the hand into the relaxed stance"
+  ],
+  "w1_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "around",
+   "Domain Expansion, Infinite Void: raises one hand in front of his face and crosses the middle finger over the index finger in the domain hand sign, holds it perfectly still with a calm smile as rings of white-blue cursed energy pulse outward from his body again and again, then flicks the hand forward with a final flash of white light, then lowers it into the relaxed stance"
+  ]
+ },
+ "state_fixes": {
+  "walk": [
+   8,
+   "guard",
+   true,
+   true,
+   "none",
+   "walks forward calmly to the right in side profile, one hand still raised in front of his chest with two fingers up, the other arm loose: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time exactly like the first frame, a seamless two-step walk cycle that ends exactly on the first pose"
+  ],
+  "crouch": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "squats down very low on the spot: knees fully bent, hips dropped almost to the heels, back bent forward, one hand still raised with two fingers up"
+  ]
+ },
+ "notes": "makeGojo: buildBrawlerNormals(S=1.04, P=1.26, fx=Cursed) -> jab3 exists; no baseWeapon. Overrides: jabs from the raised two-finger hand, blue cursed energy on the moves that carry the Cursed fx (jab3, dashattack, smashes, fair, dair) + nair; ftilt/utilt/dtilt/bair/uair stay generic kicks/uppercut. Timings: nspecial Red: projectile at f16/40 (explodes, pose Cast); sspecial Blue: slow piercing orb that pulls, at f16/58 (long end lag, pose Raise); uspecial teleports 280 px at f18/38 (stick direction), intangible f6-20, body hit f20-24, helpless -> pin None, ends in the air; dspecial Infinity: counter + reflect f3-30, impact burst f30-34/54 (pose HandSign). Weapons: w0 'Technique : Violet' replaces nspecial (Purple, piercing, at f24/52) + jab + ultimate (VIOLET IMAGINAIRE: huge purple orb at f64/104). w1 'Six Yeux' (blindfold off: stat boost only) replaces only jab + ultimate (EXTENSION: SPHERE DE L'INFINI: holds everyone in place f34, 4 hits from f44, launcher f90-94/110; the void itself is drawn by the game, UltFx::InfiniteVoid). Base ultimate BLEU PUISSANCE MAXIMALE: an orb appears ON the nearest foe at f36 (+18 f warning), pulls, explodes -> the clip keeps the orb at his fingertips. The blindfold stays on in every clip (the guard has it; Six Eyes is a weapon pickup). Source: Red/Blue/Purple colours, the two-finger poses and the crossed-fingers domain sign follow JJK; Red is written as a fingertip shot (anime: a repelling blast). state_fixes: suggested walk/crouch texts (the generic ones raise both fists); not applied by clips.py."
+}

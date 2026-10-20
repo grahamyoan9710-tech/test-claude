@@ -1,0 +1,212 @@
+{
+ "guard_pose": "low ready stance facing right, gripping a huge black notched greatsword at his hip, the long blade angled up and forward",
+ "armed": "greatsword",
+ "skip": [
+  "jab3"
+ ],
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "quick straight thrust: drives the huge black greatsword straight forward at full extension, then pulls it back into the stance The whole blade stays inside the picture."
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "diagonal slash: swings the huge black greatsword from high in front down to low in front in one fast cut, then back into the stance The whole blade stays inside the picture."
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "big forward cut: lifts the huge black greatsword above his head and brings it straight down to low in front of him, then back into the stance The whole blade stays inside the picture."
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "overhead arc: sweeps the huge black greatsword from in front of him up over his head to behind him, then back into the stance The whole blade stays inside the picture."
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "crouching low cut: drops into a crouch and sweeps the huge black greatsword low in front at shin height, then rises back into the stance The whole blade stays inside the picture."
+  ],
+  "dashattack": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "running slash: lunges forward with a long stride and swings the huge black greatsword across in a wide horizontal cut, then stops and settles back into the stance The whole blade stays inside the picture."
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "charged smash: raises the huge black greatsword far behind his head, black anti-magic crackling like black lightning over the blade, then brings it down in a tremendous cut to the front, then recovers into the stance The whole blade stays inside the picture."
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising smash: crouches, then swings the huge black greatsword in a big arc from in front straight up over his head, black anti-magic crackling like black lightning trailing the blade, then back into the stance The whole blade stays inside the picture."
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "low spinning cut: slashes the huge black greatsword low in front, then spins around and slashes low behind him, black anti-magic crackling like black lightning, then back into the stance The whole blade stays inside the picture."
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "double cut in mid-air: chops the huge black greatsword down in front of him, then swings it back up, the blade circling close around his body, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "crescent cut in mid-air: swings the huge black greatsword in a big arc from above his head down to below him in front, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "bair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "backward cut in mid-air: twists his torso and swings the huge black greatsword behind him in a downward arc, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "uair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "overhead arc in mid-air: swings the huge black greatsword from behind him over his head to the front, then back to the tucked pose The whole blade stays inside the picture."
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "downward stab in mid-air: points the huge black greatsword straight down beneath him and plunges it down, then pulls it back up to the tucked pose The whole blade stays inside the picture."
+  ],
+  "ledgeattack": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "rises from a low crouch with a quick low horizontal cut of the huge black greatsword forward at knee height, then back into the stance The whole blade stays inside the picture."
+  ],
+  "getupattack": [
+   8,
+   "knockdown@last",
+   "guard",
+   false,
+   "around",
+   "from lying on his back, swings the huge black greatsword low across in front of him, then low behind him while springing to his feet, ending in the stance The whole blade stays inside the picture."
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "anti-magic slash: raises the huge black greatsword over his head with both hands as black anti-magic gathers on the blade, then cuts down to the front and a black crescent of anti-magic edged with white crackles flies off the blade straight forward, then he recovers into the stance The whole blade stays inside the picture."
+  ],
+  "sspecial": [
+   16,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Black Meteorite rush: crouches, then charges forward wrapped in a swirling black anti-magic aura with the greatsword thrust ahead, strikes three fast blows, then a final rising slash, then skids to a stop and settles back into the stance The whole blade stays inside the picture."
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   null,
+   false,
+   "up",
+   "Black Hurricane: crouches, then springs upward spinning like a drill, the greatsword whirling around him in a tight tornado of black anti-magic, ending in mid-air with the sword raised above his head, legs dangling"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "anti-magic deflection: braces and holds the huge greatsword flat across in front of his body like a shield, black anti-magic flickering along the blade, holds the block for a moment, then swings it forward like a bat to send the spell back, then returns to the stance The whole blade stays inside the picture."
+  ],
+  "ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Black Divider: black anti-magic flares over his body and the greatsword like black flames, he dashes forward and slashes four times in quick succession, then winds up and swings one huge horizontal cut that launches a big black crescent of anti-magic forward, then the aura fades and he returns to the stance The whole blade stays inside the picture."
+  ],
+  "w0_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Demon-Slayer cleave: raises the huge Demon-Slayer Sword high behind his head with both hands as thick black anti-magic gathers on it, then slams it down to the front and a large black crescent of anti-magic flies straight forward, then he recovers into the stance The whole blade stays inside the picture."
+  ],
+  "w0_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "down",
+   "Black Meteorite: wrapped in black anti-magic, he springs upward slashing upward with the Demon-Slayer Sword several times, then raises it over his head with both hands and plunges straight down like a black meteor, slamming the blade down in front of him with a burst of black anti-magic, then rises back into the stance The whole blade stays inside the picture."
+  ],
+  "w1_sspecial": [
+   16,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Black Divider: crouches, then dashes forward at blinding speed wrapped in black anti-magic, slashing five times in quick succession, then one final rising cut, then skids to a stop and settles back into the stance The whole blade stays inside the picture."
+  ],
+  "w1_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "around",
+   "Devil Union: throws his head back and roars as black anti-magic erupts around him, black devil markings spread over his skin and a black horn grows on his head, a ring of black anti-magic blasts outward close around him, then the burst settles, the markings fade and he returns to the stance"
+  ]
+ },
+ "notes": "makeAsta: buildSwordNormals(S=1.05, P=0.9, smashFx=AntiMagic) -> no jab3 (skip); baseWeapon AstaSword, weaponLength 84. Specials: nspecial BlackSlash projectile (piercing) at f14/42 (Overhead); sspecial 'Meteore noir' dash f8 speed 15, 3 hits f8-19, launcher f20-24/48 (Thrust); uspecial 'Ouragan noir' rises f4 (vy -16.5) spinning, hits f4-24/46, helpless after -> pin None, ends airborne; dspecial counter + reflect f5-26, strike f26-30/52. w0 'Epee pourfendeuse' (DemonSlayer) replaces nspecial (bigger, faster slash), jab (exists) and ultimate (BLACK METEORITE). w1 'Epee habitante' (DemonDweller) replaces sspecial (Black Divider: dash f6 speed 19, 5 hits, finisher f26-30/48), jab (exists) and ultimate (UNION DEMONIAQUE: awaken burst f38-44, DemonUnion form 12 s that also swaps nspecial/sspecial to the w0/w1 versions; the game draws the form, the clip returns to the guard). The w0/w1 clips start from the greatsword guard: the prompts name the weapon but PixelLab will keep the greatsword. The blade already reaches the top-right corner of the guard picture: every sword clip ends with 'The whole blade stays inside the picture.' Generic states already generated (walk 'fists raised', crouch 'fists still raised', shield 'crosses both forearms') contradict the sword guard: check them."
+}

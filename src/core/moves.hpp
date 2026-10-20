@@ -28,6 +28,8 @@ enum class HitFx : uint8_t {
   Hollow,     // green-black hollow energy (Ulquiorra: Cero Oscuras, Luz de la Luna)
   Berserk,    // Kenpachi's wild yellow reiatsu
   Water,      // water jutsu (Kakashi)
+  Wolf,       // pale blue ceros and spectral wolves (Starrk)
+  Claw,       // cyan claw slashes (Grimmjow)
   Count
 };
 
@@ -112,6 +114,12 @@ enum class ProjVisual : uint8_t {
   ZephyrSpear,  // Yuno: giant wind spear
   IceAxe,       // Kratos: Leviathan axe wrapped in frost (ultimate)
   MaxBlue,      // Gojo: maximum output blue (huge vortex)
+  GetsugaCross, // Ichigo: Getsuga Jujisho, two black crescents crossing (hollow mask)
+  Desgarron,    // Grimmjow: five claws of cyan reiatsu raking forward
+  PanteraDart,  // Grimmjow: Garra de la Pantera, a forearm blade fired like a missile
+  CeroWolf,     // Starrk: a wolf of blue cero running (or leaping on its prey)
+  StarrkCero,   // Starrk: a small blue cero (Cero Metralleta)
+  LightningHound,  // Kakashi: a hound of lightning running along the ground
   Count
 };
 
@@ -145,7 +153,13 @@ struct ProjectileDef {
   bool follow = false;     // stays on its target while it lives (black flames, vortices, petal spheres)
   int armDelay = 0;        // harmless for its first frames (the warning before a strike from the sky)
   bool ignoreGround = false;  // flies through the stage (strikes from the sky, eruptions)
-  bool single = false;     // one at a time: a new one replaces the fighter's previous one (no spamming)
+  Vec2 jitter;             // random spawn offset in [-jitter, +jitter] (rains, eruptions)
+};
+
+// One more projectile fired by a move at a given frame (cinematic ultimates: a rain, then its finisher).
+struct ProjShot {
+  int frame = 0;
+  ProjectileDef def;
 };
 
 // A beam drawn from the fighter during a move (the damage comes from the move's hitboxes, see beamHits).
@@ -182,7 +196,7 @@ enum class UltFx : uint8_t {
   None,
   BlackMeteorite, BlackDivider, DemonUnion,          // Asta
   SpiritStorm, WindBladeShower, ZephyrSpear,         // Yuno
-  Mugetsu, GiantGetsuga, VastoLordeCero,             // Ichigo
+  GetsugaJujisho, GiantGetsuga, VastoLordeCero,      // Ichigo
   Kageyoshi, Gokei, Hakuteiken,                      // Byakuya
   LightDragon, MasterSwordBeam, LightArrowRain,      // Link
   DemonDragon, DemonKingRampage, GloomPillars,       // Ganondorf
@@ -195,6 +209,8 @@ enum class UltFx : uint8_t {
   UzumakiBarrage, Rasenshuriken, KuramaBijudama,     // Naruto
   Kirin, IndraArrow, Amaterasu,                      // Sasuke
   Raikiri, Kamui, KamuiShuriken,                     // Kakashi
+  GranReyCero, PanteraRelease, DesgarronClaws,       // Grimmjow
+  CeroMetralleta, LosLobos, StarrkRelease,           // Starrk
   Count
 };
 
@@ -205,13 +221,14 @@ enum class Form : uint8_t {
   SpartanRage,   // Kratos: red-hot, glowing tattoos, fists of fire
   DemonUnion,    // Asta: black skin markings, demon horn and black wing
   VastoLorde,    // Ichigo: white hollow body, horns, long orange hair, black sclera
-  FinalGetsuga,  // Ichigo: Mugetsu form, long black hair, black bandages
+  HollowMask,    // Ichigo: the Visored hollow mask over his face
   RedDemon,      // Kenpachi: bankai, red skin, horns, burning red aura
   Segunda,       // Ulquiorra: Segunda Etapa, black body, huge bat wings, tail
   KuramaAvatar,  // Naruto: golden chakra cloak with the giant fox around him
   SusanooPurple, // Sasuke: purple Susanoo around him
   SusanooBlue,   // Kakashi: blue Susanoo around him
-  DemonDragon,   // Ganondorf: (summon) the demon dragon behind him
+  Pantera,       // Grimmjow: Resurreccion, long hair, panther ears and tail, white armour, claws
+  LosLobos,      // Starrk: Resurreccion, fur-lined coat, a pistol in each hand
   Count
 };
 
@@ -253,7 +270,10 @@ struct MoveDef {
   float chargeDamageMul = 0.4f;     // damage * (1 + mul * chargeRatio)
   // Projectile
   int projectileFrame = -1;
+  int projectileRepeat = 0;         // fired again `projectileRepeat` times, every `projectileEvery` frames
+  int projectileEvery = 0;
   ProjectileDef projectile;
+  std::vector<ProjShot> shots;      // more projectiles, of other kinds
   // Defensive windows
   int intangibleStart = -1, intangibleEnd = -1;
   int armorStart = -1, armorEnd = -1;
@@ -263,8 +283,18 @@ struct MoveDef {
   float teleportDist = 0.0f;
   bool teleportForward = false;     // straight ahead instead of the stick direction
   bool turnAfterTeleport = false;   // faces back after it (strikes from behind)
+  // Use limits
+  int cooldown = 0;                 // frames from its start before it can be used again (0: none)
+  int channelEnd = -1;              // the technique is held up to this frame: its clip keeps the cast pose
   // Presentation
   int superFlash = 0;               // frames of "super freeze" when the move starts (cut-in with its name)
+  // A PixelLab effect the renderer plays behind the fighter from that frame, following it (offset from the feet,
+  // facing right): a burst of energy, an aura.
+  const char* castFx = nullptr;
+  int castFxFrame = -1;
+  Vec2 castFxAt;
+  bool castFxStays = false;         // stays where it started (a trail) instead of following the fighter
+  float castFxScale = 1.0f;         // its size (1: drawn for a fighter 170 px tall in its clips)
   PoseHint pose = PoseHint::Auto;
   BeamDef beam;
   bool reflects = false;            // a counter that sends projectiles back instead of taking them
@@ -304,6 +334,7 @@ struct Palette {
 enum class Hero : uint8_t {
   Asta, Yuno, Ichigo, Byakuya, Link, Ganondorf, Kratos, Gojo, Sukuna,
   Kenpachi, Ulquiorra, Hunter, Naruto, Sasuke, Kakashi,
+  Starrk, Grimmjow,
   Count
 };
 
@@ -348,6 +379,11 @@ enum class WeaponVisual : uint8_t {
   KakashiKunai,    // Kakashi: kunai
   SharinganEye,    // Kakashi: Sharingan (kamui)
   DoubleMangekyo,  // Kakashi: double Mangekyo (Susanoo)
+  Pantera,         // Grimmjow: his katana, teal grip
+  PanteraClaws,    // Grimmjow: claws of cyan reiatsu on both hands (power-up)
+  LobosPack,       // Starrk: spectral wolves running round him (power-up)
+  Lilynette,       // Starrk: Lilynette, the other half of his soul, floating at his side (power-up)
+  LobosPistol,     // Starrk: a pistol of Los Lobos (drawn in both hands while released)
   Count
 };
 
@@ -363,12 +399,16 @@ struct WeaponDef {
   float blade = 0.0f;         // > 0: blade length (grip to tip) while held, else the fighter's blade * reachMul
   int duration = 60 * 18;     // frames before it vanishes
   std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while held (its ultimate included)
+  // A full kit: every ground attack is its M1 combo (jab, jab2, jab3), every aerial its air M1 (nair); its specials
+  // are its 4 skills.
+  bool kit = false;
 };
 
 // A transformation: started by a move (MoveDef::formIndex), lasts `duration` frames (0 = until that move ends).
 struct FormDef {
   Form form = Form::None;
   int duration = 0;
+  HitFx fx = HitFx::Normal;   // element of the base attacks while transformed (Normal = unchanged)
   float damageMul = 1.0f;     // every hit
   float kbTakenMul = 1.0f;    // knockback received
   bool superArmor = false;    // weak hits do not make it flinch
@@ -398,6 +438,10 @@ struct CharacterDef {
 };
 
 const std::vector<CharacterDef>& roster();
+// The hitboxes of the moves drawn by generated clips are moved onto what the clips draw (core/roster_hitfit.inc,
+// written by `super_clash --fit-hitboxes`). That tool sets this before the first roster() call to get the hitboxes
+// as written in the roster, the fit not applied.
+extern bool g_rawHitboxes;
 
 // --- helpers used to author the roster (roster_normals.cpp) ---------------
 HitboxDef hb(int start, int end, float ox, float oy, float radius, float dmg, float angle,
@@ -406,6 +450,12 @@ MoveDef mv(const char* name, int duration, std::vector<HitboxDef> boxes, int lan
 // Generic normal attacks, scaled by body size (S) and power (P).
 void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx);
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx = HitFx::Slash);
+// A weapon's kit M1 with a blade (WeaponDef::kit): jab, jab2, jab3 and the air M1 (nair).
+void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, bool thrust2 = false, int airCuts = 2);
+// ... with a lance: two thrusts, a rising sweep and two thrusts in the air.
+void addLanceKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f);
+// ... with fists, feet or chakra.
+void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed = 1.0f, float reach = 1.0f, bool upper = false);
 // A blade swing hitbox: sweeps from a0 to a1 degrees, hits from reach0 to reach1 of the blade.
 HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1, float radius, float dmg, float angle,
              float bkb, float kbg, int group = 0, HitFx fx = HitFx::Slash);

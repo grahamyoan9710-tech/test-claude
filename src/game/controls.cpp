@@ -334,6 +334,8 @@ InputState readDevice(int d) {
     in.grab = down(kActGrab, KEY_KP_5);
     in.smash = down(kActSmash, KEY_KP_4);
     in.ultimate = down(kActUltimate, KEY_KP_6);
+    in.tapJump = settings().tapJump;  // the Up key jumps too (Paramètres > Jeu)
+    in.digital = true;
   } else if (d >= kPad1 && d < kDeviceCount && padConnected(d - kPad1)) {
     const Pad& p = g_pads[d - kPad1];
     in.stick = p.stick;
@@ -356,6 +358,7 @@ InputState readDevice(int d) {
     in.shield = held(kActShield);
     in.smash = held(kActSmash);
     in.ultimate = held(kActUltimate);
+    in.tapJump = settings().tapJump && !p.down[kPadUp];  // the stick jumps, the d-pad does not
   }
   return in;
 }
@@ -395,9 +398,9 @@ PadFamily padFamily(int p) { return padConnected(p) ? g_pads[p].family : PadFami
 int padBinding(int p, int action, int slot) {
   if (action < kActJump || action >= kActionCount || slot < 0 || slot > 1) return -1;
   const Settings& s = settings();
-  if (s.padIsDefault() && !padHasTriggers(p)) {  // SNES-style pads: RB shields, Back = ultimate
+  if (s.padIsDefault() && !padHasTriggers(p)) {  // SNES-style pads: RB shields, LB grabs
     if (action == kActShield) return slot == 0 ? kPadRB : -1;
-    if (action == kActUltimate) return slot == 0 ? kPadBack : -1;
+    if (action == kActGrab) return slot == 0 ? kPadLB : -1;
   }
   return s.pad[action][slot];
 }
@@ -460,5 +463,41 @@ MenuNav readMenuNav() {
   nav.down = out[1];
   nav.left = out[2];
   nav.right = out[3];
+  return nav;
+}
+
+MenuNav readMenuNavFor(int device) {
+  static int held[kDeviceCount][4] = {};
+  MenuNav nav;
+  if (device < 0 || device >= kDeviceCount) return nav;
+  bool dir[4] = {};
+  if (device == kKeyboard1) {
+    dir[0] = IsKeyDown(KEY_W), dir[1] = IsKeyDown(KEY_S), dir[2] = IsKeyDown(KEY_A), dir[3] = IsKeyDown(KEY_D);
+    nav.confirm = anyPressed({KEY_SPACE, KEY_J});
+    nav.prev = IsKeyPressed(KEY_K);
+    nav.start = IsKeyPressed(KEY_ENTER);
+  } else if (device == kKeyboard2) {
+    dir[0] = IsKeyDown(KEY_UP), dir[1] = IsKeyDown(KEY_DOWN), dir[2] = IsKeyDown(KEY_LEFT), dir[3] = IsKeyDown(KEY_RIGHT);
+    nav.confirm = anyPressed({KEY_PERIOD, KEY_KP_1});
+    nav.prev = anyPressed({KEY_SLASH, KEY_KP_2});
+    nav.start = IsKeyPressed(KEY_KP_ENTER);
+  } else {
+    const int i = device - kPad1;
+    const Pad& p = g_pads[i];
+    if (p.joy >= 0) {
+      for (int k = 0; k < 4; ++k) dir[k] = p.menuDir[k] || p.down[kPadUp + k];
+      nav.confirm = padPressed(i, kPadA);
+      nav.prev = padPressed(i, kPadX);
+      nav.start = padPressed(i, kPadStart);
+    }
+  }
+  bool out[4];
+  for (int k = 0; k < 4; ++k) {
+    int& h = held[device][k];
+    h = dir[k] ? h + 1 : 0;
+    out[k] = h == 1 || (h > 18 && h % 6 == 0);  // key repeat
+  }
+  nav.up = out[0], nav.down = out[1], nav.left = out[2], nav.right = out[3];
+  if (nav.confirm || nav.start) nav.device = device;
   return nav;
 }

@@ -61,9 +61,17 @@ ASTUCES
   portrait flotte au-dessus). Marchez dessus avec ce combattant pour la
   ramasser : plus de puissance, plus d'allonge et des spéciales changées
   pendant une vingtaine de secondes. (Réglage ARMES dans la sélection.)
-- 9 combattants : Asta et Yuno (Black Clover), Ichigo et Byakuya (Bleach),
-  Link et Ganondorf (Zelda TOTK), Kratos (God of War), Gojo et Sukuna
-  (Jujutsu Kaisen). Projet de fan non officiel.
+  Chaque arme change aussi l'ULTIME : 3 ultimes différents par combattant !
+- 17 combattants : Asta et Yuno (Black Clover), Ichigo, Byakuya, Kenpachi,
+  Ulquiorra, Grimmjow et Starrk (Bleach), Naruto, Sasuke et Kakashi (Naruto),
+  Gojo et Sukuna (Jujutsu Kaisen), Link et Ganondorf (Zelda TOTK), Kratos
+  (God of War) et le Chasseur (Monster Hunter). Projet de fan non officiel.
+- 11 arènes, dont 2 par anime : Las Noches et le Seireitei (Bleach), le
+  repaire du Taureau Noir et la Tour des Grimoires (Black Clover), Shibuya et
+  le lycée Jujutsu (Jujutsu Kaisen), Konoha et la Vallée de la Fin (Naruto).
+- Ordinateurs du niveau 1 au niveau 10 (le niveau 10 frappe deux fois plus fort).
+- Les combattants sont en pixel art (Paramètres > Affichage pour revenir au
+  dessin lisse).
 - Le mode Entraînement permet de s'exercer contre un mannequin.
 
 Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.

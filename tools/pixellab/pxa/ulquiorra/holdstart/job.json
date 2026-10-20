@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "64094372-31f3-487e-96af-0796e82a9787",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:9cc66894-b34d-47ae-8e96-9e35ad0ed1bd",
+  "description": "pulls his right hand out of his coat pocket and thrusts the right arm straight forward at shoulder height, the hand closing on the collar of an invisible opponent in front of him, ending with the right arm fully extended forward, holding it at arm's length, the left hand still in his pocket. Only Ulquiorra is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ulquiorra Cifer from Bleach, a pale thin arrancar with black hair, a broken white helmet on his head, green tear lines, a long white coat with black trim",
+  "initial_pose": "calm upright stance facing right, arms lowered with both hands in the pockets of his long white coat"
+ },
+ "reply": "id: 64094372-31f3-487e-96af-0796e82a9787\njob_id: 64094372-31f3-487e-96af-0796e82a9787\ndescription: pulls his right hand out of his coat pocket and thrusts the right arm straight forward at shoulder height, the hand closing on the collar of an invisible opponent in front of him, ending with the right arm fully extended forward, holding it at arm's length, the left hand still in his pocket. Only Ulquiorra is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"64094372-31f3-487e-96af-0796e82a9787\")\nasset_id: b055e1de-af1b-56de-89e8-8dd7839cc4e4\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/ulquiorra_guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

@@ -1,0 +1,6 @@
+# secrets: never commit
+px/
+el/
+.token
+.key
+__pycache__/

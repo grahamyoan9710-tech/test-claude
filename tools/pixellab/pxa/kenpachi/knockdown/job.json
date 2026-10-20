@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "535843e7-4f48-49b5-b3d5-c917bcbcc289",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:994cfda6-837d-4bea-b138-60c2982b9fa9",
+  "description": "is knocked off his feet and falls flat on his back on the ground, ending lying down He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Kenpachi Zaraki from Bleach, a very tall man with spiky black hair tied with bells, an eyepatch, a torn white captain haori over a black robe, holding a long jagged katana",
+  "initial_pose": "hunched leaning stance facing right, a long jagged notched katana held low and forward in his right hand, torn white haori hanging from his shoulders"
+ },
+ "reply": "id: 535843e7-4f48-49b5-b3d5-c917bcbcc289\njob_id: 535843e7-4f48-49b5-b3d5-c917bcbcc289\ndescription: is knocked off his feet and falls flat on his back on the ground, ending lying down He keeps holding a long jagged katana the whole time; the weapon stays visible. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"535843e7-4f48-49b5-b3d5-c917bcbcc289\")\nasset_id: 7c8fbdab-a40a-5716-975d-bc1477cf6275\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/kenpachi_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

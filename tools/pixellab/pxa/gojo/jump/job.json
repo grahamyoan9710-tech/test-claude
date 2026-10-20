@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "6ebef88b-13ce-427d-adc2-614dd531251d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:be8b5f29-14e2-4818-a7be-deeeecb4e7e8",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Satoru Gojo from Jujutsu Kaisen, a tall man with spiky white hair and a black blindfold, a dark navy high-collared uniform",
+  "initial_pose": "relaxed upright stance facing right, one hand raised in front of his chest with the index and middle fingers up, the other arm hanging loose, black blindfold over his eyes"
+ },
+ "reply": "id: 6ebef88b-13ce-427d-adc2-614dd531251d\njob_id: 6ebef88b-13ce-427d-adc2-614dd531251d\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6ebef88b-13ce-427d-adc2-614dd531251d\")\nasset_id: 6a5ab9b8-8873-5e32-bc1d-1ed42d7c0b27\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/gojo_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

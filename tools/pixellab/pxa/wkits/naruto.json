@@ -1,0 +1,169 @@
+{
+ "notes": "Naruto's kits (v9.6). Both are powers with nothing in hand: their states reuse his own state prompts with the mode's look (subject, guard picture w<slot>guard). The Odama Rasengan sphere is drawn in its clip; the Rasenshuriken and the Tailed Beast Bomb are drawn by the game.",
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": null,
+   "wguard": "orange pigment spreads around his eyes as he enters Sage Mode, and a long red cloak with black flame patterns along its hem appears on his shoulders over his orange and black tracksuit; he settles into a calm fighting stance, fists raised",
+   "subject": "Naruto in Sage Mode, a young ninja with spiky blond hair, orange pigment around his eyes, a long red cloak with black flame patterns along its hem worn over his orange and black tracksuit, a forehead protector with long black tails",
+   "guard_pose": "calm fighting stance facing right, fists raised, a long red cloak with black flames on his shoulders",
+   "air_pose": "in mid-air facing right, knees tucked, the red cloak fluttering",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first hit of a fast three-hit combo in Sage Mode: a straight punch with the right fist, the air rippling in front of the fist with a small yellow-orange burst of nature chakra, then back into the stance"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second hit: a fast spinning back kick at chest height, the red cloak swirling around him, then back into the stance"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "finisher: steps in and thrusts both open palms straight forward at full extension with a strong burst of yellow-orange nature chakra in front of the palms, the red cloak flapping back, then back into the stance"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "air combo: a spinning kick in mid-air, then a second spinning kick the other way, the red cloak swirling around him, then back to the tucked pose"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Odama Rasengan: holds his right arm forward at chest height, palm up, and a big glowing blue ball of swirling chakra, almost as large as his torso, appears on his palm from the third frame and stays there, spinning; then he thrusts the ball straight forward at full arm extension, then the ball fades and he returns to the stance. The big blue ball is clearly drawn on his palm in every frame from the third to the ninth, fully inside the picture"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "palm rush: dashes forward low and strikes with a powerful open palm thrust at full extension, a burst of yellow-orange nature chakra around the palm, then settles back into the stance"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "Sage leap: crouches, then leaps high into the air with a spinning rising kick, the red cloak swirling, rising the whole time, ending in mid-air with one leg raised"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "counter stance: Naruto crouches low on the spot with his knees bent wide apart and both open hands held in front of his chest, perfectly still and watchful, then lunges forward with a powerful open palm strike and a burst of yellow-orange nature chakra in front of the palm, then back into the stance. He stays human, in his red cloak and orange tracksuit, the whole time: no animal, no transformation"
+    ],
+    "w0_ultimate": [
+     28,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Sage Mode Rasenshuriken: raises his open right hand high above his head and holds it there for a long time, then throws forward with a big overhand motion, then returns to the stance. Only Naruto is drawn: nothing in his hand, no shuriken, no effect"
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": null,
+   "wguard": "his whole body ignites in a blazing golden-yellow chakra cloak with black seal markings on his chest and arms (Nine-Tails Chakra Mode), golden flames flickering off his outline; he settles into a fighting stance, fists raised",
+   "subject": "Naruto in Nine-Tails Chakra Mode, a young ninja whose whole body glows bright golden-yellow like fire, black seal markings on his chest and arms, spiky blond hair, golden flames flickering off his outline",
+   "guard_pose": "fighting stance facing right, fists raised, his whole body glowing golden-yellow",
+   "air_pose": "in mid-air facing right, knees tucked, his body glowing golden-yellow",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "first hit of a lightning-fast combo: a straight punch, a golden chakra fist flaring around his own fist, then back into the stance"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "second hit: a long-range punch, a golden chakra arm stretching out from his shoulder far ahead of his real fist, then pulling back, back into the stance. The whole chakra arm stays inside the picture"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "finisher: a rising uppercut, a huge golden chakra fist swelling around his fist as he swings it up over his head, then back into the stance. The whole chakra fist stays inside the picture"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "air combo: spins in mid-air with two golden chakra arms sweeping around his body in a full circle, then back to the tucked pose"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Rasengan with chakra arms: two golden chakra arms spring from his back and spin a swirling blue Rasengan sphere in front of him, then he thrusts it forward with both hands, then returns to the stance. The whole sphere stays inside the picture"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "shadow clones: makes the cross-shaped clone hand sign, then thrusts both hands forward to send his clones ahead, then returns to the stance. Only Naruto is drawn: no clones, no smoke"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     null,
+     false,
+     "up",
+     "golden flash leap: crouches, then shoots straight up in a streak of golden chakra, one fist raised above his head, rising the whole time"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "chakra arm grab: stretches a long golden chakra arm forward from his shoulder, its giant golden hand closing on something in front of him, then pulls the arm back into the stance. The whole chakra arm stays inside the picture. Only Naruto is drawn: no opponent"
+    ],
+    "w1_ultimate": [
+     28,
+     "guard",
+     true,
+     false,
+     "forward",
+     "Tailed Beast Bomb: glowing golden, he crouches and brings both hands together in front of his mouth as if gathering a huge ball, holds it for a long time, then thrusts both hands forward firing it, then returns to the stance. Only Naruto is drawn: no sphere, no effect"
+    ]
+   }
+  }
+ }
+}

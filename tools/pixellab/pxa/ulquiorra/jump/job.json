@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "c835c3f7-85af-4bf4-85f3-c7d18d2ca210",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6e86add6-240f-444a-8943-043e6d8a4742",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Ulquiorra Cifer from Bleach, a pale thin arrancar with black hair, a broken white helmet on his head, green tear lines, a long white coat with black trim",
+  "initial_pose": "calm upright stance facing right, arms lowered with both hands in the pockets of his long white coat"
+ },
+ "reply": "id: c835c3f7-85af-4bf4-85f3-c7d18d2ca210\njob_id: c835c3f7-85af-4bf4-85f3-c7d18d2ca210\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c835c3f7-85af-4bf4-85f3-c7d18d2ca210\")\nasset_id: cdbca9e9-ed88-5da3-b558-c2c0b8cdf924\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/ulquiorra_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

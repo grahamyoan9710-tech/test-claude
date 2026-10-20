@@ -57,7 +57,12 @@ inline Color portColor(int port) {
   return cols[port & 3];
 }
 inline Color cpuColor() { return {150, 156, 152, 255}; }
-inline Color slotColor(const Fighter& f) { return f.cpu ? cpuColor() : portColor(f.port); }
+// Team battles: red, blue.
+inline Color teamColor(int team) { return team == 1 ? Color{62, 124, 236, 255} : Color{230, 68, 56, 255}; }
+inline const char* teamName(int team) { return team == 1 ? "BLEUE" : "ROUGE"; }
+inline Color slotColor(const Fighter& f) {
+  return f.inTeam ? teamColor(f.team) : f.cpu ? cpuColor() : portColor(f.port);
+}
 
 // ---- Text ------------------------------------------------------------------
 inline float textSpacing(float size, FontKind k) { return k == FontKind::Title ? size * 0.02f : size * 0.01f; }
@@ -101,7 +106,7 @@ inline std::string upperFr(std::string s) {
       ++i;
     } else if (c == 0xC5 && i + 1 < s.size()) {
       unsigned char d = (unsigned char)s[i + 1];
-      if (d == 0x8D || d == 0x93) s[i + 1] = char(d - 1);  // ō, œ
+      if (d == 0x8D || d == 0x93 || d == 0xAB) s[i + 1] = char(d - 1);  // ō, œ, ū
       ++i;
     }
   }
@@ -125,6 +130,14 @@ inline Color hitFxColor(HitFx fx) {
     case HitFx::Ice: return {140, 220, 255, 255};
     case HitFx::Cursed: return {110, 130, 255, 255};
     case HitFx::Blood: return {214, 30, 44, 255};
+    case HitFx::Chakra: return {255, 150, 40, 255};
+    case HitFx::Lightning: return {150, 200, 255, 255};
+    case HitFx::BlackFlame: return {22, 12, 26, 255};
+    case HitFx::Hollow: return {70, 220, 130, 255};
+    case HitFx::Berserk: return {240, 214, 70, 255};
+    case HitFx::Water: return {70, 160, 240, 255};
+    case HitFx::Wolf: return {110, 170, 255, 255};
+    case HitFx::Claw: return {60, 214, 240, 255};
     default: return {255, 234, 190, 255};
   }
 }
@@ -135,6 +148,10 @@ inline Color hitFxGlow(HitFx fx) {
     case HitFx::Blood: return {255, 150, 150, 255};
     case HitFx::Cursed: return {200, 170, 255, 255};
     case HitFx::Dark: return {220, 180, 255, 255};
+    case HitFx::BlackFlame: return {200, 60, 120, 255};
+    case HitFx::Lightning: return {230, 244, 255, 255};
+    case HitFx::Wolf: return {214, 232, 255, 255};
+    case HitFx::Claw: return {210, 252, 255, 255};
     default: return mixColor(hitFxColor(fx), WHITE, 0.55f);
   }
 }

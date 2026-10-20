@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "30028401-7636-49e5-a63e-0903a68f4eb7",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:29ff5b73-ffcc-4abd-95d2-2784f9b0a83e",
+  "description": "is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Yuno, a slim young man with black hair, a white and gold Golden Dawn robe with a dark blue cape",
+  "initial_pose": "calm magic stance facing right, one hand raised forward, a small green grimoire floating behind him"
+ },
+ "reply": "id: 30028401-7636-49e5-a63e-0903a68f4eb7\njob_id: 30028401-7636-49e5-a63e-0903a68f4eb7\ndescription: is knocked off his feet and falls flat on his back on the ground, ending lying down The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"30028401-7636-49e5-a63e-0903a68f4eb7\")\nasset_id: 395c2639-624e-5823-81a6-e3296776ea79\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/yuno_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

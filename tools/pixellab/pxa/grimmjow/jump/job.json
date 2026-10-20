@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "6a49d06f-360f-421e-9964-367499e3d604",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a240027a-83a7-4441-bc0b-190494d8996d",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Grimmjow Jaegerjaquez from Bleach, a muscular arrancar with spiky light-blue hair, a jaw-bone mask on the cheek, an open white jacket showing his abs, a black hakama",
+  "initial_pose": "feral crouched brawling stance facing right, knees bent, both fists raised, a wild grin"
+ },
+ "reply": "id: 6a49d06f-360f-421e-9964-367499e3d604\njob_id: 6a49d06f-360f-421e-9964-367499e3d604\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6a49d06f-360f-421e-9964-367499e3d604\")\nasset_id: 789bbc6e-8116-5d6b-8bfc-121126b84d31\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/grimmjow_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

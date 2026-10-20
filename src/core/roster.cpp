@@ -1,129 +1,14 @@
-// The fifteen fighters of Super Clash Bros.: fan-made homages to Black Clover, Bleach, Naruto, Jujutsu
+// The seventeen fighters of Super Clash Bros.: fan-made homages to Black Clover, Bleach, Naruto, Jujutsu
 // Kaisen, Zelda: Tears of the Kingdom, God of War and Monster Hunter. Each one has its normals, four
 // specials, three ultimates (bare-handed and with each of its two weapons) and two weapons that drop
 // during a match.
-#include "core/moves.hpp"
+#include <cmath>
+#include <iterator>
+
+#include "core/roster_kit.hpp"
 
 namespace {
-using L = Limb;
-using F = HitFx;
-using PV = ProjVisual;
-
-void sc(MoveDef& m, float S, float P) {
-  for (auto& h : m.hitboxes) {
-    h.offset = h.offset * S;
-    h.radius *= S;
-    h.damage *= P;
-  }
-  m.projectile.spawnOffset = m.projectile.spawnOffset * S;
-  m.projectile.hit.damage *= P;
-  m.projectile.explode.damage *= P;
-  m.beam.from = m.beam.from * S;
-  m.beam.length *= S;
-  m.beam.width *= S;
-}
-
-VelEvent ve(int frame, VelMode mode, float x, float y, float stickX = 0.0f, bool airOnly = false) {
-  VelEvent e;
-  e.frame = frame;
-  e.mode = mode;
-  e.v = {x, y};
-  e.stickX = stickX;
-  e.airOnly = airOnly;
-  return e;
-}
-
-ProjectileDef proj(Vec2 spawn, Vec2 vel, float grav, int life, float radius, float dmg, float bkb, float kbg, F fx,
-                   PV vis) {
-  ProjectileDef p;
-  p.spawnOffset = spawn;
-  p.velocity = vel;
-  p.gravity = grav;
-  p.lifetime = life;
-  p.radius = radius;
-  p.hit = hb(0, 0, 0, 0, radius, dmg, 361, bkb, kbg, L::None, 0, fx);
-  p.visual = vis;
-  return p;
-}
-
-Palette pal(Color3 a, Color3 b, Color3 c, Color3 skin, Color3 hair, Color3 eyes) {
-  Palette p;
-  p.primary = a;
-  p.secondary = b;
-  p.accent = c;
-  p.skin = skin;
-  p.hair = hair;
-  p.eyes = eyes;
-  return p;
-}
-
-HitboxDef imp(HitboxDef h) {
-  h.impact = true;
-  return h;
-}
-
-// n light hits every `every` frames (groups g0, g0+1...): the caller adds the finisher.
-void multi(std::vector<HitboxDef>& v, int start, int n, int every, float ox, float oy, float r, float dmg, L limb,
-           F fx, int g0 = 0, float angle = 361.0f) {
-  for (int k = 0; k < n; ++k)
-    v.push_back(hb(start + k * every, start + k * every + 3, ox, oy, r, dmg, angle, 18, 6, limb, g0 + k, fx));
-}
-
-// Ultimates: invulnerable, hanging in the air; the cinematic freeze covers the first 30 frames.
-MoveDef ultimate(const char* name, int duration, std::vector<HitboxDef> boxes, PoseHint pose) {
-  MoveDef m = mv(name, duration, std::move(boxes));
-  m.intangibleStart = 0;
-  m.intangibleEnd = duration;
-  m.vel = {ve(1, VelMode::Set, 0.0f, -3.0f), ve(22, VelMode::Set, 0.0f, 0.0f)};
-  m.gravityMul = 0.0f;
-  m.allowDrift = false;
-  m.pose = pose;
-  return m;
-}
-
-// Area storm around the user: light hits every `every` frames, then a launching finisher.
-std::vector<HitboxDef> storm(int start, int hits, int every, float r0, float r1, float dmg, F fx, float finalDmg,
-                             float finalR, float angle = 75.0f) {
-  std::vector<HitboxDef> v;
-  for (int k = 0; k < hits; ++k) {
-    float r = r0 + (r1 - r0) * float(k) / std::max(1, hits - 1);
-    v.push_back(hb(start + k * every, start + k * every + 3, 0, -10, r, dmg, 361, 10, 0, L::None, k, fx));
-  }
-  const int f = start + hits * every + 2;
-  v.push_back(imp(hb(f, f + 6, 0, -10, finalR, finalDmg, angle, 92, 106, L::None, hits, fx)));
-  return v;
-}
-
-WeaponDef weapon(const char* name, const char* desc, WeaponVisual vis, F fx, float dmg, float kb, float reach,
-                 int seconds = 18) {
-  WeaponDef w;
-  w.name = name;
-  w.desc = desc;
-  w.visual = vis;
-  w.fx = fx;
-  w.damageMul = dmg;
-  w.kbMul = kb;
-  w.reachMul = reach;
-  w.duration = seconds * 60;
-  return w;
-}
-
-void stats(CharacterDef& c, float w, float h, float weight, float walk, float run, float air, float grav,
-           float maxFall, float fastFall, float jump, float shortHop, float airJump, int squat) {
-  c.width = w;
-  c.height = h;
-  c.weight = weight;
-  c.walkSpeed = walk;
-  c.runSpeed = run;
-  c.airSpeed = air;
-  c.gravity = grav;
-  c.maxFall = maxFall;
-  c.fastFall = fastFall;
-  c.jumpVel = jump;
-  c.shortHopVel = shortHop;
-  c.airJumpVel = airJump;
-  c.jumpSquat = squat;
-}
+using namespace kit;
 
 // ---------------------------------------------------------------------------------------------
 // Black Clover
@@ -140,7 +25,7 @@ CharacterDef makeAsta() {
                 pal({236, 232, 220}, {60, 58, 66}, {200, 48, 52}, {238, 198, 162}, {226, 226, 214}, {80, 150, 70})};
   stats(c, 46, 98, 102, 4.3f, 9.2f, 5.3f, 0.66f, 10.5f, 15.5f, 16.0f, 10.5f, 14.5f, 3);
   c.weaponLength = 84;
-  const float S = 1.05f, P = 1.28f;
+  const float S = 1.05f, P = 0.9f;
   buildSwordNormals(c, S, P, F::AntiMagic);
   auto& m = c.moves;
 
@@ -175,16 +60,6 @@ CharacterDef makeAsta() {
   m[DSpecial].reflects = true;
   m[DSpecial].gravityMul = 0.3f;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  std::vector<HitboxDef> ub;
-  multi(ub, 34, 5, 4, 30, -6, 74, 4.0f, L::Weapon, F::AntiMagic, 0, 0);
-  m[FinalSmash] = ultimate("BLACK DIVIDER", 100, ub, PoseHint::Thrust);
-  m[FinalSmash].vel = {ve(1, VelMode::Set, 0, -2), ve(22, VelMode::Set, 0, 0), ve(34, VelMode::SetX, 15, 0),
-                       ve(52, VelMode::Set, 0, 0)};
-  m[FinalSmash].projectileFrame = 60;
-  m[FinalSmash].projectile = proj({60, -10}, {17, 0}, 0, 60, 90, 24, 92, 108, F::AntiMagic, PV::BlackSlash);
-  m[FinalSmash].projectile.piercing = true;
-  m[FinalSmash].projectile.hit.impact = true;
 
   c.weapons[0] = weapon("Épée pourfendeuse", "Lame géante : frappe plus fort et plus loin", WeaponVisual::DemonSlayer,
                         F::AntiMagic, 1.3f, 1.12f, 1.25f);
@@ -222,7 +97,7 @@ CharacterDef makeYuno() {
   c.groundAccel = 1.4f;
   c.airAccel = 0.55f;
   c.airJumps = 2;
-  const float S = 0.97f, P = 0.93f;
+  const float S = 0.97f, P = 1.13f;  // v9.6: 41% (v9.3: 1.11)
   buildBrawlerNormals(c, S, P, F::Wind);
   auto& m = c.moves;
 
@@ -257,9 +132,6 @@ CharacterDef makeYuno() {
   m[DSpecial].gravityMul = 0.4f;
   m[DSpecial].pose = PoseHint::Spin;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("TEMPÊTE DE ZÉPHYR", 100, storm(34, 6, 6, 200, 360, 3, F::Wind, 18, 430, 80),
-                           PoseHint::Raise);
 
   c.weapons[0] = weapon("Grimoire à quatre trèfles", "Cinq lames de vent d'un coup", WeaponVisual::Grimoire, F::Wind,
                         1.2f, 1.1f, 1.0f);
@@ -297,26 +169,30 @@ CharacterDef makeIchigo() {
   c.baseWeapon = WeaponVisual::Zangetsu;
   c.palettes = {pal({32, 32, 38}, {236, 236, 240}, {200, 50, 40}, {242, 206, 170}, {240, 128, 40}, {120, 80, 50}),
                 pal({240, 240, 244}, {32, 32, 38}, {200, 30, 30}, {232, 228, 226}, {240, 128, 40}, {230, 200, 40})};
-  stats(c, 46, 104, 102, 4.2f, 9.2f, 5.2f, 0.64f, 10.2f, 15.0f, 15.5f, 10.2f, 14.2f, 4);
+  stats(c, 46, 104, 100, 4.1f, 8.9f, 5.1f, 0.64f, 10.2f, 15.0f, 15.4f, 10.2f, 14.0f, 4);
   c.weaponLength = 88;
-  const float S = 1.08f, P = 1.1f;
+  const float S = 1.08f, P = 1.13f;  // v9.6: 44% with the kits (v9.3: 1.10)
   buildSwordNormals(c, S, P, F::Reiatsu);
   auto& m = c.moves;
 
-  m[NSpecial] = mv("Getsuga Tenshō", 50, {});
-  m[NSpecial].projectileFrame = 18;
-  m[NSpecial].projectile = proj({52, -10}, {13, 0}, 0, 40, 30, 11, 45, 80, F::Reiatsu, PV::Getsuga);
+  m[NSpecial] = mv("Getsuga Tenshō", 58, {});  // long end lag: no spamming it
+  m[NSpecial].projectileFrame = 20;
+  m[NSpecial].projectile = proj({52, -10}, {12, 0}, 0, 34, 28, 9.5f, 40, 72, F::Reiatsu, PV::Getsuga);
   m[NSpecial].projectile.piercing = true;
-  m[NSpecial].projectile.grow = 0.5f;
+  m[NSpecial].projectile.grow = 0.3f;
   m[NSpecial].pose = PoseHint::Overhead;
 
-  m[SSpecial] = mv("Shunpo", 40, {hb(12, 16, 56, -6, 30, 10, 40, 50, 78, L::Weapon, 0, F::Slash)});
+  m[SSpecial] = mv("Shunpo", 44, {hb(12, 16, 56, -6, 30, 8.5f, 40, 48, 74, L::Weapon, 0, F::Slash)});
   m[SSpecial].intangibleStart = 4;
   m[SSpecial].intangibleEnd = 12;
   m[SSpecial].vel = {ve(4, VelMode::SetX, 20, 0), ve(4, VelMode::SetY, 0, 0, 0, true), ve(12, VelMode::Scale, 0.15f, 1.0f)};
   m[SSpecial].gravityMul = 0.2f;
   m[SSpecial].frictionMul = 0.05f;
   m[SSpecial].pose = PoseHint::Thrust;
+  m[SSpecial].castFx = "shunpo_streak";  // the flash step leaves its blur where it began (its copies too)
+  m[SSpecial].castFxFrame = 4;
+  m[SSpecial].castFxAt = {0, -c.height * 0.5f};
+  m[SSpecial].castFxStays = true;
 
   m[USpecial] = mv("Tsukiyomi", 44, {hb(4, 7, 36, -30, 30, 11, 80, 50, 72, L::Weapon, 0, F::Reiatsu),
                                      hb(7, 14, 20, -64, 26, 6, 85, 40, 60, L::Weapon, 1, F::Reiatsu)});
@@ -329,50 +205,70 @@ CharacterDef makeIchigo() {
   cero.start = 22;
   cero.end = 34;
   cero.from = {36, -14};
-  cero.length = 250;
-  cero.width = 44;
+  cero.length = 230;
+  cero.width = 40;
   cero.fx = F::Blood;
-  m[DSpecial] = mv("Cero", 54, beamHits(cero, 7, 30, 50, 80, 3));
+  m[DSpecial] = mv("Cero", 56, beamHits(cero, 7, 30, 46, 74, 3));
   m[DSpecial].beam = cero;
   m[DSpecial].gravityMul = 0.3f;
   m[DSpecial].pose = PoseHint::Cast;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  BeamDef mugetsu;
-  mugetsu.start = 44;
-  mugetsu.end = 76;
-  mugetsu.from = {30, -10};
-  mugetsu.length = 1100;
-  mugetsu.width = 240;
-  mugetsu.fx = F::Dark;
-  m[FinalSmash] = ultimate("MUGETSU", 104, beamHits(mugetsu, 20, 30, 95, 110, 6), PoseHint::Overhead);
-  m[FinalSmash].beam = mugetsu;
-
-  c.weapons[0] = weapon("Zangetsu (Shikai)", "Getsuga Tenshō géant", WeaponVisual::Zangetsu, F::Reiatsu, 1.25f, 1.1f,
-                        1.15f);
+  c.weapons[0] = weapon("Zangetsu (Shikai)", "Getsuga Tenshō géant", WeaponVisual::Zangetsu, F::Reiatsu, 1.15f, 1.06f,
+                        1.12f);
   MoveDef huge = m[NSpecial];
   huge.name = "Getsuga Tenshō !";
-  huge.projectile.radius *= 1.45f;
+  huge.projectile.radius *= 1.4f;
   huge.projectile.hit.radius = huge.projectile.radius;
-  huge.projectile.hit.damage *= 1.35f;
-  huge.projectile.grow = 0.9f;
+  huge.projectile.hit.damage *= 1.25f;
+  huge.projectile.grow = 0.6f;
   huge.projectile.hit.impact = true;
-  c.weapons[0].moves = {{NSpecial, huge}};
+  // The Shikai's kit: the M1 combo, a Shunpo cut, a rising Getsuga, and Zangetsu raised as a shield (a counter).
+  MoveDef cut = m[SSpecial];
+  cut.name = "Shunpo tranchant";
+  for (auto& h : cut.hitboxes) h.damage *= 1.15f, h.fx = F::Reiatsu, h.impact = true;
+  MoveDef rise = m[USpecial];
+  rise.name = "Getsuga ascendant";
+  for (auto& h : rise.hitboxes) h.damage *= 1.1f;
+  MoveDef parry = mv("Garde de Zangetsu", 52, {imp(hb(26, 31, 62, -12, 46, 13, 361, 60, 95, L::Weapon, 0, F::Reiatsu))});
+  parry.counterStart = 5;
+  parry.counterEnd = 26;
+  parry.gravityMul = 0.3f;
+  parry.pose = PoseHint::Overhead;
+  sc(parry, S, P);
+  c.weapons[0].moves = {{NSpecial, huge}, {SSpecial, cut}, {USpecial, rise}, {DSpecial, parry}};
+  addBladeKit(c.weapons[0], S, P, F::Reiatsu);
   c.weapons[1] = weapon("Tensa Zangetsu (Bankai)", "Vitesse du Bankai : Getsuga noir", WeaponVisual::TensaZangetsu,
-                        F::Dark, 1.15f, 1.1f, 1.05f);
+                        F::Dark, 1.1f, 1.05f, 1.05f);
   MoveDef black = m[NSpecial];
   black.name = "Getsuga noir";
-  black.projectile.velocity.x = 17;
+  black.projectile.velocity.x = 16;
   black.projectile.hit.fx = F::Dark;
-  black.projectile.hit.damage *= 1.2f;
-  black.projectileFrame = 12;
-  black.duration = 38;
+  black.projectile.hit.damage *= 1.1f;
+  black.projectileFrame = 14;
+  black.duration = 46;
   MoveDef flash = m[SSpecial];
   flash.name = "Shunpo du Bankai";
-  flash.hitboxes[0].damage *= 1.3f;
+  flash.hitboxes[0].damage *= 1.2f;
   flash.hitboxes[0].fx = F::Dark;
   flash.hitboxes[0].impact = true;
-  c.weapons[1].moves = {{NSpecial, black}, {SSpecial, flash}};
+  // The Bankai's kit: a faster M1 (its second hit a thrust, three cuts in the air), the black Getsuga, the Bankai
+  // Shunpo, a rising drill of black reiatsu, and the Bankai's release (a burst all around him, armored).
+  MoveDef drill = m[USpecial];
+  drill.name = "Tenshō noir ascendant";
+  for (auto& h : drill.hitboxes) h.damage *= 1.15f, h.fx = F::Dark;
+  drill.vel = {ve(4, VelMode::Set, 1.5f, -18.5f, 3.0f)};
+  MoveDef release = mv("Libération du Bankai", 50, {imp(hb(16, 22, 0, -50, 56, 12, 70, 55, 85, L::Body, 0, F::Dark))});
+  release.armorStart = 4;
+  release.armorEnd = 16;
+  release.gravityMul = 0.3f;
+  release.pose = PoseHint::Cast;
+  sc(release, S, P);
+  release.castFx = "bankai_burst";  // the black reiatsu erupts around him as the blow comes out (its size)
+  release.castFxFrame = 14;
+  release.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[1].moves = {{NSpecial, black}, {SSpecial, flash}, {USpecial, drill}, {DSpecial, release}};
+  addBladeKit(c.weapons[1], S, P, F::Dark, 0.8f, true, 3);
   return c;
 }
 
@@ -389,7 +285,7 @@ CharacterDef makeByakuya() {
   stats(c, 44, 106, 92, 4.4f, 9.8f, 5.2f, 0.6f, 10.0f, 15.0f, 15.0f, 10.0f, 14.0f, 3);
   c.groundAccel = 1.4f;
   c.weaponLength = 72;
-  const float S = 1.02f, P = 1.12f;
+  const float S = 1.02f, P = 0.98f;  // v9.6: 42% at 0.97, 61% at 1.0
   buildSwordNormals(c, S, P, F::Petal);
   auto& m = c.moves;
 
@@ -429,9 +325,6 @@ CharacterDef makeByakuya() {
   m[DSpecial].pose = PoseHint::HandSign;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("SENBONZAKURA KAGEYOSHI", 104, storm(34, 9, 5, 300, 380, 2.2f, F::Petal, 16, 400, 70),
-                           PoseHint::HandSign);
-
   c.weapons[0] = weapon("Senbonzakura (Shikai)", "La nuée de pétales grossit", WeaponVisual::Senbonzakura, F::Petal,
                         1.2f, 1.08f, 1.2f);
   MoveDef swarm = m[NSpecial];
@@ -469,7 +362,7 @@ CharacterDef makeLink() {
                 pal({70, 128, 70}, {120, 88, 58}, {222, 184, 90}, {244, 210, 176}, {214, 164, 92}, {70, 130, 200})};
   stats(c, 44, 98, 98, 4.2f, 8.9f, 5.1f, 0.62f, 10.2f, 15.0f, 15.2f, 10.0f, 14.2f, 4);
   c.weaponLength = 64;
-  const float S = 1.0f, P = 1.12f;
+  const float S = 1.0f, P = 1.06f;  // v9.9: 36% with the kits at 0.92
   buildSwordNormals(c, S, P, F::Light);
   auto& m = c.moves;
 
@@ -498,16 +391,6 @@ CharacterDef makeLink() {
   m[DSpecial].pose = PoseHint::Cast;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  BeamDef seal;
-  seal.start = 40;
-  seal.end = 68;
-  seal.from = {24, -20};
-  seal.length = 1100;
-  seal.width = 170;
-  seal.fx = F::Light;
-  m[FinalSmash] = ultimate("SCEAU DE LUMIÈRE", 100, beamHits(seal, 19, 35, 92, 108, 5), PoseHint::Overhead);
-  m[FinalSmash].beam = seal;
-
   c.weapons[0] = weapon("Épée de légende", "L'épée tire un rayon de lumière", WeaponVisual::MasterSword, F::Light, 1.25f,
                         1.1f, 1.2f);
   MoveDef beam = mv("Rayon de l'épée", 40, {});
@@ -527,6 +410,84 @@ CharacterDef makeLink() {
   light.pose = PoseHint::Bow;
   sc(light, S, P);
   c.weapons[1].moves = {{NSpecial, light}};
+
+  // The Master Sword's kit: the glowing blade's M1, the sword beam, the spin attack, a rising jump slash and a
+  // perfect guard with the shield.
+  MoveDef spin = mv("Attaque tournoyante", 46, {imp(sw(10, 18, 180, -180, 0.2f, 1.05f, 24, 11, 45, 55, 85, 0, F::Light))});
+  spin.pose = PoseHint::Spin;
+  MoveDef jumpSlash = mv("Saut de l'épée", 44, {sw(5, 12, -40, 120, 0.2f, 1.0f, 24, 8, 85, 50, 70, 0, F::Light)});
+  jumpSlash.vel = {ve(5, VelMode::Set, 1.5f, -17.0f, 3.5f)};
+  jumpSlash.gravityMul = 0.5f;
+  jumpSlash.helplessAfter = true;
+  jumpSlash.pose = PoseHint::Uppercut;
+  MoveDef guard = mv("Parade parfaite", 50, {imp(sw(26, 30, 30, -20, 0.3f, 1.0f, 22, 12, 361, 60, 95, 0, F::Light))});
+  guard.counterStart = 4;
+  guard.counterEnd = 26;
+  guard.reflects = true;  // the shield
+  guard.gravityMul = 0.3f;
+  guard.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&spin, &jumpSlash, &guard}) sc(*d, S, P);
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, spin}, {USpecial, jumpSlash}, {DSpecial, guard}});
+  addBladeKit(c.weapons[0], S, P, F::Light);
+  // The Bow of Light's kit: the M1 shoots (a quick arrow of light, two arrows, a charged arrow that ejects), the air
+  // M1 shoots down in front, three arrows in a fan, a leap that shoots down, and a rain of light falling ahead.
+  const float PK = P * 1.5f;  // only arrows left (no smashes): they hit harder
+  MoveDef quick = light;
+  quick.name = "Flèche rapide";
+  quick.duration = 26;
+  quick.projectileFrame = 9;
+  quick.projectile.hit.damage *= 0.4f * PK / P;
+  quick.projectile.hit.baseKB = 10, quick.projectile.hit.growth = 25;
+  quick.projectile.hit.impact = false;
+  quick.nextMove = Jab2, quick.comboStart = 4, quick.comboEnd = 22, quick.comboAt = 13;
+  MoveDef twin = quick;
+  twin.name = "Double flèche";
+  twin.duration = 28;
+  twin.projectile.count = 2;
+  twin.projectile.spreadDeg = 6;
+  twin.nextMove = Jab3, twin.comboStart = 4, twin.comboEnd = 24, twin.comboAt = 14;
+  MoveDef charged = light;
+  charged.name = "Flèche chargée";
+  charged.duration = 40;
+  charged.projectileFrame = 20;
+  charged.projectile.radius *= 1.3f;
+  charged.projectile.hit.radius = charged.projectile.radius;
+  charged.projectile.hit.damage *= PK / P;
+  charged.projectile.hit.baseKB = 50, charged.projectile.hit.growth = 95;
+  MoveDef airShot = quick;
+  airShot.name = "Tir aérien";
+  airShot.duration = 34;
+  airShot.nextMove = -1;
+  airShot.projectileFrame = 12;
+  airShot.projectile.velocity = {15, 9};  // down in front
+  airShot.projectile.hit.damage *= 1.5f;
+  airShot.landingLag = 8;
+  MoveDef fan = light;
+  fan.name = "Triple flèche";
+  fan.projectile.count = 3;
+  fan.projectile.spreadDeg = 14;
+  fan.projectile.hit.damage *= 0.6f * PK / P;
+  MoveDef rise = mv("Envol de lumière", 44, {});
+  rise.vel = {ve(4, VelMode::Set, 1.5f, -17.5f, 3.0f)};
+  rise.gravityMul = 0.5f;
+  rise.helplessAfter = true;
+  rise.projectileFrame = 14;
+  rise.projectile = light.projectile;
+  rise.projectile.velocity = {3, 17};  // straight down below him
+  rise.projectile.hit.damage *= 0.7f;
+  rise.pose = PoseHint::Raise;
+  MoveDef rain = mv("Pluie de lumière", 50, {});
+  rain.projectileFrame = 18;
+  rain.projectile = light.projectile;
+  rain.projectile.spawnOffset = {150, -340};  // from the sky, ahead of him
+  rain.projectile.velocity = {0, 15};
+  rain.projectile.count = 3;
+  rain.projectile.spreadDeg = 10;
+  rain.projectile.hit.damage *= 0.8f * PK / P;
+  rain.pose = PoseHint::Bow;
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{Jab, quick}, {Jab2, twin}, {Jab3, charged}, {NAir, airShot},
+                                                       {SSpecial, fan}, {USpecial, rise}, {DSpecial, rain}});
+  c.weapons[1].kit = true;
   return c;
 }
 
@@ -537,13 +498,13 @@ CharacterDef makeGanondorf() {
   c.series = "Zelda: Tears of the Kingdom";
   c.hero = Hero::Ganondorf;
   c.style = BodyStyle::Brute;
-  c.palettes = {pal({46, 42, 50}, {120, 30, 36}, {216, 176, 80}, {124, 104, 96}, {196, 58, 40}, {236, 200, 80}),
-                pal({72, 32, 42}, {30, 24, 30}, {200, 60, 60}, {112, 98, 102}, {150, 40, 40}, {255, 90, 60})};
+  c.palettes = {pal({46, 42, 50}, {120, 30, 36}, {216, 176, 80}, {150, 112, 92}, {196, 58, 40}, {236, 200, 80}),
+                pal({72, 32, 42}, {30, 24, 30}, {200, 60, 60}, {138, 108, 100}, {150, 40, 40}, {255, 90, 60})};
   stats(c, 64, 128, 132, 3.2f, 7.2f, 4.5f, 0.68f, 11.2f, 15.8f, 15.2f, 10.0f, 13.8f, 6);
   c.groundAccel = 0.95f;
   c.friction = 0.7f;
   c.airAccel = 0.36f;
-  const float S = 1.25f, P = 1.27f;
+  const float S = 1.25f, P = 1.52f;  // v9.2: a little softer, 59% after the clip refit
   buildBrawlerNormals(c, S, P, F::Gloom);
   auto& m = c.moves;
 
@@ -584,16 +545,6 @@ CharacterDef makeGanondorf() {
   m[Extra1].pose = PoseHint::Stomp;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial, Extra1}) sc(m[id], S, P);
 
-  BeamDef breath;
-  breath.start = 46;
-  breath.end = 80;
-  breath.from = {30, -20};
-  breath.length = 1000;
-  breath.width = 260;
-  breath.fx = F::Gloom;
-  m[FinalSmash] = ultimate("BÊTE DU FLÉAU", 104, beamHits(breath, 21, 35, 95, 110, 6), PoseHint::Roar);
-  m[FinalSmash].beam = breath;
-
   c.weapons[0] = weapon("Épée du Roi Démon", "Lame de malice à grande portée", WeaponVisual::DemonKingSword, F::Gloom,
                         1.3f, 1.12f, 1.5f);
   MoveDef blade = mv("Lame de malice", 52, {imp(hb(10, 22, 70, -6, 38, 15, 40, 60, 88, L::ArmFront, 0, F::Gloom))});
@@ -633,7 +584,7 @@ CharacterDef makeKratos() {
                 pal({160, 130, 60}, {80, 60, 44}, {196, 40, 36}, {214, 210, 202}, {196, 196, 196}, {200, 160, 80})};
   stats(c, 56, 114, 118, 3.6f, 8.0f, 4.8f, 0.66f, 11.0f, 15.5f, 15.6f, 10.2f, 14.0f, 5);
   c.groundAccel = 1.1f;
-  const float S = 1.14f, P = 1.24f;
+  const float S = 1.14f, P = 1.10f;  // v9.9: 58% at 1.13 once the lot 3 kits came in (v9.6: 58% at 1.17)
   buildBrawlerNormals(c, S, P, F::Fire);
   auto& m = c.moves;
 
@@ -664,13 +615,6 @@ CharacterDef makeKratos() {
   m[DSpecial].gravityMul = 0.3f;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  std::vector<HitboxDef> rage;
-  multi(rage, 34, 9, 4, 40, -6, 60, 3.0f, L::ArmFront, F::Fire);
-  rage.push_back(imp(hb(74, 80, 40, 0, 150, 20, 50, 95, 110, L::Body, 9, F::Fire)));
-  m[FinalSmash] = ultimate("RAGE DE SPARTE", 100, rage, PoseHint::Rush);
-  m[FinalSmash].vel = {ve(1, VelMode::Set, 0, -2), ve(22, VelMode::Set, 0, 0), ve(34, VelMode::SetX, 9, 0),
-                       ve(70, VelMode::Set, 0, 0)};
-
   c.weapons[0] = weapon("Hache Léviathan", "La hache gèle et revient dans la main", WeaponVisual::LeviathanAxe, F::Ice,
                         1.25f, 1.12f, 1.35f);
   MoveDef axe = mv("Lancer de Léviathan", 36, {});
@@ -691,6 +635,58 @@ CharacterDef makeKratos() {
   chaos.pose = PoseHint::Spin;
   sc(chaos, S, P);
   c.weapons[1].moves = {{NSpecial, chaos}};
+
+  // The Leviathan Axe's kit: the axe's M1, the throw, the Frost Giant's Frenzy (three chops), a spinning leap and
+  // Hel's Touch (the axe slammed into the ground, ice bursting all around him). The shield stays on his arm.
+  c.weapons[0].blade = 0.72f * c.height;
+  MoveDef frenzy = mv("Frénésie du géant du givre", 46,
+                      {sw(6, 9, 110, -40, 0.3f, 1.0f, 22, 4, 361, 10, 25, 0, F::Ice),
+                       sw(14, 17, 30, -15, 0.3f, 1.0f, 22, 4, 361, 10, 25, 1, F::Ice),
+                       imp(sw(22, 26, 110, -40, 0.3f, 1.0f, 26, 9, 45, 55, 85, 2, F::Ice))});
+  frenzy.vel = {ve(4, VelMode::SetX, 5.5f, 0), ve(26, VelMode::Scale, 0.2f, 1.0f)};
+  frenzy.frictionMul = 0.3f;
+  frenzy.pose = PoseHint::Rush;
+  MoveDef axeLeap = mv("Bond de la Léviathan", 46, {sw(5, 14, -60, 180, 0.2f, 1.0f, 26, 9, 85, 50, 70, 0, F::Ice)});
+  axeLeap.vel = {ve(5, VelMode::Set, 1.5f, -16.5f, 3.5f)};
+  axeLeap.gravityMul = 0.5f;
+  axeLeap.helplessAfter = true;
+  axeLeap.pose = PoseHint::Uppercut;
+  MoveDef hel = mv("Toucher de Hel", 52, {imp(hb(20, 26, 26, 30, 64, 13, 70, 60, 90, L::Body, 0, F::Ice))});
+  hel.armorStart = 6;
+  hel.armorEnd = 20;
+  hel.gravityMul = 0.3f;
+  hel.pose = PoseHint::Overhead;
+  for (MoveDef* d : {&frenzy, &axeLeap, &hel}) sc(*d, S, P);
+  hel.castFx = "frost_burst";  // ice spikes burst from the ground where the axe lands
+  hel.castFxFrame = 19;
+  hel.castFxAt = {26, 0};
+  hel.castFxStays = true;
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, frenzy}, {USpecial, axeLeap}, {DSpecial, hel}});
+  addBladeKit(c.weapons[0], S, P, F::Ice);
+  // The Blades of Chaos's kit: lashes on their chains, the whirl, the chains hooking a foe from afar, a propeller
+  // leap and a shield counter answered by both blades.
+  c.weapons[1].blade = 1.0f * c.height;  // the chains: the fit stretches it to the drawn lash
+  MoveDef hooks = mv("Crochets du Chaos", 48, {hb(10, 18, 120, -14, 30, 0, 0, 0, 0, L::ArmFront)});
+  hooks.isGrab = true;
+  hooks.pose = PoseHint::Thrust;
+  std::vector<HitboxDef> prop;
+  multi(prop, 5, 3, 4, 0, -50, 50, 3.0f, L::Weapon, F::Fire);
+  prop.push_back(hb(17, 21, 0, -62, 54, 6, 85, 50, 72, L::Weapon, 3, F::Fire));
+  MoveDef ascent = mv("Envol du Chaos", 46, prop);
+  ascent.vel = {ve(5, VelMode::Set, 1.5f, -16.5f, 3.5f)};
+  ascent.gravityMul = 0.5f;
+  ascent.helplessAfter = true;
+  ascent.pose = PoseHint::Spin;
+  MoveDef chaosCounter = mv("Contre du Chaos", 52, {imp(hb(26, 31, 70, -10, 40, 13, 361, 60, 95, L::Weapon, 0, F::Fire))});
+  chaosCounter.counterStart = 4;
+  chaosCounter.counterEnd = 26;
+  chaosCounter.reflects = true;  // the shield
+  chaosCounter.gravityMul = 0.3f;
+  chaosCounter.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&hooks, &ascent, &chaosCounter}) sc(*d, S, P);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(),
+                            {{SSpecial, hooks}, {USpecial, ascent}, {DSpecial, chaosCounter}});
+  addBladeKit(c.weapons[1], S, P, F::Fire, 0.9f);
   return c;
 }
 
@@ -708,7 +704,7 @@ CharacterDef makeGojo() {
                 pal({236, 236, 240}, {44, 48, 64}, {180, 110, 255}, {244, 222, 206}, {244, 244, 252}, {120, 210, 255})};
   stats(c, 44, 114, 90, 4.4f, 9.4f, 5.4f, 0.58f, 9.6f, 14.5f, 15.4f, 10.0f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.04f, P = 1.03f;
+  const float S = 1.04f, P = 1.26f;  // v9.9: 45% with the kits at 1.22
   buildBrawlerNormals(c, S, P, F::Cursed);
   auto& m = c.moves;
 
@@ -719,13 +715,13 @@ CharacterDef makeGojo() {
   m[NSpecial].projectile.explode = hb(0, 0, 0, 0, 62, 7, 40, 60, 75, L::None, 0, F::Cursed);
   m[NSpecial].pose = PoseHint::Cast;
 
-  m[SSpecial] = mv("Bleu", 44, {});
-  m[SSpecial].projectileFrame = 14;
-  m[SSpecial].projectile = proj({64, -10}, {3.2f, 0}, 0, 90, 26, 1.4f, 6, 5, F::Cursed, PV::BlueOrb);
+  m[SSpecial] = mv("Bleu", 58, {});  // long end lag: no spamming it
+  m[SSpecial].projectileFrame = 16;
+  m[SSpecial].projectile = proj({64, -10}, {3.2f, 0}, 0, 64, 24, 1.2f, 6, 5, F::Cursed, PV::BlueOrb);
   m[SSpecial].projectile.piercing = true;
-  m[SSpecial].projectile.rehit = 7;
-  m[SSpecial].projectile.pull = 2.4f;
-  m[SSpecial].projectile.pullRadius = 170;
+  m[SSpecial].projectile.rehit = 9;
+  m[SSpecial].projectile.pull = 1.5f;
+  m[SSpecial].projectile.pullRadius = 140;
   m[SSpecial].pose = PoseHint::Raise;
 
   m[USpecial] = mv("Téléportation", 38, {hb(20, 24, 0, -6, 40, 7, 80, 55, 70, L::Body, 0, F::Cursed)});
@@ -746,13 +742,6 @@ CharacterDef makeGojo() {
   m[DSpecial].pose = PoseHint::HandSign;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("SPHÈRE DE L'INFINI", 104,
-                           {hb(34, 38, 0, 0, 620, 6, 90, 10, 0, L::None, 0, F::Cursed)}, PoseHint::HandSign);
-  m[FinalSmash].projectileFrame = 56;
-  m[FinalSmash].projectile = proj({40, -10}, {14, 0}, 0, 80, 110, 28, 95, 110, F::Cursed, PV::PurpleOrb);
-  m[FinalSmash].projectile.piercing = true;
-  m[FinalSmash].projectile.hit.impact = true;
-
   c.weapons[0] = weapon("Technique : Violet", "Le Rouge devient un Violet qui efface tout", WeaponVisual::HollowPurple,
                         F::Cursed, 1.1f, 1.05f, 1.0f);
   MoveDef purple = mv("Violet", 52, {});
@@ -765,6 +754,67 @@ CharacterDef makeGojo() {
   c.weapons[0].moves = {{NSpecial, purple}};
   c.weapons[1] = weapon("Six Yeux", "Bandeau retiré : tout frappe plus fort", WeaponVisual::SixEyes, F::Cursed, 1.35f,
                         1.2f, 1.0f, 15);
+
+  // Hollow Purple's kit: blows of cursed energy, Purple, Reversal Red at point-blank, a lift on Blue, and a burst of
+  // both techniques around him.
+  MoveDef rRed = mv("Rouge inversé", 44, {imp(hb(12, 16, 52, -10, 38, 12, 40, 70, 95, L::ArmFront, 0, F::Cursed))});
+  rRed.pose = PoseHint::Point;
+  MoveDef lift = mv("Envol du Bleu", 44, {hb(6, 14, 0, -50, 34, 6, 85, 45, 60, L::Body, 0, F::Cursed)});
+  lift.vel = {ve(5, VelMode::Set, 1.0f, -17.5f, 3.0f)};
+  lift.gravityMul = 0.45f;
+  lift.helplessAfter = true;
+  lift.pose = PoseHint::Raise;
+  MoveDef both = mv("Rouge et Bleu", 52, {imp(hb(20, 26, 0, -45, 64, 13, 70, 60, 90, L::Body, 0, F::Cursed))});
+  both.armorStart = 6;
+  both.armorEnd = 20;
+  both.gravityMul = 0.3f;
+  both.pose = PoseHint::HandSign;
+  for (MoveDef* d : {&rRed, &lift, &both}) sc(*d, S, P);
+  rRed.castFx = "red_blast";  // the Red bursts from his fingertips
+  rRed.castFxFrame = 11;
+  rRed.castFxAt = {48, -c.height * 0.5f};
+  rRed.castFxScale = 0.7f;
+  lift.castFx = "blue_orb";  // the Blue above his hand pulls him up
+  lift.castFxFrame = 4;
+  lift.castFxAt = {6, -c.height * 1.15f};
+  lift.castFxScale = 0.55f;
+  both.castFx = "cursed_burst";
+  both.castFxFrame = 14;
+  both.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, rRed}, {USpecial, lift}, {DSpecial, both}});
+  addFistKit(c.weapons[0], S, P, F::Cursed, 1.0f, 1.1f);
+  // The Six Eyes' kit (the blindfold off): faster blows, a maximum Red, a maximum Blue, an instant teleport, and
+  // Infinity as a counter.
+  MoveDef mRed = m[NSpecial];
+  mRed.name = "Rouge maximal";
+  mRed.projectile.hit.damage *= 1.3f;
+  mRed.projectile.radius *= 1.2f;
+  mRed.projectile.hit.radius = mRed.projectile.radius;
+  mRed.projectile.explodeRadius *= 1.3f;
+  mRed.projectile.explode.radius = mRed.projectile.explodeRadius;
+  mRed.projectile.explode.damage *= 1.25f;
+  MoveDef mBlue = m[SSpecial];
+  mBlue.name = "Bleu maximal";
+  mBlue.duration = 48;
+  mBlue.projectile.pull *= 1.4f;
+  mBlue.projectile.pullRadius *= 1.3f;
+  mBlue.projectile.radius *= 1.2f;
+  mBlue.projectile.hit.radius = mBlue.projectile.radius;
+  MoveDef blink = m[USpecial];
+  blink.name = "Téléportation instantanée";
+  blink.teleportDist *= 1.25f;
+  blink.castFx = "teleport_flicker";  // where he vanishes
+  blink.castFxFrame = 6;
+  blink.castFxAt = {0, -c.height * 0.5f};
+  blink.castFxStays = true;
+  MoveDef infinity = m[DSpecial];
+  infinity.name = "Infini des Six Yeux";
+  for (auto& h : infinity.hitboxes) h.damage *= 1.2f;
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(),
+                            {{NSpecial, mRed}, {SSpecial, mBlue}, {USpecial, blink}, {DSpecial, infinity}});
+  addFistKit(c.weapons[1], S, P, F::Cursed, 0.85f, 1.15f);
+  for (auto& [id, mdef] : c.weapons[1].moves)
+    if (id == Jab) mdef.name = "Frappe des Six Yeux";
   return c;
 }
 
@@ -779,7 +829,7 @@ CharacterDef makeSukuna() {
                 pal({36, 36, 44}, {120, 30, 40}, {220, 60, 60}, {242, 212, 190}, {240, 150, 170}, {220, 40, 40})};
   stats(c, 46, 104, 100, 4.3f, 9.4f, 5.3f, 0.64f, 10.4f, 15.5f, 15.6f, 10.3f, 14.4f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.0f, P = 0.88f;
+  const float S = 1.0f, P = 1.05f;  // v9.6: 58% (v9.2: 1.09)
   buildBrawlerNormals(c, S, P, F::Blood);
   auto& m = c.moves;
 
@@ -816,10 +866,6 @@ CharacterDef makeSukuna() {
   m[DSpecial].pose = PoseHint::Bow;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("SANCTUAIRE DÉMONIAQUE", 110, storm(34, 11, 4, 480, 540, 1.8f, F::Blood, 16, 560, 70),
-                           PoseHint::HandSign);
-  m[FinalSmash].hitboxes.back().fx = F::Fire;
-
   c.weapons[0] = weapon("Kamutoke", "La foudre remplace le Démantèlement", WeaponVisual::Kamutoke, F::Electric, 1.15f,
                         1.08f, 1.1f);
   MoveDef bolt = mv("Kamutoke", 40, {});
@@ -832,6 +878,61 @@ CharacterDef makeSukuna() {
   c.weapons[0].moves = {{NSpecial, bolt}};
   c.weapons[1] = weapon("Doigt de Sukuna", "Puissance maudite : tout frappe plus fort", WeaponVisual::CursedFinger,
                         F::Blood, 1.35f, 1.2f, 1.0f, 15);
+
+  // Kamutoke's kit: the staff's M1 (its second hit a thrust of the crescent blade), the bolt, a lightning lunge, a
+  // rising thunder and the thunder called down all around him.
+  c.weapons[0].blade = 0.95f * c.height;
+  MoveDef lunge = mv("Ruée foudroyante", 44, {imp(sw(12, 18, 4, 4, 0.3f, 1.1f, 24, 11, 40, 55, 86, 0, F::Electric))});
+  lunge.vel = {ve(10, VelMode::SetX, 15, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(22, VelMode::Scale, 0.2f, 1.0f)};
+  lunge.gravityMul = 0.3f;
+  lunge.frictionMul = 0.1f;
+  lunge.pose = PoseHint::Thrust;
+  MoveDef rise = mv("Tonnerre ascendant", 44, {hb(4, 8, 10, -30, 30, 8, 80, 50, 70, L::Weapon, 0, F::Electric),
+                                               hb(8, 15, 0, -70, 30, 5, 85, 40, 60, L::Weapon, 1, F::Electric)});
+  rise.vel = {ve(4, VelMode::Set, 1.5f, -17.5f, 3.0f)};
+  rise.gravityMul = 0.5f;
+  rise.helplessAfter = true;
+  rise.pose = PoseHint::Raise;
+  MoveDef call = mv("Appel du tonnerre", 54, {imp(hb(24, 30, 0, -20, 70, 13, 80, 60, 90, L::Body, 0, F::Electric))});
+  call.armorStart = 6;
+  call.armorEnd = 24;
+  call.gravityMul = 0.3f;
+  call.pose = PoseHint::Raise;
+  for (MoveDef* d : {&lunge, &rise, &call}) sc(*d, S, P);
+  call.castFx = "thunder_burst";  // the bolt from the sky and its dome of lightning
+  call.castFxFrame = 22;
+  call.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, lunge}, {USpecial, rise}, {DSpecial, call}});
+  addBladeKit(c.weapons[0], S, P, F::Electric, 1.0f, true);
+  m[SSpecial].castFx = "cleave_flurry";  // the web of slashes in front of his hand
+  m[SSpecial].castFxFrame = 6;
+  m[SSpecial].castFxAt = {48, -c.height * 0.5f};
+  // The finger's kit: crimson taijutsu, a barrage of Dismantles, the King's Cleave, a cursed ascent and the King's
+  // counter.
+  MoveDef barrage = m[NSpecial];
+  barrage.name = "Rafale de Démantèlements";
+  barrage.projectile.count = 4;
+  barrage.projectile.spreadDeg = 16;
+  barrage.projectile.hit.damage *= 0.85f;
+  barrage.duration = 34;
+  MoveDef kCleave = m[SSpecial];
+  kCleave.name = "Clivage du Roi";
+  for (auto& h : kCleave.hitboxes) h.damage *= 1.2f;
+  MoveDef kRise = m[USpecial];
+  kRise.name = "Envol du Roi";
+  for (auto& h : kRise.hitboxes) h.damage *= 1.15f;
+  kRise.vel = {ve(4, VelMode::Set, 1.5f, -18.0f, 3.0f)};
+  MoveDef kCounter = mv("Contre du Roi", 50, {imp(hb(26, 30, 48, -10, 36, 13, 361, 60, 95, L::ArmFront, 0, F::Blood))});
+  kCounter.counterStart = 4;
+  kCounter.counterEnd = 26;
+  kCounter.gravityMul = 0.3f;
+  kCounter.pose = PoseHint::Point;
+  sc(kCounter, S, P);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(),
+                            {{NSpecial, barrage}, {SSpecial, kCleave}, {USpecial, kRise}, {DSpecial, kCounter}});
+  addFistKit(c.weapons[1], S, P, F::Blood, 1.0f, 1.2f);  // the crimson slash lines reach past the hand
+  for (auto& [id, mdef] : c.weapons[1].moves)
+    if (id == Jab) mdef.name = "Frappe maudite";
   return c;
 }
 
@@ -851,7 +952,7 @@ CharacterDef makeKenpachi() {
   stats(c, 54, 124, 128, 3.7f, 8.4f, 4.8f, 0.68f, 11.0f, 15.6f, 15.4f, 10.2f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 96;
-  const float S = 1.18f, P = 1.28f;
+  const float S = 1.18f, P = 1.04f;  // v9.3: 43% with the softer launches (v9.2: 1.0)
   buildSwordNormals(c, S, P, F::Berserk);
   auto& m = c.moves;
 
@@ -886,8 +987,6 @@ CharacterDef makeKenpachi() {
   m[DSpecial].pose = PoseHint::TwoHanded;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("KENDŌ", 100, storm(34, 4, 6, 160, 240, 4, F::Berserk, 22, 300, 60), PoseHint::TwoHanded);
-
   c.weapons[0] = weapon("Nozarashi (Shikai)", "Couperet géant : tranche tout", WeaponVisual::Nozarashi, F::Berserk, 1.3f,
                         1.12f, 1.4f);
   MoveDef cleave = m[NSpecial];
@@ -919,7 +1018,7 @@ CharacterDef makeUlquiorra() {
   stats(c, 44, 106, 86, 4.2f, 9.0f, 5.4f, 0.5f, 8.8f, 13.6f, 14.6f, 9.6f, 13.2f, 3);
   c.airJumps = 2;
   c.airAccel = 0.5f;
-  const float S = 1.0f, P = 1.0f;
+  const float S = 1.0f, P = 1.40f;  // v9.6: 61% (v9.2: 1.48)
   buildBrawlerNormals(c, S, P, F::Hollow);
   auto& m = c.moves;
 
@@ -963,8 +1062,6 @@ CharacterDef makeUlquiorra() {
   m[DSpecial].pose = PoseHint::Point;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("CERO OSCURAS", 100, {}, PoseHint::Point);
-
   c.weapons[0] = weapon("Murciélago (Resurrección)", "Lances de lumière verte", WeaponVisual::LuzDeLaLuna, F::Hollow,
                         1.2f, 1.08f, 1.15f);
   MoveDef luz = mv("Luz de la Luna", 40, {});
@@ -976,6 +1073,159 @@ CharacterDef makeUlquiorra() {
   c.weapons[0].moves = {{NSpecial, luz}};
   c.weapons[1] = weapon("Segunda Etapa", "La forme ultime de l'Espada", WeaponVisual::SegundaCore, F::Hollow, 1.35f, 1.18f,
                         1.2f, 15);
+  return c;
+}
+
+// Grimmjow: a brawler with claws of reiatsu; his katana Pantera stays at his side until he picks it up.
+CharacterDef makeGrimmjow() {
+  CharacterDef c;
+  c.name = "GRIMMJOW";
+  c.title = "Le 6e Espada";
+  c.series = "Bleach";
+  c.hero = Hero::Grimmjow;
+  c.style = BodyStyle::Brawler;
+  c.baseWeapon = WeaponVisual::Pantera;
+  c.palettes = {pal({240, 238, 232}, {34, 34, 40}, {60, 196, 220}, {236, 200, 172}, {104, 196, 232}, {50, 170, 230}),
+                pal({40, 40, 48}, {206, 204, 212}, {230, 70, 70}, {236, 200, 172}, {104, 196, 232}, {50, 170, 230})};
+  stats(c, 46, 106, 102, 4.5f, 10.0f, 5.6f, 0.66f, 10.6f, 15.8f, 15.8f, 10.4f, 14.6f, 3);
+  c.groundAccel = 1.5f;
+  c.weaponLength = 72;
+  const float S = 1.04f, P = 1.18f;  // v9.6: 59% at 1.20, 40% at 1.14
+  buildBrawlerNormals(c, S, P, F::Claw);
+  auto& m = c.moves;
+
+  m[NSpecial] = mv("Cero", 44, {});
+  m[NSpecial].projectileFrame = 16;
+  m[NSpecial].projectile = proj({40, -12}, {12, 0}, 0, 36, 18, 9, 40, 70, F::Blood, PV::Cero);
+  m[NSpecial].pose = PoseHint::Point;
+
+  m[SSpecial] = mv("Desgarrón", 46, {});
+  m[SSpecial].projectileFrame = 12;
+  m[SSpecial].projectile = proj({40, -8}, {9, 0}, 0, 22, 30, 2.6f, 14, 10, F::Claw, PV::Desgarron);
+  m[SSpecial].projectile.piercing = true;
+  m[SSpecial].projectile.rehit = 5;
+  m[SSpecial].projectile.explodeRadius = 52;
+  m[SSpecial].projectile.explode = hb(0, 0, 0, 0, 52, 7, 45, 50, 80, L::None, 0, F::Claw);
+  m[SSpecial].pose = PoseHint::Throw;
+
+  m[USpecial] = mv("Sonído griffu", 44, {hb(4, 7, 30, -30, 30, 9, 80, 50, 72, L::ArmFront, 0, F::Claw),
+                                         hb(7, 14, 18, -62, 26, 6, 85, 40, 60, L::ArmFront, 1, F::Claw)});
+  m[USpecial].vel = {ve(4, VelMode::Set, 1.5f, -17.4f, 3.2f)};
+  m[USpecial].gravityMul = 0.5f;
+  m[USpecial].helplessAfter = true;
+  m[USpecial].pose = PoseHint::Uppercut;
+
+  m[DSpecial] = mv("Garra de la Pantera", 48, {});
+  m[DSpecial].projectileFrame = 18;
+  m[DSpecial].projectile = proj({34, -10}, {15, 0}, 0, 26, 9, 3.4f, 16, 34, F::Claw, PV::PanteraDart);
+  m[DSpecial].projectile.count = 5;
+  m[DSpecial].projectile.spreadDeg = 9;
+  m[DSpecial].pose = PoseHint::Cast;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  c.weapons[0] = weapon("Pantera (zanpakutō)", "Il dégaine : l'ultime libère la panthère", WeaponVisual::Pantera, F::Claw,
+                        1.2f, 1.08f, 1.15f);
+  MoveDef rush = mv("Charge de Pantera", 46, {imp(hb(10, 22, 44, -6, 30, 11, 40, 55, 82, L::Weapon, 0, F::Claw))});
+  rush.vel = {ve(10, VelMode::SetX, 14, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(24, VelMode::Scale, 0.2f, 1.0f)};
+  rush.gravityMul = 0.3f;
+  rush.frictionMul = 0.1f;
+  rush.pose = PoseHint::Thrust;
+  sc(rush, S, P);
+  c.weapons[0].moves = {{SSpecial, rush}};
+  c.weapons[1] = weapon("Griffes de Pantera", "Desgarrón : cinq griffes géantes", WeaponVisual::PanteraClaws, F::Claw, 1.25f,
+                        1.12f, 1.2f, 15);
+  MoveDef big = m[SSpecial];
+  big.name = "Desgarrón géant";
+  big.projectile.radius *= 1.6f;
+  big.projectile.hit.radius = big.projectile.radius;
+  big.projectile.hit.damage *= 1.3f;
+  big.projectile.lifetime = 30;
+  big.projectile.explodeRadius *= 1.4f;
+  big.projectile.explode.radius = big.projectile.explodeRadius;
+  big.projectile.explode.damage *= 1.3f;
+  big.projectile.explode.impact = true;
+  c.weapons[1].moves = {{SSpecial, big}};
+  return c;
+}
+
+// Starrk: the lazy Primera, ceros and wolves of cero; Lilynette lets him release Los Lobos.
+CharacterDef makeStarrk() {
+  CharacterDef c;
+  c.name = "STARRK";
+  c.title = "Le 1er Espada";
+  c.series = "Bleach";
+  c.hero = Hero::Starrk;
+  c.style = BodyStyle::Ninja;
+  c.palettes = {pal({238, 236, 230}, {36, 36, 42}, {120, 180, 255}, {232, 198, 170}, {86, 62, 48}, {120, 140, 170}),
+                pal({70, 72, 82}, {230, 228, 220}, {170, 210, 255}, {232, 198, 170}, {86, 62, 48}, {120, 140, 170})};
+  stats(c, 46, 112, 106, 4.0f, 8.9f, 5.3f, 0.62f, 10.0f, 14.8f, 15.4f, 10.0f, 13.8f, 4);
+  c.airJumps = 2;
+  c.airAccel = 0.5f;
+  const float S = 1.08f, P = 1.2f;
+  buildBrawlerNormals(c, S, P, F::Wolf);
+  auto& m = c.moves;
+
+  BeamDef cero;
+  cero.start = 16;
+  cero.end = 28;
+  cero.from = {34, -14};
+  cero.length = 300;
+  cero.width = 46;
+  cero.fx = F::Wolf;
+  m[NSpecial] = mv("Cero", 46, beamHits(cero, 11, 30, 50, 86, 2));
+  m[NSpecial].beam = cero;
+  m[NSpecial].gravityMul = 0.3f;
+  m[NSpecial].pose = PoseHint::Point;
+
+  m[SSpecial] = mv("Los Lobos", 46, {});
+  m[SSpecial].projectileFrame = 14;
+  m[SSpecial].projectileRepeat = 1;
+  m[SSpecial].projectileEvery = 9;
+  m[SSpecial].projectile = proj({30, 30}, {8.5f, 0}, 0, 60, 16, 3, 10, 10, F::Wolf, PV::CeroWolf);
+  m[SSpecial].projectile.explodeRadius = 48;
+  m[SSpecial].projectile.explode = hb(0, 0, 0, 0, 48, 9, 45, 48, 76, L::None, 0, F::Wolf);
+  m[SSpecial].pose = PoseHint::Point;
+
+  m[USpecial] = mv("Sonído", 38, {hb(20, 24, 0, -6, 38, 7, 80, 55, 70, L::Body, 0, F::Wolf)});
+  m[USpecial].teleportFrame = 18;
+  m[USpecial].teleportDist = 270;
+  m[USpecial].intangibleStart = 6;
+  m[USpecial].intangibleEnd = 20;
+  m[USpecial].vel = {ve(2, VelMode::Set, 0, 0)};
+  m[USpecial].gravityMul = 0.0f;
+  m[USpecial].allowDrift = false;
+  m[USpecial].helplessAfter = true;
+
+  m[DSpecial] = mv("Rafale de ceros", 52, {});
+  m[DSpecial].projectileFrame = 14;
+  m[DSpecial].projectileRepeat = 6;
+  m[DSpecial].projectileEvery = 3;
+  m[DSpecial].projectile = proj({36, -12}, {17, 0}, 0, 24, 9, 1.7f, 8, 14, F::Wolf, PV::StarrkCero);
+  m[DSpecial].projectile.jitter = {0, 14};
+  m[DSpecial].gravityMul = 0.4f;
+  m[DSpecial].pose = PoseHint::Cast;
+  for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
+
+  c.weapons[0] = weapon("Los Lobos (la meute)", "Trois loups de cero à la fois", WeaponVisual::LobosPack, F::Wolf, 1.2f, 1.08f,
+                        1.0f, 15);
+  MoveDef pack = m[SSpecial];
+  pack.name = "La meute";
+  pack.projectileRepeat = 2;
+  pack.projectileEvery = 7;
+  pack.projectile.explodeRadius *= 1.3f;
+  pack.projectile.explode.radius = pack.projectile.explodeRadius;
+  pack.projectile.explode.damage *= 1.2f;
+  c.weapons[0].moves = {{SSpecial, pack}};
+  c.weapons[1] = weapon("Lilynette", "L'autre moitié de son âme : l'ultime le libère", WeaponVisual::Lilynette, F::Wolf, 1.25f,
+                        1.1f, 1.0f, 15);
+  MoveDef twin = m[NSpecial];
+  twin.name = "Cero de Lilynette";
+  twin.beam.width *= 1.4f;
+  for (auto& h : twin.hitboxes) {
+    h.radius *= 1.3f;
+    h.damage *= 1.2f;
+  }
+  c.weapons[1].moves = {{NSpecial, twin}};
   return c;
 }
 
@@ -994,7 +1244,7 @@ CharacterDef makeNaruto() {
   stats(c, 44, 96, 92, 4.5f, 9.8f, 5.6f, 0.6f, 10.0f, 15.0f, 15.6f, 10.4f, 14.6f, 3);
   c.groundAccel = 1.5f;
   c.airJumps = 2;
-  const float S = 0.98f, P = 1.0f;
+  const float S = 0.98f, P = 1.11f;  // v9.3: hits harder, 41%
   buildBrawlerNormals(c, S, P, F::Chakra);
   auto& m = c.moves;
 
@@ -1027,8 +1277,6 @@ CharacterDef makeNaruto() {
   m[DSpecial].pose = PoseHint::HandSign;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("BARRAGE UZUMAKI", 100, storm(34, 6, 5, 120, 160, 3, F::Chakra, 18, 200, 60), PoseHint::HandSign);
-
   c.weapons[0] = weapon("Mode Ermite", "Rasengan géant (Ōdama)", WeaponVisual::SageScroll, F::Chakra, 1.25f, 1.1f, 1.1f);
   MoveDef odama = m[NSpecial];
   odama.name = "Ōdama Rasengan";
@@ -1037,6 +1285,13 @@ CharacterDef makeNaruto() {
     h.offset.x *= 1.2f;
     h.damage *= 1.3f;
   }
+  // PixelLab will not draw the giant sphere in his Sage Mode clip: the game draws it on his palm (where the clip
+  // holds it out, frames 2-9: x 227, y 86 of the 256 frame, 213 px for his 96 units), the hit on the sphere.
+  odama.castFx = "odama_ball";
+  odama.castFxFrame = 7;
+  odama.castFxAt = {67, -71};
+  odama.castFxScale = 1.26f;  // its drawn radius (58 px) on the hitbox's (41)
+  for (auto& h : odama.hitboxes) h.offset = {67, -71 + c.height * 0.5f};
   c.weapons[0].moves = {{NSpecial, odama}};
   c.weapons[1] = weapon("Chakra de Kurama", "Le manteau de chakra du renard", WeaponVisual::KuramaChakra, F::Chakra, 1.3f,
                         1.15f, 1.2f, 15);
@@ -1046,6 +1301,44 @@ CharacterDef makeNaruto() {
   clones.projectile.spreadDeg = 8;
   clones.projectile.hit.damage *= 1.25f;
   c.weapons[1].moves = {{SSpecial, clones}};
+
+  // Sage Mode's kit: frog kata (nature energy hits beyond the fist), the Odama, a frog kata rush, a sage leap and a
+  // frog kata counter.
+  MoveDef rush = mv("Kawazu Kumite", 40, {imp(hb(10, 15, 46, -10, 30, 11, 45, 55, 88, L::ArmFront, 0, F::Chakra))});
+  rush.vel = {ve(6, VelMode::SetX, 13, 0), ve(6, VelMode::SetY, 0, -1, 0, true), ve(16, VelMode::Scale, 0.2f, 1.0f)};
+  rush.gravityMul = 0.3f;
+  rush.frictionMul = 0.1f;
+  rush.pose = PoseHint::Rush;
+  MoveDef leap = mv("Bond de l'ermite", 42, {hb(4, 12, 10, -40, 30, 8, 85, 55, 70, L::LegFront, 0, F::Chakra)});
+  leap.vel = {ve(4, VelMode::Set, 1.5f, -18.0f, 3.0f)};
+  leap.gravityMul = 0.5f;
+  leap.helplessAfter = true;
+  leap.pose = PoseHint::Uppercut;
+  MoveDef frog = mv("Contre du crapaud", 50, {imp(hb(26, 31, 50, -10, 36, 13, 361, 60, 95, L::ArmFront, 0, F::Chakra))});
+  frog.counterStart = 4;
+  frog.counterEnd = 26;
+  frog.gravityMul = 0.3f;
+  frog.pose = PoseHint::Kneel;
+  const float PK = P * 1.28f;  // the kits hit harder than his bare-handed normals: they lose the smashes
+  for (MoveDef* d : {&rush, &leap, &frog}) sc(*d, S, PK);
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, rush}, {USpecial, leap}, {DSpecial, frog}});
+  addFistKit(c.weapons[0], S, PK, F::Chakra, 1.0f, 1.15f);
+  // Kurama's kit: faster blows stretched by chakra arms, a Rasengan spun by the chakra arms, the clones, a golden
+  // flash upward and a chakra arm that grabs from afar.
+  MoveDef kRasengan = m[NSpecial];
+  kRasengan.name = "Rasengan de Kurama";
+  for (auto& h : kRasengan.hitboxes) h.radius *= 1.3f, h.offset.x *= 1.2f, h.damage *= 1.3f;
+  MoveDef flashUp = mv("Éclair doré", 40, {hb(4, 12, 0, -40, 32, 8, 85, 55, 72, L::Body, 0, F::Chakra)});
+  flashUp.vel = {ve(4, VelMode::Set, 2.0f, -19.0f, 3.5f)};
+  flashUp.gravityMul = 0.5f;
+  flashUp.helplessAfter = true;
+  flashUp.pose = PoseHint::Uppercut;
+  MoveDef arm = mv("Bras de chakra", 46, {hb(10, 18, 90, -20, 30, 0, 0, 0, 0, L::ArmFront)});
+  arm.isGrab = true;
+  arm.pose = PoseHint::Thrust;
+  for (MoveDef* d : {&flashUp, &arm}) sc(*d, S, PK);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{NSpecial, kRasengan}, {USpecial, flashUp}, {DSpecial, arm}});
+  addFistKit(c.weapons[1], S, PK, F::Chakra, 0.85f, 1.35f, true);
   return c;
 }
 
@@ -1062,7 +1355,7 @@ CharacterDef makeSasuke() {
   stats(c, 44, 102, 90, 4.4f, 9.7f, 5.4f, 0.6f, 9.8f, 14.8f, 15.2f, 10.0f, 14.2f, 3);
   c.groundAccel = 1.45f;
   c.weaponLength = 70;
-  const float S = 1.0f, P = 1.05f;
+  const float S = 1.0f, P = 0.86f;  // v9.2: hits a little harder, 42%
   buildSwordNormals(c, S, P, F::Lightning);
   auto& m = c.moves;
 
@@ -1100,8 +1393,6 @@ CharacterDef makeSasuke() {
   m[DSpecial].pose = PoseHint::Roar;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("KIRIN", 100, {}, PoseHint::Raise);
-
   c.weapons[0] = weapon("Arc de Susanoo", "Flèches de flammes violettes", WeaponVisual::SusanooBow, F::Dark, 1.2f, 1.08f,
                         1.0f);
   MoveDef arrow = mv("Flèche de Susanoo", 40, {});
@@ -1113,7 +1404,9 @@ CharacterDef makeSasuke() {
   c.weapons[0].moves = {{NSpecial, arrow}};
   c.weapons[1] = weapon("Mangekyō Sharingan", "Amaterasu : des flammes noires sur l'ennemi", WeaponVisual::Mangekyo,
                         F::BlackFlame, 1.25f, 1.1f, 1.0f, 15);
-  MoveDef ama = mv("Amaterasu", 50, {});
+  // Sasuke holds his gaze while the black flames burn (they start at frame 20 and last 70): he stands still and
+  // cannot attack until they die out, and the technique needs three seconds to come back.
+  MoveDef ama = mv("Amaterasu", 96, {});
   ama.projectileFrame = 20;
   ama.projectile = proj({0, 0}, {0, 0}, 0, 70, 30, 2.2f, 8, 6, F::BlackFlame, PV::BlackFlames);
   ama.projectile.target = ProjTarget::Nearest;
@@ -1121,8 +1414,91 @@ CharacterDef makeSasuke() {
   ama.projectile.piercing = true;
   ama.projectile.rehit = 8;
   ama.projectile.ignoreGround = true;
+  ama.channelEnd = 90;
+  ama.cooldown = 180;
+  ama.allowDrift = false;
+  ama.vel = {ve(1, VelMode::Set, 0, 0)};
   ama.pose = PoseHint::HandSign;
   c.weapons[1].moves = {{NSpecial, ama}};
+
+  // Susanoo's bow kit: the M1 shoots (a quick arrow, two arrows, a charged arrow that ejects), the air M1 shoots down
+  // in front, a fan of three arrows, a leap on chakra wings, and the ribcage of Susanoo as a counter. The kits hit
+  // harder than his sword normals (P is low for them: they reach far).
+  const float PK = 1.36f;
+  MoveDef quick = arrow;
+  quick.name = "Flèche rapide";
+  quick.duration = 26;
+  quick.projectileFrame = 9;
+  quick.projectile.hit.damage *= 0.4f * PK / P;
+  quick.projectile.hit.baseKB = 10, quick.projectile.hit.growth = 25;
+  quick.nextMove = Jab2, quick.comboStart = 4, quick.comboEnd = 22, quick.comboAt = 13;
+  MoveDef twin = quick;
+  twin.name = "Double flèche";
+  twin.duration = 28;
+  twin.projectile.count = 2;
+  twin.projectile.spreadDeg = 6;
+  twin.nextMove = Jab3, twin.comboStart = 4, twin.comboEnd = 24, twin.comboAt = 14;
+  MoveDef charged = arrow;
+  charged.name = "Flèche chargée";
+  charged.duration = 40;
+  charged.projectileFrame = 20;
+  charged.projectile.radius *= 1.3f;
+  charged.projectile.hit.damage *= PK / P;
+  charged.projectile.hit.radius = charged.projectile.radius;
+  charged.projectile.hit.baseKB = 50, charged.projectile.hit.growth = 95;
+  charged.projectile.hit.impact = true;
+  MoveDef airShot = quick;
+  airShot.name = "Tir aérien";
+  airShot.duration = 34;
+  airShot.nextMove = -1;
+  airShot.projectileFrame = 12;
+  airShot.projectile.velocity = {15, 9};  // down in front
+  airShot.projectile.hit.damage *= 1.5f;
+  airShot.landingLag = 8;
+  MoveDef fan = arrow;
+  fan.name = "Éventail de flèches";
+  fan.projectile.count = 3;
+  fan.projectile.spreadDeg = 14;
+  fan.projectile.hit.damage *= 0.6f * PK / P;
+  MoveDef wings = m[USpecial];
+  wings.name = "Envol du Susanoo";
+  for (auto& h : wings.hitboxes) h.fx = F::Dark;
+  MoveDef ribs = mv("Garde du Susanoo", 50, {imp(hb(26, 30, 50, -40, 50, 12, 361, 60, 92, L::Body, 0, F::Dark))});
+  ribs.counterStart = 4;
+  ribs.counterEnd = 26;
+  ribs.reflects = true;
+  ribs.gravityMul = 0.3f;
+  ribs.pose = PoseHint::Bow;
+  sc(ribs, S, PK);
+  ribs.castFx = "susanoo_ribs";  // the ribcage rises around him while he guards
+  ribs.castFxFrame = 3;
+  ribs.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{Jab, quick}, {Jab2, twin}, {Jab3, charged}, {NAir, airShot},
+                                                       {SSpecial, fan}, {USpecial, wings}, {DSpecial, ribs}});
+  c.weapons[0].kit = true;
+  // The Mangekyo's kit: the sword wreathed in black flames (the M1, its thrust, a rising spin), Amaterasu, the
+  // Kagutsuchi lunge, a rising black flame slash and a barrier of black flames.
+  MoveDef kagu = mv("Enton : Kagutsuchi", 44, {imp(sw(12, 18, 5, 5, 0.3f, 1.15f, 24, 11, 40, 55, 88, 0, F::BlackFlame))});
+  kagu.vel = {ve(10, VelMode::SetX, 15, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(22, VelMode::Scale, 0.2f, 1.0f)};
+  kagu.gravityMul = 0.3f;
+  kagu.frictionMul = 0.1f;
+  kagu.pose = PoseHint::Thrust;
+  MoveDef rising = mv("Envol d'Enton", 44, {sw(4, 14, -30, 100, 0.2f, 1.0f, 26, 9, 85, 50, 70, 0, F::BlackFlame)});
+  rising.vel = {ve(4, VelMode::Set, 1.5f, -17.0f, 3.0f)};
+  rising.gravityMul = 0.5f;
+  rising.helplessAfter = true;
+  rising.pose = PoseHint::Uppercut;
+  MoveDef barrier = mv("Barrière d'Enton", 50, {imp(hb(14, 22, 0, -50, 56, 11, 70, 55, 85, L::Body, 0, F::BlackFlame))});
+  barrier.armorStart = 4;
+  barrier.armorEnd = 14;
+  barrier.gravityMul = 0.3f;
+  barrier.pose = PoseHint::Cast;
+  for (MoveDef* d : {&kagu, &rising, &barrier}) sc(*d, S, PK);
+  barrier.castFx = "black_flame_burst";
+  barrier.castFxFrame = 12;
+  barrier.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, kagu}, {USpecial, rising}, {DSpecial, barrier}});
+  addBladeKit(c.weapons[1], S, PK, F::BlackFlame, 0.9f, true);
   return c;
 }
 
@@ -1138,7 +1514,7 @@ CharacterDef makeKakashi() {
                 pal({40, 48, 70}, {90, 90, 96}, {120, 170, 230}, {236, 212, 188}, {214, 216, 222}, {40, 40, 44})};
   stats(c, 44, 104, 96, 4.3f, 9.5f, 5.3f, 0.6f, 10.0f, 15.0f, 15.2f, 10.0f, 14.2f, 3);
   c.groundAccel = 1.4f;
-  const float S = 1.02f, P = 1.04f;
+  const float S = 1.02f, P = 1.08f;  // v9.1: toned down, he won 72% of the balance duels
   buildBrawlerNormals(c, S, P, F::Lightning);
   auto& m = c.moves;
 
@@ -1149,7 +1525,7 @@ CharacterDef makeKakashi() {
   m[NSpecial].projectile.rehit = 8;
   m[NSpecial].pose = PoseHint::HandSign;
 
-  m[SSpecial] = mv("Raikiri", 52, {imp(hb(22, 28, 50, -6, 30, 14, 40, 60, 90, L::ArmFront, 0, F::Lightning))});
+  m[SSpecial] = mv("Raikiri", 52, {imp(hb(22, 28, 50, -6, 30, 12, 40, 60, 90, L::ArmFront, 0, F::Lightning))});
   m[SSpecial].vel = {ve(14, VelMode::SetX, 17, 0), ve(14, VelMode::SetY, 0, -1, 0, true), ve(30, VelMode::Scale, 0.2f, 1.0f)};
   m[SSpecial].gravityMul = 0.3f;
   m[SSpecial].frictionMul = 0.1f;
@@ -1170,8 +1546,6 @@ CharacterDef makeKakashi() {
   m[DSpecial].isGrab = true;
   m[DSpecial].pose = PoseHint::Kneel;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
-
-  m[FinalSmash] = ultimate("RAIKIRI", 100, storm(34, 3, 6, 80, 100, 4, F::Lightning, 24, 140, 45), PoseHint::Rush);
 
   c.weapons[0] = weapon("Sharingan (Kamui)", "Kamui : un vortex sur l'ennemi", WeaponVisual::SharinganEye, F::Dark, 1.2f,
                         1.08f, 1.0f);
@@ -1197,6 +1571,51 @@ CharacterDef makeKakashi() {
   shuri.pose = PoseHint::Throw;
   sc(shuri, S, P);
   c.weapons[1].moves = {{NSpecial, shuri}};
+
+  // The Sharingan's kit: copied taijutsu ending in a lightning palm, Kamui, the Lightning Hound running along the
+  // ground, a Kamui warp upward and a counter read by the Sharingan.
+  MoveDef hound = mv("Raiton : Chien de foudre", 44, {});
+  hound.projectileFrame = 16;
+  hound.projectile = proj({30, 10}, {11, 0}, 0, 50, 22, 9, 45, 75, F::Lightning, PV::LightningHound);
+  hound.projectile.piercing = true;
+  hound.pose = PoseHint::Kneel;
+  MoveDef warp = m[USpecial];
+  warp.name = "Kamui : téléportation";
+  for (auto& h : warp.hitboxes) h.fx = F::Dark;
+  warp.castFx = "kamui_swirl";  // space twists where he vanishes
+  warp.castFxFrame = 6;
+  warp.castFxAt = {0, -c.height * 0.5f};
+  warp.castFxStays = true;
+  MoveDef read = mv("Contre du Sharingan", 50, {imp(hb(26, 30, 46, -10, 34, 12, 361, 60, 92, L::ArmFront, 0, F::Lightning))});
+  read.counterStart = 4;
+  read.counterEnd = 26;
+  read.gravityMul = 0.3f;
+  read.pose = PoseHint::Point;
+  for (MoveDef* d : {&hound, &read}) sc(*d, S, P);
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, hound}, {USpecial, warp}, {DSpecial, read}});
+  addFistKit(c.weapons[0], S, P, F::Lightning, 0.95f);
+  // Both Mangekyo's kit: taijutsu ending in a Kamui Raikiri, the Kamui shuriken, the Kamui Raikiri dash, a leap and
+  // the ribcage of Susanoo as a counter.
+  MoveDef kRaikiri = m[SSpecial];
+  kRaikiri.name = "Kamui Raikiri";
+  for (auto& h : kRaikiri.hitboxes) h.damage *= 1.2f, h.fx = F::Dark;
+  MoveDef sLeap = mv("Bond du Susanoo", 40, {hb(4, 10, 0, -40, 30, 6, 80, 50, 60, L::Body, 0, F::Dark)});
+  sLeap.vel = {ve(4, VelMode::Set, 1.5f, -18.0f, 3.0f)};
+  sLeap.gravityMul = 0.5f;
+  sLeap.helplessAfter = true;
+  sLeap.pose = PoseHint::Uppercut;
+  MoveDef guard = mv("Garde du Susanoo", 50, {imp(hb(26, 30, 50, -40, 50, 12, 361, 60, 92, L::Body, 0, F::Dark))});
+  guard.counterStart = 4;
+  guard.counterEnd = 26;
+  guard.reflects = true;
+  guard.gravityMul = 0.3f;
+  guard.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&sLeap, &guard}) sc(*d, S, P);
+  guard.castFx = "susanoo_ribs";
+  guard.castFxFrame = 3;
+  guard.castFxAt = {0, -c.height * 0.5f};
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, kRaikiri}, {USpecial, sLeap}, {DSpecial, guard}});
+  addFistKit(c.weapons[1], S, P, F::Dark, 0.9f);
   return c;
 }
 
@@ -1216,7 +1635,7 @@ CharacterDef makeHunter() {
   stats(c, 52, 108, 120, 3.6f, 8.2f, 4.8f, 0.66f, 10.8f, 15.4f, 15.2f, 10.0f, 13.8f, 5);
   c.groundAccel = 1.0f;
   c.weaponLength = 100;
-  const float S = 1.08f, P = 1.24f;
+  const float S = 1.08f, P = 1.20f;  // v9.9: 41% at 1.15 once the lot 3 kits came in (v9.7: 45%)
   buildSwordNormals(c, S, P, F::Slash);
   auto& m = c.moves;
 
@@ -1249,9 +1668,6 @@ CharacterDef makeHunter() {
   m[DSpecial].pose = PoseHint::Kneel;
   for (int id : {NSpecial, SSpecial, USpecial, DSpecial}) sc(m[id], S, P);
 
-  m[FinalSmash] = ultimate("TAILLE CHARGÉE VRAIE", 100, storm(34, 2, 10, 140, 160, 6, F::Slash, 26, 240, 50),
-                           PoseHint::TwoHanded);
-
   c.weapons[0] = weapon("Lame chargée", "Décharge élémentaire explosive", WeaponVisual::ChargeBlade, F::Electric, 1.2f,
                         1.1f, 1.0f);
   MoveDef ued = mv("Décharge élémentaire", 54, {imp(hb(22, 26, 60, 10, 40, 12, 60, 50, 85, L::Weapon, 0, F::Electric))});
@@ -1271,15 +1687,195 @@ CharacterDef makeHunter() {
   shell.projectile.explode = hb(0, 0, 0, 0, 80, 11, 45, 55, 82, L::None, 0, F::Fire);
   shell.pose = PoseHint::Thrust;
   sc(shell, S, P);
+  shell.castFx = "gun_blast";  // the shell leaves the tip in a cone of fire
+  shell.castFxFrame = 14;
+  shell.castFxAt = {shell.projectile.spawnOffset.x, shell.projectile.spawnOffset.y - c.height * 0.5f};
   c.weapons[1].moves = {{NSpecial, shell}};
+
+  // The charge blade's kit: the sword's M1 (a roundslash to finish), the discharge, a charged thrust, a rising slash
+  // and the guard point (a counter with the shield, a phial bursts as it bashes).
+  c.weapons[0].blade = 0.82f * c.height;
+  MoveDef cThrust = mv("Estoc chargé", 44, {imp(sw(12, 18, 4, 4, 0.3f, 1.1f, 22, 11, 40, 55, 85, 0, F::Electric))});
+  cThrust.vel = {ve(10, VelMode::SetX, 13, 0), ve(10, VelMode::SetY, 0, -1, 0, true), ve(22, VelMode::Scale, 0.2f, 1.0f)};
+  cThrust.gravityMul = 0.3f;
+  cThrust.frictionMul = 0.1f;
+  cThrust.pose = PoseHint::Thrust;
+  MoveDef rSlash = mv("Taille ascendante", 46, {sw(6, 13, -40, 120, 0.2f, 1.0f, 26, 9, 85, 50, 72, 0, F::Electric)});
+  rSlash.vel = {ve(6, VelMode::Set, 1.5f, -17.0f, 3.5f)};
+  rSlash.gravityMul = 0.5f;
+  rSlash.helplessAfter = true;
+  rSlash.pose = PoseHint::Uppercut;
+  MoveDef gPoint = mv("Garde parfaite", 50, {imp(hb(26, 31, 50, -10, 44, 13, 361, 60, 95, L::Body, 0, F::Electric))});
+  gPoint.counterStart = 4;
+  gPoint.counterEnd = 26;
+  gPoint.reflects = true;
+  gPoint.gravityMul = 0.3f;
+  gPoint.pose = PoseHint::Kneel;
+  for (MoveDef* d : {&cThrust, &rSlash, &gPoint}) sc(*d, S, P);
+  gPoint.castFx = "explosion_electric";  // the phial bursts against the shield
+  gPoint.castFxFrame = 26;
+  gPoint.castFxAt = {50, -c.height * 0.5f};
+  gPoint.castFxScale = 0.6f;
+  c.weapons[0].moves.insert(c.weapons[0].moves.end(), {{SSpecial, cThrust}, {USpecial, rSlash}, {DSpecial, gPoint}});
+  addBladeKit(c.weapons[0], S, P, F::Electric);
+  // The gunlance's kit: thrusts and a sweep that fires a shell, the shell shot, a guard dash behind the shield, a
+  // blast that throws him upward and a full burst of every shell.
+  MoveDef gDash = mv("Charge au bouclier", 46, {hb(8, 20, 40, -8, 32, 6, 40, 40, 50, L::Body, 0, F::Normal),
+                                                imp(sw(22, 26, 4, 4, 0.3f, 1.1f, 22, 10, 40, 55, 85, 1, F::Slash))});
+  gDash.armorStart = 4;
+  gDash.armorEnd = 20;
+  gDash.vel = {ve(6, VelMode::SetX, 10, 0), ve(26, VelMode::Scale, 0.2f, 1.0f)};
+  gDash.gravityMul = 0.45f;
+  gDash.frictionMul = 0.12f;
+  gDash.pose = PoseHint::Rush;
+  MoveDef blast = mv("Saut explosif", 46, {imp(hb(6, 10, 0, 50, 48, 10, 80, 50, 75, L::None, 0, F::Fire))});
+  blast.vel = {ve(7, VelMode::Set, 1.0f, -19.0f, 3.0f)};
+  blast.gravityMul = 0.5f;
+  blast.helplessAfter = true;
+  blast.pose = PoseHint::Raise;
+  MoveDef fullBurst = mv("Salve complète", 54, {imp(hb(18, 24, 96, -6, 52, 15, 40, 60, 92, L::Weapon, 0, F::Fire))});
+  fullBurst.armorStart = 4;
+  fullBurst.armorEnd = 18;
+  fullBurst.vel = {ve(18, VelMode::SetX, -5, 0), ve(26, VelMode::Scale, 0.3f, 1.0f)};  // the recoil
+  fullBurst.gravityMul = 0.3f;
+  fullBurst.pose = PoseHint::Thrust;
+  for (MoveDef* d : {&gDash, &blast, &fullBurst}) sc(*d, S, P);
+  c.weapons[1].moves.insert(c.weapons[1].moves.end(), {{SSpecial, gDash}, {USpecial, blast}, {DSpecial, fullBurst}});
+  addLanceKit(c.weapons[1], S, P, F::Fire);
   return c;
+}
+// The basic attack (jab) with a picked-up weapon: one big strike, drawn by its own clip (w0_jab / w1_jab). A blade
+// slashes from above down to the front, a spear or a lance thrusts, a bow looses a quick arrow, a power strikes with
+// a burst of its energy. No chain: pressing again strikes again.
+float pickupReach(WeaponVisual v) {  // weapon units, a 100-unit fighter (render_weapons.cpp weaponVisualLength)
+  switch (v) {
+    case WeaponVisual::DemonSlayer: return 100;
+    case WeaponVisual::DemonDweller: return 80;
+    case WeaponVisual::Zangetsu: return 90;
+    case WeaponVisual::TensaZangetsu: return 82;
+    case WeaponVisual::Senbonzakura: return 74;
+    case WeaponVisual::Kageyoshi: return 80;
+    case WeaponVisual::MasterSword: return 79;
+    case WeaponVisual::DemonKingSword: return 96;
+    case WeaponVisual::LeviathanAxe: return 72;
+    case WeaponVisual::BladesOfChaos: return 86;
+    case WeaponVisual::Nozarashi: return 110;
+    case WeaponVisual::RedBankai: return 113;
+    case WeaponVisual::Pantera: return 74;
+    case WeaponVisual::ChargeBlade: return 82;
+    default: return 0;
+  }
+}
+bool pickupThrusts(WeaponVisual v) {
+  return v == WeaponVisual::WindSpear || v == WeaponVisual::GloomSpear || v == WeaponVisual::LuzDeLaLuna ||
+         v == WeaponVisual::Gunlance || v == WeaponVisual::Kamutoke;
+}
+float thrustReach(WeaponVisual v) {
+  switch (v) {
+    case WeaponVisual::WindSpear: return 98;
+    case WeaponVisual::GloomSpear: return 105;
+    case WeaponVisual::LuzDeLaLuna: return 104;
+    case WeaponVisual::Gunlance: return 108;
+    default: return 94;  // Kamutoke
+  }
+}
+
+MoveDef weaponStrike(const CharacterDef& c, const WeaponDef& w) {
+  const float S = c.height / 100.0f;
+  const F fx = w.fx;
+  const WeaponVisual v = w.visual;
+  if (v == WeaponVisual::BowOfLight || v == WeaponVisual::SusanooBow) {  // a quick arrow, like the special's
+    for (const auto& [id, special] : w.moves)
+      if (id == NSpecial && special.projectileFrame >= 0) {
+        MoveDef m = mv("Tir rapide", 32, {});
+        m.projectileFrame = 11;
+        m.projectile = special.projectile;
+        m.projectile.hit.damage *= 0.5f;
+        m.projectile.explodeRadius = 0.0f;
+        m.pose = PoseHint::Bow;
+        return m;
+      }
+  }
+  MoveDef m;
+  if (const float R = pickupReach(v) * S; R > 0.0f) {  // the slash: high behind the head, down to the front
+    m = mv("Frappe de l'arme", 30, {hb(8, 10, R * 0.35f, -R * 0.55f, 20 * S, 7.0f, 45, 40, 85, L::Weapon, 0, fx),
+                                    hb(9, 12, R * 0.7f, -R * 0.12f, 28 * S, 9.0f, 40, 40, 85, L::Weapon, 0, fx),
+                                    hb(9, 12, R * 0.35f, -R * 0.05f, 22 * S, 9.0f, 40, 40, 85, L::Weapon, 0, fx)});
+  } else if (pickupThrusts(v)) {  // the thrust: straight ahead, far
+    const float R = thrustReach(v) * S;
+    m = mv("Estoc de l'arme", 30, {hb(8, 11, R * 0.5f, -10 * S, 20 * S, 7.5f, 38, 38, 85, L::Weapon, 0, fx),
+                                   hb(9, 12, R * 0.95f, -10 * S, 24 * S, 8.5f, 38, 38, 85, L::Weapon, 0, fx)});
+  } else {  // a power: a burst of its energy in front of the hands
+    m = mv("Frappe d'énergie", 30, {hb(8, 12, 52 * S, -10 * S, 34 * S, 8.5f, 45, 40, 80, L::ArmFront, 0, fx)});
+  }
+  return m;
+}
+
+void addWeaponStrikes(CharacterDef& c) {
+  for (auto& w : c.weapons)
+    if (!w.kit) w.moves.push_back({Jab, weaponStrike(c, w)});  // a kit has its own M1
+}
+}  // namespace
+
+bool g_rawHitboxes = false;
+
+namespace {
+// One hitbox moved onto the drawing of its clip:
+// fighter, weapon slot (-1: bare-handed), move, index in the move's hitboxes, the radius it was written with (the
+// entry is dropped if that changed: the roster moved on since the fit), its fitted offset and radius, and for a
+// blade swing its fitted angles and reach (its offset is unused).
+struct HitFit {
+  const char* fighter;
+  int slot, move, index;
+  float was, x, y, r, a0, a1, reach1;
+};
+constexpr HitFit kHitFit[] = {
+#include "core/roster_hitfit.inc"
+    {nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
+MoveDef* moveOf(CharacterDef& c, int slot, int move) {
+  if (slot < 0) return move >= 0 && move < MOVE_COUNT ? &c.moves[move] : nullptr;
+  if (slot >= int(std::size(c.weapons))) return nullptr;
+  for (auto& [id, m] : c.weapons[slot].moves)
+    if (id == move) return &m;
+  return nullptr;
+}
+
+void applyHitFit(std::vector<CharacterDef>& v) {
+  for (const HitFit& h : kHitFit) {
+    if (!h.fighter) break;
+    for (auto& c : v) {
+      if (c.name != h.fighter) continue;
+      MoveDef* m = moveOf(c, h.slot, h.move);
+      if (!m || h.index < 0 || h.index >= int(m->hitboxes.size())) continue;
+      HitboxDef& x = m->hitboxes[h.index];
+      if (std::fabs(x.radius - h.was) > 0.01f) continue;
+      x.radius = h.r;
+      if (x.swing) {
+        x.a0 = h.a0;
+        x.a1 = h.a1;
+        x.reach1 = h.reach1;
+      } else {
+        x.offset = {h.x, h.y};
+      }
+    }
+  }
 }
 }  // namespace
 
 const std::vector<CharacterDef>& roster() {
-  static const std::vector<CharacterDef> r = {
-      makeAsta(),   makeYuno(),      makeIchigo(),    makeByakuya(), makeKenpachi(),  makeUlquiorra(),
-      makeNaruto(), makeSasuke(),    makeKakashi(),   makeGojo(),    makeSukuna(),    makeLink(),
-      makeGanondorf(), makeKratos(), makeHunter()};
+  static const std::vector<CharacterDef> r = [] {
+    std::vector<CharacterDef> v = {makeAsta(),      makeYuno(),     makeIchigo(),   makeByakuya(),   makeKenpachi(),
+                                   makeUlquiorra(), makeGrimmjow(), makeStarrk(),   makeNaruto(),    makeSasuke(),
+                                   makeKakashi(),   makeGojo(),     makeSukuna(),   makeLink(),      makeGanondorf(),
+                                   makeKratos(),    makeHunter()};
+    for (auto& c : v) {
+      addWeaponStrikes(c);  // before the ultimates: the bows copy their special's arrow
+      addUltimates(c);      // roster_ultimates.cpp
+    }
+    if (!g_rawHitboxes) applyHitFit(v);
+    return v;
+  }();
   return r;
 }

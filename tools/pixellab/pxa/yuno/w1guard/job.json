@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "5b198143-8ab4-4e8d-9563-22720cb77efb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fe3ea848-875c-4ddd-a0d6-31333ebd892b",
+  "description": "green wind gathers in his raised hand and forms a long spear of swirling green wind, which he grips with both hands in a ready stance, point forward; his cream-white and gold Golden Dawn robe keeps exactly its colours the whole time. Ends standing still in that stance, the weapon fully inside the picture The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "Yuno, a slim young man with black hair, a white and gold Golden Dawn robe with a dark blue cape",
+  "initial_pose": "calm magic stance facing right, right hand raised forward with the palm open, a green grimoire floating in the air just above it, cape flowing behind him"
+ },
+ "reply": "id: 5b198143-8ab4-4e8d-9563-22720cb77efb\njob_id: 5b198143-8ab4-4e8d-9563-22720cb77efb\ndescription: green wind gathers in his raised hand and forms a long spear of swirling green wind, which he grips with both hands in a ready stance, point forward; his cream-white and gold Golden Dawn robe keeps exactly its colours the whole time. Ends standing still in that stance, the weapon fully inside the picture The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5b198143-8ab4-4e8d-9563-22720cb77efb\")\nasset_id: 8757c6dc-da31-5076-a27a-c821d0452656\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/tmp/claude-0/-home-user-test-claude/454a74a0-0344-5f0d-8ed7-e18843be178a/scratchpad/pxa/base/yuno_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

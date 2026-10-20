@@ -1,0 +1,188 @@
+{
+ "guard_pose": "low brawling stance facing right, a large round wooden shield with a gold rim held forward on the front arm, the rear fist clenched at chest height",
+ "armed": "fists",
+ "skip": [],
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "fast punch: snaps the free rear fist straight forward past the edge of the shield at full arm extension, then pulls it back into the stance"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "shield bash: shoves the round shield straight forward hard with a twist of the hips, then pulls it back into the stance"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Spartan kick: lifts the front knee and kicks straight forward at belly height with a burst of fire, then back into the stance"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "shield rush: rushes forward behind the raised round shield and rams ahead shoulder first with a burst of fire, then slides to a stop and stands back up in the stance"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "fiery haymaker: pulls the free fist far back as flames wrap around it, then lunges and drives it straight forward at full extension with a burst of fire, then recovers into the stance"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising shield smash: crouches, then springs up and smashes the round shield straight up above his head with a burst of fire, then lands back in the stance"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "low sweep: drops low and slams the edge of the round shield down in front of him, then spins and kicks low behind him, fire flashing at each blow, then back into the stance"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "neutral aerial: spins once in mid-air with the shield held out, a ring of fire flashing around his body, then opens up again"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "forward aerial: a heavy flying kick straight forward in mid-air with a burst of fire at the foot, then pulls the leg back in"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "down aerial: plunges the round shield straight down beneath him in mid-air with a burst of fire, then pulls it back up"
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "Spartan Rage burst: clenches his fists and hunches as a red glow spreads over his skin, then throws his head back and roars as a ring of fire bursts out around his body, then the glow calms and he returns to the stance"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "shield charge: raises the round shield in front of him and charges forward shoulder first behind it, ramming ahead, then digs his heels in, slows to a stop and returns to the stance"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   null,
+   false,
+   "up",
+   "Spartan leap: crouches, then leaps straight up driving a fiery rising uppercut, the fist wrapped in flames, ending high in mid-air with the fist raised"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "shield parry: raises the round shield in front of his face and braces behind it, holding the block, then bashes it forward hard with a burst of fire, then returns to the stance"
+  ],
+  "ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "around",
+   "Spartan Rage: clenches both fists and hunches as a red glow spreads over his skin and his red tattoo burns brighter, then throws his head back and roars, fire erupting around his whole body in a burst that blasts outward, his fists blazing with flames, then the burst settles and he returns to the stance"
+  ],
+  "w0_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Leviathan Axe throw: pulls the frost-covered Leviathan Axe from behind his back and hurls it spinning forward with an overhand throw, holds out his empty hand, then the axe flies back into his palm with a burst of frost, then he puts it away and returns to the stance"
+  ],
+  "w0_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "around",
+   "Fimbulwinter: raises the Leviathan Axe as icy frost swirls around him, hurls it spinning forward, a blizzard of ice crystals bursts around his body, he holds out his open hand, the axe flies back into his grip, then he swings it down in one heavy cut as the frost around him shatters into ice shards, then he lowers it and returns to the stance"
+  ],
+  "w1_nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "Chaos whirl: lowers the shield and spins on the spot whipping the two Blades of Chaos, curved runed blades on long chains wrapped around his forearms, around him in wide fiery circles close to his body, four fast revolutions trailing flames, then one heavy fiery sweep, then the blades snap back into his hands and he returns to the stance"
+  ],
+  "w1_ultimate": [
+   28,
+   "guard",
+   true,
+   false,
+   "forward",
+   "Chaos whip: lashes the two Blades of Chaos, curved runed blades on long chains wrapped around his forearms, straight forward, then yanks them back hard as if hauling something in, spins whipping the blades around him in a whirl of fire five times, then swings both blades overhead and slams them down to the front in a huge fiery arc, then the blades snap back into his hands and he returns to the stance"
+  ]
+ },
+ "state_fixes": {
+  "walk": [
+   8,
+   "guard",
+   true,
+   true,
+   "none",
+   "walks forward heavily to the right in side profile, the round shield held forward on the front arm, the rear fist clenched: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time exactly like the first frame, a seamless two-step walk cycle that ends exactly on the first pose"
+  ],
+  "crouch": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "squats down very low on the spot: knees fully bent, hips dropped almost to the heels, back bent forward, the round shield held in front of him"
+  ],
+  "shield": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "braces to block: raises the round shield in front of his face and crouches slightly behind it, a defensive guard"
+  ]
+ },
+ "notes": "makeKratos: buildBrawlerNormals(S=1.14, P=1.34, fx=Fire) -> jab3 exists; baseWeapon GuardianShield (the round shield on the front arm in the guard picture; armed 'fists'). Overrides: rear-fist jab, jab2 = shield bash (its hitbox is ArmBack), jab3 = Spartan kick, fire on the moves that carry the Fire fx (jab3, dashattack, smashes, fair, dair) + nair; ftilt/utilt/dtilt/bair/uair stay generic. Timings: nspecial 'Rage spartiate': armour f4-18, burst around him f14-18/48 (pose Roar); sspecial shield charge: armour f4-22, dash f8 (speed 12.5), shield hit f8-22/46; uspecial: rises at f5 (vy -16), hits f5-16 (Uppercut), helpless -> pin None, ends in the air; dspecial shield parry: counter + reflect f4-22, shield strike f22-26/48. Weapons: w0 'Hache Leviathan' (Ice) replaces nspecial (boomerang axe throw at f14/36, pose Throw) + jab + ultimate (FIMBULWINTER: freezes everyone in place f34, 4 hits from f46, shatter launcher f84-88/104). w1 'Lames du Chaos' (Fire) replaces nspecial (Fleau du Chaos: 4 hits radius 104 around him from f8 every 5 f, finisher f30-34/50, pose Spin) + jab + ultimate (FOUET DU CHAOS: the chains catch a foe 200 px ahead f36-44, pull it to 84 px, 5 hits from f50, launcher f80-86/104). Base ultimate RAGE DE SPARTE: awaken burst f38-44/76 (radius 210), SpartanRage form 10 s (red-hot tint drawn by the game, nspecial becomes a bigger fire blast). Generated clips get no weapon overlay, so the w0/w1 clips bring the axe / the blades in and put them away; the chains are kept close to the body so nothing leaves the frame. Source: GoW 2018 Spartan Rage is bare-fisted (matches); Fimbulwinter is the great winter of Ragnarok, written here as a frost burst."
+}
