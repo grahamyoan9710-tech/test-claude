@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 09 h 45 UTC, session A (propriétaire) : **refonte complète décidée par le propriétaire** (droits
+  d'auteur) : les 17 combattants actuels seront remplacés par 17 persos originaux, avec des armes invoquées par une
+  touche, et tous les effets et menus seront refaits avec PixelLab. Ce travail se fait sur la branche
+  `claude/refonte-originaux`, créée depuis celle-ci. Rien n'est changé ici ni dans `main`. Les fiches à valider
+  sont dans `docs/refonte/FICHES.md` sur cette branche. Aucune génération PixelLab avant validation.
 - 16/10 19 h 25 UTC, session B : **v9.9 publiée et vérifiée** (workflow réussi ; l'archive Linux téléchargée par
   l'API a la même somme SHA-256 que la release, affiche v9.9, et Link y a son Arc de lumière en match). Verrou de
   version libre. Tous les verrous sont libres.
