@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "0b9db665-0173-459e-9077-54ec86cee8f8",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e0ab293d-0da6-4ee9-b293-001ec125c7b2",
+  "last_frame_url": "upload:a1120c94-3036-4927-8c4c-64778746858a",
+  "description": "lunging grab: reaches forward with her free hand to seize an opponent, the other hand keeping a long silver spear with white ribbons ready, then pulls back. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: 0b9db665-0173-459e-9077-54ec86cee8f8\njob_id: 0b9db665-0173-459e-9077-54ec86cee8f8\ndescription: lunging grab: reaches forward with her free hand to seize an opponent, the other hand keeping a long silver spear with white ribbons ready, then pulls back. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0b9db665-0173-459e-9077-54ec86cee8f8\")\nasset_id: fa084cda-e001-5e46-af90-a305f7ebf98e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+}
