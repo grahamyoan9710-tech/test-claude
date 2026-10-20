@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "3e48935e-236b-423d-b942-c8c120c06fd1",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 3e48935e-236b-423d-b942-c8c120c06fd1\njob_id: 3e48935e-236b-423d-b942-c8c120c06fd1\ndescription: in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3e48935e-236b-423d-b942-c8c120c06fd1\")\nasset_id: 3ea7a29b-e429-569f-84f2-84db6ef11169\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
