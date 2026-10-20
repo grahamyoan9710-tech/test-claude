@@ -1,5 +1,12 @@
 {
  "p01": {
-  "sspecial": "dashes forward very low and fast, then spins around on the spot and swings his elbow back behind him, then turns back into the stance; nothing leaves his body, his hands stay empty"
+  "sspecial": "dashes forward very low and fast, then spins around on the spot and swings his elbow back behind him, then turns back into the stance; nothing leaves his body, his hands stay empty",
+  "uair": "in mid-air, sweeps one open hand up in an arc over his head, then back to the tucked pose; nothing leaves his body, his hands stay empty",
+  "dair": "in mid-air, extends one leg straight down below him heel first, then pulls the leg back up; nothing leaves his body",
+  "fsmash": "silat double palm push: sinks low drawing both hands back to the hip, then steps forward and pushes both open palms straight ahead at chest height, then recovers; nothing leaves his hands, his hands stay empty",
+  "grab": "lunges forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves his hands",
+  "fthrow": "holding an invisible opponent, steps forward and pushes both hands forward, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands",
+  "bthrow": "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands",
+  "dthrow": "holding an invisible opponent, crouches and brings both hands down to the floor in front of him, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"
  }
 }

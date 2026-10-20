@@ -8,3 +8,8 @@ p01/w0_runstart
 p01/w0_knockdown
 p01/w0_holdstart
 p02/jump
+p01/w1_runstart
+p01/w1_holdstart
+p01/w1_knockdown
+p02/runstart
+p02/holdstart

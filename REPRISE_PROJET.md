@@ -55,6 +55,18 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 19 h 45 UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` (= `claude/refonte-originaux` +
+  ce commit) : **reprise bloquée : pas de jeton PixelLab dans ce conteneur** (`px/.token` n'est pas dans git).
+  `fetch_orphans.sh`, `driver.py` et `skill_fx.py render` attendent le jeton ; rien n'a été envoyé à PixelLab.
+  - Relu sans jeton (clips déjà téléchargés). **Bons** : 01 nair, bair (quelques points blancs sous les pieds),
+    usmash, dsmash, dashattack, pummel, uthrow, w0_fthrow, w0_bthrow, tout le kit w1 présent ; 02 idle, walk,
+    runstart, land, crouch, shield, holdstart, roll, spotdodge. **Tache grise dans la traînée** (gardés, à ton avis) :
+    01 fair, sspecial (déjà refait), w0_uthrow.
+  - **Écartés (`qa2`), le driver les refera** : 01 uair, dair, fsmash, grab, fthrow, bthrow, dthrow (énergie,
+    poussière, boule de feu ; nouveaux prompts sans mots d'action dans `pxa/qa_prompts.json`), 01 w1_jump (sa
+    dernière image, base des aériens, est debout au sol), 02 knockdown (traits bleus).
+  - **Bases validées** : 01 w1_runstart, w1_holdstart, w1_knockdown ; 02 runstart, holdstart.
+  - Toujours à vérifier dans la galerie avant tout renvoi : 01 w1_uspecial, w1_dspecial (« submitting », sans job).
 - 20/10 19 h 30 UTC, session A (cloud), branche `claude/refonte-originaux` : **PASSATION à une session sur le PC du
   propriétaire (plugin ponytail, absent des sessions cloud).** Tout est poussé, y compris les images brutes PixelLab
   et les fiches de jobs (`pxa/p0*/`, `pxa/base_src/`) : rien n'est à repayer. Aucun job PixelLab n'est en cours.
