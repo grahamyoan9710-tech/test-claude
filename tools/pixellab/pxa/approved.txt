@@ -24,3 +24,4 @@ p03/knockdown
 p03/jump
 p02/w0_jump
 p02/w0_knockdown
+p02/w0_ledgegrab
