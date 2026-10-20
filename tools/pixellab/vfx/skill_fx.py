@@ -452,7 +452,7 @@ def form_burst(f, name):
     add(name, R(f, 260, 260, 130, 240, 14, [
         {"id": "flash", "type": "glow", "y": -90, "radius": K((0, 20), (0.15, 110), (1, 20)), "ramp": "glow",
          "dissolve": A(0, 1, "in", 0.4, 1)},
-        M.burst_rays(1, 20, 30, 120, 6, 0.0, 0.7),
+        M.burst_rays(1, 20, 30, 112, 6, 0.0, 0.7),
         {"id": "rays_pos", "type": "glow", "y": -90, "radius": 1, "ramp": "glow", "intensity": 0.0},
         M.shock(1, 20, 120, 4, squash=0.3),
     ]))

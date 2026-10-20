@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "1c6a58cb-638d-47a4-9913-906a50ca0f09",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a9b56e27-9ce5-4713-8ef8-dbdab07fc5d8",
+  "last_frame_url": "upload:7911eb8d-6284-43a6-9700-9625a0c65bcd",
+  "description": "taekwondo lead-leg roundhouse kick: snaps the front foot up in a quick roundhouse at waist height, then puts it back down in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 1c6a58cb-638d-47a4-9913-906a50ca0f09\njob_id: 1c6a58cb-638d-47a4-9913-906a50ca0f09\ndescription: taekwondo lead-leg roundhouse kick: snaps the front foot up in a quick roundhouse at waist height, then puts it back down in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1c6a58cb-638d-47a4-9913-906a50ca0f09\")\nasset_id: 2477090d-ff20-503a-852e-31fbd54964d0\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png"
+}
