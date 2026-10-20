@@ -342,6 +342,97 @@ FX["move_vanish"] = recipe(160, 200, 80, 176, 11, [
 ])
 
 
+# --- System effects (shields, KO, explosions, weapons, ultimates...): grey, the game tints them ---
+def burst_rays(i, count, r0, r1, width, start=0.0, end=0.6, ramp="glow", spin=0.0):
+    return {"id": f"rays{i}", "type": "rays", "count": count, "inner": A(r0 * 0.3, r0), "length": K((0, 4), (0.3, r1), (1, r1 * 0.6)),
+            "width": width, "jitter": 0.45, "alternate": 0.45, "tip_fade": 0.4, "spin": spin, "ramp": ramp,
+            "life": [start, end], "dissolve": A(0, 1, "in", 0.4, 1)}
+
+
+def flash(i, r, end=0.35, y=0):
+    return {"id": f"flash{i}", "type": "glow", "y": y, "radius": K((0, r * 0.3), (0.25, r), (1, r * 0.4)), "ramp": "glow",
+            "life": [0.0, end], "dissolve": A(0, 1, "in", 0.3, 1)}
+
+
+def shock(i, r0, r1, width=2.0, start=0.0, end=1.0, squash=1.0, ramp="main"):
+    return {"id": f"shock{i}", "type": "ring", "radius": A(r0, r1), "width": A(width, 0.5), "soft": 2, "squash": squash,
+            "ramp": ramp, "life": [start, end], "dissolve": A(0, 1, "in", 0.5, 1)}
+
+
+def shards(i, count, speed, gravity=60, size=(2, 5), start=0.0):
+    return {"id": f"shards{i}", "type": "particles", "mode": "burst", "count": count, "speed": speed, "spread": 360,
+            "size": list(size), "shape": "chunk", "shrink": 0, "gravity": gravity, "lifespan": 0.8, "life": [start, 1.0],
+            "fade_out": 0.3, "outline": True}
+
+
+def glints(i, count, speed, start=0.0, size=(2, 4), ramp="glow"):
+    return {"id": f"glints{i}", "type": "particles", "mode": "burst", "count": count, "speed": speed, "size": list(size),
+            "shape": "sparkle", "lifespan": 0.7, "life": [start, 1.0], "fade_out": 0.3, "ramp": ramp}
+
+
+HEX = {"id": "hex", "type": "star", "points": 6, "step": 1, "radius": A(14, 34), "rotation": A(0, 20), "width": 1.2,
+       "soft": 2, "ramp": "glow", "dissolve": A(0, 1, "in", 0.4, 1)}
+FX["sys_shield_hit"] = recipe(110, 110, 55, 55, 8, [HEX, shock(1, 8, 44, 2), glints(1, 6, 50)])
+FX["sys_shield_break"] = recipe(220, 220, 110, 110, 14, [
+    flash(1, 60), dict(HEX, radius=A(30, 44), dissolve=A(0, 1, "in", 0.1, 0.5), breakup="blocks"),
+    shock(1, 20, 100, 3), shards(1, 26, 140, 70, (3, 6)), glints(1, 10, 110, 0.05)])
+FX["sys_ko"] = recipe(256, 256, 128, 128, 16, [
+    flash(1, 90, 0.4), burst_rays(1, 18, 30, 120, 6, 0.0, 0.7), shock(1, 20, 124, 4), shock(2, 10, 90, 2, 0.12),
+    glints(1, 14, 140, 0.05, (3, 5))])
+FX["sys_explosion"] = recipe(220, 220, 110, 120, 14, [
+    flash(1, 50, 0.3),
+    {"id": "boom", "type": "puffs", "mode": "burst", "radius": 26, "count": 9, "throw": 0.7, "rise": 0.5, "lump": 1.1,
+     "billow": 0.9, "highlight": 0.7, "thin": 0.4},
+    shock(1, 14, 96, 3, 0.0, 0.8), shards(1, 14, 120, 120, (2, 5), 0.05)])
+FX["sys_weapon_pillar"] = recipe(90, 320, 45, 316, 12, [
+    {"id": "beam", "type": "beam", "width": {"wave": {"mid": 16, "amp": 3, "cycles": 1}}, "height": 300, "taper": 0.0,
+     "soft": 4, "top_fade": 0.7, "ramp": "glow"},
+    {"id": "core", "type": "beam", "width": {"wave": {"mid": 5, "amp": 1, "cycles": 2}}, "height": 300, "taper": 0.0,
+     "soft": 1, "top_fade": 0.5, "ramp": "glow", "z": "front"},
+    {"id": "motes", "type": "particles", "mode": "fall", "radius": 10, "speed": 220, "count": 10, "size": [2, 3],
+     "shape": "sparkle", "lifespan": 0.6, "y": -280, "ramp": "glow"},
+    {"id": "base", "type": "ring", "radius": {"wave": {"mid": 20, "amp": 3, "cycles": 1}}, "width": 1.5, "soft": 2,
+     "squash": 0.26, "ramp": "main"},
+], loop=True, outline="none")
+FX["sys_weapon_beacon"] = recipe(130, 170, 65, 150, 12, [
+    {"id": "ring", "type": "ring", "radius": {"wave": {"mid": 34, "amp": 4, "cycles": 1}}, "width": 1.5, "soft": 2,
+     "squash": 0.26, "ramp": "main"},
+    {"id": "ring2", "type": "ring", "radius": {"wave": {"mid": 24, "amp": 3, "cycles": 1, "phase": 0.5}}, "width": 1,
+     "soft": 2, "squash": 0.26, "ramp": "glow"},
+    {"id": "glow", "type": "glow", "radius": 30, "squash": 0.3, "ramp": "glow", "intensity": 0.5},
+    {"id": "rise", "type": "particles", "mode": "rise", "radius": 30, "squash": 0.3, "speed": 110, "count": 9,
+     "size": [2, 3], "shape": "sparkle", "lifespan": 0.8, "ramp": "glow", "fade_out": 0.4},
+    {"id": "streaks", "type": "particles", "mode": "rise", "radius": 26, "squash": 0.3, "speed": 120, "count": 5,
+     "size": [6, 12], "shape": "streak", "lifespan": 0.6, "ramp": "glow", "fade_out": 0.4},
+], loop=True)
+FX["sys_weapon_land"] = recipe(160, 110, 80, 92, 10, [
+    shock(1, 8, 64, 3, squash=0.26), shock(2, 4, 44, 2, 0.1, squash=0.26, ramp="glow"),
+    {"id": "rise", "type": "particles", "mode": "rise", "radius": 40, "squash": 0.3, "speed": 70, "count": 10,
+     "size": [2, 4], "shape": "sparkle", "lifespan": 0.7, "ramp": "glow", "fade_out": 0.3},
+    {"id": "dust", "type": "puffs", "mode": "poof", "direction": -90, "spread": 2.8, "radius": 10, "count": 6,
+     "throw": 0.9, "rise": 0.2, "thin": 0.5, "squash": 0.6}])
+FX["sys_ult_ready"] = recipe(170, 220, 85, 200, 14, [
+    {"id": "gather", "type": "particles", "mode": "converge", "y": -80, "radius": 80, "count": 16, "size": [2, 4],
+     "shape": "sparkle", "lifespan": 0.6, "ramp": "glow"},
+    shock(1, 50, 12, 2, 0.0, 0.7, 0.26),
+    *[needle(30 + k, dx, hgt, 2, st, "lt") for k, (dx, hgt, st) in enumerate([(0, 150, 0.4), (-20, 110, 0.45), (22, 120, 0.42)])],
+    flash(1, 50, 1.0, -80)], ramps=TONES)
+FX["sys_final_smash"] = recipe(256, 256, 128, 128, 16, [
+    flash(1, 110, 0.5), burst_rays(1, 24, 20, 126, 5, 0.0, 0.8), shock(1, 10, 120, 5), shock(2, 6, 90, 3, 0.15),
+    glints(1, 18, 150, 0.0, (3, 6))])
+FX["sys_orb_break"] = recipe(220, 220, 110, 110, 14, [
+    flash(1, 70), burst_rays(1, 14, 20, 100, 5), shock(1, 14, 100, 3), shards(1, 20, 130, 50, (3, 6)), glints(1, 12, 120)])
+FX["sys_orb_hit"] = recipe(110, 110, 55, 55, 7, [flash(1, 26, 0.6), shock(1, 6, 44, 2), glints(1, 6, 60)])
+FX["sys_reflect"] = recipe(130, 130, 65, 65, 9, [dict(HEX, radius=A(20, 52)), dict(HEX, id="hex2", radius=A(10, 36),
+                                                                                  rotation=A(30, 10)), flash(1, 30, 0.4)])
+FX["sys_tech"] = recipe(120, 70, 60, 54, 8, [shock(1, 6, 50, 2, squash=0.3), glints(1, 6, 50)])
+FX["sys_clank"] = recipe(100, 100, 50, 50, 7, [burst_rays(1, 8, 8, 44, 3, 0.0, 0.9), flash(1, 22, 0.5), glints(1, 6, 70)])
+FX["sys_form_end"] = recipe(170, 220, 85, 200, 14, [
+    shock(1, 20, 60, 2, 0.0, 0.8, 0.26),
+    {"id": "rise", "type": "particles", "mode": "rise", "radius": 40, "squash": 0.4, "speed": 120, "count": 16,
+     "size": [2, 4], "shape": "sparkle", "lifespan": 0.7, "ramp": "glow", "fade_out": 0.3, "y": -60}])
+
+
 def call(argv):
     r = subprocess.run(["python3", PX, "vfx_workbench", json.dumps({"argv": argv})], capture_output=True, text=True,
                        timeout=300)

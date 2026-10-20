@@ -30,11 +30,26 @@ fx move_smoke_run 13 95 32 84.0 18.0 14.9254 0
 fx move_smoke_slide 13 132 25 123.0 13.0 14.9254 0
 fx move_vanish 11 104 131 52.0 116.0 14.9254 0
 fx move_wave_1 16 197 156 97.0 140.0 15 0
-fx move_wave_2 14 195 198 97.0 180.0 14.9254 0
-fx move_wave_3 16 246 204 123.0 170.0 14.9254 0
-fx move_wave_4 16 211 164 106.0 133.0 14.9254 0
+fx move_wave_2 16 221 158 110.0 148.0 15 0
+fx move_wave_3 17 224 158 112.0 143.0 15 0
+fx move_wave_4 19 139 156 67.0 141.0 15 0
 fx move_wave_5 16 288 229 144.0 192.0 14.9254 0
 fx smoke_puff 8 99 100 51.0 43.0 14.9254 0 40
+fx sys_clank 7 96 92 48.0 47.0 14.9254 0
+fx sys_explosion 14 201 199 102.0 99.0 14.9254 0
+fx sys_final_smash 16 254 250 128.0 122.0 14.9254 0
+fx sys_form_end 14 130 179 65.0 161.0 14.9254 0
+fx sys_ko 16 254 256 126.0 128.0 14.9254 0
+fx sys_orb_break 14 217 212 110.0 102.0 14.9254 0
+fx sys_orb_hit 7 92 97 46.0 46.0 14.9254 0
+fx sys_reflect 9 104 108 52.0 54.0 14.9254 0
+fx sys_shield_break 14 220 212 110.0 102.0 14.9254 0
+fx sys_shield_hit 8 92 92 46.0 46.0 14.9254 0
+fx sys_tech 8 108 48 54.0 32.0 14.9254 0
+fx sys_ult_ready 14 168 177 85.0 159.0 14.9254 0
+fx sys_weapon_beacon 12 102 126 51.0 111.0 14.9254 1
+fx sys_weapon_land 10 138 80 69.0 62.0 14.9254 0
+fx sys_weapon_pillar 12 70 293 35.0 289.0 14.9254 1
 fx teleport_flicker 8 73 150 31.0 75.0 14.9254 0
 icon cursed_finger 57 74
 icon double_mangekyo 86 86

@@ -1,5 +1,6 @@
-// Weapons lying on the stage: a glowing pedestal of light, the weapon floating above it,
+// Weapons lying on the stage: a PixelLab beacon of light, the weapon floating above it,
 // the owner's portrait and a blink when they are about to vanish.
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 
 void drawItems(const Match& m, float time) {
@@ -12,16 +13,8 @@ void drawItems(const Match& m, float time) {
     const float bob = it.grounded ? std::sin(time * 3.0f + it.age * 0.02f) * 5.0f : 0.0f;
     const Vec2 base = it.pos;
     const Vec2 center = base + Vec2{0.0f, -46.0f + bob};
-    // Pillar of light while it falls / beacon once landed
-    if (!it.grounded) {
-      DrawRectangleGradientV(int(base.x - 10), int(base.y - 160), 20, 140, withAlpha(g, 0.0f), withAlpha(g, 0.35f));
-    } else {
-      float pulse = 0.5f + 0.5f * std::sin(time * 4.0f);
-      DrawRectangleGradientV(int(base.x - 22), int(base.y - 140), 44, 140, withAlpha(g, 0.0f), withAlpha(c, 0.22f + 0.1f * pulse));
-      DrawEllipse(int(base.x), int(base.y - 2), 34 + 6 * pulse, 8, withAlpha(c, 0.45f));
-      DrawEllipseLines(int(base.x), int(base.y - 2), 40 + 6 * pulse, 10, withAlpha(g, 0.8f));
-    }
-    DrawCircleGradient(int(center.x), int(center.y), 44, withAlpha(g, 0.35f), withAlpha(c, 0.0f));
+    // Once landed, the PixelLab beacon (falling, the pillar of light of fx.cpp guides it down)
+    if (it.grounded) art::drawFx("sys_weapon_beacon", time, base, 1.1f, 0.0f, false, 0.9f, mixColor(g, WHITE, 0.3f));
     // The weapon itself
     drawWeaponIcon(d, it.slot, center, 76.0f);
     // Whose weapon: the owner's portrait in a ring
