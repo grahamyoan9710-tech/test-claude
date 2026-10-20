@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "d2fff538-6e37-4af3-ad18-5e200dcfe3a2",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e4851b29-2663-4274-9a58-d844f05f5c7b",
+  "last_frame_url": "upload:ae5d0f19-9f8b-4b1f-a257-365a8323c6d4",
+  "description": "rises from a low crouch with a quick low horizontal cut of a long curved black odachi sword with a violet ribbon forward at knee height, then back into the ready stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: d2fff538-6e37-4af3-ad18-5e200dcfe3a2\njob_id: d2fff538-6e37-4af3-ad18-5e200dcfe3a2\ndescription: rises from a low crouch with a quick low horizontal cut of a long curved black odachi sword with a violet ribbon forward at knee height, then back into the ready stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d2fff538-6e37-4af3-ad18-5e200dcfe3a2\")\nasset_id: b1f6f090-51ff-513f-b8af-6780ef15a194\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

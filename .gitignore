@@ -9,10 +9,14 @@ dist/
 !assets/sprites/*.png
 !art/fighters/*.png
 !tools/pixellab/vfx/ult/*.png
-# PixelLab: the picked bases are kept (every clip starts from them); job folders and frames stay local
+# PixelLab: the picked bases, the raw frames and the job records are kept (another session resumes from them
+# without paying twice); the clips set aside (.qa*, .generic) and the tests stay local
 !tools/pixellab/pxa/base/*.png
-tools/pixellab/pxa/base_src/
-tools/pixellab/pxa/p[0-9][0-9]/
+!tools/pixellab/pxa/base_src/**/*.png
+!tools/pixellab/pxa/p[0-9][0-9]/**/*.png
+tools/pixellab/pxa/p[0-9][0-9]/*.qa*/
+tools/pixellab/pxa/p[0-9][0-9]/*.generic*/
+tools/pixellab/pxa/p[0-9][0-9]/_test*/
 tools/pixellab/pxa/jobs_*.json
 tools/pixellab/pxa/jobs_*.log
 tools/pixellab/vfx/move/

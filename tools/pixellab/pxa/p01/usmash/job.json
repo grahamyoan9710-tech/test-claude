@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "a37fa82b-92f9-4d2c-a8fd-f898f4e05a33",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:42afbd9b-3181-46db-be58-df8ae9ad1d90",
+  "last_frame_url": "upload:5c29204c-784c-4b32-99f2-b7a9d08cb11e",
+  "description": "silat rising crescent kick: spins and swings one leg in a high vertical crescent arc over his head, then lands back in the low stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: a37fa82b-92f9-4d2c-a8fd-f898f4e05a33\njob_id: a37fa82b-92f9-4d2c-a8fd-f898f4e05a33\ndescription: silat rising crescent kick: spins and swings one leg in a high vertical crescent arc over his head, then lands back in the low stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a37fa82b-92f9-4d2c-a8fd-f898f4e05a33\")\nasset_id: 38466e5e-8fa7-5e56-9a1c-689b25f75edf\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

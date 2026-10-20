@@ -55,6 +55,44 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 19 h 30 UTC, session A (cloud), branche `claude/refonte-originaux` : **PASSATION à une session sur le PC du
+  propriétaire (plugin ponytail, absent des sessions cloud).** Tout est poussé, y compris les images brutes PixelLab
+  et les fiches de jobs (`pxa/p0*/`, `pxa/base_src/`) : rien n'est à repayer. Aucun job PixelLab n'est en cours.
+  - **Reprendre les clips** (dans `tools/pixellab`, jeton dans `px/.token`, jamais commité) :
+    `bash pxa/fetch_orphans.sh` (télécharge ce qui est fini, ne renvoie rien), puis
+    `nohup python3 pxa/driver.py p01 p02 p03 p07 p08 > pxa/driver_all.log 2>&1 &`. Le driver envoie ce dont la
+    base est prête et validée (`pxa/approved.txt`). Ne pas tuer `pxbatch.py` : ses jobs en cours ne seraient plus
+    téléchargés (il faudrait relancer `fetch_orphans.sh`). `pxcli.py wait` sait maintenant récupérer un vieux job
+    par son numéro de galerie.
+  - **État** : 01 112/138 clips, 02 11/138, 03, 07 et 08 0/138 (690 en tout, environ 1,2 génération par clip,
+    10 jobs à la fois, 6 min par clip). Il reste 1 960 générations (recharge le 13/11).
+  - **Bloqués, à vérifier dans la galerie PixelLab avant tout renvoi** : `pxa/p01/w1_dspecial` et
+    `pxa/p01/w1_uspecial` (envoi coupé par un redémarrage, sans numéro de job). S'ils n'y sont pas, passer leur
+    `job.json` en `"status": "rejected"` : le driver les refera.
+  - **À refaire automatiquement** (écartés, le driver les relance) : `p01/sspecial` (prompt dans
+    `pxa/qa_prompts.json`), `p02/knockdown`, `p02/spotdodge` (ancien prompt).
+  - **Bases validées** : 01 jump, runstart, holdstart, ledgegrab, knockdown, w0_jump, w0_runstart, w0_knockdown,
+    w0_holdstart ; 02 jump. À valider dès leur arrivée : les autres bases (runstart, knockdown, holdstart,
+    ledgegrab, w0_*/w1_* de chacun). Une base validée s'ajoute à `pxa/approved.txt` (« p02/runstart »).
+  - **Relu et bon (01)** : états de base, coups Penchak Silat (jab à dtilt), nspecial, uspecial, dspecial, ultime,
+    kit de l'odachi (w0_*), états w0. **Pas encore relu** : aériens, smashs, dashattack, prises et lancers, w0
+    lancers, kit des dagues (w1_*), clips du 02. Outil : `python3 review_strip.py OUT.png 0.8 pxa/p01/<clip>...`.
+  - **Leçons de relecture** : un prompt avec des mots d'action (« hit », « dodge », « knocked ») fait dessiner des
+    effets ; les prompts communs ont été réécrits. Un clip raté s'écarte avec `python3 pxa/retire.py qa1 p01 <clip>`
+    (avec `--if-desc <début de l'ancien prompt>` pour ne jamais écarter la nouvelle version), un nouveau prompt se met
+    dans `pxa/qa_prompts.json`. Traînées : gardées sur les coups et les épées.
+  - **Import** : `python3 pxa/import_all.py p01` (déjà fait pour les clips du 01 présents à 17 h). Puis
+    `fitall.sh` (session A seulement) quand les 5 sont importés, puis l'équilibrage (provisoire : 01 et 07 79 %,
+    03 42 %, 02 33 %, 08 17 %).
+  - **Effets** : ondes 1 à 5 faites et importées (impacts des coups puissants, `vfx/wave_build.py`). Effets système
+    `sys_*` et `sys_aura` faits. Effets des compétences : générateur `vfx/skill_fx.py` (79 effets), gratuit,
+    rendu interrompu à 67/79 et non exporté : relancer `python3 skill_fx.py render`, relire, puis `export` et
+    `import`. Recette `sys_impact` écrite (lignes de vitesse des impact frames) : à rendre et à brancher dans
+    `drawImpactFrame` (`src/game/match_screen.cpp`) à la place des lignes dessinées.
+  - **Reste dessiné par le code** : lignes des impact frames, `KoBeam` (code mort à retirer), replis de `fx.cpp`
+    quand un sprite manque, `shotPlaceholder` (disparaît avec les effets des compétences), menus.
+  - **Ensuite** : refonte des menus (fonds `menu_fond_1/2/3`, disposition de `menu_accueil`), démo regardée,
+    release v10.0. Question ouverte pour le propriétaire : les décors d'arènes viennent encore des anciennes séries.
 - 20/10 15 h 30 UTC, session A, branche `claude/refonte-originaux` : **styles de combat, traînées, ondes d'impact.**
   - Le propriétaire précise : sans arme, chaque perso se bat dans un art martial (01 Penchak Silat, 02 Taekwondo,
     03 Muay Thaï, 07 Karaté, 08 Kung Fu ; FICHES §1.7). Prompts dans `pxa/new_specs.py` (`STYLES`) ; les 8 coups

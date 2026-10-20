@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "0c88e62c-8969-4eee-99af-f4da7fee474c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:2e2af6ea-fe6c-495d-af0b-49259011e818",
+  "last_frame_url": "upload:7bcfac2b-3592-46a6-a88c-05f2d8a2f983",
+  "description": "falls through the air: legs reach down, arms out for balance, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 0c88e62c-8969-4eee-99af-f4da7fee474c\njob_id: 0c88e62c-8969-4eee-99af-f4da7fee474c\ndescription: falls through the air: legs reach down, arms out for balance, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0c88e62c-8969-4eee-99af-f4da7fee474c\")\nasset_id: 28866c44-c1c0-5fff-a9da-deeadad26540\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

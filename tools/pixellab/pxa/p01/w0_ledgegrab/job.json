@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "9d853e90-377c-4eef-a4d3-fc2470e6b0f5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3832b045-2703-411f-988f-280ed7092b07",
+  "description": "jumps up and stretches his free arm straight up above his head, the empty hand closing on nothing near the top of the picture but fully inside it, then hangs still from that raised hand with the legs dangling below, his other hand holding a long curved black odachi sword with a violet ribbon pointing down beside his legs; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 9d853e90-377c-4eef-a4d3-fc2470e6b0f5\njob_id: 9d853e90-377c-4eef-a4d3-fc2470e6b0f5\ndescription: jumps up and stretches his free arm straight up above his head, the empty hand closing on nothing near the top of the picture but fully inside it, then hangs still from that raised hand with the legs dangling below, his other hand holding a long curved black odachi sword with a violet ribbon pointing down beside his legs; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9d853e90-377c-4eef-a4d3-fc2470e6b0f5\")\nasset_id: db118d36-b012-5cb3-a9a4-15187d53b845\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": ""
+}

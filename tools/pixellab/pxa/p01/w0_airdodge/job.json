@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "403e5f83-5cc0-48cc-8d9c-ce1726297c1c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5418f9a8-c57b-4570-8b93-424fe9550fae",
+  "last_frame_url": "upload:0215504b-791c-4c95-b3f2-e4cdb67d1217",
+  "description": "air dodge: curls up tightly in mid-air in the same place holding a long curved black odachi sword with a violet ribbon close to his body, the body staying in the middle of the picture, then opens up again in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 403e5f83-5cc0-48cc-8d9c-ce1726297c1c\njob_id: 403e5f83-5cc0-48cc-8d9c-ce1726297c1c\ndescription: air dodge: curls up tightly in mid-air in the same place holding a long curved black odachi sword with a violet ribbon close to his body, the body staying in the middle of the picture, then opens up again in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"403e5f83-5cc0-48cc-8d9c-ce1726297c1c\")\nasset_id: 685cd342-2686-5434-9733-4031e57f2847\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

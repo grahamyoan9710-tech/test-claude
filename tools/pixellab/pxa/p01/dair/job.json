@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "942e677e-15fc-41d1-8b58-6cfb0b0ab481",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a9192e86-0042-4f5f-bd67-551c24ccb216",
+  "last_frame_url": "upload:1ff8bd3b-2f51-49d6-85e2-f3d7be52f9ca",
+  "description": "in mid-air, stomps one heel straight down below him, then pulls the leg back up. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 942e677e-15fc-41d1-8b58-6cfb0b0ab481\njob_id: 942e677e-15fc-41d1-8b58-6cfb0b0ab481\ndescription: in mid-air, stomps one heel straight down below him, then pulls the leg back up. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"942e677e-15fc-41d1-8b58-6cfb0b0ab481\")\nasset_id: fd9e3de2-9d13-5041-8c69-52f8336b0cbb\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/jump/f_08.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "5c183ba9-86d3-43bc-870d-cc2d8bde2e16",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0c27a539-4b48-4855-b14e-4ebd6cabb5a0",
+  "last_frame_url": "upload:2c2defcf-7558-4ac8-8b64-7923a7552ff8",
+  "description": "falls helplessly, exhausted: both arms hang limp and loose straight up above his head, head drooping, eyes half closed, legs dangling loosely below him, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 5c183ba9-86d3-43bc-870d-cc2d8bde2e16\njob_id: 5c183ba9-86d3-43bc-870d-cc2d8bde2e16\ndescription: falls helplessly, exhausted: both arms hang limp and loose straight up above his head, head drooping, eyes half closed, legs dangling loosely below him, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5c183ba9-86d3-43bc-870d-cc2d8bde2e16\")\nasset_id: 4d92ca21-2ce1-5978-8284-fab0e85e1b00\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

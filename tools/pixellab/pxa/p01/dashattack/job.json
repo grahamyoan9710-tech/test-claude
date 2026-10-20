@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "615308b5-5939-4301-9442-d4770c5b60a5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:d013819c-2d10-4b4c-aa50-89742bcc48ec",
+  "last_frame_url": "upload:d3390471-f644-481a-8287-963324ff2416",
+  "description": "silat sliding strike: drops low and slides forward on one bent knee thrusting a palm strike ahead, then rises into the low stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 615308b5-5939-4301-9442-d4770c5b60a5\njob_id: 615308b5-5939-4301-9442-d4770c5b60a5\ndescription: silat sliding strike: drops low and slides forward on one bent knee thrusting a palm strike ahead, then rises into the low stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"615308b5-5939-4301-9442-d4770c5b60a5\")\nasset_id: c8de74c6-4cb1-5f3e-84cc-c68d206ada4c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

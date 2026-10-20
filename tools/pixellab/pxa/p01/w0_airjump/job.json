@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "919086bd-7285-4198-81d0-b50f86244a32",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:493801c7-73a4-4d21-9f70-0b11c9e39ada",
+  "last_frame_url": "upload:234c05de-2094-403b-a96d-3b24a67f0d5b",
+  "description": "double jump in mid-air: kicks off the air and does a full forward somersault holding a long curved black odachi sword with a violet ribbon close to his body, ending tucked in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 919086bd-7285-4198-81d0-b50f86244a32\njob_id: 919086bd-7285-4198-81d0-b50f86244a32\ndescription: double jump in mid-air: kicks off the air and does a full forward somersault holding a long curved black odachi sword with a violet ribbon close to his body, ending tucked in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"919086bd-7285-4198-81d0-b50f86244a32\")\nasset_id: 8e5d3969-9e08-549f-937b-890b29813ded\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

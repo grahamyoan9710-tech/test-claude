@@ -251,6 +251,9 @@ def wait(out, timeout=1200):
                                                       'failed' if 'status: failed' in text or 'error' in text.lower()[:200] else 'processing')
         asset = sc.get('asset_id') or next((l.split(':', 1)[1].strip() for l in text.splitlines()
                                             if l.startswith('asset_id:')), None)
+        if 'completed' in status and not asset:  # an old job: get_image no longer gives it, the submission did
+            asset = next((l.split(':', 1)[1].strip() for l in job.get('reply', '').splitlines()
+                          if l.startswith('asset_id:')), None)
         if 'completed' in status and not asset and 'asset_status:' in text and time.time() - t0 < timeout:
             time.sleep(10)  # done, but not saved to the gallery yet
             continue

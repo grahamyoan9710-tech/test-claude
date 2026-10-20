@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "71923561-9654-4e22-a5fe-cde0bf2085ab",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6a6f35ce-88fd-4c08-aefb-c09ab522b33c",
+  "last_frame_url": "upload:33dc9455-a644-400a-8151-d3b1b6d7d4d9",
+  "description": "fast run cycle to the right: leaning far forward, a long curved black odachi sword with a violet ribbon held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 71923561-9654-4e22-a5fe-cde0bf2085ab\njob_id: 71923561-9654-4e22-a5fe-cde0bf2085ab\ndescription: fast run cycle to the right: leaning far forward, a long curved black odachi sword with a violet ribbon held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"71923561-9654-4e22-a5fe-cde0bf2085ab\")\nasset_id: 979a4e54-f67e-5c3d-9627-15a1b62ccb4e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_runstart/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

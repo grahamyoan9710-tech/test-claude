@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "8881bbc1-df9d-4d2e-8877-424e38edd0a4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:d4ccee00-5675-468f-a45a-4f877e9f6a36",
+  "last_frame_url": "upload:ae6c1056-6241-4b17-9555-91b2bd522671",
+  "description": "holds an invisible opponent by the collar at arm's length with his free hand, the other hand keeping a long curved black odachi sword with a violet ribbon ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: 8881bbc1-df9d-4d2e-8877-424e38edd0a4\njob_id: 8881bbc1-df9d-4d2e-8877-424e38edd0a4\ndescription: holds an invisible opponent by the collar at arm's length with his free hand, the other hand keeping a long curved black odachi sword with a violet ribbon ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"8881bbc1-df9d-4d2e-8877-424e38edd0a4\")\nasset_id: 46c39e1e-ff87-550c-9517-27aa8d738540\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_holdstart/f_04.png",
+ "frames": 5,
+ "charged": ""
+}

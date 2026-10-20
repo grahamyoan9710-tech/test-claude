@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "5de73550-f155-4a5c-af10-30c6f0f13acb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5ddd113a-3a12-416a-a2ab-4a55261cd349",
+  "last_frame_url": "upload:0972f641-bdfd-4723-99e0-65d3038f5a61",
+  "description": "rises from a low crouch with a quick sweeping kick forward along the ground, then back into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 5de73550-f155-4a5c-af10-30c6f0f13acb\njob_id: 5de73550-f155-4a5c-af10-30c6f0f13acb\ndescription: rises from a low crouch with a quick sweeping kick forward along the ground, then back into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5de73550-f155-4a5c-af10-30c6f0f13acb\")\nasset_id: f9b2d884-a7da-5628-a8a3-83ebe1a3577a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

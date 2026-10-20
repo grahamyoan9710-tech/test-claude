@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "ee4d06b4-de3f-4580-9d71-c7b94258f268",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4871dc18-f5d8-4988-86db-5d0dd09571c7",
+  "last_frame_url": "upload:4c553f67-df06-47aa-85c5-5886c5c9098e",
+  "description": "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his free hand clutching at the collar at his throat, the other hand still gripping two curved violet daggers, one in each hand pointing down, legs kicking and squirming, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding two curved violet daggers, one in each hand",
+  "initial_pose": "fighting stance facing right, holding two curved violet daggers, one in each hand"
+ },
+ "reply": "id: ee4d06b4-de3f-4580-9d71-c7b94258f268\njob_id: ee4d06b4-de3f-4580-9d71-c7b94258f268\ndescription: held up by the collar from in front of him: chest pulled forward, head tilted back in pain, his free hand clutching at the collar at his throat, the other hand still gripping two curved violet daggers, one in each hand pointing down, legs kicking and squirming, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ee4d06b4-de3f-4580-9d71-c7b94258f268\")\nasset_id: b0931d90-e96b-565d-9da1-ef0a129f43a1\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

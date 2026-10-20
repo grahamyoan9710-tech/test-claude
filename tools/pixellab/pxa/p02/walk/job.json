@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "4c0679a0-36ad-4f99-98f3-2c2bc5df5cc8",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:014d6000-c7fb-4cf0-add9-dcd1202a6899",
+  "last_frame_url": "upload:2e5ee3ee-659a-4017-8ac6-5f6df2ef2eeb",
+  "description": "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time exactly like the first frame, fists raised, a seamless two-step walk cycle that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 4c0679a0-36ad-4f99-98f3-2c2bc5df5cc8\njob_id: 4c0679a0-36ad-4f99-98f3-2c2bc5df5cc8\ndescription: walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time exactly like the first frame, fists raised, a seamless two-step walk cycle that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4c0679a0-36ad-4f99-98f3-2c2bc5df5cc8\")\nasset_id: 6896fe6f-5d23-5cd1-a8db-ea91574fbbcd\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}
