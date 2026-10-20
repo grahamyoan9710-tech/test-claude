@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:f0480030-51b2-46bd-af6b-5e7651232cd8", "last_frame_url": "upload:090fd82a-ba8f-4e95-a336-88143a4de927", "description": "runs forward with the spear held out in front, then slows down and stops in the stance; her feet stay light on the floor, nothing is kicked up. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons", "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "090c35aa-246d-4f79-948e-96eba9182e0c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:f0480030-51b2-46bd-af6b-5e7651232cd8",
+  "last_frame_url": "upload:090fd82a-ba8f-4e95-a336-88143a4de927",
+  "description": "runs forward with the spear held out in front, then slows down and stops in the stance; her feet stay light on the floor, nothing is kicked up. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: 090c35aa-246d-4f79-948e-96eba9182e0c\njob_id: 090c35aa-246d-4f79-948e-96eba9182e0c\ndescription: runs forward with the spear held out in front, then slows down and stops in the stance; her feet stay light on the floor, nothing is kicked up. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"090c35aa-246d-4f79-948e-96eba9182e0c\")\nasset_id: 9acc0a4e-b3b9-5e5c-930f-e9bbf8ce41e6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+}
