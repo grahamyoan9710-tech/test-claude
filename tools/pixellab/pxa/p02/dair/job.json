@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "a3fb735b-6515-418c-8b53-ef5ff5e0abd0",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: a3fb735b-6515-418c-8b53-ef5ff5e0abd0\njob_id: a3fb735b-6515-418c-8b53-ef5ff5e0abd0\ndescription: in mid-air, an axe kick: brings one straight leg down hard beneath her, then pulls it back. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a3fb735b-6515-418c-8b53-ef5ff5e0abd0\")\nasset_id: a67cb520-30f6-5834-8fe1-53f26ebd7e79\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
+ "frames": 13,
+ "charged": "2 generations"
 }

@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "ad98c5cb-3b68-4ed8-b433-e63c6ed83c4c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:28e00466-893a-40d4-9850-1607d98f8830",
+  "last_frame_url": "upload:e8b8e2a9-1ca9-4f80-8635-2193db7c77f9",
+  "description": "slides forward low on one leg and kicks with the other, ending in a low crouch. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: ad98c5cb-3b68-4ed8-b433-e63c6ed83c4c\njob_id: ad98c5cb-3b68-4ed8-b433-e63c6ed83c4c\ndescription: slides forward low on one leg and kicks with the other, ending in a low crouch. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ad98c5cb-3b68-4ed8-b433-e63c6ed83c4c\")\nasset_id: 996da27b-9450-5fcc-b801-5c956b4a8397\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png"
+}

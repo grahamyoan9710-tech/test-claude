@@ -61,6 +61,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
     `search`) : passés en `rejected`, le driver les refait.
   - Lancés : `driver.py p01 p02 p03 p07 p08` (348 clips prêts au départ, ~420 générations sur 1 960) et
     `skill_fx.py render` (les 79 effets, gratuit).
+  - **Effets des compétences faits** : les 79 rendus, relus, exportés et importés (`assets/sprites/fx_p0*.png`,
+    lignes `fx`). Rendu avec `fit_canvas` (`move_fx.py`) : 40 effets touchaient le bord de leur image ; l'ancre
+    exportée suit l'agrandissement. Rayons de `t_burst` un peu raccourcis. Vérifié : compilation, `sim_test`
+    « all tests passed », démo 07 contre 08 (ultime à l'arme A) où l'effet est joué. `shotPlaceholder` reste comme
+    repli quand un sprite manque.
+  - Clips relus à mesure qu'ils arrivent ; un clip écarté pendant que le driver tourne reçoit un `job.json`
+    `{"status": "rejected"}`, sinon ce driver ne le refait pas (il le garde dans sa liste des clips lancés).
   - Relu avant le jeton (clips déjà téléchargés). **Bons** : 01 nair, bair (quelques points blancs sous les pieds),
     usmash, dsmash, dashattack, pummel, uthrow, w0_fthrow, w0_bthrow, tout le kit w1 présent ; 02 idle, walk,
     runstart, land, crouch, shield, holdstart, roll, spotdodge. **Tache grise dans la traînée** (gardés, à ton avis) :
