@@ -13,23 +13,20 @@ enum class Limb : uint8_t { None, ArmFront, ArmBack, LegFront, LegBack, Body, He
 // Visual / audio flavour of a hit.
 enum class HitFx : uint8_t {
   Normal, Fire, Electric, Slash, Dark, Magic,
-  AntiMagic,  // black lightning that cancels magic (Asta)
-  Wind,       // green-white gusts (Yuno)
-  Reiatsu,    // blue-white spiritual pressure (Ichigo)
-  Petal,      // cherry-blossom blades (Byakuya)
-  Light,      // golden sacred light (Link)
-  Gloom,      // red-black malice (Ganondorf)
-  Ice,        // frost (Leviathan axe)
-  Cursed,     // blue / purple cursed energy (Gojo)
-  Blood,      // crimson slashes (Sukuna)
-  Chakra,     // orange / blue chakra swirls (Naruto)
-  Lightning,  // crackling blue-white lightning (Chidori, Raikiri, Kirin)
-  BlackFlame, // Amaterasu's black flames (Sasuke)
-  Hollow,     // green-black hollow energy (Ulquiorra: Cero Oscuras, Luz de la Luna)
-  Berserk,    // Kenpachi's wild yellow reiatsu
-  Water,      // water jutsu (Kakashi)
-  Wolf,       // pale blue ceros and spectral wolves (Starrk)
-  Claw,       // cyan claw slashes (Grimmjow)
+  Shadow,     // violet shadow (01)
+  Ice,        // frost and ice stars (02, 09)
+  Star,       // violet and gold stars (04)
+  Water,      // water and blue flames (05)
+  Rose,       // pink and magenta (06, 14)
+  Lightning,  // red lightning (07)
+  Light,      // white and gold light (08)
+  Wind,       // jade wind and green lightning (10)
+  Arcane,     // violet spells (11)
+  Sand,       // golden sand (12)
+  Blood,      // black feathers and red (13)
+  Moon,       // night violet, gravity (15)
+  Sun,        // golden flames (16)
+  Nature,     // emerald leaves and vines (17)
   Count
 };
 
@@ -65,61 +62,18 @@ constexpr float kShoulderX = 0.03f, kShoulderY = -0.17f;
 constexpr float kGripDist = 0.28f;  // shoulder -> hand distance along the blade, fraction of the height
 
 enum class ProjVisual : uint8_t {
-  Fireball, Bolt, Shuriken, Star,
-  BlackSlash,   // Asta: black crescent of anti-magic
-  WindBlade,    // Yuno: thin green crescents
-  Tornado,      // Yuno: travelling whirlwind
-  Getsuga,      // Ichigo: huge crescent wave of reiatsu
-  Cero,         // Ichigo: red blast from the hollow mask
-  Petals,       // Byakuya: swarm of blade petals
-  Arrow,        // Link: arrow
-  LightArrow,   // Link: arrow of light
-  Bomb,         // Link: Zonai bomb
-  SwordBeam,    // Link: Master Sword beam
-  DarkOrb,      // Ganondorf: sphere of gloom
-  GloomSpear,   // Ganondorf: spear of malice
-  Axe,          // Kratos: spinning Leviathan axe (comes back)
-  ChainBlade,   // Kratos: thrown Blade of Chaos
-  BlueOrb,      // Gojo: Lapse Blue (attracts)
-  RedOrb,       // Gojo: Reversal Red (repels)
-  PurpleOrb,    // Gojo: Hollow Purple (erases)
-  Dismantle,    // Sukuna: invisible cutting lines
-  FireArrow,    // Sukuna: Fuga
-  Lightning,    // Sukuna: Kamutoke
-  ReiatsuWave,  // Kenpachi: wild yellow slash wave
-  CeroOscuras,  // Ulquiorra: black-green blast
-  LuzDeLaLuna,  // Ulquiorra: green light spear
-  Lanza,        // Ulquiorra: Lanza del Relampago (huge green lightning javelin)
-  BarrelBomb,   // Hunter: large barrel bomb
-  Phial,        // Hunter: charge blade phial burst
-  GunlanceShell,// Hunter: gunlance shelling (fire burst)
-  Rasengan,     // Naruto: spinning chakra sphere
-  Rasenshuriken,// Naruto: wind shuriken with a white ring of micro-blades
-  ShadowClone,  // Naruto: a running shadow clone
-  Bijudama,     // Naruto: tailed beast bomb (black-purple sphere)
-  GreatFireball,// Sasuke / Kakashi: Katon great fireball (orange, big)
-  ChidoriSpear, // Sasuke: thrown lightning spear
-  KirinBolt,    // Sasuke: the lightning dragon diving from the sky
-  IndraArrow,   // Sasuke: Susanoo's arrow
-  BlackFlames,  // Sasuke: Amaterasu (sticks to its target)
-  Kunai,        // Kakashi: thrown kunai
-  WaterDragon,  // Kakashi: Suiton water dragon
-  KamuiVortex,  // Kakashi: dimensional vortex (sticks to its target)
-  KamuiShuriken,// Kakashi: Susanoo's giant shuriken
-  GiantGetsuga, // Ichigo: ultimate Getsuga Tensho
-  LightPillar,  // Link: arrow of light falling from the sky
-  GloomPillar,  // Ganondorf: gloom erupting from the ground
-  PetalSphere,  // Byakuya: Gokei, a sphere of blades around the target
-  WindRain,     // Yuno: wind blades raining from the sky
-  ZephyrSpear,  // Yuno: giant wind spear
-  IceAxe,       // Kratos: Leviathan axe wrapped in frost (ultimate)
-  MaxBlue,      // Gojo: maximum output blue (huge vortex)
-  GetsugaCross, // Ichigo: Getsuga Jujisho, two black crescents crossing (hollow mask)
-  Desgarron,    // Grimmjow: five claws of cyan reiatsu raking forward
-  PanteraDart,  // Grimmjow: Garra de la Pantera, a forearm blade fired like a missile
-  CeroWolf,     // Starrk: a wolf of blue cero running (or leaping on its prey)
-  StarrkCero,   // Starrk: a small blue cero (Cero Metralleta)
-  LightningHound,  // Kakashi: a hound of lightning running along the ground
+  Orb,       // sphere of energy
+  Crescent,  // flying slash
+  Wave,      // wave along the ground
+  Bolt,      // fast streak (lightning, ray)
+  Star,      // star, sparkle
+  Arrow,     // arrow
+  Spear,     // thrown spear or javelin
+  Blade,     // spinning weapon (chakram, disc, axe, dagger)
+  Feather,   // feathers, petals, pages, leaves
+  Pillar,    // column erupting from the ground or falling from the sky
+  Bomb,      // big sphere that explodes
+  Beast,     // creature (dragon, phoenix, ravens)
   Count
 };
 
@@ -141,7 +95,8 @@ struct ProjectileDef {
   float spreadDeg = 0.0f;
   bool bounces = false;
   bool piercing = false;   // keeps flying after a hit
-  ProjVisual visual = ProjVisual::Fireball;
+  ProjVisual visual = ProjVisual::Orb;
+  const char* fx = nullptr;  // its PixelLab effect (an "fx" line of sheets.txt); none yet: a placeholder is drawn
   int rehit = 0;           // > 0: hits the same fighter again every `rehit` frames (swarms, vortices)
   float pull = 0.0f;       // drags fighters within pullRadius towards it (px / frame)
   float pullRadius = 0.0f;
@@ -169,6 +124,7 @@ struct BeamDef {
   float angle = 0.0f;        // degrees, 0 = forward, 90 = up
   float length = 0.0f, width = 0.0f;
   HitFx fx = HitFx::Normal;
+  const char* sprite = nullptr;  // its PixelLab effect (drawn along the beam)
 };
 
 // Body language of a special move (the renderer builds the pose from it).
@@ -186,51 +142,18 @@ enum class PoseHint : uint8_t {
   Roar,       // arms wide, chest out
   Rush,       // body-first dash
   Raise,      // one arm raised to the sky (summon, orb above)
-  Point,      // one finger pointed forward (Ulquiorra's cero)
-  TwoHanded,  // both hands on the hilt above the head (Kenpachi's kendo, great sword charge)
+  Point,      // one finger pointed forward
+  TwoHanded,  // both hands on the hilt above the head (a great sword charge)
   Kneel       // crouched low, gathering power
 };
 
-// The cinematic of an ultimate (the renderer draws it: domain, summon, transformation...).
-enum class UltFx : uint8_t {
-  None,
-  BlackMeteorite, BlackDivider, DemonUnion,          // Asta
-  SpiritStorm, WindBladeShower, ZephyrSpear,         // Yuno
-  GetsugaJujisho, GiantGetsuga, VastoLordeCero,      // Ichigo
-  Kageyoshi, Gokei, Hakuteiken,                      // Byakuya
-  LightDragon, MasterSwordBeam, LightArrowRain,      // Link
-  DemonDragon, DemonKingRampage, GloomPillars,       // Ganondorf
-  SpartanRage, Fimbulwinter, ChaosWhip,              // Kratos
-  MaxBlue, ImaginaryPurple, InfiniteVoid,            // Gojo
-  MalevolentShrine, KamutokeStrike, FugaBlast,       // Sukuna
-  Kendo, NozarashiCleave, RedDemon,                  // Kenpachi
-  CeroOscuras, LanzaRelampago, SegundaEtapa,         // Ulquiorra
-  TrueChargedSlash, AmpedDischarge, WyvernFire,      // Hunter
-  UzumakiBarrage, Rasenshuriken, KuramaBijudama,     // Naruto
-  Kirin, IndraArrow, Amaterasu,                      // Sasuke
-  Raikiri, Kamui, KamuiShuriken,                     // Kakashi
-  GranReyCero, PanteraRelease, DesgarronClaws,       // Grimmjow
-  CeroMetralleta, LosLobos, StarrkRelease,           // Starrk
-  Count
-};
+// An ultimate's presentation: a cinematic dims the stage behind the fighters while it runs (its effects are the
+// move's PixelLab effects: castFx, projectiles, beam).
+enum class UltFx : uint8_t { None, Cinematic, Count };
 
-// Transformations (Spartan Rage, Bankai, Vasto Lorde...): the renderer draws the form, the moves and
+// Transformations: the fighter keeps its clips, recoloured, with its aura around it (FormDef::aura); the moves and
 // stats change while it lasts.
-enum class Form : uint8_t {
-  None,
-  SpartanRage,   // Kratos: red-hot, glowing tattoos, fists of fire
-  DemonUnion,    // Asta: black skin markings, demon horn and black wing
-  VastoLorde,    // Ichigo: white hollow body, horns, long orange hair, black sclera
-  HollowMask,    // Ichigo: the Visored hollow mask over his face
-  RedDemon,      // Kenpachi: bankai, red skin, horns, burning red aura
-  Segunda,       // Ulquiorra: Segunda Etapa, black body, huge bat wings, tail
-  KuramaAvatar,  // Naruto: golden chakra cloak with the giant fox around him
-  SusanooPurple, // Sasuke: purple Susanoo around him
-  SusanooBlue,   // Kakashi: blue Susanoo around him
-  Pantera,       // Grimmjow: Resurreccion, long hair, panther ears and tail, white armour, claws
-  LosLobos,      // Starrk: Resurreccion, fur-lined coat, a pistol in each hand
-  Count
-};
+enum class Form : uint8_t { None, Awakened, Count };
 
 enum class VelMode : uint8_t { Set, SetX, SetY, Add, Scale, StickDir };
 
@@ -330,64 +253,16 @@ struct Palette {
   Color3 hair{40, 30, 30}, eyes{70, 52, 44};
 };
 
-// Who the fighter is (drives the procedural drawing: silhouette, outfit, hair, accessories).
+// Who the fighter is: its clips and pictures are assets/sprites/<id>_*.png (CharacterDef::id).
 enum class Hero : uint8_t {
-  Asta, Yuno, Ichigo, Byakuya, Link, Ganondorf, Kratos, Gojo, Sukuna,
-  Kenpachi, Ulquiorra, Hunter, Naruto, Sasuke, Kakashi,
-  Starrk, Grimmjow,
+  P01, P02, P03, P04, P05, P06, P07, P08, P09, P10, P11, P12, P13, P14, P15, P16, P17,
   Count
 };
 
-// Drawn weapons: the fighters' own blades and the weapons that drop during a match.
-enum class WeaponVisual : uint8_t {
-  None,
-  AstaSword,       // Asta's notched black great sword
-  DemonSlayer,     // huge black slab of a sword
-  DemonDweller,    // slender black katana
-  Grimoire,        // floating four-leaf grimoire
-  WindSpear,       // spear of green wind
-  Zangetsu,        // giant cleaver with a cloth-wrapped grip
-  TensaZangetsu,   // black bankai katana with a chain
-  Katana,          // Byakuya's sword
-  Senbonzakura,    // blade dissolving into pink petals
-  Kageyoshi,       // bankai: petal storm swords
-  MasterSword,     // blade of evil's bane
-  BowOfLight,      // golden bow
-  DemonKingSword,  // Ganondorf's gloom sword
-  GloomSpear,      // spear of malice
-  LeviathanAxe,    // frost axe with runes
-  BladesOfChaos,   // two chained fire blades
-  HollowPurple,    // purple orb above the hand
-  SixEyes,         // blindfold removed: shining blue eyes
-  Kamutoke,        // lightning bow-spear
-  CursedFinger,    // Sukuna's finger (power-up)
-  ShieldAndSword,  // Link's base kit (sword + shield)
-  GuardianShield,  // Kratos's base kit
-  KenpachiSword,   // Kenpachi: long notched, chipped katana with a bare grip
-  Nozarashi,       // Kenpachi's shikai: giant cleaver-axe
-  RedBankai,       // Kenpachi's bankai: huge crimson cleaver dripping red reiatsu
-  LuzDeLaLuna,     // Ulquiorra: green light spear (Murcielago, resurreccion)
-  SegundaCore,     // Ulquiorra: segunda etapa (black-green crystal of power)
-  GreatSword,      // Hunter: huge bone-and-steel great sword
-  ChargeBlade,     // Hunter: charge blade (sword + shield with glowing phials)
-  Gunlance,        // Hunter: gunlance (lance with a shell chamber + big shield)
-  SageScroll,      // Naruto: toad sage scroll (sage mode)
-  KuramaChakra,    // Naruto: Kurama's golden chakra
-  Kusanagi,        // Sasuke: straight Kusanagi sword
-  SusanooBow,      // Sasuke: purple flame bow of the Susanoo
-  Mangekyo,        // Sasuke: eternal Mangekyo Sharingan (amaterasu)
-  KakashiKunai,    // Kakashi: kunai
-  SharinganEye,    // Kakashi: Sharingan (kamui)
-  DoubleMangekyo,  // Kakashi: double Mangekyo (Susanoo)
-  Pantera,         // Grimmjow: his katana, teal grip
-  PanteraClaws,    // Grimmjow: claws of cyan reiatsu on both hands (power-up)
-  LobosPack,       // Starrk: spectral wolves running round him (power-up)
-  Lilynette,       // Starrk: Lilynette, the other half of his soul, floating at his side (power-up)
-  LobosPistol,     // Starrk: a pistol of Los Lobos (drawn in both hands while released)
-  Count
-};
+// How a weapon is shown: held in the fighter's clips, or floating beside it (drawn by the game from its picture).
+enum class WeaponVisual : uint8_t { None, Held, Floating, Count };
 
-// A weapon that drops during the match: only its owner (character) can pick it up.
+// One of the fighter's two weapons, summoned with the weapon button.
 struct WeaponDef {
   std::string name;           // shown when it is picked up
   std::string desc;           // one short French line
@@ -412,16 +287,17 @@ struct FormDef {
   float damageMul = 1.0f;     // every hit
   float kbTakenMul = 1.0f;    // knockback received
   bool superArmor = false;    // weak hits do not make it flinch
+  const char* aura = nullptr; // its PixelLab aura, looping around the fighter
   std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while transformed
 };
 
 struct CharacterDef {
+  std::string id;                 // "p01": its clips and pictures (assets/sprites/<id>_*.png), its hitbox fits
   std::string name;
   std::string title;
-  std::string series;             // universe the fighter comes from
-  Hero hero = Hero::Asta;
+  std::string series;             // element, shown in the menus
+  Hero hero = Hero::P01;
   BodyStyle style = BodyStyle::Brawler;
-  WeaponVisual baseWeapon = WeaponVisual::None;  // drawn in hand for Limb::Weapon moves
   std::array<Palette, 2> palettes;
   float width = 50, height = 100;
   float weight = 100;

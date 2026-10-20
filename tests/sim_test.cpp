@@ -406,7 +406,7 @@ static void testTeams() {
 
 static void testFinalSmash() {
   std::printf("[clash orb + final smash]\n");
-  Match m(duel(0, 0, 2, false, false));
+  Match m(duel(0, 4, 2, false, false));  // N° 05: its bare-handed ultimate is an attack
   skipCountdown(m);
   Fighter& f = m.fighters[0];
   Fighter& v = m.fighters[1];
@@ -533,8 +533,8 @@ static int charIndex(const char* name) {
 
 static void testWeapons() {
   std::printf("[weapons]\n");
-  const int kratos = charIndex("KRATOS"), gojo = charIndex("GOJO");
-  MatchConfig cfg = duel(0, kratos, gojo, false, false);
+  const int ringGirl = charIndex("N° 04"), other = charIndex("N° 11");
+  MatchConfig cfg = duel(0, ringGirl, other, false, false);
   cfg.items = false;
   cfg.weapons = false;  // no random drops: the test drops them itself
   Match m(cfg);
@@ -545,14 +545,14 @@ static void testWeapons() {
   f.facing = 1;
   v.pos = {250, 0};
   Pad p{m};
-  m.dropWeaponFor(1, 0);  // Gojo's weapon: Kratos must not be able to take it
+  m.dropWeaponFor(1, 0);  // the other fighter's weapon: it must not be taken
   m.items.back().pos = {-150, -300};
   for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   CHECK(!m.items.empty() && m.items.back().grounded, "a dropped weapon lands on the stage");
   p.run(30, key(1, 0));
   CHECK(f.weapon < 0 && m.items.size() == 1, "another character's weapon cannot be picked up");
   m.items.clear();
-  m.dropWeaponFor(0, 0);  // Leviathan axe
+  m.dropWeaponFor(0, 0);  // the ring-chakram
   m.items.back().pos = {f.pos.x + 60, -300};
   for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   p.run(20, key(1, 0));
@@ -560,7 +560,7 @@ static void testWeapons() {
   p.idle(20);
   f.facing = 1;
   p.run(1, key(0, 0, false, false, false, true));
-  CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Lancer de Léviathan", "the axe replaces the neutral special");
+  CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Boomerang", "the ring replaces the neutral special");
   bool thrown = false, back = false;
   for (int i = 0; i < 200; ++i) {
     p.idle(1);
@@ -570,66 +570,10 @@ static void testWeapons() {
       break;
     }
   }
-  CHECK(thrown && back, "the axe flies and comes back (thrown %d back %d)", thrown, back);
+  CHECK(thrown && back, "the ring flies and comes back (thrown %d back %d)", thrown, back);
   f.weaponTimer = 2;
   p.idle(3);
   CHECK(f.weapon < 0, "a weapon vanishes after its time");
-  // Reach: a held weapon makes the base moves hit harder
-  float base = 0.0f, boosted = 0.0f;
-  for (int pass = 0; pass < 2; ++pass) {
-    Match m2(cfg);
-    skipCountdown(m2);
-    m2.fighters[0].pos = {-40, 0};
-    m2.fighters[0].facing = 1;
-    m2.fighters[1].pos = {20, 0};
-    if (pass == 1) m2.equipWeapon(m2.fighters[0], 1);
-    Pad p2{m2};
-    p2.run(1, key(0, 0, true));
-    p2.idle(25);
-    (pass == 0 ? base : boosted) = m2.fighters[1].percent;
-  }
-  CHECK(boosted > base * 1.1f, "weapon damage bonus (%.1f vs %.1f)", boosted, base);
-}
-
-// Sasuke's Amaterasu: he stands still and cannot attack while the black flames burn, then it needs time to come back.
-static void testAmaterasu() {
-  std::printf("[amaterasu]\n");
-  MatchConfig cfg = duel(0, charIndex("SASUKE"), charIndex("NARUTO"), false, false);
-  cfg.items = false;
-  cfg.weapons = false;
-  for (int air = 0; air < 2; ++air) {
-    Match m(cfg);
-    skipCountdown(m);
-    Fighter& f = m.fighters[0];
-    Fighter& v = m.fighters[1];
-    f.pos = {-150, air ? -260.0f : 0.0f};
-    f.facing = 1;
-    v.pos = {150, 0};
-    m.equipWeapon(f, 1);  // the Mangekyo Sharingan
-    Pad p{m};
-    if (!air) p.idle(10);
-    p.run(1, key(0, 0, false, false, false, true));
-    CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Amaterasu", "air %d: the neutral special is Amaterasu",
-          air);
-    const MoveDef& ama = f.moveDef(NSpecial);
-    const float x0 = f.pos.x;
-    bool held = true, moved = false;
-    for (int i = 1; i < ama.duration - 1; ++i) {
-      p.run(1, key(1, 0, i % 2 == 0, false, false, i % 3 == 0));  // walks, attacks and casts again: in vain
-      held = held && f.state == FState::Attack && f.move == NSpecial;
-      moved = moved || std::fabs(f.pos.x - x0) > 0.5f;
-    }
-    CHECK(held, "air %d: nothing interrupts the technique (state %d, move %d)", air, int(f.state), f.move);
-    CHECK(!moved, "air %d: he does not move while casting (x %.1f -> %.1f)", air, x0, f.pos.x);
-    if (air) continue;
-    CHECK(v.percent > 5.0f, "the black flames burn (%.1f%%)", v.percent);
-    p.idle(30);
-    p.run(1, key(0, 0, false, false, false, true));
-    CHECK(f.state != FState::Attack, "it cannot be cast again right away (state %d, move %d)", int(f.state), f.move);
-    p.idle(ama.cooldown - ama.duration - 30);
-    p.run(1, key(0, 0, false, false, false, true));
-    CHECK(f.state == FState::Attack && f.move == NSpecial, "it comes back after %d frames", ama.cooldown);
-  }
 }
 
 // With a picked-up weapon the basic attack becomes the weapon's own strike (its clip: w0_jab / w1_jab), and it hits.
@@ -1182,7 +1126,6 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "cpu10") testLevel10();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();
-  if (only.empty() || only == "weapons" || only == "amaterasu") testAmaterasu();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "recovery") testRecoveryStages();
   if (only.empty() || only == "battle") testBattles();

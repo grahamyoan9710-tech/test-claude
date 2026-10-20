@@ -412,6 +412,7 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
       pr.bounces = p.bounces;
       pr.piercing = p.piercing;
       pr.visual = p.visual;
+      pr.fx = p.fx;
       pr.rehit = p.rehit;
       pr.pull = p.pull;
       pr.pullRadius = p.pullRadius;

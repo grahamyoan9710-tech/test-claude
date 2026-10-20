@@ -78,7 +78,8 @@ struct Projectile {
   HitboxDef hit;
   bool bounces = false;
   bool piercing = false;
-  ProjVisual visual = ProjVisual::Fireball;
+  ProjVisual visual = ProjVisual::Orb;
+  const char* fx = nullptr;  // its PixelLab effect (ProjectileDef::fx)
   bool alive = true;
   std::vector<int> hitList;
   // Behaviours (see ProjectileDef)

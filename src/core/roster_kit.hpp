@@ -152,6 +152,13 @@ inline MoveDef cine(const char* name, int duration, std::vector<HitboxDef> boxes
 }
 }  // namespace kit
 
-// The three ultimates of a fighter (bare-handed, then with each weapon) and its transformations
-// (roster_ultimates.cpp).
-void addUltimates(CharacterDef& c);
+// The shapes of the ultimates and the transformations (roster_ultimates.cpp). `fx`: the move's PixelLab effect.
+namespace ult {
+int form(CharacterDef& c, const char* aura, HitFx fx, int seconds, float damage, float kbTaken);
+MoveDef awaken(const char* name, int form, HitFx e, const char* fx);
+MoveDef ambush(const char* name, HitFx e, const char* fx, Limb limb, int hits);
+MoveDef storm(const char* name, HitFx e, const char* fx, float r0, float r1);
+MoveDef beam(const char* name, HitFx e, const char* fx, float angle, float length, float width);
+MoveDef rain(const char* name, HitFx e, const char* fx, ProjVisual vis, int strikes);
+MoveDef blast(const char* name, HitFx e, const char* fx, ProjVisual vis, float speed, float radius, float explode);
+}  // namespace ult
