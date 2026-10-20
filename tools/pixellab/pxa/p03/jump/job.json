@@ -1,17 +1,1 @@
-{
- "status": "submitted",
- "job_id": "bd53d210-404e-4628-b2a9-69cccd8d682d",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:64c6cd7e-2cfe-4262-b7e7-3680aaa69432",
-  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
-  "frame_count": 8,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
-  "initial_pose": "fighting stance facing right, fists raised"
- },
- "reply": "id: bd53d210-404e-4628-b2a9-69cccd8d682d\njob_id: bd53d210-404e-4628-b2a9-69cccd8d682d\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bd53d210-404e-4628-b2a9-69cccd8d682d\")\nasset_id: cd0e68af-dcb9-552b-a1b3-6b5f1b5ef670\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
- "last": null
-}
+{"status": "rejected"}
