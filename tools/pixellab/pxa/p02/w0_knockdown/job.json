@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "144890a1-a71c-4fb6-a530-f6729b01ac98",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -13,5 +13,7 @@
  },
  "reply": "id: 144890a1-a71c-4fb6-a530-f6729b01ac98\njob_id: 144890a1-a71c-4fb6-a530-f6729b01ac98\ndescription: tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, still holding her spear, ending lying still; nothing else is drawn around her. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"144890a1-a71c-4fb6-a530-f6729b01ac98\")\nasset_id: 60a15333-7ced-55c6-8bc8-d0c3361e3232\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
- "last": null
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
 }

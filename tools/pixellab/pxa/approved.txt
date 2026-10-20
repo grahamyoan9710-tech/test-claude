@@ -21,3 +21,6 @@ p02/w0_holdstart
 p03/runstart
 p03/holdstart
 p03/knockdown
+p03/jump
+p02/w0_jump
+p02/w0_knockdown

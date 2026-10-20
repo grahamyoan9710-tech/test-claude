@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "732c0e75-e79d-440f-b60d-e1439c773782",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 732c0e75-e79d-440f-b60d-e1439c773782\njob_id: 732c0e75-e79d-440f-b60d-e1439c773782\ndescription: knees the invisible opponent he is holding in front of him: a quick knee strike, then back to holding with both hands. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"732c0e75-e79d-440f-b60d-e1439c773782\")\nasset_id: de3b312b-e20f-55db-8781-79c10083877a\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p03/holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p03/holdstart/f_04.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/holdstart/f_04.png",
+ "frames": 5,
+ "charged": "1 generation"
 }

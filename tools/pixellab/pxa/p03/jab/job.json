@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:1570e4f2-98d9-4112-a118-2a7a19ee76a2", "last_frame_url": "upload:9d29da82-0249-4b89-a28d-0fb3539a01da", "description": "muay thai jab: a fast straight punch with the lead fist at face height, then back to the high guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots", "initial_pose": "fighting stance facing right, fists raised"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "0f41093e-fd59-4272-9001-c46101971fa5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:1570e4f2-98d9-4112-a118-2a7a19ee76a2",
+  "last_frame_url": "upload:9d29da82-0249-4b89-a28d-0fb3539a01da",
+  "description": "muay thai jab: a fast straight punch with the lead fist at face height, then back to the high guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 0f41093e-fd59-4272-9001-c46101971fa5\njob_id: 0f41093e-fd59-4272-9001-c46101971fa5\ndescription: muay thai jab: a fast straight punch with the lead fist at face height, then back to the high guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0f41093e-fd59-4272-9001-c46101971fa5\")\nasset_id: 613f9fea-428c-5eac-b3a3-c8cc45def9f7\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"
+}
