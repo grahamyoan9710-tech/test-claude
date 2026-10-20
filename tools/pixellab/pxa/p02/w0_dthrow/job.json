@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "f140c6ad-b77f-4324-ab1c-cbc0e4d70efa",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6ae8104f-4398-40f8-a06a-b77055d696d0",
+  "last_frame_url": "upload:b9f37895-c1bf-4e94-a493-b7fb6ab79d9f",
+  "description": "slams the invisible opponent she is holding down onto the ground in front of her with her free hand, then stabs down at it with a long silver spear with white ribbons, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "holding an invisible opponent in front of her with both hands"
+ },
+ "reply": "id: f140c6ad-b77f-4324-ab1c-cbc0e4d70efa\njob_id: f140c6ad-b77f-4324-ab1c-cbc0e4d70efa\ndescription: slams the invisible opponent she is holding down onto the ground in front of her with her free hand, then stabs down at it with a long silver spear with white ribbons, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f140c6ad-b77f-4324-ab1c-cbc0e4d70efa\")\nasset_id: 2ba2b58e-6057-5aef-8568-465cdbbb00d2\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+}

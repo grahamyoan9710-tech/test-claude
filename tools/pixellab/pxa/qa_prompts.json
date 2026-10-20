@@ -14,6 +14,7 @@
  "p02": {
   "knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, ending lying still; nothing else is drawn around her",
   "ledgeattack": "rises from a low crouch with a quick low sweeping kick forward, then back into the fighting stance; her foot passes just above the floor, nothing is kicked up",
-  "w0_knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, still holding her spear, ending lying still; nothing else is drawn around her"
+  "w0_knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, still holding her spear, ending lying still; nothing else is drawn around her",
+  "w0_grab": "leans forward and reaches out with her free open hand, closes it on empty air, then pulls back, the other hand keeping a long silver spear with white ribbons still at her side. The whole weapon stays inside the picture; nothing leaves her hands"
  }
 }

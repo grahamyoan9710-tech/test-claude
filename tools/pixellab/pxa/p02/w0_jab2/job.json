@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "81b7179b-bb3a-45a0-a5da-6a878deeed85",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 81b7179b-bb3a-45a0-a5da-6a878deeed85\njob_id: 81b7179b-bb3a-45a0-a5da-6a878deeed85\ndescription: two quick thrusts of the spear forward. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"81b7179b-bb3a-45a0-a5da-6a878deeed85\")\nasset_id: ba1d0f84-2bf1-583a-bc4a-818fa22977d6\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }

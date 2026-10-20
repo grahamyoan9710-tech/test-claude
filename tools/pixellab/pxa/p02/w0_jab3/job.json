@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "fb0275a8-d009-4a85-b354-47896662c466",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: fb0275a8-d009-4a85-b354-47896662c466\njob_id: fb0275a8-d009-4a85-b354-47896662c466\ndescription: a wide circular sweep of the spear around her at waist height. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fb0275a8-d009-4a85-b354-47896662c466\")\nasset_id: 85fac06e-5e7f-58fc-adde-6b8819f4ed6b\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
