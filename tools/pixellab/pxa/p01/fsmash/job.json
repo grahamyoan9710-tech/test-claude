@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "cf54dac1-f8a4-40cc-98c2-2b7f718f9326",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3ef79085-3f83-476e-b84a-1ac5edb2d21f",
+  "last_frame_url": "upload:9058d377-4aff-44af-89e8-ce3ae864cca3",
+  "description": "silat double palm push: sinks low drawing both hands back to the hip, then steps forward and pushes both open palms straight ahead at chest height, then recovers; nothing leaves his hands, his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: cf54dac1-f8a4-40cc-98c2-2b7f718f9326\njob_id: cf54dac1-f8a4-40cc-98c2-2b7f718f9326\ndescription: silat double palm push: sinks low drawing both hands back to the hip, then steps forward and pushes both open palms straight ahead at chest height, then recovers; nothing leaves his hands, his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"cf54dac1-f8a4-40cc-98c2-2b7f718f9326\")\nasset_id: 741159eb-6ba2-5691-ab0b-de82c6537458\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png"
+}

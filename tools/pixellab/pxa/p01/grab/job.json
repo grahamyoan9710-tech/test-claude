@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "b9020fc5-f70d-4a75-921d-e72e43811f7d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:417a3a64-b070-4d84-adbf-990fac5fdb5b",
+  "last_frame_url": "upload:e7ea91c2-6381-4ddd-8ce7-5723c3a8213a",
+  "description": "lunges forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves his hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: b9020fc5-f70d-4a75-921d-e72e43811f7d\njob_id: b9020fc5-f70d-4a75-921d-e72e43811f7d\ndescription: lunges forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves his hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b9020fc5-f70d-4a75-921d-e72e43811f7d\")\nasset_id: b9873945-3b9f-5d83-8ad2-d31fb2e796f6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png"
+}
