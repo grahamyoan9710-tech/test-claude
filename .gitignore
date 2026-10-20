@@ -16,3 +16,12 @@ tools/pixellab/pxa/p[0-9][0-9]/
 tools/pixellab/pxa/jobs_*.json
 tools/pixellab/pxa/jobs_*.log
 tools/pixellab/vfx/move/
+# Shock waves: the PixelLab pictures and clips are kept, the job records and built frames stay local
+!tools/pixellab/vfx/waves_src/**/*.png
+!tools/pixellab/vfx/waves_anim_mm/**/*.png
+tools/pixellab/vfx/**/job.json
+tools/pixellab/vfx/**/result.json
+tools/pixellab/vfx/waves_anim/
+tools/pixellab/vfx/*.log
+tools/pixellab/pxa/*.log
+tools/pixellab/**/.lock

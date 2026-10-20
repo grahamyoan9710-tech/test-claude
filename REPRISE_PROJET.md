@@ -55,6 +55,20 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 15 h 30 UTC, session A, branche `claude/refonte-originaux` : **styles de combat, traînées, ondes d'impact.**
+  - Le propriétaire précise : sans arme, chaque perso se bat dans un art martial (01 Penchak Silat, 02 Taekwondo,
+    03 Muay Thaï, 07 Karaté, 08 Kung Fu ; FICHES §1.7). Prompts dans `pxa/new_specs.py` (`STYLES`) ; les 8 coups
+    génériques du 01 déjà faits sont écartés (`pxa/<id>/<clip>.generic`, `pxa/retire.py`) et refaits.
+  - Traînées : gardées pour les coups rapides et les épées, interdites ailleurs (`TAIL_BLOW` / `TAIL` dans
+    `clips.py`).
+  - Ondes 1 à 5 : ce sont aussi les ondes d'impact des coups puissants (elles partent du sol). Refaites au plus
+    près de la planche : image pro PixelLab avec le dessin en référence (`vfx/waves_src`), puis deux clips
+    PixMiniMax, le jaillissement et la dissipation (`vfx/waves_anim_mm`), assemblés par `vfx/wave_build.py`
+    (taches grises du modèle retirées, sol lumineux à demi transparent). Onde 1 importée ; 2 à 4 en cours ; onde 5
+    refaite plus large (`w5d`, la première touchait les bords). Jouées à 1,5 fois la taille, teintées : sur un
+    coup puissant, l'onde de l'attaquant monte sous la victime (`Fx::waveOf`).
+  - Lots de clips : `driver.py p01 p03 p07 p08` et `driver.py p02` tournent (10 jobs à la fois chez PixelLab,
+    environ 6 min par clip : 6 à 7 h pour les 690 clips).
 - 20/10 14 h 45 UTC, session A, branche `claude/refonte-originaux` : **5 persos jouables pour l'instant, effets de
   déplacement faits, bases PixelLab prêtes.**
   - Le propriétaire veut d'abord 5 persos complets (armes et compétences inspirées des anciens persos, belles

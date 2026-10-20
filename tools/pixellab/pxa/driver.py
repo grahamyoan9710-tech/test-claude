@@ -1,4 +1,5 @@
-"""Keeps the clips of the PixelLab fighters coming: python3 driver.py FIGHTER [FIGHTER...]
+"""Keeps the clips of the PixelLab fighters coming: python3 driver.py [--states] FIGHTER [FIGHTER...]
+--states: only the states (idle, run, ledge...; with a weapon too), not the attacks.
 Every minute, submits (through pxbatch.py) the clips whose base is ready and approved, until none is left.
 A base clip (jump, runstart, drawsword...) feeds others only once listed in approved.txt ("fighter/clip"): a bad
 base must not spoil every clip made from it. The guard picture is always approved."""
@@ -16,12 +17,21 @@ def approved():
     return {l.strip() for l in open(p)} if os.path.exists(p) else set()
 
 
+STATES_ONLY = False
+
+
+def is_state(name):
+    return (name[3:] if re.match(r"w\d_", name) else name) in C.STATES
+
+
 def ready(fighter):
     importlib.reload(C)  # clips.py may have changed (a better prompt) while the driver runs
     ok = approved()
     out = []
     for j in C.jobs(fighter):
         name = os.path.basename(j["out"])
+        if STATES_ONLY and not is_state(name):
+            continue
         base = C.clips(fighter)[name][1]
         root = base.split("@")[0]
         if root == "sword":
@@ -38,14 +48,16 @@ def ready(fighter):
 
 
 def main():
-    fighters = sys.argv[1:]
+    global STATES_ONLY
+    STATES_ONLY = "--states" in sys.argv
+    fighters = [a for a in sys.argv[1:] if not a.startswith("--")]
     n, launched, procs = 0, set(), []
     while True:
         todo = [j for f in fighters for j in ready(f) if j["out"] not in launched]
         procs = [p for p in procs if p.poll() is None]
         if todo:  # each batch runs on its own: a new base does not wait for the clips before it
             n += 1
-            path = os.path.join(S, f"jobs_driver_{n}.json")
+            path = os.path.join(S, f"jobs_driver_{'_'.join(fighters)}_{n}.json")
             json.dump(todo, open(path, "w"), indent=1)
             launched |= {j["out"] for j in todo}
             print(time.strftime("%H:%M"), "batch", n, [os.path.relpath(j["out"], S) for j in todo], flush=True)

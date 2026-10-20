@@ -24,6 +24,8 @@ from PIL import Image
 
 def paletted(img):
     arr = np.asarray(img)
+    if ((arr[..., 3] > 0) & (arr[..., 3] < 255)).any():  # see-through pixels: kept as RGBA
+        return img
     opaque = arr[..., 3] > 0
     cols = np.unique(arr[opaque][:, :3], axis=0)
     if len(cols) > 255:

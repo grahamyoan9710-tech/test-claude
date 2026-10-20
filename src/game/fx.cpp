@@ -105,13 +105,24 @@ void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise, Color
   }
 }
 
+// The owner's shock wave of a fighter (sheet ref_effets.png, waves 1-5): its transformation's, also the impact
+// wave of its powerful blows. By hero: 01 -> 5, 02 -> 3, 03 -> 2, 07 -> 4 (no transformation), 08 -> 1...
+constexpr float kWaveSize = 1.5f;  // the waves engulf the fighter
+static const char* waveOf(Hero h) {
+  static const char* const kWave[] = {"move_wave_5", "move_wave_3", "move_wave_2", nullptr, nullptr,
+                                      "move_wave_4", "move_wave_4", "move_wave_1", nullptr, "move_wave_4",
+                                      nullptr, "move_wave_5", nullptr, "move_wave_1", nullptr, "move_wave_2"};
+  const int i = int(h);
+  return i >= 0 && i < int(std::size(kWave)) && kWave[i] ? kWave[i] : "move_wave_1";
+}
+
 // ---- Hit sparks ----------------------------------------------------------------------
 // The PixelLab hit effect of an element, if it has one (it replaces the drawn sparks).
 static const char* hitSprite(HitFx fx) {
   switch (fx) {
     case HitFx::Slash: return "hit_slash";
     case HitFx::Arcane: return "hit_reiatsu";
-    case HitFx::Dark: return "hit_dark";
+    case HitFx::Dark: case HitFx::Shadow: case HitFx::Moon: return "hit_dark";
     case HitFx::Sun: return "hit_chakra";
     case HitFx::Lightning: case HitFx::Electric: return "hit_lightning";
     case HitFx::Fire: return "hit_fire";
@@ -465,7 +476,12 @@ void Fx::onEvents(const Match& m) {
         }
         const bool big = e.impact || kb >= 140.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
-        if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf) groundImpact(m, m.fighters[e.b].pos, kb);
+        if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf) {  // a powerful blow: the attacker's wave rises
+          int atk = e.a;                                             // from under the victim's feet
+          if (atk < 0 && m.fighters[e.b].lastHitFrame >= m.frame - 1) atk = m.fighters[e.b].lastHitBy;
+          if (atk < 0 || atk >= nf || !moveFx(m, atk, waveOf(m.fighters[atk].def->hero), m.fighters[e.b].pos, kWaveSize))
+            groundImpact(m, m.fighters[e.b].pos, kb);
+        }
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
           const Fighter& v = m.fighters[e.b];
           Combo& c = combos_[e.b & 3];
@@ -741,12 +757,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Transform: {  // a transformation: its shock wave (the owner's sheet: one per transformation)
-        static const char* const kWave[] = {"move_wave_5", "move_wave_3", "move_wave_2", nullptr, nullptr,
-                                            "move_wave_4", nullptr, "move_wave_1", nullptr, "move_wave_4",
-                                            nullptr, "move_wave_5", nullptr, "move_wave_1", nullptr, "move_wave_2"};
-        const int h = e.a >= 0 && e.a < nf ? int(m.fighters[e.a].def->hero) : -1;
-        const char* wave = h >= 0 && h < int(std::size(kWave)) && kWave[h] ? kWave[h] : "move_wave_1";
-        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, wave, m.fighters[e.a].pos)) {
+        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, waveOf(m.fighters[e.a].def->hero), m.fighters[e.a].pos, kWaveSize)) {
           shake_ = std::max(shake_, 12.0f);
           au.play(Sfx::UltReady, 0.9f, 0.8f);
           au.play(Sfx::BeamBlast, 0.7f, 0.7f);
@@ -811,11 +822,11 @@ void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip) {
   playFx(name, at, size, rot, flip, WHITE);
 }
 
-bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at) {
+bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at, float size) {
   if (who < 0 || who >= int(m.fighters.size()) || !art::fxInfo(name)) return false;
   const Fighter& f = m.fighters[who];
   const Color tint = mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f);
-  playFx(name, at, f.def->height / 170.0f, 0.0f, f.facing < 0, tint);
+  playFx(name, at, size * f.def->height / 170.0f, 0.0f, f.facing < 0, tint);
   return true;
 }
 

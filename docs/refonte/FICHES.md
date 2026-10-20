@@ -116,14 +116,32 @@ Ondes de choc des transformations :
 | 4 | T06, T10 |
 | 5 | T01, T12 |
 
+Les ondes sont aussi les **ondes d'impact des coups puissants** (précisé le 20/10) : elles partent du sol et
+montent. Chaque perso a la sienne, celle de sa transformation (07, sans transformation : onde 4).
+
 Les autres effets sont propres à chaque coup (projectiles, traînées, ultimes, auras) et figurent sur les fiches.
 Les effets des menus sont aussi faits avec PixelLab : pétales, étincelles, éclat de sélection, transition.
 
 Règles des effets :
 - Aucun effet n'est dessiné par le code. Les anciens effets codés sont supprimés dès qu'ils sont remplacés.
-- Aucun effet dans les clips des persos : chaque prompt se termine par « Only <perso> is drawn ».
+- Aucun effet dans les clips des persos : chaque prompt se termine par « Only <perso> is drawn ». Exception
+  (précisée le 20/10) : les traînées des coups rapides et des épées sont gardées ; partout ailleurs, aucune.
 - Un clip où un effet est collé au perso est **régénéré**, jamais découpé avec `erase` ou `degrey`.
 - Aucun perso coupé au bord du cadre.
+
+### 1.7 Styles de combat à mains nues (demandé le 20/10)
+Sans arme, chaque perso se bat dans un art martial de la liste du propriétaire : ses coups (jab, combo, tilts,
+smashs, aériens, ruée) en reprennent les gestes. Avec une arme, ce sont les coups du kit de l'arme.
+
+| Perso | Style | Ce qu'on voit |
+|---|---|---|
+| 01 | Penchak Silat | Garde basse et fluide, frappes à main ouverte, coudes, balayages au sol |
+| 02 | Taekwondo | Coups de pied rapides et acrobatiques : circulaires, retourné, tornade, hache |
+| 03 | Muay Thaï | Coudes, genoux, tibias, teep, genou sauté |
+| 07 | Karaté | Direct, gyaku-zuki, mae-geri, yoko-geri, tranchant de la main |
+| 08 | Kung Fu | Coups de poing en chaîne, paumes, griffe du tigre, coup de pied de la grue |
+
+Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis les styles déjà pris.
 
 ---
 

@@ -85,8 +85,11 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   tient tant que la hitbox est active.
 - Effets : **tous** faits avec PixelLab (`vfx_workbench`), menus compris, et joués par le jeu (effets `fx`). Aucun
   effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
-- Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Un clip où
-  un effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun perso coupé au bord du cadre.
+- Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
+  exception : les traînées des coups rapides et des épées sont gardées. Un clip où un autre effet est collé au perso
+  est régénéré, pas découpé avec `erase` ou `degrey`. Aucun perso coupé au bord du cadre.
+- Sans arme, chaque perso se bat dans un art martial (`docs/refonte/FICHES.md`, §1.7). Les ondes 1 à 5 de la planche
+  servent aussi d'ondes d'impact des coups puissants ; elles partent du sol et montent.
 - Armes (refonte) : tout le monde commence à mains nues. L'arme d'un perso tombe sur l'arène ; il la prend en se
   tenant dessus et en appuyant sur la touche Arme (arme A), puis cette touche alterne A et B, sans délai. L'arme
   reste jusqu'au KO, sans minuteur. Chaque arme B a son propre modèle, exactement comme sur la planche (plan

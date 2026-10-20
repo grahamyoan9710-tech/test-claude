@@ -43,5 +43,128 @@
    "none",
    "raises one hand high to the sky and holds it there, then swings it down"
   ]
+ },
+ "style": "Karate",
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate lead punch: from a low front stance snaps a sharp straight punch with the lead fist, then pulls it back"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate reverse punch: drives the rear fist straight forward with a twist of the hips, the other fist pulled back to the hip, then back"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate front kick: snaps the rear foot straight forward at chest height, then back into the stance"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate side thrust kick: turns sideways and thrusts the heel straight forward at chest height, then back"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "karate rising block strike: sweeps the forearm straight up above her head, then back into the stance"
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate foot sweep: drops low and sweeps the foot along the ground in front, then rises into the stance"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "karate lunge punch: lunges forward into a long front stance driving a straight punch ahead, then stops in the stance"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate knife-hand strike: raises one open hand behind her head, then drives a powerful knife-hand chop forward and down, then back into the stance"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "karate jumping front kick: springs up and snaps a kick straight up above her head, then lands in the stance"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "karate low spinning sweep: drops and sweeps one leg along the ground in front and then behind her, then rises"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "in mid-air, spins once with both legs extended, then tucks again"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "in mid-air, a flying side kick straight forward, then pulls the leg back"
+  ],
+  "bair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose"
+  ],
+  "uair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "in mid-air, a rising knife-hand strike above her head, then back to the tucked pose"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "in mid-air, a downward heel kick straight below her, then pulls the leg back"
+  ]
  }
 }

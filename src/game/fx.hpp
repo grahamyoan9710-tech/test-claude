@@ -39,7 +39,7 @@ class Fx {
   void playFx(const char* name, Vec2 at, float size, float rot, bool flip, Color tint);  // tinted (shared effects)
   // A shared movement effect (move_*: PixelLab, grey and white) in fighter `who`'s colour, mirrored to its facing.
   // False when the effect is not imported.
-  bool moveFx(const Match& m, int who, const char* name, Vec2 at);
+  bool moveFx(const Match& m, int who, const char* name, Vec2 at, float size = 1.0f);
   Vec2 punchFocus() const { return punchPos_; }
 
  private:

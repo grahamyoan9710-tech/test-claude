@@ -43,5 +43,128 @@
    "none",
    "clenches his fists and roars with his head thrown back, arms tense, then drops into a lower stance"
   ]
+ },
+ "style": "Muay Thai",
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "muay thai jab: a fast straight punch with the lead fist at face height, then back to the high guard"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "muay thai elbow: steps in and swings the rear elbow horizontally across at head height, then back to the high guard"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "muay thai knee: reaches forward with both hands as if clinching an invisible opponent and drives the rear knee up and forward at belly height, then back"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "muay thai teep: lifts the lead knee and pushes the sole of the foot straight forward at belly height, then back to the guard"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "muay thai upward elbow: drives the rear elbow straight up in front of his face, then back to the high guard"
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "muay thai low kick: swings the rear shin low in front at knee height, then back to the guard"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "muay thai flying knee: leaps forward driving one knee straight ahead with both arms raised, then lands in the high guard"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "muay thai roundhouse kick: pivots on the lead foot and swings the rear shin in a wide powerful arc forward at rib height, then back to the high guard"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "muay thai jumping knee: springs straight up driving one knee high above, arms reaching up, then lands in the guard"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "muay thai double elbow: chops both elbows down in front of him, then turns and strikes a back elbow behind him, then the guard"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "in mid-air, knees and elbows tucked tight, spinning once, then opens up"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "in mid-air, a flying knee straight forward, then pulls the leg back"
+  ],
+  "bair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "in mid-air, a spinning back elbow behind him, then back to the tucked pose"
+  ],
+  "uair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "in mid-air, an upward elbow strike straight above his head, then back to the tucked pose"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "in mid-air, a downward double elbow chop beneath him, then back to the tucked pose"
+  ]
  }
 }

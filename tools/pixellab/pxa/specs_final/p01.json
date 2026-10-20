@@ -43,5 +43,128 @@
    "none",
    "spreads his arms wide and throws his head back, his coat and hair lifting, then settles into a stronger stance"
   ]
+ },
+ "style": "Penchak Silat",
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "silat open-hand strike from a low crouched stance: snaps a palm-heel strike straight forward at face height, then back"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "silat elbow strike: steps in low and swings the rear elbow horizontally forward at head height, then back into the low stance"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "silat crescent kick: turns low and whips a sharp heel kick forward in an arc at chest height, then back into the low stance"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "silat side kick: turns sideways and thrusts the heel straight forward at waist height, then back into the low stance"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "silat rising claw: from a low crouch sweeps one open clawed hand in a high arc up above his head, then back"
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "silat floor sweep: drops into a deep squat and sweeps one straight leg in a wide arc along the ground in front, then rises"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "silat sliding strike: drops low and slides forward on one bent knee thrusting a palm strike ahead, then rises into the low stance"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "silat double palm strike: sinks low drawing both hands back to the hip, then explodes forward driving both open palms straight ahead at chest height, then recovers"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "silat rising crescent kick: spins and swings one leg in a high vertical crescent arc over his head, then lands back in the low stance"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "silat ground sweep: drops onto one hand and spins sweeping his extended leg around, in front and then behind him, then rises"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "in mid-air, tucks and spins once with elbows and knees out, then opens up again"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "in mid-air, a sharp flying knee straight forward, then pulls the leg back"
+  ],
+  "bair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "in mid-air, looks back and thrusts one heel straight out behind him, then back to the tucked pose"
+  ],
+  "uair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "in mid-air, an upward claw strike sweeping one open hand over his head, then back to the tucked pose"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "in mid-air, stomps one heel straight down below him, then pulls the leg back up"
+  ]
  }
 }

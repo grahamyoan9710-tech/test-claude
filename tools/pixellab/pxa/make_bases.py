@@ -23,11 +23,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(S)))
 SPRITES = os.path.join(ROOT, "assets", "sprites")
 
 # The chosen candidate (f_NN) of each pro job, after looking at the four of them.
-PICK = {"p01": 3, "p02": 3, "p03": 3, "p07": 2, "p08": 0}
-APICK = {("p01", 0): 0, ("p01", 1): 0, ("p02", 0): 0, ("p02", 1): 0, ("p03", 0): 0, ("p03", 1): 0,
+PICK = {"p01": 3, "p02": ("b", 1), "p03": 3, "p07": 2, "p08": 0}  # ("b", i): f_i of a redone job, <id>_guardb
+APICK = {("p01", 0): 0, ("p01", 1): 0, ("p02", 0): ("b", 1), ("p02", 1): ("b", 0), ("p03", 0): 0, ("p03", 1): 0,
          ("p07", 0): 2, ("p07", 1): 2, ("p08", 0): 0, ("p08", 1): ("b", 0)}
 # A redone armed guard: its own folder (pxa/base_src/<id>_w<slot><suffix>/) and what the prompt adds.
-REDO = {("p08", 1): ("b", "His skin stays pale exactly like the first reference: only the halberd is golden")}
+REDO = {("p08", 1): ("b", "His skin stays pale exactly like the first reference: only the halberd is golden"),
+        ("p02", 0): ("b", "Her legs stay fully covered like the first reference: knee-length shorts over opaque tights"),
+        ("p02", 1): ("b", "Her legs stay fully covered like the first reference: knee-length shorts over opaque tights")}
+
+
+def guard_src(k):
+    suffix, i = PICK[k] if isinstance(PICK[k], tuple) else ("", PICK[k])
+    return os.path.join(S, "base_src", f"{k}_guard{suffix}", f"f_{i:02d}.png")
 
 # The weapons in hand, as the owner's sheet draws them (docs/refonte/ref_armes.png), and how they are held.
 WEAPONS = {
@@ -89,9 +96,8 @@ def main():
     os.makedirs(os.path.join(S, "base"), exist_ok=True)
     subjects = json.load(open(os.path.join(S, "subjects14.json")))
     if cmd == "guard":
-        for k, i in PICK.items():
-            print(k, place(os.path.join(S, "base_src", f"{k}_guard", f"f_{i:02d}.png"),
-                           os.path.join(S, "base", f"{k}_guard256.png")))
+        for k in PICK:
+            print(k, place(guard_src(k), os.path.join(S, "base", f"{k}_guard256.png")))
     elif cmd == "armed":
         ids = sys.argv[2:] or sorted(PICK)
         for (k, slot), (weapon, hold) in WEAPONS.items():
@@ -108,7 +114,7 @@ def main():
             icon = os.path.join(SPRITES, f"{k}_icon_{'ab'[slot]}.png")
             r = subprocess.run(["python3", os.path.join(os.path.dirname(S), "tools", "pxcli.py"), "image", out,
                                 "--model", "pro", "--desc", desc, "--w", "170", "--h", "170",
-                                "--ref", os.path.join(S, "base_src", f"{k}_guard", f"f_{PICK[k]:02d}.png") +
+                                "--ref", guard_src(k) +
                                 "|the character: keep the same hair, face, outfit and colours",
                                 "--ref", icon + "|the weapon held: keep exactly its shape and colours",
                                 "--no-wait"], capture_output=True, text=True, timeout=300)

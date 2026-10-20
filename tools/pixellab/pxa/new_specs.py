@@ -216,12 +216,112 @@ F["p08"] = {
 }
 
 
+# Bare hands: each fighter fights in a martial art (the owner's list of 10 styles); these motions replace the generic
+# brawler normals of clips.py (same frames, base and direction). With a weapon, its kit moves are used instead.
+STYLE_OF = {"p01": "Penchak Silat", "p02": "Taekwondo", "p03": "Muay Thai", "p07": "Karate", "p08": "Kung Fu"}
+STYLES = {
+    "Penchak Silat": {
+        "jab": "silat open-hand strike from a low crouched stance: snaps a palm-heel strike straight forward at face height, then back",
+        "jab2": "silat elbow strike: steps in low and swings the rear elbow horizontally forward at head height, then back into the low stance",
+        "jab3": "silat crescent kick: turns low and whips a sharp heel kick forward in an arc at chest height, then back into the low stance",
+        "ftilt": "silat side kick: turns sideways and thrusts the heel straight forward at waist height, then back into the low stance",
+        "utilt": "silat rising claw: from a low crouch sweeps one open clawed hand in a high arc up above his head, then back",
+        "dtilt": "silat floor sweep: drops into a deep squat and sweeps one straight leg in a wide arc along the ground in front, then rises",
+        "dashattack": "silat sliding strike: drops low and slides forward on one bent knee thrusting a palm strike ahead, then rises into the low stance",
+        "fsmash": "silat double palm strike: sinks low drawing both hands back to the hip, then explodes forward driving both open palms straight ahead at chest height, then recovers",
+        "usmash": "silat rising crescent kick: spins and swings one leg in a high vertical crescent arc over his head, then lands back in the low stance",
+        "dsmash": "silat ground sweep: drops onto one hand and spins sweeping his extended leg around, in front and then behind him, then rises",
+        "nair": "in mid-air, tucks and spins once with elbows and knees out, then opens up again",
+        "fair": "in mid-air, a sharp flying knee straight forward, then pulls the leg back",
+        "bair": "in mid-air, looks back and thrusts one heel straight out behind him, then back to the tucked pose",
+        "uair": "in mid-air, an upward claw strike sweeping one open hand over his head, then back to the tucked pose",
+        "dair": "in mid-air, stomps one heel straight down below him, then pulls the leg back up",
+    },
+    "Taekwondo": {
+        "jab": "taekwondo lead-leg roundhouse kick: snaps the front foot up in a quick roundhouse at waist height, then puts it back down in the stance",
+        "jab2": "taekwondo rear-leg roundhouse kick: whips the back leg around in a fast roundhouse at chest height, then back into the stance",
+        "jab3": "taekwondo spinning back kick: spins around and thrusts the heel straight forward at chest height, then back into the stance",
+        "ftilt": "taekwondo side kick: lifts the lead knee and thrusts the foot sideways straight forward at chest height, then back",
+        "utilt": "taekwondo axe kick: swings one straight leg high above her head, then brings it back down into the stance",
+        "dtilt": "taekwondo low sweep: crouches and sweeps one extended leg along the ground in front, then rises",
+        "dashattack": "taekwondo flying side kick: leaps forward with one leg extended straight ahead, then lands in the stance",
+        "fsmash": "taekwondo tornado kick: spins a full turn on one foot and whips the other leg around in a high roundhouse forward at head height, then lands in the stance",
+        "usmash": "taekwondo jumping scissor kick: springs straight up kicking both legs high above her head one after the other, then lands",
+        "dsmash": "taekwondo spinning sweep: crouches and spins with one leg extended, sweeping in front and then behind her, then rises",
+        "nair": "in mid-air, a spinning kick with both legs extended all around, then tucks again",
+        "fair": "in mid-air, a flying side kick straight forward, then pulls the leg back",
+        "bair": "in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose",
+        "uair": "in mid-air, a bicycle kick straight up above her head, then back to the tucked pose",
+        "dair": "in mid-air, an axe kick: brings one straight leg down hard beneath her, then pulls it back",
+    },
+    "Muay Thai": {
+        "jab": "muay thai jab: a fast straight punch with the lead fist at face height, then back to the high guard",
+        "jab2": "muay thai elbow: steps in and swings the rear elbow horizontally across at head height, then back to the high guard",
+        "jab3": "muay thai knee: reaches forward with both hands as if clinching an invisible opponent and drives the rear knee up and forward at belly height, then back",
+        "ftilt": "muay thai teep: lifts the lead knee and pushes the sole of the foot straight forward at belly height, then back to the guard",
+        "utilt": "muay thai upward elbow: drives the rear elbow straight up in front of his face, then back to the high guard",
+        "dtilt": "muay thai low kick: swings the rear shin low in front at knee height, then back to the guard",
+        "dashattack": "muay thai flying knee: leaps forward driving one knee straight ahead with both arms raised, then lands in the high guard",
+        "fsmash": "muay thai roundhouse kick: pivots on the lead foot and swings the rear shin in a wide powerful arc forward at rib height, then back to the high guard",
+        "usmash": "muay thai jumping knee: springs straight up driving one knee high above, arms reaching up, then lands in the guard",
+        "dsmash": "muay thai double elbow: chops both elbows down in front of him, then turns and strikes a back elbow behind him, then the guard",
+        "nair": "in mid-air, knees and elbows tucked tight, spinning once, then opens up",
+        "fair": "in mid-air, a flying knee straight forward, then pulls the leg back",
+        "bair": "in mid-air, a spinning back elbow behind him, then back to the tucked pose",
+        "uair": "in mid-air, an upward elbow strike straight above his head, then back to the tucked pose",
+        "dair": "in mid-air, a downward double elbow chop beneath him, then back to the tucked pose",
+    },
+    "Karate": {
+        "jab": "karate lead punch: from a low front stance snaps a sharp straight punch with the lead fist, then pulls it back",
+        "jab2": "karate reverse punch: drives the rear fist straight forward with a twist of the hips, the other fist pulled back to the hip, then back",
+        "jab3": "karate front kick: snaps the rear foot straight forward at chest height, then back into the stance",
+        "ftilt": "karate side thrust kick: turns sideways and thrusts the heel straight forward at chest height, then back",
+        "utilt": "karate rising block strike: sweeps the forearm straight up above her head, then back into the stance",
+        "dtilt": "karate foot sweep: drops low and sweeps the foot along the ground in front, then rises into the stance",
+        "dashattack": "karate lunge punch: lunges forward into a long front stance driving a straight punch ahead, then stops in the stance",
+        "fsmash": "karate knife-hand strike: raises one open hand behind her head, then drives a powerful knife-hand chop forward and down, then back into the stance",
+        "usmash": "karate jumping front kick: springs up and snaps a kick straight up above her head, then lands in the stance",
+        "dsmash": "karate low spinning sweep: drops and sweeps one leg along the ground in front and then behind her, then rises",
+        "nair": "in mid-air, spins once with both legs extended, then tucks again",
+        "fair": "in mid-air, a flying side kick straight forward, then pulls the leg back",
+        "bair": "in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose",
+        "uair": "in mid-air, a rising knife-hand strike above her head, then back to the tucked pose",
+        "dair": "in mid-air, a downward heel kick straight below her, then pulls the leg back",
+    },
+    "Kung Fu": {
+        "jab": "kung fu chain punch: a fast vertical-fist punch straight forward, then back",
+        "jab2": "kung fu palm strike: a flowing open-palm strike forward with the other hand, then back",
+        "jab3": "kung fu crane kick: lifts one knee high with both arms spread like wings and snaps a kick straight forward at chest height, then back",
+        "ftilt": "kung fu tiger claw: lunges forward raking one clawed hand at chest height, then back into the stance",
+        "utilt": "kung fu rising palm: sweeps one palm in a circle straight up above his head, then back into the stance",
+        "dtilt": "kung fu low sweep: sinks into a low horse stance and sweeps one leg along the ground in front, then rises",
+        "dashattack": "kung fu flying kick: leaps forward with one leg extended straight ahead, then lands in the stance",
+        "fsmash": "kung fu dragon palms: circles both arms in a flowing motion, then thrusts both palms straight forward at chest height, then back into the stance",
+        "usmash": "kung fu jumping crescent kick: springs up and swings one leg in a high arc above his head, then lands in the stance",
+        "dsmash": "kung fu sweeping kick: drops low and sweeps one leg around along the ground, in front and then behind him, then rises",
+        "nair": "in mid-air, a butterfly twist with both legs extended, then tucks again",
+        "fair": "in mid-air, a flying kick straight forward, then pulls the leg back",
+        "bair": "in mid-air, a back palm strike behind him, then back to the tucked pose",
+        "uair": "in mid-air, a scissor kick straight up above his head, then back to the tucked pose",
+        "dair": "in mid-air, pushes both palms straight down beneath him, then back to the tucked pose",
+    },
+}
+
+
+def style_overrides(f):
+    """The bare-handed normals in the fighter's martial art: the generic clip with the style's motion."""
+    import clips as C
+    base = dict(C.COMMON)
+    base.update(C.STAGE_B)
+    return {k: [*base[k][:5], motion] for k, motion in STYLES[STYLE_OF[f]].items()}
+
+
 def main():
     os.makedirs(os.path.join(S, "specs_final"), exist_ok=True)
     os.makedirs(os.path.join(S, "wkits"), exist_ok=True)
     for f, d in F.items():
         json.dump({"guard_pose": "fighting stance facing right, fists raised", "armed": "none", "she": d["she"],
-                   "specific": d["skills"]}, open(os.path.join(S, "specs_final", f"{f}.json"), "w"), indent=1)
+                   "specific": d["skills"], "style": STYLE_OF[f], "overrides": style_overrides(f)}, open(os.path.join(S, "specs_final", f"{f}.json"), "w"), indent=1)
         slots = {}
         for slot, w in d["weapons"].items():
             moves = {f"w{slot}_{k}": v for k, v in w["moves"].items()}

@@ -43,5 +43,128 @@
    "none",
    "spreads his arms and rises on his toes, his coat and hair lifting, then lands in a calm stance"
   ]
+ },
+ "style": "Kung Fu",
+ "overrides": {
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "kung fu chain punch: a fast vertical-fist punch straight forward, then back"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "kung fu palm strike: a flowing open-palm strike forward with the other hand, then back"
+  ],
+  "jab3": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "kung fu crane kick: lifts one knee high with both arms spread like wings and snaps a kick straight forward at chest height, then back"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "kung fu tiger claw: lunges forward raking one clawed hand at chest height, then back into the stance"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "kung fu rising palm: sweeps one palm in a circle straight up above his head, then back into the stance"
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "kung fu low sweep: sinks into a low horse stance and sweeps one leg along the ground in front, then rises"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "kung fu flying kick: leaps forward with one leg extended straight ahead, then lands in the stance"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "kung fu dragon palms: circles both arms in a flowing motion, then thrusts both palms straight forward at chest height, then back into the stance"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "kung fu jumping crescent kick: springs up and swings one leg in a high arc above his head, then lands in the stance"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "kung fu sweeping kick: drops low and sweeps one leg around along the ground, in front and then behind him, then rises"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "in mid-air, a butterfly twist with both legs extended, then tucks again"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "in mid-air, a flying kick straight forward, then pulls the leg back"
+  ],
+  "bair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "in mid-air, a back palm strike behind him, then back to the tucked pose"
+  ],
+  "uair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "in mid-air, a scissor kick straight up above his head, then back to the tucked pose"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "in mid-air, pushes both palms straight down beneath him, then back to the tucked pose"
+  ]
  }
 }

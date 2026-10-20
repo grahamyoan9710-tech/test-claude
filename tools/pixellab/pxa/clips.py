@@ -144,7 +144,13 @@ def spec(fighter):
 
 TAIL = (" The character stays at the same place in the frame (the game moves him), always facing right, seen from the side;"
         " keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no"
-        " energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.")
+        " motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no"
+        " smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon"
+        " clearly in a crisp pose, never blurred.")
+# Blows (the owner allows the trails of fast blows and blades): nothing else is drawn but the character.
+TAIL_BLOW = (" The character stays at the same place in the frame (the game moves him), always facing right, seen from the"
+             " side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no"
+             " glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.")
 
 # --- the moves every fighter has (bare-handed brawler moves) ---
 COMMON = {
@@ -338,7 +344,7 @@ def jobs(fighter, only=None):
         if ks and ks.get("look") == "new":  # the weapon's own look
             subject = ks.get("subject", subject)
             pose = ks.get(f"{kind}_pose", pose) if kind in ("guard", "air") else pose
-        desc = desc.rstrip(" .") + "." + TAIL
+        desc = desc.rstrip(" .") + "." + (TAIL_BLOW if direction not in ("none", None) else TAIL)
         if she:
             desc, pose = feminine(desc), feminine(pose)
         j = {"out": os.path.join(S, fighter, name), "src": src, "frames": n, "desc": desc,

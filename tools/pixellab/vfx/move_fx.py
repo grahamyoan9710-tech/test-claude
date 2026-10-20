@@ -142,39 +142,146 @@ def sparkles(i, count, radius, start=0.0, end=1.0, y=-60):
             "size": [2, 4], "shape": "sparkle", "blink": 2, "life": [start, end], "y": y, "ramp": "glow"}
 
 
-FX["move_wave_1"] = recipe(256, 200, 128, 160, 16, [
-    ground_ring(1, 20, 110, 0.0, 0.8, 4), ground_ring(2, 10, 80, 0.15, 1.0, 3),
-    {"id": "glow", "type": "glow", "radius": A(30, 70), "squash": 0.3, "shape": "soft", "ramp": "glow",
+# The owner's waves 1-5 are also the impact waves of powerful blows: they rise from the ground up.
+TONES = {"dk": ["#24242c", "#3e3e4a", "#62626f", "#8c8c9c"], "md": ["#34343e", "#5e5e6c", "#9696a6", "#cacad6"],
+         "lt": ["#7e7e8c", "#b8b8c6", "#e4e4ee", "#ffffff"], "star": ["#8a8a98", "#ececf4", "#ffffff"]}
+LEAF = ["...111...", ".1233321.", "123444321", ".1233321.", "...111..."]
+
+
+def tongue(i, angle, h, w, ramp="md", start=0.0, grow=0.26, z="back", bevel=4, curl=0.0):
+    """A flame-like spike standing on the ground, turned `angle` degrees (clockwise), growing up from its root."""
+    pts = [[-w * 0.5, 0], [-w * 0.36, -h * 0.3], [-w * 0.16 + curl * w, -h * 0.72], [curl * w * 1.8, -h],
+           [w * 0.1 + curl * w, -h * 0.7], [w * 0.34, -h * 0.28], [w * 0.5, 0]]
+    return {"id": f"tongue{i}", "type": "shape", "points": pts, "smooth": 0.45, "rotation": angle,
+            "scale": K((0, 0.04), (grow, 1.06), (grow + 0.1, 1.0), (1, 0.95), ease="out"), "fill": "edge",
+            "bevel": bevel, "ramp": ramp, "z": z, "life": [start, 1.0], "dissolve": A(0, 1, "in", 0.58, 1)}
+
+
+def needle(i, x, h, w, start, ramp="lt", y=0):
+    """A light streak drawn from the ground up."""
+    return {"id": f"needle{i}", "type": "shape", "closed": False, "x": x, "y": y, "points": [[0, 0], [0, -h * 0.5], [0, -h]],
+            "width": w, "taper": 1.0, "fill": "edge", "ramp": ramp, "reveal": A(0, 1, "out", 0, 0.45),
+            "life": [start, 1.0], "dissolve": A(0, 1, "in", 0.5, 1)}
+
+
+def crescent(i, a, b, tilt, y, sweep, turns, thick, ramp="md", start=0.0, phase=0.0, grow=0.3, z="auto"):
+    """A shaded ribbon along a tilted ellipse, thickest in its middle, turning round: one outline going along the outer
+    edge and back along the inner edge (q runs 0 -> 1 -> 0 along it)."""
+    import math
+    c, sn = math.cos(math.radians(tilt)), math.sin(math.radians(tilt))
+    q = "(1-abs(1-2*s))"
+    d = f"({thick}*sin(pi*{q})*(1-2*clamp(floor(2*s),0,1)))"
+    th = f"(tau*({sweep}*{q}+{turns}*u+{phase}))"
+    ex, ey = f"({a}+{d})*cos{th}", f"({b}+{b / a:.2f}*{d})*sin{th}"
+    if abs(tilt) < 0.01:
+        fx, fy = ex, ey
+    else:
+        fx, fy = f"{c:.3f}*{ex}-{sn:.3f}*{ey}", f"{sn:.3f}*{ex}+{c:.3f}*{ey}"
+    layer = {"id": f"crescent{i}", "type": "shape", "closed": True, "y": y,
+             "points": {"curves": [{"x": fx, "y": fy, "z": f"sin{th}", "n": 72}]},
+             "scale": K((0, 0.25), (grow, 1.0), (1, 1.08), ease="out"), "fill": "edge", "bevel": 3, "ramp": ramp,
+             "life": [start, 1.0], "dissolve": A(0, 1, "in", 0.55, 1)}
+    if z == "auto":
+        layer["depth"] = "auto"
+    else:
+        layer["z"] = z
+    return layer
+
+
+def leaves(i, count, speed, spread=150, start=0.0, x=0, y=-6, gravity=110, direction=-90):
+    return {"id": f"leaves{i}", "type": "particles", "mode": "burst", "x": x, "y": y, "direction": direction,
+            "spread": spread, "speed": speed, "count": count, "shape": "custom", "pixels": LEAF, "pixel_ramp": 4,
+            "orient": True, "shrink": 0, "gravity": gravity, "lifespan": 0.8, "life": [start, 1.0], "fade_out": 0.2,
+            "ramp": "md"}
+
+
+def ground_glow(r0, r1, squash=0.26, intensity=0.55):
+    return {"id": "groundglow", "type": "glow", "radius": K((0, r0), (0.2, r1), (1, r1 * 0.8), ease="out"),
+            "squash": squash, "ramp": "lt", "intensity": intensity, "dissolve": A(0, 1, "in", 0.3, 1)}
+
+
+def wave_ring(i, r1, start=0.0, width=2.5, squash=0.24, ramp="md"):
+    return {"id": f"gring{i}", "type": "ring", "y": -2, "radius": A(8, r1), "width": A(width, 1), "soft": 1.5,
+            "squash": squash, "ramp": ramp, "life": [start, 1.0], "dissolve": A(0, 1, "in", 0.5, 1)}
+
+
+def wave(w, h, ox, oy, frames, layers):
+    return recipe(w, h, ox, oy, frames, layers, ramps=TONES)
+
+
+# Wave 1: circular energy. A thick ribbon round the feet and a smaller one above, light streaks rising between them.
+FX["move_wave_1"] = wave(280, 230, 140, 200, 18, [
+    ground_glow(14, 70),
+    crescent(1, 108, 30, 0, -6, 0.8, 0.7, 9, "md"),
+    crescent(2, 92, 25, 0, -2, 0.6, 0.7, 5, "lt", phase=0.25),
+    crescent(3, 76, 20, 0, A(-30, -92, "out"), 0.75, -0.6, 6, "md", start=0.1, phase=0.5),
+    wave_ring(1, 70, 0.0, 2, 0.27, "lt"),
+    *[needle(k, dx, hgt, w, st) for k, (dx, hgt, w, st) in enumerate(
+        [(0, 150, 4, 0.0), (-26, 120, 3, 0.04), (28, 128, 3, 0.06), (-52, 96, 3, 0.1), (54, 102, 3, 0.08),
+         (-76, 70, 2, 0.14), (78, 74, 2, 0.12), (-12, 92, 2, 0.18), (14, 106, 2, 0.16)])],
+    leaves(1, 6, 70, 70, 0.1, -104, -10, 70, -120), leaves(2, 6, 70, 70, 0.1, 104, -10, 70, -60),
+])
+
+# Wave 2: vertical burst. A sheaf of flame tongues shooting up, leaf shards flying out, a splash on the ground.
+FX["move_wave_2"] = wave(260, 250, 130, 228, 16, [
+    ground_glow(10, 54),
+    {"id": "splash", "type": "rays", "y": -2, "count": 18, "inner": A(10, 34), "length": K((0, 6), (0.25, 36), (1, 26)),
+     "width": 4, "jitter": 0.5, "squash": 0.24, "tip_fade": 0.6, "ramp": "dk", "life": [0.0, 0.75],
      "dissolve": A(0, 1, "in", 0.4, 1)},
-    streaks(1, 18, 70, 140, 0.0, 0.9), sparkles(1, 8, 80, 0.2, 1.0, -70),
+    *[tongue(k, ang, hh, ww, rp, st, curl=cl) for k, (ang, hh, ww, rp, st, cl) in enumerate(
+        [(-64, 60, 22, "dk", 0.06, -0.1), (64, 62, 22, "dk", 0.06, 0.1), (-46, 98, 28, "dk", 0.03, -0.08),
+         (46, 102, 28, "dk", 0.03, 0.08), (-28, 138, 30, "md", 0.0, -0.05), (28, 142, 30, "md", 0.0, 0.05)])],
+    tongue(10, -13, 150, 30, "md", 0.02, z="front", curl=-0.04), tongue(11, 13, 156, 30, "md", 0.02, z="front", curl=0.04),
+    tongue(20, 0, 214, 40, "lt", 0.0, 0.3, z="front"),
+    needle(1, -6, 150, 3, 0.05), needle(2, 8, 170, 3, 0.03),
+    leaves(1, 12, 150, 150, 0.06, 0, -20, 130),
 ])
-FX["move_wave_2"] = recipe(240, 230, 120, 210, 14, [
-    *spikes(1, [(0, 170), (-14, 120), (14, 125), (-28, 85), (28, 90), (-42, 55), (42, 60)], 16, 0.0, 1.0),
-    {"id": "base", "type": "glow", "radius": A(20, 60), "squash": 0.35, "ramp": "glow", "dissolve": A(0, 1, "in", 0.3, 1)},
-    debris(1, 14, 120, 0.05), sparkles(1, 6, 70, 0.3, 1.0, -110),
+
+# Wave 3: multiple circles. Rings spreading on the ground, a wide double halo rising, a pillar, streaks and stars.
+FX["move_wave_3"] = wave(320, 240, 160, 214, 18, [
+    ground_glow(12, 80, 0.22),
+    wave_ring(1, 72, 0.0, 3, 0.22, "lt"), wave_ring(2, 102, 0.08, 2.5, 0.22), wave_ring(3, 130, 0.16, 2, 0.22),
+    crescent(1, 144, 18, 0, A(-24, -104, "out"), 1.0, 0.0, 3, "md", start=0.08, grow=0.35, z="back"),
+    {"id": "halo2", "type": "ring", "y": A(-26, -110, "out"), "radius": A(36, 132, "out"), "width": 1.5, "soft": 1,
+     "squash": 0.13, "ramp": "lt", "life": [0.12, 1.0], "dissolve": A(0, 1, "in", 0.55, 1)},
+    {"id": "pillar", "type": "beam", "width": K((0, 4), (0.2, 22), (1, 6)), "height": K((0, 0), (0.28, 205), (1, 212)),
+     "taper": 0.25, "soft": 3, "top_fade": 0.55, "ramp": "lt", "dissolve": A(0, 1, "in", 0.45, 1)},
+    *[needle(k, dx, hgt, w, st) for k, (dx, hgt, w, st) in enumerate(
+        [(-30, 150, 3, 0.04), (32, 142, 3, 0.06), (-60, 112, 2, 0.1), (62, 116, 2, 0.08), (-90, 82, 2, 0.14),
+         (92, 86, 2, 0.12)])],
+    {"id": "stars", "type": "particles", "mode": "twinkle", "y": -100, "radius": 130, "squash": 0.55, "count": 14,
+     "size": [3, 6], "shape": "sparkle", "blink": 2, "ramp": "star", "life": [0.18, 1.0], "fade_out": 0.3},
 ])
-FX["move_wave_3"] = recipe(272, 210, 136, 170, 16, [
-    ground_ring(1, 16, 120, 0.0, 0.7, 4, 0.26), ground_ring(2, 16, 100, 0.2, 0.85, 3, 0.26),
-    ground_ring(3, 16, 80, 0.4, 1.0, 3, 0.26),
-    {"id": "pillar", "type": "beam", "height": K((0, 0), (0.2, 150), (1, 160)), "width": A(18, 4), "taper": 0.2,
-     "soft": 3, "top_fade": 0.6, "ramp": "glow", "dissolve": A(0, 1, "in", 0.5, 1)},
-    sparkles(1, 14, 100, 0.1, 1.0, -70),
+
+# Wave 4: whirlwind energy. Two thick tilted ribbons turning round each other, streaks and debris swept round.
+FX["move_wave_4"] = wave(320, 250, 160, 222, 18, [
+    ground_glow(12, 74),
+    crescent(1, 118, 34, -8, -12, 0.72, 0.9, 11, "md"),
+    crescent(2, 100, 28, -8, -14, 0.5, 0.9, 5, "lt", phase=0.2),
+    crescent(3, 100, 28, 10, A(-34, -120, "out"), 0.66, -0.8, 9, "md", start=0.06, phase=0.45),
+    crescent(4, 86, 23, 10, A(-36, -124, "out"), 0.45, -0.8, 4, "lt", start=0.08, phase=0.6),
+    *[needle(k, dx, hgt, w, st) for k, (dx, hgt, w, st) in enumerate(
+        [(0, 170, 4, 0.0), (-22, 140, 3, 0.04), (24, 150, 3, 0.05), (-48, 112, 3, 0.08), (50, 118, 3, 0.07),
+         (-72, 82, 2, 0.12), (74, 86, 2, 0.1)])],
+    {"id": "debris", "type": "particles", "mode": "rise", "radius": 100, "squash": 0.3, "speed": 110, "count": 12,
+     "shape": "custom", "pixels": LEAF, "pixel_ramp": 4, "orient": True, "shrink": 0, "vortex": 1.5, "lifespan": 0.7,
+     "fade_out": 0.3, "ramp": "md"},
 ])
-FX["move_wave_4"] = recipe(272, 230, 136, 190, 16, [
-    {"id": "swirl1", "type": "arc", "profile": "taper", "radius": 90, "squash": 0.3, "start": A(0, 360, "linear"),
-     "sweep": 220, "thickness": 6, "ramp": "glow", "dissolve": A(0, 1, "in", 0.5, 1)},
-    {"id": "swirl2", "type": "arc", "profile": "taper", "y": -60, "radius": 100, "squash": 0.25,
-     "start": A(180, 540, "linear"), "sweep": 200, "thickness": 5, "ramp": "glow", "life": [0.1, 1.0],
-     "dissolve": A(0, 1, "in", 0.5, 1)},
-    ground_ring(1, 20, 95, 0.0, 0.9, 3, 0.3), streaks(1, 20, 60, 160, 0.0, 0.95),
-])
-FX["move_wave_5"] = recipe(300, 250, 150, 206, 16, [
-    *spikes(1, [(0, 200), (-10, 160), (10, 165), (-22, 130), (22, 135), (-36, 95), (36, 100), (-52, 60), (52, 64)],
-            18, 0.0, 1.0),
-    ground_ring(1, 30, 140, 0.0, 0.85, 5, 0.25),
-    {"id": "flash", "type": "glow", "radius": K((0, 20), (0.15, 90), (0.5, 60), (1, 20)), "squash": 0.4,
-     "ramp": "glow", "dissolve": A(0, 1, "in", 0.3, 0.9)},
-    debris(1, 20, 150, 0.05), sparkles(1, 10, 110, 0.25, 1.0, -120),
+
+# Wave 5: powerful transformation. A wide crown of tongues bursting from a ring on the ground, shards thrown far.
+CROWN = [(-80, 50, 24, "dk"), (-68, 82, 28, "md"), (-56, 70, 26, "dk"), (-44, 122, 32, "md"), (-32, 100, 30, "dk"),
+         (-20, 166, 36, "md"), (-9, 130, 30, "dk"), (0, 232, 44, "lt"), (9, 136, 30, "dk"), (20, 172, 36, "md"),
+         (32, 104, 30, "dk"), (44, 126, 32, "md"), (56, 72, 26, "dk"), (68, 86, 28, "md"), (80, 52, 24, "dk")]
+FX["move_wave_5"] = wave(360, 270, 180, 246, 18, [
+    ground_glow(18, 110, 0.22),
+    {"id": "flash", "type": "glow", "y": -40, "radius": K((0, 10), (0.12, 80), (0.4, 40), (1, 10)), "squash": 0.7,
+     "ramp": "lt", "intensity": 0.7, "life": [0.0, 0.5], "dissolve": A(0, 1, "in", 0.3, 1)},
+    wave_ring(1, 160, 0.0, 4, 0.2),
+    *[tongue(k, ang, hh, ww, rp, 0.02 * (abs(ang) // 20), z="front" if rp == "lt" else "back",
+             curl=-0.06 if ang < 0 else 0.06 if ang > 0 else 0.0) for k, (ang, hh, ww, rp) in enumerate(CROWN)],
+    *[needle(k, dx, hgt, 3, st) for k, (dx, hgt, st) in enumerate([(-10, 170, 0.04), (12, 190, 0.03), (-40, 120, 0.08),
+                                                                  (42, 126, 0.07)])],
+    leaves(1, 18, 190, 170, 0.06, 0, -24, 150),
 ])
 
 # --- Other effects (jump, dash...) ---
