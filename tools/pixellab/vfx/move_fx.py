@@ -31,6 +31,10 @@ def shift(v, o):
 def recipe(w, h, ox, oy, frames, layers, loop=False, fps=15, ramps=None, outline="dark"):
     layers = [dict(l) for l in layers]
     for l in layers:
+        if l.get("type") == "bolt":  # no position: its two ends, written relative to the origin
+            l["start"] = [l["start"][0] + ox, l["start"][1] + oy]
+            l["end"] = [l["end"][0] + ox, l["end"][1] + oy]
+            continue
         l["x"] = shift(l.get("x", 0), ox)
         l["y"] = shift(l.get("y", 0), oy)
         if l.get("type") == "particles" and l.get("shape") == "chunk" and "floor" not in l:
@@ -477,36 +481,40 @@ def render(name):
     return step, warn, text if not step else ""
 
 
-if __name__ == "__main__":
+def export_all(names, steps):
+    import time
+    for n in names:
+        text = ""
+        for attempt in range(5):
+            text = call([steps[n], "export", "--name", n])
+            if "download" in text:
+                break
+            time.sleep(6)
+        links = [w for w in text.split() if w.startswith("https://api.pixellab.ai/mcp/pixel-tools/")]
+        base = links[0].rstrip(":/") if links else None
+        files = [w.strip(",") for w in text.replace(":", " ").split() if w.endswith((".png", ".json", ".png,", ".json,"))]
+        print(n, "exported" if base else "export failed")
+        if not base:
+            print(text[:800])
+            continue
+        for f in files:
+            ext = f.rsplit(".", 1)[1].strip(",")
+            if ext not in ("png", "json"):
+                continue
+            dst = os.path.join(OUT, f"{n}.{ext}")
+            for attempt in range(4):
+                r = subprocess.run(["curl", "-sS", "--retry", "4", "-o", dst, f"{base}/{f.strip(',')}"])
+                if r.returncode == 0 and os.path.getsize(dst) > 0:
+                    break
+
+
+def main(fx=None):
+    if fx:
+        FX.update(fx)
     os.makedirs(OUT, exist_ok=True)
-    cmd, names = sys.argv[1], sys.argv[2:] or list(FX)
+    cmd, names = sys.argv[1], sys.argv[2:] or list(fx or FX)
     steps_path = os.path.join(OUT, "steps.json")
     steps = json.load(open(steps_path)) if os.path.exists(steps_path) else {}
-    if cmd == "export":
-        import time, urllib.request
-        for n in names:
-            text = ""
-            for attempt in range(5):
-                text = call([steps[n], "export", "--name", n])
-                if "download" in text:
-                    break
-                time.sleep(6)
-            links = [w for w in text.split() if w.startswith("https://api.pixellab.ai/mcp/pixel-tools/")]
-            base = links[0].rstrip(":/") if links else None
-            files = [w.strip(",") for w in text.replace(":", " ").split() if w.endswith((".png", ".json", ".png,", ".json,"))]
-            print(n, base, files[:4])
-            if not base:
-                print(text[:800])
-                continue
-            for f in files:
-                ext = f.rsplit(".", 1)[1].strip(",")
-                if ext not in ("png", "json"):
-                    continue
-                dst = os.path.join(OUT, f"{n}.{ext}")
-                for attempt in range(4):
-                    r = subprocess.run(["curl", "-sS", "--retry", "4", "-o", dst, f"{base}/{f.strip(',')}"])
-                    if r.returncode == 0 and os.path.getsize(dst) > 0:
-                        break
     if cmd == "render":
         for n in names:
             step, warn, err = render(n)
@@ -514,3 +522,9 @@ if __name__ == "__main__":
                 steps[n] = step
             print(n, step, "|", " / ".join(warn)[:300], err[:600])
             json.dump(steps, open(steps_path, "w"), indent=1)
+    if cmd == "export":
+        export_all(names, steps)
+
+
+if __name__ == "__main__":
+    main()

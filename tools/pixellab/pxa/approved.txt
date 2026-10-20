@@ -2,3 +2,9 @@ p01/jump
 p01/runstart
 p01/holdstart
 p01/ledgegrab
+p01/knockdown
+p01/w0_jump
+p01/w0_runstart
+p01/w0_knockdown
+p01/w0_holdstart
+p02/jump
