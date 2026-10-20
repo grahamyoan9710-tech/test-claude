@@ -1877,14 +1877,14 @@ const World* world(StageTheme theme) {
   static const World kKonoha{bakeKonoha, bgKonoha, konohaSolid, konohaThin, nullptr};
   static const World kValley{bakeValleyOfTheEnd, bgValleyOfTheEnd, valleySolid, valleyThin, valleyForeground};
   switch (theme) {
-    case StageTheme::LasNoches: return &kLasNoches;
-    case StageTheme::Seireitei: return &kSeireitei;
-    case StageTheme::BlackBulls: return &kBlackBulls;
-    case StageTheme::GrimoireTower: return &kGrimoire;
-    case StageTheme::Shibuya: return &kShibuya;
-    case StageTheme::JujutsuHigh: return &kJujutsuHigh;
-    case StageTheme::Konoha: return &kKonoha;
-    case StageTheme::ValleyOfTheEnd: return &kValley;
+    case StageTheme::MoonDesert: return &kLasNoches;
+    case StageTheme::WhiteCity: return &kSeireitei;
+    case StageTheme::OldDen: return &kBlackBulls;
+    case StageTheme::TowerOfLore: return &kGrimoire;
+    case StageTheme::NeonCrossroads: return &kShibuya;
+    case StageTheme::ShadowTemple: return &kJujutsuHigh;
+    case StageTheme::PeakVillage: return &kKonoha;
+    case StageTheme::SkyValley: return &kValley;
     default: return nullptr;
   }
 }

@@ -48,6 +48,7 @@ Fighter start(int number, const char* element, Build b, F e, Palette main, Palet
   c.title = element;
   c.series = element;
   c.hero = Hero(number - 1);
+  c.element = e;
   c.palettes = {main, alt};
   switch (b) {
     case Build::Small: stats(c, 40, 86, 82, 4.4f, 9.4f, 5.6f, 0.62f, 10.0f, 15.0f, 16.0f, 10.5f, 15.0f, 3); break;

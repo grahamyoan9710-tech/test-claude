@@ -11,8 +11,8 @@ constexpr size_t kMaxParticles = 1400;
 // Blade-like elements leave slash streaks across the impact; blunt ones a heavier shock ring.
 bool bladeFx(HitFx fx) {
   switch (fx) {
-    case HitFx::Slash: case HitFx::AntiMagic: case HitFx::Reiatsu: case HitFx::Petal: case HitFx::Blood:
-    case HitFx::Wind: case HitFx::Ice: case HitFx::Light: case HitFx::Dark: case HitFx::Berserk: case HitFx::Claw:
+    case HitFx::Slash: case HitFx::Shadow: case HitFx::Arcane: case HitFx::Rose: case HitFx::Blood:
+    case HitFx::Wind: case HitFx::Ice: case HitFx::Light: case HitFx::Dark: case HitFx::Sand:
       return true;
     default: return false;
   }
@@ -24,32 +24,13 @@ struct AuraLook {
   bool dark;
 };
 AuraLook auraLook(Hero h) {
-  switch (h) {
-    case Hero::Asta: return {{14, 12, 18, 255}, {230, 230, 240, 255}, true};
-    case Hero::Yuno: return {{80, 220, 150, 255}, {225, 255, 238, 255}, false};
-    case Hero::Ichigo: return {{60, 130, 255, 255}, {215, 235, 255, 255}, false};
-    case Hero::Byakuya: return {{250, 110, 170, 255}, {255, 228, 240, 255}, false};
-    case Hero::Link: return {{255, 180, 60, 255}, {255, 248, 214, 255}, false};
-    case Hero::Ganondorf: return {{36, 0, 12, 255}, {255, 60, 80, 255}, true};
-    case Hero::Kratos: return {{255, 76, 20, 255}, {255, 216, 120, 255}, false};
-    case Hero::Gojo: return {{80, 140, 255, 255}, {226, 238, 255, 255}, false};
-    case Hero::Sukuna: return {{200, 14, 36, 255}, {255, 150, 150, 255}, false};
-    case Hero::Kenpachi: return {{255, 214, 40, 255}, {255, 250, 200, 255}, false};
-    case Hero::Ulquiorra: return {{8, 20, 12, 255}, {90, 255, 150, 255}, true};
-    case Hero::Hunter: return {{255, 140, 60, 255}, {255, 236, 190, 255}, false};
-    case Hero::Naruto: return {{255, 150, 30, 255}, {255, 240, 170, 255}, false};
-    case Hero::Sasuke: return {{120, 70, 220, 255}, {220, 200, 255, 255}, false};
-    case Hero::Kakashi: return {{90, 160, 255, 255}, {230, 240, 255, 255}, false};
-    case Hero::Starrk: return {{90, 150, 255, 255}, {226, 238, 255, 255}, false};
-    case Hero::Grimmjow: return {{40, 200, 240, 255}, {220, 252, 255, 255}, false};
-    default: return {{255, 220, 120, 255}, {255, 255, 230, 255}, false};
-  }
+  const HitFx e = heroElement(h);
+  return {hitFxColor(e), hitFxGlow(e), e == HitFx::Dark};
 }
 
 }  // namespace
 
 Color auraColor(Hero h) {
-  if (h == Hero::Asta) return {186, 26, 44, 255};  // anti-magic: black aura, a blood-red glow
   const AuraLook a = auraLook(h);
   return a.dark ? a.inner : a.outer;
 }
@@ -129,17 +110,16 @@ void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise, Color
 static const char* hitSprite(HitFx fx) {
   switch (fx) {
     case HitFx::Slash: return "hit_slash";
-    case HitFx::Reiatsu: return "hit_reiatsu";
+    case HitFx::Arcane: return "hit_reiatsu";
     case HitFx::Dark: return "hit_dark";
-    case HitFx::Chakra: return "hit_chakra";
+    case HitFx::Sun: return "hit_chakra";
     case HitFx::Lightning: case HitFx::Electric: return "hit_lightning";
     case HitFx::Fire: return "hit_fire";
-    case HitFx::BlackFlame: return "hit_blackflame";
     case HitFx::Water: return "hit_water";
     case HitFx::Wind: return "hit_wind";
     case HitFx::Ice: return "hit_ice";
     case HitFx::Blood: return "hit_blood";
-    case HitFx::Cursed: return "hit_cursed";
+    case HitFx::Star: return "hit_cursed";
     case HitFx::Normal: return "hit_impact";
     case HitFx::Light: return "hit_light";
     default: return nullptr;
@@ -163,7 +143,7 @@ void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
     playFx(s, pos, 0.5f + 0.3f * std::min(heavy, 1.2f), flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
     return;
   }
-  const bool black = fx == HitFx::AntiMagic;
+  const bool black = fx == HitFx::Shadow;
   const Color c = hitFxColor(fx), g = hitFxGlow(fx);
   const Color light = black ? Color{236, 236, 246, 255} : g;
   // Flash disc, white core and a star burst of rays
@@ -247,7 +227,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
         add(PK::Wisp, pos, rdir() * rng_.range(2.0f, 6.0f), rng_.range(16, 26), 10 + heavy * 6, 2, c, -0.05f);
       break;
     case HitFx::Magic: burst(pos, n / 2, 7.0f, c, PK::Star, 26, 5); break;
-    case HitFx::AntiMagic:  // black lightning that cancels magic, dark flakes
+    case HitFx::Shadow:  // black lightning that cancels magic, dark flakes
       for (int i = 0; i < 3 + int(heavy * 5); ++i) {
         Particle& z = add(PK::Zap, pos, {}, rng_.range(6, 10), 40 + 80 * heavy * rng_.range(0.5f, 1.0f), 5.0f,
                           {12, 10, 16, 255});
@@ -268,12 +248,12 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
         add(PK::Leaf, pos, rdir() * rng_.range(3.0f, 8.0f) + dir * 2.0f, rng_.range(26, 40), rng_.range(4.0f, 6.0f), 0.0f,
             i % 3 ? Color{90, 200, 110, 255} : Color{190, 245, 160, 255}, 0.06f, 0.9f);
       break;
-    case HitFx::Reiatsu:
+    case HitFx::Arcane:
       for (int i = 0; i < n; ++i)
         add(PK::Wisp, pos + rdir() * rng_.range(0, 14), rdir() * rng_.range(1.5f, 5.0f) + Vec2{0, -1.0f},
             rng_.range(18, 30), 8 + 8 * heavy, 2, i % 2 ? c : g, -0.08f, 0.93f);
       break;
-    case HitFx::Petal:
+    case HitFx::Rose:
       for (int i = 0; i < n * 2; ++i)
         add(PK::Petal, pos, rdir() * rng_.range(3.0f, 10.0f) + dir * 2.0f, rng_.range(30, 46), rng_.range(4.0f, 6.5f), 0.0f,
             i % 4 == 0 ? Color{255, 236, 244, 255} : i % 4 == 1 ? Color{236, 100, 150, 255} : c, 0.05f, 0.9f);
@@ -287,7 +267,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
         r.rot = rng_.range(0, 2 * kPi);
       }
       break;
-    case HitFx::Gloom:
+    case HitFx::Moon:
       for (int i = 0; i < n; ++i)
         add(PK::Smoke, pos + rdir() * rng_.range(0, 10), rdir() * rng_.range(1.0f, 4.5f) + Vec2{0, -0.6f}, rng_.range(22, 34),
             10, 26 + heavy * 18, i % 3 ? Color{24, 4, 10, 235} : Color{150, 16, 40, 220}, -0.02f, 0.92f);
@@ -301,7 +281,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
       for (int i = 0; i < 4; ++i)
         add(PK::Smoke, pos, rdir() * rng_.range(1.0f, 3.0f), rng_.range(20, 30), 8, 24 + heavy * 10, {225, 245, 255, 200});
       break;
-    case HitFx::Cursed:
+    case HitFx::Star:
       for (int i = 0; i < n; ++i)
         add(PK::Wisp, pos + rdir() * rng_.range(0, 12), rdir() * rng_.range(2.0f, 6.0f), rng_.range(16, 28), 8 + 7 * heavy, 2,
             i % 2 ? Color{90, 130, 255, 255} : Color{170, 90, 255, 255}, -0.04f);
@@ -323,7 +303,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
             i % 3 ? Color{190, 16, 30, 255} : Color{120, 6, 16, 255}, 0.4f, 0.97f);
       break;
     }
-    case HitFx::Chakra:  // swirls of orange chakra, a few blue sparks
+    case HitFx::Sun:  // swirls of golden flame, a few pale sparks
       for (int i = 0; i < n; ++i)
         add(PK::Wisp, pos + rdir() * rng_.range(0, 12), rdir() * rng_.range(2.0f, 6.0f), rng_.range(16, 28), 8 + 7 * heavy, 2,
             i % 3 ? Color{255, 150, 40, 255} : Color{110, 170, 255, 255}, -0.05f);
@@ -341,12 +321,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
       for (int i = 0; i < n / 2; ++i)
         add(PK::Mote, pos, rdir() * rng_.range(3.0f, 9.0f), rng_.range(12, 20), 2.5f, 0.5f, {220, 240, 255, 255}, 0.0f, 0.9f);
       break;
-    case HitFx::BlackFlame:
-      for (int i = 0; i < n; ++i)
-        add(PK::Smoke, pos + rdir() * rng_.range(0, 10), rdir() * rng_.range(1.0f, 4.0f) + Vec2{0, -1.2f}, rng_.range(22, 34), 9,
-            24 + heavy * 14, i % 3 ? Color{12, 6, 14, 240} : Color{170, 30, 80, 220}, -0.04f, 0.92f);
-      break;
-    case HitFx::Hollow:  // black-green blast
+    case HitFx::Nature:  // black-green blast
       for (int i = 0; i < n; ++i)
         add(PK::Wisp, pos + rdir() * rng_.range(0, 10), rdir() * rng_.range(2.0f, 6.0f), rng_.range(16, 26), 8 + 7 * heavy, 2,
             i % 2 ? Color{70, 230, 130, 255} : Color{10, 30, 18, 255}, -0.03f);
@@ -355,7 +330,7 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
         r.rot = rng_.range(0, 2 * kPi);
       }
       break;
-    case HitFx::Berserk:  // wild yellow reiatsu and cut marks
+    case HitFx::Sand:  // wild yellow reiatsu and cut marks
       for (int i = 0; i < n; ++i)
         add(PK::Wisp, pos + rdir() * rng_.range(0, 14), rdir() * rng_.range(2.0f, 6.0f) + Vec2{0, -1.0f}, rng_.range(18, 30),
             9 + 8 * heavy, 2, i % 2 ? Color{255, 220, 60, 255} : Color{255, 250, 200, 255}, -0.08f, 0.93f);
@@ -365,28 +340,6 @@ void Fx::elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy) {
         c2.rot = std::atan2(dir.y, dir.x) + kPi * 0.5f + rng_.range(-0.6f, 0.6f);
       }
       break;
-    case HitFx::Wolf:  // pale blue cero light and spectral wisps howling away
-      for (int i = 0; i < n; ++i)
-        add(PK::Wisp, pos + rdir() * rng_.range(0, 12), rdir() * rng_.range(2.0f, 6.0f) + Vec2{0, -0.8f}, rng_.range(18, 30),
-            8 + 8 * heavy, 2, i % 3 ? Color{110, 170, 255, 255} : Color{230, 240, 255, 255}, -0.05f, 0.93f);
-      {
-        Particle& r = add(PK::Burst, pos, {}, 10, 36 + 40 * heavy, 96 + 110 * heavy, {200, 225, 255, 255});
-        r.rot = rng_.range(0, 2 * kPi);
-      }
-      break;
-    case HitFx::Claw: {  // four parallel claw marks raked across the impact, cyan sparks
-      const float base = std::atan2(dir.y, dir.x) + kPi * 0.5f + rng_.range(-0.35f, 0.35f);
-      const Vec2 across{std::cos(base + kPi * 0.5f), std::sin(base + kPi * 0.5f)};
-      for (int i = 0; i < 4; ++i) {
-        Particle& c2 = add(PK::Cut, pos + across * ((i - 1.5f) * (7.0f + 5.0f * heavy)), {}, 14 + heavy * 4, 56 + 56 * heavy,
-                           3.5f + 3.0f * heavy, {60, 214, 240, 255});
-        c2.rot = base;
-      }
-      for (int i = 0; i < n; ++i)
-        add(PK::Spark, pos, rdir() * rng_.range(4.0f, 10.0f) + dir * 2.0f, rng_.range(10, 18), 2.5f, 0.0f,
-            i % 2 ? Color{120, 240, 255, 255} : WHITE);
-      break;
-    }
     case HitFx::Water:
       for (int i = 0; i < n * 3 / 2; ++i)
         add(PK::Drop, pos, rdir() * rng_.range(3.0f, 9.0f) + Vec2{0, -2.5f}, rng_.range(22, 34), rng_.range(2.5f, 4.0f), 0.0f,
@@ -401,8 +354,8 @@ void Fx::explosion(Vec2 pos, float r, HitFx fx, bool drawn) {
   // Fire and plain blasts burn orange; the other elements explode in their own colours.
   const bool fiery = fx == HitFx::Fire || fx == HitFx::Normal || fx == HitFx::Slash;
   const bool elemental = !fiery;
-  const Color hot = fx == HitFx::Cursed ? Color{255, 150, 190, 255} : fiery ? Color{255, 238, 170, 255} : hitFxGlow(fx);
-  const Color mid = fx == HitFx::Cursed ? Color{220, 40, 90, 255} : fiery ? Color{255, 120, 30, 255} : hitFxColor(fx);
+  const Color hot = fx == HitFx::Star ? Color{255, 150, 190, 255} : fiery ? Color{255, 238, 170, 255} : hitFxGlow(fx);
+  const Color mid = fx == HitFx::Star ? Color{220, 40, 90, 255} : fiery ? Color{255, 120, 30, 255} : hitFxColor(fx);
   add(PK::Flash, pos, {}, 12, r * 0.6f, r * 2.0f, hot);
   Particle& b = add(PK::Burst, pos, {}, 11, r * 0.9f, r * 2.4f, hot);
   b.rot = rng_.range(0, 2 * kPi);
@@ -463,7 +416,7 @@ void Fx::hitSound(HitFx fx, float kb, bool big) {
     case HitFx::Fire: au.play(Sfx::HitFire, 0.7f, p); break;
     case HitFx::Electric: au.play(Sfx::HitElectric, 0.7f, p); break;
     case HitFx::Slash: au.play(Sfx::HitSlash, 0.8f, p); break;
-    case HitFx::AntiMagic:
+    case HitFx::Shadow:
       au.play(Sfx::HitElectric, 0.5f, 0.6f * p);
       au.play(Sfx::HitSlash, 0.75f, 0.85f * p);
       break;
@@ -471,29 +424,26 @@ void Fx::hitSound(HitFx fx, float kb, bool big) {
       au.play(Sfx::WindGust, 0.55f, 1.25f * p);
       au.play(Sfx::HitSlash, 0.4f, 1.1f * p);
       break;
-    case HitFx::Reiatsu:
+    case HitFx::Arcane:
       au.play(Sfx::HitSlash, 0.8f, 0.85f * p);
       au.play(Sfx::WindGust, 0.35f, 0.7f * p);
       break;
-    case HitFx::Petal:
+    case HitFx::Rose:
       au.play(Sfx::PetalSwish, 0.8f, p);
       au.play(Sfx::HitSlash, 0.45f, 1.2f * p);
       break;
     case HitFx::Light: au.play(Sfx::HitHoly, 0.75f, p); break;
-    case HitFx::Gloom: au.play(Sfx::HitGloom, 0.8f, p); break;
+    case HitFx::Moon: au.play(Sfx::HitGloom, 0.8f, p); break;
     case HitFx::Dark: au.play(Sfx::HitGloom, 0.7f, 0.9f * p); au.play(Sfx::HitSlash, 0.5f, 0.8f * p); break;
     case HitFx::Ice: au.play(Sfx::IceCrack, 0.8f, p); break;
-    case HitFx::Cursed: au.play(Sfx::HitGloom, 0.55f, 1.3f * p); au.play(Sfx::HitElectric, 0.25f, 1.5f * p); break;
+    case HitFx::Star: au.play(Sfx::HitGloom, 0.55f, 1.3f * p); au.play(Sfx::HitElectric, 0.25f, 1.5f * p); break;
     case HitFx::Blood: au.play(Sfx::HitSlash, 0.85f, 0.8f * p); break;
     case HitFx::Magic: au.play(Sfx::HitElectric, 0.35f, 1.4f * p); break;
-    case HitFx::Chakra: au.play(Sfx::WindGust, 0.45f, 1.5f * p); au.play(Sfx::HitHoly, 0.35f, 0.8f * p); break;
+    case HitFx::Sun: au.play(Sfx::WindGust, 0.45f, 1.5f * p); au.play(Sfx::HitHoly, 0.35f, 0.8f * p); break;
     case HitFx::Lightning: au.play(Sfx::HitElectric, 0.8f, 1.15f * p); break;
-    case HitFx::BlackFlame: au.play(Sfx::HitFire, 0.6f, 0.6f * p); au.play(Sfx::HitGloom, 0.4f, 0.9f * p); break;
-    case HitFx::Hollow: au.play(Sfx::HitGloom, 0.6f, 1.15f * p); au.play(Sfx::BeamBlast, 0.3f, 1.4f * p); break;
-    case HitFx::Berserk: au.play(Sfx::HitSlash, 0.9f, 0.75f * p); au.play(Sfx::HitHeavy, 0.3f, 0.8f * p); break;
+    case HitFx::Nature: au.play(Sfx::HitGloom, 0.6f, 1.15f * p); au.play(Sfx::BeamBlast, 0.3f, 1.4f * p); break;
+    case HitFx::Sand: au.play(Sfx::HitSlash, 0.9f, 0.75f * p); au.play(Sfx::HitHeavy, 0.3f, 0.8f * p); break;
     case HitFx::Water: au.play(Sfx::WindGust, 0.5f, 0.6f * p); au.play(Sfx::HitLight, 0.4f, 0.7f * p); break;
-    case HitFx::Wolf: au.play(Sfx::BeamBlast, 0.35f, 1.5f * p); au.play(Sfx::HitHoly, 0.3f, 0.7f * p); break;
-    case HitFx::Claw: au.play(Sfx::HitSlash, 0.85f, 1.3f * p); au.play(Sfx::HitSlash, 0.45f, 1.7f * p); break;
     default: break;
   }
   Sfx s = kb < 40 ? Sfx::HitLight : kb < 100 ? Sfx::HitMedium : Sfx::HitHeavy;
@@ -598,22 +548,19 @@ void Fx::onEvents(const Match& m) {
         const float p = rng_.range(0.95f, 1.05f);
         switch (e.fx) {
           case HitFx::Wind: au.play(Sfx::WindGust, 0.6f, 1.3f * p); break;
-          case HitFx::Petal: au.play(Sfx::PetalSwish, 0.7f, 0.9f * p); break;
+          case HitFx::Rose: au.play(Sfx::PetalSwish, 0.7f, 0.9f * p); break;
           case HitFx::Light: au.play(Sfx::HitHoly, 0.4f, 1.3f * p); au.play(Sfx::Projectile, 0.4f, 1.2f * p); break;
-          case HitFx::Gloom: au.play(Sfx::HitGloom, 0.5f, 1.2f * p); break;
+          case HitFx::Moon: au.play(Sfx::HitGloom, 0.5f, 1.2f * p); break;
           case HitFx::Ice: au.play(Sfx::Swing, 0.7f, 0.8f * p); au.play(Sfx::IceCrack, 0.3f, 1.3f * p); break;
-          case HitFx::Cursed: au.play(Sfx::BeamBlast, 0.4f, 1.6f * p); break;
-          case HitFx::AntiMagic: au.play(Sfx::HitSlash, 0.6f, 0.7f * p); au.play(Sfx::WindGust, 0.4f, 0.8f * p); break;
-          case HitFx::Reiatsu: au.play(Sfx::BeamBlast, 0.5f, 1.3f * p); break;
+          case HitFx::Star: au.play(Sfx::BeamBlast, 0.4f, 1.6f * p); break;
+          case HitFx::Shadow: au.play(Sfx::HitSlash, 0.6f, 0.7f * p); au.play(Sfx::WindGust, 0.4f, 0.8f * p); break;
+          case HitFx::Arcane: au.play(Sfx::BeamBlast, 0.5f, 1.3f * p); break;
           case HitFx::Blood: au.play(Sfx::HitSlash, 0.5f, 1.4f * p); break;
           case HitFx::Electric: case HitFx::Lightning: au.play(Sfx::HitElectric, 0.7f, 0.8f * p); break;
-          case HitFx::Chakra: au.play(Sfx::WindGust, 0.6f, 1.4f * p); break;
-          case HitFx::Hollow: au.play(Sfx::BeamBlast, 0.5f, 1.2f * p); break;
+          case HitFx::Sun: au.play(Sfx::WindGust, 0.6f, 1.4f * p); break;
+          case HitFx::Nature: au.play(Sfx::BeamBlast, 0.5f, 1.2f * p); break;
           case HitFx::Water: au.play(Sfx::WindGust, 0.7f, 0.6f * p); break;
-          case HitFx::BlackFlame: au.play(Sfx::HitFire, 0.5f, 0.6f * p); break;
-          case HitFx::Berserk: au.play(Sfx::BeamBlast, 0.5f, 0.9f * p); break;
-          case HitFx::Wolf: au.play(Sfx::BeamBlast, 0.4f, 1.6f * p); break;
-          case HitFx::Claw: au.play(Sfx::HitSlash, 0.6f, 1.4f * p); au.play(Sfx::WindGust, 0.35f, 1.6f * p); break;
+          case HitFx::Sand: au.play(Sfx::BeamBlast, 0.5f, 0.9f * p); break;
           default:
             au.play(Sfx::Projectile, 0.5f, e.fx == HitFx::Fire ? 0.8f : e.fx == HitFx::Dark ? 1.4f : 1.0f);
             break;
@@ -734,11 +681,7 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::CutIn, 0.7f, 1.1f);
         break;
       case EvType::Explosion:
-        if (e.visual == int(ProjVisual::FireArrow))  // Fuga: a tower of fire where the arrow lands
-          playFx("fuga_blast", e.pos, 2.0f * e.strength / 170.0f);
-        else if (e.visual == int(ProjVisual::Lanza))  // the Lanza: a dome of teal light
-          playFx("lanza_blast", e.pos, 2.0f * e.strength / 200.0f);
-        else if (const char* x = explosionSprite(e.fx); x && art::fxInfo(x)) {  // its radius on the blast's
+        if (const char* x = explosionSprite(e.fx); x && art::fxInfo(x)) {  // its radius on the blast's
           const art::FxInfo* fi = art::fxInfo(x);
           playFx(x, e.pos, std::max(20.0f, e.strength) / (fi->hit > 0.0f ? fi->hit : 0.4f * std::min(fi->fw, fi->fh)));
         }
@@ -753,7 +696,7 @@ void Fx::onEvents(const Match& m) {
         p.slot = e.b & 1;
         p.pos = e.pos;
         p.color = hitFxColor(w.fx);
-        p.glow = w.fx == HitFx::AntiMagic ? Color{230, 230, 240, 255} : hitFxGlow(w.fx);
+        p.glow = w.fx == HitFx::Shadow ? Color{230, 230, 240, 255} : hitFxGlow(w.fx);
         pillars_.push_back(p);
         au.play(Sfx::WeaponPickup, 0.4f, 0.7f);
         break;
@@ -771,9 +714,9 @@ void Fx::onEvents(const Match& m) {
         const auto& chars = roster();
         const int ch = std::clamp(int(e.strength), 0, int(chars.size()) - 1);
         const WeaponDef& w = chars[ch].weapons[e.b & 1];
-        const Color c = hitFxColor(w.fx), g = w.fx == HitFx::AntiMagic ? Color{230, 230, 240, 255} : hitFxGlow(w.fx);
+        const Color c = hitFxColor(w.fx), g = w.fx == HitFx::Shadow ? Color{230, 230, 240, 255} : hitFxGlow(w.fx);
         add(PK::Flash, e.pos, {}, 12, 30, 130, g);
-        add(PK::Ring, e.pos, {}, 18, 10, 120, withAlpha(w.fx == HitFx::AntiMagic ? Color{20, 18, 24, 255} : c, 0.9f));
+        add(PK::Ring, e.pos, {}, 18, 10, 120, withAlpha(w.fx == HitFx::Shadow ? Color{20, 18, 24, 255} : c, 0.9f));
         add(PK::Ring, e.pos, {}, 26, 10, 170, withAlpha(g, 0.6f));
         Particle& b = add(PK::Burst, e.pos, {}, 14, 50, 170, g);
         b.rot = rng_.range(0, 2 * kPi);
@@ -827,126 +770,11 @@ void Fx::onEvents(const Match& m) {
 
 // ---- Per frame -------------------------------------------------------------------------
 void Fx::projectileTrails(const Match& m) {
+  // A projectile drawn by its PixelLab effect carries its own trail; a placeholder leaves a few dots of its colour.
   for (const auto& p : m.projectiles) {
-    const Vec2 v = p.vel;
-    const Vec2 back = v.len2() > 0.01f ? v.norm() * -1.0f : Vec2{0.0f, 0.0f};
-    const float r = p.radius;
-    switch (p.visual) {
-      case ProjVisual::Fireball: case ProjVisual::Bolt: case ProjVisual::Star:
-        if (m.frame % 2 == 0) {
-          Color c = p.visual == ProjVisual::Fireball ? Color{255, 150, 50, 200}
-                    : p.visual == ProjVisual::Bolt  ? Color{150, 230, 255, 200}
-                                                    : Color{255, 230, 120, 200};
-          add(PK::Dot, p.pos, {rng_.range(-0.5f, 0.5f), rng_.range(-0.5f, 0.5f)}, 14, r * 0.5f, 0, c);
-        }
-        break;
-      case ProjVisual::BlackSlash:
-        add(PK::Shard, p.pos + rdir() * rng_.range(0.0f, r * 0.8f), back * rng_.range(1.0f, 3.0f) + rdir(), rng_.range(12, 20),
-            rng_.range(2.5f, 2.5f + r * 0.08f), 1.0f, m.frame % 3 ? Color{16, 14, 20, 255} : Color{220, 220, 230, 255}, 0.05f);
-        if (m.frame % 4 == 0) {
-          Particle& z = add(PK::Zap, p.pos + rdir() * (r * 0.5f), {}, 5, r * 0.9f, 2.5f, {12, 10, 16, 255});
-          z.rot = rng_.range(0, 2 * kPi);
-          z.color2 = {235, 235, 245, 255};
-        }
-        break;
-      case ProjVisual::WindBlade:
-        if (m.frame % 2 == 0) add(PK::Spark, p.pos, back * 2.0f + rdir() * 0.5f, 8, 2.0f, 0.0f, {200, 255, 225, 255});
-        break;
-      case ProjVisual::Tornado:
-        if (m.frame % 2 == 0)
-          add(PK::Leaf, p.pos + Vec2{rng_.range(-r, r), rng_.range(-r * 1.6f, r)}, Vec2{rng_.range(-3, 3), rng_.range(-3.0f, -0.5f)},
-              rng_.range(20, 30), 4.0f, 0.0f, m.frame % 4 ? Color{90, 200, 110, 255} : Color{200, 250, 180, 255}, 0.02f, 0.94f);
-        if (m.frame % 5 == 0) dust(p.pos + Vec2{0.0f, r * 1.2f}, 1, 2.0f);
-        break;
-      case ProjVisual::Getsuga: {
-        const bool dark = p.hit.fx == HitFx::Dark;
-        add(dark ? PK::Smoke : PK::Wisp, p.pos + rdir() * rng_.range(0.0f, r), back * rng_.range(1.0f, 3.0f), rng_.range(14, 22),
-            dark ? 10.0f : 9.0f, dark ? 24.0f : 2.0f, dark ? Color{14, 6, 10, 220} : Color{120, 190, 255, 255}, -0.03f);
-        if (dark && m.frame % 2 == 0)
-          add(PK::Ember, p.pos + rdir() * rng_.range(0.0f, r), back * 2.0f, 16, 2.5f, 0.5f, {255, 50, 60, 255}, -0.04f);
-        break;
-      }
-      case ProjVisual::Cero:
-        add(PK::Ember, p.pos + rdir() * (r * 0.5f), back * 2.0f + rdir(), 14, 3.0f, 0.5f, {255, 60, 70, 255});
-        break;
-      case ProjVisual::Petals:
-        add(PK::Petal, p.pos + rdir() * rng_.range(0.0f, r), back * rng_.range(0.5f, 2.0f) + rdir() * 1.5f, rng_.range(22, 34),
-            rng_.range(3.5f, 5.0f), 0.0f, m.frame % 3 ? Color{255, 160, 196, 255} : Color{255, 236, 244, 255}, 0.03f, 0.92f);
-        break;
-      case ProjVisual::LightArrow: case ProjVisual::SwordBeam:
-        add(PK::Mote, p.pos + rdir() * rng_.range(0.0f, r * 0.6f), back * 1.5f + rdir() * 0.6f, rng_.range(16, 26), 2.4f, 0.5f,
-            m.frame % 2 ? Color{255, 220, 130, 255} : WHITE, -0.02f, 0.95f);
-        break;
-      case ProjVisual::Bomb: {  // fuse sparks
-        const float a = p.age * 0.25f;
-        const Vec2 fuse = p.pos + Vec2{std::cos(a - 1.2f), std::sin(a - 1.2f)} * (r * 1.25f);
-        add(PK::Spark, fuse, rdir() * rng_.range(1.5f, 4.0f) + Vec2{0, -1.0f}, rng_.range(6, 10), 2.0f, 0.0f,
-            m.frame % 2 ? Color{255, 230, 120, 255} : WHITE, 0.1f);
-        break;
-      }
-      case ProjVisual::DarkOrb: case ProjVisual::GloomSpear:
-        if (m.frame % 2 == 0)
-          add(PK::Smoke, p.pos + rdir() * rng_.range(0.0f, r * 0.6f), back * 1.2f + Vec2{0.0f, -0.6f}, rng_.range(20, 30),
-              r * 0.35f, r * 0.9f, m.frame % 4 ? Color{20, 2, 8, 220} : Color{140, 14, 40, 200}, -0.02f, 0.94f);
-        if (m.frame % 3 == 0)
-          add(PK::Ember, p.pos + rdir() * (r * 0.7f), rdir() * 1.5f, 16, 2.5f, 0.5f, {255, 70, 90, 255}, -0.04f);
-        break;
-      case ProjVisual::Axe:  // frost trail
-        add(PK::Ice, p.pos + rdir() * rng_.range(0.0f, r * 0.8f), back * rng_.range(0.5f, 2.0f) + rdir(), rng_.range(14, 22),
-            rng_.range(3.0f, 5.0f), 0.0f, m.frame % 3 ? Color{180, 235, 255, 255} : WHITE, 0.15f, 0.95f);
-        if (m.frame % 2 == 0)
-          add(PK::Smoke, p.pos, back * 1.0f, 18, 6, 18, {220, 245, 255, 150});
-        break;
-      case ProjVisual::ChainBlade: case ProjVisual::FireArrow:
-        add(PK::Ember, p.pos + rdir() * rng_.range(0.0f, r * 0.5f), back * rng_.range(1.0f, 3.0f) + rdir(), rng_.range(14, 24),
-            rng_.range(2.0f, 3.5f), 0.5f, m.frame % 3 ? Color{255, 150, 40, 255} : Color{255, 230, 140, 255}, -0.05f, 0.94f);
-        if (m.frame % 3 == 0)
-          add(PK::Smoke, p.pos, back * 1.0f + Vec2{0, -0.5f}, 22, 5, 16, {70, 56, 50, 170}, -0.02f);
-        break;
-      case ProjVisual::BlueOrb:  // matter sucked into the void
-        for (int i = 0; i < 2; ++i) {
-          const Vec2 d = rdir();
-          add(PK::Mote, p.pos + d * (r * rng_.range(2.2f, 3.4f)), d * -rng_.range(3.0f, 5.0f), 14, 2.4f, 0.4f,
-              i ? Color{120, 190, 255, 255} : WHITE, 0.0f, 1.0f);
-        }
-        break;
-      case ProjVisual::RedOrb:
-        add(PK::Spark, p.pos, rdir() * rng_.range(3.0f, 6.0f) + back * 2.0f, 10, 2.5f, 0.0f,
-            m.frame % 2 ? Color{255, 80, 90, 255} : Color{255, 200, 200, 255});
-        break;
-      case ProjVisual::PurpleOrb: {
-        for (int i = 0; i < 2; ++i) {  // space being erased: debris pulled in
-          const Vec2 d = rdir();
-          add(PK::Mote, p.pos + d * (r * rng_.range(1.6f, 2.4f)), d * -rng_.range(3.0f, 6.0f) + v * 0.8f, 12, 3.0f, 0.5f,
-              i ? Color{190, 120, 255, 255} : Color{255, 230, 255, 255}, 0.0f, 1.0f);
-        }
-        if (m.frame % 3 == 0) {
-          Particle& z = add(PK::Zap, p.pos + rdir() * (r * 0.6f), v * 0.5f, 5, r * 0.9f, 3.0f, {200, 120, 255, 255});
-          z.rot = rng_.range(0, 2 * kPi);
-          z.color2 = WHITE;
-        }
-        break;
-      }
-      case ProjVisual::Lightning:
-        if (m.frame % 2 == 0)
-          add(PK::Spark, p.pos + rdir() * (r * 0.5f), rdir() * rng_.range(2.0f, 6.0f), 8, 2.0f, 0.0f, {200, 240, 255, 255});
-        break;
-      case ProjVisual::Desgarron: case ProjVisual::PanteraDart:
-        if (m.frame % 2 == 0)
-          add(PK::Spark, p.pos + rdir() * rng_.range(0.0f, r * 0.6f), back * rng_.range(2.0f, 4.0f), 9, 2.2f, 0.0f,
-              m.frame % 4 ? Color{120, 240, 255, 255} : WHITE);
-        break;
-      case ProjVisual::CeroWolf:  // spectral mist trailing off the running wolf
-        if (m.frame % 2 == 0)
-          add(PK::Wisp, p.pos + rdir() * rng_.range(0.0f, r * 0.7f), back * 1.5f + Vec2{0, -0.6f}, rng_.range(14, 22), r * 0.6f, 2,
-              {120, 175, 255, 255}, -0.03f);
-        break;
-      case ProjVisual::StarrkCero:
-        add(PK::Mote, p.pos + rdir() * (r * 0.3f), back * 1.5f + rdir() * 0.5f, 10, 2.0f, 0.4f,
-            m.frame % 2 ? Color{150, 200, 255, 255} : WHITE, 0.0f, 0.95f);
-        break;
-      default: break;
-    }
+    if ((p.fx && art::fxInfo(p.fx)) || m.frame % 2) continue;
+    const Color c = withAlpha(hitFxColor(p.hit.fx), 0.8f);
+    add(PK::Dot, p.pos, {rng_.range(-0.5f, 0.5f), rng_.range(-0.5f, 0.5f)}, 14, p.radius * 0.5f, 0, c);
   }
 }
 

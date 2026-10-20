@@ -4,7 +4,7 @@
     python3 scripts/import_clip.py FIGHTER ANIM FRAMES_DIR --anchor AX AY --pxh P [--loop] [--fps 15]
                                    [--impact N] [--keep-first] [--only 1-8] [--drop PX]
 
-- FIGHTER: the fighter's name (naruto, sasuke...); ANIM: the clip's name, as in sheetName() of
+- FIGHTER: the fighter's id (p01, p02...); ANIM: the clip's name, as in sheetName() of
   src/game/fighter_art.cpp: a state ("idle", "run", "roll"...), a move ("jab", "fsmash", "nspecial", "ultimate"...)
   or a move with a picked-up weapon ("w0_jab", "w1_jab");
 - FRAMES_DIR: what PixelLab returned. f_00.png is the frame it was given (left out unless --keep-first), the

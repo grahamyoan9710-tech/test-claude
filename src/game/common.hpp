@@ -116,42 +116,33 @@ inline std::string upperFr(std::string s) {
 // Signature colours of each element: the main tint and its bright glow.
 inline Color hitFxColor(HitFx fx) {
   switch (fx) {
-    case HitFx::Fire: return {255, 140, 40, 255};
+    case HitFx::Fire: return {255, 120, 40, 255};
     case HitFx::Electric: return {120, 230, 255, 255};
     case HitFx::Slash: return {210, 230, 255, 255};
     case HitFx::Dark: return {150, 70, 220, 255};
     case HitFx::Magic: return {255, 130, 220, 255};
-    case HitFx::AntiMagic: return {28, 24, 34, 255};
-    case HitFx::Wind: return {120, 232, 170, 255};
-    case HitFx::Reiatsu: return {90, 170, 255, 255};
-    case HitFx::Petal: return {255, 150, 190, 255};
-    case HitFx::Light: return {255, 214, 110, 255};
-    case HitFx::Gloom: return {176, 24, 52, 255};
-    case HitFx::Ice: return {140, 220, 255, 255};
-    case HitFx::Cursed: return {110, 130, 255, 255};
-    case HitFx::Blood: return {214, 30, 44, 255};
-    case HitFx::Chakra: return {255, 150, 40, 255};
-    case HitFx::Lightning: return {150, 200, 255, 255};
-    case HitFx::BlackFlame: return {22, 12, 26, 255};
-    case HitFx::Hollow: return {70, 220, 130, 255};
-    case HitFx::Berserk: return {240, 214, 70, 255};
-    case HitFx::Water: return {70, 160, 240, 255};
-    case HitFx::Wolf: return {110, 170, 255, 255};
-    case HitFx::Claw: return {60, 214, 240, 255};
+    case HitFx::Shadow: return {150, 90, 230, 255};
+    case HitFx::Ice: return {140, 210, 255, 255};
+    case HitFx::Star: return {190, 140, 255, 255};
+    case HitFx::Water: return {60, 170, 240, 255};
+    case HitFx::Rose: return {245, 100, 170, 255};
+    case HitFx::Lightning: return {240, 50, 60, 255};
+    case HitFx::Light: return {255, 226, 140, 255};
+    case HitFx::Wind: return {80, 220, 190, 255};
+    case HitFx::Arcane: return {170, 110, 240, 255};
+    case HitFx::Sand: return {230, 180, 70, 255};
+    case HitFx::Blood: return {200, 30, 44, 255};
+    case HitFx::Moon: return {130, 100, 230, 255};
+    case HitFx::Sun: return {255, 190, 70, 255};
+    case HitFx::Nature: return {90, 210, 140, 255};
     default: return {255, 234, 190, 255};
   }
 }
 inline Color hitFxGlow(HitFx fx) {
   switch (fx) {
-    case HitFx::AntiMagic: return {246, 246, 250, 255};
-    case HitFx::Gloom: return {255, 90, 110, 255};
     case HitFx::Blood: return {255, 150, 150, 255};
-    case HitFx::Cursed: return {200, 170, 255, 255};
     case HitFx::Dark: return {220, 180, 255, 255};
-    case HitFx::BlackFlame: return {200, 60, 120, 255};
-    case HitFx::Lightning: return {230, 244, 255, 255};
-    case HitFx::Wolf: return {214, 232, 255, 255};
-    case HitFx::Claw: return {210, 252, 255, 255};
+    case HitFx::Lightning: return {255, 170, 170, 255};
     default: return mixColor(hitFxColor(fx), WHITE, 0.55f);
   }
 }

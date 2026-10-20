@@ -96,12 +96,8 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       DrawCircleV(b, 16, ui::kInk);
       DrawCircleV(b, 13.5f, mixColor(c, ui::kInk, 0.55f));
       DrawRing(b, 13.5f, 16.5f, -90, -90 + 360 * left, 32, blink ? WHITE : g);
-      const float len = std::max(12.0f, weaponVisualLength(w->visual)) * 0.26f;
-      const Vec2 dir = Vec2{0.7f, -0.7f}.norm();
-      WeaponStyle st;
-      st.icon = true;
-      drawWeaponStyled(w->visual, W(b) - dir * (len * 0.5f), dir, 0.26f, 1.0f, time, st);
-      if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging (Amaterasu)
+      drawWeaponIcon(*f.def, f.weapon, W(b), 26.0f);
+      if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging
         DrawCircleV(b, 13.5f, withAlpha(ui::kInk, 0.65f));
         char sec[16];
         std::snprintf(sec, sizeof sec, "%d", (f.moveCooldown[NSpecial] + 59) / 60);

@@ -71,29 +71,14 @@ void additive(bool on) {
 // Outside of attacks the blade never points at the ground in front like a walking stick: big blades
 // rest on the shoulder, swords and katanas are held up in guard, spears and axes stand upright.
 enum class Carry { None, Shoulder, Guard, Upright, Haft, Kunai };
-Carry carryOf(WeaponVisual v) {
-  switch (v) {
-    case WeaponVisual::AstaSword: case WeaponVisual::DemonSlayer: case WeaponVisual::DemonKingSword:
-    case WeaponVisual::KenpachiSword: case WeaponVisual::Nozarashi: case WeaponVisual::RedBankai:
-    case WeaponVisual::GreatSword:
-      return Carry::Shoulder;
-    case WeaponVisual::WindSpear: case WeaponVisual::GloomSpear: case WeaponVisual::Kamutoke:
-    case WeaponVisual::LuzDeLaLuna: case WeaponVisual::Gunlance:
-      return Carry::Upright;
-    case WeaponVisual::LeviathanAxe: return Carry::Haft;
-    case WeaponVisual::KakashiKunai: return Carry::Kunai;
-    default: return isHandWeapon(v) ? Carry::Guard : Carry::None;
-  }
-}
-// The weapon in hand outside of attacks: a picked-up one, else the fighter's own blade if it keeps it drawn.
+Carry carryOf(WeaponVisual v) { return v == WeaponVisual::Held ? Carry::Guard : Carry::None; }
+// The weapon in hand outside of attacks: the summoned one (the fighters start bare-handed).
 WeaponVisual carriedWeapon(const CharacterDef& d, WeaponVisual held) {
-  if (isHandWeapon(held)) return held;
-  switch (d.hero) {
-    case Hero::Asta: case Hero::Ichigo: case Hero::Byakuya: case Hero::Link: case Hero::Kenpachi: case Hero::Hunter:
-      return d.baseWeapon;
-    default: return WeaponVisual::None;
-  }
+  (void)d;
+  return held == WeaponVisual::Held ? held : WeaponVisual::None;
 }
+bool isHandWeapon(WeaponVisual v) { return v == WeaponVisual::Held; }
+float frontWeaponLength(const Pose& p) { return p.bladeLen; }
 WeaponVisual heldVisual(const Fighter& f) { return f.weaponDef() ? f.weaponDef()->visual : WeaponVisual::None; }
 enum class Gait { Stand, Walk, Run, Air };
 // Sets the front hand and the blade for the way the fighter moves (the other states keep the standing blade).
@@ -145,12 +130,9 @@ Vec2 gaitFoot(float u, float duty, float S, const Vec2 (&keys)[5], float H) {
   return {q.x, 0.5f * H - std::max(0.0f, q.y)};
 }
 enum class RunStyle { Normal, Ninja, Heavy };
-RunStyle runStyle(Hero h) {
-  switch (h) {
-    case Hero::Naruto: case Hero::Sasuke: case Hero::Kakashi: return RunStyle::Ninja;  // arms swept back
-    case Hero::Ganondorf: case Hero::Kratos: case Hero::Kenpachi: case Hero::Hunter: return RunStyle::Heavy;
-    default: return RunStyle::Normal;
-  }
+RunStyle runStyle(const CharacterDef& d) {
+  return d.style == BodyStyle::Brute ? RunStyle::Heavy : d.style == BodyStyle::Speedster ? RunStyle::Ninja
+                                                                                        : RunStyle::Normal;
 }
 
 void walkPose(Pose& p, const Fighter& f, float H) {
@@ -171,7 +153,7 @@ void walkPose(Pose& p, const Fighter& f, float H) {
 }
 
 void runPose(Pose& p, const Fighter& f, float H, float sf) {
-  const RunStyle st = runStyle(f.def->hero);
+  const RunStyle st = runStyle(*f.def);
   const float D = (st == RunStyle::Heavy ? 1.15f : 1.32f) * H, duty = st == RunStyle::Heavy ? 0.42f : 0.36f, S = duty * D;
   const float u = wrap01(f.pos.x * float(f.facing) / D);
   const float kick = st == RunStyle::Heavy ? 0.16f : 0.25f;  // how high the heel comes up behind
@@ -367,7 +349,7 @@ void applyHint(Pose& p, const Fighter& f, const MoveDef& m, float time, bool who
   const float relax = clampf((t - key - 18.0f) / std::max(8.0f, float(m.duration) - key - 18.0f), 0.0f, 1.0f);
   const float on = t < key ? ready : 1.0f - smoothstep(relax);  // weight of the hint over the base pose
   if (on <= 0.001f) return;
-  const bool armed = f.def->baseWeapon != WeaponVisual::None || (f.weaponDef() && isHandWeapon(f.weaponDef()->visual));
+  const bool armed = f.weaponDef() && isHandWeapon(f.weaponDef()->visual);
   auto at = [&](float x, float y) { return Vec2{x * H, y * H}; };
   Vec2 hF = p.handF, hB = p.handB;
   float lean = p.lean, crouch = p.crouch;
@@ -793,30 +775,12 @@ Pose restPose(const CharacterDef& d, float time, WeaponVisual held) {
     p.lean += lean;
     p.crouch += crouch;
   };
-  if (!art::stance(d, p, bob)) switch (d.hero) {  // each hero's guard (drawn from a picture: its stance)
-    case Hero::Asta: stance({0.17f, 0.0f}, {-0.03f, 0.06f}, 0.14f, -0.13f, 0.06f, 0.12f); break;
-    case Hero::Yuno: stance({0.11f, 0.07f}, {-0.05f, 0.07f}, 0.08f, -0.07f, -0.02f, 0.0f); break;
-    case Hero::Ichigo: stance({0.2f, 0.0f}, {0.03f, 0.07f}, 0.12f, -0.11f, 0.03f, 0.08f); break;
-    case Hero::Byakuya: stance({0.12f, 0.07f}, {-0.03f, 0.08f}, 0.08f, -0.07f, -0.06f, 0.0f); break;
-    case Hero::Link: stance({0.17f, 0.05f}, {0.17f, -0.07f}, 0.12f, -0.12f, 0.04f, 0.1f); break;
-    case Hero::Ganondorf: stance({0.17f, 0.05f}, {-0.12f, 0.05f}, 0.12f, -0.13f, 0.0f, 0.06f); break;
-    case Hero::Kratos: stance({0.16f, 0.02f}, {0.03f, 0.05f}, 0.13f, -0.12f, 0.06f, 0.1f); break;
-    case Hero::Gojo: stance({0.04f, 0.09f}, {-0.05f, 0.09f}, 0.07f, -0.07f, -0.1f, 0.0f); break;
-    case Hero::Sukuna: stance({0.1f, 0.08f}, {-0.06f, 0.08f}, 0.1f, -0.09f, 0.04f, 0.04f); break;
-    case Hero::Grimmjow: stance({0.05f, 0.11f}, {-0.03f, 0.11f}, 0.12f, -0.11f, 0.1f, 0.06f); break;  // hands in his pockets
-    case Hero::Starrk: stance({0.07f, 0.14f}, {-0.03f, 0.14f}, 0.07f, -0.06f, -0.08f, 0.0f); break;  // lazy, leaning back
+  switch (d.style) {  // the guard of the build
+    case BodyStyle::Brute: stance({0.17f, 0.04f}, {-0.06f, 0.06f}, 0.13f, -0.13f, 0.03f, 0.08f); break;
+    case BodyStyle::Speedster: stance({0.12f, 0.05f}, {-0.04f, 0.07f}, 0.1f, -0.09f, 0.04f, 0.04f); break;
     default: break;
   }
-  const WeaponVisual v = carriedWeapon(d, held);
-  carryWeapon(p, v, H, Gait::Stand, bob);
-  if (v == d.baseWeapon) {
-    switch (d.hero) {  // personal touches
-      case Hero::Ichigo: p.handF = {0.21f * H, -0.05f * H + bob}; p.weaponDir = {1.0f, -0.62f}; break;  // pointed at the foe
-      case Hero::Byakuya: p.weaponDir = {0.5f, -1.0f}; break;  // upright, composed
-      case Hero::Link: p.weaponDir = {1.0f, -0.5f}; break;
-      default: break;
-    }
-  }
+  carryWeapon(p, carriedWeapon(d, held), H, Gait::Stand, bob);
   if (p.weapon) p.weaponDir = rotate(p.weaponDir.norm(), br * 0.03f);
   float bl = std::fmod(time + d.height, 3.7f);
   p.blink = bl < 0.12f || (std::fmod(time * 0.37f + d.height, 3.0f) < 0.4f && bl > 0.3f && bl < 0.4f);  // sometimes twice
@@ -960,7 +924,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
     }
     case FState::Run: {
       runPose(p, f, H, sf);
-      if (runStyle(d.hero) != RunStyle::Ninja || isHandWeapon(heldVisual(f))) carryWeapon(p, carried, H, Gait::Run);
+      if (runStyle(d) != RunStyle::Ninja || isHandWeapon(heldVisual(f))) carryWeapon(p, carried, H, Gait::Run);
       break;
     }
     case FState::Crouch: {
@@ -1189,6 +1153,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
   }
   p.bladeLen = f.bladeLength();
   p.form = f.formKind();
+  p.formColor = C(f.def->palettes[0].accent);
   pickClip(p, f, m, tt);
   return p;
 }
@@ -1374,7 +1339,7 @@ void stepAnim(Anim& a, const Fighter& f, const Match& m) {
   }
   if (attacking && p.trailLimb != Limb::None && p.trailLimb != Limb::Body) {
     const bool blade = (p.trailLimb == Limb::Weapon || (p.trailLimb == Limb::ArmFront && isHandWeapon(p.held))) &&
-                       frontWeaponLength(*f.def, p) > 0.0f;
+                       frontWeaponLength(p) > 0.0f;
     for (int i = std::min(a.trailN, kTrail - 1); i > 0; --i) {
       a.trailA[i] = a.trailA[i - 1];
       a.trailB[i] = a.trailB[i - 1];
@@ -1489,18 +1454,8 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
 // orbiting the body (its front half passes in front of the fighter).
 // The hero's aura drawn by PixelLab (behind it, from its feet), if it has one.
 const char* auraSprite(const Fighter& f) {
-  switch (f.def->hero) {
-    case Hero::Ichigo:  // blue reiatsu; black and red in Bankai and in the masked Getsuga Jujisho
-      return f.weapon == 1 || (f.weapon == 0 && f.move == FinalSmash) ? "bankai_aura" : "reiatsu_aura";
-    case Hero::Naruto: return f.weapon == 1 ? "kurama_aura" : "sage_aura";  // nature energy, or Kurama's golden flames
-    case Hero::Sasuke: return "susanoo_aura";
-    case Hero::Kakashi: return "raikiri_aura";
-    case Hero::Kratos: return "rage_aura";
-    case Hero::Sukuna: return "cursed_aura";
-    case Hero::Link: return "light_aura";
-    case Hero::Gojo: return "six_eyes_aura";
-    default: return nullptr;
-  }
+  (void)f;
+  return "ult_ready";  // the same aura for everyone, in PixelLab
 }
 
 void drawUltAura(Vec2 c, float H, float t, bool front, float k, Color z) {
@@ -1716,8 +1671,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   // The hero's PixelLab aura (its reiatsu...) replaces the drawn ring and pillar when it has one: the ultimate
   // ready, then unleashed (bigger).
   const char* aura = auraSprite(f);
-  // Sukuna's finger and Gojo's Six Eyes, nothing in hand: their aura stays on, fainter
-  const bool power = (d.hero == Hero::Sukuna || d.hero == Hero::Gojo) && f.weapon == 1;
+  const bool power = false;
   if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs || power)) {
     art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0,
                 usingFs ? 1.0f : std::max(ultK, power ? 0.7f : 0.0f));

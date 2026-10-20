@@ -22,16 +22,8 @@ void drawItems(const Match& m, float time) {
       DrawEllipseLines(int(base.x), int(base.y - 2), 40 + 6 * pulse, 10, withAlpha(g, 0.8f));
     }
     DrawCircleGradient(int(center.x), int(center.y), 44, withAlpha(g, 0.35f), withAlpha(c, 0.0f));
-    // The weapon itself, tilted, slowly turning
-    const float a = -1.1f + std::sin(time * 1.6f + it.age * 0.01f) * 0.25f;
-    const Vec2 dir{std::cos(a), std::sin(a)};
-    const float len = std::max(30.0f, weaponVisualLength(w.visual) * 0.8f);
-    WeaponStyle st;
-    st.icon = true;
-    drawWeaponStyled(w.visual, center - dir * (len * 0.5f), dir, 0.8f, 1.0f, time, st);
-    if (w.visual == WeaponVisual::SixEyes || w.visual == WeaponVisual::CursedFinger || w.visual == WeaponVisual::Grimoire ||
-        w.visual == WeaponVisual::HollowPurple)
-      DrawCircleV(V(center), 10.0f, withAlpha(g, 0.9f));
+    // The weapon itself
+    drawWeaponIcon(d, it.slot, center, 76.0f);
     // Whose weapon: the owner's portrait in a ring
     const Vec2 tag = center + Vec2{0.0f, -58.0f};
     DrawCircleV(V(tag), 21, withAlpha(c, 0.9f));

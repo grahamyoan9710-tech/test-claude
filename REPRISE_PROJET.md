@@ -55,6 +55,22 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 10 h 30 UTC, session A, branche `claude/refonte-originaux` : **étape 3 faite, les anciens persos sont
+  retirés.** Le propriétaire a tout validé : plan recommandé, torses nus gardés, « EN LIGNE » grisé.
+  - Cœur : 17 persos numérotés (P01 à P17, identifiants `p01`…`p17`) d'après `docs/refonte/FICHES.md` (mains
+    nues, 2 kits d'armes et 9 transformations). Éléments, visuels de projectiles, ultimes et formes sont
+    génériques. Chaque coup nomme son futur effet PixelLab `pNN_<x|a|b|t>_<n|s|u|d|ult|aura|burst>`.
+  - Rendu : plus aucun dessin procédural des persos ni des armes. Un perso est dessiné par ses clips, sinon par son
+    image provisoire `pNN_still.png`. Ses portraits viennent de `pNN_portrait.png`, ses icônes d'armes de
+    `pNN_icon_a/b.png` (`scripts/crop_refs.py` découpe les planches du propriétaire).
+  - Retirés : 1 520 images (clips, effets propres aux anciens persos, armes dessinées), `assets/fighters`,
+    17 voix, `render_weapons` et cinématiques codées, shader du Kamui, données PixelLab des anciens persos.
+    `qa_fixes.json`, `qa_prompts.json`, `subjects14.json` et `approved.txt` sont remis à zéro. Gardés : 15 effets
+    génériques (`hit_*`, `explosion_*`, fumée, téléportation, contre).
+  - Arènes : noms et textes neutres (plus de Konoha, Las Noches, etc.). **Leurs décors dessinés restent ceux des
+    anciennes séries** : à refaire, question posée au propriétaire.
+  - Vérifié : `cmake --build build`, `ctest` 1/1, `sim_test` « all tests passed ». Équilibre provisoire de 29 % à
+    77 %, à régler après les clips. Captures sans écran du combat et de la sélection : correctes.
 - 20/10 10 h 30 UTC, session A, branche `claude/refonte-originaux` : **étape 2 de la refonte faite.**
   - Fiches des 17 persos, de leurs 34 armes et des 9 transformations, plus les menus et le budget :
     `docs/refonte/FICHES.md`. Les images du propriétaire sont dans `docs/refonte/`.

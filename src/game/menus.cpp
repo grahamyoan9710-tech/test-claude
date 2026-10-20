@@ -50,15 +50,11 @@ Rectangle rosterRect(int i) {
   const int row = i / perRow, col = i % perRow, inRow = std::min(perRow, n - row * perRow);
   return {(kScreenW - (pitch * inRow - 6)) * 0.5f + col * pitch, 516.0f + row * 80.0f, w, h};
 }
-// Tile tint per universe (the fighters of one series sit side by side): bright, one hue each.
+// Tile tint of a fighter: the colour of its element.
 Color seriesColor(const std::string& series) {
-  if (series == "Black Clover") return {72, 164, 58, 255};     // grimoire green
-  if (series == "Bleach") return {56, 128, 236, 255};          // reishi blue
-  if (series.rfind("Zelda", 0) == 0) return {22, 170, 164, 255};  // Zonai teal
-  if (series == "God of War") return {208, 40, 50, 255};       // Spartan red
-  if (series == "Jujutsu Kaisen") return {138, 72, 228, 255};  // hollow purple
-  if (series == "Naruto") return {246, 128, 30, 255};          // Konoha orange
-  return {214, 166, 52, 255};                                 // Monster Hunter: guild gold
+  for (const auto& c : roster())
+    if (c.series == series) return hitFxColor(c.element);
+  return {214, 166, 52, 255};
 }
 constexpr Color kRandomTint = {74, 64, 176, 255};  // "?": a fighter or an arena drawn at random
 constexpr float kTileSlant = 14.0f;

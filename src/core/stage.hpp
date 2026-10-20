@@ -15,11 +15,11 @@ struct Platform {
 };
 
 enum class StageTheme : uint8_t {
-  Cosmic, Sunset, Sky,                  // the Zonai worlds: the Depths, the Sanctuary, the Sky Islands
-  LasNoches, Seireitei,                 // Bleach
-  BlackBulls, GrimoireTower,            // Black Clover
-  Shibuya, JujutsuHigh,                 // Jujutsu Kaisen
-  Konoha, ValleyOfTheEnd                // Naruto
+  Cosmic, Sunset, Sky,                  // the ancient lands: the Depths, the Sanctuary, the Sky Islands
+  MoonDesert, WhiteCity,                // desert and city
+  OldDen, TowerOfLore,                  // forest
+  NeonCrossroads, ShadowTemple,         // night
+  PeakVillage, SkyValley                // mountain temples
 };
 constexpr int kStageThemeCount = 11;
 

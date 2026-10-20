@@ -63,13 +63,6 @@ if(CLASH_BUILD_GAME)
     font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Poppins-Bold.ttf"
     icon_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
     gamecontrollerdb_txt "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt")
-  # Illustrated fighters (scripts/rig_art.py): the packed parts and their joints (see src/game/fighter_art.cpp).
-  set(CLASH_FIGHTER_ART asta yuno ichigo byakuya kenpachi ulquiorra grimmjow starrk naruto sasuke kakashi gojo sukuna
-      link ganondorf kratos hunter)
-  foreach(f ${CLASH_FIGHTER_ART})
-    list(APPEND CLASH_EMBED fighter_${f}_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/fighters/${f}.png"
-                            fighter_${f}_rig "${CMAKE_CURRENT_SOURCE_DIR}/assets/fighters/${f}.rig")
-  endforeach()
   # Animations generated for the fighters (scripts/import_sheet.py): every assets/sprites/*.png, its index, and a
   # table of them for src/game/fighter_art.cpp.
   file(GLOB CLASH_SHEETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/assets/sprites/*.png")

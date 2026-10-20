@@ -36,14 +36,15 @@ struct Pose {
   HitFx heldFx = HitFx::Normal;            // its element (subtle glow)
   bool twoHanded = false;  // back hand on the grip too
   bool hideWeapon = false; // the weapon is flying (thrown axe)
-  float shieldOpen = 0.0f; // Kratos's Guardian Shield: 0 folded on the forearm .. 1 unfolded
+  float shieldOpen = 0.0f; // a folding shield: 0 folded on the forearm .. 1 unfolded
   float bow = -1.0f;       // < 0: no bow out; 0..1: string drawn back
   int prop = 0;            // object in the hand before a throw / shot (see render_fighter.cpp)
   float charge = 0.0f;     // energy gathered in the hands (casts, hand signs, raised arm)
   HitFx chargeFx = HitFx::Normal;
   bool shout = false;      // roaring / shouting face
   float bladeLen = 0.0f;   // > 0: the blade in hand is drawn this long (grip to tip, px at scale 1) = its hitbox
-  Form form = Form::None;  // transformation (Vasto Lorde, Segunda Etapa...)
+  Form form = Form::None;  // transformation
+  Color formColor{255, 255, 255, 255};  // its colour (the fighter's accent)
   int sheet = -1;          // a generated animation shows this pose instead (see SheetAnim in fighter_art.hpp)
   float sheetT = 0.0f;     // looping animations: seconds; the others: 0..1 through the move
   bool sheetFlip = false;  // the clip is drawn mirrored (a roll backwards)
@@ -95,32 +96,10 @@ void drawPortraitDisc(const CharacterDef& def, int palette, Vec2 center, float r
 
 // ---- Weapons (render_weapons.cpp) ---------------------------------------------
 // A weapon held at `grip`, pointing along `dir` (unit), at `scale` (1 = a 100 px fighter).
-void drawWeaponVisual(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time);
-float weaponVisualLength(WeaponVisual v);  // grip to tip, at scale 1
-// The same, as a fighter holds it.
-struct WeaponStyle {
-  int side = 1;           // +1 / -1: mirrors the asymmetric weapons (the fighter's facing)
-  bool single = false;    // in a hand: one Blade of Chaos, Link's sword without its shield
-  float glow = 0.0f;      // aura of a picked-up weapon's element (0 = none)
-  HitFx fx = HitFx::Normal;
-  float pull = -1.0f;     // bows: string drawn back (0..1), < 0 = at rest
-  float open = 0.0f;      // grimoire: opened (0..1)
-  int variant = 0;        // bows: 0 golden bow of light, 1 plain wooden bow, 2 bow of flames
-  bool ghost = false;     // afterimage: flat silhouette in `tint`
-  Color tint = WHITE;
-  float slim = 1.0f;      // cross-section of the weapon (< 1: slimmer, for the illustrated fighters' realistic builds)
-  bool icon = false;      // items and HUD: a power is shown by its icon (in a fight its effect is drawn on the body)
-};
-void drawWeaponStyled(WeaponVisual v, Vec2 grip, Vec2 dir, float scale, float alpha, float time,
-                      const WeaponStyle& style);
-// Round shield on a fighter's arm: Link's, or Kratos's Guardian Shield (folds along `fold` into a bracer).
-void drawShieldVisual(bool guardian, Vec2 center, float radius, float open, Vec2 fold, float alpha, float time,
-                      const WeaponStyle& style);
-bool isHandWeapon(WeaponVisual v);  // drawn in the front hand (not a power-up, not a shield)
-// The weapon in a fighter's front hand for this pose (picked-up weapon, else the base blade) and its length (px).
-WeaponVisual frontWeapon(const CharacterDef& def, const Pose& pose);
-float frontWeaponLength(const CharacterDef& def, const Pose& pose);
-// Weapons lying on the stage (render_items.cpp)
+// A fighter's weapon icon (assets/sprites/<id>_icon_a / _icon_b), fitted in `size`; false if it has none.
+bool drawWeaponIcon(const CharacterDef& def, int slot, Vec2 center, float size, float alpha = 1.0f);
+// A floating weapon (WeaponVisual::Floating) beside the fighter holding it.
+void drawFloatingWeapon(const Fighter& f, float time, float alpha);
 void drawItems(const Match& m, float time);
 
 // ---- Big effects (render_vfx.cpp) -------------------------------------------------
@@ -130,32 +109,14 @@ void drawUltimateBackdrop(const Match& m, float time);   // domain / cinematic b
 void drawUltimateFront(const Match& m, float time);
 // v5 cinematics (render_ult.cpp): draws the backdrop (front = false) or the foreground layer of an ultimate.
 // Returns true when it replaces the hero's classic domain.
-bool drawUltCinematic(const Match& m, const Fighter& f, UltFx fx, float k, int mf, float time, const Rect& view, bool front);
-// Transformations: Susanoo, Kurama's cloak, wings... behind (front = false) and over the fighter.
+// Transformations: the fighter's aura behind it (front = false) and over it.
 void drawFormAvatar(const Fighter& f, float time, bool front);
 
 // Signature element of each hero (auras, cut-ins, domains).
-inline HitFx heroElement(Hero h) {
-  switch (h) {
-    case Hero::Asta: return HitFx::AntiMagic;
-    case Hero::Yuno: return HitFx::Wind;
-    case Hero::Ichigo: return HitFx::Reiatsu;
-    case Hero::Byakuya: return HitFx::Petal;
-    case Hero::Link: return HitFx::Light;
-    case Hero::Ganondorf: return HitFx::Gloom;
-    case Hero::Kratos: return HitFx::Fire;
-    case Hero::Gojo: return HitFx::Cursed;
-    case Hero::Sukuna: return HitFx::Blood;
-    case Hero::Kenpachi: return HitFx::Berserk;
-    case Hero::Ulquiorra: return HitFx::Hollow;
-    case Hero::Hunter: return HitFx::Slash;
-    case Hero::Naruto: return HitFx::Chakra;
-    case Hero::Sasuke: return HitFx::Lightning;
-    case Hero::Kakashi: return HitFx::Lightning;
-    case Hero::Starrk: return HitFx::Wolf;
-    case Hero::Grimmjow: return HitFx::Claw;
-    default: return HitFx::Normal;
-  }
+inline HitFx heroElement(Hero h) {  // the element of the fighter's effects
+  for (const auto& c : roster())
+    if (c.hero == h) return c.element;
+  return HitFx::Normal;
 }
 
 // ---- VFX drawing kit (render_vfx.cpp): soft gradients made of a few big triangles ------

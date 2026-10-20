@@ -84,7 +84,7 @@ int checkHitboxes(const std::string& outPath) {
                   if (mk.opaque[size_t(y) * mk.w + x])
                     gap = std::min(gap, segDist({float(x), float(y)}, a, b) - rad);
             const Vec2 c = (s.a + s.b) * 0.5f - f.center();
-            std::fprintf(out, "%s\t%d\t%s\t%d\t%d\t%d\t%d\t%.3f\t%.1f\t%.1f\t%.1f\t%.1f\n", d.name.c_str(), slot,
+            std::fprintf(out, "%s\t%d\t%s\t%d\t%d\t%d\t%d\t%.3f\t%.1f\t%.1f\t%.1f\t%.1f\n", d.id.c_str(), slot,
                          art::sheetName(art::kSheetMove0 + mv), fr, md.duration, mk.frame, s.index,
                          inside ? float(covered) / inside : 0.0f, covered ? 0.0f : gap * k, c.x, c.y, s.radius);
             ++rows;
@@ -168,7 +168,7 @@ int fitImpacts(const std::string& outPath) {
                 if (j == 0) ++total;
               }
           }
-          std::fprintf(out, "%s\t%s\t%d\t%d\t%d\t%d\t", d.name.c_str(), art::sheetName(sheet), bi, blows[bi].first,
+          std::fprintf(out, "%s\t%s\t%d\t%d\t%d\t%d\t", d.id.c_str(), art::sheetName(sheet), bi, blows[bi].first,
                        blows[bi].second, md.duration);
           for (int j = 0; j < nf; ++j) std::fprintf(out, "%s%.3f", j ? "," : "", total ? cov[j] / total : 0.0);
           std::fprintf(out, "\n");
@@ -296,7 +296,7 @@ int fitHitboxes(const std::string& outPath) {
           ++total;
           const char* nm = art::sheetName(sheet);
           auto report = [&](int box, int frame, Vec2 o, float r0, Vec2 o1, float r1, float c0, float c1, const char* note) {
-            std::fprintf(rep, "%s\t%d\t%s\t%d\t%d\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.3f\t%.3f\t%s\n", d.name.c_str(), slot,
+            std::fprintf(rep, "%s\t%d\t%s\t%d\t%d\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.3f\t%.3f\t%s\n", d.id.c_str(), slot,
                          nm, box, frame, o.x, o.y, r0, o1.x, o1.y, r1, c0, c1, note);
           };
           // The frame shown in the middle of its window.
@@ -358,7 +358,7 @@ int fitHitboxes(const std::string& outPath) {
               std::snprintf(note, sizeof note, "swing: no better, kept");
             report(i, hit.frame, h.offset, h.radius, h.offset, h.radius, c0, better ? c1 : c0, note);
             if (!better) continue;
-            std::fprintf(out, "    {\"%s\", %d, %d, %d, %.2ff, 0, 0, %.1ff, %.1ff, %.1ff, %.3ff},  // %s swing\n", d.name.c_str(),
+            std::fprintf(out, "    {\"%s\", %d, %d, %d, %.2ff, 0, 0, %.1ff, %.1ff, %.1ff, %.3ff},  // %s swing\n", d.id.c_str(),
                          slot, mv, i, h.radius, h.radius, h1.a0, h1.a1, h1.reach1, nm);
             ++moved;
             continue;
@@ -430,7 +430,7 @@ int fitHitboxes(const std::string& outPath) {
             report(j, hit.frame, o.offset, o.radius, better ? o1 : o.offset, better ? rr : o.radius, cb, better ? ca : cb,
                    better ? (j == lead ? "fitted" : "moved with the blow") : "no better: kept");
             if (!better) continue;
-            std::fprintf(out, "    {\"%s\", %d, %d, %d, %.2ff, %.1ff, %.1ff, %.1ff, 0, 0, 0},  // %s\n", d.name.c_str(), slot, mv,
+            std::fprintf(out, "    {\"%s\", %d, %d, %d, %.2ff, %.1ff, %.1ff, %.1ff, 0, 0, 0},  // %s\n", d.id.c_str(), slot, mv,
                          j, o.radius, o1.x, o1.y, rr, nm);
             ++moved;
           }

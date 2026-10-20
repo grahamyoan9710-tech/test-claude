@@ -17,7 +17,7 @@ enum class Sfx : int {
 
 // Sounds recorded in assets/audio (sfx_<name>.mp3, embedded at build time) replace the synthesized ones; the
 // others are synthesized at start-up. The announcer's lines are voice_<key>.mp3, the themes music_<key>.mp3.
-// The announcer's key for a fighter's name: lower case letters ("NARUTO" -> "naruto").
+// The announcer's key for a fighter's name: lower case letters ("N° 01" -> "n_01").
 std::string voiceKey(const std::string& name);
 
 class Audio {
@@ -25,10 +25,10 @@ class Audio {
   bool init();
   void shutdown();
   void play(Sfx s, float volume = 1.0f, float pitch = 1.0f);
-  // The announcer: "three", "go", "game", "winner", a fighter's name ("naruto")... A new line cuts the last one.
+  // The announcer: "three", "go", "game", "winner", a fighter's name ("n_01")... A new line cuts the last one.
   void voice(const char* key, float volume = 1.0f);
   // 0 = silence, 1 = menu theme, 2 = battle theme; `world`: the theme of a series (music_<world>.mp3, e.g.
-  // "naruto"), the synthesized battle theme when there is none.
+  // "battle"), the synthesized battle theme when there is none.
   void setMusic(int mode, const char* world = nullptr);
   void update();  // feeds the recorded theme (call once a frame)
   void toggleMute();

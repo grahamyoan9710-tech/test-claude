@@ -296,6 +296,7 @@ struct CharacterDef {
   std::string name;
   std::string title;
   std::string series;             // element, shown in the menus
+  HitFx element = HitFx::Normal;  // the colour of its effects
   Hero hero = Hero::P01;
   BodyStyle style = BodyStyle::Brawler;
   std::array<Palette, 2> palettes;

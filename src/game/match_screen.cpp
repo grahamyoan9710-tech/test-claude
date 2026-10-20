@@ -83,7 +83,7 @@ void drawUltCutIn(const Match& m, float time) {
   const Fighter& f = m.fighters[m.freezeOwner];
   const int t = 30 - m.freezeTimer;  // 0 .. 29
   const HitFx el = heroElement(f.def->hero);
-  const bool black = el == HitFx::AntiMagic;
+  const bool black = el == HitFx::Dark;
   const Color c = black ? Color{60, 58, 70, 255} : hitFxColor(el);
   const Color g = black ? Color{235, 235, 245, 255} : hitFxGlow(el);
   const Color deep = black ? Color{6, 6, 10, 255} : shade(hitFxColor(el), 0.3f);
@@ -166,11 +166,7 @@ MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devic
   comboStart_.assign(m_.fighters.size(), 0.0f);
   comboShow_.assign(m_.fighters.size(), 0);
   updateCamera(true);
-  // the theme of the stage's world (music_<world>.mp3), else the synthesized battle theme
-  const std::string& series = m_.stage().series;
-  const char* world = series == "Naruto" ? "naruto" : series == "Bleach" ? "bleach" : series == "Black Clover" ? "blackclover"
-                      : series == "Jujutsu Kaisen" ? "jjk" : series.rfind("Zelda", 0) == 0 ? "zelda" : "battle";
-  audio_.setMusic(2, world);
+  audio_.setMusic(2, "battle");  // music_battle.mp3, else the synthesized battle theme
 }
 
 std::vector<std::string> MatchScreen::pauseItems() const {
