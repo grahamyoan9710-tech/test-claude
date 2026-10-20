@@ -3,6 +3,7 @@ build-*/
 dist/
 *.png
 !docs/*.png
+!docs/refonte/*.png
 !assets/*.png
 !assets/fighters/*.png
 !assets/sprites/*.png

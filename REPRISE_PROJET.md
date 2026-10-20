@@ -55,6 +55,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 10 h 30 UTC, session A, branche `claude/refonte-originaux` : **étape 2 de la refonte faite.**
+  - Fiches des 17 persos, de leurs 34 armes et des 9 transformations, plus les menus et le budget :
+    `docs/refonte/FICHES.md`. Les images du propriétaire sont dans `docs/refonte/`.
+  - CLAUDE.md est mis à jour : refonte, armes, effets, tenues.
+  - **En attente de validation du propriétaire.** Aucune génération PixelLab, et pas de jeton PixelLab dans ce
+    conteneur.
+  - Suite après validation : étape 3 (retirer les anciens persos) et étape 4 (nouvelles armes).
 - 20/10 09 h 45 UTC, session A (propriétaire) : **refonte complète décidée par le propriétaire** (droits
   d'auteur) : les 17 combattants actuels seront remplacés par 17 persos originaux, avec des armes invoquées par une
   touche, et tous les effets et menus seront refaits avec PixelLab. Ce travail se fait sur la branche

@@ -1,18 +1,29 @@
 # Super Clash Bros. — instructions pour Claude Code
 
-Jeu de combat façon Smash (fan game) en C++17 avec raylib 5.5 : 17 combattants d'animes et de jeux.
+Jeu de combat façon Smash en C++17 avec raylib 5.5.
+**Refonte en cours (décidée le 20/10/2026)** : 17 combattants originaux remplacent les 17 anciens persos d'animes et
+de jeux, sur la branche `claude/refonte-originaux`. Fiches, menus et budget : `docs/refonte/FICHES.md`. Images du
+propriétaire : `docs/refonte/*.png`.
 Avant toute chose, lire **REPRISE_PROJET.md** : il donne l'état exact du travail et la suite.
 
 ## Règles
 - Le propriétaire du projet écrit en français : répondre en français.
-- Ne jamais recommencer le projet ni retirer une fonctionnalité existante.
+- Ne jamais recommencer le moteur ni retirer une fonctionnalité existante, **sauf la refonte décidée par le
+  propriétaire** :
+  - les 17 anciens combattants, leurs sprites, leurs effets et leurs voix sont retirés (droits d'auteur) ;
+  - sont gardés : `src/core` (combat, IA, tests), le système d'armes à kits, la chaîne PixelLab (`tools/pixellab`,
+    `import_all.py`, `qa_fixes`, `fitall.sh`), les scripts d'import, les paquets et les releases.
+- Les persos, armes et transformations n'ont pas encore de nom : ils sont repérés par numéro (perso `NN`, armes
+  `NN-A` et `NN-B`, transformation `TNN`).
+- Les 3 persos et 3 armes prévus pour la 10.5 ne sont pas à faire maintenant.
 - Ne jamais afficher, committer ou recopier une clé :
   - jeton PixelLab : `tools/pixellab/px/.token` ;
   - clé ElevenLabs : `tools/pixellab/el/.key`.
   Ces dossiers sont ignorés par git, et chacun utilise son propre compte.
 - Ne jamais relancer un job PixelLab encore « submitted » ou en cours : chaque job est facturé. Vérifier d'abord avec
   `python3 tools/pixellab/tools/pxcli.py jobs`.
-- Lilynette (Starrk) est une enfant : sa tenue reste couverte et rien n'est sexualisé.
+- Aucun personnage sexualisé : pas de décolleté, ventre couvert, jupes ou shorts à mi-cuisse au moins, pas de
+  jarretelles. Les persos jeunes (04, 11, 14) ont des tenues sages.
 - Commits : messages en anglais, clairs. Ne rien fusionner dans `main` sans demande explicite.
 - **Versions : +0,1 à chaque mise à jour livrée au propriétaire** (9.1, 9.2, 9.3…), dans
   `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README. Prendre le verrou « Version et paquets »,
@@ -72,5 +83,9 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - C++17, style du code voisin : commentaires courts en anglais, noms explicites, pas de dépendance nouvelle.
 - Un clip regardé vers la droite ; le jeu le retourne. Dans un clip d'attaque, l'image « impact » est celle que le jeu
   tient tant que la hitbox est active.
-- Les gros effets (rayons, tornades, explosions) sont dessinés par le jeu (effets `fx`), pas dans les clips du
-  personnage. Les prompts PixelLab se terminent par « Only <nom> is drawn ».
+- Effets : **tous** faits avec PixelLab (`vfx_workbench`), menus compris, et joués par le jeu (effets `fx`). Aucun
+  effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
+- Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Un clip où
+  un effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun perso coupé au bord du cadre.
+- Armes (refonte) : tout le monde commence à mains nues. La touche Arme fait apparaître l'arme A, puis alterne A et
+  B, sans délai. L'arme reste jusqu'au KO. Plus de minuteur ni d'armes qui tombent sur l'arène.
