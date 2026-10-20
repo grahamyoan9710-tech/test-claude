@@ -35,29 +35,6 @@ Color auraColor(Hero h) {
   return a.dark ? a.inner : a.outer;
 }
 
-namespace {
-// One layer of flame: a soft blob whose rim licks upwards in flickering tongues.
-void kiFlame(Vec2 c, float H, float scale, float t, Color col, float alpha, float seed) {
-  constexpr int kN = 30;
-  const Vec2 o = c + Vec2{0.0f, -H * 0.1f};
-  const Color in = withAlpha(col, alpha), out = withAlpha(col, 0.0f);
-  Vec2 pts[kN];
-  for (int i = 0; i < kN; ++i) {
-    const float a = 2.0f * kPi * i / kN;
-    const Vec2 d{std::cos(a), std::sin(a)};
-    const float up = std::max(0.0f, -d.y);
-    float r = H * scale * (0.5f + 0.06f * std::sin(t * 11.0f + i * 1.7f + seed));
-    float tongue = std::pow(up, 1.4f) * H * scale * (0.42f + 0.32f * (0.5f + 0.5f * std::sin(t * 15.0f + i * 2.3f + seed)));
-    if (i % 2) {  // notches between the tongues
-      r *= 0.86f;
-      tongue *= 0.45f;
-    }
-    pts[i] = o + Vec2{d.x * r * 0.78f, d.y * r * 1.02f - tongue};
-  }
-  for (int i = 0; i < kN; ++i) vfx::tri(o, pts[i], pts[(i + 1) % kN], in, out, out);
-}
-}  // namespace
-
 Fx::Particle& Fx::add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity,
                       float drag) {
   if (parts_.size() >= kMaxParticles) {
@@ -928,42 +905,15 @@ void Fx::update(const Match& m) {
         audio_->play(Sfx::BeamHum, 0.5f + 0.4f * big, mv->beam.width > 100.0f ? 0.8f : 1.2f);
         shake_ = std::max(shake_, 4.0f + 8.0f * big);
       }
-      if (m.frame % 2 == 0) {  // sparks spraying from the hands
-        const BeamDef& b = mv->beam;
-        const Vec2 a = f.center() + Vec2{b.from.x * f.facing, b.from.y};
-        const Vec2 d{std::cos(deg2rad(b.angle)) * f.facing, -std::sin(deg2rad(b.angle))};
-        add(PK::Spark, a, (d + rdir() * 0.8f) * rng_.range(5.0f, 11.0f), 10, 3.0f, 0.0f, hitFxGlow(b.fx));
-        shake_ = std::max(shake_, 2.0f + 3.0f * clampf(b.width / 160.0f, 0.0f, 1.0f));
-      }
+      shake_ = std::max(shake_, 2.0f + 3.0f * clampf(mv->beam.width / 160.0f, 0.0f, 1.0f));
     } else if (!mv) {
       beamMark_[id] = -1;
     }
     if (f.hitlag > 0) continue;
-    float sp = f.kbVel.len();
-    if (f.state == FState::Hitstun && sp > 8.0f && m.frame % 2 == 0) {
-      Color c = sp > 16.0f ? Color{255, 170, 90, 220} : Color{230, 230, 235, 200};
-      add(PK::Smoke, f.center(), f.kbVel * -0.05f, 26, 8, 20 + sp, c);
-    }
-    if (f.state == FState::Hitstun && sp > 21.0f && m.frame % 3 == 0) {  // a launch that kills crackles
-      Particle& z = add(PK::Zap, f.center() + rdir() * 10.0f, {}, 8, 34.0f + sp, 3.0f, {255, 110, 60, 255});
-      z.rot = std::atan2(-f.kbVel.y, -f.kbVel.x) + rng_.range(-0.6f, 0.6f);
-      z.color2 = {255, 240, 200, 255};
-      z.seed = uint32_t(m.frame) * 31u + uint32_t(f.id);
-    }
-    const AuraLook look = auraLook(f.def->hero);
-    if (f.finalSmash && m.frame % 2 == 0) {  // ki: sparks shooting up through the aura
-      add(PK::Spark, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.1f, 0.8f) * H},
-          {rng_.range(-0.3f, 0.3f), -rng_.range(5.0f, 9.0f)}, rng_.range(8, 12), 2.0f, 0.0f,
-          look.dark ? (m.frame % 4 ? look.outer : look.inner) : look.inner, 0.0f, 0.97f);
-      if (m.frame % 6 == 0)
-        add(PK::Mote, f.pos + Vec2{rng_.range(-0.45f, 0.45f) * H, -rng_.range(0.0f, 0.9f) * H},
-            {rng_.range(-0.3f, 0.3f), rng_.range(-1.6f, -0.8f)}, rng_.range(30, 50), rng_.range(1.8f, 3.2f), 0.4f, look.inner,
-            -0.02f, 0.99f);
-    }
-    if (f.charging && m.frame % 2 == 0) {  // gathering power: sparks converge
-      Vec2 o = rdir() * (H * 0.7f);
-      add(PK::Spark, f.center() + o, o * -0.09f, 10, 2.5f, 0, look.dark ? look.inner : mixColor(look.inner, {255, 240, 150, 255}, 0.4f));
-    }
+    const float sp = f.kbVel.len();
+    if (f.state == FState::Hitstun && sp > 8.0f && m.frame % 3 == 0 && art::fxInfo("smoke_puff"))  // a launch trails smoke
+      playFx("smoke_puff", f.center(), clampf(0.25f + sp / 60.0f, 0.3f, 0.7f), rng_.range(0.0f, 6.28f), false,
+             sp > 16.0f ? Color{255, 190, 140, 255} : WHITE);
   }
   projectileTrails(m);
   shake_ *= 0.86f;
@@ -1023,31 +973,12 @@ void Fx::drawBack(const Match& m, float time) const {
       k = std::max(k, 0.45f + 0.55f * ratio);
     }
     if (k <= 0.0f) continue;
+    // The PixelLab aura: the fighter's transformation aura if it has one, else the grey one in its colour
+    const std::string own = f.def->id + "_t_aura";
+    const bool mine = art::fxInfo(own.c_str()) != nullptr;
     const AuraLook look = auraLook(f.def->hero);
-    const float H = f.height(), t = time + f.id * 1.3f;
-    const Vec2 c = f.center();
-    const float s = 0.92f + 0.12f * k + 0.03f * std::sin(t * 20.0f);
-    if (look.dark) {  // black flames, lit from inside
-      kiFlame(c, H, s * 1.08f, t, look.outer, 0.62f * std::min(1.0f, k), 0.0f);
-      vfx::additive(true);
-      kiFlame(c, H, s * 0.82f, t * 1.3f, look.inner, 0.24f * std::min(1.0f, k), 2.0f);
-      vfx::additive(false);
-    } else {
-      vfx::additive(true);
-      kiFlame(c, H, s * 1.1f, t, look.outer, 0.42f * std::min(1.0f, k), 0.0f);
-      kiFlame(c, H, s * 0.86f, t * 1.25f, mixColor(look.outer, look.inner, 0.5f), 0.38f * std::min(1.0f, k), 2.0f);
-      kiFlame(c, H, s * 0.6f, t * 1.5f, look.inner, 0.3f * std::min(1.0f, k), 4.0f);
-      vfx::additive(false);
-    }
-    vfx::additive(true);
-    for (int i = 0; i < 7; ++i) {  // streaks of ki racing upwards
-      const float ph = std::fmod(t * 2.2f + vfx::hash01(i * 13 + f.id * 7), 1.0f);
-      const float x = c.x + (vfx::hash01(i * 17 + f.id) - 0.5f) * H * 0.85f;
-      const float y = c.y + H * 0.45f - ph * H * 1.3f;
-      const Color col = look.dark ? Color{230, 230, 240, 255} : look.inner;
-      vfx::streak({x, y + H * 0.3f}, {x, y}, 1.0f, 3.5f, withAlpha(col, 0.0f), withAlpha(col, 0.6f * std::sin(ph * kPi) * std::min(1.0f, k)));
-    }
-    vfx::additive(false);
+    art::drawFx(mine ? own.c_str() : "sys_aura", time + f.id * 0.37f, f.pos, f.def->height / 170.0f * (0.95f + 0.1f * k),
+                0.0f, f.facing < 0, 0.85f * std::min(1.0f, k), mine ? WHITE : (look.dark ? look.inner : look.outer));
   }
 }
 

@@ -398,6 +398,14 @@ FX["sys_weapon_pillar"] = recipe(90, 320, 45, 316, 12, [
     {"id": "base", "type": "ring", "radius": {"wave": {"mid": 20, "amp": 3, "cycles": 1}}, "width": 1.5, "soft": 2,
      "squash": 0.26, "ramp": "main"},
 ], loop=True, outline="none")
+FX["sys_aura"] = recipe(180, 240, 90, 226, 10, [
+    {"id": "back", "type": "flame", "width": 46, "height": 150, "tongues": 5, "spread": 1.0, "taper": 0.5, "base": 0.9,
+     "sway": 0.3, "flicker": 0.6, "cycles": 2, "ramp": "main", "intensity": 0.8},
+    {"id": "inner", "type": "flame", "width": 30, "height": 110, "tongues": 3, "spread": 0.8, "base": 0.9,
+     "sway": 0.25, "flicker": 0.5, "cycles": 2, "ramp": "glow", "intensity": 0.7},
+    {"id": "sparks", "type": "particles", "mode": "rise", "radius": 40, "squash": 0.4, "speed": 160, "count": 10,
+     "size": [5, 10], "shape": "streak", "lifespan": 0.6, "ramp": "glow", "fade_out": 0.4},
+], loop=True)
 FX["sys_weapon_beacon"] = recipe(130, 170, 65, 150, 12, [
     {"id": "ring", "type": "ring", "radius": {"wave": {"mid": 34, "amp": 4, "cycles": 1}}, "width": 1.5, "soft": 2,
      "squash": 0.26, "ramp": "main"},
