@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:39a1b77e-3e0a-48c1-87a1-c7cc1e9e05c0", "last_frame_url": "upload:aea6e4e5-5071-4a87-9cb1-885ba5223478", "description": "taekwondo jumping scissor kick: springs straight up kicking both legs high above her head one after the other, then lands. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots", "initial_pose": "fighting stance facing right, fists raised"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "e1167828-a01f-406a-beb9-0246f3ba27e5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:39a1b77e-3e0a-48c1-87a1-c7cc1e9e05c0",
+  "last_frame_url": "upload:aea6e4e5-5071-4a87-9cb1-885ba5223478",
+  "description": "taekwondo jumping scissor kick: springs straight up kicking both legs high above her head one after the other, then lands. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: e1167828-a01f-406a-beb9-0246f3ba27e5\njob_id: e1167828-a01f-406a-beb9-0246f3ba27e5\ndescription: taekwondo jumping scissor kick: springs straight up kicking both legs high above her head one after the other, then lands. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"e1167828-a01f-406a-beb9-0246f3ba27e5\")\nasset_id: 16953963-b937-5a1d-9e55-0d3872196f7b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png"
+}
