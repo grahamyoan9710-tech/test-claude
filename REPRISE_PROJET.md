@@ -55,10 +55,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
-- 20/10 19 h 45 UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` (= `claude/refonte-originaux` +
-  ce commit) : **reprise bloquée : pas de jeton PixelLab dans ce conteneur** (`px/.token` n'est pas dans git).
-  `fetch_orphans.sh`, `driver.py` et `skill_fx.py render` attendent le jeton ; rien n'a été envoyé à PixelLab.
-  - Relu sans jeton (clips déjà téléchargés). **Bons** : 01 nair, bair (quelques points blancs sous les pieds),
+- 20/10 19 h 15 UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` (= `claude/refonte-originaux` +
+  ses commits) : **reprise des clips et des effets.** Jeton remis dans `px/.token` (ignoré par git).
+  - `fetch_orphans.sh` : rien à récupérer. 01 w1_uspecial et w1_dspecial absents de la galerie (`list_images`
+    `search`) : passés en `rejected`, le driver les refait.
+  - Lancés : `driver.py p01 p02 p03 p07 p08` (348 clips prêts au départ, ~420 générations sur 1 960) et
+    `skill_fx.py render` (les 79 effets, gratuit).
+  - Relu avant le jeton (clips déjà téléchargés). **Bons** : 01 nair, bair (quelques points blancs sous les pieds),
     usmash, dsmash, dashattack, pummel, uthrow, w0_fthrow, w0_bthrow, tout le kit w1 présent ; 02 idle, walk,
     runstart, land, crouch, shield, holdstart, roll, spotdodge. **Tache grise dans la traînée** (gardés, à ton avis) :
     01 fair, sspecial (déjà refait), w0_uthrow.
