@@ -479,7 +479,7 @@ def render(name):
             time.sleep(5)
             continue
         r = subprocess.run(["python3", PX, "vfx_workbench",
-                            json.dumps({"argv": [s0, "render", json.dumps({"recipe": FX[name], "zoom": 2})]}),
+                            json.dumps({"argv": [s0, "render", json.dumps({"recipe": FX[name], "zoom": 2, "fit_canvas": True})]}),
                             "--save", out], capture_output=True, text=True, timeout=300)
         text = r.stdout + r.stderr
         if "busy" not in text:
