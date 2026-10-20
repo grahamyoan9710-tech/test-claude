@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:4f29f663-1230-408d-a27e-733f5a4759cf", "last_frame_url": "upload:de064dde-e958-49dd-8757-3363b9d8035d", "description": "muay thai flying knee: leaps forward driving one knee straight ahead with both arms raised, then lands in the high guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots", "initial_pose": "running to the right, leaning forward, arms swept back"}, "src": "/home/user/test-claude/tools/pixellab/pxa/p03/runstart/f_08.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "75ad8e6a-7772-41ed-bbc9-520c486ee98e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4f29f663-1230-408d-a27e-733f5a4759cf",
+  "last_frame_url": "upload:de064dde-e958-49dd-8757-3363b9d8035d",
+  "description": "muay thai flying knee: leaps forward driving one knee straight ahead with both arms raised, then lands in the high guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 75ad8e6a-7772-41ed-bbc9-520c486ee98e\njob_id: 75ad8e6a-7772-41ed-bbc9-520c486ee98e\ndescription: muay thai flying knee: leaps forward driving one knee straight ahead with both arms raised, then lands in the high guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"75ad8e6a-7772-41ed-bbc9-520c486ee98e\")\nasset_id: dffe622f-2d56-5b9d-996e-0fc665ef9dc1\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"
+}

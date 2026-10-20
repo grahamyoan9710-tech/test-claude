@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "636eb39f-350e-4e5c-9c4b-6ff33992bc87",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -13,5 +13,7 @@
  },
  "reply": "id: 636eb39f-350e-4e5c-9c4b-6ff33992bc87\njob_id: 636eb39f-350e-4e5c-9c4b-6ff33992bc87\ndescription: tips slowly backwards off balance and sinks down until he lies flat on his back on the floor, ending lying still; nothing else is drawn around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"636eb39f-350e-4e5c-9c4b-6ff33992bc87\")\nasset_id: 79c4c31b-06f4-5c89-ac5f-2445dd0d3824\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
- "last": null
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
 }
