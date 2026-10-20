@@ -710,11 +710,18 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::ShieldHit, 0.35f, 0.9f);
         break;
       }
-      case EvType::WeaponPickup: {
+      case EvType::WeaponSummon: {  // the weapon appears in a flash of its colour (the shared "appear" effect)
         const auto& chars = roster();
         const int ch = std::clamp(int(e.strength), 0, int(chars.size()) - 1);
         const WeaponDef& w = chars[ch].weapons[e.b & 1];
-        const Color c = hitFxColor(w.fx), g = w.fx == HitFx::Shadow ? Color{230, 230, 240, 255} : hitFxGlow(w.fx);
+        const Color c = hitFxColor(w.fx), g = hitFxGlow(w.fx);
+        if (art::fxInfo("move_appear")) {
+          const Vec2 feet = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos : e.pos;
+          playFx("move_appear", feet, chars[ch].height / 170.0f, 0.0f, false, mixColor(c, WHITE, 0.25f));
+          texts_.push_back({e.pos + Vec2{0.0f, -70.0f}, w.name, g, 0});
+          au.play(Sfx::WeaponPickup, 0.9f);
+          break;
+        }
         add(PK::Flash, e.pos, {}, 12, 30, 130, g);
         add(PK::Ring, e.pos, {}, 18, 10, 120, withAlpha(w.fx == HitFx::Shadow ? Color{20, 18, 24, 255} : c, 0.9f));
         add(PK::Ring, e.pos, {}, 26, 10, 170, withAlpha(g, 0.6f));
@@ -750,11 +757,16 @@ void Fx::onEvents(const Match& m) {
         add(PK::Ring, e.pos, {}, 14, 20, 140, WHITE);
         au.play(Sfx::Counter, 0.8f, 0.8f);
         break;
-      case EvType::WeaponBreak: {
+      case EvType::WeaponVanish: {  // the weapon fades away (the shared "vanish" effect)
         const auto& chars = roster();
         const int ch = std::clamp(int(e.strength), 0, int(chars.size()) - 1);
         const WeaponDef& w = chars[ch].weapons[e.b & 1];
         const Color c = hitFxColor(w.fx);
+        if (art::fxInfo("move_vanish")) {
+          const Vec2 feet = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos : e.pos;
+          playFx("move_vanish", feet, chars[ch].height / 170.0f, 0.0f, false, mixColor(c, WHITE, 0.25f));
+          break;
+        }
         for (int i = 0; i < 18; ++i)
           add(PK::Shard, e.pos, rdir() * rng_.range(3.0f, 10.0f) + Vec2{0, -2.0f}, rng_.range(30, 46), rng_.range(4.0f, 8.0f), 1.0f,
               i % 3 ? Color{200, 206, 216, 255} : c, 0.4f);
@@ -779,7 +791,14 @@ void Fx::projectileTrails(const Match& m) {
 }
 
 void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip) {
-  if (art::fxInfo(name)) sprites_.push_back({name, at, size, rot, flip, 0});
+  playFx(name, at, size, rot, flip, WHITE);
+}
+
+void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip, Color tint) {
+  if (!art::fxInfo(name)) return;
+  SpriteFx s{name, at, size, rot, flip, 0};
+  s.tint = tint;
+  sprites_.push_back(s);
 }
 
 void Fx::update(const Match& m) {
@@ -944,7 +963,7 @@ void Fx::update(const Match& m) {
 // ---- Drawing ---------------------------------------------------------------------------
 void Fx::drawBack(const Match& m, float time) const {
   for (const auto& f : sprites_)  // the techniques' effects, behind their fighter
-    if (f.follow != -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip);
+    if (f.follow != -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
   for (const auto& p : parts_) {  // cracks in the ground, under everything that moves
     if (p.kind != PK::Crack) continue;
     const float a = clampf(p.life / 40.0f, 0.0f, 1.0f), grow = clampf((p.maxLife - p.life) / 5.0f, 0.0f, 1.0f);
@@ -1184,7 +1203,7 @@ void Fx::drawWorld() const {
   }
   vfx::additive(false);
   for (const auto& f : sprites_)
-    if (f.follow == -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip);
+    if (f.follow == -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
 }
 
 void Fx::drawScreen(const Camera2D& cam) const {

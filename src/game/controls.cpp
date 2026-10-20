@@ -334,6 +334,7 @@ InputState readDevice(int d) {
     in.grab = down(kActGrab, KEY_KP_5);
     in.smash = down(kActSmash, KEY_KP_4);
     in.ultimate = down(kActUltimate, KEY_KP_6);
+    in.weapon = down(kActWeapon, KEY_KP_7);
     in.tapJump = settings().tapJump;  // the Up key jumps too (Paramètres > Jeu)
     in.digital = true;
   } else if (d >= kPad1 && d < kDeviceCount && padConnected(d - kPad1)) {
@@ -358,6 +359,7 @@ InputState readDevice(int d) {
     in.shield = held(kActShield);
     in.smash = held(kActSmash);
     in.ultimate = held(kActUltimate);
+    in.weapon = held(kActWeapon);
     in.tapJump = settings().tapJump && !p.down[kPadUp];  // the stick jumps, the d-pad does not
   }
   return in;

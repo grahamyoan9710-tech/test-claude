@@ -30,7 +30,7 @@ Match::Match(const MatchConfig& c) : cfg(c), rng(c.seed) {
     fighters.push_back(f);
   }
   orbTimer = rng.irange(60 * 10, 60 * 20);
-  itemTimer = rng.irange(60 * 7, 60 * 11);
+  itemTimer = rng.irange(60 * 3, 60 * 6);
 }
 
 void Match::emit(EvType t, Vec2 pos, int a, int b, float strength, Vec2 dir, HitFx fx) {
@@ -152,7 +152,7 @@ void Match::koFighter(Fighter& f) {
   Vec2 dir = (p - Vec2{0, -150}).norm();
   emit(EvType::KO, p, f.id, f.lastHitBy, f.lastKnockback, dir);
   if (f.grabPartner >= 0) releaseGrab(f, false);
-  loseWeapon(f, false);
+  loseWeapon(f);
   if (f.form >= 0) endForm(f);
   f.captor = -1;
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
@@ -332,7 +332,7 @@ void Match::resetPositions() {
     f.finalSmash = false;
     f.ult = 0.0f;
     f.captor = -1;
-    loseWeapon(f, false);
+    loseWeapon(f);
     if (f.form >= 0) endForm(f);
     setState(f, FState::Air);
   }

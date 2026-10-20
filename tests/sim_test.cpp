@@ -531,6 +531,10 @@ static int charIndex(const char* name) {
   return 0;
 }
 
+// Weapons: bare hands at the start; a fighter's weapon drops on the stage and only its owner takes it, by standing
+// on it and pressing the weapon button (walking over it is not enough): weapon A. Then the button switches A <-> B
+// with no cooldown, never in the middle of a move (the press waits for it to end); the weapon is lost at a KO.
+// The CPUs go and take theirs and switch too.
 static void testWeapons() {
   std::printf("[weapons]\n");
   const int ringGirl = charIndex("N° 04"), other = charIndex("N° 11");
@@ -545,18 +549,65 @@ static void testWeapons() {
   f.facing = 1;
   v.pos = {250, 0};
   Pad p{m};
-  m.dropWeaponFor(1, 0);  // the other fighter's weapon: it must not be taken
+  p.idle(20);
+  CHECK(f.weapon < 0, "everyone starts bare-handed (weapon %d)", f.weapon);
+  InputState press;
+  press.weapon = true;
+  p.run(1, press);
+  p.idle(1);
+  CHECK(f.weapon < 0, "the button alone does nothing without a weapon (weapon %d)", f.weapon);
+  m.dropWeaponFor(1, 0);  // the other fighter's weapon: it cannot be taken
   m.items.back().pos = {-150, -300};
   for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   CHECK(!m.items.empty() && m.items.back().grounded, "a dropped weapon lands on the stage");
   p.run(30, key(1, 0));
-  CHECK(f.weapon < 0 && m.items.size() == 1, "another character's weapon cannot be picked up");
+  p.run(1, press);
+  p.idle(1);
+  CHECK(f.weapon < 0 && m.items.size() == 1, "another character's weapon cannot be taken (weapon %d)", f.weapon);
   m.items.clear();
   m.dropWeaponFor(0, 0);  // the ring-chakram
   m.items.back().pos = {f.pos.x + 60, -300};
   for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   p.run(20, key(1, 0));
-  CHECK(f.weapon == 0 && m.items.empty(), "walking over its own weapon picks it up (weapon %d)", f.weapon);
+  p.idle(5);
+  CHECK(f.weapon < 0 && m.items.size() == 1, "walking over its weapon does not take it (weapon %d)", f.weapon);
+  auto summons = [&]() {
+    int n = 0;
+    for (const auto& e : m.events) n += e.type == EvType::WeaponSummon && e.a == f.id;
+    return n;
+  };
+  if (!m.items.empty()) f.pos.x = m.items.back().pos.x;  // back on it
+  p.idle(3);
+  p.run(1, press);
+  CHECK(f.weapon == 0 && m.items.empty() && summons() == 1, "standing on it + the button takes weapon A (weapon %d)",
+        f.weapon);
+  p.idle(1);
+  p.run(1, press);
+  CHECK(f.weapon == 1, "the next press switches to weapon B, no cooldown (weapon %d)", f.weapon);
+  p.idle(1);
+  p.run(1, press);
+  CHECK(f.weapon == 0, "and back to A (weapon %d)", f.weapon);
+  p.idle(1);
+  p.run(30, press);  // held: one switch only
+  CHECK(f.weapon == 1, "holding the button switches once (weapon %d)", f.weapon);
+  p.idle(10);
+  // Not in the middle of a move: the press waits for it to end.
+  p.run(1, key(0, 0, true));
+  CHECK(f.state == FState::Attack, "the M1 starts");
+  const int w0 = f.weapon;
+  p.run(1, press);
+  CHECK(f.weapon == w0 && f.state == FState::Attack, "no switch during a move (weapon %d)", f.weapon);
+  bool switched = false;
+  for (int i = 0; i < 40 && !switched; ++i) {
+    p.idle(1);
+    switched = f.weapon != w0;
+  }
+  CHECK(switched, "the press is kept until the move ends (weapon %d, state %d)", f.weapon, int(f.state));
+  // The weapon's own skills: the ring-chakram flies and comes back.
+  if (f.weapon != 0) {
+    p.idle(10);
+    p.run(1, press);
+  }
   p.idle(20);
   f.facing = 1;
   p.run(1, key(0, 0, false, false, false, true));
@@ -571,9 +622,37 @@ static void testWeapons() {
     }
   }
   CHECK(thrown && back, "the ring flies and comes back (thrown %d back %d)", thrown, back);
-  f.weaponTimer = 2;
-  p.idle(3);
-  CHECK(f.weapon < 0, "a weapon vanishes after its time");
+  // A KO: back to bare hands.
+  const int stocks = f.stocks;
+  f.pos = {0, m.stage().blast.bottom() + 100.0f};
+  f.grounded = false;
+  f.groundPlat = -1;
+  p.idle(5);
+  CHECK(f.stocks < stocks && f.weapon < 0, "a KO loses the weapon (stocks %d, weapon %d)", f.stocks, f.weapon);
+  p.idle(400);
+  CHECK(f.weapon < 0, "it respawns bare-handed (weapon %d)", f.weapon);
+
+  // The CPUs take their weapon and switch between their two.
+  MatchConfig c2 = duel(0, charIndex("N° 01"), charIndex("N° 17"), true, true);
+  c2.items = false;
+  Match m2(c2);
+  std::vector<CpuBrain> brains;
+  for (const auto& g : m2.fighters) brains.emplace_back(7, 5u + 11u * uint32_t(g.id));
+  std::array<InputState, 4> in{};
+  bool armed[2] = {false, false}, both[2] = {false, false};
+  int seen[2][2] = {};
+  for (int t = 0; t < 60 * 40 && !m2.finished; ++t) {
+    for (size_t k = 0; k < m2.fighters.size(); ++k) in[m2.fighters[k].port] = brains[k].think(m2, int(k));
+    m2.step(in);
+    for (int k = 0; k < 2; ++k)
+      if (m2.fighters[k].weapon >= 0) {
+        armed[k] = true;
+        seen[k][m2.fighters[k].weapon] = 1;
+      }
+  }
+  for (int k = 0; k < 2; ++k) both[k] = seen[k][0] && seen[k][1];
+  CHECK(armed[0] && armed[1], "the CPUs take their weapons (%d %d)", armed[0], armed[1]);
+  CHECK(both[0] || both[1], "the CPUs switch between their two weapons (%d %d)", both[0], both[1]);
 }
 
 // With a picked-up weapon the basic attack becomes the weapon's own strike (its clip: w0_jab / w1_jab), and it hits.
@@ -584,7 +663,6 @@ static void testWeaponStrikes() {
     for (int slot = 0; slot < 2; ++slot) {
       MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
       cfg.items = false;
-      cfg.weapons = false;
       Match m(cfg);
       skipCountdown(m);
       Fighter& f = m.fighters[0];
@@ -619,7 +697,6 @@ static void testWeaponKits() {
       if (slot < 0 && !r[c].weapons[0].kit && !r[c].weapons[1].kit) continue;
       MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
       cfg.items = false;
-      cfg.weapons = false;
       Match m(cfg);
       skipCountdown(m);
       Fighter& f = m.fighters[0];
@@ -673,7 +750,6 @@ static void testAllUltimates() {
       for (int pass = 0; pass < 2; ++pass) {  // 0: at 30%, how much damage; 1: at 130%, does it KO
         MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
         cfg.items = false;
-        cfg.weapons = false;
         Match m(cfg);
         skipCountdown(m);
         Fighter& f = m.fighters[0];
@@ -738,7 +814,6 @@ static void testUltimatesBlocked() {
     for (int slot = -1; slot <= 1; ++slot) {
       MatchConfig cfg = duel(0, c, c == 0 ? 1 : 0, false, false);
       cfg.items = false;
-      cfg.weapons = false;
       Match m(cfg);
       skipCountdown(m);
       Fighter& f = m.fighters[0];

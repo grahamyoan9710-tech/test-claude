@@ -20,6 +20,7 @@ class CpuBrain {
   bool recover(const Match& m, const Fighter& f, InputState& in);
   bool chaseOrb(const Match& m, const Fighter& f, InputState& in);
   bool fetchWeapon(const Match& m, const Fighter& f, InputState& in);
+  void manageWeapon(const Match& m, const Fighter& f, InputState& in);
   void fight(const Match& m, const Fighter& f, const Fighter& t, InputState& in);
 
   int level_;
@@ -27,6 +28,7 @@ class CpuBrain {
   Rng rng_;
   InputState last_;
   int decisionTimer_ = 0;
+  int weaponTimer_ = -1;  // frames before the next weapon decision (-1: not drawn yet)
   int shieldHold_ = 0;
   int chargeHold_ = 0;
   Vec2 chargeDir_;

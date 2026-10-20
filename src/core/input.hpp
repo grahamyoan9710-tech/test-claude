@@ -13,6 +13,7 @@ struct InputState {
   bool grab = false;
   bool smash = false;  // keyboard "smash" key: smash attack / aerial towards the stick (or forward)
   bool ultimate = false;  // unleashes the ultimate (final smash) once the ultimate meter is full
+  bool weapon = false;    // summons weapon A, then switches A <-> B
   bool tapJump = false;   // pushing the stick up jumps (as in Smash Bros.)
   bool digital = false;   // the stick is keys (keyboard): no gentle tilt, so up + attack a little after is an up tilt
 };

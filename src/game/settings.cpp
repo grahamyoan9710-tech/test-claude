@@ -16,23 +16,23 @@ namespace {
 Settings g_settings;
 
 const int kDefaultKeys[2][kActionCount] = {
-    {KEY_A, KEY_D, KEY_W, KEY_S, KEY_SPACE, KEY_J, KEY_K, KEY_L, KEY_I, KEY_O, KEY_U},
+    {KEY_A, KEY_D, KEY_W, KEY_S, KEY_SPACE, KEY_J, KEY_K, KEY_L, KEY_I, KEY_O, KEY_U, KEY_E},
     {KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_RIGHT_SHIFT, KEY_RIGHT_CONTROL,
-     KEY_SEMICOLON, KEY_APOSTROPHE},
+     KEY_SEMICOLON, KEY_APOSTROPHE, KEY_M},
 };
 // The layout of Super Smash Bros. Ultimate, by button position (Xbox names): attack on the right button (A on a
 // Switch pad), special on the bottom one (B), jump on the top and left ones (X / Y), grab on the bumpers (L / R),
 // shield on the triggers (ZL / ZR), smash attacks on the right stick. The ultimate is the special with a full
-// meter, as a Final Smash; Back (the "-" button) unleashes it too.
+// meter, as a Final Smash; Back (the "-" button) unleashes it too. The top button (Y) summons and switches weapons.
 const int kDefaultPad[kActionCount][2] = {
     {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1},  // directions: stick / d-pad
-    {kPadX, kPadY}, {kPadB, -1}, {kPadA, -1}, {kPadLT, kPadRT}, {kPadLB, kPadRB}, {-1, -1}, {kPadBack, -1}};
+    {kPadX, -1}, {kPadB, -1}, {kPadA, -1}, {kPadLT, kPadRT}, {kPadLB, kPadRB}, {-1, -1}, {kPadBack, -1}, {kPadY, -1}};
 // The defaults before v7.6: saved settings still on them move to the new ones.
 const int kOldDefaultPad[kActionCount][2] = {
     {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1},
-    {kPadX, kPadY}, {kPadA, -1}, {kPadB, -1}, {kPadLT, kPadRT}, {kPadLB, -1}, {-1, -1}, {kPadRB, -1}};
+    {kPadX, kPadY}, {kPadA, -1}, {kPadB, -1}, {kPadLT, kPadRT}, {kPadLB, -1}, {-1, -1}, {kPadRB, -1}, {-1, -1}};
 const char* kActionIds[kActionCount] = {"left", "right", "up", "down", "jump",
-                                        "attack", "special", "shield", "grab", "smash", "ultimate"};
+                                        "attack", "special", "shield", "grab", "smash", "ultimate", "weapon"};
 
 int clampi(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }
 }  // namespace
@@ -40,7 +40,7 @@ int clampi(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }
 const char* actionName(int a) {
   static const char* names[kActionCount] = {"Gauche", "Droite", "Haut", "Bas", "Saut",
                                             "Attaque", "Spéciale", "Bouclier", "Saisie", "Attaque smash",
-                                            "Ultime"};
+                                            "Ultime", "Arme"};
   return (a >= 0 && a < kActionCount) ? names[a] : "?";
 }
 
@@ -137,6 +137,8 @@ void loadSettings() {
   for (int a = 0; a < kActionCount; ++a)
     oldPad = oldPad && s.pad[a][0] == kOldDefaultPad[a][0] && s.pad[a][1] == kOldDefaultPad[a][1];
   if (oldPad) s.resetPad();
+  // Saved before the weapon button: Y jumped too; it summons the weapons now.
+  if (s.pad[kActJump][1] == kPadY && s.pad[kActWeapon][0] == kPadY) s.pad[kActJump][1] = -1;
   // Actions added since the file was written (e.g. "ultimate") keep their default key only if
   // no saved binding already uses it; otherwise they get a free key.
   auto used = [&](int key, int kb0, int a0) {

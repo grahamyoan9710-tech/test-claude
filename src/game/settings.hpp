@@ -4,7 +4,7 @@
 
 // Keyboard actions that can be rebound.
 enum KeyAction : int {
-  kActLeft, kActRight, kActUp, kActDown, kActJump, kActAttack, kActSpecial, kActShield, kActGrab, kActSmash, kActUltimate,
+  kActLeft, kActRight, kActUp, kActDown, kActJump, kActAttack, kActSpecial, kActShield, kActGrab, kActSmash, kActUltimate, kActWeapon,
   kActionCount
 };
 const char* actionName(int action);
@@ -25,7 +25,7 @@ struct Settings {
   // Rules
   int stocks = 3;
   bool items = true;
-  bool weapons = true;  // weapons drop during matches
+  bool weapons = true;  // the fighters' weapons drop during matches
   bool teams = false;   // team battle (2 v 2): red against blue
   int cpuLevel = 5;
   bool tapJump = true;  // Up (the stick or the key) jumps too, as in Smash Bros.

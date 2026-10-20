@@ -268,7 +268,7 @@ MatchScreen::Result MatchScreen::updatePause() {
     std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
     resume();
   } else if (training() && pauseSel_ == 7) {  // the weapon falls in front of the player
-    m_.loseWeapon(m_.fighters[0], false);
+    m_.loseWeapon(m_.fighters[0]);
     m_.dropWeaponFor(0, dropSlot_);
     resume();
   }
@@ -358,7 +358,6 @@ MatchScreen::Result MatchScreen::update() {
   if (weaponShow_ >= 0 && m_.started() && !m_.fighters.empty()) {  // the demo's weapon kit: never lost
     Fighter& f = m_.fighters[0];
     if (f.weapon != weaponShow_ && f.active() && f.state != FState::Attack) m_.equipWeapon(f, weaponShow_);
-    f.weaponTimer = std::max(f.weaponTimer, 60);
   }
   if (ultShow_ >= -1 && !ultFired_ && m_.started() && m_.fighters.size() >= 2) {
     Fighter& f = m_.fighters[0];

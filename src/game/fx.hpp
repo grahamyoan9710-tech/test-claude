@@ -36,6 +36,7 @@ class Fx {
   // Plays a PixelLab effect once (art::drawFx: an fx line of sheets.txt) at `at`, `size` world units per effect
   // pixel; it is drawn in front of the world until its last frame.
   void playFx(const char* name, Vec2 at, float size, float rot = 0.0f, bool flip = false);
+  void playFx(const char* name, Vec2 at, float size, float rot, bool flip, Color tint);  // tinted (shared effects)
   Vec2 punchFocus() const { return punchPos_; }
 
  private:
@@ -75,7 +76,7 @@ class Fx {
     int t = 0, landT = -1;
     Color color, glow;
   };
-  struct FloatText {  // weapon name rising above whoever picked it up
+  struct FloatText {  // weapon name rising above whoever took it
     Vec2 pos;
     std::string text;
     Color color;
@@ -108,6 +109,7 @@ class Fx {
     int t = 0;
     int follow = -1;  // a technique's effect: on that fighter, behind it (-2: behind, where it began)
     Vec2 off;
+    Color tint = WHITE;
   };
   std::vector<SpriteFx> sprites_;
   std::array<std::pair<int, int>, 8> castSeen_{};  // each fighter's move and move frame at the last update

@@ -87,5 +87,7 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Un clip où
   un effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun perso coupé au bord du cadre.
-- Armes (refonte) : tout le monde commence à mains nues. La touche Arme fait apparaître l'arme A, puis alterne A et
-  B, sans délai. L'arme reste jusqu'au KO. Plus de minuteur ni d'armes qui tombent sur l'arène.
+- Armes (refonte) : tout le monde commence à mains nues. L'arme d'un perso tombe sur l'arène ; il la prend en se
+  tenant dessus et en appuyant sur la touche Arme (arme A), puis cette touche alterne A et B, sans délai. L'arme
+  reste jusqu'au KO, sans minuteur. Chaque arme B a son propre modèle, exactement comme sur la planche (plan
+  complet, validé : le propriétaire autorise toutes les générations nécessaires).

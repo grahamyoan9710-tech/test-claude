@@ -236,6 +236,7 @@ InputState CpuBrain::think(const Match& m, int self) {
     last_ = in;
     return in;
   }
+  manageWeapon(m, f, in);
   if (m.orb.active && chaseOrb(m, f, in)) {
     last_ = in;
     return in;
@@ -313,7 +314,7 @@ bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
   return true;
 }
 
-// Walks to one of its own weapons when it is close and nobody is in its face.
+// Walks to one of its own weapons when it is close and nobody is in its face, and takes it (the weapon button).
 bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
   const WeaponItem* best = nullptr;
   float bd = 650.0f;
@@ -331,9 +332,36 @@ bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
   const float dx = best->pos.x - f.pos.x, dy = best->pos.y - f.pos.y;
   in.stick.x = std::fabs(dx) > 12.0f ? signf(dx) : 0.0f;
   if (!m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f) && dy > -20.0f) in.stick.x = 0.0f;  // no walking off
+  if (std::fabs(dx) < 24.0f && std::fabs(dy) < 30.0f) tap(in, &IS::weapon);  // on it: take it
   if (dy < -50.0f && std::fabs(dx) < 160.0f && f.state != FState::JumpSquat) tap(in, &IS::jump);
   else if (dy > 30.0f && std::fabs(dx) < 30.0f) in.stick.y = 1.0f;  // drop through a thin platform
   return true;
+}
+
+// How far a weapon's neutral special flies (0: no projectile): the "distance" weapon is the one that reaches further.
+static float weaponRange(const WeaponDef& w) {
+  for (const auto& [id, mv] : w.moves)
+    if (id == NSpecial && mv.projectileFrame >= 0) return std::fabs(mv.projectile.velocity.x) * mv.projectile.lifetime;
+  return 0.0f;
+}
+
+// Armed, the weapon button switches A <-> B: the distance weapon when the opponent is far, the other one up close;
+// it thinks it over every few seconds.
+void CpuBrain::manageWeapon(const Match& m, const Fighter& f, InputState& in) {
+  if (f.weapon < 0) return;  // bare hands: it goes and takes its weapon (fetchWeapon)
+  if (weaponTimer_ < 0) weaponTimer_ = rng_.irange(20, std::max(30, 150 - level_ * 12));
+  if (weaponTimer_ > 0) {
+    --weaponTimer_;
+    return;
+  }
+  if (f.state == FState::Respawn || f.state == FState::Attack || f.state == FState::Hitstun) return;
+  float dist = 1e9f;
+  for (const auto& o : m.fighters)
+    if (m.foes(f, o) && o.active()) dist = std::min(dist, std::fabs(o.pos.x - f.pos.x));
+  const int ranged = weaponRange(f.def->weapons[1]) > weaponRange(f.def->weapons[0]) ? 1 : 0;
+  const int want = dist > 380.0f ? ranged : dist < 200.0f ? 1 - ranged : std::max(0, f.weapon);
+  if (want != f.weapon) tap(in, &IS::weapon);
+  weaponTimer_ = rng_.irange(90, 240);
 }
 
 bool CpuBrain::chaseOrb(const Match& m, const Fighter& f, InputState& in) {

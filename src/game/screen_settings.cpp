@@ -28,7 +28,7 @@ const RowInfo kRows[3][7] = {
      {"Personnages en pixel art", "Les combattants sont dessinés comme des sprites en pixel art (les menus restent lisses)."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
-     {"Armes", "Des armes tombent du ciel : chaque combattant ramasse les siennes en marchant dessus."},
+     {"Armes", "Les armes tombent sur l'arène : chaque combattant prend la sienne en se tenant dessus et en appuyant sur la touche Arme."},
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 10 : le niveau 10 frappe deux fois plus fort)."},
      {"Saut avec Haut", "Comme Smash Bros. : Haut (stick ou touche) fait sauter ; Haut + attaque ou spéciale ensemble reste un coup vers le haut."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},
@@ -45,11 +45,11 @@ Rectangle sliderRect(int row) {
   Rectangle w = widgetRect(row);
   return {w.x + 12, w.y + 10, w.width - 110, 14};
 }
-Rectangle keyRect(int row, int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 48 + row * 30.0f, 216, 26}; }
+Rectangle keyRect(int row, int col) { return {kPanel.x + 300 + col * 236.0f, kPanel.y + 48 + row * 28.0f, 216, 25}; }
 // The reset row: keyboard 1, keyboard 2, then everything (both keyboards and the gamepad).
 Rectangle resetRect(int col) {
-  if (col == 2) return {kPanel.x + 824, kPanel.y + 52 + kActionCount * 30.0f, 302, 28};
-  return {kPanel.x + 300 + col * 236.0f, kPanel.y + 52 + kActionCount * 30.0f, 216, 28};
+  if (col == 2) return {kPanel.x + 824, kPanel.y + 52 + kActionCount * 28.0f, 302, 28};
+  return {kPanel.x + 300 + col * 236.0f, kPanel.y + 52 + kActionCount * 28.0f, 216, 28};
 }
 
 enum class Widget { Slider, Toggle, Selector, Button };
@@ -702,7 +702,7 @@ void App::drawSettings() {
     drawText("MANETTE", box.x + 18, box.y + 10, 26, ui::kGold, FontKind::Title);
     const int pad = shownPad(f);
     for (int i = 0; i < kPadActionRows + 2; ++i) {  // moving, the bindings, pause
-      const float y = box.y + 62 + i * 33.0f;
+      const float y = box.y + 60 + i * 30.0f;
       const int a = i == 0 ? kActLeft : i <= kPadActionRows ? padAction(i - 1) : -1;
       ui::Btn b0 = a < 0 ? ui::Btn::Start : a == kActLeft ? ui::Btn::Move : ui::Btn::None, b1 = ui::Btn::None;
       if (a >= kActJump) {
@@ -715,7 +715,7 @@ void App::drawSettings() {
       drawText(a < 0 ? "Pause" : a == kActLeft ? "Se déplacer" : actionName(a), box.x + 128, y - 11, 17,
                a == kActUltimate ? ui::kGold : ui::kCream);
     }
-    drawText("Clavier 2 : le pavé numérique marche aussi (0 à 6).", box.x + 18, box.y + box.height - 66, 13, ui::kMuted);
+    drawText("Clavier 2 : le pavé numérique marche aussi (0 à 7).", box.x + 18, box.y + box.height - 66, 13, ui::kMuted);
   }
   if (help) {
     float y = kPanel.y + kPanel.height - 40;

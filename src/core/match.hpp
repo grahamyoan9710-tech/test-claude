@@ -16,7 +16,7 @@ struct MatchConfig {
   int stage = 0;
   int stocks = 3;
   bool items = true;  // Clash Orb
-  bool weapons = true;  // weapons drop from the sky (each one for a given character)
+  bool weapons = true;  // the fighters' weapons drop on the stage
   bool training = false;  // infinite lives, the match never ends
   bool teams = false;     // team battle (2 v 2...): the last team standing wins
   std::array<Slot, 4> slots;
@@ -27,7 +27,8 @@ enum class EvType : uint8_t {
   Hit, ShieldHit, KO, Jump, AirJump, Land, Dash, Grab, Throw, Projectile, ShieldBreak,
   Respawn, Tech, LedgeGrab, Counter, Swing, Clank, Countdown, Go, GameSet,
   OrbSpawn, OrbHit, OrbBreak, FinalSmash, UltReady,
-  WeaponSpawn, WeaponPickup, WeaponBreak, WeaponLand,  // b = weapon slot, strength = character
+  WeaponSpawn, WeaponLand,      // a weapon drops / lands: b = weapon slot, strength = character
+  WeaponSummon, WeaponVanish,  // taken (or switched to) / lost: a = fighter, b = weapon slot, strength = character
   SuperFlash,  // a = fighter, b = move id: freeze + cut-in
   Explosion,   // strength = radius
   Reflect,
@@ -36,13 +37,14 @@ enum class EvType : uint8_t {
   Capture      // a = attacker, b = victim: caught by a cinematic ultimate
 };
 
-// A weapon lying on the stage (or falling on it).
+// A fighter's weapon lying on the stage (or falling on it): its owner takes it by standing on it and pressing the
+// weapon button.
 struct WeaponItem {
-  int character = 0;  // roster index: only this character can pick it up
+  int character = 0;  // roster index: only this character can take it
   int slot = 0;       // index in CharacterDef::weapons
   Vec2 pos, vel;      // pos = bottom centre
   bool grounded = false;
-  int life = 0;       // frames left before it vanishes
+  int life = 0;       // frames left before it vanishes (nobody took it)
   int age = 0;
 };
 
@@ -119,7 +121,7 @@ class Match {
   // Training: put everybody back on their spawn point at 0%.
   void resetPositions();
   // Training / tests: drops one of fighter id's weapons right above it.
-  void dropWeaponFor(int id, int slot);
+  void dropWeaponFor(int id, int slot = 0);
 
   MatchConfig cfg;
   const StageDef* stageDef = nullptr;
@@ -206,10 +208,11 @@ class Match {
   void startForm(Fighter& f, int form);
   void endForm(Fighter& f);
   // weapons.cpp
-  void updateItems();
+  void updateItems();               // drops, and the weapon button
   void spawnWeapon(int character, int slot, Vec2 pos);
-  void equipWeapon(Fighter& f, int slot);
-  void loseWeapon(Fighter& f, bool broken);
+  void equipWeapon(Fighter& f, int slot);  // takes weapon `slot` (tools, tests, demos)
+  void switchWeapon(Fighter& f);    // bare hands -> A, then A <-> B
+  void loseWeapon(Fighter& f);      // a KO: back to bare hands
   void explodeProjectile(Projectile& pr);
   void creditProjectile(int owner, Fighter& victim, float damage, bool wasShielding);
   void gainUlt(Fighter& f, float amount);

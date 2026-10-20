@@ -55,6 +55,18 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 11 h 30 UTC, session A, branche `claude/refonte-originaux` : **étape 4 faite, nouveau système d'armes.**
+  - Les armes tombent toujours sur l'arène, seul leur propriétaire peut les prendre. On les prend en se tenant
+    dessus et en appuyant sur la touche **Arme** (arme A) ; marcher dessus ne suffit plus. Ensuite, la même touche
+    alterne A et B, sans délai, jamais au milieu d'un coup (la pression attend 45 images). L'arme reste jusqu'au KO,
+    sans minuteur.
+  - Touches : `E` (clavier 1), `M` ou 7 du pavé (clavier 2), `Y` (manette, le saut reste sur X). Les anciens
+    réglages où Y sautait sont migrés.
+  - L'IA va chercher son arme, la prend avec la touche, puis alterne arme de distance et arme de mêlée.
+  - Effets : prise et perte jouent les effets partagés `move_appear` et `move_vanish`, teintés à la couleur de
+    l'arme ; un repli codé reste en attendant.
+  - Le propriétaire autorise toutes les générations : **plan complet**, chaque arme B a son propre modèle.
+  - Vérifié : compilation complète, `sim_test` « all tests passed ».
 - 20/10 10 h 30 UTC, session A, branche `claude/refonte-originaux` : **étape 3 faite, les anciens persos sont
   retirés.** Le propriétaire a tout validé : plan recommandé, torses nus gardés, « EN LIGNE » grisé.
   - Cœur : 17 persos numérotés (P01 à P17, identifiants `p01`…`p17`) d'après `docs/refonte/FICHES.md` (mains

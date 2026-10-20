@@ -13,40 +13,36 @@ Le dossier « 10.5 update » (3 persos et 3 armes) n'est pas traité : il est pr
 
 ## 1. Règles communes
 
-### 1.1 Armes : nouveau fonctionnement
+### 1.1 Armes : nouveau fonctionnement (précisé par le propriétaire le 20/10)
 - Tout le monde commence le combat **à mains nues**, et réapparaît à mains nues après un KO.
-- Une seule touche **Arme** :
-  - 1re pression : l'arme A apparaît ;
-  - pressions suivantes : on passe de A à B, puis de B à A, etc. ;
-  - aucun délai de recharge. Le changement se fait dès que le perso peut agir, pas au milieu d'un coup.
-- L'arme reste jusqu'au KO ou au prochain changement. Il n'y a plus de minuteur, et plus aucune arme ne tombe sur
-  l'arène.
-- Touches proposées (modifiables dans les options) :
+- De temps en temps, l'arme d'un perso **tombe sur l'arène** (son icône, prise sur ta planche). Seul son
+  propriétaire peut la prendre.
+- Pour la prendre, il faut **se tenir dessus et appuyer sur la touche Arme**. Marcher dessus ne suffit pas.
+- On a alors l'arme A. Ensuite, la même touche passe de A à B, puis de B à A, etc. :
+  - aucun délai de recharge ;
+  - le changement se fait dès que le perso peut agir, pas au milieu d'un coup (la pression attend la fin du coup).
+- L'arme reste jusqu'au KO : il n'y a plus de minuteur. Après un KO, une nouvelle arme tombera plus tard.
+- Touches (modifiables dans les options) :
 
   | Contrôle | Touche Arme |
   |---|---|
-  | Clavier J1 | `E`, à côté de ZQSD/WASD |
-  | Clavier J2 | `M` |
+  | Clavier J1 | `E` |
+  | Clavier J2 | `M` (ou 7 sur le pavé numérique) |
   | Manette | `Y` (le saut reste sur `X`) |
 
-- Adaptation du code, au plus simple :
-  - un bouton `weapon` est ajouté aux entrées ;
-  - `equipWeapon` est appelé quand on appuie dessus ;
-  - le minuteur `weaponTimer`, les armes au sol (`spawnWeapon`, ramassage) et l'option « armes au sol » sont
-    retirés ;
-  - `WeaponDef` et les kits ne changent pas ;
-  - l'orbe (jauge d'ultime) est gardé.
 - L'IA :
-  - invoque une arme peu après le début du combat ;
+  - va chercher son arme et la prend avec la touche ;
   - prend l'arme de distance quand l'adversaire est loin et celle de mêlée quand il est près ;
   - change parfois d'arme en plein combat.
-- Tests ajoutés : touche → arme A → arme B → arme A, aucun délai, retour à mains nues au KO, et déterminisme.
+- Tests : touche sans arme, prise sur place, pas de prise en marchant, A puis B puis A, aucun délai, pas de
+  changement pendant un coup, retour à mains nues au KO, l'IA qui prend et change d'arme.
 
 ### 1.2 Les états d'une arme (communs aux 34)
 | État | Ce qu'on voit |
 |---|---|
 | Icône | L'image de l'arme seule, prise sur ta planche (HUD, sélection, galerie). |
-| Invocation | Effet « Apparition » teinté de la couleur de l'arme, et clip du perso qui la saisit. |
+| Au sol | L'icône de l'arme posée sur l'arène, avec son halo. |
+| Prise ou changement | Effet « Apparition » teinté de la couleur de l'arme, et clip du perso qui la saisit. |
 | En main | L'arme est tenue dans **tous** les clips du perso : repos, marche, course, saut, chute, bouclier, esquives, dégâts, rebord, saisies et projections. Chaque fiche donne sa pose de repos. |
 | Attaque | Traînée du coup : effet PixelLab joué par le jeu, de la couleur indiquée. |
 | Éveil (ultime) | Aura de l'arme : effet PixelLab en boucle, d'après l'image de droite de ta planche. |
@@ -645,31 +641,32 @@ Clips par perso, d'après la chaîne actuelle :
 | Élément | Clips | Contenu |
 |---|---|---|
 | Mains nues | ~55 | 50 états et coups normaux, 4 compétences, l'ultime ou la transformation |
-| Arme tenue en main | 44 | L'invocation, 34 états avec l'arme, puis M1 ×3, M1 aérien, 4 compétences et l'ultime |
-| Arme éveillée (plan recommandé) | 10 | L'invocation et ses 9 coups ; elle reprend les états de son arme A (même objet) |
-| Arme flottante | 10 | L'invocation et ses 9 coups ; le jeu la dessine à côté du perso |
+| Arme tenue en main | 44 | La prise, 34 états avec l'arme, puis M1 ×3, M1 aérien, 4 compétences et l'ultime |
+| Arme éveillée (plan recommandé, remplacé) | 10 | La prise et ses 9 coups ; elle reprend les états de son arme A |
+| Arme flottante | 10 | La prise et ses 9 coups ; le jeu la dessine à côté du perso |
 
 Une transformation ne demande aucun clip en plus : c'est le clip d'ultime, plus la recoloration et l'aura.
 
 | Plan | Clips | Générations (≈ 1,25 par clip) |
 |---|---|---|
-| **Recommandé** : les armes éveillées reprennent les états de leur arme A | ~1 990 | **~2 550** |
-| Complet : chaque arme B éveillée a son propre modèle, plus grand, dans ses 34 états | ~2 330 | ~3 000 |
+| Recommandé (abandonné) : les armes éveillées reprennent les états de leur arme A | ~1 990 | ~2 550 |
+| **Complet (choisi le 20/10)** : chaque arme B a son propre modèle, exactement comme sur la planche, dans ses 34 états | ~2 330 | **~3 000** |
 
 En plus :
 - les 17 images de base (le perso de profil, en garde, d'après ta planche, tenue corrigée) : ~70 générations ;
-- les effets (`vfx_workbench`) ne coûtent rien.
+- les effets (`vfx_workbench`) ne coûtent rien, dont la banque commune des 18 effets de déplacement (§1.6).
 
-Lots du plan recommandé :
+Lots du plan complet :
 
 | Lot | Persos | Clips | Générations |
 |---|---|---|---|
-| 1 | 03, 02, 01 (ceux de tes menus) | 395 | ~500 |
-| 2 | 07, 08, 17 | 361 | ~450 |
-| 3 | 04, 05, 06 | 327 | ~410 |
-| 4 | 09, 10, 11 | 293 | ~370 |
-| 5 | 12, 13, 14 | 361 | ~450 |
-| 6 | 15, 16 | 252 | ~320 |
+| 1 | 03, 02, 01 (ceux de tes menus) | 429 | ~550 |
+| 2 | 07, 08, 17 | 429 | ~540 |
+| 3 | 04, 05, 06 | 395 | ~500 |
+| 4 | 09, 10, 11 | 361 | ~450 |
+| 5 | 12, 13, 14 | 429 | ~540 |
+| 6 | 15, 16 | 286 | ~360 |
 
-Avec ~2 500 générations jusqu'au 13/11, les lots 1 à 5 tiennent sûrement. Le lot 6 passera peut-être après la
-recharge. J'annoncerai le compte exact avant chaque lot, après `pxcli.py jobs` et `pxcli.py balance`.
+Il reste 2 510 générations jusqu'au 13/11, puis le compteur repart à 5 000. Les lots 1 à 4 passent avant le 13/11,
+les lots 5 et 6 après la recharge. J'annonce le compte exact avant chaque lot, après `pxcli.py jobs` et
+`pxcli.py balance`.

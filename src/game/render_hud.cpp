@@ -87,15 +87,13 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
     DrawRing({x + 50, y + 46}, 37, 38.5f, 0, 360, 36, withAlpha(ui::kGold, 0.5f));
     drawPortraitDisc(*f.def, f.palette, {x + 50, y + 46}, 36, time + f.id);
-    if (const WeaponDef* w = f.weaponDef()) {  // held weapon: badge on the portrait, ring = time left
+    if (const WeaponDef* w = f.weaponDef()) {  // the weapon in hand: a badge on the portrait
       const Vector2 b{x + 80, y + 72};
       const Color c = hitFxColor(w->fx), g = hitFxGlow(w->fx);
-      const float left = clampf(float(f.weaponTimer) / float(std::max(1, w->duration)), 0.0f, 1.0f);
-      const bool blink = left < 0.2f && int(time * 8.0f) % 2 == 0;
       ui::glow(b, 26, withAlpha(g, 0.35f), 4);
       DrawCircleV(b, 16, ui::kInk);
       DrawCircleV(b, 13.5f, mixColor(c, ui::kInk, 0.55f));
-      DrawRing(b, 13.5f, 16.5f, -90, -90 + 360 * left, 32, blink ? WHITE : g);
+      DrawRing(b, 13.5f, 16.5f, 0, 360, 32, g);
       drawWeaponIcon(*f.def, f.weapon, W(b), 26.0f);
       if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging
         DrawCircleV(b, 13.5f, withAlpha(ui::kInk, 0.65f));

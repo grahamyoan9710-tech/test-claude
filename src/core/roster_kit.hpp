@@ -94,8 +94,7 @@ inline std::vector<HitboxDef> storm(int start, int hits, int every, float r0, fl
   return v;
 }
 
-inline WeaponDef weapon(const char* name, const char* desc, WeaponVisual vis, F fx, float dmg, float kb, float reach,
-                 int seconds = 18) {
+inline WeaponDef weapon(const char* name, const char* desc, WeaponVisual vis, F fx, float dmg, float kb, float reach) {
   WeaponDef w;
   w.name = name;
   w.desc = desc;
@@ -104,7 +103,6 @@ inline WeaponDef weapon(const char* name, const char* desc, WeaponVisual vis, F 
   w.damageMul = dmg;
   w.kbMul = kb;
   w.reachMul = reach;
-  w.duration = seconds * 60;
   return w;
 }
 

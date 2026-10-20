@@ -272,7 +272,6 @@ struct WeaponDef {
   float kbMul = 1.1f;         // knockback growth
   float reachMul = 1.0f;      // hand / weapon hitboxes reach further (and the blade is that much longer)
   float blade = 0.0f;         // > 0: blade length (grip to tip) while held, else the fighter's blade * reachMul
-  int duration = 60 * 18;     // frames before it vanishes
   std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while held (its ultimate included)
   // A full kit: every ground attack is its M1 combo (jab, jab2, jab3), every aerial its air M1 (nair); its specials
   // are its 4 skills.
