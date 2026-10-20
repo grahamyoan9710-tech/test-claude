@@ -1,18 +1,1 @@
-{
- "status": "submitted",
- "job_id": "78456895-fb6f-48bf-85ff-6f9d36e27ebc",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:744f4022-20a4-4cef-ba8e-10257c5ab4a2",
-  "last_frame_url": "upload:f8cc92ee-c9f3-4aa4-83e0-c4db0264e6b0",
-  "description": "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
-  "frame_count": 12,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
-  "initial_pose": "holding an invisible opponent in front of him with both hands"
- },
- "reply": "id: 78456895-fb6f-48bf-85ff-6f9d36e27ebc\njob_id: 78456895-fb6f-48bf-85ff-6f9d36e27ebc\ndescription: holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"78456895-fb6f-48bf-85ff-6f9d36e27ebc\")\nasset_id: be3c9174-d2dc-5709-ab85-417221bd917a\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/p01/holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png"
-}
+{"status": "rejected"}
