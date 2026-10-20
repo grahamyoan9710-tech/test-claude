@@ -12,6 +12,7 @@
   "w1_dspecial": "kneels and pushes the tip of one dagger down to the floor in front of him, then lifts it and stands back up; nothing comes out of the floor or the dagger"
  },
  "p02": {
-  "knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, ending lying still; nothing else is drawn around her"
+  "knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, ending lying still; nothing else is drawn around her",
+  "ledgeattack": "rises from a low crouch with a quick low sweeping kick forward, then back into the fighting stance; her foot passes just above the floor, nothing is kicked up"
  }
 }

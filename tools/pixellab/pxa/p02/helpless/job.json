@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "2e6cb5a4-6bd7-4ccd-9c57-c50672661568",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:7d326c4e-76f1-4a2f-91f2-38f50d291403",
+  "last_frame_url": "upload:21c1c4e4-7f82-43e4-9fde-1139019c7db3",
+  "description": "falls helplessly, exhausted: both arms hang limp and loose straight up above her head, head drooping, eyes half closed, legs dangling loosely below her, the body tilting slowly as she drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 2e6cb5a4-6bd7-4ccd-9c57-c50672661568\njob_id: 2e6cb5a4-6bd7-4ccd-9c57-c50672661568\ndescription: falls helplessly, exhausted: both arms hang limp and loose straight up above her head, head drooping, eyes half closed, legs dangling loosely below her, the body tilting slowly as she drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"2e6cb5a4-6bd7-4ccd-9c57-c50672661568\")\nasset_id: 7811c10f-672c-502a-b5eb-b4531a860ccc\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png"
+}
