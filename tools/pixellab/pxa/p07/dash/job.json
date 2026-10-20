@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "378af81b-9880-4447-84ee-fc59adb057da",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -13,5 +13,7 @@
  },
  "reply": "id: 378af81b-9880-4447-84ee-fc59adb057da\njob_id: 378af81b-9880-4447-84ee-fc59adb057da\ndescription: darts forward to the right: pushes off hard from the back foot and springs forward low with the torso leaning far forward, both arms swept back, one long low stride, landing on the front foot already in a running stride. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"378af81b-9880-4447-84ee-fc59adb057da\")\nasset_id: f0901cb0-009a-5249-8734-0612917869fb\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
- "last": null
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
 }
