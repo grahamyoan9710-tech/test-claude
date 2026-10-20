@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "0faa4011-33e8-431a-98cd-61f655066f88",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 0faa4011-33e8-431a-98cd-61f655066f88\njob_id: 0faa4011-33e8-431a-98cd-61f655066f88\ndescription: muay thai teep: lifts the lead knee and pushes the sole of the foot straight forward at belly height, then back to the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0faa4011-33e8-431a-98cd-61f655066f88\")\nasset_id: 27c26d2c-23c5-5cab-8cd7-70e514d437e0\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }

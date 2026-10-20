@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "1c5687d0-ca11-4d11-b2a5-93a494465466",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3689eb8c-1282-45e4-be8e-8c8ffa13f13a",
+  "last_frame_url": "upload:e0faf58d-e040-41df-8f29-d7561faf5fdc",
+  "description": "tumbles head over heels through the air after a heavy blow, spinning out of control, a seamless loop. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 1c5687d0-ca11-4d11-b2a5-93a494465466\njob_id: 1c5687d0-ca11-4d11-b2a5-93a494465466\ndescription: tumbles head over heels through the air after a heavy blow, spinning out of control, a seamless loop. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1c5687d0-ca11-4d11-b2a5-93a494465466\")\nasset_id: 5701e6f9-169f-5369-9603-1a33af527a00\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/jump/f_08.png"
+}

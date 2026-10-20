@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "357a87ef-51d3-48b9-b966-0814def02fba",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c6c3758a-2b07-46b5-bdcb-d8f5adf60e45",
+  "last_frame_url": "upload:12446941-dae9-4d3e-936c-5cdfffc2fb4d",
+  "description": "double jump in mid-air: kicks off the air and does a full forward somersault, ending tucked in the same pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 357a87ef-51d3-48b9-b966-0814def02fba\njob_id: 357a87ef-51d3-48b9-b966-0814def02fba\ndescription: double jump in mid-air: kicks off the air and does a full forward somersault, ending tucked in the same pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"357a87ef-51d3-48b9-b966-0814def02fba\")\nasset_id: b2ccdfab-5eb9-5508-8317-cb74de1b7114\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

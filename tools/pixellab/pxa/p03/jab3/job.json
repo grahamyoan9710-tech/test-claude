@@ -1,1 +1,20 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:92e27961-2548-4ff3-abbc-2e35639bed27", "last_frame_url": "upload:d269e006-c6ac-43e7-9815-2a5f2d09981a", "description": "muay thai knee: reaches forward with both hands as if clinching an invisible opponent and drives the rear knee up and forward at belly height, then back. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots", "initial_pose": "fighting stance facing right, fists raised"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"}
+{
+ "status": "done",
+ "job_id": "0cafcf0f-7b7c-4620-8706-b4e22ac67080",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:92e27961-2548-4ff3-abbc-2e35639bed27",
+  "last_frame_url": "upload:d269e006-c6ac-43e7-9815-2a5f2d09981a",
+  "description": "muay thai knee: reaches forward with both hands as if clinching an invisible opponent and drives the rear knee up and forward at belly height, then back. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 0cafcf0f-7b7c-4620-8706-b4e22ac67080\njob_id: 0cafcf0f-7b7c-4620-8706-b4e22ac67080\ndescription: muay thai knee: reaches forward with both hands as if clinching an invisible opponent and drives the rear knee up and forward at belly height, then back. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0cafcf0f-7b7c-4620-8706-b4e22ac67080\")\nasset_id: 97e51528-94b2-59b8-9f61-77958e000442\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

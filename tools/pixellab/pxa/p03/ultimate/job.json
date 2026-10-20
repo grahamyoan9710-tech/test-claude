@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "ab4114a9-2c0d-4725-9898-4395a5345641",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3b386294-428b-4b4b-a583-59df4dc08321",
+  "last_frame_url": "upload:ca03e866-4ad5-4725-9801-b164b5c15b12",
+  "description": "clenches his fists and roars with his head thrown back, arms tense, then drops into a lower stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: ab4114a9-2c0d-4725-9898-4395a5345641\njob_id: ab4114a9-2c0d-4725-9898-4395a5345641\ndescription: clenches his fists and roars with his head thrown back, arms tense, then drops into a lower stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ab4114a9-2c0d-4725-9898-4395a5345641\")\nasset_id: 011143d5-e68d-540e-954a-3dfaa78740f9\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"
+}
