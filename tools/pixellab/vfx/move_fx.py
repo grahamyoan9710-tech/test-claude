@@ -398,6 +398,14 @@ FX["sys_weapon_pillar"] = recipe(90, 320, 45, 316, 12, [
     {"id": "base", "type": "ring", "radius": {"wave": {"mid": 20, "amp": 3, "cycles": 1}}, "width": 1.5, "soft": 2,
      "squash": 0.26, "ramp": "main"},
 ], loop=True, outline="none")
+# The manga impact frame: jagged speed lines bursting from the blow (drawn in the screen's ink colour).
+FX["sys_impact"] = recipe(256, 256, 128, 128, 4, [
+    {"id": "lines", "type": "rays", "count": 56, "inner": 34, "length": 96, "width": 5, "jitter": 0.6, "alternate": 0.6,
+     "tip_fade": 0.0, "spin": A(0, 12, "linear"), "ramp": "glow"},
+    {"id": "spikes", "type": "rays", "count": 16, "inner": 10, "length": 44, "width": 9, "jitter": 0.4, "alternate": 0.5,
+     "tip_fade": 0.0, "spin": A(5, 20, "linear"), "ramp": "glow"},
+    {"id": "core", "type": "glow", "radius": 16, "shape": "hard", "ramp": "glow"},
+], outline="none")
 FX["sys_aura"] = recipe(180, 240, 90, 226, 10, [
     {"id": "back", "type": "flame", "width": 46, "height": 150, "tongues": 5, "spread": 1.0, "taper": 0.5, "base": 0.9,
      "sway": 0.3, "flicker": 0.6, "cycles": 2, "ramp": "main", "intensity": 0.8},
