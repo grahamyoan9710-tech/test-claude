@@ -1,0 +1,47 @@
+{
+ "guard_pose": "fighting stance facing right, fists raised",
+ "armed": "none",
+ "she": true,
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "flicks one open hand forward as if throwing a shard, then pulls it back"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "slides forward low on one leg and kicks with the other, ending in a low crouch"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "jumps straight up with her arms raised, her hair and coat streaming below her"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "raises both palms in front of her face as a guard, then pushes them forward"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "spreads her arms and floats slightly, her hair and coat rising around her, then lands in a stronger stance"
+  ]
+ }
+}

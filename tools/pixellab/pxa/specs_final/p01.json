@@ -1,0 +1,47 @@
+{
+ "guard_pose": "fighting stance facing right, fists raised",
+ "armed": "none",
+ "she": false,
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "points two fingers forward at an opponent and holds the pose, his coat swaying"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "back",
+   "dashes forward very low and fast, turns around on the spot and strikes behind him with a quick elbow, then turns back into the stance"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "crouches low and gathers himself, then springs straight up with his arms tucked, his coat streaming below him"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "raises one forearm in a calm parry, then answers with a fast backhand strike"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "spreads his arms wide and throws his head back, his coat and hair lifting, then settles into a stronger stance"
+  ]
+ }
+}

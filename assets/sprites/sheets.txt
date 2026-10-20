@@ -16,6 +16,24 @@ fx hit_lightning 8 95 94 46.0 48.0 14.9254 0 44
 fx hit_slash 7 80 75 38.0 30.0 14.9254 0 38
 fx hit_water 8 110 104 57.0 42.0 14.9254 0 44
 fx hit_wind 8 94 96 46.0 44.0 14.9254 0 42
+fx move_appear 12 116 160 58.0 143.0 14.9254 0
+fx move_dash 9 150 47 145.0 24.0 14.9254 0
+fx move_dash_fast 10 253 47 248.0 24.0 14.9254 0
+fx move_hover 12 100 113 50.0 94.0 14.9254 1
+fx move_jump 10 88 81 44.0 66.0 14.9254 0
+fx move_jump_air 11 54 58 37.0 7.0 14.9254 0
+fx move_land 10 101 69 43.0 58.0 14.9254 0
+fx move_smoke_airjump 11 107 94 55.0 77.0 14.9254 0
+fx move_smoke_dash 10 197 56 192.0 24.0 14.9254 0
+fx move_smoke_jump 13 99 53 55.0 45.0 14.9254 0
+fx move_smoke_run 13 95 32 84.0 18.0 14.9254 0
+fx move_smoke_slide 13 132 25 123.0 13.0 14.9254 0
+fx move_vanish 11 104 131 52.0 116.0 14.9254 0
+fx move_wave_1 16 226 183 113.0 150.0 14.9254 0
+fx move_wave_2 14 195 198 97.0 180.0 14.9254 0
+fx move_wave_3 16 246 204 123.0 170.0 14.9254 0
+fx move_wave_4 16 211 164 106.0 133.0 14.9254 0
+fx move_wave_5 16 288 229 144.0 192.0 14.9254 0
 fx smoke_puff 8 99 100 51.0 43.0 14.9254 0 40
 fx teleport_flicker 8 73 150 31.0 75.0 14.9254 0
 icon cursed_finger 57 74

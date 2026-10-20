@@ -237,7 +237,7 @@ static void testKeyboardControls() {
 static void testCombos() {
   std::printf("[combos and Smash Bros. controls]\n");
   auto fresh = [] {
-    Match* m = new Match(duel(0, 8, 2, false, false));
+    Match* m = new Match(duel(0, 4, 2, false, false));
     skipCountdown(*m);
     m->fighters[0].pos = {-200, 0};
     m->fighters[0].facing = 1;
@@ -309,7 +309,7 @@ static void testAttackStep() {
   std::printf("[moving while attacking]\n");
   // Presses attack once at x (stick neutral), then holds the stick at sx while the jab plays out.
   auto jab = [](float x, float sx, Fighter* out) {
-    Match m(duel(0, 8, 2, false, false));
+    Match m(duel(0, 4, 2, false, false));
     skipCountdown(m);
     m.fighters[0].pos = {x, 0};
     m.fighters[0].facing = 1;
@@ -330,7 +330,7 @@ static void testAttackStep() {
   CHECK(mv2 == Jab && fwd > 8.0f && f.facing == 1, "the stick forward moves the jab forward (moved %.1f)", fwd);
   auto [mv3, back] = jab(-200.0f, -1.0f, &f);
   CHECK(back < -8.0f && f.facing == 1, "... and back, still facing forward (moved %.1f, facing %d)", back, f.facing);
-  Match m(duel(0, 8, 2, false, false));
+  Match m(duel(0, 4, 2, false, false));
   float right = 0.0f;
   for (const auto& pl : m.platforms)
     if (pl.solid && pl.rect.top() == 0.0f) right = std::max(right, pl.rect.right());
@@ -344,9 +344,9 @@ static void testTeams() {
   cfg.stage = 0;
   cfg.stocks = 2;
   cfg.teams = true;
-  cfg.slots[0] = {true, 8, false, 9, 0};
+  cfg.slots[0] = {true, 4, false, 9, 0};
   cfg.slots[1] = {true, 2, true, 9, 0};
-  cfg.slots[2] = {true, 9, true, 9, 1};
+  cfg.slots[2] = {true, 3, true, 9, 1};
   cfg.slots[3] = {true, 0, true, 9, 1};
   {  // a teammate's jab does nothing
     Match m(cfg);
@@ -406,7 +406,7 @@ static void testTeams() {
 
 static void testFinalSmash() {
   std::printf("[clash orb + final smash]\n");
-  Match m(duel(0, 4, 2, false, false));  // N° 05: its bare-handed ultimate is an attack
+  Match m(duel(0, 3, 2, false, false));  // N° 07: its bare-handed ultimate is an attack
   skipCountdown(m);
   Fighter& f = m.fighters[0];
   Fighter& v = m.fighters[1];
@@ -537,8 +537,8 @@ static int charIndex(const char* name) {
 // The CPUs go and take theirs and switch too.
 static void testWeapons() {
   std::printf("[weapons]\n");
-  const int ringGirl = charIndex("N° 04"), other = charIndex("N° 11");
-  MatchConfig cfg = duel(0, ringGirl, other, false, false);
+  const int lancer = charIndex("N° 02"), other = charIndex("N° 07");
+  MatchConfig cfg = duel(0, lancer, other, false, false);
   cfg.items = false;
   cfg.weapons = false;  // no random drops: the test drops them itself
   Match m(cfg);
@@ -565,7 +565,7 @@ static void testWeapons() {
   p.idle(1);
   CHECK(f.weapon < 0 && m.items.size() == 1, "another character's weapon cannot be taken (weapon %d)", f.weapon);
   m.items.clear();
-  m.dropWeaponFor(0, 0);  // the ring-chakram
+  m.dropWeaponFor(0, 0);  // the silver spear
   m.items.back().pos = {f.pos.x + 60, -300};
   for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
   p.run(20, key(1, 0));
@@ -603,7 +603,7 @@ static void testWeapons() {
     switched = f.weapon != w0;
   }
   CHECK(switched, "the press is kept until the move ends (weapon %d, state %d)", f.weapon, int(f.state));
-  // The weapon's own skills: the ring-chakram flies and comes back.
+  // The weapon's own skills: the silver spear is thrown and comes back.
   if (f.weapon != 0) {
     p.idle(10);
     p.run(1, press);
@@ -611,7 +611,7 @@ static void testWeapons() {
   p.idle(20);
   f.facing = 1;
   p.run(1, key(0, 0, false, false, false, true));
-  CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Boomerang", "the ring replaces the neutral special");
+  CHECK(f.state == FState::Attack && f.moveDef(f.move).name == "Lance de givre", "the spear throw replaces the neutral special");
   bool thrown = false, back = false;
   for (int i = 0; i < 200; ++i) {
     p.idle(1);
@@ -621,7 +621,7 @@ static void testWeapons() {
       break;
     }
   }
-  CHECK(thrown && back, "the ring flies and comes back (thrown %d back %d)", thrown, back);
+  CHECK(thrown && back, "the spear flies and comes back (thrown %d back %d)", thrown, back);
   // A KO: back to bare hands.
   const int stocks = f.stocks;
   f.pos = {0, m.stage().blast.bottom() + 100.0f};
@@ -633,7 +633,7 @@ static void testWeapons() {
   CHECK(f.weapon < 0, "it respawns bare-handed (weapon %d)", f.weapon);
 
   // The CPUs take their weapon and switch between their two.
-  MatchConfig c2 = duel(0, charIndex("N° 01"), charIndex("N° 17"), true, true);
+  MatchConfig c2 = duel(0, charIndex("N° 01"), charIndex("N° 08"), true, true);
   c2.items = false;
   Match m2(c2);
   std::vector<CpuBrain> brains;

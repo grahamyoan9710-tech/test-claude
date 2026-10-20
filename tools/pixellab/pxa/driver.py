@@ -2,7 +2,7 @@
 Every minute, submits (through pxbatch.py) the clips whose base is ready and approved, until none is left.
 A base clip (jump, runstart, drawsword...) feeds others only once listed in approved.txt ("fighter/clip"): a bad
 base must not spoil every clip made from it. The guard picture is always approved."""
-import importlib, json, os, subprocess, sys, time
+import importlib, json, os, re, subprocess, sys, time
 
 S = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, S)
@@ -26,7 +26,8 @@ def ready(fighter):
         root = base.split("@")[0]
         if root == "sword":
             root = "drawsword"
-        if root != "guard" and f"{fighter}/{root}" not in ok:
+        if root != "guard" and not re.fullmatch(r"w\dguard", root) and f"{fighter}/{root}" not in ok:  # the armed
+            # guards are pictures picked by eye (make_bases.py armedpick)
             continue
         jf = os.path.join(j["out"], "job.json")
         if os.path.exists(jf) and json.load(open(jf)).get("status") != "rejected":

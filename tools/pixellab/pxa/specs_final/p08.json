@@ -1,0 +1,47 @@
+{
+ "guard_pose": "fighting stance facing right, fists raised",
+ "armed": "none",
+ "she": false,
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "flicks one hand forward as if throwing a feather, then pulls it back"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "dashes forward low, his coat streaming behind him, then stops"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "jumps straight up with his arms spread like wings, coat flaring"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "raises both forearms crossed in front of him as a guard, then opens them"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "spreads his arms and rises on his toes, his coat and hair lifting, then lands in a calm stance"
+  ]
+ }
+}

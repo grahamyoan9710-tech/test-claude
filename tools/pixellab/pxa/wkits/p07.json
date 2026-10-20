@@ -1,0 +1,166 @@
+{
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "a broad black and red sword with red ribbons",
+   "subject": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+   "guard_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons",
+   "air_pose": "in mid-air facing right, knees tucked, holding a broad black and red sword with red ribbons",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a fast horizontal cut of the sword"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a fast return cut of the sword the other way"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a lunging straight thrust of the sword far forward"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins and cuts all around her with the sword"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "swings the sword in a fast forward arc, stopping with the blade extended"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward very low and fast and finishes with the sword extended far ahead"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "leaps straight up with the sword raised above her head"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "holds the sword crosswise to parry, then counters with a quick cut"
+    ],
+    "w0_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "forward",
+     "zigzags forward in fast dashes, cutting at each turn, then stops with her back turned and the sword lowered"
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": "a broad black and red sword, larger and more jagged, with red ribbons",
+   "subject": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword, larger and more jagged, with red ribbons",
+   "guard_pose": "fighting stance facing right, holding a broad black and red sword, larger and more jagged, with red ribbons",
+   "air_pose": "in mid-air facing right, knees tucked, holding a broad black and red sword, larger and more jagged, with red ribbons",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a fast cut of the jagged sword"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a return cut of the jagged sword"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a lunging thrust of the jagged sword far forward"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins and cuts all around her with the jagged sword"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "draws back the jagged sword and hurls her free hand forward as if throwing a spear"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "rushes forward cutting twice with the jagged sword"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "spins upward with the jagged sword held out"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "stabs the jagged sword into the ground in front of her, then pulls it out"
+    ],
+    "w1_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "down",
+     "points the jagged sword to the sky with both hands, holds it, then swings it down at the ground ahead"
+    ]
+   }
+  }
+ }
+}

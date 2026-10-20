@@ -1,0 +1,47 @@
+{
+ "guard_pose": "fighting stance facing right, fists raised",
+ "armed": "none",
+ "she": true,
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "thrusts one open hand forward fast, fingers stiff, then pulls it back"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "dashes forward very low and fast and finishes with a quick flying knee strike, then lands back in the stance"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "a rising flying kick straight up, her ponytail streaming below her"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "down",
+   "crouches and slams one palm onto the ground in front of her, then stands back up"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "raises one hand high to the sky and holds it there, then swings it down"
+  ]
+ }
+}

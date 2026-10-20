@@ -55,6 +55,24 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 20/10 14 h 45 UTC, session A, branche `claude/refonte-originaux` : **5 persos jouables pour l'instant, effets de
+  déplacement faits, bases PixelLab prêtes.**
+  - Le propriétaire veut d'abord 5 persos complets (armes et compétences inspirées des anciens persos, belles
+    animations PixelLab, ses effets de déplacement et d'impact) : **01, 02, 03, 07, 08**. `roster()` ne rend
+    plus qu'eux ; les kits des 12 autres sont dans l'historique (commit c349427). Tests adaptés.
+  - Banque d'effets de déplacement de sa planche (`fx_move_*`, 18 effets, `vfx_workbench`, recettes dans
+    `tools/pixellab/vfx/move_fx.py`) : sauts, atterrissage, course, dash, apparition, disparition, ondes 1 à 5 des
+    transformations. Branchés dans `fx.cpp` (`Fx::moveFx`), teintés à la couleur du perso.
+  - Bases : `pxa/base/<id>_guard256.png` (mains nues) et `<id>_w<slot>guard256.png` (arme en main, modèle de sa
+    planche donné en référence), pieds alignés sur ceux de la garde ; `pxa/make_bases.py`, `pxa/anchors14.json`.
+    Base du 08 à la hallebarde refaite (peau dorée) ; base du 02 refaite (short aux genoux sur collants opaques :
+    l'ancienne montrait la cuisse et des lignes façon jarretelles).
+  - Clips : `pxa/new_specs.py` écrit `specs_final/` et `wkits/` (prompts de mouvement seulement) ; `clips.py`
+    ajoute partout « Only the character is drawn… », passe les prompts au féminin pour 02 et 07, et part de l'image
+    armée exacte pour les clips d'arme. 138 clips par perso, 690 en tout. Essai de 8 clips sur le 01 en cours.
+  - Équilibre provisoire (`sim_test balance`) : 01 79 %, 07 79 %, 03 42 %, 02 33 %, 08 17 %. À refaire après
+    l'import des clips et `fitall.sh`.
+  - Vérifié : compilation, `sim_test` « all tests passed ».
 - 20/10 11 h 30 UTC, session A, branche `claude/refonte-originaux` : **étape 4 faite, nouveau système d'armes.**
   - Les armes tombent toujours sur l'arène, seul leur propriétaire peut les prendre. On les prend en se tenant
     dessus et en appuyant sur la touche **Arme** (arme A) ; marcher dessus ne suffit plus. Ensuite, la même touche

@@ -1,0 +1,47 @@
+{
+ "guard_pose": "fighting stance facing right, fists raised",
+ "armed": "none",
+ "she": false,
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "a short powerful straight punch forward, the scarf flaring behind him"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "charges forward shoulder first, then stops in a wide stance"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "a jumping uppercut that carries him straight up, spinning once"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "down",
+   "punches both fists into the ground in front of him, then stands back up"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "clenches his fists and roars with his head thrown back, arms tense, then drops into a lower stance"
+  ]
+ }
+}

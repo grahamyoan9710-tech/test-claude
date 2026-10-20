@@ -1,0 +1,166 @@
+{
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "a long silver spear with white ribbons",
+   "subject": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, black shorts to mid-thigh over opaque black tights, black boots, holding a long silver spear with white ribbons",
+   "guard_pose": "fighting stance facing right, holding a long silver spear with white ribbons",
+   "air_pose": "in mid-air facing right, knees tucked, holding a long silver spear with white ribbons",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a quick straight thrust of the spear forward"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "two quick thrusts of the spear forward"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "around",
+     "a wide circular sweep of the spear around her at waist height"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, thrusts the spear down in front, then straight ahead"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "throws the spear forward with a full overhand throw, then catches it as it comes back"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "charges forward with the spear held out in front, then skids to a stop"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "spins upward with the spear twirling above her head"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "stabs the spear point into the ground in front of her, then pulls it back out"
+    ],
+    "w0_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "none",
+     "plants the spear upright in the ground beside her and holds it with both hands, head bowed, then pulls it out"
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": "a staff topped by a blue crystal star with blue ribbons",
+   "subject": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, black shorts to mid-thigh over opaque black tights, black boots, holding a staff topped by a blue crystal star with blue ribbons",
+   "guard_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with blue ribbons",
+   "air_pose": "in mid-air facing right, knees tucked, holding a staff topped by a blue crystal star with blue ribbons",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a short swing of the star staff forward"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a backhand swing of the star staff"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "raises the star staff and strikes forward with its star head"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, swings the star staff in a full circle around her"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "points the star staff forward and up, as if casting a lob"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "twirls the star staff in front of her, then points it forward"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "raises the star staff overhead and jumps straight up"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "plants the star staff in front of her and holds it with both hands as a guard"
+    ],
+    "w1_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "none",
+     "raises the star staff high to the sky with both hands and holds it there, then lowers it"
+    ]
+   }
+  }
+ }
+}

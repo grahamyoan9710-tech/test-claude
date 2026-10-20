@@ -37,6 +37,9 @@ class Fx {
   // pixel; it is drawn in front of the world until its last frame.
   void playFx(const char* name, Vec2 at, float size, float rot = 0.0f, bool flip = false);
   void playFx(const char* name, Vec2 at, float size, float rot, bool flip, Color tint);  // tinted (shared effects)
+  // A shared movement effect (move_*: PixelLab, grey and white) in fighter `who`'s colour, mirrored to its facing.
+  // False when the effect is not imported.
+  bool moveFx(const Match& m, int who, const char* name, Vec2 at);
   Vec2 punchFocus() const { return punchPos_; }
 
  private:

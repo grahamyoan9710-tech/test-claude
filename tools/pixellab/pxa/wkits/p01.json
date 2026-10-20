@@ -1,0 +1,166 @@
+{
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "a long curved black odachi sword with a violet ribbon",
+   "subject": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+   "guard_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon",
+   "air_pose": "in mid-air facing right, knees tucked, holding a long curved black odachi sword with a violet ribbon",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a fast horizontal cut of the odachi from left to right at chest height"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a rising diagonal cut of the odachi from low in front up over his head"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a big two-handed downward cut of the odachi from high above to the ground in front"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins once and sweeps the odachi in a full circle around him"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "swings the odachi in a wide low arc along the ground, sending its edge forward"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward low and draws a lightning-fast horizontal cut, ending far ahead with the blade extended"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "spins upward with the odachi held out, cutting in a rising spiral"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "holds the odachi crosswise in front of him to parry, then counters with a quick cut"
+    ],
+    "w0_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "none",
+     "crouches low with the odachi drawn back, holds perfectly still, then rises and slowly slides the blade home into an invisible sheath at his hip"
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": "two curved violet daggers, one in each hand",
+   "subject": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding two curved violet daggers, one in each hand",
+   "guard_pose": "fighting stance facing right, holding two curved violet daggers, one in each hand",
+   "air_pose": "in mid-air facing right, knees tucked, holding two curved violet daggers, one in each hand",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a quick slash with the dagger in his front hand"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a quick slash with the dagger in his back hand"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "stabs both daggers forward together in an X"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins with both daggers out, slashing all around"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "throws both daggers forward with a snap of the wrists, then catches them as they come back"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "rushes forward slashing five times with alternating daggers"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "drills upward spinning fast with both daggers held out"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "stabs a dagger into the ground in front of him, then pulls it out and stands back up"
+    ],
+    "w1_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward and slashes in every direction with both daggers in a whirl of cuts, ending in a crossed X pose"
+    ]
+   }
+  }
+ }
+}

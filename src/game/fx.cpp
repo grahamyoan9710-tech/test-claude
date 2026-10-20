@@ -523,19 +523,25 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Jump:
-        dust(e.pos, 4, 3.0f);
+        if (!(moveFx(m, e.a, "move_smoke_jump", e.pos) && moveFx(m, e.a, "move_jump", e.pos))) dust(e.pos, 4, 3.0f);
         au.play(Sfx::Jump, 0.35f, rng_.range(0.95f, 1.05f));
         break;
       case EvType::AirJump:
-        add(PK::Ring, e.pos, {}, 16, 6, 40, withAlpha(WHITE, 0.8f));
+        if (!(moveFx(m, e.a, "move_jump_air", e.pos) && moveFx(m, e.a, "move_smoke_airjump", e.pos)))
+          add(PK::Ring, e.pos, {}, 16, 6, 40, withAlpha(WHITE, 0.8f));
         au.play(Sfx::AirJump, 0.35f, rng_.range(0.95f, 1.05f));
         break;
-      case EvType::Land:
-        dust(e.pos, 2 + int(std::min(6.0f, e.strength * 0.4f)), 2.5f + e.strength * 0.2f);
+      case EvType::Land: {  // a hard landing, or a slide when it lands running
+        const bool sliding = e.a >= 0 && e.a < nf && std::fabs(m.fighters[e.a].vel.x) > 5.0f;
+        if (!moveFx(m, e.a, sliding ? "move_smoke_slide" : "move_land", e.pos))
+          dust(e.pos, 2 + int(std::min(6.0f, e.strength * 0.4f)), 2.5f + e.strength * 0.2f);
         au.play(Sfx::Land, clampf(0.2f + e.strength / 25.0f, 0.2f, 0.8f));
         break;
+      }
       case EvType::Dash:
-        if (e.a >= 0) {
+        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, "move_smoke_run", e.pos)) {
+          moveFx(m, e.a, "move_dash", m.fighters[e.a].center());
+        } else if (e.a >= 0) {
           const Fighter& f = m.fighters[e.a];
           for (int i = 0; i < 3; ++i)
             add(PK::Smoke, e.pos + Vec2{-f.facing * 10.0f, -4}, {-f.facing * rng_.range(1, 3), rng_.range(-1, 0)}, 20, 5, 13,
@@ -568,7 +574,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Respawn:
-        burst(e.pos + Vec2{0, -40}, 20, 5, {255, 255, 220, 255}, PK::Star, 30, 5);
+        if (!moveFx(m, e.a, "move_appear", e.pos)) burst(e.pos + Vec2{0, -40}, 20, 5, {255, 255, 220, 255}, PK::Star, 30, 5);
         break;
       case EvType::Tech:
         add(PK::Ring, e.pos + Vec2{0, -10}, {}, 14, 10, 50, withAlpha({200, 240, 255, 255}, 0.9f));
@@ -734,7 +740,18 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::WeaponPickup, 0.9f);
         break;
       }
-      case EvType::Transform: {  // a transformation: a burst of the hero's power
+      case EvType::Transform: {  // a transformation: its shock wave (the owner's sheet: one per transformation)
+        static const char* const kWave[] = {"move_wave_5", "move_wave_3", "move_wave_2", nullptr, nullptr,
+                                            "move_wave_4", nullptr, "move_wave_1", nullptr, "move_wave_4",
+                                            nullptr, "move_wave_5", nullptr, "move_wave_1", nullptr, "move_wave_2"};
+        const int h = e.a >= 0 && e.a < nf ? int(m.fighters[e.a].def->hero) : -1;
+        const char* wave = h >= 0 && h < int(std::size(kWave)) && kWave[h] ? kWave[h] : "move_wave_1";
+        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, wave, m.fighters[e.a].pos)) {
+          shake_ = std::max(shake_, 12.0f);
+          au.play(Sfx::UltReady, 0.9f, 0.8f);
+          au.play(Sfx::BeamBlast, 0.7f, 0.7f);
+          break;
+        }
         const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : WHITE;
         add(PK::Flash, e.pos, {}, 14, 40, 260, el);
         add(PK::Ring, e.pos, {}, 26, 16, 300, el);
@@ -792,6 +809,14 @@ void Fx::projectileTrails(const Match& m) {
 
 void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip) {
   playFx(name, at, size, rot, flip, WHITE);
+}
+
+bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at) {
+  if (who < 0 || who >= int(m.fighters.size()) || !art::fxInfo(name)) return false;
+  const Fighter& f = m.fighters[who];
+  const Color tint = mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f);
+  playFx(name, at, f.def->height / 170.0f, 0.0f, f.facing < 0, tint);
+  return true;
 }
 
 void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip, Color tint) {
