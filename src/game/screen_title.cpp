@@ -1,180 +1,86 @@
-// Title screen ("appuyez sur ENTRÉE") and main menu.
+// Main menu, the first screen (docs/refonte/menu_accueil.png): one of the owner's three backgrounds (the next one
+// at each visit), the logo, a column of slanted buttons, the featured arena, a tip, the version.
 #include "game/app.hpp"
-#include "game/menu_theme.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
 namespace {
-float hash(int i) {
-  uint32_t x = uint32_t(i) * 2246822519u + 0x2545F491u;
-  x ^= x >> 15;
-  x *= 0x2c1b3c6du;
-  x ^= x >> 12;
-  return float(x & 0xFFFF) / 65535.0f;
-}
-float easeOutBack(float t) {
-  t = clampf(t, 0.0f, 1.0f);
-  const float c1 = 1.70158f, c3 = c1 + 1.0f;
-  return 1.0f + c3 * std::pow(t - 1.0f, 3.0f) + c1 * std::pow(t - 1.0f, 2.0f);
-}
 float easeOut(float t) {
   t = clampf(t, 0.0f, 1.0f);
   return 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
 }
 
-void drawGear(Vector2 c, float r, float rot, Color col) {
-  for (int i = 0; i < 8; ++i) {
-    float a = rot + i * kPi / 4.0f;
-    DrawRectanglePro({c.x + std::cos(a) * r * 0.86f, c.y + std::sin(a) * r * 0.86f, r * 0.42f, r * 0.42f},
-                     {r * 0.21f, r * 0.21f}, a * 180.0f / kPi, col);
-  }
-  DrawCircleV(c, r * 0.82f, col);
-  DrawCircleV(c, r * 0.36f, withAlpha(ui::kInk, 0.55f));
-  DrawRing(c, r * 0.5f, r * 0.58f, 0, 360, 32, withAlpha(ui::kInk, 0.25f));
-}
-
-void drawTarget(Vector2 c, float r, float time) {
-  const Color cream{240, 230, 204, 255}, terra{184, 76, 56, 255};
-  const Color cols[3] = {cream, terra, cream};
-  DrawCircleV(c, r + 2.5f, ui::kInk);
-  for (int i = 0; i < 3; ++i) DrawCircleV(c, r * (1.0f - i * 0.3f), cols[i]);
-  DrawCircleV(c, r * 0.14f, terra);
-  float wob = std::sin(time * 3.0f) * 4.0f;
-  DrawLineEx({c.x + r * 1.2f + wob, c.y - r * 0.9f - wob}, {c.x + r * 0.1f, c.y - r * 0.05f}, 6, {112, 76, 46, 255});
-  DrawTriangle({c.x + r * 0.05f, c.y}, {c.x + r * 0.3f, c.y - r * 0.08f}, {c.x + r * 0.1f, c.y - r * 0.25f},
-               {196, 200, 190, 255});
-}
-
-void drawExit(Vector2 c, float r) {
-  DrawRectangleRounded({c.x - r * 0.75f, c.y - r, r * 1.1f, r * 2.0f}, 0.15f, 6, {238, 228, 204, 255});
-  DrawRectangleRounded({c.x - r * 0.6f, c.y - r * 0.85f, r * 0.8f, r * 1.7f}, 0.15f, 6, {56, 42, 62, 255});
-  DrawCircleV({c.x + r * 0.05f, c.y + r * 0.05f}, r * 0.09f, ui::kGold);
-  DrawLineEx({c.x + r * 0.2f, c.y}, {c.x + r * 1.1f, c.y}, r * 0.22f, ui::kGold);
-  ui::arrowTri({c.x + r * 1.15f, c.y}, r * 0.55f, 1, ui::kGold);
-}
-
-struct Tile {
-  Rectangle r;
-  float slant;
-  Color top, bottom;
+struct Item {
   const char* label;
+  const char* icon;
   const char* desc;
+  bool ready;  // false: shown, not open yet
 };
+const Item kItems[] = {
+    {"JOUER", "menu_icon_play", "Combat contre l'ordinateur.", true},
+    {"ENTRAÎNEMENT", "menu_icon_training", "Vies infinies, mannequin réglable en pause.", true},
+    {"VERSUS", "menu_icon_versus", "De 2 à 4 joueurs sur la même machine.", true},
+    {"EN LIGNE", "menu_icon_online", "Bientôt.", false},
+    {"PERSONNAGES", "menu_icon_fighters", "Bientôt : la galerie des combattants.", false},
+    {"ARÈNES", "menu_icon_arenas", "Bientôt : l'aperçu des arènes.", false},
+    {"OPTIONS", "menu_icon_options", "Son, affichage, règles du jeu, touches et manettes.", true},
+    {"QUITTER", "menu_icon_quit", "Quitter Super Clash Bros.", true},
+};
+constexpr int kItemCount = int(sizeof kItems / sizeof kItems[0]);
+const Color kRed{236, 40, 74, 255}, kRedDark{164, 14, 48, 255};
 
-// Jewel tiles under the gold trims: ruby, emerald, sapphire, amethyst.
-const Tile kTiles[4] = {
-    {{60, 126, 640, 474}, 70, {218, 52, 70, 255}, {86, 12, 42, 255}, "COMBAT",
-     "Affrontez jusqu'à 3 adversaires, humains ou ordinateurs."},
-    {{728, 126, 500, 142}, 21, {30, 164, 116, 255}, {6, 62, 58, 255}, "ENTRAÎNEMENT",
-     "Vies infinies, mannequin, compteur de combos : idéal pour apprendre."},
-    {{704, 292, 500, 142}, 21, {48, 116, 230, 255}, {14, 32, 104, 255}, "PARAMÈTRES",
-     "Son, affichage, règles du jeu, touches et manettes."},
-    {{680, 458, 500, 142}, 21, {146, 74, 210, 255}, {48, 20, 92, 255}, "QUITTER",
-     "Quitter Super Clash Bros."},
-};
-// Speed streaks: long thin strokes rushing from right to left behind the tiles, bright head, fading tail.
-void speedStreaks(float time, Color col) {
-  if (col.a == 0) return;
-  for (int i = 0; i < 9; ++i) {
-    const float len = 260.0f + 420.0f * hash(i * 7 + 1), th = 3.0f + 20.0f * hash(i * 13 + 5);
-    const float speed = 700.0f + 900.0f * hash(i * 3 + 2), y = 110.0f + 520.0f * hash(i * 11 + 3);
-    const float span = kScreenW + len + 200.0f;
-    const float x = kScreenW + 100.0f - std::fmod(time * speed + hash(i * 5) * span, span), s = th * 1.2f;
-    const Color tail = withAlpha(col, 0.0f);
-    ui::quad({x + s, y}, {x + len + s, y}, {x + len, y + th}, {x, y + th}, col, tail, tail, col);
+Rectangle itemRect(int i, bool sel) {
+  const Rectangle r{58, 170.0f + i * 47.0f, 300, 42};
+  return sel ? Rectangle{r.x - 14, r.y - 6, r.width + 30, r.height + 12} : r;
+}
+const Rectangle kCard{26, 590, 452, 104};
+const Rectangle kGear{kScreenW - 58, kScreenH - 54, 40, 40};
+
+// An icon cut from the mock (white on transparent), h pixels high, centred on c.
+void icon(const char* name, Vector2 c, float h, Color tint) {
+  float w, hh;
+  if (!art::pictureSize(name, w, hh)) return;
+  const float k = h / hh;
+  art::drawPicture(name, {0, 0, w, hh}, {c.x - w * k * 0.5f, c.y - h * 0.5f, w * k, h}, 1.0f, false, tint);
+}
+
+void button(const Item& it, Rectangle r, bool sel, float pop) {
+  const float s = r.height * 0.3f;
+  ui::slanted({r.x + 5, r.y + 6, r.width, r.height}, s, withAlpha(BLACK, 0.45f * pop), withAlpha(BLACK, 0.45f * pop));
+  if (sel) {
+    ui::slanted(r, s, kRed, kRedDark);
+    ui::slanted({r.x + s, r.y, r.width - s, r.height * 0.4f}, s * 0.4f, withAlpha(WHITE, 0.16f), withAlpha(WHITE, 0.0f));
+    ui::slantedOutline(r, s, 2.5f, withAlpha(WHITE, 0.9f));
+  } else {
+    ui::slanted(r, s, withAlpha({36, 36, 48, 255}, 0.92f), withAlpha({14, 14, 22, 255}, 0.92f));
+    ui::slantedOutline(r, s, 1.5f, withAlpha({130, 130, 150, 255}, 0.55f));
+  }
+  const Color ink = !it.ready ? Color{140, 140, 152, 255} : sel ? WHITE : Color{232, 232, 240, 255};
+  const float cy = r.y + r.height * 0.5f, size = sel ? 25.0f : 21.0f;
+  icon(it.icon, {r.x + s + 28, cy}, r.height * 0.56f, ink);
+  drawTextOutlined(it.label, r.x + s + 58, cy - size * 0.55f, size, ink, withAlpha(BLACK, 0.6f), 2.0f, FontKind::Title);
+  if (!it.ready) {  // in place of the arrow
+    const Rectangle tag{r.x + r.width - s - 62, cy - 8, 54, 16};
+    DrawRectangleRounded(tag, 0.5f, 6, withAlpha({70, 70, 84, 255}, 0.9f));
+    drawText("BIENTÔT", tag.x + 5, tag.y + 2, 11, {200, 200, 210, 255});
+  } else {
+    ui::arrowTri({r.x + r.width - s - 18, cy}, sel ? 16.0f : 12.0f, 1, withAlpha(ink, sel ? 1.0f : 0.6f));
   }
 }
+
+// One tip per visit, with the key or button of its action.
+struct Tip {
+  int action;
+  const char* text;
+};
+const Tip kTips[] = {
+    {kActWeapon, "Arme : ramasse ton arme, puis alterne A et B"},
+    {kActUltimate, "Ultime : quand la jauge est pleine"},
+    {kActGrab, "Prise : attrape, puis lance dans une direction"},
+};
 }  // namespace
-
-// ---------------------------------------------------------------------------
-// Title screen
-// ---------------------------------------------------------------------------
-void App::updateTitle(const MenuNav& nav) {
-  if (screenFrames_ == 22) audio_.play(Sfx::HitHeavy, 0.9f, 0.8f);
-  if (screenFrames_ == 30) audio_.voice("title");
-  if (screenFrames_ == 24) audio_.play(Sfx::Crowd, 0.5f, 1.1f);
-  bool go = nav.confirm || nav.start || IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
-  if (go && screenFrames_ > 20) {
-    audio_.play(Sfx::Go, 0.8f);
-    goTo(Screen::MainMenu);
-  }
-}
-
-void App::drawTitle() {
-  const float t = time_, f = float(screenFrames_);
-  const Vector2 center{kScreenW * 0.5f, 232};
-
-  ui::stageBackdrop(2, t, 0.0f);  // the sky islands, slowly drifting
-  DrawRectangleGradientV(0, 0, kScreenW, 420, withAlpha(ui::kInk, 0.5f), withAlpha(ui::kInk, 0.0f));
-  float pulse = 1.0f + 0.02f * std::sin(t * 2.0f);
-  ui::zonaiRing(center, 226 * pulse, t, clampf(f / 30.0f, 0.0f, 1.0f));
-
-  // Ancient stone disc and fighters (they run in from the sides)
-  ui::stoneDisc({kScreenW * 0.5f, 614}, 600, 34, t);
-  const auto& r = roster();
-  const int n = int(r.size());
-  const float gap = std::min(174.0f, 1000.0f / std::max(1, n - 1));
-  for (int i = 0; i < n; ++i) {
-    float enter = easeOut((f - 26.0f - i * 4.0f) / 28.0f);
-    const bool left = i < n / 2;
-    float side = left ? -1.0f : 1.0f;
-    float x = kScreenW * 0.5f + (i - (n - 1) * 0.5f) * gap + side * (1.0f - enter) * 760.0f;
-    float hop = std::max(0.0f, std::sin(t * 2.4f + i * 1.3f)) * 9.0f;
-    int facing = left ? 1 : -1;
-    DrawEllipse(int(x), 610, 40.0f - hop, 8.0f, withAlpha(ui::kInk, 0.3f));
-    Pose p = restPose(r[i], t + i);
-    drawCharacterSprite(r[i], 0, p, {x, 608 - hop}, facing, std::min(1.3f, 150.0f / r[i].height * (n > 6 ? 1.0f : 1.15f)),
-                  1.0f, WHITE, 0.0f, t + i);
-  }
-
-  // Logo: slams in, then breathes
-  float k = easeOutBack(f / 24.0f);
-  float scale = f < 24 ? lerpf(2.6f, 1.0f, k) : 1.0f + 0.012f * std::sin(t * 2.2f);
-  float alpha = clampf(f / 10.0f, 0.0f, 1.0f);
-  float shakeX = (f >= 24 && f < 36) ? std::sin(f * 3.1f) * (36 - f) * 0.8f : 0.0f;
-  if (alpha > 0.0f) {
-    float s1 = 46 * scale;
-    const char* super = "SUPER";
-    drawTextOutlined(super, center.x - textWidth(super, s1, FontKind::Title) * 0.5f + shakeX, 70 - (scale - 1) * 40,
-                     s1, withAlpha(ui::kCream, alpha), withAlpha(ui::kUmber, alpha), 4.0f * scale, FontKind::Title);
-    float size = 150 * scale;
-    float w = ui::spriteWidth(ui::Sprite::Logo, size);
-    ui::drawSprite(ui::Sprite::Logo, center.x - w * 0.5f + shakeX, 108 - (scale - 1) * 60, size, alpha);
-  }
-  // Subtitle ribbon: teal ink, gold edges, rules on both sides
-  if (f > 28) {
-    float a = clampf((f - 28) / 12.0f, 0.0f, 1.0f);
-    Rectangle rib{center.x - 270, 286, 540, 44};
-    ui::slanted({rib.x + 6, rib.y + 6, rib.width, rib.height}, 22, withAlpha(BLACK, 0.35f * a), withAlpha(BLACK, 0.35f * a));
-    ui::slanted(rib, 22, withAlpha({34, 56, 60, 255}, 0.95f * a), withAlpha(ui::kInk, 0.95f * a));
-    ui::slantedOutline(rib, 22, 1.5f, withAlpha(ui::kGold, a));
-    const float my = rib.y + rib.height * 0.5f;
-    ui::rule(rib.x - 74, rib.x + 4, my, withAlpha(ui::kGold, a));
-    ui::rule(rib.x + rib.width - 4, rib.x + rib.width + 74, my, withAlpha(ui::kGold, a));
-    drawTextCentered("LE CHOC DES COMBATTANTS", center.x, rib.y + 9, 23, withAlpha(ui::kCream, a));
-  }
-  // Glints around the logo
-  for (int i = 0; i < 6; ++i) {
-    float ph = std::fmod(t * 0.8f + hash(i + 40), 1.0f);
-    float s = std::sin(ph * kPi) * 14.0f;
-    Vector2 p{center.x - 380 + hash(i + 60) * 760, 100 + hash(i + 80) * 170};
-    if (f > 30 && s > 1.0f) ui::star(p, s, s * 0.3f, t, withAlpha({255, 244, 210, 255}, 0.85f));
-  }
-  // Press start
-  if (f > 40) {
-    float a = 0.55f + 0.45f * std::sin(t * 4.0f);
-    const char* txt = "APPUYEZ SUR";
-    const float ph = padPrompts() ? 44 : 34;  // a gamepad button is a smaller shape than a key cap
-    float total = textWidth(txt, 26) + 14 + ui::promptWidth("ENTRÉE", ui::Btn::Start, ph);
-    float x = center.x - total * 0.5f;
-    drawTextOutlined(txt, x, 368, 26, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.5f);
-    ui::prompt("ENTRÉE", ui::Btn::Start, x + textWidth(txt, 26) + 14, 381 - ph * 0.5f, ph, true);
-  }
-  drawTextOutlined("v9.9", kScreenW - 54, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
-  drawTextOutlined("C++ & raylib", 16, kScreenH - 26, 15, ui::kCream, ui::kInk, 2.0f);
-  if (f >= 22 && f < 40) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({255, 248, 228, 255}, (40 - f) / 18.0f * 0.7f));
-}
 
 // ---------------------------------------------------------------------------
 // Main menu
@@ -185,10 +91,16 @@ void App::claimP1(int device) {
   if (device >= 0) assignDevice(0, device);
 }
 
+int App::featuredStage() const { return settings().menuBg % int(stageList().size()); }
+
 void App::activateMenu(int item, int device) {
+  if (!kItems[item].ready) {
+    audio_.play(Sfx::MenuBack);
+    return;
+  }
   audio_.play(Sfx::MenuSelect);
   switch (item) {
-    case 0:
+    case 0: case 2:  // JOUER, VERSUS: the same select, where players join
       training_ = false;
       cssRow_ = 1;
       claimP1(device);
@@ -201,7 +113,7 @@ void App::activateMenu(int item, int device) {
       claimP1(device);
       goTo(Screen::CharSelect);
       break;
-    case 2:
+    case 6:
       settingsReturn_ = Screen::MainMenu;
       setTab_ = 0;
       setRow_ = -1;
@@ -214,16 +126,11 @@ void App::activateMenu(int item, int device) {
 }
 
 void App::updateMainMenu(const MenuNav& nav) {
-  int before = menuSel_;
-  if (nav.left && menuSel_ != 0) {
-    menuRight_ = menuSel_;
-    menuSel_ = 0;
-  }
-  if (nav.right && menuSel_ == 0) menuSel_ = menuRight_;
-  if (nav.up && menuSel_ > 1) menuSel_--;
-  if (nav.down && menuSel_ >= 1 && menuSel_ < 3) menuSel_++;
-  for (int i = 0; i < 4; ++i) {
-    if (!ui::hovered(kTiles[i].r)) continue;
+  const int before = menuSel_;
+  if (nav.up) menuSel_ = (menuSel_ + kItemCount - 1) % kItemCount;
+  if (nav.down) menuSel_ = (menuSel_ + 1) % kItemCount;
+  for (int i = 0; i < kItemCount; ++i) {
+    if (!ui::hovered(itemRect(i, i == menuSel_))) continue;
     if (ui::mouseMoved()) menuSel_ = i;
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       menuSel_ = i;
@@ -231,84 +138,80 @@ void App::updateMainMenu(const MenuNav& nav) {
       return;
     }
   }
-  if (menuSel_ != 0) menuRight_ = menuSel_;
   if (menuSel_ != before) audio_.play(Sfx::MenuMove, 0.7f);
-  if (nav.confirm || nav.start) activateMenu(menuSel_, nav.device);
-  else if (nav.back) {
-    audio_.play(Sfx::MenuBack);
-    goTo(Screen::Title);
+  if (ui::clicked(kGear)) {
+    menuSel_ = 6;
+    activateMenu(6);
+  } else if (nav.prev || ui::clicked(kCard)) {  // discover the featured arena: a training there
+    stage_ = featuredStage();
+    stageRandom_ = false;
+    activateMenu(1, nav.device);
+  } else if (nav.confirm || nav.start) {
+    activateMenu(menuSel_, nav.device);
   }
 }
 
 void App::drawMainMenu() {
-  const float t = time_;
-  const MenuTheme& th = menuTheme();
-  ui::stageBackdrop(2, t, th.dim);
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, th.skyTop, th.skyLow);
-  ui::glow({kScreenW * 0.5f, kScreenH + 60.0f}, 520, th.sun, 8);  // the sun just set
-  speedStreaks(t, th.streaks);
-  ui::header("MENU PRINCIPAL", nullptr, th.tiles[0][0], t);
-  // small logo, top right
-  ui::drawSprite(ui::Sprite::Logo, kScreenW - 360, 30, 52);
+  const float t = time_, f = float(screenFrames_);
+  const int bg = settings().menuBg % 3;
+  art::drawPicture(TextFormat("menu_fond_%d", bg + 1), {0, 0, kScreenW, kScreenH}, {0, 0, kScreenW, kScreenH});
+  DrawRectangleGradientH(0, 0, 620, kScreenH, withAlpha(BLACK, 0.55f), withAlpha(BLACK, 0.0f));
 
-  const auto& r = roster();
-  for (int i = 0; i < 4; ++i) {
-    const Tile& tile = kTiles[i];
-    bool sel = i == menuSel_;
-    float popIn = easeOut((screenFrames_ - i * 4.0f) / 18.0f);
-    Rectangle rr = tile.r;
-    rr.x += (1.0f - popIn) * (i == 0 ? -500.0f : 500.0f);
-    if (sel) rr = ui::grow(rr, 6.0f + std::sin(t * 6.0f) * 1.5f);
-    const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
-    // shadow, body, sheen
-    ui::slanted({rr.x + 10, rr.y + 12, rr.width, rr.height}, tile.slant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    const Color ttop = th.tiles[i][0], tbottom = th.tiles[i][1];
-    Color top = sel ? mixColor(ttop, ui::kCream, 0.08f) : shade(ttop, 0.72f);
-    Color bottom = sel ? tbottom : shade(tbottom, 0.7f);
-    ui::slanted(rr, tile.slant, withAlpha(top, 0.96f), withAlpha(bottom, 0.96f));
-    ui::slanted({rr.x + tile.slant * 0.9f, rr.y, rr.width - tile.slant * 0.9f, rr.height * 0.18f}, tile.slant * 0.18f,
-                withAlpha(ui::kCream, 0.14f), withAlpha(ui::kCream, 0.0f));
-    // Zonai rune carved in the tile (instead of stripes)
-    const bool big = i == 0;
-    const Vector2 rc = big ? Vector2{rr.x + rr.width * 0.56f, rr.y + rr.height * 0.4f}
-                           : Vector2{rr.x + rr.width - 78, rr.y + rr.height * 0.5f};
-    ui::rune(rc, big ? 190.0f : 62.0f, i == 0 ? 0 : i == 1 ? 3 : i == 2 ? 2 : 1, t * (sel ? 0.5f : 0.1f),
-             withAlpha(ui::kCream, sel ? 0.1f : 0.06f), big ? 7.0f : 4.0f);
-    // inner hairline, frame, corner ornaments
-    const Rectangle in = ui::grow(rr, -8);
-    ui::slantedOutline(in, tile.slant * in.height / rr.height, 1.0f, withAlpha(ui::kGold, sel ? 0.5f : 0.25f));
-    ui::slantedOutline(rr, tile.slant, sel ? 3.0f : 2.5f, sel ? ui::kGold : withAlpha(ui::kInk, 0.9f));
-    ui::corners(rr, tile.slant, big ? 30.0f : 18.0f, 3.0f, sel ? ui::kGold : withAlpha(ui::kGold, 0.45f));
-    if (sel) {
-      ui::slantedOutline(ui::grow(rr, 7), tile.slant, 4, withAlpha(th.glow, 0.18f + 0.16f * pulse));
-      ui::corners(ui::grow(rr, 9 + pulse * 3), tile.slant, big ? 34.0f : 20.0f, 3.0f, ui::kGold);
-    }
-
-    if (i == 0) {
-      ui::glow({rr.x + rr.width * 0.5f, rr.y + rr.height * 0.45f}, 230, withAlpha({255, 226, 170, 255}, sel ? 0.3f : 0.16f), 10);
-      const int show[4] = {0, 2, 6, 7};
-      for (int k = 0; k < 4; ++k) {
-        const CharacterDef& d = r[show[k] % int(r.size())];
-        Pose p = restPose(d, t + k);
-        float hop = sel ? std::max(0.0f, std::sin(t * 5.0f + k * 1.6f)) * 10.0f : 0.0f;
-        float scale = 170.0f / d.height * (d.style == BodyStyle::Brute ? 1.1f : 1.0f);
-        float x = rr.x + 120 + k * 140;
-        drawCharacterSprite(d, 0, p, {x, rr.y + rr.height - 132 - hop}, k < 2 ? 1 : -1, scale, 1.0f, WHITE, 0.0f, t + k);
-      }
-      float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 6.0f : 0.0f;
-      ui::drawSprite(ui::Sprite::Combat, rr.x + 36, rr.y + rr.height - 118 - bounce, 92);
-      drawTextOutlined("Jusqu'à 4 joueurs  •  Ordinateurs niveaux 1 à 10", rr.x + 40, rr.y + rr.height - 30, 18,
-                       ui::kCream, ui::kInk, 2.0f);
-    } else {
-      float bounce = sel ? std::fabs(std::sin(t * 4.0f)) * 4.0f : 0.0f;
-      drawTextOutlined(tile.label, rr.x + tile.slant + 26, rr.y + 44 - bounce, 42, sel ? ui::kCream : Color{226, 218, 198, 255},
-                       ui::kInk, 4.0f, FontKind::Title);
-      Vector2 ic{rr.x + rr.width - 78, rr.y + rr.height * 0.5f};
-      if (i == 1) drawTarget(ic, 36, t);
-      if (i == 2) drawGear(ic, 36, t * (sel ? 1.2f : 0.3f), {236, 226, 200, 255});
-      if (i == 3) drawExit({ic.x - 10, ic.y}, 32);
-    }
+  // Logo, top left
+  float lw, lh;
+  if (art::pictureSize("menu_logo", lw, lh)) {
+    const float k = 372.0f / lw, in = easeOut(f / 16.0f);
+    art::drawPicture("menu_logo", {0, 0, lw, lh}, {18 - (1.0f - in) * 80.0f, 6, lw * k, lh * k}, in);
   }
-  ui::footer({{"FLÈCHES", ui::Btn::Move, "Naviguer"}, {"ENTRÉE", ui::Btn::A, "Choisir"}, {"ÉCHAP", ui::Btn::B, "Retour"}},
-             kTiles[menuSel_].desc);
+
+  // Buttons, sliding in one after the other; the chosen one is red, bigger
+  for (int i = 0; i < kItemCount; ++i) {
+    if (i == menuSel_) continue;
+    const float pop = easeOut((f - i * 2.0f) / 14.0f);
+    Rectangle r = itemRect(i, false);
+    r.x -= (1.0f - pop) * 420.0f;
+    button(kItems[i], r, false, pop);
+  }
+  {
+    const float pop = easeOut((f - menuSel_ * 2.0f) / 14.0f);
+    Rectangle r = itemRect(menuSel_, true);
+    r.x -= (1.0f - pop) * 420.0f + std::sin(t * 5.0f) * 1.5f;
+    button(kItems[menuSel_], r, true, pop);
+  }
+
+  // Featured arena (changes with the background)
+  const auto& stages = stageList();
+  const int fs = featuredStage();
+  ui::slanted({kCard.x + 6, kCard.y + 7, kCard.width, kCard.height}, 18, withAlpha(BLACK, 0.45f), withAlpha(BLACK, 0.45f));
+  ui::slanted(kCard, 18, withAlpha({28, 28, 38, 255}, 0.94f), withAlpha({12, 12, 18, 255}, 0.94f));
+  DrawRectangleGradientH(int(kCard.x + 10), int(kCard.y + kCard.height - 4), int(kCard.width - 10), 4, kRed,
+                         withAlpha(kRed, 0.0f));
+  const Rectangle thumb{kCard.x + 26, kCard.y + 10, 150, 84};
+  drawStageThumb(fs, stages[fs], thumb);
+  DrawRectangleLinesEx(thumb, 1.5f, withAlpha(WHITE, 0.5f));
+  const float tx = thumb.x + thumb.width + 18;
+  drawText("ARÈNE À LA UNE", tx, kCard.y + 14, 13, {200, 200, 212, 255});
+  drawTextOutlined(stages[fs].name.c_str(), tx, kCard.y + 31, 26, WHITE, withAlpha(BLACK, 0.6f), 2.0f, FontKind::Title);
+  const float ph = padPrompts() ? 26 : 22;
+  const float pw = ui::prompt("K", ui::Btn::X, tx, kCard.y + 70 - ph * 0.5f, ph);
+  drawText("Découvrir cette arène", tx + pw + 8, kCard.y + 62, 16, {232, 232, 240, 255});
+
+  // Tip, top right
+  const Tip& tip = kTips[settings().menuBg % 3];
+  const std::string key = keyName(settings().keys[0][tip.action]);
+  const float th = 26, tw = ui::promptWidth(key.c_str(), ui::padButtonFor(tip.action), th) + 12 + textWidth(tip.text, 16);
+  const Rectangle pill{kScreenW - tw - 52, 16, tw + 32, 40};
+  DrawRectangleRounded({pill.x + 3, pill.y + 4, pill.width, pill.height}, 0.5f, 8, withAlpha(BLACK, 0.4f));
+  DrawRectangleRounded(pill, 0.5f, 8, withAlpha({16, 16, 24, 255}, 0.88f));
+  DrawRectangleRoundedLinesEx(pill, 0.5f, 8, 1.5f, withAlpha({150, 150, 170, 255}, 0.6f));
+  const float kx = pill.x + 16 + ui::prompt(key.c_str(), ui::padButtonFor(tip.action), pill.x + 16, pill.y + 7, th);
+  drawText(tip.text, kx + 12, pill.y + 11, 16, WHITE);
+
+  // What the chosen button does, the version and the options wheel, bottom right
+  drawTextOutlined(kItems[menuSel_].desc, kCard.x + kCard.width + 30, kScreenH - 34, 17, {232, 232, 240, 255},
+                   withAlpha(BLACK, 0.7f), 2.0f);
+  drawTextOutlined("v9.9", kGear.x - 50, kGear.y + 11, 17, WHITE, withAlpha(BLACK, 0.7f), 2.0f);
+  const bool gearHot = ui::hovered(kGear);
+  icon("menu_icon_options", {kGear.x + kGear.width * 0.5f, kGear.y + kGear.height * 0.5f}, gearHot ? 34.0f : 30.0f,
+       gearHot ? kRed : WHITE);
 }

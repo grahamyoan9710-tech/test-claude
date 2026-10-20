@@ -615,7 +615,8 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 Tous les menus sont refaits dans le style de `menu_accueil.png` et `menu_selection.png`.
 
 **Écran titre**
-- Fond : tes images 1, 2 et 3 (`menu_fond_*.png`) en fondu enchaîné.
+- Fond : tes images 1, 2 et 3 (`menu_fond_*.png`), une par visite : chaque lancement ou retour au menu passe à
+  la suivante (1, 2, 3, 1…), retenue dans les réglages (`menu_bg`).
 - En haut à gauche : le logo.
 - Une colonne de boutons inclinés, avec leurs icônes : le bouton choisi est rouge, les autres sont sombres.
 - En bas à gauche : la carte « Arène à la une ».

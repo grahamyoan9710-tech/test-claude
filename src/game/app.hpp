@@ -81,7 +81,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { Title, MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim };
+enum class Screen { MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -113,12 +113,11 @@ class App {
   void finishMatch();
   void toast(const char* text);
   // screens (screen_title.cpp)
-  void updateTitle(const MenuNav& nav);
-  void drawTitle();
   void updateMainMenu(const MenuNav& nav);
   void drawMainMenu();
   void activateMenu(int item, int device = -1);
   void claimP1(int device);
+  int featuredStage() const;  // the main menu's arena of the moment
   // Gives `device` to card `col` (made human); a card that played it gets the old device or a free one.
   void assignDevice(int col, int device);
   int freeDevice(int col) const;
@@ -150,8 +149,8 @@ class App {
   void changeSetting(int row, int delta);
 
   Options opt_;
-  Screen screen_ = Screen::Title;
-  Screen next_ = Screen::Title;
+  Screen screen_ = Screen::MainMenu;
+  Screen next_ = Screen::MainMenu;
   int transition_ = -1;  // frames into a screen transition, -1 = none
   Audio audio_;
   RenderTexture2D target_{};
@@ -167,7 +166,6 @@ class App {
 
   // main menu
   int menuSel_ = 0;
-  int menuRight_ = 1;  // last selected tile of the right column
   bool introDone_ = false;
   // fight setup
   bool training_ = false;

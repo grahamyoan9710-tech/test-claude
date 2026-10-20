@@ -67,6 +67,10 @@ void App::enterScreen(Screen s) {
   }
   if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
   if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
+  if (s == Screen::MainMenu) {  // each visit shows the next of the owner's three backgrounds
+    settings().menuBg = (settings().menuBg + 1) % 3;
+    saveSettings();
+  }
   screen_ = s;
   screenFrames_ = 0;
   if (s != Screen::Match) {
@@ -206,7 +210,7 @@ void App::run() {
     transition_ = -1;
     enterScreen(Screen::Results);
   } else {
-    enterScreen(Screen::Title);
+    enterScreen(Screen::MainMenu);
   }
 
   while (!quit_ && !WindowShouldClose()) {
@@ -246,7 +250,6 @@ void App::run() {
     MenuNav nav = (screen_ != Screen::Match && !blocked) ? readMenuNav() : MenuNav{};
     if (!blocked) {
       switch (screen_) {
-        case Screen::Title: updateTitle(nav); break;
         case Screen::MainMenu: updateMainMenu(nav); break;
         case Screen::CharSelect: updateCss(nav); break;
         case Screen::StageSelect: updateStage(nav); break;
@@ -272,7 +275,6 @@ void App::run() {
     // anti-aliased edges must not punch translucent holes into the off-screen image.
     ui::frameBlend();
     switch (screen_) {
-      case Screen::Title: drawTitle(); break;
       case Screen::MainMenu: drawMainMenu(); break;
       case Screen::CharSelect: drawCss(); break;
       case Screen::StageSelect: drawStage(); break;

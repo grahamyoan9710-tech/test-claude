@@ -74,6 +74,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
     - **Dash** : un double appui fait d'abord un dash, puis la course. Nouveau clip `dash` (mains nues et armes,
       `clips.py`), joué sur les 12 premières images de `FState::Run` (`pickClip`, `kSheetDash`) ; sans clip, la
       course est jouée comme avant. Les 15 clips partent avec le driver.
+  - **Menu principal refait** (`screen_title.cpp`, comme `menu_accueil.png`) : il remplace l'écran titre et
+    l'ancien menu à 4 tuiles. Fond `menu_fond_1..3` (un par visite, `Settings::menuBg`, `menu_bg`), logo et
+    icônes détourés de la maquette (`assets/sprites/menu_logo.png`, `menu_icon_*.png`), 8 boutons inclinés
+    (EN LIGNE, PERSONNAGES et ARÈNES marqués « BIENTÔT » : pas encore d'écran), carte « Arène à la une »
+    (K / X : entraînement dans cette arène), astuce avec sa touche, version et roue des options. Prochaine étape :
+    la sélection (`menu_selection.png`), puis les autres écrans dans le même style.
   - Clips relus à mesure qu'ils arrivent ; un clip écarté pendant que le driver tourne reçoit un `job.json`
     `{"status": "rejected"}`, sinon ce driver ne le refait pas (il le garde dans sa liste des clips lancés).
   - Relu avant le jeton (clips déjà téléchargés). **Bons** : 01 nair, bair (quelques points blancs sous les pieds),

@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "b95ca8dc-a88f-4a27-baf9-4f4d6227f507",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:55b3c345-f02c-4bee-aa76-3c171628e20b",
+  "last_frame_url": "upload:2ee9651d-56f4-4a4b-a432-202042d713fa",
+  "description": "lands from a jump: absorbs the impact by bending the knees deeply, a long silver spear with white ribbons held ready, then rises back into the stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: b95ca8dc-a88f-4a27-baf9-4f4d6227f507\njob_id: b95ca8dc-a88f-4a27-baf9-4f4d6227f507\ndescription: lands from a jump: absorbs the impact by bending the knees deeply, a long silver spear with white ribbons held ready, then rises back into the stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b95ca8dc-a88f-4a27-baf9-4f4d6227f507\")\nasset_id: 89b1404d-8c4a-52d2-b97e-bd2a97d4a304\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+}
