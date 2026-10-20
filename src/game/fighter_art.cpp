@@ -207,7 +207,7 @@ const char* sheetName(int anim) {
   static const char* const kStates[kSheetMove0] = {
       "idle", "walk", "run", "crouch", "jumpsquat", "jump", "airjump", "fall", "land", "shield", "roll", "spotdodge",
       "airdodge", "hurt", "tumble", "knockdown", "getup", "helpless", "ledge", "climb", "hold", "grabbed", "dizzy",
-      "victory"};
+      "victory", "dash"};
   static const char* const kMoves[MOVE_COUNT] = {
       "jab", "jab2", "jab3", "ftilt", "utilt", "dtilt", "dashattack", "fsmash", "usmash", "dsmash", "nair", "fair",
       "bair", "uair", "dair", "nspecial", "sspecial", "uspecial", "dspecial", "grab", "pummel", "fthrow", "bthrow",

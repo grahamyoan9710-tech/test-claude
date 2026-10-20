@@ -844,6 +844,7 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     case FState::Idle: case FState::Respawn: loop(art::kSheetIdle); break;
     case FState::Walk: case FState::Run: {  // the steps follow the ground covered (no skating)
       const bool run = f.state == FState::Run;
+      if (run && sf < 12.0f && once(art::kSheetDash, sf / 12.0f)) break;  // the dash, then the run
       if (loop(run ? art::kSheetRun : art::kSheetWalk)) {
         const float cycle = f.def->height * (run ? 1.4f : 0.8f), u = f.pos.x * float(f.facing) / cycle;
         p.sheetPhase = u - std::floor(u);

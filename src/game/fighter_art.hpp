@@ -23,7 +23,8 @@ enum SheetAnim : int {
   kSheetIdle, kSheetWalk, kSheetRun, kSheetCrouch, kSheetJumpSquat, kSheetJump, kSheetAirJump, kSheetFall,
   kSheetLand, kSheetShield, kSheetRoll, kSheetSpotDodge, kSheetAirDodge, kSheetHurt, kSheetTumble, kSheetKnockdown,
   kSheetGetUp, kSheetHelpless, kSheetLedge, kSheetClimb, kSheetHold, kSheetGrabbed, kSheetDizzy, kSheetVictory,
-  kSheetMove0,                                // + MoveId: one clip per move
+  kSheetDash,
+  kSheetMove0,                               // + MoveId: one clip per move
   kSheetWeapon0 = kSheetMove0 + MOVE_COUNT,   // + MoveId: the move done with weapon slot 0
   kSheetWeapon1 = kSheetWeapon0 + MOVE_COUNT,  // ... with weapon slot 1
   kSheetWState0 = kSheetWeapon1 + MOVE_COUNT,  // + state: the state while holding weapon slot 0

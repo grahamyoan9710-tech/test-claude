@@ -66,6 +66,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
     exportée suit l'agrandissement. Rayons de `t_burst` un peu raccourcis. Vérifié : compilation, `sim_test`
     « all tests passed », démo 07 contre 08 (ultime à l'arme A) où l'effet est joué. `shotPlaceholder` reste comme
     repli quand un sprite manque.
+  - **Demandes du propriétaire (20 h 40)** :
+    - Chute (`fall`, `w0_fall`, `w1_fall`) : plus de « squat » en l'air (elle partait des genoux repliés du saut,
+      tendait les jambes et revenait). Nouveau prompt dans `clips.py` : une seule pose tenue, seuls les cheveux et
+      les vêtements flottent vers le haut. Les 4 clips faits (01 ×3, 02) sont écartés (`.qafall`) et renvoyés à
+      part (`pxa/jobs_fall_fix.json`) ; les autres persos auront le nouveau prompt directement.
+    - **Dash** : un double appui fait d'abord un dash, puis la course. Nouveau clip `dash` (mains nues et armes,
+      `clips.py`), joué sur les 12 premières images de `FState::Run` (`pickClip`, `kSheetDash`) ; sans clip, la
+      course est jouée comme avant. Les 15 clips partent avec le driver.
   - Clips relus à mesure qu'ils arrivent ; un clip écarté pendant que le driver tourne reçoit un `job.json`
     `{"status": "rejected"}`, sinon ce driver ne le refait pas (il le garde dans sa liste des clips lancés).
   - Relu avant le jeton (clips déjà téléchargés). **Bons** : 01 nair, bair (quelques points blancs sous les pieds),

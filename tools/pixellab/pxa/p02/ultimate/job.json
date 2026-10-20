@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "60ce36b5-d753-48c7-aff1-6a45a6f66a55",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fa352b4b-e9fc-4891-8d17-ca9140e3fa2b",
+  "last_frame_url": "upload:bd535440-cf95-49c4-aef2-22705a79110f",
+  "description": "spreads her arms and floats slightly, her hair and coat rising around her, then lands in a stronger stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 60ce36b5-d753-48c7-aff1-6a45a6f66a55\njob_id: 60ce36b5-d753-48c7-aff1-6a45a6f66a55\ndescription: spreads her arms and floats slightly, her hair and coat rising around her, then lands in a stronger stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"60ce36b5-d753-48c7-aff1-6a45a6f66a55\")\nasset_id: dad97bc2-36ca-562c-b880-70c5f53c22d1\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png"
+}

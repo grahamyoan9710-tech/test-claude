@@ -26,7 +26,7 @@ SUBJECT.update(json.load(open(os.path.join(S, "subjects14.json"))))
 OTHERS = sorted(json.load(open(os.path.join(S, "subjects14.json"))))
 STATES = {"idle", "walk", "runstart", "jump", "crouch", "land", "shield", "roll", "spotdodge", "hurt", "knockdown", "dizzy",
           "grabbed", "holdstart", "victory", "run", "fall", "airjump", "airdodge", "helpless", "tumble", "ledgegrab",
-          "getup", "hold", "ledge", "climb"}
+          "getup", "hold", "ledge", "climb", "dash"}
 
 
 # The base stance of each fighter (what its guard picture shows), until its spec gives its own "guard_pose".
@@ -64,9 +64,10 @@ WSTATES = {
     "idle": (8, "guard", True, True, "none", "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, {held} held exactly as in the first frame, the feet stay planted, returns exactly to the first pose"),
     "walk": (8, "guard", True, True, "none", "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, {held} held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose"),
     "runstart": (8, "guard", None, False, "none", "breaks into a fast run to the right: leans the torso far forward, {held} held low and trailing behind him in one hand, the free arm swept back, legs start a long running stride"),
+    "dash": (8, "guard", None, False, "none", "darts forward to the right: pushes off hard from the back foot and springs forward low with the torso leaning far forward, {held} held low and trailing behind him in one hand, the free arm swept back, one long low stride, landing on the front foot already in a running stride"),
     "run": (8, "runstart@last", True, True, "none", "fast run cycle to the right: leaning far forward, {held} held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose"),
     "jump": (8, "guard", None, False, "none", "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, {held} held ready in one hand, hair and clothes fly upward"),
-    "fall": (8, "jump@last", True, True, "none", "falls through the air: legs reach down, the free arm out for balance, {held} held ready, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose"),
+    "fall": (8, "jump@last", True, True, "none", "falls through the air holding one still pose: the body, arms, legs and {held} do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward in the wind of the fall, a seamless loop that ends exactly on the first pose"),
     "airjump": (8, "jump@last", True, False, "none", "double jump in mid-air: kicks off the air and does a full forward somersault holding {held} close to his body, ending tucked in the same pose"),
     "land": (4, "guard", True, False, "none", "lands from a jump: absorbs the impact by bending the knees deeply, {held} held ready, then rises back into the stance"),
     "crouch": (4, "guard", None, False, "none", "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, {held} held low and ready in front of him"),
@@ -158,6 +159,7 @@ COMMON = {
     "idle": (8, "guard", True, True, "none", "idle fighting stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, the feet stay planted, returns exactly to the first pose"),
     "walk": (8, "guard", True, True, "none", "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time exactly like the first frame, fists raised, a seamless two-step walk cycle that ends exactly on the first pose"),
     "runstart": (8, "guard", None, False, "none", "breaks into a fast run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride"),
+    "dash": (8, "guard", None, False, "none", "darts forward to the right: pushes off hard from the back foot and springs forward low with the torso leaning far forward, both arms swept back, one long low stride, landing on the front foot already in a running stride"),
     "jump": (8, "guard", None, False, "none", "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward"),
     "crouch": (4, "guard", None, False, "none", "crouches down as low as he can on the spot and holds it: knees fully bent, hips dropped right down onto the heels, torso folded forward over the knees, head ducked low at about half his standing height, fists raised in front of the face. Only the character is drawn"),
     "land": (4, "guard", True, False, "none", "lands from a jump: absorbs the impact by bending the knees deeply, then rises back into the stance"),
@@ -185,7 +187,7 @@ COMMON = {
 STAGE_B = {
     "run": (8, "runstart@last", True, True, "none", "fast run cycle to the right: leaning far forward, both arms swept straight back, long fast strides, a seamless loop that ends exactly on the first pose"),
     "dashattack": (12, "runstart@last", "guard", False, "forward", "running tackle: rushes forward shoulder first, then slides to a stop and stands back up in the fighting stance"),
-    "fall": (8, "jump@last", True, True, "none", "falls through the air: legs reach down, arms out for balance, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose"),
+    "fall": (8, "jump@last", True, True, "none", "falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward in the wind of the fall, a seamless loop that ends exactly on the first pose"),
     "airjump": (8, "jump@last", True, False, "none", "double jump in mid-air: kicks off the air and does a full forward somersault, ending tucked in the same pose"),
     "airdodge": (8, "jump@last", True, False, "none", "air dodge: curls up tightly in mid-air in the same place, the body staying in the middle of the picture, then opens up again in the same pose"),
     "helpless": (8, "jump@last", True, True, "none", "falls helplessly, exhausted: both arms hang limp and loose straight up above his head, head drooping, eyes half closed, legs dangling loosely below him, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn"),

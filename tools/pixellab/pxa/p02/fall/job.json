@@ -1,20 +1,18 @@
 {
- "status": "done",
- "job_id": "b4af3fb4-e9e7-4f07-8425-98e0b1050063",
+ "status": "submitted",
+ "job_id": "85041d4a-f33f-4e76-a8df-64d71632e215",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:796b2e08-0054-438f-aaa7-10353627cfa3",
-  "last_frame_url": "upload:50ec230f-9781-4a29-856d-359ff3210444",
-  "description": "falls through the air: legs reach down, arms out for balance, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "first_frame_url": "upload:530252ce-78e0-42af-af52-e01e7bc985e7",
+  "last_frame_url": "upload:bce3a8ee-5607-49d5-9d8f-04dd71965349",
+  "description": "falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward in the wind of the fall, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
   "initial_pose": "in mid-air facing right, knees tucked"
  },
- "reply": "id: b4af3fb4-e9e7-4f07-8425-98e0b1050063\njob_id: b4af3fb4-e9e7-4f07-8425-98e0b1050063\ndescription: falls through the air: legs reach down, arms out for balance, hair and clothes flutter upward, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b4af3fb4-e9e7-4f07-8425-98e0b1050063\")\nasset_id: b05ad30e-cfd8-5de1-b1e7-a0a8c9d9ced4\nasset_status: pending (saved to your gallery when generation completes)",
+ "reply": "id: 85041d4a-f33f-4e76-a8df-64d71632e215\njob_id: 85041d4a-f33f-4e76-a8df-64d71632e215\ndescription: falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward in the wind of the fall, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"85041d4a-f33f-4e76-a8df-64d71632e215\")\nasset_id: 68a4f104-4bac-5b97-9dc8-5f0c3164f88a\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
- "frames": 9,
- "charged": "1 generation"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png"
 }
