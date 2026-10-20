@@ -1,5 +1,6 @@
 // Character select and stage select screens.
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/fx.hpp"
 #include "game/menu_theme.hpp"
 #include "game/render.hpp"
@@ -371,11 +372,12 @@ void App::drawCss() {
   // Backdrop: a twilight sky, the two sides in their colours (crimson against azure), gold rays behind the "VS"
   const MenuTheme& th = menuTheme();
   const Color night = th.night;
-  ui::stageBackdrop(1, t, th.cssDim);
+  ui::stageBackdrop(featuredStage(), t, th.cssDim);
   DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(night, 0.55f), withAlpha(night, 0.2f));
   // The light of each side takes the aura colour of the fighter picked by the first player standing there (J1 on
   // the left, J2 on the right: the others do not change it) and slides to it; "?" runs through every colour.
   Color side[2];
+  int sideChar[2] = {-1, -1};  // the first fighter of each side, shown big on its panel
   for (int k = 0; k < 2; ++k) {
     Color want = k == 0 ? th.left : th.right;
     for (int col = 0; col < cols; ++col) {
@@ -383,6 +385,7 @@ void App::drawCss() {
       const SlotSetup& s = slots_[col];
       if ((training_ || s.type != 0) && !s.random) {
         want = auraColor(r[s.character].hero);
+        sideChar[k] = s.character;
       } else if ((training_ || s.type != 0) && s.random) {
         const int n = int(r.size());
         const float f = t * 0.8f + k * 5.0f;
@@ -399,23 +402,29 @@ void App::drawCss() {
   g_sideLightSet = true;
   DrawRectangleGradientH(0, 0, kScreenW / 2, kScreenH, withAlpha(side[0], 0.55f), withAlpha(side[0], 0.0f));
   DrawRectangleGradientH(kScreenW / 2, 0, kScreenW / 2, kScreenH, withAlpha(side[1], 0.0f), withAlpha(side[1], 0.55f));
+  // Each side's first fighter: its face big on a slanted panel of the side's colour (the owner's mock)
+  for (int k = 0; k < 2; ++k) {
+    if (sideChar[k] < 0) continue;
+    const Rectangle pr = k == 0 ? Rectangle{-90, 64, 430, 412} : Rectangle{kScreenW - 340.0f, 64, 430, 412};
+    ui::slanted(pr, 110, withAlpha(side[k], 0.55f), withAlpha(shade(side[k], 0.35f), 0.55f));
+    constexpr float size = 520.0f;  // the head is a fifth of it
+    const Vec2 head{pr.x + pr.width * (k == 0 ? 0.62f : 0.4f), pr.y + 150};
+    drawPortraitIn(r[sideChar[k]], 0, {head.x - size * 0.02f, head.y + size * 0.12f}, size, pr, 110, t);
+    ui::slanted(pr, 110, withAlpha(night, 0.25f), withAlpha(night, 0.75f));  // faded under the fighters
+    ui::slantedOutline(pr, 110, 2.0f, withAlpha(mixColor(side[k], WHITE, 0.4f), 0.6f));
+  }
   {
-    const Vector2 c{kScreenW * 0.5f, 62};
-    for (int k = 0; k < 18; ++k) {
-      const float a0 = t * 0.12f + k * (2.0f * kPi / 18), a1 = a0 + 0.12f;
-      DrawTriangle(c, {c.x + std::cos(a1) * 900, c.y + std::sin(a1) * 900}, {c.x + std::cos(a0) * 900, c.y + std::sin(a0) * 900},
-                   withAlpha(th.rays, 0.07f));
+    float lw, lh;
+    if (art::pictureSize("menu_logo", lw, lh)) {
+      const float k = 220.0f / lw;
+      art::drawPicture("menu_logo", {0, 0, lw, lh}, {kScreenW * 0.5f - lw * k * 0.5f, 4, lw * k, lh * k});
     }
-    ui::glow(c, 150, withAlpha(mixColor(th.rays, ui::kCream, 0.3f), 0.3f), 8);
-    const float pulse = 0.5f + 0.5f * std::sin(t * 4.0f);
-    drawTextOutlined("VS", c.x - textWidth("VS", 86, FontKind::Title) * 0.5f, 6, 86, mixColor(ui::kGold, ui::kCream, 0.3f * pulse),
-                     ui::kInk, 5.0f, FontKind::Title);
     const char* title = training_ ? "ENTRAÎNEMENT" : teamsOn ? "COMBAT EN ÉQUIPES" : "CHOIX DES COMBATTANTS";
-    const float tw = textWidth(title, 20, FontKind::Title) + 40;
-    const Rectangle tb{c.x - tw * 0.5f, 96, tw, 30};
-    ui::slanted(tb, 10, withAlpha(ui::kInk, 0.92f), withAlpha(ui::kInk, 0.92f));
-    ui::slantedOutline(tb, 10, 1.5f, ui::kGold);
-    drawTextCentered(title, c.x, tb.y + 5, 20, ui::kCream, true, FontKind::Title);
+    const float tw = textWidth(title, 18, FontKind::Title) + 40;
+    const Rectangle tb{kScreenW * 0.5f - tw * 0.5f, 106, tw, 26};
+    ui::slanted(tb, 10, withAlpha({16, 16, 24, 255}, 0.92f), withAlpha({16, 16, 24, 255}, 0.92f));
+    ui::slantedOutline(tb, 10, 1.5f, withAlpha(WHITE, 0.7f));
+    drawTextCentered(title, kScreenW * 0.5f, tb.y + 4, 18, WHITE, true, FontKind::Title);
   }
   // The grid's ground: deep night, a gold rule on top
   DrawRectangleGradientV(0, 500, kScreenW, kScreenH - 500, withAlpha(night, 0.7f), withAlpha(shade(night, 0.45f), 0.96f));
@@ -466,8 +475,8 @@ void App::drawCss() {
     }
     const bool lit = hov || chosen;
     ui::slanted({rr.x + 4, rr.y + 4, rr.width, rr.height}, kTileSlant, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    ui::slanted(rr, kTileSlant, withAlpha(mixColor(pc, ui::kInk, lit ? 0.12f : 0.3f), 0.97f),
-                withAlpha(mixColor(pc, ui::kInk, lit ? 0.62f : 0.76f), 0.97f));
+    ui::slanted(rr, kTileSlant, withAlpha(mixColor(pc, ui::kInk, lit ? 0.0f : 0.15f), 0.97f),
+                withAlpha(mixColor(pc, ui::kInk, lit ? 0.45f : 0.6f), 0.97f));
     ui::slanted({rr.x + kTileSlant * 0.7f, rr.y, rr.width - kTileSlant * 0.7f, rr.height * 0.3f}, kTileSlant * 0.3f,
                 withAlpha(ui::kCream, lit ? 0.2f : 0.12f), withAlpha(ui::kCream, 0.0f));
     if (rnd) {
@@ -518,9 +527,13 @@ void App::drawCss() {
                        rnd ? 15 : 13, WHITE, false);
       ++tags;
     }
-    ui::slantedOutline(rr, kTileSlant, chosen ? 2.5f : hov ? 2.0f : 1.5f,
-                       chosen ? ui::kGold : hov ? withAlpha(ui::kGold, 0.7f) : withAlpha(ui::kInk, 0.95f));
-    if (chosen) ui::corners(ui::grow(rr, 4), kTileSlant, 14, 2.5f, ui::kGold);
+    const Color red{236, 40, 74, 255};
+    ui::slantedOutline(rr, kTileSlant, chosen ? 3.0f : hov ? 2.0f : 1.5f,
+                       chosen ? red : hov ? withAlpha(WHITE, 0.8f) : withAlpha(ui::kInk, 0.95f));
+    if (chosen) {  // a red glow around it
+      ui::slantedOutline(ui::grow(rr, 3), kTileSlant, 3.0f, withAlpha(red, 0.45f + 0.15f * std::sin(t * 5.0f)));
+      ui::slantedOutline(ui::grow(rr, 6), kTileSlant, 2.0f, withAlpha(red, 0.18f));
+    }
   }
 
   // The players, big, on both sides of the "VS"
