@@ -7,6 +7,11 @@
   "grab": "lunges forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves his hands",
   "fthrow": "holding an invisible opponent, steps forward and pushes both hands forward, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands",
   "bthrow": "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands, no beam, no motion streak, no trail behind the arms",
-  "dthrow": "holding an invisible opponent, crouches and brings both hands down to the floor in front of him, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"
+  "dthrow": "holding an invisible opponent, crouches and brings both hands down to the floor in front of him, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands",
+  "w1_dthrow": "holding an invisible opponent, crouches and brings his free hand down to the floor in front of him, then points both curved violet daggers down at the floor, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing comes out of the floor or the daggers",
+  "w1_dspecial": "kneels and pushes the tip of one dagger down to the floor in front of him, then lifts it and stands back up; nothing comes out of the floor or the dagger"
+ },
+ "p02": {
+  "knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, ending lying still; nothing else is drawn around her"
  }
 }

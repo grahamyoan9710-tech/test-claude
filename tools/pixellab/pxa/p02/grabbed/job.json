@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "c8579a16-1598-4273-bc3c-b095f6dc5a3d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:f30de3fc-0d7c-476a-9519-38d354918a4a",
+  "last_frame_url": "upload:3402a81c-0917-4699-b478-d17967d37271",
+  "description": "held up by the collar from in front of her: chest pulled forward, head tilted back in pain, hands clutching at the collar at her throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: c8579a16-1598-4273-bc3c-b095f6dc5a3d\njob_id: c8579a16-1598-4273-bc3c-b095f6dc5a3d\ndescription: held up by the collar from in front of her: chest pulled forward, head tilted back in pain, hands clutching at the collar at her throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c8579a16-1598-4273-bc3c-b095f6dc5a3d\")\nasset_id: 872f8695-944d-5b83-8016-1d6c0919f313\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png"
+}

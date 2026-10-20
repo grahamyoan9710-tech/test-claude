@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "414b2742-a224-4e99-8cb5-4a1d9cd696d9",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -13,5 +13,7 @@
  },
  "reply": "id: 414b2742-a224-4e99-8cb5-4a1d9cd696d9\njob_id: 414b2742-a224-4e99-8cb5-4a1d9cd696d9\ndescription: jumps up and stretches his free arm straight up above his head, the empty hand closing on nothing near the top of the picture but fully inside it, then hangs still from that raised hand with the legs dangling below, his other hand holding two curved violet daggers, one in each hand pointing down beside his legs; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"414b2742-a224-4e99-8cb5-4a1d9cd696d9\")\nasset_id: 9045b808-2b77-5b21-afa3-b89ba0420613\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w1_jump/f_08.png",
- "last": null
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
 }
