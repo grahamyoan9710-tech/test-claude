@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "81b7179b-bb3a-45a0-a5da-6a878deeed85",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c0c0da1b-fbd9-46f7-be6c-bf5f0d3e7475",
+  "last_frame_url": "upload:a90e0b94-f565-45d9-b854-277509c6e999",
+  "description": "two quick thrusts of the spear forward. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: 81b7179b-bb3a-45a0-a5da-6a878deeed85\njob_id: 81b7179b-bb3a-45a0-a5da-6a878deeed85\ndescription: two quick thrusts of the spear forward. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"81b7179b-bb3a-45a0-a5da-6a878deeed85\")\nasset_id: ba1d0f84-2bf1-583a-bc4a-818fa22977d6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+}

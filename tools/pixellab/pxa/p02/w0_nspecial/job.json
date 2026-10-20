@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "bec4b30b-5e23-4bc3-9d3d-0ddab2148125",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e70c7c09-4221-42a4-9436-da42e8efefc3",
+  "last_frame_url": "upload:7904143b-3b37-4d87-acc1-563abc4858c7",
+  "description": "throws the spear forward with a full overhand throw, then catches it as it comes back. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: bec4b30b-5e23-4bc3-9d3d-0ddab2148125\njob_id: bec4b30b-5e23-4bc3-9d3d-0ddab2148125\ndescription: throws the spear forward with a full overhand throw, then catches it as it comes back. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bec4b30b-5e23-4bc3-9d3d-0ddab2148125\")\nasset_id: 19d7951d-1959-51b7-951d-4eb017be0cc0\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
+}
