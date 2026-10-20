@@ -1,0 +1,17 @@
+{
+ "status": "submitted",
+ "job_id": "5320d4a0-63a0-43b8-b830-160d2d72384f",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3ac39f2e-8dc8-4b6b-9c44-62f2324ee687",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, two curved violet daggers, one in each hand held ready in one hand, hair and clothes fly upward. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding two curved violet daggers, one in each hand",
+  "initial_pose": "fighting stance facing right, holding two curved violet daggers, one in each hand"
+ },
+ "reply": "id: 5320d4a0-63a0-43b8-b830-160d2d72384f\njob_id: 5320d4a0-63a0-43b8-b830-160d2d72384f\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, two curved violet daggers, one in each hand held ready in one hand, hair and clothes fly upward. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5320d4a0-63a0-43b8-b830-160d2d72384f\")\nasset_id: 27d348d5-570a-5e4a-b20f-c6b4e20835a6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png",
+ "last": null
+}
