@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "a3fb735b-6515-418c-8b53-ef5ff5e0abd0",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:372a15b7-b176-43cd-8dfa-7a7fb8fcf1e3",
+  "last_frame_url": "upload:48cc114c-8020-4dc5-b02d-22ee3df8d76a",
+  "description": "in mid-air, an axe kick: brings one straight leg down hard beneath her, then pulls it back. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: a3fb735b-6515-418c-8b53-ef5ff5e0abd0\njob_id: a3fb735b-6515-418c-8b53-ef5ff5e0abd0\ndescription: in mid-air, an axe kick: brings one straight leg down hard beneath her, then pulls it back. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a3fb735b-6515-418c-8b53-ef5ff5e0abd0\")\nasset_id: a67cb520-30f6-5834-8fe1-53f26ebd7e79\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/jump/f_08.png"
+}
