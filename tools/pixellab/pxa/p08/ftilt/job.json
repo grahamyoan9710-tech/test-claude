@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "fe4e7d39-eda4-416c-941a-b52e2bf66c0a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e68e29ab-5d99-4436-9b19-27a315b8c093",
+  "last_frame_url": "upload:464e1231-cf22-41bc-998b-6939d561b174",
+  "description": "kung fu tiger claw: lunges forward raking one clawed hand at chest height, then back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: fe4e7d39-eda4-416c-941a-b52e2bf66c0a\njob_id: fe4e7d39-eda4-416c-941a-b52e2bf66c0a\ndescription: kung fu tiger claw: lunges forward raking one clawed hand at chest height, then back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fe4e7d39-eda4-416c-941a-b52e2bf66c0a\")\nasset_id: 5fa2761f-9897-5b34-b1a2-dad7de2befe0\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"
+}
