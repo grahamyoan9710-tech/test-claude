@@ -27,9 +27,7 @@ std::string pictureName(const Arena& a, const char* part) { return std::string("
 }  // namespace
 
 namespace stageart {
-void bake(StageTheme, paint::Art&) {}
-
-void drawBackground(StageTheme theme, const paint::Art&, Vec2, float skyX, float skyY, float) {
+void drawBackground(StageTheme theme, Vec2, float skyX, float skyY, float) {
   const Arena* a = arena(theme);
   float w, h;
   if (!a || !art::pictureSize(pictureName(*a, "bg").c_str(), w, h)) return;
@@ -39,16 +37,15 @@ void drawBackground(StageTheme theme, const paint::Art&, Vec2, float skyX, float
                    {skyX + (bw - w * k) * 0.5f, skyY + (bh - h * k) * 0.5f, w * k, h * k});
 }
 
-bool drawPlatform(const Platform& p, StageTheme theme, float, int) {
+void drawPlatform(const Platform& p, StageTheme theme, float) {
   const Arena* a = arena(theme);
-  if (!a) return false;
+  if (!a) return;
   const std::string name = pictureName(*a, p.solid ? "solid" : "thin");
   float w, h;
-  if (!art::pictureSize(name.c_str(), w, h)) return false;  // not imported yet: the generic platform
+  if (!art::pictureSize(name.c_str(), w, h)) return;
   const float pad = 10.0f, dw = p.rect.w + 2.0f * pad;  // the ends hang a little past the platform's edges
   const int cap = int(std::min(w * 0.25f, dw * 0.4f));
   art::drawPicture3(name.c_str(), {p.rect.x - pad, p.rect.y - (p.solid ? a->solidTop : a->thinTop), dw, h}, cap);
-  return true;
 }
 
 void drawForeground(StageTheme, Vec2, float) {}

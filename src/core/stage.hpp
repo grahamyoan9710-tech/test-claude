@@ -14,21 +14,14 @@ struct Platform {
   Vec2 delta;              // displacement during the last frame
 };
 
-enum class StageTheme : uint8_t {
-  Cosmic, Sunset, Sky,                  // the ancient lands: the Depths, the Sanctuary, the Sky Islands
-  MoonDesert, WhiteCity,                // desert and city
-  OldDen, TowerOfLore,                  // forest
-  NeonCrossroads, ShadowTemple,         // night
-  PeakVillage, SkyValley,               // mountain temples
-  Lunar, Frost, Crimson, Kurenai, Clouds  // the five arenas painted with PixelLab (one per fighter)
-};
-constexpr int kStageThemeCount = 16;
+// The five arenas painted with PixelLab, one per fighter (render_stages.cpp).
+enum class StageTheme : uint8_t { Lunar, Frost, Crimson, Kurenai, Clouds };
 
 struct StageDef {
   std::string name;
   std::string series;      // where the world comes from (stage select)
   std::string blurb;       // a line about it (stage select)
-  StageTheme theme = StageTheme::Cosmic;
+  StageTheme theme = StageTheme::Lunar;
   std::vector<Platform> platforms;
   Rect blast;              // leaving this rectangle = KO
   std::vector<Vec2> spawns;
