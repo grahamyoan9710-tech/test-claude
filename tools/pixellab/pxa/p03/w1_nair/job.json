@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "ef982dd3-035e-448d-847a-074aa9bcf259",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: ef982dd3-035e-448d-847a-074aa9bcf259\njob_id: ef982dd3-035e-448d-847a-074aa9bcf259\ndescription: in mid-air, swings the spiked greatsword in a full circle around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ef982dd3-035e-448d-847a-074aa9bcf259\")\nasset_id: 9c6a00e9-9b6b-5437-b201-da325723e3ae\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p03/w1_jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w1_jump/f_08.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w1_jump/f_08.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
