@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:5a5b15c4-2b64-4ea3-bac7-26902c22a0b5", "last_frame_url": "upload:9a795fac-85ba-42c5-b481-2d36620cc201", "description": "in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots", "initial_pose": "in mid-air facing right, knees tucked"}, "src": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png", "last": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png"}
+{
+ "status": "submitted",
+ "job_id": "5114f9fe-96f8-4f4c-94e9-3b547bb6db37",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5a5b15c4-2b64-4ea3-bac7-26902c22a0b5",
+  "last_frame_url": "upload:9a795fac-85ba-42c5-b481-2d36620cc201",
+  "description": "in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 5114f9fe-96f8-4f4c-94e9-3b547bb6db37\njob_id: 5114f9fe-96f8-4f4c-94e9-3b547bb6db37\ndescription: in mid-air, a back kick thrusting one heel straight behind her, then back to the tucked pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5114f9fe-96f8-4f4c-94e9-3b547bb6db37\")\nasset_id: 46f8810d-40dc-58a6-9037-3b4f3285a9fc\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png"
+}
