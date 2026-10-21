@@ -12,7 +12,7 @@ struct Arena {
   float solidTop, thinTop;  // the walkable top of each platform picture, in pixels below its first row
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 0, 0}, kFrost{"givre", 0, 4}, kCrimson{"ecarlate", 0, 86},
+  static const Arena kLunar{"lunaire", 0, 0}, kFrost{"givre", 0, 4}, kCrimson{"ecarlate", 0, 6},
       kKurenai{"kurenai", 12, 2}, kClouds{"nuees", 76, 2};
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
@@ -43,9 +43,11 @@ void drawPlatform(const Platform& p, StageTheme theme, float) {
   const std::string name = pictureName(*a, p.solid ? "solid" : "thin");
   float w, h;
   if (!art::pictureSize(name.c_str(), w, h)) return;
-  const float pad = 10.0f, dw = p.rect.w + 2.0f * pad;  // the ends hang a little past the platform's edges
-  const int cap = int(std::min(w * 0.25f, dw * 0.4f));
-  art::drawPicture3(name.c_str(), {p.rect.x - pad, p.rect.y - (p.solid ? a->solidTop : a->thinTop), dw, h}, cap);
+  // Scaled to the platform's width, its proportions kept (stretched pixel art smears); the ends hang a little past
+  // the platform's edges.
+  const float pad = 10.0f, dw = p.rect.w + 2.0f * pad, k = dw / w;
+  art::drawPicture(name.c_str(), {0, 0, w, h},
+                   {p.rect.x - pad, p.rect.y - (p.solid ? a->solidTop : a->thinTop) * k, dw, h * k});
 }
 
 void drawForeground(StageTheme, Vec2, float) {}

@@ -15,7 +15,8 @@ from PIL import Image, ImageDraw, ImageFilter
 PX = "tools/pixellab/pxa"
 OUT = "assets/sprites"
 ARENAS = ["lunaire", "givre", "ecarlate", "kurenai", "nuees"]
-MIRRORED = {"kurenai"}  # the main platform cut at the kit's left edge: its right half, mirrored, makes the left one
+MIRRORED = {"kurenai", "ecarlate"}  # the main platform cut at the kit's left edge: its right half, mirrored, makes the left
+TOP_CUT = {"ecarlate"}  # the thin platform's ropes run out of the picture: only the deck is kept
 PORTRAITS = {"p01": 0, "p02": 0, "p03": 0, "p07": 0, "p08": 3}  # the candidate kept for each fighter
 
 
@@ -101,6 +102,8 @@ def main():
                 solid = Image.new("RGBA", (half.width * 2, solid.height))
                 solid.paste(half.transpose(Image.FLIP_LEFT_RIGHT), (0, 0))
                 solid.paste(half, (half.width, 0))
+            if key in TOP_CUT:
+                thin = crop_alpha(thin.crop((0, max(0, walk_top(thin) - 3), thin.width, thin.height)))
             x2(solid).save(f"{OUT}/arena_{key}_solid.png")
             x2(thin).save(f"{OUT}/arena_{key}_thin.png")
             print(f'{key}: solidTop {walk_top(solid) * 2}, thinTop {walk_top(thin) * 2}')
