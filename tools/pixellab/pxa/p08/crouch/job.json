@@ -1,0 +1,17 @@
+{
+ "status": "submitted",
+ "job_id": "61b0dea4-e77e-4f1e-9865-857d21ac1e38",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:76b6a474-3a5f-4adb-a066-b485a6a1b4e4",
+  "description": "crouches down as low as he can on the spot and holds it: knees fully bent, hips dropped right down onto the heels, torso folded forward over the knees, head ducked low at about half his standing height, fists raised in front of the face. Only the character is drawn. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 61b0dea4-e77e-4f1e-9865-857d21ac1e38\njob_id: 61b0dea4-e77e-4f1e-9865-857d21ac1e38\ndescription: crouches down as low as he can on the spot and holds it: knees fully bent, hips dropped right down onto the heels, torso folded forward over the knees, head ducked low at about half his standing height, fists raised in front of the face. Only the character is drawn. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"61b0dea4-e77e-4f1e-9865-857d21ac1e38\")\nasset_id: c8d2a7f0-043f-581c-86e5-63a2f8789c28\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
+ "last": null
+}
