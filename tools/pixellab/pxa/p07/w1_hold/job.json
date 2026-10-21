@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "282d9f3f-61df-4da3-b7cc-5328da534ad6",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 282d9f3f-61df-4da3-b7cc-5328da534ad6\njob_id: 282d9f3f-61df-4da3-b7cc-5328da534ad6\ndescription: holds an invisible opponent by the collar at arm's length with her free hand, the other hand keeping a broad black and red sword, larger and more jagged, with red ribbons ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"282d9f3f-61df-4da3-b7cc-5328da534ad6\")\nasset_id: 86594eaf-3e65-5f24-9061-331315a6e48b\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_holdstart/f_04.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_holdstart/f_04.png",
+ "frames": 5,
+ "charged": "1 generation"
 }
