@@ -37,6 +37,12 @@
  },
  "p07": {
   "dash": "leans the torso far forward and takes one long low step to the right from the stance, both arms swept back, ending on the front foot in a running pose",
-  "dashattack": "from a running stride, steps into a long low front stance and drives a straight punch far forward with her right arm fully extended, holds the punch, then pulls back into the stance"
+  "dashattack": "from a running stride, steps into a long low front stance and drives a straight punch far forward with her right arm fully extended, holds the punch, then pulls back into the stance",
+  "hurt": "flinches backwards in pain: head thrown back, body leaning backwards, arms raised, then holds that pained pose",
+  "nair": "in mid-air, spins once with both legs extended, then tucks again, staying high in the air the whole time, the feet never touching anything",
+  "uair": "in mid-air, raises one open hand straight above her head in a rising knife-hand, then back to the tucked pose",
+  "dair": "in mid-air, extends one leg straight down below her with the heel pointing down, then pulls the leg back to the tucked pose",
+  "dtilt": "karate foot sweep: drops low on one knee and swings the front foot in a low arc just above the floor, then rises into the stance",
+  "usmash": "karate rising front kick: standing on one leg, snaps the other leg straight up above her head, then lowers it back into the stance, the standing foot stays planted"
  }
 }
