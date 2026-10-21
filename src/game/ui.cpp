@@ -132,6 +132,18 @@ void slantedOutline(Rectangle r, float s, float t, Color c) {
   }
 }
 
+void menuPlate(Rectangle r, float s, bool chosen, float a) {
+  slanted({r.x + 5, r.y + 6, r.width, r.height}, s, withAlpha(BLACK, 0.45f * a), withAlpha(BLACK, 0.45f * a));
+  if (chosen) {
+    slanted(r, s, withAlpha(kRed, a), withAlpha(kRedDark, a));
+    slanted({r.x + s, r.y, r.width - s, r.height * 0.4f}, s * 0.4f, withAlpha(WHITE, 0.16f * a), withAlpha(WHITE, 0.0f));
+    slantedOutline(r, s, 2.5f, withAlpha(WHITE, 0.9f * a));
+  } else {
+    slanted(r, s, withAlpha({36, 36, 48, 255}, 0.92f * a), withAlpha({14, 14, 22, 255}, 0.92f * a));
+    slantedOutline(r, s, 1.5f, withAlpha({130, 130, 150, 255}, 0.55f * a));
+  }
+}
+
 Rectangle grow(Rectangle r, float px) { return {r.x - px, r.y - px, r.width + 2 * px, r.height + 2 * px}; }
 
 void glow(Vector2 c, float radius, Color col, int layers) {
@@ -743,11 +755,12 @@ float actionPrompt(int device, int action, float x, float y, float h, bool lit) 
 
 void footer(std::initializer_list<Hint> hints, const char* info) {
   const float h = 46, y = kScreenH - h, kh = 28;
-  DrawRectangleGradientV(0, int(y - 30), kScreenW, 30, withAlpha(kInk, 0.0f), withAlpha(kInk, 0.6f));
-  DrawRectangle(0, int(y), kScreenW, int(h), withAlpha(kInk, 0.9f));
-  DrawRectangleGradientH(0, int(y), kScreenW / 2, 2, withAlpha(kGold, 0.1f), withAlpha(kGold, 0.85f));
-  DrawRectangleGradientH(kScreenW / 2, int(y), kScreenW / 2, 2, withAlpha(kGold, 0.85f), withAlpha(kGold, 0.1f));
-  diamond({kScreenW * 0.5f, y + 1}, 5, kGold);
+  const Color night{12, 12, 18, 255};
+  DrawRectangleGradientV(0, int(y - 30), kScreenW, 30, withAlpha(night, 0.0f), withAlpha(night, 0.6f));
+  DrawRectangle(0, int(y), kScreenW, int(h), withAlpha(night, 0.9f));
+  DrawRectangleGradientH(0, int(y), kScreenW / 2, 2, withAlpha(kRed, 0.1f), withAlpha(kRed, 0.85f));
+  DrawRectangleGradientH(kScreenW / 2, int(y), kScreenW / 2, 2, withAlpha(kRed, 0.85f), withAlpha(kRed, 0.1f));
+  diamond({kScreenW * 0.5f, y + 1}, 5, kRed);
   // Measure from the right
   float total = 0;
   for (const Hint& hint : hints) total += promptWidth(hint.key, hint.pad, kh) + 8 + textWidth(hint.label, 18) + 26;

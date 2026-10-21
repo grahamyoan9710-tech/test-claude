@@ -514,33 +514,27 @@ void MatchScreen::drawTrainingPanel() {
 }
 
 void MatchScreen::drawPause() {
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.62f), withAlpha(ui::kInk, 0.78f));
+  // The main menu's look: a dark veil, crimson for the chosen button, dark ink for the others.
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha({12, 12, 18, 255}, 0.6f), withAlpha({12, 12, 18, 255}, 0.8f));
   ui::vignette(0.4f);
   const auto items = pauseItems();
   const int n = int(items.size());
   Rectangle first = pauseItemRect(0, n);
   const float pw = ui::spriteWidth(ui::Sprite::Pause, 96);
-  ui::zonaiRing({kScreenW * 0.5f, first.y - 70}, 120, time_, 0.55f);
   ui::drawSprite(ui::Sprite::Pause, kScreenW * 0.5f - pw * 0.5f, first.y - 128, 96);
-  ui::rule(kScreenW * 0.5f - 230, kScreenW * 0.5f - pw * 0.5f - 24, first.y - 62, ui::kGold);
-  ui::rule(kScreenW * 0.5f + pw * 0.5f + 24, kScreenW * 0.5f + 230, first.y - 62, ui::kGold);
-  const float pulse = 0.5f + 0.5f * std::sin(time_ * 6.0f);
+  DrawRectangleGradientH(int(kScreenW * 0.5f - 260), int(first.y - 30), 260, 4, withAlpha(ui::kRed, 0.0f), ui::kRed);
+  DrawRectangleGradientH(int(kScreenW * 0.5f), int(first.y - 30), 260, 4, ui::kRed, withAlpha(ui::kRed, 0.0f));
   for (int i = 0; i < n; ++i) {
     Rectangle r = pauseItemRect(i, n);
     bool sel = i == pauseSel_;
     if (sel) r = ui::grow(r, 4);
-    ui::slanted({r.x + 6, r.y + 7, r.width, r.height}, 18, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    ui::slanted(r, 18, sel ? Color{44, 96, 90, 245} : Color{32, 46, 50, 240}, sel ? Color{20, 50, 52, 245} : Color{18, 28, 32, 240});
-    ui::slantedOutline(r, 18, sel ? 2.5f : 1.5f, sel ? ui::kGold : withAlpha(ui::kStone, 0.5f));
-    if (sel) {
-      ui::slantedOutline(ui::grow(r, 5), 18, 4, withAlpha(ui::kTeal, 0.18f + 0.16f * pulse));
-      ui::corners(ui::grow(r, 6 + pulse * 2), 18, 14, 3.0f, ui::kGold);
-    }
-    drawTextCentered(items[i].c_str(), r.x + r.width * 0.5f, r.y + r.height * 0.5f - 12, 24,
-                     sel ? ui::kCream : ui::kMuted, true);
+    ui::menuPlate(r, 18, sel);
+    drawTextOutlined(items[i].c_str(), r.x + r.width * 0.5f - textWidth(items[i].c_str(), sel ? 25 : 22, FontKind::Title) * 0.5f,
+                     r.y + r.height * 0.5f - (sel ? 14 : 12), sel ? 25 : 22, sel ? WHITE : Color{232, 232, 240, 255},
+                     withAlpha(BLACK, 0.6f), 2.0f, FontKind::Title);
     if (sel && training() && i >= 2 && i <= 7) {
-      ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, ui::kGold);
-      ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, ui::kGold);
+      ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, WHITE);
+      ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, WHITE);
     }
   }
   // Unplugged gamepads

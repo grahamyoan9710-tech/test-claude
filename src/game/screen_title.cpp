@@ -29,7 +29,7 @@ const Item kItems[] = {
     {"QUITTER", "menu_icon_quit", "Quitter Super Clash Bros.", true},
 };
 constexpr int kItemCount = int(sizeof kItems / sizeof kItems[0]);
-const Color kRed{236, 40, 74, 255}, kRedDark{164, 14, 48, 255};
+using ui::kRed;
 
 Rectangle itemRect(int i, bool sel) {
   const Rectangle r{58, 170.0f + i * 47.0f, 300, 42};
@@ -46,17 +46,9 @@ void icon(const char* name, Vector2 c, float h, Color tint) {
   art::drawPicture(name, {0, 0, w, hh}, {c.x - w * k * 0.5f, c.y - h * 0.5f, w * k, h}, 1.0f, false, tint);
 }
 
-void button(const Item& it, Rectangle r, bool sel, float pop) {
+void button(const Item& it, Rectangle r, bool sel) {
   const float s = r.height * 0.3f;
-  ui::slanted({r.x + 5, r.y + 6, r.width, r.height}, s, withAlpha(BLACK, 0.45f * pop), withAlpha(BLACK, 0.45f * pop));
-  if (sel) {
-    ui::slanted(r, s, kRed, kRedDark);
-    ui::slanted({r.x + s, r.y, r.width - s, r.height * 0.4f}, s * 0.4f, withAlpha(WHITE, 0.16f), withAlpha(WHITE, 0.0f));
-    ui::slantedOutline(r, s, 2.5f, withAlpha(WHITE, 0.9f));
-  } else {
-    ui::slanted(r, s, withAlpha({36, 36, 48, 255}, 0.92f), withAlpha({14, 14, 22, 255}, 0.92f));
-    ui::slantedOutline(r, s, 1.5f, withAlpha({130, 130, 150, 255}, 0.55f));
-  }
+  ui::menuPlate(r, s, sel);
   const Color ink = !it.ready ? Color{140, 140, 152, 255} : sel ? WHITE : Color{232, 232, 240, 255};
   const float cy = r.y + r.height * 0.5f, size = sel ? 25.0f : 21.0f;
   icon(it.icon, {r.x + s + 28, cy}, r.height * 0.56f, ink);
@@ -170,13 +162,13 @@ void App::drawMainMenu() {
     const float pop = easeOut((f - i * 2.0f) / 14.0f);
     Rectangle r = itemRect(i, false);
     r.x -= (1.0f - pop) * 420.0f;
-    button(kItems[i], r, false, pop);
+    button(kItems[i], r, false);
   }
   {
     const float pop = easeOut((f - menuSel_ * 2.0f) / 14.0f);
     Rectangle r = itemRect(menuSel_, true);
     r.x -= (1.0f - pop) * 420.0f + std::sin(t * 5.0f) * 1.5f;
-    button(kItems[menuSel_], r, true, pop);
+    button(kItems[menuSel_], r, true);
   }
 
   // Featured arena (changes with the background)

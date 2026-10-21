@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:504209b5-c301-42e5-a594-754188763cfa", "last_frame_url": "upload:9f555b03-2722-4ada-9080-30c8e00ab904", "description": "leaps up with a rising cut of the greatsword above his head. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins", "initial_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "3e306cde-d48a-4e54-ac17-2723804e859f",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:504209b5-c301-42e5-a594-754188763cfa",
+  "last_frame_url": "upload:9f555b03-2722-4ada-9080-30c8e00ab904",
+  "description": "leaps up with a rising cut of the greatsword above his head. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins"
+ },
+ "reply": "id: 3e306cde-d48a-4e54-ac17-2723804e859f\njob_id: 3e306cde-d48a-4e54-ac17-2723804e859f\ndescription: leaps up with a rising cut of the greatsword above his head. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3e306cde-d48a-4e54-ac17-2723804e859f\")\nasset_id: b05c04c5-cbe1-57a9-9bf2-b2c25fb5c02e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png"
+}

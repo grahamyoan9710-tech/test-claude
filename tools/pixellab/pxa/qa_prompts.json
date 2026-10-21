@@ -22,6 +22,7 @@
  },
  "p03": {
   "dspecial": "crouches and presses both fists down onto the floor in front of him, then stands back up; nothing comes out of the floor or his fists",
-  "dair": "in mid-air, brings both elbows down beneath him, then back to the tucked pose; nothing is drawn below him"
+  "dair": "in mid-air, brings both elbows down beneath him, then back to the tucked pose; nothing is drawn below him",
+  "w0_fthrow": "pushes the invisible opponent he is holding forward with his free hand, then swings a huge jagged black greatsword with glowing red veins in a wide arc in front of him, the whole blade always drawn clearly, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
  }
 }

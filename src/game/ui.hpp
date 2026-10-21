@@ -24,6 +24,11 @@ void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color ca, Color cb, Color 
 // Parallelogram leaning right ("/") inside the bounding box r, vertical gradient.
 void slanted(Rectangle r, float slant, Color top, Color bottom);
 void slantedOutline(Rectangle r, float slant, float thick, Color c);
+// The main menu's look (docs/refonte/menu_accueil.png): crimson for the chosen item, dark ink for the others.
+constexpr Color kRed = {236, 40, 74, 255};
+constexpr Color kRedDark = {164, 14, 48, 255};
+// One of its slanted plates: drop shadow, crimson (chosen) or dark fill, white or grey outline.
+void menuPlate(Rectangle r, float slant, bool chosen, float alpha = 1.0f);
 Rectangle grow(Rectangle r, float px);
 void glow(Vector2 c, float radius, Color col, int layers = 10);
 void sunburst(Vector2 c, float radius, int rays, float rot, Color col);
