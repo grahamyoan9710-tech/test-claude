@@ -1507,20 +1507,21 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     if (mv->teleportFrame >= 0 && f.moveFrame >= mv->intangibleStart && f.moveFrame < mv->teleportFrame)
       alpha = 0.12f;
   }
-  // A blow lights the victim up in its element (fire orange, lightning blue, darkness violet...).
+  // A blow lights the victim up in its element (fire orange, lightning blue, darkness violet...). The tints stay
+  // light: a strong one turns the pixel-art clip into a flat silhouette.
   Color flashCol = f.flashFx == HitFx::Normal ? WHITE : mixColor(hitFxGlow(f.flashFx), WHITE, 0.3f);
-  float flash = f.flash > 0 ? f.flash / 12.0f : 0.0f;
+  float flash = f.flash > 0 ? 0.45f * std::min(1.0f, f.flash / 10.0f) : 0.0f;
   if (const MoveDef* mv = f.currentMove()) {
     if (f.charging) {
       flashCol = {255, 235, 120, 255};
-      flash = 0.25f + 0.2f * std::sin(time * 30.0f);
+      flash = 0.14f + 0.1f * std::sin(time * 30.0f);
     } else if (mv->counterStart >= 0 && !f.counterTriggered && f.moveFrame >= mv->counterStart &&
                f.moveFrame < mv->counterEnd) {
       flashCol = {130, 190, 255, 255};
-      flash = 0.3f + 0.15f * std::sin(time * 25.0f);
+      flash = 0.18f + 0.08f * std::sin(time * 25.0f);
     } else if (mv->armorStart >= 0 && f.moveFrame >= mv->armorStart && f.moveFrame < mv->armorEnd) {
       flashCol = {255, 150, 60, 255};
-      flash = std::max(flash, 0.25f);
+      flash = std::max(flash, 0.2f);
     }
   }
   if (f.state == FState::Helpless) {

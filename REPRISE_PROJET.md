@@ -55,6 +55,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~18 h UTC, session cloud : **bugs signalés par le propriétaire après la v10.0** (branche `cool-sagan`).
+  - Effets PixelLab de déplacement et d'impact invisibles : `Fx::drawWorld` sortait avant de les dessiner quand
+    aucune particule lumineuse n'était en vie. Corrigé (ils s'affichent toujours).
+  - Effets figés sur leur dernière image (tous importés « sans boucle ») : projectiles (l'orbe du 01), rayons et
+    auras bouclent avec `art::fxLoopTime` ; les colonnes (`PV::Pillar`) jouent une fois depuis leur apparition.
+  - Clips déformés par l'ancien squelette (rebond en course, roulade qui tourne, chute au sol couchée de travers) :
+    `drawCharacter` dessine les clips « à plat » comme avant la refonte, avec le décalage de la montée au rebord.
+  - Anneaux d'ulti dessinés par le code retirés (l'aura PixelLab s'affiche déjà) ; teintes de coup, de charge et de
+    contre adoucies (le perso devenait une silhouette unie).
+  - Arme au sol : portrait du propriétaire (il était découpé en coordonnées monde), touche Arme du joueur et barre
+    du maintien de 2 s (`drawItemPrompts`). Nom de l'arme et compteur de combo au-dessus des étiquettes J1/CPU.
 - 21/10 ~17 h 05 UTC, session cloud : **v10.0 publiée et vérifiée** (workflow lancé à la main sur
   `claude/cool-sagan-8wiysw`, absente des branches qui le déclenchent ; réussi ; l'archive Linux téléchargée a la
   somme SHA-256 de la release et contient v10.0). Verrou de version libre.

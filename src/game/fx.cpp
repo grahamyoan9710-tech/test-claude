@@ -700,7 +700,7 @@ void Fx::onEvents(const Match& m) {
         const WeaponDef& w = chars[ch].weapons[e.b & 1];
         const Color c = hitFxColor(w.fx), g = hitFxGlow(w.fx);
         // The weapon's name, above the fighter's J1 / CPU tag (render_fighter.cpp, tagY)
-        const Vec2 name = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos - Vec2{0.0f, m.fighters[e.a].height() + 64.0f}
+        const Vec2 name = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos - Vec2{0.0f, m.fighters[e.a].height() + 100.0f}
                                                : e.pos - Vec2{0.0f, 70.0f};
         if (art::fxInfo("move_appear")) {
           const Vec2 feet = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos : e.pos;
@@ -865,7 +865,7 @@ void Fx::update(const Match& m) {
     if (!c.live && c.hits == 0) continue;
     ++c.since;
     if (f.active()) {
-      c.pos = f.center() - Vec2{0.0f, f.height() * 0.85f};
+      c.pos = f.center() - Vec2{0.0f, f.height() * 0.5f + 80.0f};  // above the J1 / CPU tags, even stacked
       c.damage = std::max(0.0f, f.percent - c.base);
     }
     if (c.live && (!stunned || !f.active())) c.live = false;  // it got away: the counter lingers, then fades
