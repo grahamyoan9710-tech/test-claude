@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "49e99b88-034b-4e94-8000-b995d9d13821",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 49e99b88-034b-4e94-8000-b995d9d13821\njob_id: 49e99b88-034b-4e94-8000-b995d9d13821\ndescription: leans forward and reaches out with his free open hand, closes it on empty air, then pulls back, the other hand keeping a golden halberd still at his side; nothing leaves his hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"49e99b88-034b-4e94-8000-b995d9d13821\")\nasset_id: 78555ed2-bdfc-5c05-bb35-344b60e43010\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }

@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "2f36df95-5200-4b77-8409-8ed0cf503125",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:8443a207-2726-4d05-b2d6-3efee7af67f6",
+  "last_frame_url": "upload:ff56c9e6-8683-463c-8b1f-f93c84e3f96f",
+  "description": "leaps up with a rising sweep of the halberd above his head. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a golden halberd",
+  "initial_pose": "fighting stance facing right, holding a golden halberd"
+ },
+ "reply": "id: 2f36df95-5200-4b77-8409-8ed0cf503125\njob_id: 2f36df95-5200-4b77-8409-8ed0cf503125\ndescription: leaps up with a rising sweep of the halberd above his head. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"2f36df95-5200-4b77-8409-8ed0cf503125\")\nasset_id: ec60e2f8-e2e2-59c3-a67c-ea7e5f1548ed\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png"
+}
