@@ -52,9 +52,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud (cool-sagan) | 21/10 21 h 20 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~21 h UTC, session cloud : **v10.3 publiée** (M1 gardé 8 images pendant l'élan du saut et la réception ;
+  avec une arme, Haut + M1 dans l'élan donne le M1 aérien). Verrou de version libre. Maquettes d'effets du
+  propriétaire (style Rivals of Aether) dans `docs/refonte/vfx_maquette_*.png` : planche 1 (coups, sol, saut, dash,
+  atterrissage) aux couleurs fixes pour tous ; planches 2 à 4 (compétences, foudre) et bulle de bouclier à
+  recolorer. Pour la mise à jour suivante (10.4).
 - 21/10 ~20 h 40 UTC, session cloud : **v10.2 publiée** (workflow lancé à la main, réussi). Verrou de version libre.
   Ensuite : M1 sans animation selon l'arme (signalé par le propriétaire), au sol et en l'air.
 - 21/10 ~20 h 30 UTC, session cloud : **plateformes en profondeur, sans coupure** (façon Smash, dessus visible).
