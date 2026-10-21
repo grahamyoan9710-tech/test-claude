@@ -65,6 +65,19 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   - Lancé : `driver.py p01 p02 p03 p07 p08`. Les 25 clips `p02/w1_*` (bâton) étaient refusés avant l'envoi
     (description du perso à 302 caractères, limite 300) : « with blue ribbons » → « with ribbons »
     (`new_specs.py`, `wkits/p02.json`), renvoyés à part (`pxa/jobs_p02w1_fix.json`).
+  - **Bloqué** : portraits peints et arènes. Le compte IMG.LY (Codesign `asset_generate`) n'a plus de crédits ;
+    Asset Generator et Icons8 ne sont pas autorisés (connecteurs de claude.ai) ; SpriteCook à 0.
+  - **En attendant** : `pXX_still.png` et `pXX_portrait.png` des 5 refaits à partir des gardes du jeu
+    (`pxa/base/<id>_guard256.png`, ×2 au plus proche voisin) : les anciens venaient de la planche (02 et 07 en
+    brassière, culotte et jarretelles). Pause, résultats, pied de page et HUD du combat dans le style du menu
+    principal (`ui::menuPlate`, `ui::kRed`) : plus d'anneau Zonai, de disque de pierre ni de filets dorés.
+  - **Arènes (décision du propriétaire, 21/10)** : seulement 5 pour l'instant, une par perso, fonds peints dans le
+    style des menus, dispositions des plateformes gardées : Abîme Lunaire (01), Citadelle de Givre (02), Canyon
+    Écarlate (03), Toits Kurenai (07), Monastère des Nuées (08). À faire dès que la génération d'images marche.
+  - Relecture : bases validées 03 w0_knockdown, w1_jump ; 02 w1_jump, w1_runstart, w1_knockdown, w1_holdstart
+    (refaite : le bras partait en arrière). Écartés (`qa3`, prompts dans `qa_prompts.json`) : 03 w0_fthrow,
+    w0_getup, w1_crouch, w1_land ; 01 w1_dspecial ; 02 w0_dthrow. 03 w1_runstart bloqué de nouveau chez PixelLab :
+    renvoyé à part (`pxa/jobs_p03_runfix.json`). 03 dair gardé (geste faible, mais propre).
 - 21/10 ~2 h UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **PASSATION à une nouvelle session**
   (pour les plugins Codesign, Asset Generator et Icons8, connectés seulement au démarrage d'une session).
   - **Arrêté proprement** : driver et lots arrêtés, tout est poussé. 16 jobs ont un numéro (`"submitted"`), dont 6
