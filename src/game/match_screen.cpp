@@ -479,13 +479,12 @@ void MatchScreen::drawTrainingPanel() {
   for (const auto& f : m_.fighters)
     if (f.cpu) dummy = f.id;
   Rectangle p{18, 18, 330, 172};
-  ui::panel(p, withAlpha(ui::kInk, 0.8f), withAlpha(ui::kGold, 0.75f), 0.12f);
-  ui::rune({p.x + p.width - 30, p.y + 24}, 12, 3, time_ * 0.5f, withAlpha(ui::kTeal, 0.7f), 2.0f);
-  drawText("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, {156, 206, 128, 255}, FontKind::Title);
+  ui::card(p, 0.92f);
+  ui::bold("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, ui::kGold);
   int live = dummy >= 0 ? combo_[dummy] : 0;
   int shown = live >= 2 ? live : lastCombo_;
   Color cc = live >= 2 ? ui::kGold : ui::kCream;
-  drawTextOutlined(TextFormat("%d", shown), p.x + 16, p.y + 40, 54, cc, ui::kInk, 3.0f, FontKind::Title);
+  ui::bold(TextFormat("%d", shown), p.x + 16, p.y + 40, 54, cc);
   drawText("COUPS", p.x + 22 + textWidth(TextFormat("%d", shown), 54, FontKind::Title), p.y + 52, 18, ui::kMuted);
   float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
   drawText(TextFormat("Dégâts du combo : %d %%", int(dmg)), p.x + 16, p.y + 98, 16, ui::kCream);
@@ -505,36 +504,30 @@ void MatchScreen::drawTrainingPanel() {
   if (m_.trainFight) on += "Combat 3 vies";
   if (m_.trainInfiniteUlt) on += std::string(on.empty() ? "" : "  •  ") + "Ulti infinie";
   if (m_.trainZeroPercent) on += std::string(on.empty() ? "" : "  •  ") + "0 %";
-  if (!on.empty()) drawTextOutlined(on.c_str(), p.x + 4, p.y + p.height + 8, 16, {156, 206, 128, 255}, ui::kInk, 2.0f);
+  if (!on.empty()) drawTextOutlined(on.c_str(), p.x + 4, p.y + p.height + 10, 16, ui::kGreen, ui::kInk, 2.0f);
   if (m_.trainRestart > 0) {  // the fight is over: it starts over
     const float a = clampf(m_.trainRestart / 30.0f, 0.0f, 1.0f);
-    drawTextOutlined("Le combat recommence...", kScreenW * 0.5f - textWidth("Le combat recommence...", 34, FontKind::Title) * 0.5f,
-                     kScreenH * 0.5f + 70, 34, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 3.0f, FontKind::Title);
+    ui::boldCentered("Le combat recommence...", kScreenW * 0.5f, kScreenH * 0.5f + 70, 34, WHITE, a);
   }
 }
 
 void MatchScreen::drawPause() {
-  // The main menu's look: a dark veil, crimson for the chosen button, dark ink for the others.
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha({12, 12, 18, 255}, 0.6f), withAlpha({12, 12, 18, 255}, 0.8f));
+  // The menus' look: a navy veil, chunky buttons (the chosen one gold).
+  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(ui::kNavyDeep, 0.6f), withAlpha(ui::kInk, 0.85f));
   ui::vignette(0.4f);
   const auto items = pauseItems();
   const int n = int(items.size());
   Rectangle first = pauseItemRect(0, n);
   const float pw = ui::spriteWidth(ui::Sprite::Pause, 96);
   ui::drawSprite(ui::Sprite::Pause, kScreenW * 0.5f - pw * 0.5f, first.y - 128, 96);
-  DrawRectangleGradientH(int(kScreenW * 0.5f - 260), int(first.y - 30), 260, 4, withAlpha(ui::kRed, 0.0f), ui::kRed);
-  DrawRectangleGradientH(int(kScreenW * 0.5f), int(first.y - 30), 260, 4, ui::kRed, withAlpha(ui::kRed, 0.0f));
   for (int i = 0; i < n; ++i) {
-    Rectangle r = pauseItemRect(i, n);
-    bool sel = i == pauseSel_;
-    if (sel) r = ui::grow(r, 4);
-    ui::menuPlate(r, 18, sel);
-    drawTextOutlined(items[i].c_str(), r.x + r.width * 0.5f - textWidth(items[i].c_str(), sel ? 25 : 22, FontKind::Title) * 0.5f,
-                     r.y + r.height * 0.5f - (sel ? 14 : 12), sel ? 25 : 22, sel ? WHITE : Color{232, 232, 240, 255},
-                     withAlpha(BLACK, 0.6f), 2.0f, FontKind::Title);
+    const Rectangle r = pauseItemRect(i, n);
+    const bool sel = i == pauseSel_;
+    ui::button(r, items[i].c_str(), sel ? ui::Tone::Gold : ui::Tone::Navy, sel, time_, 1.0f, sel ? 25.0f : 22.0f);
     if (sel && training() && i >= 2 && i <= 7) {
-      ui::arrowTri({r.x + 30, r.y + r.height * 0.5f}, 16, -1, WHITE);
-      ui::arrowTri({r.x + r.width - 30, r.y + r.height * 0.5f}, 16, 1, WHITE);
+      const float cy = r.y + (r.height - ui::chunkyLip(r)) * 0.5f;
+      ui::arrowTri({r.x + 30, cy}, 18, -1, ui::kInk);
+      ui::arrowTri({r.x + r.width - 30, cy}, 18, 1, ui::kInk);
     }
   }
   // Unplugged gamepads
@@ -543,11 +536,11 @@ void MatchScreen::drawPause() {
     if (padLost_[f.port]) ++lostCount, lostPort = f.port;
   if (lostCount > 0) {
     Rectangle b{kScreenW * 0.5f - 340, kScreenH - 146.0f, 680, 82};
-    ui::panel(b, {58, 24, 26, 245}, {226, 118, 92, 255}, 0.25f);
+    ui::card(b, 1.0f, {150, 34, 52, 250}, {84, 14, 30, 250});
     std::string title = lostCount > 1 ? std::string("MANETTES DÉBRANCHÉES")
                                       : std::string(deviceName(devices_[lostPort])) + " DÉBRANCHÉE (JOUEUR " +
                                             std::to_string(lostPort + 1) + ")";
-    drawTextCentered(title.c_str(), b.x + b.width * 0.5f, b.y + 12, 26, ui::kCream, true, FontKind::Title);
+    ui::boldCentered(title.c_str(), b.x + b.width * 0.5f, b.y + 12, 26);
     drawTextCentered(lostCount > 1 ? "Rebranchez-les : chacune retrouve son joueur. Ou reprenez le combat sans elles."
                                    : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
                      b.x + b.width * 0.5f, b.y + 48, 17, {250, 218, 200, 255}, false);

@@ -14,34 +14,31 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
   for (const auto& f : m.fighters) {
     Color pc = slotColor(f);
     Rectangle card{x, y, pw, ph};
-    ui::slanted({x + 5, y + 6, pw, ph}, 16, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    if (f.eliminated) {
-      ui::slanted(card, 16, {70, 76, 76, 235}, {34, 40, 42, 235});
-    } else {  // the main menu's dark plate, a bright band of the player colour on top
-      ui::slanted(card, 16, withAlpha({36, 36, 48, 255}, 0.94f), withAlpha({14, 14, 22, 255}, 0.94f));
-      ui::slanted({x + 16 - 16 * 6 / ph, y, pw - 16 + 16 * 6 / ph - 2, 6}, 16 * 6 / ph, pc, shade(pc, 0.8f));
+    if (f.eliminated) {  // a navy card, the player's colour along the top
+      ui::card(card, 0.9f, {70, 76, 96, 255}, {34, 40, 58, 255});
+    } else {
+      ui::card(card, 0.94f);
+      ui::roundRect({x + 3, y + 3, pw - 6, 7}, 3, mixColor(pc, WHITE, 0.25f), shade(pc, 0.8f));
     }
-    ui::slantedOutline(card, 16, 1.5f, withAlpha({130, 130, 150, 255}, f.eliminated ? 0.3f : 0.55f));
     if (f.finalSmash) {
       float pulse = 0.5f + 0.5f * std::sin(time * 7.0f);
-      Color zon = mixColor(ui::kRed, WHITE, pulse);
-      ui::slantedOutline(ui::grow(card, 3), 16, 3.5f, zon);
+      Color zon = mixColor(ui::kGold, WHITE, pulse);
+      ui::rim(card, 16, time);
       const char* ready = "ULTI PRÊTE !";
       float tw = textWidth(ready, 22, FontKind::Title);
       float ty = y - 50 - 3 * pulse;
       float bw = devices && !f.cpu ? ui::actionPromptWidth((*devices)[f.port & 3], kActUltimate, 24) : 0.0f;
       float tx = x + pw - tw - 4 - (bw > 0 ? bw + 6 : 0);
-      drawTextOutlined(ready, tx, ty, 22, zon, Color{12, 12, 18, 255}, 3.0f, FontKind::Title);
+      ui::bold(ready, tx, ty, 22, zon);
       if (bw > 0) ui::actionPrompt((*devices)[f.port & 3], kActUltimate, tx + tw + 6, ty, 24, true);
     }
-    DrawCircleV({x + 50, y + 46}, 36, withAlpha({12, 12, 18, 255}, 0.6f));
-    DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
+    DrawCircleV({x + 50, y + 46}, 39, ui::kInk);
+    DrawCircleV({x + 50, y + 46}, 36.5f, pc);
     drawPortraitDisc(*f.def, f.palette, {x + 50, y + 46}, 36, time + f.id);
     if (const WeaponDef* w = f.weaponDef()) {  // the weapon in hand: a badge on the portrait
       const Vector2 b{x + 80, y + 72};
       const Color c = hitFxColor(w->fx), g = hitFxGlow(w->fx);
-      ui::glow(b, 26, withAlpha(g, 0.35f), 4);
-      DrawCircleV(b, 16, ui::kInk);
+      DrawCircleV(b, 17, ui::kInk);
       DrawCircleV(b, 13.5f, mixColor(c, ui::kInk, 0.55f));
       DrawRing(b, 13.5f, 16.5f, 0, 360, 32, g);
       drawWeaponIcon(*f.def, f.weapon, W(b), 26.0f);
@@ -58,14 +55,13 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     float lw = textWidth(label, 15) + 16;
     float ns = 22.0f;  // long names shrink to leave room for the player label
     while (ns > 13.0f && textWidth(f.def->name.c_str(), ns, FontKind::Title) > pw - 94 - lw - 20) ns -= 1.0f;
-    drawTextOutlined(f.def->name.c_str(), x + 94, y + 9 + (22 - ns) * 0.5f, ns, WHITE, withAlpha(BLACK, 0.7f), 2.5f,
-                     FontKind::Title);
-    DrawRectangleRounded({x + pw - lw - 11.5f, y + 9.5f, lw + 3, 23}, 0.5f, 6, ui::kInk);
-    DrawRectangleRounded({x + pw - lw - 10, y + 11, lw, 20}, 0.5f, 6, shade(pc, 0.85f));
-    drawText(label, x + pw - lw - 2, y + 12, 15, WHITE);
+    ui::bold(f.def->name.c_str(), x + 94, y + 12 + (22 - ns) * 0.5f, ns);
+    ui::roundRect({x + pw - lw - 12, y + 12, lw + 4, 24}, 10, ui::kInk, ui::kInk);
+    ui::roundRect({x + pw - lw - 10, y + 14, lw, 20}, 8, mixColor(pc, WHITE, 0.2f), shade(pc, 0.7f));
+    drawTextOutlined(label, x + pw - lw - 2, y + 15, 15, WHITE, ui::kInk, 2.0f);
 
     if (f.eliminated) {
-      drawTextOutlined("K.O.", x + 104, y + 34, 42, {200, 204, 196, 255}, ui::kInk, 3.0f, FontKind::Title);
+      ui::bold("K.O.", x + 104, y + 36, 42, {200, 208, 224, 255});
     } else {
       char pct[16];
       std::snprintf(pct, sizeof pct, "%d", int(f.percent));
@@ -75,8 +71,8 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       Color col = percentColor(f.percent);
       float size = 50.0f + std::min(8.0f, sh);
       float w = textWidth(pct, size, FontKind::Title);
-      drawTextOutlined(pct, x + 180 - w + jx, y + 30 + jy, size, col, ui::kInk, 4.0f, FontKind::Title);
-      drawTextOutlined("%", x + 184 + jx, y + 50 + jy, 26, col, ui::kInk, 3.0f, FontKind::Title);
+      ui::bold(pct, x + 180 - w + jx, y + 32 + jy, size, col);
+      ui::bold("%", x + 184 + jx, y + 52 + jy, 26, col);
       if (!m.cfg.training || m.trainFight) {
         for (int i = 0; i < std::min(f.stocks, 6); ++i) {
           Vector2 c{x + 104.0f + i * 17.0f, y + 78.0f};

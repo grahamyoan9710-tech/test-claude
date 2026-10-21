@@ -1,6 +1,6 @@
 #pragma once
-// Small immediate-mode UI kit: the visual identity of every menu (TotK-like: slate ink panels,
-// gold hairlines, parchment text, Zonai teal glow).
+// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon: the logo's royal blue and gold,
+// chunky rounded buttons with a thick dark outline, a lip and a gloss, deep navy cards, gold ribbons).
 #include <initializer_list>
 #include <utility>
 
@@ -9,14 +9,27 @@
 
 namespace ui {
 
-constexpr Color kInk = {14, 22, 26, 255};       // deep slate / teal ink
-constexpr Color kSlate = {26, 40, 44, 255};     // panel fill
-constexpr Color kStone = {112, 126, 120, 255};  // idle frames, quiet lines
-constexpr Color kGold = {232, 196, 110, 255};   // hairlines, focus, highlights
-constexpr Color kCream = {246, 236, 212, 255};  // parchment text
-constexpr Color kMuted = {158, 176, 168, 255};  // secondary text
-constexpr Color kUmber = {58, 34, 20, 255};     // warm depth of the big titles
-constexpr Color kTeal = kZonaiGlow;             // Zonai glow: selection accents
+constexpr Color kInk = {10, 14, 36, 255};        // outlines, the deepest navy
+constexpr Color kNavy = {30, 54, 118, 255};      // cards (top)
+constexpr Color kNavyDeep = {13, 25, 68, 255};   // cards (bottom)
+constexpr Color kSlate = kNavy;
+constexpr Color kBlue = {72, 156, 255, 255};     // secondary buttons
+constexpr Color kSky = {160, 218, 255, 255};     // light trims and highlights
+constexpr Color kStone = {104, 124, 172, 255};   // idle lines
+constexpr Color kGold = {255, 210, 74, 255};     // primary buttons, focus
+constexpr Color kGoldDeep = {238, 140, 24, 255};
+constexpr Color kCream = {255, 250, 238, 255};   // text
+constexpr Color kMuted = {170, 190, 230, 255};   // secondary text
+constexpr Color kUmber = kInk;                   // outline of the big titles
+constexpr Color kTeal = kSky;                    // light accents
+constexpr Color kRed = {246, 72, 80, 255};       // cancel, danger
+constexpr Color kRedDark = {168, 28, 46, 255};
+constexpr Color kGreen = {126, 226, 74, 255};    // go
+
+// The tones of the chunky buttons.
+enum class Tone : int { Gold, Blue, Navy, Red, Green, Grey };
+Color toneTop(Tone t);
+Color toneBottom(Tone t);
 
 // ---- Shapes -------------------------------------------------------------------
 // Quad with one colour per corner (a = top-left, b = top-right, c = bottom-right, d = bottom-left).
@@ -24,10 +37,27 @@ void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color ca, Color cb, Color 
 // Parallelogram leaning right ("/") inside the bounding box r, vertical gradient.
 void slanted(Rectangle r, float slant, Color top, Color bottom);
 void slantedOutline(Rectangle r, float slant, float thick, Color c);
-// The main menu's look (docs/refonte/menu_accueil.png): crimson for the chosen item, dark ink for the others.
-constexpr Color kRed = {236, 40, 74, 255};
-constexpr Color kRedDark = {164, 14, 48, 255};
-// One of its slanted plates: drop shadow, crimson (chosen) or dark fill, white or grey outline.
+// Rounded rectangle with a vertical gradient (radius in pixels), and its outline.
+void roundRect(Rectangle r, float radius, Color top, Color bottom);
+void roundLines(Rectangle r, float radius, float thick, Color c);
+// The chunky look: drop shadow, thick dark outline, a darker lip under the face, a gloss on top. radius < 0: from
+// the height.
+void chunky(Rectangle r, Color top, Color bottom, float alpha = 1.0f, float radius = -1.0f);
+void chunky(Rectangle r, Tone tone, float alpha = 1.0f, float radius = -1.0f);
+float chunkyLip(Rectangle r);  // the lip's height: the face is r without it
+// A button: its chunky body, the label in white; focused: lifted, a gold rim, a shine running over it.
+void button(Rectangle r, const char* label, Tone tone, bool focused, float time, float alpha = 1.0f, float size = 0.0f);
+// Navy card: panels and sheets.
+void card(Rectangle r, float alpha = 1.0f, Color top = kNavy, Color bottom = kNavyDeep);
+// Ribbon banner with folded tails, centred on cx, its text on it; returns its width.
+float ribbon(const char* text, float cx, float y, float size, Tone tone = Tone::Gold, float alpha = 1.0f);
+float ribbonWidth(const char* text, float size);
+// The gold rim of what is focused.
+void rim(Rectangle r, float radius, float time);
+// Big type: white (or fill) with a thick dark outline and a dark drop under it (title font).
+void bold(const char* text, float x, float y, float size, Color fill = WHITE, float alpha = 1.0f);
+void boldCentered(const char* text, float cx, float y, float size, Color fill = WHITE, float alpha = 1.0f);
+// The main menu's plate (the old look's name): a chunky button, gold when chosen, navy otherwise.
 void menuPlate(Rectangle r, float slant, bool chosen, float alpha = 1.0f);
 Rectangle grow(Rectangle r, float px);
 void glow(Vector2 c, float radius, Color col, int layers = 10);
@@ -37,9 +67,9 @@ void star(Vector2 c, float rOut, float rIn, float rot, Color col);
 void diamond(Vector2 c, float r, Color col);
 // Short L brackets on the corners of a slanted box (slant 0 = rectangle).
 void corners(Rectangle r, float slant, float len, float thick, Color col);
-// Slanted slate plate: drop shadow, fill, gold hairline and corner ornaments.
+// A card in the given colours (the slant is ignored: everything is rounded now).
 void plate(Rectangle r, float slant, Color top, Color bottom, Color line);
-// Hairline rule with small diamonds at both ends.
+// Hairline rule with a small dot at both ends.
 void rule(float x0, float x1, float y, Color col);
 // Zonai rune glyph (kind 0 spiral, 1 eye, 2 three dots, 3 compass) inside a circle of radius r.
 void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
@@ -47,7 +77,7 @@ void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f
 // ---- Backgrounds ----------------------------------------------------------------
 // Painterly sky: gradient, soft cloud banks, drifting motes (tinted by `motes`).
 void backdrop(float time, Color top, Color bottom, Color motes);
-// A real stage background, slowly panning, under a teal-ink veil (dim 0..1) and drifting Zonai motes.
+// A real stage background, slowly panning, under a navy veil (dim 0..1).
 void stageBackdrop(int stage, float time, float dim);
 // Drifting glowing motes rising across the screen.
 void motes(int count, float time, Color col, float alpha = 1.0f);

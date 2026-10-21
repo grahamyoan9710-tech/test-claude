@@ -1,4 +1,4 @@
-// Super Clash Bros. - a platform fighter inspired by Super Smash Bros.
+// Clash Horizon - a platform fighter inspired by Super Smash Bros.
 //
 // Usage: super_clash [--demo] [--fighters A,B,..] [--stage N]
 //                    [--screen title|menu|css|stage|results|settings|training]

@@ -50,7 +50,7 @@ inline void endClip() { EndScissorMode(); }
 // ---- Palette ----------------------------------------------------------------
 // Ancient-tech glow (TotK Zonai teal-green): runes on outfits, ultimate aura, menu selection.
 constexpr Color kZonaiGlow = {72, 228, 190, 255};
-constexpr Color kOutline = {12, 18, 22, 255};  // default text outline (teal ink)
+constexpr Color kOutline = {10, 14, 36, 255};  // default text outline (navy ink)
 
 inline Color portColor(int port) {
   static const Color cols[4] = {{230, 68, 56, 255}, {62, 124, 236, 255}, {240, 196, 52, 255}, {68, 192, 100, 255}};

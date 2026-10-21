@@ -66,12 +66,12 @@ jobs:
         if: steps.v.outputs.skip != 'true'
         run: |
           v="${{ steps.v.outputs.version }}"
-          cp "dist/SuperClashBros-$v-linux-x64.tar.gz" dist/SuperClashBros-linux-x64.tar.gz
-          cp "dist/SuperClashBros-$v-windows-x64.zip" dist/SuperClashBros-windows-x64.zip
-          files="dist/SuperClashBros-linux-x64.tar.gz dist/SuperClashBros-windows-x64.zip"
+          cp "dist/ClashHorizon-$v-linux-x64.tar.gz" dist/ClashHorizon-linux-x64.tar.gz
+          cp "dist/ClashHorizon-$v-windows-x64.zip" dist/ClashHorizon-windows-x64.zip
+          files="dist/ClashHorizon-linux-x64.tar.gz dist/ClashHorizon-windows-x64.zip"
           if gh release view "v$v" > /dev/null 2>&1; then
             gh release upload "v$v" $files --clobber
           else
-            gh release create "v$v" $files --target "$GITHUB_SHA" --title "Super Clash Bros. v$v" \
+            gh release create "v$v" $files --target "$GITHUB_SHA" --title "Clash Horizon v$v" \
               --notes-file packaging/NOUVEAUTES.md
           fi

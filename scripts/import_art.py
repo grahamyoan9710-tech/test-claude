@@ -3,13 +3,14 @@
 - arena backdrops  tools/pixellab/pxa/arenas/<key>_bg/f_00.png  -> arena_<key>_bg.png
 - platform kits    tools/pixellab/pxa/arenas/<key>_kit/f_00.png -> arena_<key>_solid.png (left piece), _thin.png (right)
 - portraits        tools/pixellab/pxa/portraits/<id>/f_NN.png   -> <id>_portrait.png (the candidate picked in PORTRAITS)
+- the game's logo  docs/refonte/logo_clash_horizon.png (the owner's, on white) -> menu_logo.png, on transparency
 Pixel art is scaled x2 with nearest neighbour (crisp once the game filters it). Prints each platform's walkable top
 (pixels below its first row) for render_stages.cpp."""
 import os
 import sys
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFilter
 
 PX = "tools/pixellab/pxa"
 OUT = "assets/sprites"
@@ -61,7 +62,33 @@ def clean_portrait(im):
     return Image.fromarray(a)
 
 
+def cut_out_white(im, band=3):
+    """The white around the logo becomes transparent: the near-white area joined to the border (the logo's own whites,
+    inside its dark outline, stay), its edge un-blended from the white over a few pixels."""
+    a = np.array(im.convert("RGB")).astype(np.float32)
+    light = (a.min(axis=2) >= 232) & (a.max(axis=2) - a.min(axis=2) < 24)
+    mask = Image.fromarray((light * 255).astype(np.uint8)).copy()  # (an array-backed image ignores floodfill)
+    for seed in [(0, 0), (mask.width - 1, 0), (0, mask.height - 1), (mask.width - 1, mask.height - 1)]:
+        if mask.getpixel(seed) == 255:
+            ImageDraw.floodfill(mask, seed, 128)
+    bg = np.array(mask) == 128
+    near = np.array(Image.fromarray((bg * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(2 * band + 1))) > 0
+    alpha = np.where(bg, 0.0, 1.0)
+    edge = near & ~bg  # colour to alpha against white: the least alpha that explains the pixel
+    k = np.clip((255.0 - a[edge].min(axis=1)) / 255.0 * 1.6, 0.0, 1.0)
+    alpha[edge] = k
+    rgb = a.copy()
+    safe = np.maximum(k, 1e-3)[:, None]
+    rgb[edge] = np.clip((a[edge] - (1.0 - k)[:, None] * 255.0) / safe, 0.0, 255.0)
+    out = np.dstack([rgb, alpha * 255.0]).astype(np.uint8)
+    return crop_alpha(Image.fromarray(out, "RGBA"))
+
+
 def main():
+    logo = "docs/refonte/logo_clash_horizon.png"
+    if os.path.exists(logo):
+        cut = cut_out_white(Image.open(logo))
+        cut.resize((1000, round(cut.height * 1000 / cut.width)), Image.LANCZOS).save(f"{OUT}/menu_logo.png", optimize=True)
     for key in ARENAS:
         bg = f"{PX}/arenas/{key}_bg/f_00.png"
         if os.path.exists(bg):

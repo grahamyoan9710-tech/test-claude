@@ -1,5 +1,5 @@
-// Main menu, the first screen (docs/refonte/menu_accueil.png): one of the owner's three backgrounds (the next one
-// at each visit), the logo, a column of slanted buttons, the featured arena, a tip, the version.
+// Main menu, the first screen: one of the owner's three backgrounds (the next one at each visit), the Clash Horizon
+// logo over a column of chunky buttons, a tip and the options button at the top right, the featured arena below.
 #include "game/app.hpp"
 #include "game/fighter_art.hpp"
 #include "game/render.hpp"
@@ -26,19 +26,24 @@ const Item kItems[] = {
     {"PERSONNAGES", "menu_icon_fighters", "La galerie des combattants : style, armes, compétences.", true},
     {"ARÈNES", "menu_icon_arenas", "L'aperçu des arènes ; ENTRÉE pour s'y entraîner.", true},
     {"OPTIONS", "menu_icon_options", "Son, affichage, règles du jeu, touches et manettes.", true},
-    {"QUITTER", "menu_icon_quit", "Quitter Super Clash Bros.", true},
+    {"QUITTER", "menu_icon_quit", "Quitter Clash Horizon.", true},
 };
 constexpr int kItemCount = int(sizeof kItems / sizeof kItems[0]);
-using ui::kRed;
 
+// JOUER first, big and gold; the others blue (QUITTER red, what is not open yet grey).
 Rectangle itemRect(int i, bool sel) {
-  const Rectangle r{58, 170.0f + i * 47.0f, 300, 42};
-  return sel ? Rectangle{r.x - 14, r.y - 6, r.width + 30, r.height + 12} : r;
+  const float y = i == 0 ? 252.0f : 316.0f + (i - 1) * 50.0f;
+  const Rectangle r{46, y, i == 0 ? 352.0f : 320.0f, i == 0 ? 56.0f : 42.0f};
+  return sel ? Rectangle{r.x, r.y - 2, r.width + 12, r.height + 4} : r;
 }
-const Rectangle kCard{26, 590, 452, 104};
-const Rectangle kGear{kScreenW - 58, kScreenH - 54, 40, 40};
+ui::Tone toneOf(int i) {
+  if (!kItems[i].ready) return ui::Tone::Grey;
+  return i == 0 ? ui::Tone::Gold : i == kItemCount - 1 ? ui::Tone::Red : ui::Tone::Blue;
+}
+const Rectangle kCard{846, 596, 410, 98};
+const Rectangle kGear{kScreenW - 62, 14, 46, 46};
 
-// An icon cut from the mock (white on transparent), h pixels high, centred on c.
+// An icon (white on transparent), h pixels high, centred on c.
 void icon(const char* name, Vector2 c, float h, Color tint) {
   float w, hh;
   if (!art::pictureSize(name, w, hh)) return;
@@ -46,19 +51,25 @@ void icon(const char* name, Vector2 c, float h, Color tint) {
   art::drawPicture(name, {0, 0, w, hh}, {c.x - w * k * 0.5f, c.y - h * 0.5f, w * k, h}, 1.0f, false, tint);
 }
 
-void button(const Item& it, Rectangle r, bool sel) {
-  const float s = r.height * 0.3f;
-  ui::menuPlate(r, s, sel);
-  const Color ink = !it.ready ? Color{140, 140, 152, 255} : sel ? WHITE : Color{232, 232, 240, 255};
-  const float cy = r.y + r.height * 0.5f, size = sel ? 25.0f : 21.0f;
-  icon(it.icon, {r.x + s + 28, cy}, r.height * 0.56f, ink);
-  drawTextOutlined(it.label, r.x + s + 58, cy - size * 0.55f, size, ink, withAlpha(BLACK, 0.6f), 2.0f, FontKind::Title);
+void button(int i, Rectangle r, bool sel, float t) {
+  const Item& it = kItems[i];
+  ui::button(r, "", toneOf(i), sel, t);
+  if (sel) r = ui::grow(r, 3.0f);
+  const float lip = ui::chunkyLip(r), cy = r.y + (r.height - lip) * 0.5f, sr = (r.height - lip) * 0.36f;
+  const Vector2 sock{r.x + sr + 12, cy};  // the icon in a dark socket
+  DrawCircleV(sock, sr + 2, ui::kInk);
+  DrawCircleV(sock, sr, withAlpha(shade(ui::toneBottom(toneOf(i)), 0.55f), 0.95f));
+  icon(it.icon, sock, sr * 1.25f, WHITE);
+  const float size = i == 0 ? 32.0f : 23.0f;
+  ui::bold(it.label, sock.x + sr + 14, cy - size * 0.5f + size * 0.06f, size, it.ready ? WHITE : Color{214, 220, 232, 255});
   if (!it.ready) {  // in place of the arrow
-    const Rectangle tag{r.x + r.width - s - 62, cy - 8, 54, 16};
-    DrawRectangleRounded(tag, 0.5f, 6, withAlpha({70, 70, 84, 255}, 0.9f));
-    drawText("BIENTÔT", tag.x + 5, tag.y + 2, 11, {200, 200, 210, 255});
-  } else {
-    ui::arrowTri({r.x + r.width - s - 18, cy}, sel ? 16.0f : 12.0f, 1, withAlpha(ink, sel ? 1.0f : 0.6f));
+    const Rectangle tag{r.x + r.width - 92, cy - 11, 80, 22};
+    ui::roundRect(ui::grow(tag, 2), 11, ui::kInk, ui::kInk);
+    ui::roundRect(tag, 9, ui::toneTop(ui::Tone::Red), ui::toneBottom(ui::Tone::Red));
+    drawTextCentered("BIENTÔT", tag.x + tag.width * 0.5f, tag.y + 3, 14, WHITE, true);
+  } else if (sel) {
+    ui::arrowTri({r.x + r.width - 22, cy}, 18.0f, 1, ui::kInk);
+    ui::arrowTri({r.x + r.width - 24, cy - 1}, 14.0f, 1, WHITE);
   }
 }
 
@@ -156,63 +167,59 @@ void App::drawMainMenu() {
   const float t = time_, f = float(screenFrames_);
   const int bg = settings().menuBg % 3;
   art::drawPicture(TextFormat("menu_fond_%d", bg + 1), {0, 0, kScreenW, kScreenH}, {0, 0, kScreenW, kScreenH});
-  DrawRectangleGradientH(0, 0, 620, kScreenH, withAlpha(BLACK, 0.55f), withAlpha(BLACK, 0.0f));
+  // A royal blue grade on the left, under the logo and the buttons
+  DrawRectangleGradientH(0, 0, 640, kScreenH, withAlpha(ui::kNavyDeep, 0.88f), withAlpha(ui::kNavyDeep, 0.0f));
+  DrawRectangleGradientV(0, kScreenH - 160, kScreenW, 160, withAlpha(ui::kInk, 0.0f), withAlpha(ui::kInk, 0.7f));
 
-  // Logo, top left
+  // Logo, top left, popping in
   float lw, lh;
   if (art::pictureSize("menu_logo", lw, lh)) {
-    const float k = 372.0f / lw, in = easeOut(f / 16.0f);
-    art::drawPicture("menu_logo", {0, 0, lw, lh}, {18 - (1.0f - in) * 80.0f, 6, lw * k, lh * k}, in);
+    const float in = easeOut(f / 18.0f), pop = 1.0f + 0.08f * std::sin(std::min(1.0f, f / 18.0f) * kPi);
+    const float w = 410.0f * pop, h = w * lh / lw;
+    art::drawPicture("menu_logo", {0, 0, lw, lh}, {226 - w * 0.5f, 126 - h * 0.5f, w, h}, in);
   }
 
-  // Buttons, sliding in one after the other; the chosen one is red, bigger
+  // Buttons, sliding in one after the other; the chosen one lifts, with a gold rim
   for (int i = 0; i < kItemCount; ++i) {
     if (i == menuSel_) continue;
     const float pop = easeOut((f - i * 2.0f) / 14.0f);
     Rectangle r = itemRect(i, false);
-    r.x -= (1.0f - pop) * 420.0f;
-    button(kItems[i], r, false);
+    r.x -= (1.0f - pop) * 440.0f;
+    button(i, r, false, t);
   }
   {
     const float pop = easeOut((f - menuSel_ * 2.0f) / 14.0f);
     Rectangle r = itemRect(menuSel_, true);
-    r.x -= (1.0f - pop) * 420.0f + std::sin(t * 5.0f) * 1.5f;
-    button(kItems[menuSel_], r, true);
+    r.x -= (1.0f - pop) * 440.0f;
+    button(menuSel_, r, true, t);
   }
+  // What the chosen button does, under the column
+  drawTextOutlined(kItems[menuSel_].desc, 50, kScreenH - 46, 18, ui::kCream, ui::kInk, 2.5f);
 
-  // Featured arena (changes with the background)
+  // Featured arena (changes with the background), bottom right
   const auto& stages = stageList();
   const int fs = featuredStage();
-  ui::slanted({kCard.x + 6, kCard.y + 7, kCard.width, kCard.height}, 18, withAlpha(BLACK, 0.45f), withAlpha(BLACK, 0.45f));
-  ui::slanted(kCard, 18, withAlpha({28, 28, 38, 255}, 0.94f), withAlpha({12, 12, 18, 255}, 0.94f));
-  DrawRectangleGradientH(int(kCard.x + 10), int(kCard.y + kCard.height - 4), int(kCard.width - 10), 4, kRed,
-                         withAlpha(kRed, 0.0f));
-  const Rectangle thumb{kCard.x + 26, kCard.y + 10, 150, 84};
+  ui::card(kCard, 0.96f);
+  const Rectangle thumb{kCard.x + 12, kCard.y + 12, 132, kCard.height - 24};
+  ui::roundRect(ui::grow(thumb, 3), 10, ui::kInk, ui::kInk);
   drawStageThumb(fs, stages[fs], thumb);
-  DrawRectangleLinesEx(thumb, 1.5f, withAlpha(WHITE, 0.5f));
-  const float tx = thumb.x + thumb.width + 18;
-  drawText("ARÈNE À LA UNE", tx, kCard.y + 14, 13, {200, 200, 212, 255});
-  drawTextOutlined(stages[fs].name.c_str(), tx, kCard.y + 31, 26, WHITE, withAlpha(BLACK, 0.6f), 2.0f, FontKind::Title);
-  const float ph = padPrompts() ? 26 : 22;
-  const float pw = ui::prompt("K", ui::Btn::X, tx, kCard.y + 70 - ph * 0.5f, ph);
-  drawText("Découvrir cette arène", tx + pw + 8, kCard.y + 62, 16, {232, 232, 240, 255});
+  const float tx = thumb.x + thumb.width + 16;
+  drawTextOutlined("ARÈNE À LA UNE", tx, kCard.y + 12, 14, ui::kGold, ui::kInk, 2.0f);
+  ui::bold(stages[fs].name.c_str(), tx, kCard.y + 30, 27);
+  const float ph = padPrompts() ? 26 : 24;
+  const float pw = ui::prompt("K", ui::Btn::X, tx, kCard.y + 72 - ph * 0.5f, ph);
+  drawTextOutlined("Découvrir cette arène", tx + pw + 8, kCard.y + 62, 16, ui::kCream, ui::kInk, 2.0f);
 
-  // Tip, top right
+  // Options button and version, top right; the tip left of them
+  const bool gearHot = ui::hovered(kGear);
+  ui::chunky(gearHot ? ui::grow(kGear, 2) : kGear, gearHot ? ui::Tone::Gold : ui::Tone::Blue, 1.0f, 14.0f);
+  icon("menu_icon_options", {kGear.x + kGear.width * 0.5f, kGear.y + kGear.height * 0.45f}, 28.0f, WHITE);
+  drawTextOutlined("v10.0", kGear.x + 4, kGear.y + kGear.height + 8, 16, ui::kCream, ui::kInk, 2.0f);
   const Tip& tip = kTips[settings().menuBg % 3];
   const std::string key = keyName(settings().keys[0][tip.action]);
   const float th = 26, tw = ui::promptWidth(key.c_str(), ui::padButtonFor(tip.action), th) + 12 + textWidth(tip.text, 16);
-  const Rectangle pill{kScreenW - tw - 52, 16, tw + 32, 40};
-  DrawRectangleRounded({pill.x + 3, pill.y + 4, pill.width, pill.height}, 0.5f, 8, withAlpha(BLACK, 0.4f));
-  DrawRectangleRounded(pill, 0.5f, 8, withAlpha({16, 16, 24, 255}, 0.88f));
-  DrawRectangleRoundedLinesEx(pill, 0.5f, 8, 1.5f, withAlpha({150, 150, 170, 255}, 0.6f));
-  const float kx = pill.x + 16 + ui::prompt(key.c_str(), ui::padButtonFor(tip.action), pill.x + 16, pill.y + 7, th);
-  drawText(tip.text, kx + 12, pill.y + 11, 16, WHITE);
-
-  // What the chosen button does, the version and the options wheel, bottom right
-  drawTextOutlined(kItems[menuSel_].desc, kCard.x + kCard.width + 30, kScreenH - 34, 17, {232, 232, 240, 255},
-                   withAlpha(BLACK, 0.7f), 2.0f);
-  drawTextOutlined("v10.0", kGear.x - 50, kGear.y + 11, 17, WHITE, withAlpha(BLACK, 0.7f), 2.0f);
-  const bool gearHot = ui::hovered(kGear);
-  icon("menu_icon_options", {kGear.x + kGear.width * 0.5f, kGear.y + kGear.height * 0.5f}, gearHot ? 34.0f : 30.0f,
-       gearHot ? kRed : WHITE);
+  const Rectangle pill{kGear.x - tw - 52, kGear.y + 2, tw + 32, 42};
+  ui::card(pill, 0.94f);
+  const float kx = pill.x + 16 + ui::prompt(key.c_str(), ui::padButtonFor(tip.action), pill.x + 16, pill.y + 8, th);
+  drawTextOutlined(tip.text, kx + 12, pill.y + 12, 16, ui::kCream, ui::kInk, 2.0f);
 }

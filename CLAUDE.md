@@ -1,4 +1,4 @@
-# Super Clash Bros. — instructions pour Claude Code
+# Clash Horizon (ex-Super Clash Bros.) — instructions pour Claude Code
 
 Jeu de combat façon Smash en C++17 avec raylib 5.5.
 **Refonte en cours (décidée le 20/10/2026)** : 17 combattants originaux remplacent les 17 anciens persos d'animes et

@@ -1,9 +1,9 @@
 ## Installer
 
-- **Linux** : télécharger `SuperClashBros-linux-x64.tar.gz`, le décompresser, puis lancer `./super_clash` dans le
-  dossier `SuperClashBros` (Ubuntu 24.04 ou plus récent).
-- **Windows** : télécharger `SuperClashBros-windows-x64.zip`, le décompresser, puis double-cliquer sur
-  `super_clash.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations complémentaires »,
+- **Linux** : télécharger `ClashHorizon-linux-x64.tar.gz`, le décompresser, puis lancer `./clash_horizon` dans le
+  dossier `ClashHorizon` (Ubuntu 24.04 ou plus récent).
+- **Windows** : télécharger `ClashHorizon-windows-x64.zip`, le décompresser, puis double-cliquer sur
+  `clash_horizon.exe` (si Windows affiche « Windows a protégé votre ordinateur » : « Informations complémentaires »,
   puis « Exécuter quand même »).
 
 ## Nouveautés

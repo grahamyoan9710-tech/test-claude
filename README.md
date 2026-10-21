@@ -1,4 +1,4 @@
-# Super Clash Bros.
+# Clash Horizon
 
 Un jeu de combat de plateforme en C++ inspiré de **Super Smash Bros.** : on ne vide pas une barre de vie,
 on fait monter le **pourcentage de dégâts** de l'adversaire jusqu'à pouvoir l'**éjecter hors de l'écran**.
@@ -251,7 +251,7 @@ Chaos, Dragon de lumière...
 ## Paramètres
 
 Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquement dans le fichier
-`super_clash.cfg`, à côté de l'exécutable :
+`clash_horizon.cfg`, à côté de l'exécutable :
 
 - **Audio** : volume général, musique, effets sonores (et un bouton pour tester).
 - **Affichage** : plein écran, qualité graphique (*Haute* = contours lissés, rendu en double
@@ -385,18 +385,18 @@ afficher les zones de coup. Pour voir les boutons d'une manette sans en avoir un
 [Releases](https://github.com/grahamyoan9710-tech/test-claude/releases)) :
 
 - **Linux 64 bits** :
-  [SuperClashBros-linux-x64.tar.gz](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/SuperClashBros-linux-x64.tar.gz)
-  (Ubuntu 24.04 ou plus récent) : décompresser, puis dans un terminal ouvert dans le dossier : `./super_clash`.
+  [ClashHorizon-linux-x64.tar.gz](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/ClashHorizon-linux-x64.tar.gz)
+  (Ubuntu 24.04 ou plus récent) : décompresser, puis dans un terminal ouvert dans le dossier : `./clash_horizon`.
 - **Windows 64 bits** :
-  [SuperClashBros-windows-x64.zip](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/SuperClashBros-windows-x64.zip)
-  : décompresser, puis double-cliquer sur `super_clash.exe` (si Windows affiche « Windows a protégé votre
+  [ClashHorizon-windows-x64.zip](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/ClashHorizon-windows-x64.zip)
+  : décompresser, puis double-cliquer sur `clash_horizon.exe` (si Windows affiche « Windows a protégé votre
   ordinateur » : « Informations complémentaires » puis « Exécuter quand même »).
 
 Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/screen_title.cpp`) arrive sur la
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`SuperClashBros-10.0-linux-x64.tar.gz` et `SuperClashBros-10.0-windows-x64.zip`).
+dans `dist/` (`ClashHorizon-10.0-linux-x64.tar.gz` et `ClashHorizon-10.0-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds ready-to-run archives of the game in dist/:
-#   SuperClashBros-<version>-linux-x64.tar.gz   (needs cmake, g++ and the X11/GL dev packages)
-#   SuperClashBros-<version>-windows-x64.zip    (cross-compiled, needs the mingw-w64 package)
+#   ClashHorizon-<version>-linux-x64.tar.gz   (needs cmake, g++ and the X11/GL dev packages)
+#   ClashHorizon-<version>-windows-x64.zip    (cross-compiled, needs the mingw-w64 package)
 # Usage: scripts/package_release.sh [version]
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -41,11 +41,11 @@ build() {  # build dir, extra cmake arguments...
   cmake --build "$dir" -j"$(nproc)" --target super_clash
 }
 
-stage() {  # platform, executable, readme
-  local out="$DIST/$1/SuperClashBros"
+stage() {  # platform, executable, its name in the archive, readme
+  local out="$DIST/$1/ClashHorizon"
   mkdir -p "$out/licences"
-  cp "$2" "$out/"
-  cp "$3" "$out/LISEZ-MOI.txt"
+  cp "$2" "$out/$3"
+  cp "$4" "$out/LISEZ-MOI.txt"
   cp "$ROOT/assets/fonts/LuckiestGuy-LICENSE.txt" "$ROOT/assets/fonts/Poppins-OFL.txt" \
     "$ROOT/assets/gamecontrollerdb-LICENSE.txt" "$out/licences/"
 }
@@ -53,18 +53,18 @@ stage() {  # platform, executable, readme
 # Linux: static C++ runtime, X11/OpenGL/audio libraries are loaded at run time.
 build "$ROOT/build-release-linux" -DCLASH_PORTABLE=ON
 strip "$ROOT/build-release-linux/super_clash"
-stage linux "$ROOT/build-release-linux/super_clash" "$ROOT/packaging/LISEZ-MOI-linux.txt"
-tar -C "$DIST/linux" -czf "$DIST/SuperClashBros-$VERSION-linux-x64.tar.gz" SuperClashBros
+stage linux "$ROOT/build-release-linux/super_clash" clash_horizon "$ROOT/packaging/LISEZ-MOI-linux.txt"
+tar -C "$DIST/linux" -czf "$DIST/ClashHorizon-$VERSION-linux-x64.tar.gz" ClashHorizon
 
 # Windows: one self-contained .exe.
 if command -v x86_64-w64-mingw32-g++ > /dev/null; then
   build "$ROOT/build-release-windows" -DCMAKE_TOOLCHAIN_FILE="$ROOT/cmake/mingw-w64.cmake"
   x86_64-w64-mingw32-strip "$ROOT/build-release-windows/super_clash.exe"
-  stage windows "$ROOT/build-release-windows/super_clash.exe" "$ROOT/packaging/LISEZ-MOI-windows.txt"
-  sed -i 's/$/\r/' "$DIST/windows/SuperClashBros/LISEZ-MOI.txt"  # Windows line endings
+  stage windows "$ROOT/build-release-windows/super_clash.exe" clash_horizon.exe "$ROOT/packaging/LISEZ-MOI-windows.txt"
+  sed -i 's/$/\r/' "$DIST/windows/ClashHorizon/LISEZ-MOI.txt"  # Windows line endings
   (cd "$DIST/windows" && python3 -c "
 import shutil, sys
-shutil.make_archive(sys.argv[1], 'zip', '.', 'SuperClashBros')" "$DIST/SuperClashBros-$VERSION-windows-x64")
+shutil.make_archive(sys.argv[1], 'zip', '.', 'ClashHorizon')" "$DIST/ClashHorizon-$VERSION-windows-x64")
 else
   echo "mingw-w64 not found: Windows archive skipped" >&2
 fi

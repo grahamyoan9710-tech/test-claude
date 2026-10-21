@@ -1,20 +1,20 @@
-SUPER CLASH BROS. - version Linux (64 bits)
-===========================================
+CLASH HORIZON - version Linux (64 bits)
+======================================
 
 POUR JOUER
 ----------
 1. Décompressez l'archive (clic droit > « Extraire ici »).
-2. Ouvrez un terminal dans le dossier SuperClashBros
+2. Ouvrez un terminal dans le dossier ClashHorizon
    (clic droit dans le dossier > « Ouvrir dans un terminal »), puis tapez :
 
-       ./super_clash
+       ./clash_horizon
 
    Si le terminal répond « Permission non accordée », tapez d'abord :
 
-       chmod +x super_clash
+       chmod +x clash_horizon
 
 Aucune installation n'est nécessaire : tout (polices, sons, musique) est
-dans le fichier super_clash. Testé sur Ubuntu 24.04.
+dans le fichier clash_horizon. Testé sur Ubuntu 24.04.
 
 COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
 --------------------------------------------------------------
@@ -67,7 +67,7 @@ ASTUCES
   dessin lisse).
 - Le mode Entraînement permet de s'exercer contre un mannequin.
 
-Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
+Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
 Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
 Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
 

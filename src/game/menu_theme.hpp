@@ -1,6 +1,6 @@
 #pragma once
-// Colour palettes of the menus (main menu, character select). The shapes, gold trims, runes and fonts stay:
-// only the colours change.
+// Colour palettes of the menus (main menu, character select). The shapes and fonts stay: only the colours change.
+// The first one is the game's (Clash Horizon: royal blue and gold).
 #include "game/common.hpp"
 
 struct MenuTheme {
@@ -20,11 +20,11 @@ struct MenuTheme {
 };
 
 inline const MenuTheme kMenuThemes[] = {
-    {"CRÉPUSCULE (v8.1)", 0.58f, {24, 18, 72, 153}, {150, 34, 76, 87}, {255, 150, 90, 31},
-     {{{218, 52, 70, 255}, {86, 12, 42, 255}}, {{30, 164, 116, 255}, {6, 62, 58, 255}},
-      {{48, 116, 230, 255}, {14, 32, 104, 255}}, {{146, 74, 210, 255}, {48, 20, 92, 255}}},
-     kZonaiGlow, {0, 0, 0, 0},
-     0.82f, {22, 16, 58, 255}, {232, 38, 80, 255}, {30, 128, 255, 255}, {232, 196, 110, 255}},
+    {"HORIZON (v10.1)", 0.58f, {14, 30, 90, 153}, {40, 100, 220, 87}, {255, 200, 90, 31},
+     {{{255, 214, 80, 255}, {240, 140, 24, 255}}, {{90, 170, 255, 255}, {30, 96, 222, 255}},
+      {{52, 84, 164, 255}, {20, 38, 98, 255}}, {{255, 104, 104, 255}, {198, 36, 56, 255}}},
+     {255, 210, 74, 255}, {0, 0, 0, 0},
+     0.7f, {12, 22, 62, 255}, {236, 64, 72, 255}, {64, 140, 255, 255}, {255, 210, 74, 255}},
     {"BRASIER", 0.62f, {70, 0, 12, 217}, {255, 96, 0, 158}, {255, 200, 60, 90},
      {{{255, 64, 36, 255}, {128, 8, 18, 255}}, {{255, 146, 24, 255}, {150, 46, 0, 255}},
       {{240, 176, 26, 255}, {150, 78, 0, 255}}, {{84, 46, 44, 255}, {24, 10, 12, 255}}},

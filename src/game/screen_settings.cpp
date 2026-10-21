@@ -6,8 +6,19 @@
 
 namespace {
 const char* kTabNames[4] = {"AUDIO", "AFFICHAGE", "JEU", "COMMANDES"};
-// Earthy tab accents: terracotta, slate blue, moss, ochre.
-const Color kTabColors[4] = {{184, 88, 62, 255}, {70, 120, 150, 255}, {96, 140, 78, 255}, {196, 150, 66, 255}};
+// Tab accents (the sliders' fill): orange, blue, green, violet.
+const Color kTabColors[4] = {{255, 170, 40, 255}, {72, 156, 255, 255}, {126, 226, 74, 255}, {196, 120, 255, 255}};
+// A binding cell: navy, blue when focused, gold while it waits for the new key or button.
+void cell(Rectangle k, bool focused, bool waiting) {
+  ui::chunky(k, waiting ? ui::Tone::Gold : focused ? ui::Tone::Blue : ui::Tone::Navy, 1.0f, 8.0f);
+}
+// The focused row: a lighter band and a gold dot.
+void rowBand(Rectangle r) {
+  ui::roundRect(r, 12, withAlpha(ui::kBlue, 0.28f), withAlpha(ui::kBlue, 0.12f));
+  ui::roundLines(r, 12, 1.5f, withAlpha(ui::kGold, 0.5f));
+  DrawCircleV({r.x + 13, r.y + r.height * 0.5f}, 6, ui::kInk);
+  DrawCircleV({r.x + 13, r.y + r.height * 0.5f}, 4, ui::kGold);
+}
 const Rectangle kPanel{60, 198, 1160, 440};
 
 struct RowInfo {
@@ -202,7 +213,7 @@ void drawPadBindings(PadFamily f, int row, int col, bool waiting, float t) {
                                                     : "Manette Xbox";
   for (char& ch : title)
     if (ch >= 'a' && ch <= 'z') ch = char(ch - 'a' + 'A');
-  drawText(title.c_str(), kPanel.x + 30, kPanel.y + 16, 28, ui::kGold, FontKind::Title);
+  ui::bold(title.c_str(), kPanel.x + 30, kPanel.y + 14, 28, ui::kGold);
 
   drawText("ACTION", kPanel.x + 46, kPanel.y + 52, 17, ui::kMuted);
   for (int c = 0; c < 2; ++c) {
@@ -214,19 +225,13 @@ void drawPadBindings(PadFamily f, int row, int col, bool waiting, float t) {
     const int a = padAction(r);
     const bool rowFoc = r == row;
     const Rectangle k0 = padCellRect(r, 0);
-    if (rowFoc) {
-      DrawRectangleRounded({kPanel.x + 24, k0.y - 2, 540, k0.height + 4}, 0.4f, 8, withAlpha(ui::kTeal, 0.14f));
-      ui::diamond({kPanel.x + 34, k0.y + k0.height * 0.5f}, 4, ui::kGold);
-    }
-    drawText(actionName(a), kPanel.x + 46, k0.y + 4, 19,
-             a == kActUltimate ? ui::kGold : rowFoc ? ui::kCream : Color{196, 206, 198, 255});
+    if (rowFoc) rowBand({kPanel.x + 22, k0.y - 3, 540, k0.height + 6});
+    drawTextOutlined(actionName(a), kPanel.x + 46, k0.y + 4, 19,
+                     a == kActUltimate ? ui::kGold : rowFoc ? ui::kCream : ui::kMuted, ui::kInk, 2.0f);
     for (int c = 0; c < 2; ++c) {
       const Rectangle k = padCellRect(r, c);
       const bool foc = rowFoc && c == col, wait = foc && waiting;
-      DrawRectangleRounded({k.x, k.y + 3, k.width, k.height}, 0.4f, 8, {8, 12, 14, 255});
-      DrawRectangleRounded(k, 0.4f, 8, wait ? mixColor(ui::kGold, WHITE, 0.3f) : foc ? Color{52, 80, 82, 255}
-                                                                             : Color{34, 50, 54, 255});
-      if (!wait) DrawRectangleRoundedLinesEx(ui::grow(k, -1), 0.4f, 8, 1.0f, withAlpha(ui::kStone, foc ? 0.6f : 0.35f));
+      cell(k, foc, wait);
       const int b = boundButton(pad, a, c);
       if (wait) {
         drawTextCentered(int(t * 3) % 2 ? "..." : "", k.x + k.width * 0.5f, k.y + 4, 17, ui::kInk, false);
@@ -245,11 +250,8 @@ void drawPadBindings(PadFamily f, int row, int col, bool waiting, float t) {
   for (int c = 0; c < 2; ++c) {
     const Rectangle rb = padResetRect(c);
     const bool resetFoc = row == kPadActionRows && col == c;
-    const Color base = c == 1 ? Color{170, 70, 52, 255} : kTabColors[3];
-    DrawRectangleRounded(rb, 0.5f, 10, resetFoc ? mixColor(base, ui::kCream, 0.12f) : shade(base, 0.7f));
-    DrawRectangleRoundedLinesEx(ui::grow(rb, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
-    drawTextCentered(c == 0 ? "RÉINITIALISER" : "TOUT + CLAVIERS", rb.x + rb.width * 0.5f, rb.y + 8, 14, ui::kCream);
-    if (resetFoc) ui::focusFrame(rb, t, 0.5f);
+    ui::button(rb, c == 0 ? "RÉINITIALISER" : "TOUT + CLAVIERS", c == 1 ? ui::Tone::Red : ui::Tone::Blue, resetFoc, t,
+               1.0f, 15.0f);
   }
 
   // What never changes
@@ -570,32 +572,14 @@ void App::drawSettings() {
   ui::stageBackdrop(0, t, 0.6f);
   ui::header("PARAMÈTRES", "Les réglages sont enregistrés automatiquement.", kTabColors[1], t);
 
-  // Tabs
+  // Tabs: chunky buttons, the open one gold
   for (int i = 0; i < 4; ++i) {
+    const bool sel = i == setTab_;
     Rectangle r = tabRect(i);
-    bool sel = i == setTab_;
     if (sel) r = {r.x, r.y - 6, r.width, r.height + 6};
-    ui::slanted({r.x + 6, r.y + 6, r.width, r.height}, 18, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
-    ui::slanted(r, 18, sel ? mixColor(kTabColors[i], ui::kInk, 0.2f) : withAlpha({34, 50, 54, 255}, 0.94f),
-                sel ? mixColor(kTabColors[i], ui::kInk, 0.6f) : withAlpha({20, 30, 34, 255}, 0.94f));
-    if (sel) ui::slanted({r.x + 18, r.y, r.width - 18, r.height * 0.3f}, 18 * 0.3f, withAlpha(ui::kCream, 0.12f),
-                         withAlpha(ui::kCream, 0.0f));
-    ui::slantedOutline(r, 18, sel ? 2.0f : 1.5f, sel ? ui::kGold : withAlpha(ui::kStone, 0.5f));
-    if (sel) ui::corners(r, 18, 12, 2.5f, ui::kGold);
-    if (sel && setRow_ < 0) {
-      const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
-      ui::slantedOutline(ui::grow(r, 5), 18, 4, withAlpha(ui::kTeal, 0.2f + 0.16f * pulse));
-      ui::corners(ui::grow(r, 6 + pulse * 2), 18, 14, 3.0f, ui::kGold);
-    }
-    drawTextCentered(kTabNames[i], r.x + r.width * 0.5f, r.y + r.height * 0.5f - 13, 26,
-                     sel ? ui::kCream : ui::kMuted, true, FontKind::Title);
+    ui::button(r, kTabNames[i], sel ? ui::Tone::Gold : ui::Tone::Navy, sel && setRow_ < 0, t, 1.0f, 26.0f);
   }
-  ui::panel(kPanel, withAlpha({18, 28, 32, 255}, 0.93f), withAlpha(ui::kGold, 0.85f), 0.04f);
-  const Rectangle tr = tabRect(setTab_);  // the selected tab's colour runs along the panel top
-  DrawRectangleGradientH(int(kPanel.x + 20), int(kPanel.y - 1), int(tr.x - kPanel.x), 3, withAlpha(accent, 0.0f), accent);
-  DrawRectangle(int(tr.x), int(kPanel.y - 1), int(tr.width - 18), 3, accent);
-  DrawRectangleGradientH(int(tr.x + tr.width - 18), int(kPanel.y - 1), int(kPanel.x + kPanel.width - 20 - tr.x - tr.width + 18), 3,
-                         accent, withAlpha(accent, 0.0f));
+  ui::card(kPanel, 0.96f);
 
   const char* help = nullptr;
   if (setTab_ < 3) {
@@ -603,18 +587,16 @@ void App::drawSettings() {
       Rectangle rr = rowRect(r);
       bool foc = r == setRow_;
       if (foc) {
-        DrawRectangleRounded(rr, 0.35f, 8, withAlpha(mixColor(accent, ui::kTeal, 0.25f), 0.2f));
-        DrawRectangleRoundedLinesEx(rr, 0.35f, 8, 1.0f, withAlpha(ui::kGold, 0.35f));
-        ui::diamond({rr.x + 13, rr.y + rr.height * 0.5f}, 5, ui::kGold);
+        rowBand(rr);
         help = kRows[setTab_][r].help;
       }
-      drawText(kRows[setTab_][r].label, rr.x + 26, rr.y + 9, 24, foc ? ui::kCream : Color{196, 206, 198, 255});
+      drawTextOutlined(kRows[setTab_][r].label, rr.x + 28, rr.y + 9, 24, foc ? ui::kCream : ui::kMuted, ui::kInk, 2.0f);
       Rectangle w = widgetRect(r);
       switch (widgetFor(setTab_, r)) {
         case Widget::Slider: {
           int v = *volumeFor(r);
           ui::slider(sliderRect(r), v / 100.0f, foc, accent, t);
-          drawText(TextFormat("%d %%", v), w.x + w.width - 82, w.y + 4, 22, ui::kCream);
+          ui::bold(TextFormat("%d %%", v), w.x + w.width - 82, w.y + 2, 24);
           break;
         }
         case Widget::Toggle: {
@@ -638,12 +620,9 @@ void App::drawSettings() {
           break;
         }
         case Widget::Button: {
-          Rectangle b{w.x + w.width - 220, w.y, 220, w.height};
-          DrawRectangleRounded({b.x, b.y + 3, b.width, b.height}, 0.5f, 10, shade(accent, 0.4f));
-          DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(accent, ui::kCream, 0.12f) : shade(accent, 0.8f));
-          DrawRectangleRoundedLinesEx(ui::grow(b, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.6f));
-          drawTextCentered(setTab_ == 0 ? "ÉCOUTER" : "RÉINITIALISER", b.x + b.width * 0.5f, b.y + 7, 19, ui::kCream);
-          if (foc) ui::focusFrame(b, t, 0.5f);
+          const Rectangle b{w.x + w.width - 220, w.y - 2, 220, w.height + 4};
+          ui::button(b, setTab_ == 0 ? "ÉCOUTER" : "RÉINITIALISER", setTab_ == 0 ? ui::Tone::Blue : ui::Tone::Red, foc, t,
+                     1.0f, 20.0f);
           break;
         }
       }
@@ -652,43 +631,31 @@ void App::drawSettings() {
     drawPadBindings(promptFamily(), setRow_, setCol_, waitingPad_, t);
   } else {
     // Keyboard bindings table
-    drawText("ACTION", kPanel.x + 46, kPanel.y + 16, 18, ui::kMuted);
+    drawTextOutlined("ACTION", kPanel.x + 46, kPanel.y + 16, 18, ui::kMuted, ui::kInk, 2.0f);
     for (int c = 0; c < 2; ++c) {
       Rectangle k = keyRect(0, c);
-      drawTextCentered(c == 0 ? "CLAVIER 1" : "CLAVIER 2", k.x + k.width * 0.5f, kPanel.y + 13, 20,
-                       portColor(c), true, FontKind::Title);
+      ui::boldCentered(c == 0 ? "CLAVIER 1" : "CLAVIER 2", k.x + k.width * 0.5f, kPanel.y + 11, 20, portColor(c));
     }
     for (int r = 0; r < kActionCount; ++r) {
       bool rowFoc = r == setRow_;
       Rectangle k0 = keyRect(r, 0);
-      if (rowFoc) {
-        DrawRectangleRounded({kPanel.x + 24, k0.y - 2, 750, k0.height + 4}, 0.4f, 8,
-                             withAlpha(mixColor(accent, ui::kTeal, 0.25f), 0.18f));
-        ui::diamond({kPanel.x + 34, k0.y + k0.height * 0.5f}, 4, ui::kGold);
-      }
-      drawText(actionName(r), kPanel.x + 46, k0.y + 2, 18, rowFoc ? ui::kCream : Color{196, 206, 198, 255});
+      if (rowFoc) rowBand({kPanel.x + 22, k0.y - 2, 750, k0.height + 4});
+      drawTextOutlined(actionName(r), kPanel.x + 46, k0.y + 2, 18, rowFoc ? ui::kCream : ui::kMuted, ui::kInk, 2.0f);
       for (int c = 0; c < 2; ++c) {
         Rectangle k = keyRect(r, c);
         bool foc = rowFoc && c == setCol_;
         bool wait = foc && waitingKey_;
-        DrawRectangleRounded({k.x, k.y + 3, k.width, k.height}, 0.4f, 8, {8, 12, 14, 255});
-        DrawRectangleRounded(k, 0.4f, 8, wait ? mixColor(ui::kGold, WHITE, 0.3f) : foc ? Color{52, 80, 82, 255}
-                                                                                       : Color{34, 50, 54, 255});
-        if (!wait) DrawRectangleRoundedLinesEx(ui::grow(k, -1), 0.4f, 8, 1.0f, withAlpha(ui::kStone, foc ? 0.6f : 0.35f));
+        cell(k, foc, wait);
         std::string name = wait ? (int(t * 3) % 2 ? "..." : "") : keyName(s.keys[c][r]);
-        drawTextCentered(name.c_str(), k.x + k.width * 0.5f, k.y + 4, 16, wait ? ui::kInk : ui::kCream, false);
+        drawTextCentered(name.c_str(), k.x + k.width * 0.5f, k.y + 2, 16, WHITE, true);
         if (foc && !wait) ui::focusFrame(k, t, 0.4f);
       }
     }
     for (int c = 0; c < 3; ++c) {
       Rectangle b = resetRect(c);
       bool foc = setRow_ == kActionCount && setCol_ == c;
-      const Color base = c == 2 ? Color{170, 70, 52, 255} : accent;
-      DrawRectangleRounded(b, 0.5f, 10, foc ? mixColor(base, ui::kCream, 0.12f) : shade(base, 0.7f));
-      DrawRectangleRoundedLinesEx(ui::grow(b, -2), 0.5f, 10, 1.0f, withAlpha(ui::kGold, 0.55f));
-      drawTextCentered(c == 2 ? "TOUT RÉINITIALISER (+ MANETTE)" : "RÉINITIALISER", b.x + b.width * 0.5f, b.y + 5, 16,
-                       ui::kCream);
-      if (foc) ui::focusFrame(b, t, 0.5f);
+      ui::button(b, c == 2 ? "TOUT RÉINITIALISER (+ MANETTE)" : "RÉINITIALISER", c == 2 ? ui::Tone::Red : ui::Tone::Blue,
+                 foc, t, 1.0f, 15.0f);
     }
     drawText("Combos :  Attaque + Spéciale = smash   •   Bas, Bas-avant, Avant + Attaque = smash avant chargé",
              kPanel.x + 46, kPanel.y + 413, 12, ui::kMuted);
@@ -697,9 +664,9 @@ void App::drawSettings() {
     // Gamepad reference
     const PadFamily f = promptFamily();
     Rectangle box{kPanel.x + 806, kPanel.y + 16, 338, kPanel.height - 32};
-    DrawRectangleRounded(box, 0.06f, 8, withAlpha(ui::kInk, 0.5f));
-    DrawRectangleRoundedLinesEx(box, 0.06f, 8, 1.0f, withAlpha(ui::kGold, 0.3f));
-    drawText("MANETTE", box.x + 18, box.y + 10, 26, ui::kGold, FontKind::Title);
+    ui::roundRect(box, 14, withAlpha(ui::kInk, 0.55f), withAlpha(ui::kInk, 0.4f));
+    ui::roundLines(box, 14, 1.5f, withAlpha(ui::kSky, 0.3f));
+    ui::bold("MANETTE", box.x + 18, box.y + 8, 26, ui::kGold);
     const int pad = shownPad(f);
     for (int i = 0; i < kPadActionRows + 2; ++i) {  // moving, the bindings, pause
       const float y = box.y + 60 + i * 30.0f;
@@ -719,16 +686,16 @@ void App::drawSettings() {
   }
   if (help) {
     float y = kPanel.y + kPanel.height - 40;
-    DrawCircleV({kPanel.x + 40, y + 12}, 13, ui::kGold);
-    DrawCircleV({kPanel.x + 40, y + 12}, 11, mixColor(accent, ui::kInk, 0.3f));
-    drawTextCentered("i", kPanel.x + 40, y + 1, 18, ui::kCream, false);
-    drawText(help, kPanel.x + 62, y + 2, 18, {214, 220, 208, 255});
+    DrawCircleV({kPanel.x + 40, y + 12}, 14, ui::kInk);
+    DrawCircleV({kPanel.x + 40, y + 12}, 12, ui::kGold);
+    drawTextCentered("i", kPanel.x + 40, y + 1, 18, ui::kInk, false);
+    drawTextOutlined(help, kPanel.x + 62, y + 2, 18, ui::kCream, ui::kInk, 2.0f);
   }
 
   if (waitingPad_) {
     DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.65f));
     Rectangle m{kScreenW * 0.5f - 330, kScreenH * 0.5f - 90, 660, 170};
-    ui::panel(m, {24, 38, 42, 255}, ui::kGold, 0.12f);
+    ui::card(m);
     drawTextCentered(TextFormat("Nouveau bouton : %s", actionName(padAction(std::clamp(setRow_, 0, kPadActionRows - 1)))),
                      m.x + m.width * 0.5f, m.y + 28, 34, ui::kCream, true, FontKind::Title);
     drawTextCentered(setCol_ == 0 ? "Bouton 1" : "Bouton 2", m.x + m.width * 0.5f, m.y + 76, 20, ui::kGold);
@@ -745,7 +712,7 @@ void App::drawSettings() {
   if (waitingKey_) {
     DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.65f));
     Rectangle m{kScreenW * 0.5f - 330, kScreenH * 0.5f - 90, 660, 170};
-    ui::panel(m, {24, 38, 42, 255}, ui::kGold, 0.12f);
+    ui::card(m);
     drawTextCentered(TextFormat("Nouvelle touche : %s", actionName(setRow_)), m.x + m.width * 0.5f, m.y + 28, 34,
                      ui::kCream, true, FontKind::Title);
     drawTextCentered(setCol_ == 0 ? "Clavier 1" : "Clavier 2", m.x + m.width * 0.5f, m.y + 76, 20, portColor(setCol_));

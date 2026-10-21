@@ -146,7 +146,7 @@ void App::finishMatch() {
 
 void App::run() {
   SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
-  InitWindow(kScreenW, kScreenH, "Super Clash Bros.");
+  InitWindow(kScreenW, kScreenH, "Clash Horizon");
   SetExitKey(KEY_NULL);
   SetTargetFPS(60);
   initPads();
@@ -293,9 +293,8 @@ void App::run() {
       float a = std::min(1.0f, toastTimer_ / 20.0f);
       float w = textWidth(toast_.c_str(), 20) + 48;
       Rectangle r{(kScreenW - w) * 0.5f, screen_ == Screen::Match ? 22.0f : kScreenH - 110.0f, w, 44};  // clear of the HUD
-      DrawRectangleRounded(r, 0.5f, 10, withAlpha(ui::kInk, 0.9f * a));
-      DrawRectangleRoundedLinesEx(r, 0.5f, 10, 2, withAlpha(ui::kGold, a));
-      drawText(toast_.c_str(), r.x + 24, r.y + 10, 20, withAlpha(ui::kCream, a));
+      ui::chunky(r, ui::Tone::Navy, a, r.height * 0.45f);
+      drawTextOutlined(toast_.c_str(), r.x + 24, r.y + 9, 20, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.0f);
     }
     if (settings().showFps) drawTextOutlined(TextFormat("%d FPS", GetFPS()), 10, 8, 16, {150, 255, 150, 255});
     if (transition_ >= 0) ui::wipe(transition_ / float(kHalfTransition * 2));

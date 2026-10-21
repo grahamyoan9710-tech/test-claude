@@ -1,18 +1,18 @@
-SUPER CLASH BROS. - version Windows (64 bits)
-=============================================
+CLASH HORIZON - version Windows (64 bits)
+========================================
 
 POUR JOUER
 ----------
 1. Décompressez l'archive (clic droit > « Extraire tout... »).
    Ne lancez pas le jeu directement depuis le fichier .zip.
-2. Double-cliquez sur super_clash.exe.
+2. Double-cliquez sur clash_horizon.exe.
 
 Windows peut afficher « Windows a protégé votre ordinateur » car le jeu
 n'est pas signé : cliquez sur « Informations complémentaires », puis sur
 « Exécuter quand même ».
 
 Aucune installation n'est nécessaire : tout (polices, sons, musique) est
-dans le fichier super_clash.exe.
+dans le fichier clash_horizon.exe.
 
 COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
 --------------------------------------------------------------
@@ -66,7 +66,7 @@ ASTUCES
   dessin lisse).
 - Le mode Entraînement permet de s'exercer contre un mannequin.
 
-Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
+Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
 Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
 Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
 

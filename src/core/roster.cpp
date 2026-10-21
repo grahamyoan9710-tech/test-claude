@@ -1,4 +1,4 @@
-// The fighters of Super Clash Bros. (docs/refonte/FICHES.md). They have no names yet: each one is a number
+// The fighters of Clash Horizon (docs/refonte/FICHES.md). They have no names yet: each one is a number
 // (P01..P17), its weapons NN-A and NN-B, its transformation TNN. Five are playable for now (01, 02, 03, 07, 08);
 // the twelve others come back with their clips (their kits are in the git history, commit c349427).
 // Every fighter starts bare-handed (the Smash normals, four skills and an ultimate, or its transformation) and

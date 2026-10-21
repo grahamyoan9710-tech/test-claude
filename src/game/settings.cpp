@@ -79,7 +79,7 @@ Settings& settings() { return g_settings; }
 std::string settingsPath() {
   std::string dir = GetApplicationDirectory();
   if (dir.empty()) dir = "./";
-  return dir + "super_clash.cfg";
+  return dir + "clash_horizon.cfg";
 }
 
 float shakeScale() {
@@ -89,6 +89,7 @@ float shakeScale() {
 
 void loadSettings() {
   std::string path = settingsPath();
+  if (!FileExists(path.c_str())) path = path.substr(0, path.size() - 17) + "super_clash.cfg";  // the name before v10.1
   if (!FileExists(path.c_str())) return;
   char* text = LoadFileText(path.c_str());
   if (!text) return;
@@ -166,7 +167,7 @@ void loadSettings() {
 
 bool saveSettings() {
   const Settings& s = g_settings;
-  std::string out = "# Super Clash Bros. - parametres\n";
+  std::string out = "# Clash Horizon - parametres\n";
   auto put = [&](const char* k, int v) { out += std::string(k) + "=" + std::to_string(v) + "\n"; };
   put("master_volume", s.masterVolume);
   put("music_volume", s.musicVolume);
