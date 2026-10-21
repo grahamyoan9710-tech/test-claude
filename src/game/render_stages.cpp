@@ -12,8 +12,8 @@ struct Arena {
   float solidTop, thinTop;  // the walkable top of each platform picture, in pixels below its first row
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 0, 0}, kFrost{"givre", 0, 0}, kCrimson{"ecarlate", 0, 86},
-      kKurenai{"kurenai", 0, 0}, kClouds{"nuees", 0, 0};
+  static const Arena kLunar{"lunaire", 0, 0}, kFrost{"givre", 0, 4}, kCrimson{"ecarlate", 0, 86},
+      kKurenai{"kurenai", 0, 0}, kClouds{"nuees", 76, 2};
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
