@@ -1,17 +1,1 @@
-{
- "status": "rejected",
- "error": "1 validation error for call[animate_image_pixminimax]\nsubject_description\n  String should have at most 300 characters [type=string_too_long, input_value='a young woman with very ... star with blue ribbons', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:3d3ed8ca-e019-4cf4-9a4a-c690939d455d",
-  "last_frame_url": "upload:d54d427a-8f3a-4f6d-9c7b-d6b43f1733bb",
-  "description": "a short swing of the star staff forward. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
-  "frame_count": 8,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with blue ribbons",
-  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with blue ribbons"
- },
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
-}
+{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:908f9fba-5c40-464e-b3a6-9420b9de6104", "last_frame_url": "upload:229a15f3-e1af-4f26-954a-e0264d73c3e5", "description": "a short swing of the star staff forward. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons", "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"}
