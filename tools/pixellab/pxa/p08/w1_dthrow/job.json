@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "55f5bff6-22db-4ea8-9602-19721159e6f2",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 55f5bff6-22db-4ea8-9602-19721159e6f2\njob_id: 55f5bff6-22db-4ea8-9602-19721159e6f2\ndescription: bends forward and lowers the invisible opponent he is holding with his free hand, the golden halberd held still at his side, then straightens back up. The halberd is plain gold metal that never glows. Nothing appears around him: no dust, no flash, no sparks. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"55f5bff6-22db-4ea8-9602-19721159e6f2\")\nasset_id: ec4dcdd4-a2fd-5c28-8529-263762e1dcc8\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w1_holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
