@@ -55,6 +55,25 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~10 h UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **arènes et portraits faits avec
+  PixelLab ; relecture de 07 et 08.** (Le conteneur avait redémarré : driver relancé, `fetch_orphans.sh` a récupéré 6
+  jobs du 08, rien renvoyé.)
+  - **Les 5 arènes remplacent les 11 anciennes** (Zonai et mondes d'animes) : Abîme Lunaire (01, disposition d'un seul
+    sol), Citadelle de Givre (02, trois corniches), Canyon Écarlate (03, deux sols et un gouffre), Toits Kurenai (07,
+    long sol et deux poutres), Monastère des Nuées (08, îlots et planche mobile). `src/core/stage.cpp` (`stageList`),
+    thèmes `Lunar`…`Clouds`. Fond `create_image_pro` 688×384 (style : `pxa/arenas/style_menu.png`, coin des torii de
+    `menu_fond_1`), « kit » de plateformes 480×160 dans le style du fond, importés par `scripts/import_art.py`
+    (`assets/sprites/arena_<clé>_bg|solid|thin.png`, ×2 au plus proche voisin ; il affiche le haut marchable de chaque
+    plateforme, à reporter dans `render_stages.cpp`). Rendu : `render_stages.cpp` (≈70 lignes au lieu des 1 900 des
+    mondes d'animes), plateformes étirées en 3 parties (`art::drawPicture3`). Le kit de Kurenai est encore en file.
+  - **Portraits** : `create_image_pro` 168×168 avec la garde du jeu en référence (4 candidats, 15 générations) ; choix
+    dans `scripts/import_art.py` (`PORTRAITS`), liseré blanc du bas effacé. Tenues du jeu, aucune sexualisée.
+  - Relu : toutes les bases de 07 et 08 validées ; ~35 clips écartés (énergie, poussière, éclats, traînées coupées) et
+    refaits avec des prompts calmes (`qa_prompts.json`) ; prompts communs corrigés (roulade, balayages, attaque depuis
+    le rebord : plus de « along the ground »).
+  - **À faire** : importer le kit de Kurenai (`python3 scripts/import_art.py`, puis reporter ses hauts), retirer le code
+    mort des anciennes arènes (`render_world.cpp` : `bakeDepths/Sanctuary/Sky`, `drawSolid/Thin`, thèmes `Cosmic`…),
+    import des clips (`import_all.py`), `fitall.sh`, équilibrage.
 - 21/10 ~1 h 20 UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **reprise après la passation.**
   - Jeton remis dans `px/.token`. Compilation et `sim_test` : « all tests passed ». Codesign connecté ; Asset Generator
     (blueprint-studio) et Icons8 demandent une autorisation dans les connecteurs de claude.ai.
