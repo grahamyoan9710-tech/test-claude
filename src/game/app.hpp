@@ -81,7 +81,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim };
+enum class Screen { MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim, Gallery };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -140,6 +140,9 @@ class App {
   // screens (screen_results.cpp)
   void updateResults(const MenuNav& nav);
   void drawResults();
+  // the fighters' gallery (screen_gallery.cpp)
+  void updateGallery(const MenuNav& nav);
+  void drawGallery();
   // screens (screen_settings.cpp)
   void updateSettings(const MenuNav& nav);
   void drawSettings();
@@ -167,6 +170,8 @@ class App {
   // main menu
   int menuSel_ = 0;
   bool introDone_ = false;
+  int gallerySel_ = 0;
+  bool stageBrowse_ = false;  // the arenas opened from the main menu: ENTRÉE trains there, ÉCHAP goes back
   // fight setup
   bool training_ = false;
   std::array<SlotSetup, 4> slots_;

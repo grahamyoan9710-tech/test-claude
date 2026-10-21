@@ -184,6 +184,9 @@ void App::run() {
     enterScreen(Screen::CharSelect);
   } else if (opt_.screen == "stage") {
     enterScreen(Screen::StageSelect);
+  } else if (opt_.screen == "gallery") {
+    gallerySel_ = std::max(0, opt_.tab);
+    enterScreen(Screen::Gallery);
   } else if (opt_.screen == "settings") {
     setTab_ = std::clamp(opt_.tab, 0, 3);
     setRow_ = opt_.tab >= 0 ? 0 : -1;
@@ -254,6 +257,7 @@ void App::run() {
         case Screen::CharSelect: updateCss(nav); break;
         case Screen::StageSelect: updateStage(nav); break;
         case Screen::Results: updateResults(nav); break;
+        case Screen::Gallery: updateGallery(nav); break;
         case Screen::Settings: updateSettings(nav); break;
         case Screen::Poses: case Screen::Anim:
           if (nav.back) quit_ = true;
@@ -279,6 +283,7 @@ void App::run() {
       case Screen::CharSelect: drawCss(); break;
       case Screen::StageSelect: drawStage(); break;
       case Screen::Results: drawResults(); break;
+      case Screen::Gallery: drawGallery(); break;
       case Screen::Settings: drawSettings(); break;
       case Screen::Poses: drawPoses(); break;
       case Screen::Anim: drawAnimSheet(); break;

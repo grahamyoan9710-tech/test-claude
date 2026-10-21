@@ -685,12 +685,14 @@ void App::updateStage(const MenuNav& nav) {
   stageRandom_ = sel == n - 1;
   if (!stageRandom_) stage_ = sel;
   if (sel != before) audio_.play(Sfx::MenuMove);
-  if (go) {
+  if (go && stageBrowse_) {  // opened from the main menu: a training in that arena
+    activateMenu(1, nav.device);
+  } else if (go) {
     audio_.play(Sfx::MenuSelect);
     startMatch();
   } else if (nav.back) {
     audio_.play(Sfx::MenuBack);
-    goTo(Screen::CharSelect);
+    goTo(stageBrowse_ ? Screen::MainMenu : Screen::CharSelect);
   }
 }
 
@@ -701,7 +703,7 @@ void App::drawStage() {
   const int shown = stageRandom_ ? int(t * 1.5f) % int(stages.size()) : stage_;
   const StageDef& cur = stages[shown];
   ui::stageBackdrop(shown, t, 0.8f);
-  ui::header("ARÈNE", nullptr, {66, 112, 132, 255}, t);
+  ui::header(stageBrowse_ ? "ARÈNES" : "ARÈNE", nullptr, {66, 112, 132, 255}, t);
 
   // The chosen stage, live.
   Rectangle big = bigPreviewRect();
@@ -796,5 +798,6 @@ void App::drawStage() {
       DrawRectangleRoundedLinesEx(base, 0.08f, 8, 1.5f, withAlpha(ui::kStone, 0.6f));
     }
   }
-  ui::footer({{"FLÈCHES", ui::Btn::Move, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Combattre !"}, {"ÉCHAP", ui::Btn::B, "Retour"}});
+  ui::footer({{"FLÈCHES", ui::Btn::Move, "Choisir"},
+              {"ENTRÉE", ui::Btn::A, stageBrowse_ ? "S'entraîner ici" : "Combattre !"}, {"ÉCHAP", ui::Btn::B, "Retour"}});
 }

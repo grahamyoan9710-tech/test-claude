@@ -23,8 +23,8 @@ const Item kItems[] = {
     {"ENTRAÎNEMENT", "menu_icon_training", "Vies infinies, mannequin réglable en pause.", true},
     {"VERSUS", "menu_icon_versus", "De 2 à 4 joueurs sur la même machine.", true},
     {"EN LIGNE", "menu_icon_online", "Bientôt.", false},
-    {"PERSONNAGES", "menu_icon_fighters", "Bientôt : la galerie des combattants.", false},
-    {"ARÈNES", "menu_icon_arenas", "Bientôt : l'aperçu des arènes.", false},
+    {"PERSONNAGES", "menu_icon_fighters", "La galerie des combattants : style, armes, compétences.", true},
+    {"ARÈNES", "menu_icon_arenas", "L'aperçu des arènes ; ENTRÉE pour s'y entraîner.", true},
     {"OPTIONS", "menu_icon_options", "Son, affichage, règles du jeu, touches et manettes.", true},
     {"QUITTER", "menu_icon_quit", "Quitter Super Clash Bros.", true},
 };
@@ -93,17 +93,26 @@ void App::activateMenu(int item, int device) {
   audio_.play(Sfx::MenuSelect);
   switch (item) {
     case 0: case 2:  // JOUER, VERSUS: the same select, where players join
+      stageBrowse_ = false;
       training_ = false;
       cssRow_ = 1;
       claimP1(device);
       goTo(Screen::CharSelect);
       break;
     case 1:
+      stageBrowse_ = false;
       training_ = true;
       cssRow_ = 1;
       cssCol_ = 0;
       claimP1(device);
       goTo(Screen::CharSelect);
+      break;
+    case 4:
+      goTo(Screen::Gallery);
+      break;
+    case 5:
+      stageBrowse_ = true;
+      goTo(Screen::StageSelect);
       break;
     case 6:
       settingsReturn_ = Screen::MainMenu;
