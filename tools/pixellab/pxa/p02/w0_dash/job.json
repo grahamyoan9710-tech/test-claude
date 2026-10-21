@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "b8a475a6-bbf2-473a-b516-782e2db5a61e",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -13,5 +13,7 @@
  },
  "reply": "id: b8a475a6-bbf2-473a-b516-782e2db5a61e\njob_id: b8a475a6-bbf2-473a-b516-782e2db5a61e\ndescription: leans the torso far forward and takes one long low stride to the right from the stance, a long silver spear with white ribbons held low and trailing behind her in one hand, the free arm swept back, landing on the front foot already in a running stride; nothing is drawn behind the feet. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b8a475a6-bbf2-473a-b516-782e2db5a61e\")\nasset_id: f3adc352-4a0e-55c3-97c4-7622b80cc588\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
- "last": null
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
 }
