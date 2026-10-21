@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "44b70585-cfca-4dcf-9bfe-f13b58ec5b2b",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 44b70585-cfca-4dcf-9bfe-f13b58ec5b2b\njob_id: 44b70585-cfca-4dcf-9bfe-f13b58ec5b2b\ndescription: rises from a low crouch and swings one leg forward in a low arc, then back into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"44b70585-cfca-4dcf-9bfe-f13b58ec5b2b\")\nasset_id: d9e596b0-90c3-5a44-a782-0ea46052829a\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
