@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:5e807b18-03c0-4016-ac0e-511c919135c9", "last_frame_url": "upload:f073b0f1-a1c9-4d4e-bed7-b2376911c47f", "description": "karate lunge punch: lunges forward into a long front stance driving a straight punch ahead, then stops in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots", "initial_pose": "running to the right, leaning forward, arms swept back"}, "src": "/home/user/test-claude/tools/pixellab/pxa/p07/runstart/f_08.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "3db310ef-c953-4c0c-b5ae-69421c0a90fb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5e807b18-03c0-4016-ac0e-511c919135c9",
+  "last_frame_url": "upload:f073b0f1-a1c9-4d4e-bed7-b2376911c47f",
+  "description": "karate lunge punch: lunges forward into a long front stance driving a straight punch ahead, then stops in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 3db310ef-c953-4c0c-b5ae-69421c0a90fb\njob_id: 3db310ef-c953-4c0c-b5ae-69421c0a90fb\ndescription: karate lunge punch: lunges forward into a long front stance driving a straight punch ahead, then stops in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3db310ef-c953-4c0c-b5ae-69421c0a90fb\")\nasset_id: e217560e-773f-5c51-8a7c-a52b8af9bd76\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+}
