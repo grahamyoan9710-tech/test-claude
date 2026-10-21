@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~16 h UTC, session cloud (ponytail) : **les 5 persos sont complets, importés, recalés et équilibrés.**
+  - Tous les clips relus ; 7 clips du 08 qui gardaient poussière et éclats après 3-4 essais sont **nettoyés et gardés**
+    (décision du propriétaire) : `pxa/qa_fixes.json` (`specks`, `erase`, `degrey`, nouveau `dust`, `replace`).
+  - Les reprises d'un clip déjà réécrit reçoivent la fin de prompt stricte (`clips.py`, sans traînée ni effet).
+  - `import_all.py` sur les 5, `fitall.sh` (corrigé : ne dépend plus d'un ancien scratchpad) : 84 impacts recalés,
+    73 hitboxes ; `ctest` passe. Équilibrage : `k.P` et `k.c.weight` par perso dans `roster.cpp`, victoires 46-54 %.
+  - Dash et chute : 3 clips chacun par perso, chargés ; le jeu les joue (vu en démo, pas de capture image par image).
+  - **Ensuite** : release v10.0 avec l'accord du propriétaire ; écran OPTIONS encore dans l'ancien style.
 - 21/10 ~10 h UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **arènes et portraits faits avec
   PixelLab ; relecture de 07 et 08.** (Le conteneur avait redémarré : driver relancé, `fetch_orphans.sh` a récupéré 6
   jobs du 08, rien renvoyé.)
