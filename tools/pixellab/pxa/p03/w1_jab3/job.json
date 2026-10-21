@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "35a04be1-18b7-40f4-817a-51cc199e20c7",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 35a04be1-18b7-40f4-817a-51cc199e20c7\njob_id: 35a04be1-18b7-40f4-817a-51cc199e20c7\ndescription: a heavy overhead blow of the spiked greatsword into the ground. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"35a04be1-18b7-40f4-817a-51cc199e20c7\")\nasset_id: 95e2fb1e-6b9f-5a69-90e2-1903405e0047\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
