@@ -10,11 +10,13 @@
 namespace {
 struct Arena {
   const char* key;
-  float solidTop, thinTop, smallTop;  // the walkable top of each platform picture, in pixels below its first row
+  // Where the fighters walk on each platform picture, in pixels below its first row: the middle of its top floor, seen
+  // in depth as on a Smash stage.
+  float solidTop, thinTop, smallTop;
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 0, 0, 0}, kFrost{"givre", 6, 0, 0}, kCrimson{"ecarlate", 0, 4, 0},
-      kKurenai{"kurenai", 28, 2, 0}, kClouds{"nuees", 66, 2, 0};
+  static const Arena kLunar{"lunaire", 26, 0, 0}, kFrost{"givre", 18, 12, 0}, kCrimson{"ecarlate", 22, 14, 0},
+      kKurenai{"kurenai", 54, 10, 0}, kClouds{"nuees", 72, 18, 10};
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;

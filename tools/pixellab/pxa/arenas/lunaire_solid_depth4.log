@@ -1,0 +1,6 @@
+submitted 474e55ba-d1ae-4913-a8da-5159302e2921
+id: 474e55ba-d1ae-4913-a8da-5159302e2921
+job_id: 474e55ba-d1ae-4913-a8da-5159302e2921
+model: pro
+description: a game sprite on a fully transparent background, no sky, no clouds, no scenery: one single floating platform for a 2D fighting game, centred and about three quarters of the picture's width, with wide empty transparent margins on its left and right so that nothing touches any edge of the picture, seen from the front and slightly from above like a Super Smash Bros. stage: its flat top floor is clearly visible as a wide band going back in depth, above its front side; a long bridge of dark
+done 474e55ba-d1ae-4913-a8da-5159302e2921: 1 frames -> pxa/arenas/lunaire_solid_depth4 (15 generations)

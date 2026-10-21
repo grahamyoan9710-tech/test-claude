@@ -55,6 +55,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~20 h 30 UTC, session cloud : **plateformes en profondeur, sans coupure** (façon Smash, dessus visible).
+  Une image PixelLab par plateforme (`pxa/arenas/gen_platforms.sh`, passes 1 à 4) ; `scripts/import_art.py` refuse
+  toute image qui touche le bord de son cadre (coupée). Ligne de marche au milieu du dessus (`render_stages.cpp`).
+  Armes : la touche et la barre s'affichent aussi sur la 2e arme ; prise en 1 s (`kPickupFrames = 60`).
 - 21/10 ~20 h UTC, session cloud : **v10.1 publiée** (workflow lancé à la main, réussi ; archives ClashHorizon-*).
   Verrou de version libre. Ensuite : plateformes avec un effet de profondeur (dessus visible, façon Smash).
 - 21/10 ~20 h UTC, session cloud : **v10.1, le jeu devient Clash Horizon** (demandes du propriétaire).
