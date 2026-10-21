@@ -40,3 +40,5 @@ p02/w1_ledgegrab
 p03/w1_holdstart
 p03/w1_ledgegrab
 p07/runstart
+p07/jump
+p07/knockdown
