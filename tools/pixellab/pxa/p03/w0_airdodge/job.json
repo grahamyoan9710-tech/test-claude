@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "88e38b1b-1c1e-4e0d-9d6d-daf82a0bdee3",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c3c98bbc-6a46-47d7-8c74-572439b639b2",
+  "last_frame_url": "upload:7a71492f-d6ac-4f70-9ec2-b7d4d9041152",
+  "description": "air dodge: curls up tightly in mid-air in the same place holding a huge jagged black greatsword with glowing red veins close to his body, the body staying in the middle of the picture, then opens up again in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a huge jagged black greatsword with glowing red veins"
+ },
+ "reply": "id: 88e38b1b-1c1e-4e0d-9d6d-daf82a0bdee3\njob_id: 88e38b1b-1c1e-4e0d-9d6d-daf82a0bdee3\ndescription: air dodge: curls up tightly in mid-air in the same place holding a huge jagged black greatsword with glowing red veins close to his body, the body staying in the middle of the picture, then opens up again in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"88e38b1b-1c1e-4e0d-9d6d-daf82a0bdee3\")\nasset_id: bff1fb35-e97f-544a-b898-26f97cf163df\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_jump/f_08.png"
+}
