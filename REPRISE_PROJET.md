@@ -52,9 +52,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud `cool-sagan` (v10.0) | 21/10 17 h UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~17 h 05 UTC, session cloud : **v10.0 publiée et vérifiée** (workflow lancé à la main sur
+  `claude/cool-sagan-8wiysw`, absente des branches qui le déclenchent ; réussi ; l'archive Linux téléchargée a la
+  somme SHA-256 de la release et contient v10.0). Verrou de version libre.
 - 21/10 ~17 h UTC, session cloud : **règle des tenues remplacée** (demande du propriétaire). Tous les persos sont
   adultes ; chaque nouveau perso reproduit exactement sa référence PixelLab, tenue comprise, sans rien couvrir ni
   changer (`CLAUDE.md`, `FICHES.md` §1.5 ; les « Tenue à corriger » des fiches à venir sont retirées). Les 5 persos
