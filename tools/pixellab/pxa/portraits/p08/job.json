@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "4781503a-0d9b-4ca6-af2d-3f9becc9587a",
  "tool": "create_image_pro",
  "args": {
@@ -14,5 +14,7 @@
    }
   ]
  },
- "reply": "id: 4781503a-0d9b-4ca6-af2d-3f9becc9587a\njob_id: 4781503a-0d9b-4ca6-af2d-3f9becc9587a\nmodel: pro\ndescription: head and shoulders bust portrait of a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, modest fully covered outfit, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference, no border, no frame, nothing touching the edges\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: 135d08ee-cd18-51ef-b97f-a201d0639a7b\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"4781503a-0d9b-4ca6-af2d-3f9becc9587a\")"
+ "reply": "id: 4781503a-0d9b-4ca6-af2d-3f9becc9587a\njob_id: 4781503a-0d9b-4ca6-af2d-3f9becc9587a\nmodel: pro\ndescription: head and shoulders bust portrait of a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, modest fully covered outfit, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference, no border, no frame, nothing touching the edges\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: 135d08ee-cd18-51ef-b97f-a201d0639a7b\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"4781503a-0d9b-4ca6-af2d-3f9becc9587a\")",
+ "frames": 4,
+ "charged": "15 generations"
 }
