@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "f2277770-2f6b-4f17-aef7-8c15be88128e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:7706a444-15c7-4218-ac26-192e5ac13f1b",
+  "last_frame_url": "upload:75646605-7296-411d-b9b6-4ee2279d7205",
+  "description": "leans forward and reaches out with his free open hand, closes it on empty air, then pulls back, the other hand keeping a white and gold sword with white ribbons still at his side; nothing leaves his hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a white and gold sword with white ribbons"
+ },
+ "reply": "id: f2277770-2f6b-4f17-aef7-8c15be88128e\njob_id: f2277770-2f6b-4f17-aef7-8c15be88128e\ndescription: leans forward and reaches out with his free open hand, closes it on empty air, then pulls back, the other hand keeping a white and gold sword with white ribbons still at his side; nothing leaves his hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f2277770-2f6b-4f17-aef7-8c15be88128e\")\nasset_id: 446c70f0-3827-5108-ac86-0e164bfae41c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+}
