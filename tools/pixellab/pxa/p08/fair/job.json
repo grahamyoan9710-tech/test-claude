@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "4f2be86e-db9f-4ad0-9650-499e793d2c19",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 4f2be86e-db9f-4ad0-9650-499e793d2c19\njob_id: 4f2be86e-db9f-4ad0-9650-499e793d2c19\ndescription: in mid-air, a flying kick straight forward, then pulls the leg back. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4f2be86e-db9f-4ad0-9650-499e793d2c19\")\nasset_id: 6c5c373e-554d-5a12-a6de-cc4c033f42c9\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p08/jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p08/jump/f_08.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p08/jump/f_08.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
