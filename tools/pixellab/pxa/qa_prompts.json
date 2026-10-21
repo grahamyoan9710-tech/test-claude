@@ -21,7 +21,7 @@
   "w1_holdstart": "keeps a staff topped by a blue crystal star with ribbons upright in the hand on her right side and stretches her other arm straight out to the right at shoulder height, across in front of her chest, the open hand closing on the collar of an invisible opponent standing to her right; ends with that arm fully extended to the right, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w1_jab": "a short quick swing of the star staff forward at chest height, the staff head staying well inside the picture, then back into the stance",
   "w1_nspecial": "raises the staff slightly in front of her, holds it, then lowers it back into the stance; the star-shaped head of the staff stays plain",
-  "w1_dspecial": "holds the star staff upright in front of her with both hands as a guard and stays still a moment, then lowers it back into the stance",
+  "w1_dspecial": "holds the staff upright in front of her with both hands and stays still a moment, then lowers it back into the stance; nothing on the staff shines",
   "w1_jab2": "turns the staff over in a small backhand motion in front of her chest, then back into the stance; the star-shaped head of the staff stays plain"
  },
  "p03": {
@@ -45,17 +45,18 @@
   "dair": "in mid-air, extends one leg straight down below her with the heel pointing down, then pulls the leg back to the tucked pose",
   "dtilt": "karate foot sweep: drops low on one knee and swings the front foot in a low arc just above the floor, then rises into the stance",
   "usmash": "karate rising front kick: standing on one leg, snaps the other leg straight up above her head, then lowers it back into the stance, the standing foot stays planted",
-  "bthrow": "holding an invisible opponent, turns her body around and swings both arms behind her, opens her hands, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
-  "ledgeattack": "rises from a low crouch and swings one leg forward in a low arc, then back into the fighting stance",
+  "bthrow": "holding an invisible opponent, turns her body around and pushes both open hands behind her, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
+  "ledgeattack": "rises from a crouch and kicks one leg forward at knee height, then back into the fighting stance",
   "sspecial": "leans forward low, takes one long step forward and drives one knee up in a flying knee, then lands back in the stance",
   "w0_jab3": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance",
   "w0_sspecial": "leans forward low and takes one long fast step forward, ending with the sword extended far ahead",
   "w1_dspecial": "lowers the jagged sword point-down in front of her and holds it there a moment, then raises it back into the stance",
   "w1_jab3": "a short straight thrust of the jagged sword forward at chest height, the blade staying well inside the picture, then back into the stance",
-  "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, the broad black and red sword held flat against her back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture"
+  "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, the broad black and red sword held flat against her back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture",
+  "w0_ultimate": "steps forward three times, swinging the sword in a wide arc at each step, then stops with her back turned and the sword lowered"
  },
  "p08": {
-  "usmash": "kung fu crescent kick: standing on one leg, swings the other leg in a high arc above his head, then lowers it back into the stance, the standing foot stays planted",
+  "usmash": "kung fu crescent kick: standing on one leg, swings the other leg in a high arc above his head, then lowers it back into the stance, the standing foot stays planted; nothing flashes where the foot passes",
   "nspecial": "pushes one open palm forward at chest height, then pulls it back into the stance"
  }
 }

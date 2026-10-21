@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:ba123112-022f-4a82-af4a-2b39109f36ea", "last_frame_url": "upload:2ebefab7-9b0f-4fba-9f9c-a6375d328916", "description": "in mid-air, spins once with both legs extended, then tucks again, staying high in the air the whole time, the feet never touching anything. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots", "initial_pose": "in mid-air facing right, knees tucked"}, "src": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png", "last": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png"}
+{
+ "status": "submitted",
+ "job_id": "b6b513a4-5c0a-4896-b058-af0ee4b0a51d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ba123112-022f-4a82-af4a-2b39109f36ea",
+  "last_frame_url": "upload:2ebefab7-9b0f-4fba-9f9c-a6375d328916",
+  "description": "in mid-air, spins once with both legs extended, then tucks again, staying high in the air the whole time, the feet never touching anything. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: b6b513a4-5c0a-4896-b058-af0ee4b0a51d\njob_id: b6b513a4-5c0a-4896-b058-af0ee4b0a51d\ndescription: in mid-air, spins once with both legs extended, then tucks again, staying high in the air the whole time, the feet never touching anything. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b6b513a4-5c0a-4896-b058-af0ee4b0a51d\")\nasset_id: 98763a86-8589-5175-925e-9785d64f69bf\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p07/jump/f_08.png"
+}
