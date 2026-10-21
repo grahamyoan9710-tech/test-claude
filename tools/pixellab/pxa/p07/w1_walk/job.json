@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "7025063f-9402-4923-a13b-f09194a22296",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:8f49e92a-d93f-4dd3-8dea-22932296fe88",
+  "last_frame_url": "upload:b687ac96-877c-4a56-b4ad-77d0fa44dd09",
+  "description": "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a broad black and red sword, larger and more jagged, with red ribbons held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword, larger and more jagged, with red ribbons",
+  "initial_pose": "fighting stance facing right, holding a broad black and red sword, larger and more jagged, with red ribbons"
+ },
+ "reply": "id: 7025063f-9402-4923-a13b-f09194a22296\njob_id: 7025063f-9402-4923-a13b-f09194a22296\ndescription: walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a broad black and red sword, larger and more jagged, with red ribbons held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7025063f-9402-4923-a13b-f09194a22296\")\nasset_id: 8999c41d-7b90-5963-b284-f56963537d43\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png"
+}
