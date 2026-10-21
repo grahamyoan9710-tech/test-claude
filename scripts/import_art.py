@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Imports the PixelLab art of the menus and arenas into assets/sprites (run from the repository root):
 - arena backdrops  tools/pixellab/pxa/arenas/<key>_bg/f_00.png  -> arena_<key>_bg.png
-- platform kits    tools/pixellab/pxa/arenas/<key>_kit/f_00.png -> arena_<key>_solid.png (left piece), _thin.png (right)
+- platforms        tools/pixellab/pxa/arenas/<key>_<part>/f_00.png -> arena_<key>_<part>.png (solid, thin, small: one
+                   picture per platform, generated at the game's size by pxa/arenas/gen_platforms.sh)
 - portraits        tools/pixellab/pxa/portraits/<id>/f_NN.png   -> <id>_portrait.png (the candidate picked in PORTRAITS)
 - the game's logo  docs/refonte/logo_clash_horizon.png (the owner's, on white) -> menu_logo.png, on transparency
 Pixel art is scaled x2 with nearest neighbour (crisp once the game filters it). Prints each platform's walkable top
@@ -15,8 +16,8 @@ from PIL import Image, ImageDraw, ImageFilter
 PX = "tools/pixellab/pxa"
 OUT = "assets/sprites"
 ARENAS = ["lunaire", "givre", "ecarlate", "kurenai", "nuees"]
-MIRRORED = {"kurenai", "ecarlate"}  # the main platform cut at the kit's left edge: its right half, mirrored, makes the left
-TOP_CUT = {"ecarlate"}  # the thin platform's ropes run out of the picture: only the deck is kept
+PARTS = ["solid", "thin", "small"]  # the main ground, the thin platforms, the small islands (Monastère des Nuées)
+PLATFORM_PICK = {("givre", "thin"): 3, ("ecarlate", "thin"): 1, ("kurenai", "thin"): 1, ("nuees", "thin"): 1}
 PORTRAITS = {"p01": 0, "p02": 0, "p03": 0, "p07": 0, "p08": 3}  # the candidate kept for each fighter
 
 
@@ -33,21 +34,6 @@ def walk_top(im):
     a = np.array(im.getchannel("A")) > 40
     cover = a.sum(axis=1) / a.shape[1]
     return int(np.argmax(cover >= 0.6))
-
-
-def split_kit(im):
-    """The two pieces of a kit, cut at the widest run of empty columns between them."""
-    used = (np.array(im.getchannel("A")) > 40).any(axis=0)
-    xs = np.flatnonzero(used)
-    best, start = (0, 0), None
-    for x in range(xs[0], xs[-1] + 1):
-        if not used[x] and start is None:
-            start = x
-        if used[x] and start is not None:
-            best, start = max(best, (x - start, start)), None
-    gap, at = best
-    assert gap >= 4, "no empty gap between the two platforms"
-    return crop_alpha(im.crop((0, 0, at, im.height))), crop_alpha(im.crop((at + gap, 0, im.width, im.height)))
 
 
 def clean_portrait(im):
@@ -94,19 +80,12 @@ def main():
         bg = f"{PX}/arenas/{key}_bg/f_00.png"
         if os.path.exists(bg):
             x2(Image.open(bg).convert("RGB")).save(f"{OUT}/arena_{key}_bg.png")
-        kit = f"{PX}/arenas/{key}_kit/f_00.png"
-        if os.path.exists(kit):
-            solid, thin = split_kit(Image.open(kit).convert("RGBA"))
-            if key in MIRRORED:
-                half = solid.crop((solid.width // 2, 0, solid.width, solid.height))
-                solid = Image.new("RGBA", (half.width * 2, solid.height))
-                solid.paste(half.transpose(Image.FLIP_LEFT_RIGHT), (0, 0))
-                solid.paste(half, (half.width, 0))
-            if key in TOP_CUT:
-                thin = crop_alpha(thin.crop((0, max(0, walk_top(thin) - 3), thin.width, thin.height)))
-            x2(solid).save(f"{OUT}/arena_{key}_solid.png")
-            x2(thin).save(f"{OUT}/arena_{key}_thin.png")
-            print(f'{key}: solidTop {walk_top(solid) * 2}, thinTop {walk_top(thin) * 2}')
+        for part in PARTS:
+            src = f"{PX}/arenas/{key}_{part}/f_{PLATFORM_PICK.get((key, part), 0):02d}.png"
+            if os.path.exists(src):
+                pic = crop_alpha(Image.open(src).convert("RGBA"))
+                x2(pic).save(f"{OUT}/arena_{key}_{part}.png")
+                print(f"{key} {part}: walkable top {walk_top(pic) * 2}")
     for pid, pick in PORTRAITS.items():
         src = f"{PX}/portraits/{pid}/f_{pick:02d}.png"
         if os.path.exists(src):
