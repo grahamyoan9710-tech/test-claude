@@ -83,6 +83,7 @@
   "w1_bthrow": "holding an invisible opponent with his free hand, turns his body around and pushes that hand behind him, the golden halberd held still in the other hand, then returns to the ready stance; nothing shines. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w1_dthrow": "bends forward and slowly lowers the invisible opponent he is holding with his free hand, the golden halberd held still at his side, then straightens back up into the ready stance; nothing shines, nothing appears around him. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "dair": "in mid-air, lowers both open hands in front of his chest, then back to the tucked pose, staying high in the air; nothing below him",
-  "w1_dspecial": "plants the golden halberd upright beside him and leans on it for a moment, then lifts it back into the stance; nothing shines"
+  "w1_dspecial": "plants the golden halberd upright beside him and leans on it for a moment, then lifts it back into the stance; nothing shines",
+  "w1_ultimate": "raises the golden halberd high above his head with both hands and holds it, then sweeps it down in one wide arc in front of him, the blade staying inside the picture, then lowers it back into the stance; the feet stay planted"
  }
 }
