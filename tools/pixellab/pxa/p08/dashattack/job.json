@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:66b2bc4c-51d4-4991-a8ec-df9e97763ccd", "last_frame_url": "upload:71c9d241-f2d5-4b0c-999a-c2e1edb8dd52", "description": "kung fu flying kick: leaps forward with one leg extended straight ahead, then lands in the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots", "initial_pose": "running to the right, leaning forward, arms swept back"}, "src": "/home/user/test-claude/tools/pixellab/pxa/p08/runstart/f_08.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "0b568324-f7c0-4a0b-b1b1-e9262679548e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:66b2bc4c-51d4-4991-a8ec-df9e97763ccd",
+  "last_frame_url": "upload:71c9d241-f2d5-4b0c-999a-c2e1edb8dd52",
+  "description": "kung fu flying kick: leaps forward with one leg extended straight ahead, then lands in the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 0b568324-f7c0-4a0b-b1b1-e9262679548e\njob_id: 0b568324-f7c0-4a0b-b1b1-e9262679548e\ndescription: kung fu flying kick: leaps forward with one leg extended straight ahead, then lands in the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0b568324-f7c0-4a0b-b1b1-e9262679548e\")\nasset_id: e6ed6fe2-8782-5ee3-b0eb-756fadbbd8e9\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p08/runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"
+}
