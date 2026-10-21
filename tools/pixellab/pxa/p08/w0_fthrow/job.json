@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "9ad1b8f7-257d-4a2f-a889-f464d00358eb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6766663f-47e7-4071-b14d-2b659c95d65c",
+  "last_frame_url": "upload:3a1ab63c-fe00-4354-84f5-77cc7c619fb1",
+  "description": "holding an invisible opponent with his free hand, pushes that hand forward, the sword held still at his side, then returns to the ready stance. Nothing appears around him: no dust, no flash, no sparks. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: 9ad1b8f7-257d-4a2f-a889-f464d00358eb\njob_id: 9ad1b8f7-257d-4a2f-a889-f464d00358eb\ndescription: holding an invisible opponent with his free hand, pushes that hand forward, the sword held still at his side, then returns to the ready stance. Nothing appears around him: no dust, no flash, no sparks. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9ad1b8f7-257d-4a2f-a889-f464d00358eb\")\nasset_id: df9f6399-0c84-5e0c-8c80-947c47c22a62\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+}
