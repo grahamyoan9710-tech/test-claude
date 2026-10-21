@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "eb99612f-4659-48d9-9e7a-1dc603703f12",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:1d8d8dc0-ea9a-4099-a5df-f8ac2b84be1e",
+  "last_frame_url": "upload:56f085fc-ee80-4097-bc94-6d82b943f5df",
+  "description": "dashes forward very low and fast and finishes with the sword extended far ahead. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+  "initial_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons"
+ },
+ "reply": "id: eb99612f-4659-48d9-9e7a-1dc603703f12\njob_id: eb99612f-4659-48d9-9e7a-1dc603703f12\ndescription: dashes forward very low and fast and finishes with the sword extended far ahead. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"eb99612f-4659-48d9-9e7a-1dc603703f12\")\nasset_id: 03e0f95e-7e72-5276-a53e-cff8156dfe31\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png"
+}
