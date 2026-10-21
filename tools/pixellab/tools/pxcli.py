@@ -317,6 +317,8 @@ def main():
     i.add_argument('--no-wait', action='store_true'); i.add_argument('--model', default='pixflux', choices=['pixflux', 'pixen', 'pro'])
     i.add_argument('--outline'); i.add_argument('--detail')
     i.add_argument('--ref', action='append', default=[], help='PATH|usage: a labelled reference picture (pro model)')
+    i.add_argument('--style', help='PATH: a picture whose art style the result follows (pro model)')
+    i.add_argument('--bg', action='store_true', help='a scene with its background (not a cut-out sprite)')
     w = sub.add_parser('wait'); w.add_argument('out'); w.add_argument('--timeout', type=int, default=1200)
     a_ = ap.parse_args()
     if a_.cmd == 'balance':
@@ -347,7 +349,7 @@ def main():
             sys.exit(0 if wait(a_.out) else 1)
     elif a_.cmd == 'image':
         if not submitted(a_.out):
-            args = {'description': a_.desc, 'width': a_.w, 'height': a_.h, 'no_background': True}
+            args = {'description': a_.desc, 'width': a_.w, 'height': a_.h, 'no_background': not a_.bg}
             if a_.model != 'pro':
                 args['view'] = a_.view
                 if a_.direction: args['direction'] = a_.direction
@@ -359,6 +361,8 @@ def main():
             if a_.ref:
                 args['reference_images'] = [{'base64': base64.b64encode(open(r.split('|', 1)[0], 'rb').read()).decode(),
                                              'usage': r.split('|', 1)[1] if '|' in r else 'reference'} for r in a_.ref]
+            if a_.style:  # pro model: the art style (palette, outline, shading) of this picture
+                args['style_image_base64'] = base64.b64encode(open(a_.style, 'rb').read()).decode()
             tool = {'pixflux': 'create_image_pixflux', 'pixen': 'create_image_pixen', 'pro': 'create_image_pro'}[a_.model]
             submit(a_.out, tool, args, {})
         if not a_.no_wait:

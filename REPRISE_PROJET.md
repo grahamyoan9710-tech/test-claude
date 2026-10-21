@@ -78,6 +78,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
     (refaite : le bras partait en arrière). Écartés (`qa3`, prompts dans `qa_prompts.json`) : 03 w0_fthrow,
     w0_getup, w1_crouch, w1_land ; 01 w1_dspecial ; 02 w0_dthrow. 03 w1_runstart bloqué de nouveau chez PixelLab :
     renvoyé à part (`pxa/jobs_p03_runfix.json`). 03 dair gardé (geste faible, mais propre).
+  - **Propriétaire (21/10)** : « j'autorise tout sauf dépenser de l'argent pour des crédits ». Portraits et arènes
+    faits avec PixelLab (générations de l'abonnement, 1 519 restantes) : `create_image_pro` (`pxcli.py image --model pro`,
+    `--bg` pour un décor, `--style` pour le style des menus `pxa/arenas/style_menu.png`). Essais : portrait du 03
+    (`pxa/portraits/p03`), fond du Monastère des Nuées (`pxa/arenas/nuees_bg`).
+  - Prompts communs calmés dans `clips.py` (défauts revenus chez plusieurs persos) : projection vers le bas armée,
+    double saut (« kicks off the air »), fin des coups (`TAIL_BLOW` : arme et traînée dans l'image, sans éclair),
+    coups pendant une prise (« strike »).
 - 21/10 ~2 h UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **PASSATION à une nouvelle session**
   (pour les plugins Codesign, Asset Generator et Icons8, connectés seulement au démarrage d'une session).
   - **Arrêté proprement** : driver et lots arrêtés, tout est poussé. 16 jobs ont un numéro (`"submitted"`), dont 6
