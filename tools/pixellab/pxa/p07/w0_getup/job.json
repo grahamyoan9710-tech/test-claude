@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "f317388f-f811-4499-8f16-7702dc95e4a5",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: f317388f-f811-4499-8f16-7702dc95e4a5\njob_id: f317388f-f811-4499-8f16-7702dc95e4a5\ndescription: gets up from lying on her back: rolls onto her feet and stands back up into the ready stance, a broad black and red sword with red ribbons in hand. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f317388f-f811-4499-8f16-7702dc95e4a5\")\nasset_id: 3b121c36-3e6f-5f94-9f20-9a9e9066075b\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w0_knockdown/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
