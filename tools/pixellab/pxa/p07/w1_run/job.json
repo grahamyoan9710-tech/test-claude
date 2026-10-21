@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "44aa7e0b-b6a6-4199-b973-d6efcf69aa29",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:acca05f9-1c7e-42c9-a67e-e091dfe75536",
+  "last_frame_url": "upload:dd216d4e-7941-4a46-8217-a104c303905f",
+  "description": "fast run cycle to the right: leaning far forward, a broad black and red sword, larger and more jagged, with red ribbons held low and trailing behind her in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword, larger and more jagged, with red ribbons",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 44aa7e0b-b6a6-4199-b973-d6efcf69aa29\njob_id: 44aa7e0b-b6a6-4199-b973-d6efcf69aa29\ndescription: fast run cycle to the right: leaning far forward, a broad black and red sword, larger and more jagged, with red ribbons held low and trailing behind her in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"44aa7e0b-b6a6-4199-b973-d6efcf69aa29\")\nasset_id: fb6a852e-137b-5b73-abab-84386bea7e5d\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_runstart/f_08.png"
+}
