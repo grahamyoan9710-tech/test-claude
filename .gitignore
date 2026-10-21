@@ -29,3 +29,4 @@ tools/pixellab/vfx/waves_anim/
 tools/pixellab/vfx/*.log
 tools/pixellab/pxa/*.log
 tools/pixellab/**/.lock
+__pycache__/
