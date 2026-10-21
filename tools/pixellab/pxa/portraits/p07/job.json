@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "b87842bb-4e80-44c4-b215-de144b299e75",
  "tool": "create_image_pro",
  "args": {
@@ -14,5 +14,7 @@
    }
   ]
  },
- "reply": "id: b87842bb-4e80-44c4-b215-de144b299e75\njob_id: b87842bb-4e80-44c4-b215-de144b299e75\nmodel: pro\ndescription: head and shoulders bust portrait of a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, modest fully covered outfit, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference, no border, no frame, nothing touching the edges\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: a113c02c-3b05-5552-b970-2dd708985b83\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"b87842bb-4e80-44c4-b215-de144b299e75\")"
+ "reply": "id: b87842bb-4e80-44c4-b215-de144b299e75\njob_id: b87842bb-4e80-44c4-b215-de144b299e75\nmodel: pro\ndescription: head and shoulders bust portrait of a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, modest fully covered outfit, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference, no border, no frame, nothing touching the edges\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: a113c02c-3b05-5552-b970-2dd708985b83\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"b87842bb-4e80-44c4-b215-de144b299e75\")",
+ "frames": 4,
+ "charged": "15 generations"
 }
