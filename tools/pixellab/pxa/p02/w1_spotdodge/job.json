@@ -1,17 +1,1 @@
-{
- "status": "rejected",
- "error": "1 validation error for call[animate_image_pixminimax]\nsubject_description\n  String should have at most 300 characters [type=string_too_long, input_value='a young woman with very ... star with blue ribbons', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:251fa50b-a6b1-45dd-b041-1d3ce0f4164f",
-  "last_frame_url": "upload:bdb8888d-9bf3-4625-a574-537f745cce45",
-  "description": "ducks on the spot: quickly bends her knees and lowers her head and shoulders, a staff topped by a blue crystal star with blue ribbons held close to her body, then straightens up into the same stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
-  "frame_count": 8,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with blue ribbons",
-  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with blue ribbons"
- },
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
-}
+{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:4363d0b7-30ee-4caa-85d9-44a0cb5b5457", "last_frame_url": "upload:811ab68c-bdc1-4dec-bc3f-344c2c0334c9", "description": "ducks on the spot: quickly bends her knees and lowers her head and shoulders, a staff topped by a blue crystal star with blue ribbons held close to her body, then straightens up into the same stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with blue ribbons", "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with blue ribbons"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"}
