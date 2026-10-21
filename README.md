@@ -397,7 +397,7 @@ Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`ClashHorizon-10.2-linux-x64.tar.gz` et `ClashHorizon-10.2-windows-x64.zip`).
+dans `dist/` (`ClashHorizon-10.3-linux-x64.tar.gz` et `ClashHorizon-10.3-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64

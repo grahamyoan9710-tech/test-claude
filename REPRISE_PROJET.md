@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud (cool-sagan) | 21/10 21 h 20 UTC |
 
 ### Journal (le plus récent en haut)
 - 21/10 ~20 h 40 UTC, session cloud : **v10.2 publiée** (workflow lancé à la main, réussi). Verrou de version libre.
