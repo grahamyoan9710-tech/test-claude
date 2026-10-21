@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "7c2050e1-9f90-4ac2-9818-4743d9785813",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 7c2050e1-9f90-4ac2-9818-4743d9785813\njob_id: 7c2050e1-9f90-4ac2-9818-4743d9785813\ndescription: from hanging by her raised hands, she pulls her chest up to the height of her hands, swings one knee up, pushes herself up and stands up in the fighting stance; nothing is drawn around her: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7c2050e1-9f90-4ac2-9818-4743d9785813\")\nasset_id: aa7b5c2d-9d97-5b18-bdab-cb11ab96f2a6\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p07/ledgegrab/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
