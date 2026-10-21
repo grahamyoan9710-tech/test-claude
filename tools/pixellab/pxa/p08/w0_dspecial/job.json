@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "470b2b52-ebe2-45f1-a171-b0ba5d5a9fad",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:b516dc08-84b6-44de-9c75-5dbe94f6983e",
+  "last_frame_url": "upload:327cf5e1-f0ab-43c0-b4d2-dcf34de717e1",
+  "description": "holds the sword vertical in front of him as a guard and stays perfectly still, then lowers it back into the stance; nothing appears around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a white and gold sword with white ribbons"
+ },
+ "reply": "id: 470b2b52-ebe2-45f1-a171-b0ba5d5a9fad\njob_id: 470b2b52-ebe2-45f1-a171-b0ba5d5a9fad\ndescription: holds the sword vertical in front of him as a guard and stays perfectly still, then lowers it back into the stance; nothing appears around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"470b2b52-ebe2-45f1-a171-b0ba5d5a9fad\")\nasset_id: d7b949a1-5aa5-5406-a825-de01226d21a4\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+}
