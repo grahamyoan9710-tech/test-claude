@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "232e98be-f0bd-4037-99d3-8e7ce9d3b874",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 232e98be-f0bd-4037-99d3-8e7ce9d3b874\njob_id: 232e98be-f0bd-4037-99d3-8e7ce9d3b874\ndescription: from lying on his back, swings a white and gold sword with white ribbons low across in front of him, then low behind him while springing to his feet, ending in the ready stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"232e98be-f0bd-4037-99d3-8e7ce9d3b874\")\nasset_id: 9afe0c0b-c3f3-5fa3-9ec3-3a86a93379ab\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_knockdown/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
