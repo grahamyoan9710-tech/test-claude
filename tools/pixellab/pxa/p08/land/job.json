@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "eb0151df-8dad-44a6-89ee-70afdae2508a",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: eb0151df-8dad-44a6-89ee-70afdae2508a\njob_id: eb0151df-8dad-44a6-89ee-70afdae2508a\ndescription: standing on the floor, bends the knees deeply as if just landed, then rises back into the stance; the feet stay on the floor, nothing is drawn around them. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"eb0151df-8dad-44a6-89ee-70afdae2508a\")\nasset_id: b5c27e43-dea4-585c-839f-4b7f491dd37d\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
 }
