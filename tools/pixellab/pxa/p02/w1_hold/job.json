@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "f71c8b88-6b89-4c90-a5a6-5b4b77486ca7",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:997aa0ac-83c3-44b3-849c-0d330aa5df38",
+  "last_frame_url": "upload:692f2b56-561d-4233-85fe-cd9e32f0e101",
+  "description": "holds an invisible opponent by the collar at arm's length with her free hand, the other hand keeping a staff topped by a blue crystal star with ribbons ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "holding an invisible opponent in front of her with both hands"
+ },
+ "reply": "id: f71c8b88-6b89-4c90-a5a6-5b4b77486ca7\njob_id: f71c8b88-6b89-4c90-a5a6-5b4b77486ca7\ndescription: holds an invisible opponent by the collar at arm's length with her free hand, the other hand keeping a staff topped by a blue crystal star with ribbons ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f71c8b88-6b89-4c90-a5a6-5b4b77486ca7\")\nasset_id: 1ecd7f5d-f9cc-5d3c-a879-df6023641a18\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/w1_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/w1_holdstart/f_04.png"
+}
