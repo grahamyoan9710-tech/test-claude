@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "3c8c23e7-63f4-4e39-8626-dff17c81b84e",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 3c8c23e7-63f4-4e39-8626-dff17c81b84e\njob_id: 3c8c23e7-63f4-4e39-8626-dff17c81b84e\ndescription: from hanging by her raised free hand, she pulls her chest up to the height of that hand, swings one knee up, pushes herself up and stands up in the ready stance, a broad black and red sword with red ribbons in the other hand; nothing is drawn around her: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3c8c23e7-63f4-4e39-8626-dff17c81b84e\")\nasset_id: 79b19560-3559-5e44-a0ee-db595b9d5e5e\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w0_ledgegrab/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
