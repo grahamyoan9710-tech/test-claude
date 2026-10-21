@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "fe91d234-6d7a-4ab2-afa2-540b709cc684",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: fe91d234-6d7a-4ab2-afa2-540b709cc684\njob_id: fe91d234-6d7a-4ab2-afa2-540b709cc684\ndescription: holds the star staff upright in front of her with both hands as a guard and stays still a moment, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fe91d234-6d7a-4ab2-afa2-540b709cc684\")\nasset_id: 3dab88d6-630c-5d74-93db-d7fd0b94e50a\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
