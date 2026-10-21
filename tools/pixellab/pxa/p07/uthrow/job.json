@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "49c07eda-1440-47c7-8365-0beac0bc178d",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 49c07eda-1440-47c7-8365-0beac0bc178d\njob_id: 49c07eda-1440-47c7-8365-0beac0bc178d\ndescription: hoists the invisible opponent she is holding high above her head with both arms and throws it straight up, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"49c07eda-1440-47c7-8365-0beac0bc178d\")\nasset_id: 063ce196-b7d0-5cbe-85db-c2d8e2efbf38\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p07/holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
