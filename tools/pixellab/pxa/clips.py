@@ -347,7 +347,9 @@ def jobs(fighter, only=None):
         if ks and ks.get("look") == "new":  # the weapon's own look
             subject = ks.get("subject", subject)
             pose = ks.get(f"{kind}_pose", pose) if kind in ("guard", "air") else pose
-        desc = desc.rstrip(" .") + "." + (TAIL_BLOW if direction not in ("none", None) else TAIL)
+        # a clip rewritten after the review drew effects: the strict tail (no trail either) for its remake
+        blow = direction not in ("none", None) and name not in QA_PROMPTS.get(fighter, {})
+        desc = desc.rstrip(" .") + "." + (TAIL_BLOW if blow else TAIL)
         if she:
             desc, pose = feminine(desc), feminine(pose)
         j = {"out": os.path.join(S, fighter, name), "src": src, "frames": n, "desc": desc,
