@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "ee8ff4d5-688c-4c6b-a50e-f4708a79c0e1",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: ee8ff4d5-688c-4c6b-a50e-f4708a79c0e1\njob_id: ee8ff4d5-688c-4c6b-a50e-f4708a79c0e1\ndescription: in mid-air, holds the huge jagged black greatsword close against his body, then tucks again, staying high in the air, the whole sword inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ee8ff4d5-688c-4c6b-a50e-f4708a79c0e1\")\nasset_id: dc6ee8d4-65a8-5724-a7db-6d49d04af0a2\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_jump/f_08.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_jump/f_08.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
