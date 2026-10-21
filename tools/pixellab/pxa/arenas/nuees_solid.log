@@ -1,0 +1,9 @@
+submitted 57e714a6-ad34-471a-998c-edda4c683d41
+id: 57e714a6-ad34-471a-998c-edda4c683d41
+job_id: 57e714a6-ad34-471a-998c-edda4c683d41
+model: pro
+description: one single floating platform for a 2D fighting game, seen exactly from the side, on a transparent background: a grey stone floor with a red lacquered wooden edge and a low red railing at each end, on a floating rock. Its top is one perfectly flat, level walkable surface across its whole width; both of its ends are complete and finished, nothing is cut by the edges of the picture; nothing else, no characters, no text; detailed anime pixel art
+size: 312x160px
+transparent: True
+candidates
+done 57e714a6-ad34-471a-998c-edda4c683d41: 1 frames -> pxa/arenas/nuees_solid (10 generations)

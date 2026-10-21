@@ -1,0 +1,10 @@
+submitted a6f17551-b371-4b17-b1a4-62a9670c68e0
+id: a6f17551-b371-4b17-b1a4-62a9670c68e0
+job_id: a6f17551-b371-4b17-b1a4-62a9670c68e0
+model: pro
+description: one single floating platform for a 2D fighting game, seen exactly from the side, on a transparent background: a short snowy wooden beam with small icicles under it. Its top is one perfectly flat, level walkable surface across its whole width; both of its ends are complete and finished, nothing is cut by the edges of the picture; nothing else, no characters, no text; detailed anime pixel art
+size: 112x44px
+transparent: True
+candidates: 9
+style_image: yes (color_palette, outline, detail,
+done a6f17551-b371-4b17-b1a4-62a9670c68e0: 9 frames -> pxa/arenas/givre_thin (10 generations)

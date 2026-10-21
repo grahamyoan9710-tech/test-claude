@@ -1,0 +1,9 @@
+submitted 156299e0-c0f2-4ea5-b617-9d834afdb1a3
+id: 156299e0-c0f2-4ea5-b617-9d834afdb1a3
+job_id: 156299e0-c0f2-4ea5-b617-9d834afdb1a3
+model: pro
+description: one single floating platform for a 2D fighting game, seen exactly from the side, on a transparent background: the long dark tiled ridge of a Japanese roof, flat on top, with red paper lanterns hanging under the eaves. Its top is one perfectly flat, level walkable surface across its whole width; both of its ends are complete and finished, nothing is cut by the edges of the picture; nothing else, no characters, no text; detailed anime pixel art
+size: 496x152px
+transparent: True
+candidate
+done 156299e0-c0f2-4ea5-b617-9d834afdb1a3: 1 frames -> pxa/arenas/kurenai_solid (15 generations)
