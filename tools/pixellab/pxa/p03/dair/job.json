@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "d7cf7ff8-180d-4e24-8f32-af9dfef38bf4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:bf0b308d-63fc-4777-a2db-d5011251e996",
+  "last_frame_url": "upload:402deb4d-1dc0-4a35-869f-8b50d11d643b",
+  "description": "in mid-air, a downward double elbow chop beneath him, then back to the tucked pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: d7cf7ff8-180d-4e24-8f32-af9dfef38bf4\njob_id: d7cf7ff8-180d-4e24-8f32-af9dfef38bf4\ndescription: in mid-air, a downward double elbow chop beneath him, then back to the tucked pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d7cf7ff8-180d-4e24-8f32-af9dfef38bf4\")\nasset_id: b8f6218c-ad7a-5bd1-a64b-f8752538ec6b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/jump/f_08.png"
+}

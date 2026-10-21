@@ -3,9 +3,9 @@
  "error": "1 validation error for call[animate_image_pixminimax]\nsubject_description\n  String should have at most 300 characters [type=string_too_long, input_value='a young woman with very ... star with blue ribbons', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:53902226-e4a8-4eb3-94ba-59b09bc40624",
-  "last_frame_url": "upload:6c244fab-32a5-4bef-8e29-41e682c9c692",
-  "description": "lunging grab: reaches forward with her free hand to seize an opponent, the other hand keeping a staff topped by a blue crystal star with blue ribbons ready, then pulls back. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "first_frame_url": "upload:cf1a8e56-acfc-454b-bf50-37c6549ff6c5",
+  "last_frame_url": "upload:3ff3533f-e864-41e3-99da-109ef5dfbfab",
+  "description": "leans forward and reaches out with her free open hand, closes it on empty air, then pulls back, the other hand keeping a staff topped by a blue crystal star with blue ribbons still at her side; nothing leaves her hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",

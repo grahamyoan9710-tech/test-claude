@@ -1,10 +1,10 @@
 {
- "status": "rejected",
- "error": "QueuePool limit of size 8 overflow 20 reached, connection timed out, timeout 30.00 (Background on this error at: https://sqlalche.me/e/20/3o7r)",
+ "status": "submitted",
+ "job_id": "477f160e-69a9-44cc-9480-f5b4fe768cb5",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:c96cf7e7-a7c6-4a47-93ba-faf9e5fdf514",
-  "last_frame_url": "upload:a46e89bf-8f44-4f31-b27d-c54f7c03a574",
+  "first_frame_url": "upload:836327b3-c4db-45af-9ed7-27741cea98b9",
+  "last_frame_url": "upload:a2498fd8-c241-47ca-8b89-3bfb9d7157b6",
   "description": "stabs the spear point into the ground in front of her, then pulls it back out. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
   "frame_count": 12,
   "view": "side",
@@ -12,6 +12,7 @@
   "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
   "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
  },
+ "reply": "id: 477f160e-69a9-44cc-9480-f5b4fe768cb5\njob_id: 477f160e-69a9-44cc-9480-f5b4fe768cb5\ndescription: stabs the spear point into the ground in front of her, then pulls it back out. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"477f160e-69a9-44cc-9480-f5b4fe768cb5\")\nasset_id: 6319c83e-360e-55f4-a8af-6a7170e034a9\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
  "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png"
 }

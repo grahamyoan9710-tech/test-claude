@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "31137c07-e51f-44a8-b620-5caa2ef20620",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 31137c07-e51f-44a8-b620-5caa2ef20620\njob_id: 31137c07-e51f-44a8-b620-5caa2ef20620\ndescription: holding an invisible opponent, crouches and brings his free hand down to the floor in front of him, then points both curved violet daggers down at the floor, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing comes out of the floor or the daggers. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"31137c07-e51f-44a8-b620-5caa2ef20620\")\nasset_id: 1b4023e9-289f-5c6c-a06f-59bcdb56d955\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w1_holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
