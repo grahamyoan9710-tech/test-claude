@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "749144da-f688-431f-8522-69846128b723",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 749144da-f688-431f-8522-69846128b723\njob_id: 749144da-f688-431f-8522-69846128b723\ndescription: leans forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves his hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"749144da-f688-431f-8522-69846128b723\")\nasset_id: eb8ce63c-5986-51e2-8478-f2cab872363b\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }

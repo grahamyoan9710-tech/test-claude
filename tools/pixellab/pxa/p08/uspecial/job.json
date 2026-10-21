@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "04c5492c-f9a2-4a2e-bcef-4b4b0385a21e",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 04c5492c-f9a2-4a2e-bcef-4b4b0385a21e\njob_id: 04c5492c-f9a2-4a2e-bcef-4b4b0385a21e\ndescription: jumps straight up with his arms spread like wings, coat flaring. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"04c5492c-f9a2-4a2e-bcef-4b4b0385a21e\")\nasset_id: 02e74e71-be65-5479-b855-8a465feae595\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
