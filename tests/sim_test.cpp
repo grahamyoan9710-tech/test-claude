@@ -531,10 +531,10 @@ static int charIndex(const char* name) {
   return 0;
 }
 
-// Weapons: bare hands at the start; a fighter's weapon drops on the stage and only its owner takes it, by standing
-// on it and holding the weapon button for kPickupFrames (walking over it or a short press is not enough): weapon A. Then the button switches A <-> B
-// with no cooldown, never in the middle of a move (the press waits for it to end); the weapon is lost at a KO.
-// The CPUs go and take theirs and switch too.
+// Weapons: bare hands at the start; a fighter's two weapons drop on the stage one by one and only their owner takes
+// them, by standing on one and holding the weapon button for kPickupFrames (walking over it or a short press is not
+// enough). With one weapon the button does nothing else; with both it switches A <-> B, with no cooldown, never in
+// the middle of a move (the press waits for it to end); the weapons are lost at a KO. The CPUs take theirs and switch.
 static void testWeapons() {
   std::printf("[weapons]\n");
   const int lancer = charIndex("N° 02"), other = charIndex("N° 07");
@@ -586,13 +586,24 @@ static void testWeapons() {
         "standing on it + holding the button takes weapon A (weapon %d)", f.weapon);
   p.idle(1);
   p.run(1, press);
-  CHECK(f.weapon == 1, "the next press switches to weapon B, no cooldown (weapon %d)", f.weapon);
+  p.idle(1);
+  CHECK(f.weapon == 0 && f.weapons == 1, "with weapon A only, the button does not switch (weapon %d)", f.weapon);
+  m.dropWeaponFor(0, 1);  // weapon B, its own item
+  for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
+  if (!m.items.empty()) f.pos.x = m.items.back().pos.x;
+  p.idle(3);
+  for (int i = 0; i < kPickupFrames + 5 && f.weapon != 1; ++i) p.run(1, press);
+  CHECK(f.weapon == 1 && f.weapons == 3 && m.items.empty(), "holding the button over weapon B takes it too (weapon %d)",
+        f.weapon);
   p.idle(1);
   p.run(1, press);
-  CHECK(f.weapon == 0, "and back to A (weapon %d)", f.weapon);
+  CHECK(f.weapon == 0, "with both, the next press switches to weapon A, no cooldown (weapon %d)", f.weapon);
+  p.idle(1);
+  p.run(1, press);
+  CHECK(f.weapon == 1, "and back to B (weapon %d)", f.weapon);
   p.idle(1);
   p.run(30, press);  // held: one switch only
-  CHECK(f.weapon == 1, "holding the button switches once (weapon %d)", f.weapon);
+  CHECK(f.weapon == 0, "holding the button switches once (weapon %d)", f.weapon);
   p.idle(10);
   // Not in the middle of a move: the press waits for it to end.
   p.run(1, key(0, 0, true));
@@ -631,7 +642,8 @@ static void testWeapons() {
   f.grounded = false;
   f.groundPlat = -1;
   p.idle(5);
-  CHECK(f.stocks < stocks && f.weapon < 0, "a KO loses the weapon (stocks %d, weapon %d)", f.stocks, f.weapon);
+  CHECK(f.stocks < stocks && f.weapon < 0 && f.weapons == 0, "a KO loses both weapons (stocks %d, weapon %d)", f.stocks,
+        f.weapon);
   p.idle(400);
   CHECK(f.weapon < 0, "it respawns bare-handed (weapon %d)", f.weapon);
 
@@ -655,6 +667,19 @@ static void testWeapons() {
   }
   for (int k = 0; k < 2; ++k) both[k] = seen[k][0] && seen[k][1];
   CHECK(armed[0] && armed[1], "the CPUs take their weapons (%d %d)", armed[0], armed[1]);
+  {  // both weapons of a fighter drop, one after the other (not one item giving both)
+    MatchConfig c3 = duel(0, lancer, other, false, false);
+    c3.items = false;
+    Match m3(c3);
+    bool dropped[2] = {false, false};
+    std::array<InputState, 4> idle{};
+    for (int t = 0; t < 60 * 90 && !(dropped[0] && dropped[1]); ++t) {
+      m3.step(idle);
+      for (const auto& e : m3.events)
+        if (e.type == EvType::WeaponSpawn && int(e.strength) == lancer) dropped[e.b & 1] = true;
+    }
+    CHECK(dropped[0] && dropped[1], "weapons A and B both drop on the stage (%d %d)", dropped[0], dropped[1]);
+  }
   CHECK(both[0] || both[1], "the CPUs switch between their two weapons (%d %d)", both[0], both[1]);
 }
 

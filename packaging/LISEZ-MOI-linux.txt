@@ -57,10 +57,11 @@ ASTUCES
 - Donnez et recevez des coups (ou brisez l'Orbe Clash qui flotte au-dessus
   de l'arène) : quand « ULTI PRÊTE ! » s'affiche sur votre carte, appuyez
   sur ULTIME pour déclencher l'ultime de votre combattant !
-- Tout le monde commence à mains nues. L'arme de chaque combattant tombe sur
-  l'arène : tenez-vous dessus et maintenez la touche ARME (E au clavier,
-  Y à la manette) 2 secondes pour la prendre. Ensuite la touche ARME
-  alterne entre ses deux armes. L'arme est perdue au K.O.
+- Tout le monde commence à mains nues. Les deux armes de chaque combattant
+  tombent sur l'arène, l'une après l'autre : tenez-vous sur la vôtre et
+  maintenez la touche ARME (E au clavier, Y à la manette) 2 secondes pour
+  la prendre. Avec les deux, la touche ARME passe de l'une à l'autre.
+  Les armes sont perdues au K.O.
 - 5 combattants originaux et 5 arènes, en pixel art.
 - Ordinateurs du niveau 1 au niveau 10 (le niveau 10 frappe deux fois plus fort).
 - Les combattants sont en pixel art (Paramètres > Affichage pour revenir au

@@ -42,6 +42,12 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       DrawCircleV(b, 13.5f, mixColor(c, ui::kInk, 0.55f));
       DrawRing(b, 13.5f, 16.5f, 0, 360, 32, g);
       drawWeaponIcon(*f.def, f.weapon, W(b), 26.0f);
+      if (f.weapons == 3) {  // the other one, the weapon button switches to it
+        const Vector2 o{x + 20, y + 74};
+        DrawCircleV(o, 13, ui::kInk);
+        DrawCircleV(o, 10.5f, mixColor(hitFxColor(f.def->weapons[f.weapon ^ 1].fx), ui::kInk, 0.55f));
+        drawWeaponIcon(*f.def, f.weapon ^ 1, W(o), 19.0f);
+      }
       if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging
         DrawCircleV(b, 13.5f, withAlpha(ui::kInk, 0.65f));
         char sec[16];

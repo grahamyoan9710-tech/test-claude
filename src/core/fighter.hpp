@@ -90,7 +90,8 @@ struct Fighter {
   int escapeTimer = 0;
   int respawnTimer = 0;
   float ult = 0.0f;          // ultimate meter (0..kUltMax)
-  int weapon = -1;           // weapon summoned (index in def->weapons), -1 = bare hands
+  int weapon = -1;           // weapon in hand (index in def->weapons), -1 = bare hands
+  int weapons = 0;           // weapons taken (bit 0: A, bit 1: B); with both, the weapon button switches them
   int weaponBuffer = 0;      // frames a weapon press still waits for the fighter to be free
   int form = -1;             // transformation (index in def->forms), -1 = none
   int formTimer = 0;         // frames left (0 with a form = until the move that started it ends)

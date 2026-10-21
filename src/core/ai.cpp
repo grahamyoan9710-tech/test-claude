@@ -241,7 +241,7 @@ InputState CpuBrain::think(const Match& m, int self) {
     last_ = in;
     return in;
   }
-  if (f.weapon < 0 && !m.items.empty() && fetchWeapon(m, f, in)) {
+  if (f.weapons != 3 && !m.items.empty() && fetchWeapon(m, f, in)) {
     last_ = in;
     return in;
   }
@@ -314,12 +314,13 @@ bool CpuBrain::recover(const Match& m, const Fighter& f, InputState& in) {
   return true;
 }
 
-// Walks to one of its own weapons when it is close and nobody is in its face, and takes it (the weapon button).
+// Walks to one of its own weapons it does not have when it is close and nobody is in its face, and takes it (holding
+// the weapon button).
 bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
   const WeaponItem* best = nullptr;
   float bd = 650.0f;
   for (const auto& it : m.items) {
-    if (it.character != f.charIndex || !it.grounded) continue;
+    if (it.character != f.charIndex || !it.grounded || ((f.weapons >> it.slot) & 1)) continue;
     float d = std::fabs(it.pos.x - f.pos.x) + std::fabs(it.pos.y - f.pos.y);
     if (d < bd) {
       bd = d;
@@ -346,10 +347,10 @@ static float weaponRange(const WeaponDef& w) {
   return 0.0f;
 }
 
-// Armed, the weapon button switches A <-> B: the distance weapon when the opponent is far, the other one up close;
-// it thinks it over every few seconds.
+// With both weapons, the weapon button switches A <-> B: the distance weapon when the opponent is far, the other one
+// up close; it thinks it over every few seconds.
 void CpuBrain::manageWeapon(const Match& m, const Fighter& f, InputState& in) {
-  if (f.weapon < 0) return;  // bare hands: it goes and takes its weapon (fetchWeapon)
+  if (f.weapons != 3) return;  // it goes and takes the weapons it lacks (fetchWeapon)
   if (weaponTimer_ < 0) weaponTimer_ = rng_.irange(20, std::max(30, 150 - level_ * 12));
   if (weaponTimer_ > 0) {
     --weaponTimer_;

@@ -267,8 +267,8 @@ MatchScreen::Result MatchScreen::updatePause() {
     std::fill(combo_.begin(), combo_.end(), 0);
     std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
     resume();
-  } else if (training() && pauseSel_ == 7) {  // the weapon falls in front of the player
-    m_.loseWeapon(m_.fighters[0]);
+  } else if (training() && pauseSel_ == 7) {  // the weapon falls in front of the player (one it has: back to bare hands)
+    if ((m_.fighters[0].weapons >> (dropSlot_ & 1)) & 1) m_.loseWeapon(m_.fighters[0]);
     m_.dropWeaponFor(0, dropSlot_);
     resume();
   }

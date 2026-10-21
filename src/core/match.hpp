@@ -213,8 +213,8 @@ class Match {
   void updateItems();               // drops, and the weapon button
   void spawnWeapon(int character, int slot, Vec2 pos);
   void equipWeapon(Fighter& f, int slot);  // takes weapon `slot` (tools, tests, demos)
-  void switchWeapon(Fighter& f);    // bare hands -> A, then A <-> B
-  void loseWeapon(Fighter& f);      // a KO: back to bare hands
+  void switchWeapon(Fighter& f);    // A <-> B, once the fighter has both
+  void loseWeapon(Fighter& f);      // a KO: back to bare hands, both weapons lost
   void explodeProjectile(Projectile& pr);
   void creditProjectile(int owner, Fighter& victim, float damage, bool wasShielding);
   void gainUlt(Fighter& f, float amount);
