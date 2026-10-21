@@ -57,12 +57,14 @@
   "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, the broad black and red sword held flat against her back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture",
   "w0_ultimate": "steps forward three times, swinging the sword in a wide arc at each step, then stops with her back turned and the sword lowered",
   "w1_ultimate": "steps forward three times, swinging the jagged sword in a wide arc at each step, then stops with her back turned and the sword lowered",
-  "w0_bthrow": "holding an invisible opponent with her free hand, turns her body around and pushes that hand behind her, the sword held still in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+  "w0_bthrow": "holding an invisible opponent with her free hand, turns her body around and pushes that hand behind her, the sword held still in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
+  "w0_nair": "in mid-air, turns once on herself holding the sword out to the side, the blade staying inside the picture, then tucks again"
  },
  "p08": {
   "usmash": "kung fu crescent kick: standing on one leg, swings the other leg in a high arc above his head, then lowers it back into the stance, the standing foot stays planted; nothing flashes where the foot passes",
   "nspecial": "pushes one open palm forward at chest height, then pulls it back into the stance",
   "roll": "curls up into a ball and somersaults forward once, his white coat wrapped around him, then stands back up into the same stance",
-  "w0_jab": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance"
+  "w0_jab": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance",
+  "w0_uspecial": "rises turning once on himself with the sword held out to the side, the blade staying inside the picture, then ends in the air"
  }
 }
