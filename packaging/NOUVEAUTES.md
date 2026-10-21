@@ -8,18 +8,20 @@
 
 ## Nouveautés
 
-Version 10.0 : **la refonte**. Les anciens combattants d'animes et de jeux laissent la place à des **combattants
-originaux**, tous animés avec PixelLab.
+Version 10.1 : **le jeu s'appelle maintenant Clash Horizon**, avec son nouveau logo et une toute nouvelle interface.
 
-- **5 combattants originaux** (N° 01, 02, 03, 07 et 08 ; leurs noms viendront plus tard) : chacun se bat à mains
-  nues dans son art martial, a **deux armes** (A et B) avec leurs propres coups, et un portrait en pixel art.
-- **5 nouvelles arènes**, une par combattant : Abîme Lunaire, Citadelle de Givre, Canyon Écarlate, Toits Kurenai
-  et Monastère des Nuées.
-- **Armes** : tout le monde commence à mains nues. L'arme de chaque combattant tombe sur l'arène : **tenez-vous
-  dessus et maintenez la touche Arme 2 secondes** pour la prendre (un coup reçu met le compte en pause). Ensuite, la
-  touche Arme alterne entre l'arme A et l'arme B, sans délai. L'arme est perdue au K.O. Les ordinateurs vont aussi
-  chercher la leur.
-- **Plus de barre d'ulti** à l'écran : la carte du combattant affiche « ULTI PRÊTE ! » quand l'ultime est prêt.
-- **Menus** refaits dans le style rouge et noir du nouvel écran d'accueil ; pause, résultats et HUD assortis ;
-  écrans PERSONNAGES et ARÈNES.
-- **Équilibre** : sur 800 duels simulés sur les 5 arènes, chaque combattant gagne entre 48 et 52 % de ses combats.
+- **Nouvelle interface** dans les couleurs du logo (bleu roi et or) : gros boutons arrondis, panneaux bleu nuit,
+  rubans dorés, dans l'esprit de Brawlhalla et Clash of Clans. Menu principal, choix des combattants, choix de
+  l'arène, galerie, paramètres, pause, résultats et HUD du combat sont refaits.
+- **Deux armes par combattant** : ses armes A et B tombent sur l'arène l'une après l'autre. On prend chacune en
+  restant dessus et en maintenant la touche Arme 2 secondes (la touche et une barre de progression s'affichent
+  au-dessus). Avec une seule arme, on joue avec ; avec les deux, la touche Arme passe de l'une à l'autre. Les armes
+  restent jusqu'au K.O.
+- **Arènes** : chaque plateforme a sa propre image PixelLab, à sa taille (plus d'images étirées ni de bords coupés).
+- **Corrections** :
+  - les effets de saut, d'atterrissage, de dash, de fumée et d'impact ne s'affichaient presque jamais ;
+  - l'orbe du N° 01 et les autres projectiles, les rayons et les auras restaient figés sur une image ;
+  - les persos montaient et descendaient en courant, les roulades tournaient sur elles-mêmes, la chute au sol était
+    couchée de travers ;
+  - un perso touché devenait une silhouette de couleur unie ;
+  - le portrait au-dessus d'une arme au sol était vide.

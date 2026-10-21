@@ -52,9 +52,17 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud `cool-sagan` (v10.1) | 21/10 20 h UTC |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~20 h UTC, session cloud : **v10.1, le jeu devient Clash Horizon** (demandes du propriétaire).
+  - Nom et logo (`docs/refonte/logo_clash_horizon.png`, détouré par `scripts/import_art.py`) ; paquets
+    `ClashHorizon-*`, exécutable `clash_horizon` dans l'archive, réglages dans `clash_horizon.cfg`.
+  - Nouvelle DA des menus (Brawlhalla / Clash of Clans, bleu roi et or) : `ui.cpp` (boutons épais, cartes, rubans,
+    widgets) et tous les écrans. L'ancienne DA « TotK » est abandonnée.
+  - Deux armes par perso : A et B tombent séparément ; l'alternance n'existe qu'avec les deux (`Fighter::weapons`).
+  - Plateformes des arènes : une image PixelLab par plateforme à la taille du jeu (`pxa/arenas/gen_platforms.sh`).
+  - Effets visuels : le propriétaire enverra une maquette (style Rivals of Aether 1) ; ne pas les refaire avant.
 - 21/10 ~18 h UTC, session cloud : **bugs signalés par le propriétaire après la v10.0** (branche `cool-sagan`).
   - Effets PixelLab de déplacement et d'impact invisibles : `Fx::drawWorld` sortait avant de les dessiner quand
     aucune particule lumineuse n'était en vie. Corrigé (ils s'affichent toujours).
