@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "47be4b56-0e51-4d16-b5d2-a81df6b3343c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ed9218ea-bef5-4733-91ad-a6a1e968c9c6",
+  "last_frame_url": "upload:932a0199-d842-4e27-8711-351126624a7f",
+  "description": "in mid-air, holds the sword out to the side at arm's length for a moment, then tucks again, staying high in the air; nothing below him, nothing around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a white and gold sword with white ribbons"
+ },
+ "reply": "id: 47be4b56-0e51-4d16-b5d2-a81df6b3343c\njob_id: 47be4b56-0e51-4d16-b5d2-a81df6b3343c\ndescription: in mid-air, holds the sword out to the side at arm's length for a moment, then tucks again, staying high in the air; nothing below him, nothing around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"47be4b56-0e51-4d16-b5d2-a81df6b3343c\")\nasset_id: e0442a07-3ca7-53b4-b823-c97ed7e722c2\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_jump/f_08.png"
+}
