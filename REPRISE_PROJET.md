@@ -52,9 +52,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud `cool-sagan` (v10.1) | 21/10 20 h UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~20 h UTC, session cloud : **v10.1 publiée** (workflow lancé à la main, réussi ; archives ClashHorizon-*).
+  Verrou de version libre. Ensuite : plateformes avec un effet de profondeur (dessus visible, façon Smash).
 - 21/10 ~20 h UTC, session cloud : **v10.1, le jeu devient Clash Horizon** (demandes du propriétaire).
   - Nom et logo (`docs/refonte/logo_clash_horizon.png`, détouré par `scripts/import_art.py`) ; paquets
     `ClashHorizon-*`, exécutable `clash_horizon` dans l'archive, réglages dans `clash_horizon.cfg`.
