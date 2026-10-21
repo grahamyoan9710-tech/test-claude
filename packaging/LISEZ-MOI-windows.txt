@@ -53,21 +53,14 @@ Start = pause
 ASTUCES
 -------
 - Direction + attaque en même temps = attaque smash (maintenez pour charger).
-- Donnez et recevez des coups pour remplir votre barre d'ulti (ou brisez
-  l'Orbe Clash qui flotte au-dessus de l'arène) : appuyez alors sur ULTIME
-  pour déclencher l'ultime de votre combattant !
-- Des armes tombent du ciel : chacune appartient à un combattant (son
-  portrait flotte au-dessus). Marchez dessus avec ce combattant pour la
-  ramasser : plus de puissance, plus d'allonge et des spéciales changées
-  pendant une vingtaine de secondes. (Réglage ARMES dans la sélection.)
-  Chaque arme change aussi l'ULTIME : 3 ultimes différents par combattant !
-- 17 combattants : Asta et Yuno (Black Clover), Ichigo, Byakuya, Kenpachi,
-  Ulquiorra, Grimmjow et Starrk (Bleach), Naruto, Sasuke et Kakashi (Naruto),
-  Gojo et Sukuna (Jujutsu Kaisen), Link et Ganondorf (Zelda TOTK), Kratos
-  (God of War) et le Chasseur (Monster Hunter). Projet de fan non officiel.
-- 11 arènes, dont 2 par anime : Las Noches et le Seireitei (Bleach), le
-  repaire du Taureau Noir et la Tour des Grimoires (Black Clover), Shibuya et
-  le lycée Jujutsu (Jujutsu Kaisen), Konoha et la Vallée de la Fin (Naruto).
+- Donnez et recevez des coups (ou brisez l'Orbe Clash qui flotte au-dessus
+  de l'arène) : quand « ULTI PRÊTE ! » s'affiche sur votre carte, appuyez
+  sur ULTIME pour déclencher l'ultime de votre combattant !
+- Tout le monde commence à mains nues. L'arme de chaque combattant tombe sur
+  l'arène : tenez-vous dessus et maintenez la touche ARME (E au clavier,
+  Y à la manette) 2 secondes pour la prendre. Ensuite la touche ARME
+  alterne entre ses deux armes. L'arme est perdue au K.O.
+- 5 combattants originaux et 5 arènes, en pixel art.
 - Ordinateurs du niveau 1 au niveau 10 (le niveau 10 frappe deux fois plus fort).
 - Les combattants sont en pixel art (Paramètres > Affichage pour revenir au
   dessin lisse).

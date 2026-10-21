@@ -52,9 +52,16 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud `cool-sagan` (v10.0) | 21/10 17 h UTC |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~17 h UTC, session cloud (ponytail) : **v10.0** (demande du propriétaire).
+  - Ramasser son arme : se tenir dessus et **maintenir la touche Arme 2 s** (`kPickupFrames`, compte sur
+    `WeaponItem::hold`, un coup le met en pause). L'IA continue de tenir une fois dessus (`fetchWeapon`).
+  - **Barre d'ulti retirée** du HUD (`render_hud.cpp`) ; « ULTI PRÊTE ! » reste.
+  - `sim_test balance` : 40 duels par paire sur toutes les arènes (les 3 duels sur l'arène 0 donnaient 33 à 67 % au
+    hasard) ; `k.P` recalés, victoires 48-52 %. Le test des armes des ordinateurs dure 90 s (médiane ~35 s pour s'armer).
+  - Notices `LISEZ-MOI` : ancien roster et ancien ramassage retirés. Version 10.0, verrou « Version et paquets » pris.
 - 21/10 ~16 h UTC, session cloud (ponytail) : **les 5 persos sont complets, importés, recalés et équilibrés.**
   - Tous les clips relus ; 7 clips du 08 qui gardaient poussière et éclats après 3-4 essais sont **nettoyés et gardés**
     (décision du propriétaire) : `pxa/qa_fixes.json` (`specks`, `erase`, `degrey`, nouveau `dust`, `replace`).

@@ -68,8 +68,8 @@ struct Tip {
   const char* text;
 };
 const Tip kTips[] = {
-    {kActWeapon, "Arme : ramasse ton arme, puis alterne A et B"},
-    {kActUltimate, "Ultime : quand la jauge est pleine"},
+    {kActWeapon, "Arme : maintenue 2 s sur ton arme, la ramasse ; puis alterne A et B"},
+    {kActUltimate, "Ultime : quand « ULTI PRÊTE ! » s'affiche"},
     {kActGrab, "Prise : attrape, puis lance dans une direction"},
 };
 }  // namespace
@@ -211,7 +211,7 @@ void App::drawMainMenu() {
   // What the chosen button does, the version and the options wheel, bottom right
   drawTextOutlined(kItems[menuSel_].desc, kCard.x + kCard.width + 30, kScreenH - 34, 17, {232, 232, 240, 255},
                    withAlpha(BLACK, 0.7f), 2.0f);
-  drawTextOutlined("v9.9", kGear.x - 50, kGear.y + 11, 17, WHITE, withAlpha(BLACK, 0.7f), 2.0f);
+  drawTextOutlined("v10.0", kGear.x - 50, kGear.y + 11, 17, WHITE, withAlpha(BLACK, 0.7f), 2.0f);
   const bool gearHot = ui::hovered(kGear);
   icon("menu_icon_options", {kGear.x + kGear.width * 0.5f, kGear.y + kGear.height * 0.5f}, gearHot ? 34.0f : 30.0f,
        gearHot ? kRed : WHITE);

@@ -179,7 +179,7 @@ Chaos, Dragon de lumière...
   | **HUNTER** | Monster Hunter | Taille chargée, Coup d'épaule (super armure), Griffe-grappin, Bombe-tonneau G | Taille chargée vraie | Lame chargée → Décharge amplifiée (fioles qui explosent en chaîne) | Lancecanon → Feu du Wyvern |
 - **Les armes** : de temps en temps, une arme tombe du ciel dans un rayon de lumière, au-dessus d'une
   plateforme. Chaque arme appartient à **un combattant** (son portrait flotte au-dessus) : lui seul peut
-  la ramasser, **en marchant dessus**. Pendant une vingtaine de secondes (anneau autour du portrait dans
+  la ramasser, **en se tenant dessus et en maintenant la touche Arme 2 secondes**. Pendant une vingtaine de secondes (anneau autour du portrait dans
   le HUD), il frappe plus fort et plus loin, ses coups prennent l'élément de l'arme, certaines spéciales
   changent (la hache de Kratos se lance et revient, l'Épée de légende tire un rayon, Amaterasu remplace la
   boule de feu de Sasuke...), **sa M1 devient une frappe de l'arme** (animée image par image) et **son
@@ -213,9 +213,8 @@ Chaos, Dragon de lumière...
   rebords (accroche, remontée, attaque, roulade, saut), retombée en culbute + *tech*, chute libre après
   la remontée, attaques smash à charger, super armure, contres, projectiles, plateformes traversables
   et mobiles. Les zones de coup des épées suivent la lame.
-- **La barre d'ulti** : sous forme de cellules d'énergie Zonaï au-dessus de chaque carte de dégâts, elle
-  se remplit **en frappant** (0,45 point par % infligé) **et en prenant des coups** (0,35 point par %
-  reçu). Pleine, le combattant s'entoure d'une aura de son élément, la carte affiche « ULTI PRÊTE ! » avec
+- **L'ulti** : une jauge cachée (plus de barre à l'écran depuis la v10.0) se remplit **en frappant** (0,45
+  point par % infligé) **et en prenant des coups** (0,35 point par % reçu). Pleine, le combattant s'entoure d'une aura de son élément, la carte affiche « ULTI PRÊTE ! » avec
   le bouton à presser, et la touche **Ultime** déclenche l'ultime. Les ordinateurs s'en servent aussi
   (de loin pour les ultimes qui visent, face à la cible pour les rayons).
 - **L'Orbe Clash** (l'équivalent de la Smash Ball) : elle apparaît de temps en temps et flotte au-dessus
@@ -397,7 +396,7 @@ Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`SuperClashBros-9.9-linux-x64.tar.gz` et `SuperClashBros-9.9-windows-x64.zip`).
+dans `dist/` (`SuperClashBros-10.0-linux-x64.tar.gz` et `SuperClashBros-10.0-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64
@@ -517,7 +516,7 @@ src/game/   interface raylib
   render_stages.cpp    les huit arènes des animes (ciel, couches en parallaxe, plateformes, pluie...)
   paint.cpp            outils de peinture des décors (dégradés, nuages, montagnes, couches précalculées)
   screen_poses.cpp     planches de développement (poses, pellicules d'animation)
-  render_hud.cpp       pourcentages, vies, barre d'ulti, bulles hors-champ, compte à rebours
+  render_hud.cpp       pourcentages, vies, bulles hors-champ, compte à rebours
   fx.cpp               particules, rayons de K.O., tremblements, sons
   audio.cpp            synthèse des sons et de la musique
 assets/fonts/          polices (intégrées à la compilation par cmake/embed.cmake)
