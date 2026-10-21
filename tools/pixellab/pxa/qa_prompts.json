@@ -9,7 +9,7 @@
   "bthrow": "pivots on the spot, turning his back to the right for a moment with both arms swinging close to his body, then turns back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; his hands stay empty, nothing leaves them, no beam, no streak",
   "dthrow": "holding an invisible opponent, crouches and brings both hands down to the floor in front of him, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands",
   "w1_dthrow": "holding an invisible opponent, crouches and brings his free hand down to the floor in front of him, then points both curved violet daggers down at the floor, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing comes out of the floor or the daggers",
-  "w1_dspecial": "kneels down on one knee with both curved violet daggers held low at his sides, then stands back up; nothing comes out of the floor or the daggers"
+  "w1_dspecial": "slowly lowers onto one knee with the two curved violet daggers held still at his sides, then slowly stands back up into the stance"
  },
  "p02": {
   "knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, ending lying still; nothing else is drawn around her",
@@ -17,12 +17,15 @@
   "w0_knockdown": "tips slowly backwards off balance and sinks down until she lies flat on her back on the floor, still holding her spear, ending lying still; nothing else is drawn around her",
   "w0_grab": "leans forward and reaches out with her free open hand, closes it on empty air, then pulls back, the other hand keeping a long silver spear with white ribbons still at her side. The whole weapon stays inside the picture; nothing leaves her hands",
   "w0_sspecial": "runs forward with the spear held out in front, then slows down and stops in the stance; her feet stay light on the floor, nothing is kicked up",
-  "w0_dthrow": "holding an invisible opponent low with her free hand, lifts the spear high, then lowers its tip slowly toward the floor in front of her, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; the spear tip never touches the floor, nothing comes out of the floor",
+  "w0_dthrow": "holding an invisible opponent low with her free hand, raises the long spear above her head, then brings it down slowly in front of her, the whole spear always drawn clearly, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w1_holdstart": "keeps a staff topped by a blue crystal star with ribbons upright in the hand on her right side and stretches her other arm straight out to the right at shoulder height, across in front of her chest, the open hand closing on the collar of an invisible opponent standing to her right; ends with that arm fully extended to the right, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
  },
  "p03": {
   "dspecial": "crouches and presses both fists down onto the floor in front of him, then stands back up; nothing comes out of the floor or his fists",
   "dair": "in mid-air, brings both elbows down beneath him, then back to the tucked pose; nothing is drawn below him",
-  "w0_fthrow": "pushes the invisible opponent he is holding forward with his free hand, then swings a huge jagged black greatsword with glowing red veins in a wide arc in front of him, the whole blade always drawn clearly, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+  "w0_fthrow": "pushes the invisible opponent he is holding forward with his free hand, then swings a huge jagged black greatsword with glowing red veins in a wide arc in front of him, the whole blade always drawn clearly, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
+  "w0_getup": "gets up from lying on his back: rolls onto his feet and stands back up into the ready stance, a huge jagged black greatsword with red veins in hand, the blade drawn plainly, no shine on it. The whole weapon stays inside the picture",
+  "w1_crouch": "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time",
+  "w1_land": "standing on the floor, bends the knees deeply as if just landed, then rises back into the stance, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time; the feet stay on the floor"
  }
 }

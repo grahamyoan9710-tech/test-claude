@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "1aef9ea7-2328-457e-9c86-0ed1ce8d460a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ecb051f7-3abb-495e-8fc8-51876019481b",
+  "last_frame_url": "upload:deadf0e6-1558-4407-b453-c9ec6b20f558",
+  "description": "fast run cycle to the right: leaning far forward, a staff topped by a blue crystal star with ribbons held low and trailing behind her in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: 1aef9ea7-2328-457e-9c86-0ed1ce8d460a\njob_id: 1aef9ea7-2328-457e-9c86-0ed1ce8d460a\ndescription: fast run cycle to the right: leaning far forward, a staff topped by a blue crystal star with ribbons held low and trailing behind her in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1aef9ea7-2328-457e-9c86-0ed1ce8d460a\")\nasset_id: 7b107fa6-a23c-5f20-b4a2-4bd673e95821\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/w1_runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p02/w1_runstart/f_08.png"
+}

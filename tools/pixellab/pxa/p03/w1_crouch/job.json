@@ -1,17 +1,1 @@
-{
- "status": "submitted",
- "job_id": "ce42bb00-fae8-4ccb-8681-690905846ff7",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:f02d1fa8-ba70-4399-b49c-574c36b73d88",
-  "description": "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, a huge spiked black and red greatsword, larger and more jagged held low and ready in front of him. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
-  "frame_count": 4,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge spiked black and red greatsword, larger and more jagged",
-  "initial_pose": "fighting stance facing right, holding a huge spiked black and red greatsword, larger and more jagged"
- },
- "reply": "id: ce42bb00-fae8-4ccb-8681-690905846ff7\njob_id: ce42bb00-fae8-4ccb-8681-690905846ff7\ndescription: crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, a huge spiked black and red greatsword, larger and more jagged held low and ready in front of him. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ce42bb00-fae8-4ccb-8681-690905846ff7\")\nasset_id: 9474660e-716f-5a6f-98a9-49bcd69be040\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "last": null
-}
+{"status": "rejected"}
