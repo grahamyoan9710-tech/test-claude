@@ -93,6 +93,7 @@ struct Fighter {
   int weapon = -1;           // weapon in hand (index in def->weapons), -1 = bare hands
   int weapons = 0;           // weapons taken (bit 0: A, bit 1: B); with both, the weapon button switches them
   int weaponBuffer = 0;      // frames a weapon press still waits for the fighter to be free
+  int attackBuffer = 0;      // frames an attack press still waits (jump crouch, landing, end of a move)
   int form = -1;             // transformation (index in def->forms), -1 = none
   int formTimer = 0;         // frames left (0 with a form = until the move that started it ends)
   int formMove = -1;         // the move that started a move-long form

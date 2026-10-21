@@ -6,6 +6,7 @@
 namespace {
 using IS = InputState;
 constexpr float kAttackStep = 0.5f;  // jabs and tilts: how fast the stick moves the fighter (share of its walk)
+constexpr int kAttackBuffer = 8;     // frames an attack pressed while busy is kept (an M1 right after a jump)
 
 bool isAerial(int m) { return m >= NAir && m <= DAir; }
 bool isSpecialMove(int m) { return (m >= NSpecial && m <= DSpecial) || m >= Extra1; }
@@ -98,6 +99,7 @@ void Match::startMove(Fighter& f, int id) {
   }
   f.state = FState::Attack;
   f.stateFrame = 0;
+  f.attackBuffer = 0;
   f.move = id;
   f.moveFrame = 0;
   f.charge = 0;
@@ -167,7 +169,7 @@ bool Match::tryGroundActions(Fighter& f) {
     startMove(f, smashFor(f, in.stick.len() > 0.3f ? in.stick : Vec2{float(f.facing), 0.0f}));
     return true;
   }
-  if (f.pressed(&IS::attack)) {
+  if (f.attackBuffer > 0) {  // pressed now, or a little before while busy
     // A flick (direction + attack together) is a smash attack; holding the direction a
     // little first gives a tilt, even if the fighter already started to dash.
     if (f.state == FState::Run && f.stateFrame > 10 && std::fabs(in.stick.x) > 0.5f) {
@@ -215,7 +217,7 @@ bool Match::tryAirActions(Fighter& f) {
     startMove(f, aerialFor(f, f.in.stick.len() > 0.3f ? f.in.stick : Vec2{float(f.facing), 0.0f}));
     return true;
   }
-  if (f.pressed(&IS::attack)) {
+  if (f.attackBuffer > 0) {  // pressed now, or a little before (in the jump's crouch)
     startMove(f, aerialFor(f, f.in.stick));
     return true;
   }
@@ -310,6 +312,8 @@ void Match::updateFighter(Fighter& f) {
   if (f.dropThrough > 0) f.dropThrough--;
   if (f.techWindow > 0) f.techWindow--;
   if (f.techLockout > 0) f.techLockout--;
+  if (f.pressed(&IS::attack)) f.attackBuffer = kAttackBuffer;
+  else if (f.attackBuffer > 0) f.attackBuffer--;
   if (f.pressed(&IS::shield) && f.techLockout == 0) {
     f.techWindow = 20;
     f.techLockout = 40;
@@ -390,7 +394,9 @@ void Match::updateFighter(Fighter& f) {
         startMove(f, USpecial);
         break;
       }
-      if (in.stick.y < -0.5f && (f.pressed(&IS::attack) || f.pressed(&IS::smash))) {
+      // A weapon's M1 has no up attack: its press waits for the jump and comes out in the air.
+      if (in.stick.y < -0.5f &&
+          (f.pressed(&IS::smash) || (f.pressed(&IS::attack) && !(f.weaponDef() && f.weaponDef()->kit)))) {
         startMove(f, in.digital && !f.pressed(&IS::smash) && !in.special ? UTilt : USmash);
         break;
       }

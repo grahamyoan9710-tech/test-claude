@@ -155,6 +155,22 @@ static void testKeyboardControls() {
   CHECK(moveAfter({{20, key(1, 0)}, {1, key(1, 0, true)}}) == DashAttack, "run then attack = dash attack");
   CHECK(moveAfter({{1, key(0, -1, true)}}) == USmash, "up+attack together = up smash");
   CHECK(moveAfter({{6, key(0, -1)}, {1, key(0, -1, true)}}) == UTilt, "hold up then attack = up tilt");
+  CHECK(moveAfter({{1, key(0, 0, true, true)}, {8, InputState{}}}) == NAir,
+        "jump and attack together: the attack waits for the jump and comes out in the air");
+  {
+    Match* m = fresh();
+    m->equipWeapon(m->fighters[0], 0);
+    Pad p{*m};
+    InputState up = key(0, -1), upAttack = key(0, -1, true);
+    up.tapJump = upAttack.tapJump = up.digital = upAttack.digital = true;  // a keyboard: up jumps
+    p.run(1, up);  // the attack right after, in the jump's crouch
+    p.run(1, upAttack);
+    p.run(8, up);
+    CHECK(!m->fighters[0].grounded && m->fighters[0].state == FState::Attack && m->fighters[0].move == NAir,
+          "with a weapon, up then attack jumps and gives the air M1 (state %d, move %d)", int(m->fighters[0].state),
+          m->fighters[0].move);
+    delete m;
+  }
   CHECK(moveAfter({{1, key(0, 1, true)}}) == DSmash, "down+attack together = down smash");
   CHECK(moveAfter({{8, key(0, 1)}, {1, key(0, 1, true)}}) == DTilt, "crouch then attack = down tilt");
   CHECK(moveAfter({{1, key(0, 0, true)}}) == Jab, "attack = jab");
