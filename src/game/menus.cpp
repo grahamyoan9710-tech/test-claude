@@ -550,7 +550,7 @@ void App::drawCss() {
     const float joined = 1.0f - (frames_ - joinedAt_[col]) / 45.0f;  // a gamepad just joined
     if (type != 0) {
       ui::glow({cx, kFeetY - h * 0.5f}, h * 0.75f, withAlpha(mixColor(pc, ui::kCream, 0.35f), 0.35f + 0.3f * std::max(0.0f, joined)), 8);
-      ui::stoneDisc({cx, kFeetY + 2}, h * 0.42f, 9, t + col, false);
+      DrawEllipse(int(cx), int(kFeetY + 2), h * 0.36f, 8.0f, withAlpha(BLACK, 0.45f));  // a shadow, as on the gallery
     }
     if (type != 0 && s.random) {  // "?": drawn at random when the match starts
       const float pulse = 0.5f + 0.5f * std::sin(t * 3.0f + col);

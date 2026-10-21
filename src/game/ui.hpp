@@ -43,10 +43,6 @@ void plate(Rectangle r, float slant, Color top, Color bottom, Color line);
 void rule(float x0, float x1, float y, Color col);
 // Zonai rune glyph (kind 0 spiral, 1 eye, 2 three dots, 3 compass) inside a circle of radius r.
 void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
-// Rotating Zonai ring emblem with rune marks and a teal glow.
-void zonaiRing(Vector2 c, float r, float time, float alpha = 1.0f);
-// Ancient stone disc (fighters stand on it): mossy rim, glowing runes, teal under-glow.
-void stoneDisc(Vector2 c, float rx, float ry, float time, bool rock = true);
 
 // ---- Backgrounds ----------------------------------------------------------------
 // Painterly sky: gradient, soft cloud banks, drifting motes (tinted by `motes`).
