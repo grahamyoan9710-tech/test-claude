@@ -1,5 +1,5 @@
 {
- "status": "failed",
+ "status": "rejected",
  "job_id": "47be4b56-0e51-4d16-b5d2-a81df6b3343c",
  "tool": "animate_image_pixminimax",
  "args": {

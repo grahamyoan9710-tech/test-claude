@@ -72,3 +72,4 @@ p01/w0_ledgegrab
 p03/ledgegrab
 p03/w0_jump
 p08/w0_ledgegrab
+p03/w0_ledgegrab
