@@ -22,8 +22,13 @@ Avant toute chose, lire **REPRISE_PROJET.md** : il donne l'état exact du travai
   Ces dossiers sont ignorés par git, et chacun utilise son propre compte.
 - Ne jamais relancer un job PixelLab encore « submitted » ou en cours : chaque job est facturé. Vérifier d'abord avec
   `python3 tools/pixellab/tools/pxcli.py jobs`.
-- Aucun personnage sexualisé : pas de décolleté, ventre couvert, jupes ou shorts à mi-cuisse au moins, pas de
-  jarretelles. Les persos jeunes (04, 11, 14) ont des tenues sages.
+- Tenues : tous les persos sont des adultes (18 ans ou plus). Chaque perso reproduit **fidèlement** sa référence
+  (`docs/refonte/ref_persos.png` et son image PixelLab de base) : cheveux, visage, couleurs exactes, coupe et longueur
+  des vêtements, accessoires, motifs, chaussures, proportions. Ne jamais couvrir, rallonger, raccourcir, remplacer ni
+  inventer un vêtement ou un accessoire ; seules les adaptations techniques (animation, cadrage, optimisation) sont
+  permises, sans changer l'apparence. Avant de valider un perso : comparer sa base et ses clips à la référence et
+  corriger les écarts. Si la référence manque, la demander au propriétaire (ne pas prétendre avoir comparé).
+  Les 5 persos déjà faits (01, 02, 03, 07, 08) restent tels quels, sauf demande explicite.
 - Commits : messages en anglais, clairs. Ne rien fusionner dans `main` sans demande explicite.
 - **Versions : +0,1 à chaque mise à jour livrée au propriétaire** (9.1, 9.2, 9.3…), dans
   `src/game/screen_title.cpp`, `scripts/package_release.sh` et le README. Prendre le verrou « Version et paquets »,

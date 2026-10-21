@@ -82,12 +82,14 @@ Le dossier « 10.5 update » (3 persos et 3 armes) n'est pas traité : il est pr
 - Ce qui n'est pas repris de ta planche : les cheveux longs de T08. Il faudrait refaire ses ~55 clips. Je propose
   l'aura blanche et les yeux rouges, avec les cheveux inchangés.
 
-### 1.5 Tenues (aucun perso sexualisé)
-- Pour tous : pas de décolleté, ventre couvert, jupes ou shorts à mi-cuisse au moins, pas de jarretelles.
-- Tenues à couvrir : **02, 06, 07, 09, 12, 15, 17**.
-- Persos plus jeunes (petits gabarits) : **04, 11, 14**. Robe aux genoux, collants opaques, rien de suggestif.
-- Les torses nus des persos 03, 13 et 16 (style shōnen) sont gardés : dis-moi si tu préfères une chemise.
-- Ces corrections sont faites dès l'image de base PixelLab, que tu valides avant tout clip.
+### 1.5 Tenues : fidèles à la référence (décision du propriétaire, 21/10/2026)
+- Tous les persos sont des adultes (18 ans ou plus). Chaque perso reproduit **fidèlement** sa référence
+  (`docs/refonte/ref_persos.png` et son image PixelLab de base) : cheveux, visage, couleurs exactes, coupe et longueur
+  des vêtements, accessoires, motifs, chaussures, proportions. Ne jamais couvrir, rallonger, raccourcir, remplacer ni
+  inventer un vêtement ou un accessoire ; seules les adaptations techniques (animation, cadrage, optimisation) sont
+  permises, sans changer l'apparence. Avant de valider un perso : comparer sa base et ses clips à la référence et
+  corriger les écarts. Si la référence manque, la demander au propriétaire (ne pas prétendre avoir comparé).
+  Les 5 persos déjà faits (01, 02, 03, 07, 08) restent tels quels, sauf demande explicite.
 
 ### 1.6 Effets (tous faits avec PixelLab, `vfx_workbench`)
 Les effets génériques viennent de ta planche `ref_effets.png`, teintés de la couleur du perso.
@@ -181,7 +183,7 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 - **Modèle :** très longs cheveux argentés, ruban bleu, tenue noire et blanche, manteau noir. Gabarit léger,
   rapide en l'air.
 - **Effets :** bleu glacé.
-- **Tenue à corriger :** haut fermé, ventre couvert, short à mi-cuisse sur collants opaques.
+- **Tenue :** celle du jeu actuel est gardée (décision du propriétaire, 21/10).
 - **Mains nues :**
   - Neutre « Éclat de givre » ;
   - Côté « Glissade gelée » : elle glisse, frappe du pied et laisse du givre ;
@@ -236,7 +238,7 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 ### 04 · astrale · pas de transformation
 - **Modèle :** longues couettes argentées, nœuds noirs, robe blanche et noire. Petit gabarit, très mobile.
 - **Effets :** violet et doré (étoiles).
-- **Tenue :** perso jeune.
+- **Tenue :** celle de la référence, sans changement.
 - **Mains nues :**
   - Neutre « Étincelle » ;
   - Côté « Pirouette » : coup de pied tournant ;
@@ -289,7 +291,6 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 - **Modèle :** très longs cheveux roses, cornes noires, robe noire et rouge, bottes rouges. Gabarit moyen,
   technique.
 - **Effets :** rose et magenta.
-- **Tenue à corriger :** haut long (ventre couvert), jupe à mi-cuisse.
 - **Mains nues :**
   - Neutre « Orbe cramoisi » ;
   - Côté « Griffe » : une ruée griffe ;
@@ -317,7 +318,7 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 - **Modèle :** longue queue de cheval noire et rouge, tenue noire et rouge, manches larges, bottes. Gabarit léger,
   très rapide.
 - **Effets :** rouge (foudre).
-- **Tenue à corriger :** haut complet au lieu du haut court, short long sur collants, pas de jarretelles.
+- **Tenue :** celle du jeu actuel est gardée (décision du propriétaire, 21/10).
 - **Mains nues :**
   - Neutre « Éclair rouge » : un projectile rapide ;
   - Côté « Pas-éclair » ;
@@ -372,7 +373,6 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 - **Modèle :** longs cheveux bleu ciel, nœuds bleus, tenue blanche et bleue, manteau bleu étoilé. Gabarit moyen,
   combat rapproché.
 - **Effets :** bleu ciel (eau, glace).
-- **Tenue à corriger :** ventre couvert, short long, chaussettes hautes sans jarretelles.
 - **Mains nues :**
   - Neutre « Bulle » ;
   - Côté « Glissade » ;
@@ -424,7 +424,7 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 ### 11 · arcane violette · pas de transformation
 - **Modèle :** longs cheveux blancs, nœuds violets, robe noire et violette. Petit gabarit, magicienne à distance.
 - **Effets :** violet.
-- **Tenue :** perso jeune.
+- **Tenue :** celle de la référence, sans changement.
 - **Mains nues :**
   - Neutre « Sphère magique » ;
   - Côté « Glyphe » : il avance ;
@@ -450,7 +450,6 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 ### 12 · soleil d'or · transformation T12
 - **Modèle :** très longs cheveux noirs à reflets dorés, tenue noire, blanche et or. Gabarit moyen, épéiste.
 - **Effets :** or (sable).
-- **Tenue à corriger :** ventre couvert.
 - **Mains nues :**
   - Neutre « Sable doré » ;
   - Côté « Pas de sable » ;
@@ -504,7 +503,7 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 ### 14 · rose cramoisie · transformation T14
 - **Modèle :** couettes roses, nœuds noirs, robe noire et blanche, bottes blanches. Petit gabarit, rapide.
 - **Effets :** rose.
-- **Tenue :** perso jeune.
+- **Tenue :** celle de la référence, sans changement.
 - **Mains nues :**
   - Neutre « Pétale » ;
   - Côté « Pirouette » ;
@@ -532,7 +531,6 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 - **Modèle :** longs cheveux noir-violet, cornes noires, tenue noire et violette, manteau à pans violets. Gabarit
   moyen, contrôle de zone.
 - **Effets :** violet nuit (lune, gravité).
-- **Tenue à corriger :** haut fermé, ventre couvert, jupe ou short à mi-cuisse.
 - **Mains nues :**
   - Neutre « Orbe lunaire » ;
   - Côté « Ombre glissante » ;
@@ -585,7 +583,6 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 ### 17 · émeraude · pas de transformation
 - **Modèle :** longs cheveux vert menthe, nœud vert, robe noire et verte. Gabarit léger, tireuse.
 - **Effets :** vert émeraude (nature, vent).
-- **Tenue à corriger :** robe à mi-cuisse sur un short, pas de jarretelles.
 - **Mains nues :**
   - Neutre « Graine » ;
   - Côté « Liane » : un fouet ;

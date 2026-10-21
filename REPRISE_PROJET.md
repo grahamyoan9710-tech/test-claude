@@ -55,6 +55,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | session cloud `cool-sagan` (v10.0) | 21/10 17 h UTC |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~17 h UTC, session cloud : **règle des tenues remplacée** (demande du propriétaire). Tous les persos sont
+  adultes ; chaque nouveau perso reproduit exactement sa référence PixelLab, tenue comprise, sans rien couvrir ni
+  changer (`CLAUDE.md`, `FICHES.md` §1.5 ; les « Tenue à corriger » des fiches à venir sont retirées). Les 5 persos
+  faits restent tels quels. Aucun perso généré ni modifié.
 - 21/10 ~17 h UTC, session cloud (ponytail) : **v10.0** (demande du propriétaire).
   - Ramasser son arme : se tenir dessus et **maintenir la touche Arme 2 s** (`kPickupFrames`, compte sur
     `WeaponItem::hold`, un coup le met en pause). L'IA continue de tenir une fois dessus (`fetchWeapon`).
