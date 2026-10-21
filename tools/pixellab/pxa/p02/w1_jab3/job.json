@@ -3,8 +3,8 @@
  "error": "1 validation error for call[animate_image_pixminimax]\nsubject_description\n  String should have at most 300 characters [type=string_too_long, input_value='a young woman with very ... star with blue ribbons', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:01ac6ef1-aa78-465e-91bc-d0ed89a87faf",
-  "last_frame_url": "upload:08f18e5a-d203-45a6-bdb6-96d10d77c1bb",
+  "first_frame_url": "upload:42fe734d-af8f-47c7-ac80-2aac19c28ec7",
+  "last_frame_url": "upload:94b85143-3be1-452a-a67a-49a926118e61",
   "description": "raises the star staff and strikes forward with its star head. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
   "frame_count": 12,
   "view": "side",
