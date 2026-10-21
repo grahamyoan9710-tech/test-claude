@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "5cd1c460-84c2-4111-b3a1-84e849e348a6",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:189183d9-1763-4b4a-bd94-251ae5d293e1",
+  "last_frame_url": "upload:d48733b0-6ca6-4f97-a18e-7e13f6010fce",
+  "description": "holding an invisible opponent with her free hand, turns her body around and pushes that hand behind her, the sword held still in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+  "initial_pose": "holding an invisible opponent in front of her with both hands"
+ },
+ "reply": "id: 5cd1c460-84c2-4111-b3a1-84e849e348a6\njob_id: 5cd1c460-84c2-4111-b3a1-84e849e348a6\ndescription: holding an invisible opponent with her free hand, turns her body around and pushes that hand behind her, the sword held still in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5cd1c460-84c2-4111-b3a1-84e849e348a6\")\nasset_id: fc5288e8-ed28-5d34-9d99-f4aa23a13d1f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png"
+}
