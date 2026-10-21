@@ -59,7 +59,7 @@ ASTUCES
   sur ULTIME pour déclencher l'ultime de votre combattant !
 - Tout le monde commence à mains nues. Les deux armes de chaque combattant
   tombent sur l'arène, l'une après l'autre : tenez-vous sur la vôtre et
-  maintenez la touche ARME (E au clavier, Y à la manette) 2 secondes pour
+  maintenez la touche ARME (E au clavier, Y à la manette) 1 seconde pour
   la prendre. Avec les deux, la touche ARME passe de l'une à l'autre.
   Les armes sont perdues au K.O.
 - 5 combattants originaux et 5 arènes, en pixel art.

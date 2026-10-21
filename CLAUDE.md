@@ -96,6 +96,6 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - Sans arme, chaque perso se bat dans un art martial (`docs/refonte/FICHES.md`, §1.7). Les ondes 1 à 5 de la planche
   servent aussi d'ondes d'impact des coups puissants ; elles partent du sol et montent.
 - Armes (refonte) : tout le monde commence à mains nues. Les deux armes d'un perso (A et B) tombent sur l'arène, l'une
-  après l'autre ; il prend chacune en se tenant dessus et en maintenant la touche Arme 2 s. Avec une seule arme, il
+  après l'autre ; il prend chacune en se tenant dessus et en maintenant la touche Arme 1 s. Avec une seule arme, il
   joue avec ; avec les deux, la touche Arme alterne A et B, sans délai. Les armes restent jusqu'au KO, sans minuteur. Chaque arme B a son propre modèle, exactement comme sur la planche (plan
   complet, validé : le propriétaire autorise toutes les générations nécessaires).

@@ -656,7 +656,7 @@ static void testWeapons() {
   std::array<InputState, 4> in{};
   bool armed[2] = {false, false}, both[2] = {false, false};
   int seen[2][2] = {};
-  for (int t = 0; t < 60 * 90 && !m2.finished; ++t) {  // the take needs a 2 s hold, often cut by the foe
+  for (int t = 0; t < 60 * 90 && !m2.finished; ++t) {  // the take needs a 1 s hold, often cut by the foe
     for (size_t k = 0; k < m2.fighters.size(); ++k) in[m2.fighters[k].port] = brains[k].think(m2, int(k));
     m2.step(in);
     for (int k = 0; k < 2; ++k)

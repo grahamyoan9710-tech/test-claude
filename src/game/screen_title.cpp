@@ -79,7 +79,7 @@ struct Tip {
   const char* text;
 };
 const Tip kTips[] = {
-    {kActWeapon, "Arme : maintiens-la 2 s sur ton arme pour la prendre ; avec A et B, elle alterne"},
+    {kActWeapon, "Arme : maintiens-la 1 s sur ton arme pour la prendre ; avec A et B, elle alterne"},
     {kActUltimate, "Ultime : quand « ULTI PRÊTE ! » s'affiche"},
     {kActGrab, "Prise : attrape, puis lance dans une direction"},
 };

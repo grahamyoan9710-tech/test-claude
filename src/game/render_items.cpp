@@ -40,9 +40,9 @@ void drawItemPrompts(const Match& m, const Camera2D& cam, const std::array<int, 
     DrawCircleV(tag, 18.0f * cam.zoom, {24, 30, 34, 235});
     drawPortraitDisc(d, 0, W(tag), 18.0f * cam.zoom, time);
     if (!it.grounded) continue;
-    const Fighter* owner = nullptr;  // the closest one that can take it (both, in a mirror match)
+    const Fighter* owner = nullptr;  // the closest one that does not have it yet (both, in a mirror match)
     for (const auto& f : m.fighters)
-      if (f.active() && f.weapon < 0 && f.charIndex == it.character &&
+      if (f.active() && !((f.weapons >> it.slot) & 1) && f.charIndex == it.character &&
           (!owner || (f.pos - it.pos).len2() < (owner->pos - it.pos).len2()))
         owner = &f;
     if (!owner || (owner->cpu && it.hold <= 0)) continue;

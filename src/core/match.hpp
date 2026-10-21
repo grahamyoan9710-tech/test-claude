@@ -39,7 +39,7 @@ enum class EvType : uint8_t {
 
 // A fighter's weapon lying on the stage (or falling on it): its owner takes it by standing on it and holding the
 // weapon button for kPickupFrames in all (a hit pauses the count, it does not reset it).
-constexpr int kPickupFrames = 120;  // 2 s
+constexpr int kPickupFrames = 60;  // 1 s
 struct WeaponItem {
   int character = 0;  // roster index: only this character can take it
   int slot = 0;       // index in CharacterDef::weapons

@@ -39,7 +39,7 @@ const RowInfo kRows[3][7] = {
      {"Personnages en pixel art", "Les combattants sont dessinés comme des sprites en pixel art (les menus restent lisses)."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Orbe Clash", "L'orbe flottante qui remplit d'un coup la barre d'ulti."},
-     {"Armes", "Les deux armes de chaque combattant tombent sur l'arène : il prend la sienne en restant dessus, touche Arme maintenue 2 s. Avec A et B, la touche alterne."},
+     {"Armes", "Les deux armes de chaque combattant tombent sur l'arène : il prend la sienne en restant dessus, touche Arme maintenue 1 s. Avec A et B, la touche alterne."},
      {"Niveau des ordinateurs", "Niveau par défaut des combattants contrôlés par l'ordinateur (1 à 10 : le niveau 10 frappe deux fois plus fort)."},
      {"Saut avec Haut", "Comme Smash Bros. : Haut (stick ou touche) fait sauter ; Haut + attaque ou spéciale ensemble reste un coup vers le haut."},
      {"Tout réinitialiser", "Remet tous les paramètres et toutes les touches par défaut."}},

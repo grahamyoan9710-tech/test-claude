@@ -179,7 +179,7 @@ Chaos, Dragon de lumière...
   | **HUNTER** | Monster Hunter | Taille chargée, Coup d'épaule (super armure), Griffe-grappin, Bombe-tonneau G | Taille chargée vraie | Lame chargée → Décharge amplifiée (fioles qui explosent en chaîne) | Lancecanon → Feu du Wyvern |
 - **Les armes** : de temps en temps, une arme tombe du ciel dans un rayon de lumière, au-dessus d'une
   plateforme. Chaque arme appartient à **un combattant** (son portrait flotte au-dessus) : lui seul peut
-  la ramasser, **en se tenant dessus et en maintenant la touche Arme 2 secondes**. Ses deux armes (A et B) tombent
+  la ramasser, **en se tenant dessus et en maintenant la touche Arme 1 seconde**. Ses deux armes (A et B) tombent
   l'une après l'autre ; avec les deux, la touche Arme passe de l'une à l'autre. Pendant une vingtaine de secondes (anneau autour du portrait dans
   le HUD), il frappe plus fort et plus loin, ses coups prennent l'élément de l'arme, certaines spéciales
   changent (la hache de Kratos se lance et revient, l'Épée de légende tire un rayon, Amaterasu remplace la
