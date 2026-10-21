@@ -1,0 +1,17 @@
+{
+ "status": "submitted",
+ "job_id": "7cef62ef-4191-45da-98cb-eddb4f418860",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5b550528-7b11-4877-8118-e9beb288ae18",
+  "description": "braces to block: holds a broad black and red sword with red ribbons crosswise in front of her body like a shield and crouches slightly, a solid defensive guard. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+  "initial_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons"
+ },
+ "reply": "id: 7cef62ef-4191-45da-98cb-eddb4f418860\njob_id: 7cef62ef-4191-45da-98cb-eddb4f418860\ndescription: braces to block: holds a broad black and red sword with red ribbons crosswise in front of her body like a shield and crouches slightly, a solid defensive guard. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7cef62ef-4191-45da-98cb-eddb4f418860\")\nasset_id: 4733d4cd-6c55-5890-8513-f14be480670f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "last": null
+}
