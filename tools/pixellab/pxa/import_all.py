@@ -126,6 +126,22 @@ def trim_right(d, trim):
         Image.fromarray(a).save(p)
 
 
+def dust(d, spec):
+    """Erases the light warm dust kicked up at the feet: spec = {"frames": [...], "rows": 50}, files numbered like
+    f_NN; in the bottom `rows` pixels of each frame's drawing, the light pixels warmer than grey (boots stay)."""
+    for k in spec["frames"]:
+        p = os.path.join(d, f"f_{k:02d}.png")
+        a = np.asarray(Image.open(p).convert("RGBA")).copy()
+        rows = np.flatnonzero((a[..., 3] > 0).any(axis=1))
+        if not len(rows):
+            continue
+        rgb = a[..., :3].astype(int)
+        warm = (a[..., 3] > 0) & (rgb.min(-1) > 140) & (rgb[..., 0] - rgb[..., 2] > 20)
+        warm[: rows[-1] - spec.get("rows", 50)] = False
+        a[warm] = 0
+        Image.fromarray(a).save(p)
+
+
 def specks(d, spec, extra):
     """Erases, in the listed frames (sheet numbering), the small bits floating apart from the character (sparks,
     petals, streaks): spec = {"frames": [...], "max": 150}; pieces of fewer pixels go, the biggest piece stays.
@@ -241,7 +257,7 @@ def main():
         if fx.get("impact"):
             args = [a for i, a in enumerate(args) if a != "--impact" and (i == 0 or args[i - 1] != "--impact")]
             args += ["--impact", fx["impact"]]
-        if any(fx.get(k) for k in ("replace", "trim_right", "degrey", "erase", "specks")):  # review fixes, in a copy
+        if any(fx.get(k) for k in ("replace", "trim_right", "degrey", "erase", "dust", "specks")):  # review fixes, in a copy
             args[4] = with_replaced(d, fx.get("replace", {}), extra)
             if fx.get("erase"):  # one spec, or a list of them (several colour families)
                 for spec in fx["erase"] if isinstance(fx["erase"], list) else [fx["erase"]]:
@@ -250,6 +266,8 @@ def main():
                 trim_right(args[4], fx["trim_right"])
             if fx.get("degrey"):
                 degrey(args[4], fx["degrey"], extra)
+            if fx.get("dust"):
+                dust(args[4], fx["dust"])
             if fx.get("specks"):
                 specks(args[4], fx["specks"], extra)
         r = subprocess.run(args, capture_output=True, text=True)
