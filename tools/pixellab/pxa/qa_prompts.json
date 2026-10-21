@@ -19,7 +19,8 @@
   "w0_sspecial": "runs forward with the spear held out in front, then slows down and stops in the stance; her feet stay light on the floor, nothing is kicked up",
   "w0_dthrow": "holding an invisible opponent low with her free hand, raises the long spear above her head, then brings it down slowly in front of her, the whole spear always drawn clearly, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w1_holdstart": "keeps a staff topped by a blue crystal star with ribbons upright in the hand on her right side and stretches her other arm straight out to the right at shoulder height, across in front of her chest, the open hand closing on the collar of an invisible opponent standing to her right; ends with that arm fully extended to the right, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
-  "w1_jab": "a short quick swing of the star staff forward at chest height, the staff head staying well inside the picture, then back into the stance"
+  "w1_jab": "a short quick swing of the star staff forward at chest height, the staff head staying well inside the picture, then back into the stance",
+  "w1_nspecial": "slowly raises the star staff forward and up, holds it there a moment, then lowers it back into the stance"
  },
  "p03": {
   "dspecial": "crouches and presses both fists down onto the floor in front of him, then stands back up; nothing comes out of the floor or his fists",
@@ -28,6 +29,7 @@
   "w0_getup": "gets up from lying on his back: rolls onto his feet and stands back up into the ready stance, a huge jagged black greatsword with red veins in hand, the blade drawn plainly, no shine on it. The whole weapon stays inside the picture",
   "w1_crouch": "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time",
   "w1_land": "standing on the floor, bends the knees deeply as if just landed, then rises back into the stance, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time; the feet stay on the floor",
-  "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, a huge spiked black and red greatsword, larger and more jagged held flat against his back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture"
+  "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, a huge spiked black and red greatsword, larger and more jagged held flat against his back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture",
+  "w1_airdodge": "air dodge: curls up tightly in mid-air in the same place, a huge spiked black and red greatsword, larger and more jagged held still against his body, the body staying in the middle of the picture, then opens up again in the same pose"
  }
 }
