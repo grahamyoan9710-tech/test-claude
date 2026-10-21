@@ -1,5 +1,5 @@
 {
- "status": "failed",
+ "status": "submitted",
  "job_id": "a535f04c-52fc-4d89-92e1-02e023aa38e6",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,6 +14,5 @@
  },
  "reply": "id: a535f04c-52fc-4d89-92e1-02e023aa38e6\njob_id: a535f04c-52fc-4d89-92e1-02e023aa38e6\ndescription: walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a huge spiked black and red greatsword, larger and more jagged held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a535f04c-52fc-4d89-92e1-02e023aa38e6\")\nasset_id: 191f9c20-a6e2-5bcc-949f-58f2b8aa723a\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "error": "error: (psycopg.OperationalError) consuming input failed: SSL connection has been closed unexpectedly\n[SQL: \n                    SELECT id, status, last_response, created_at, modified\n                    FROM background_jobs\n                    WHERE id = %(job_id)s AND user_id = %(user_id)s\n                    LIMIT 1\n                ]\n[parameters: {'job_id': 'a535f04c-52fc-4d89-92e1-02e023aa38e6', 'user_id': '6cf31e59-5ad0-4db0-b4b2-d9f44ae3517f'}]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png"
 }
