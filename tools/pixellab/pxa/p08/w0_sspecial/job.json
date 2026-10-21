@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "dc7b3812-1d99-469f-9e84-dcc250c501a9",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: dc7b3812-1d99-469f-9e84-dcc250c501a9\njob_id: dc7b3812-1d99-469f-9e84-dcc250c501a9\ndescription: leans forward and extends the sword straight ahead at arm's length, the feet staying planted, holds it, then pulls back into the stance; nothing appears around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"dc7b3812-1d99-469f-9e84-dcc250c501a9\")\nasset_id: b2be3786-867f-5328-9e0c-5e62ae13f2f7\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
