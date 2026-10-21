@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "fbe11c04-cea7-4283-9189-faedc025aaea",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: fbe11c04-cea7-4283-9189-faedc025aaea\njob_id: fbe11c04-cea7-4283-9189-faedc025aaea\ndescription: hurls the spiked greatsword straight up into the sky, then holds his arms up waiting, then catches it. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fbe11c04-cea7-4283-9189-faedc025aaea\")\nasset_id: f839b37c-951b-5931-874b-5e4c6a8dcfa3\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
+ "frames": 17,
+ "charged": "2 generations"
 }
