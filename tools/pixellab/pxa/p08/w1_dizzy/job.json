@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "05d2455f-6791-4ca8-9931-a1d448a9eb7c",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 05d2455f-6791-4ca8-9931-a1d448a9eb7c\njob_id: 05d2455f-6791-4ca8-9931-a1d448a9eb7c\ndescription: dazed and dizzy after his guard breaks: stands slumped on wobbly bent knees, arms hanging limp, a golden halberd dangling from one loose hand with its tip on the ground, head drooping and rolling slowly in a circle, the body swaying from side to side on the spot, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"05d2455f-6791-4ca8-9931-a1d448a9eb7c\")\nasset_id: 1062703a-1276-5eee-a40b-3d9c061ced5a\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
