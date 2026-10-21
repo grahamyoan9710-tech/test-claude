@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "72443b9f-3748-4b61-837d-7ebd0789251e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fca8032a-6369-498b-92f6-48d4e3a604b3",
+  "last_frame_url": "upload:34d184df-36bf-4eb6-b8ca-459a56c7e1c4",
+  "description": "lifts the invisible opponent he is holding high with his free hand and lets go, then swings a white and gold sword with white ribbons upward over his head, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: 72443b9f-3748-4b61-837d-7ebd0789251e\njob_id: 72443b9f-3748-4b61-837d-7ebd0789251e\ndescription: lifts the invisible opponent he is holding high with his free hand and lets go, then swings a white and gold sword with white ribbons upward over his head, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"72443b9f-3748-4b61-837d-7ebd0789251e\")\nasset_id: a8812665-7ea0-5b8e-9a00-f8408d0c066b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+}
