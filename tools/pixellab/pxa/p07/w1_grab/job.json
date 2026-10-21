@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "f9656326-bcb3-46ca-ba23-14c61ff63cf7",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: f9656326-bcb3-46ca-ba23-14c61ff63cf7\njob_id: f9656326-bcb3-46ca-ba23-14c61ff63cf7\ndescription: leans forward and reaches out with her free open hand, closes it on empty air, then pulls back, the other hand keeping a broad black and red sword, larger and more jagged, with red ribbons still at her side; nothing leaves her hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f9656326-bcb3-46ca-ba23-14c61ff63cf7\")\nasset_id: f175fb65-5644-503d-91ab-2daf85645008\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
