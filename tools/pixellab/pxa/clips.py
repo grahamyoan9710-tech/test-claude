@@ -151,7 +151,8 @@ TAIL = (" The character stays at the same place in the frame (the game moves him
 # Blows (the owner allows the trails of fast blows and blades): nothing else is drawn but the character.
 TAIL_BLOW = (" The character stays at the same place in the frame (the game moves him), always facing right, seen from the"
              " side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no"
-             " glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.")
+             " glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon"
+             " and any trail stay inside the picture.")
 
 # --- the moves every fighter has (bare-handed brawler moves) ---
 COMMON = {
