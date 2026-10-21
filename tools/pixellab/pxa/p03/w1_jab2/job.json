@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:3b379f1d-d6e5-450e-9cef-da61bc4d6400", "last_frame_url": "upload:710858c1-7390-4e38-ba85-9fc20579b8ee", "description": "a crossing cut of the spiked greatsword the other way. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge spiked black and red greatsword, larger and more jagged", "initial_pose": "fighting stance facing right, holding a huge spiked black and red greatsword, larger and more jagged"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "62dcc7a5-20b2-4233-b35c-2e127c81a26e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3b379f1d-d6e5-450e-9cef-da61bc4d6400",
+  "last_frame_url": "upload:710858c1-7390-4e38-ba85-9fc20579b8ee",
+  "description": "a crossing cut of the spiked greatsword the other way. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge spiked black and red greatsword, larger and more jagged",
+  "initial_pose": "fighting stance facing right, holding a huge spiked black and red greatsword, larger and more jagged"
+ },
+ "reply": "id: 62dcc7a5-20b2-4233-b35c-2e127c81a26e\njob_id: 62dcc7a5-20b2-4233-b35c-2e127c81a26e\ndescription: a crossing cut of the spiked greatsword the other way. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"62dcc7a5-20b2-4233-b35c-2e127c81a26e\")\nasset_id: bf6dd7a4-f47d-5f26-857a-2a9d84c82c14\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png"
+}
