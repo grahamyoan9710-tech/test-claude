@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:c7fd53cf-6b81-4c48-a713-11780848ceb1", "last_frame_url": "upload:44e26311-8f79-4baa-af5f-91a96f9aac51", "description": "raises the staff slightly in front of her, holds it, then lowers it back into the stance. The star on top of the staff is a plain matte blue stone that never glows or sparkles. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons", "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "797b3d67-a022-4c0a-a65d-e6c5b04f132a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c7fd53cf-6b81-4c48-a713-11780848ceb1",
+  "last_frame_url": "upload:44e26311-8f79-4baa-af5f-91a96f9aac51",
+  "description": "raises the staff slightly in front of her, holds it, then lowers it back into the stance. The star on top of the staff is a plain matte blue stone that never glows or sparkles. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
+ },
+ "reply": "id: 797b3d67-a022-4c0a-a65d-e6c5b04f132a\njob_id: 797b3d67-a022-4c0a-a65d-e6c5b04f132a\ndescription: raises the staff slightly in front of her, holds it, then lowers it back into the stance. The star on top of the staff is a plain matte blue stone that never glows or sparkles. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"797b3d67-a022-4c0a-a65d-e6c5b04f132a\")\nasset_id: cd42f12a-a271-5b70-9449-e639ee7ae8b8\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
+}
