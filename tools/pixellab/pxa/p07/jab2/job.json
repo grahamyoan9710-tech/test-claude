@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "c5fbb552-a683-4a80-a558-8c2ed09bc105",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: c5fbb552-a683-4a80-a558-8c2ed09bc105\njob_id: c5fbb552-a683-4a80-a558-8c2ed09bc105\ndescription: karate reverse punch: drives the rear fist straight forward with a twist of the hips, the other fist pulled back to the hip, then back. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c5fbb552-a683-4a80-a558-8c2ed09bc105\")\nasset_id: 66473a48-4d4c-5490-9051-30611fcdaf75\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
