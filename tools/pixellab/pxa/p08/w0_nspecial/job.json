@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:fdc534ae-81e5-4b4e-9274-546ee027bec0", "last_frame_url": "upload:82ae8d69-95ee-46d5-a08a-f30252244c7d", "description": "thrusts the sword straight forward and holds it extended. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons", "initial_pose": "fighting stance facing right, holding a white and gold sword with white ribbons"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "5574f823-f162-4af6-ab2a-c2e90243b976",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fdc534ae-81e5-4b4e-9274-546ee027bec0",
+  "last_frame_url": "upload:82ae8d69-95ee-46d5-a08a-f30252244c7d",
+  "description": "thrusts the sword straight forward and holds it extended. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a white and gold sword with white ribbons"
+ },
+ "reply": "id: 5574f823-f162-4af6-ab2a-c2e90243b976\njob_id: 5574f823-f162-4af6-ab2a-c2e90243b976\ndescription: thrusts the sword straight forward and holds it extended. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5574f823-f162-4af6-ab2a-c2e90243b976\")\nasset_id: 6a347c59-a29a-5214-a973-8b4fd21c1ef4\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p08_w0guard256.png"
+}
