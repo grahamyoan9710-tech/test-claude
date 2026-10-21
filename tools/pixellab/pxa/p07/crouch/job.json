@@ -1,0 +1,17 @@
+{
+ "status": "submitted",
+ "job_id": "74610fab-24d0-4456-bb51-62bae86ea059",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:b2d24dd4-7827-4510-838e-bd1535b26aa0",
+  "description": "crouches down as low as she can on the spot and holds it: knees fully bent, hips dropped right down onto the heels, torso folded forward over the knees, head ducked low at about half her standing height, fists raised in front of the face. Only the character is drawn. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 74610fab-24d0-4456-bb51-62bae86ea059\njob_id: 74610fab-24d0-4456-bb51-62bae86ea059\ndescription: crouches down as low as she can on the spot and holds it: knees fully bent, hips dropped right down onto the heels, torso folded forward over the knees, head ducked low at about half her standing height, fists raised in front of the face. Only the character is drawn. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"74610fab-24d0-4456-bb51-62bae86ea059\")\nasset_id: 39c86478-4533-5a94-9af7-26f8ea292a5f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "last": null
+}
