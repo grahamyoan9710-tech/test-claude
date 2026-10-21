@@ -47,6 +47,9 @@
   "bthrow": "holding an invisible opponent, turns her body around and swings both arms behind her, opens her hands, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "ledgeattack": "rises from a low crouch and swings one leg forward in a low arc, then back into the fighting stance",
   "sspecial": "leans forward low, takes one long step forward and drives one knee up in a flying knee, then lands back in the stance",
-  "w0_jab3": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance"
+  "w0_jab3": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance",
+  "w0_sspecial": "leans forward low and takes one long fast step forward, ending with the sword extended far ahead",
+  "w1_dspecial": "lowers the jagged sword point-down in front of her and holds it there a moment, then raises it back into the stance",
+  "w1_jab3": "a short straight thrust of the jagged sword forward at chest height, the blade staying well inside the picture, then back into the stance"
  }
 }
