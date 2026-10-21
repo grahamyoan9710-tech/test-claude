@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:0beb5a9d-0beb-4ba7-ab9f-39b8ed0e2d51", "last_frame_url": "upload:198d1c3b-2fd4-4a56-abdb-6f5ad62e9779", "description": "gets up from lying on her back: rolls onto her feet and stands back up into the fighting stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.", "frame_count": 8, "view": "side", "direction": "east", "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots", "initial_pose": "lying on her back on the ground"}, "src": "/home/user/test-claude/tools/pixellab/pxa/p07/knockdown/f_08.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "acd2e025-96be-417c-b963-f7c8dbc012f0",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0beb5a9d-0beb-4ba7-ab9f-39b8ed0e2d51",
+  "last_frame_url": "upload:198d1c3b-2fd4-4a56-abdb-6f5ad62e9779",
+  "description": "gets up from lying on her back: rolls onto her feet and stands back up into the fighting stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "lying on her back on the ground"
+ },
+ "reply": "id: acd2e025-96be-417c-b963-f7c8dbc012f0\njob_id: acd2e025-96be-417c-b963-f7c8dbc012f0\ndescription: gets up from lying on her back: rolls onto her feet and stands back up into the fighting stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"acd2e025-96be-417c-b963-f7c8dbc012f0\")\nasset_id: 36b44fa5-7b1e-5ed0-9abf-d448e40119db\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/knockdown/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+}

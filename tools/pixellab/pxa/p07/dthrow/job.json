@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "6ad6934f-5a66-4d4c-8332-14804254cc98",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 6ad6934f-5a66-4d4c-8332-14804254cc98\njob_id: 6ad6934f-5a66-4d4c-8332-14804254cc98\ndescription: holding an invisible opponent, crouches and brings both hands down to the floor in front of her, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves her hands. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6ad6934f-5a66-4d4c-8332-14804254cc98\")\nasset_id: 49f69f8d-94a7-52c8-a633-bd44886abc3d\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p07/holdstart/f_04.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
