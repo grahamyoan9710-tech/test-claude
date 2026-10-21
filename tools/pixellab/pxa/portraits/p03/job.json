@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "4a22ee96-152e-4192-8522-ce0857cd6794",
  "tool": "create_image_pro",
  "args": {
@@ -14,5 +14,7 @@
    }
   ]
  },
- "reply": "id: 4a22ee96-152e-4192-8522-ce0857cd6794\njob_id: 4a22ee96-152e-4192-8522-ce0857cd6794\nmodel: pro\ndescription: head and shoulders bust portrait of a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: 04574017-2b8e-5da6-ae7c-400fb9f44c11\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"4a22ee96-152e-4192-8522-ce0857cd6794\")"
+ "reply": "id: 4a22ee96-152e-4192-8522-ce0857cd6794\njob_id: 4a22ee96-152e-4192-8522-ce0857cd6794\nmodel: pro\ndescription: head and shoulders bust portrait of a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: 04574017-2b8e-5da6-ae7c-400fb9f44c11\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"4a22ee96-152e-4192-8522-ce0857cd6794\")",
+ "frames": 4,
+ "charged": "15 generations"
 }
