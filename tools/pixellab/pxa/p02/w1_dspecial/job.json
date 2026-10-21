@@ -1,1 +1,18 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:28b5e337-9424-4ff4-806e-b4d942f0de0f", "last_frame_url": "upload:44d7f73c-0dd9-4d5a-acb8-56b5edd93780", "description": "holds the star staff upright in front of her with both hands as a guard and stays still a moment, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.", "frame_count": 12, "view": "side", "direction": "east", "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons", "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png", "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"}
+{
+ "status": "submitted",
+ "job_id": "fe91d234-6d7a-4ab2-afa2-540b709cc684",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:28b5e337-9424-4ff4-806e-b4d942f0de0f",
+  "last_frame_url": "upload:44d7f73c-0dd9-4d5a-acb8-56b5edd93780",
+  "description": "holds the star staff upright in front of her with both hands as a guard and stays still a moment, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
+ },
+ "reply": "id: fe91d234-6d7a-4ab2-afa2-540b709cc684\njob_id: fe91d234-6d7a-4ab2-afa2-540b709cc684\ndescription: holds the star staff upright in front of her with both hands as a guard and stays still a moment, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fe91d234-6d7a-4ab2-afa2-540b709cc684\")\nasset_id: 3dab88d6-630c-5d74-93db-d7fd0b94e50a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
+}

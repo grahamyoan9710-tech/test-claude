@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "50e9c7b7-06c0-4ff3-873d-a36f19d816f5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e79bcdc6-1da3-4503-b7b3-cdd4f2e4492d",
+  "last_frame_url": "upload:3db7c077-3cf3-4c8c-820f-a5035d33f58a",
+  "description": "slowly raises the star staff forward and up, holds it there a moment, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
+ },
+ "reply": "id: 50e9c7b7-06c0-4ff3-873d-a36f19d816f5\njob_id: 50e9c7b7-06c0-4ff3-873d-a36f19d816f5\ndescription: slowly raises the star staff forward and up, holds it there a moment, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"50e9c7b7-06c0-4ff3-873d-a36f19d816f5\")\nasset_id: 0bd952be-cf7f-5be6-8c55-27dd7f094b4a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
+}
