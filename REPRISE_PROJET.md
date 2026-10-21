@@ -55,6 +55,32 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~2 h UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **PASSATION à une nouvelle session**
+  (pour les plugins Codesign, Asset Generator et Icons8, connectés seulement au démarrage d'une session).
+  - **Arrêté proprement** : driver et lots arrêtés, tout est poussé. 16 jobs ont un numéro (`"submitted"`), dont 6
+    encore en cours chez PixelLab : **d'abord** `bash pxa/fetch_orphans.sh` (relancer plus tard pour ceux encore en
+    cours), **puis** `nohup python3 pxa/driver.py p01 p02 p03 p07 p08 >> pxa/driver_all.log 2>&1 &`. Les 29 clips
+    `"rejected"` sont repris par le driver (prompts calmes). Aucun job sans numéro.
+  - **Jeton** : dans l'environnement, `PIXELLAB_TOKEN` → l'écrire dans `tools/pixellab/px/.token` (ignoré par git).
+    Clé IMG.LY pour Codesign : `IMGLY_GATEWAY_API_KEY` (génération d'images sans navigateur). Asset Generator et
+    Icons8 : autorisés dans les connecteurs de claude.ai.
+  - **État** : 01 137/141, 02 97/141, 03 76/141, 07 et 08 1/141 (leurs clips sont en file). 1 665 générations.
+  - **Leçons de cette session** :
+    - Un clip écarté (`retire.py`) pendant que le driver tourne reçoit un `job.json` `{"status": "rejected"}`, sinon
+      ce driver ne le refait pas. Un lot urgent (bases bloquantes) part à part : `pxa/jobs_*_fix.json` + `pxbatch.py`.
+    - **Panne PixelLab** (`QueuePool limit`, base injoignable) : un job peut être marqué `failed` alors qu'il tourne
+      encore. Avant de le remettre en file, comparer à `pxcli.py jobs` ; un envoi coupé (`"submitting"`, sans
+      numéro) se cherche dans la galerie (`list_images` avec `search`) avant d'être renvoyé ; un clip fini se
+      récupère par `gallery_frames`.
+    - Prompts communs rendus calmes (`clips.py`) : `fall` (une pose tenue, plus de « squat »), `dash` (nouveau),
+      `jump` (finit en l'air : sa dernière image est la base des aériens), `knockdown`, `land`, prises et lancers,
+      `ledgeattack`. Les mots d'action (« hurls », « slams », « impact », « along the ground ») font dessiner des
+      effets.
+  - **Fait aussi** : effets des compétences (79, importés), dash avant la course (`kSheetDash`), menu principal et
+    sélection dans le style des maquettes, logo refait (`tools/menu/`).
+  - **Ensuite** : relire les clips à mesure, import (`import_all.py`) puis `fitall.sh` et l'équilibrage quand les 5
+    sont complets ; portraits peints et nouvelles arènes originales (Asset Generator / Codesign) ; HUD, pause et
+    résultats dans le style des menus.
 - 20/10 19 h 15 UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` (= `claude/refonte-originaux` +
   ses commits) : **reprise des clips et des effets.** Jeton remis dans `px/.token` (ignoré par git).
   - `fetch_orphans.sh` : rien à récupérer. 01 w1_uspecial et w1_dspecial absents de la galerie (`list_images`
