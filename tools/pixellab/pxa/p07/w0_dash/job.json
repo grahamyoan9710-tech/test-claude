@@ -1,1 +1,17 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "43e5de0c-1979-4dca-9bdc-6a065b728e0d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3620d554-3741-4a9e-9e89-4ff76654a5fb",
+  "description": "leans the torso far forward and takes one long low stride to the right from the stance, a broad black and red sword with red ribbons held low and trailing behind her in one hand, the free arm swept back, landing on the front foot already in a running stride; nothing is drawn behind the feet. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+  "initial_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons"
+ },
+ "reply": "id: 43e5de0c-1979-4dca-9bdc-6a065b728e0d\njob_id: 43e5de0c-1979-4dca-9bdc-6a065b728e0d\ndescription: leans the torso far forward and takes one long low stride to the right from the stance, a broad black and red sword with red ribbons held low and trailing behind her in one hand, the free arm swept back, landing on the front foot already in a running stride; nothing is drawn behind the feet. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"43e5de0c-1979-4dca-9bdc-6a065b728e0d\")\nasset_id: 3f6a1844-d149-52fa-ae99-36dbef549a82\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "last": null
+}
