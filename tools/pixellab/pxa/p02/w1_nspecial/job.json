@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "c736e273-6649-4785-b326-c64ce6bc4571",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: c736e273-6649-4785-b326-c64ce6bc4571\njob_id: c736e273-6649-4785-b326-c64ce6bc4571\ndescription: points the star staff forward and up, as if casting a lob. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c736e273-6649-4785-b326-c64ce6bc4571\")\nasset_id: 05ef32fc-f6b1-510d-91f7-a97e3475338e\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
