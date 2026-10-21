@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "7429de9b-58e4-4277-b3f5-ffde325d28aa",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 7429de9b-58e4-4277-b3f5-ffde325d28aa\njob_id: 7429de9b-58e4-4277-b3f5-ffde325d28aa\ndescription: a heavy diagonal cut of the spiked greatsword. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7429de9b-58e4-4277-b3f5-ffde325d28aa\")\nasset_id: 06b11fd1-63d6-5aee-9ad6-25a49ecb7db8\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
