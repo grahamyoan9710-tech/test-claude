@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "5fcc53ca-8aa9-41be-9c48-bd1dc26320c3",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 5fcc53ca-8aa9-41be-9c48-bd1dc26320c3\njob_id: 5fcc53ca-8aa9-41be-9c48-bd1dc26320c3\ndescription: double jump in mid-air: kicks off the air and does a full forward somersault holding a huge spiked black and red greatsword, larger and more jagged close to his body, ending tucked in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5fcc53ca-8aa9-41be-9c48-bd1dc26320c3\")\nasset_id: dbdf9029-2c51-59b7-bb87-4f9f9d4013ed\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/p03/w1_jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w1_jump/f_08.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w1_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
