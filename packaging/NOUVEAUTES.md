@@ -8,20 +8,9 @@
 
 ## Nouveautés
 
-Version 10.1 : **le jeu s'appelle maintenant Clash Horizon**, avec son nouveau logo et une toute nouvelle interface.
+Version 10.2 : **des arènes en profondeur, comme dans Smash**, et la prise d'arme plus rapide.
 
-- **Nouvelle interface** dans les couleurs du logo (bleu roi et or) : gros boutons arrondis, panneaux bleu nuit,
-  rubans dorés, dans l'esprit de Brawlhalla et Clash of Clans. Menu principal, choix des combattants, choix de
-  l'arène, galerie, paramètres, pause, résultats et HUD du combat sont refaits.
-- **Deux armes par combattant** : ses armes A et B tombent sur l'arène l'une après l'autre. On prend chacune en
-  restant dessus et en maintenant la touche Arme 2 secondes (la touche et une barre de progression s'affichent
-  au-dessus). Avec une seule arme, on joue avec ; avec les deux, la touche Arme passe de l'une à l'autre. Les armes
-  restent jusqu'au K.O.
-- **Arènes** : chaque plateforme a sa propre image PixelLab, à sa taille (plus d'images étirées ni de bords coupés).
-- **Corrections** :
-  - les effets de saut, d'atterrissage, de dash, de fumée et d'impact ne s'affichaient presque jamais ;
-  - l'orbe du N° 01 et les autres projectiles, les rayons et les auras restaient figés sur une image ;
-  - les persos montaient et descendaient en courant, les roulades tournaient sur elles-mêmes, la chute au sol était
-    couchée de travers ;
-  - un perso touché devenait une silhouette de couleur unie ;
-  - le portrait au-dessus d'une arme au sol était vide.
+- **Arènes** : on voit maintenant le dessus de chaque plateforme, en profondeur, et les combattants marchent au milieu.
+  Toutes les plateformes ont été redessinées avec PixelLab ; aucune n'est coupée sur les bords.
+- **Armes** : on prend une arme en maintenant la touche Arme **1 seconde** (au lieu de 2).
+- **Correction** : quand la deuxième arme tombait, la touche à appuyer et la barre de progression ne s'affichaient pas.
