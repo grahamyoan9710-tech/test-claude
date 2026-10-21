@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "7025063f-9402-4923-a13b-f09194a22296",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 7025063f-9402-4923-a13b-f09194a22296\njob_id: 7025063f-9402-4923-a13b-f09194a22296\ndescription: walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a broad black and red sword, larger and more jagged, with red ribbons held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7025063f-9402-4923-a13b-f09194a22296\")\nasset_id: 8999c41d-7b90-5963-b284-f56963537d43\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
