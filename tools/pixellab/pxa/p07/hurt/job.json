@@ -1,1 +1,17 @@
-{"status": "submitting", "tool": "animate_image_pixminimax", "args": {"first_frame_url": "upload:83ac030e-7128-4233-8acb-d09d3ac1c127", "description": "flinches backwards in pain: head thrown back, body leaning backwards, arms raised, then holds that pained pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.", "frame_count": 4, "view": "side", "direction": "east", "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots", "initial_pose": "fighting stance facing right, fists raised"}, "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png", "last": null}
+{
+ "status": "submitted",
+ "job_id": "1caf7ba0-3c03-4d1c-8c4d-9c439377a898",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:83ac030e-7128-4233-8acb-d09d3ac1c127",
+  "description": "flinches backwards in pain: head thrown back, body leaning backwards, arms raised, then holds that pained pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 1caf7ba0-3c03-4d1c-8c4d-9c439377a898\njob_id: 1caf7ba0-3c03-4d1c-8c4d-9c439377a898\ndescription: flinches backwards in pain: head thrown back, body leaning backwards, arms raised, then holds that pained pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1caf7ba0-3c03-4d1c-8c4d-9c439377a898\")\nasset_id: baf23118-7a31-507d-93d6-47ed77a0c1cb\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "last": null
+}
