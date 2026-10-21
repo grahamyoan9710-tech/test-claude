@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "bae50f73-9819-4af4-aa3b-012dd3f6c749",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:52ddccb5-0682-4092-ba37-511fcd9edcf9",
+  "last_frame_url": "upload:5b0e2300-804f-4771-84d3-b3772a00e96a",
+  "description": "fast run cycle to the right: leaning far forward, a huge jagged black greatsword with glowing red veins held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: bae50f73-9819-4af4-aa3b-012dd3f6c749\njob_id: bae50f73-9819-4af4-aa3b-012dd3f6c749\ndescription: fast run cycle to the right: leaning far forward, a huge jagged black greatsword with glowing red veins held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bae50f73-9819-4af4-aa3b-012dd3f6c749\")\nasset_id: ddd5d91e-d143-5586-b73b-af4b325fa264\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_runstart/f_08.png"
+}

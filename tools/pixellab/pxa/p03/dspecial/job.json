@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "23ef2e23-8220-47b8-9491-efa36a6ddfcc",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: 23ef2e23-8220-47b8-9491-efa36a6ddfcc\njob_id: 23ef2e23-8220-47b8-9491-efa36a6ddfcc\ndescription: crouches and presses both fists down onto the floor in front of him, then stands back up; nothing comes out of the floor or his fists. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"23ef2e23-8220-47b8-9491-efa36a6ddfcc\")\nasset_id: ad694123-d051-5ca6-9910-447b6f447370\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }
