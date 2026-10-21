@@ -1,17 +1,18 @@
 {
- "status": "rejected",
- "error": "1 validation error for call[animate_image_pixminimax]\nsubject_description\n  String should have at most 300 characters [type=string_too_long, input_value='a young woman with very ... star with blue ribbons', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
+ "status": "submitted",
+ "job_id": "3dea4d7e-4896-474d-8cc8-1cb427d24d67",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:a38f9b21-7d0b-4d21-8b05-3cadbe76755a",
-  "last_frame_url": "upload:d2014dc7-4ece-4460-901b-ada3925fb82d",
-  "description": "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, a staff topped by a blue crystal star with blue ribbons held exactly as in the first frame, the feet stay planted, returns exactly to the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "first_frame_url": "upload:17b6336a-ec1b-4275-abe1-168fbe871182",
+  "last_frame_url": "upload:674121a0-ed6e-41a0-877e-9c4554ca8469",
+  "description": "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, a staff topped by a blue crystal star with ribbons held exactly as in the first frame, the feet stay planted, returns exactly to the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
-  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with blue ribbons",
-  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with blue ribbons"
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
  },
+ "reply": "id: 3dea4d7e-4896-474d-8cc8-1cb427d24d67\njob_id: 3dea4d7e-4896-474d-8cc8-1cb427d24d67\ndescription: idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, a staff topped by a blue crystal star with ribbons held exactly as in the first frame, the feet stay planted, returns exactly to the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3dea4d7e-4896-474d-8cc8-1cb427d24d67\")\nasset_id: 49738412-012b-53e4-a0e2-c679c9ac77f6\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
  "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
 }
