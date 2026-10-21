@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "eb7f576d-9e37-482d-887c-9208a6d11150",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: eb7f576d-9e37-482d-887c-9208a6d11150\njob_id: eb7f576d-9e37-482d-887c-9208a6d11150\ndescription: turns the staff over in a small backhand motion in front of her chest, then back into the stance; the star-shaped head of the staff stays plain. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"eb7f576d-9e37-482d-887c-9208a6d11150\")\nasset_id: bd7acf18-c857-5d66-b9a1-f6c68b23ba24\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
 }
