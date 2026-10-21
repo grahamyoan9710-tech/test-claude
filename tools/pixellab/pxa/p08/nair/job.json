@@ -1,18 +1,1 @@
-{
- "status": "submitted",
- "job_id": "83e77c7a-27ce-441a-8bed-4da259793a21",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:18441a72-ec30-482a-9eef-9fa9d01a908b",
-  "last_frame_url": "upload:08ed2708-0aae-46c6-8b1f-2883e8330440",
-  "description": "in mid-air, a butterfly twist with both legs extended, then tucks again. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
-  "frame_count": 12,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots",
-  "initial_pose": "in mid-air facing right, knees tucked"
- },
- "reply": "id: 83e77c7a-27ce-441a-8bed-4da259793a21\njob_id: 83e77c7a-27ce-441a-8bed-4da259793a21\ndescription: in mid-air, a butterfly twist with both legs extended, then tucks again. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"83e77c7a-27ce-441a-8bed-4da259793a21\")\nasset_id: 62210370-5962-588d-b5ed-eca77f14960c\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/p08/jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p08/jump/f_08.png"
-}
+{"status": "rejected"}
