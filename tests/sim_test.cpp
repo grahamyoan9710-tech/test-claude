@@ -532,7 +532,7 @@ static int charIndex(const char* name) {
 }
 
 // Weapons: bare hands at the start; a fighter's weapon drops on the stage and only its owner takes it, by standing
-// on it and pressing the weapon button (walking over it is not enough): weapon A. Then the button switches A <-> B
+// on it and holding the weapon button for kPickupFrames (walking over it or a short press is not enough): weapon A. Then the button switches A <-> B
 // with no cooldown, never in the middle of a move (the press waits for it to end); the weapon is lost at a KO.
 // The CPUs go and take theirs and switch too.
 static void testWeapons() {
@@ -578,9 +578,12 @@ static void testWeapons() {
   };
   if (!m.items.empty()) f.pos.x = m.items.back().pos.x;  // back on it
   p.idle(3);
-  p.run(1, press);
-  CHECK(f.weapon == 0 && m.items.empty() && summons() == 1, "standing on it + the button takes weapon A (weapon %d)",
-        f.weapon);
+  p.run(kPickupFrames / 2, press);
+  p.idle(1);
+  CHECK(f.weapon < 0, "a short hold does not take it (weapon %d)", f.weapon);
+  for (int i = 0; i < kPickupFrames && f.weapon < 0; ++i) p.run(1, press);
+  CHECK(f.weapon == 0 && m.items.empty() && summons() == 1,
+        "standing on it + holding the button takes weapon A (weapon %d)", f.weapon);
   p.idle(1);
   p.run(1, press);
   CHECK(f.weapon == 1, "the next press switches to weapon B, no cooldown (weapon %d)", f.weapon);
@@ -641,7 +644,7 @@ static void testWeapons() {
   std::array<InputState, 4> in{};
   bool armed[2] = {false, false}, both[2] = {false, false};
   int seen[2][2] = {};
-  for (int t = 0; t < 60 * 40 && !m2.finished; ++t) {
+  for (int t = 0; t < 60 * 90 && !m2.finished; ++t) {  // the take needs a 2 s hold, often cut by the foe
     for (size_t k = 0; k < m2.fighters.size(); ++k) in[m2.fighters[k].port] = brains[k].think(m2, int(k));
     m2.step(in);
     for (int k = 0; k < 2; ++k)
@@ -1114,7 +1117,7 @@ static void testBattles() {
 }
 
 static void testBalance() {
-  std::printf("[balance: round robin duels on stage 0]\n");
+  std::printf("[balance: round robin duels on every stage]\n");
   const int n = int(roster().size());
   std::vector<int> wins(n, 0), games(n, 0);
   std::vector<std::vector<float>> koAt(n);  // per fighter: the victim's percent at each of its KOs
@@ -1122,8 +1125,8 @@ static void testBalance() {
   for (int a = 0; a < n; ++a)
     for (int b = 0; b < n; ++b) {
       if (a == b) continue;
-      for (uint32_t seed = 0; seed < 3; ++seed) {
-        MatchConfig cfg = duel(0, a, b, true, true);
+      for (uint32_t seed = 0; seed < 40; ++seed) {  // 3 duels on one stage were noise (a fighter at 33 or 67 %)
+        MatchConfig cfg = duel(int(seed % stageList().size()), a, b, true, true);
         cfg.seed = 50 + seed;
         Match m(cfg);
         CpuBrain ba(9, seed * 3 + 1), bb(9, seed * 3 + 2);

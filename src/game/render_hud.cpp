@@ -5,50 +5,7 @@
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
-namespace {
-// Ultimate meter: a row of crimson cells above the damage card (the main menu's colours).
-void drawUltBar(const Fighter& f, float x, float y, float w, float fill, float time) {
-  const int cells = 5;
-  const float h = 13.0f, slant = 3.0f, gap = 4.0f, labelW = 44.0f;
-  const bool ready = f.finalSmash;
-  const float pulse = ready ? 0.5f + 0.5f * std::sin(time * 7.0f) : 0.0f;
-  const Color hi = {255, 120, 140, 255}, lo = ui::kRedDark, ink = {12, 12, 18, 255};
-  ui::slanted({x - 4, y - 3, w + 8, h + 6}, slant + 1, withAlpha(ink, 0.82f), withAlpha(ink, 0.92f));
-  ui::slantedOutline({x - 4, y - 3, w + 8, h + 6}, slant + 1, 1.5f,
-                     ready ? mixColor(hi, WHITE, pulse) : withAlpha({130, 130, 150, 255}, 0.55f));
-  drawText("ULTI", x + 2, y - 2.5f, 15, ready ? mixColor(hi, WHITE, pulse) : Color{232, 232, 240, 255});
-  const float cx0 = x + labelW, cw = (w - labelW - gap * (cells - 1)) / cells;
-  for (int i = 0; i < cells; ++i) {
-    Rectangle c{cx0 + i * (cw + gap), y, cw, h};
-    ui::slanted(c, slant, {44, 44, 58, 255}, {24, 24, 34, 255});
-    float k = clampf(fill * cells - i, 0.0f, 1.0f);
-    if (k <= 0.0f) continue;
-    Rectangle in{c.x, c.y, c.width * k, c.height};
-    Color top = ready ? mixColor(hi, WHITE, 0.35f * pulse) : hi;
-    Color bottom = ready ? mixColor(lo, hi, 0.5f * pulse) : lo;
-    ui::slanted(in, slant * k, top, bottom);
-    ui::slanted({in.x + 2, in.y + 1, in.width - 3, 3}, 0.5f, withAlpha(WHITE, 0.45f), withAlpha(WHITE, 0.0f));
-  }
-  if (ready) {  // shimmer running along the cells + soft glow
-    float sx = cx0 + std::fmod(time * 260.0f, w - labelW + 60.0f) - 30.0f;
-    for (int i = 0; i < 3; ++i)
-      ui::glow({cx0 + (w - labelW) * (0.17f + 0.33f * i), y + h * 0.5f}, 30.0f + 6.0f * pulse,
-               withAlpha(hi, 0.22f + 0.12f * pulse), 4);
-    if (sx > cx0 && sx < x + w - 10)
-      ui::quad({sx + slant, y}, {sx + 10 + slant, y}, {sx + 10, y + h}, {sx, y + h}, withAlpha(WHITE, 0.0f),
-               withAlpha(WHITE, 0.7f), withAlpha(WHITE, 0.7f), withAlpha(WHITE, 0.0f));
-  }
-}
-}  // namespace
-
 void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices) {
-  static float shown[4] = {0, 0, 0, 0};  // displayed ultimate fill, eased towards the real meter
-  static const Match* lastMatch = nullptr;
-  static int lastFrame = 0;
-  if (&m != lastMatch || m.frame < lastFrame)  // a new match: no easing from the previous one
-    for (const auto& f : m.fighters) shown[f.id & 3] = f.ult / kUltMax;
-  lastMatch = &m;
-  lastFrame = m.frame;
   const int n = int(m.fighters.size());
   const float pw = 240.0f, ph = 90.0f, gap = 18.0f;
   const float total = n * pw + (n - 1) * gap;
@@ -65,10 +22,6 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       ui::slanted({x + 16 - 16 * 6 / ph, y, pw - 16 + 16 * 6 / ph - 2, 6}, 16 * 6 / ph, pc, shade(pc, 0.8f));
     }
     ui::slantedOutline(card, 16, 1.5f, withAlpha({130, 130, 150, 255}, f.eliminated ? 0.3f : 0.55f));
-    float& sh = shown[f.id & 3];
-    const float fill = f.ult / kUltMax;
-    sh = fill < sh ? std::max(fill, sh - 0.08f) : sh + (fill - sh) * 0.12f;
-    if (!f.eliminated) drawUltBar(f, x + 22, y - 22, pw - 30, sh, time + f.id);
     if (f.finalSmash) {
       float pulse = 0.5f + 0.5f * std::sin(time * 7.0f);
       Color zon = mixColor(ui::kRed, WHITE, pulse);

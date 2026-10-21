@@ -327,12 +327,13 @@ bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
     }
   }
   if (!best || !f.grounded) return false;
-  for (const auto& o : m.fighters)
-    if (m.foes(f, o) && o.active() && (o.pos - f.pos).len() < 110.0f) return false;  // busy fighting
   const float dx = best->pos.x - f.pos.x, dy = best->pos.y - f.pos.y;
+  const bool onIt = std::fabs(dx) < 24.0f && std::fabs(dy) < 30.0f;
+  for (const auto& o : m.fighters)  // once on it, it keeps holding: the take needs kPickupFrames
+    if (!onIt && m.foes(f, o) && o.active() && (o.pos - f.pos).len() < 110.0f) return false;  // busy fighting
   in.stick.x = std::fabs(dx) > 12.0f ? signf(dx) : 0.0f;
   if (!m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f) && dy > -20.0f) in.stick.x = 0.0f;  // no walking off
-  if (std::fabs(dx) < 24.0f && std::fabs(dy) < 30.0f) tap(in, &IS::weapon);  // on it: take it
+  if (onIt) in.weapon = true;  // on it: holds the button to take it
   if (dy < -50.0f && std::fabs(dx) < 160.0f && f.state != FState::JumpSquat) tap(in, &IS::jump);
   else if (dy > 30.0f && std::fabs(dx) < 30.0f) in.stick.y = 1.0f;  // drop through a thin platform
   return true;

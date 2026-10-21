@@ -308,7 +308,7 @@ CharacterDef make01() {
                     colours({30, 28, 40}, {96, 60, 160}, {150, 90, 230}, {28, 26, 34}, {150, 90, 230}),
                     colours({220, 220, 230}, {96, 60, 160}, {150, 90, 230}, {28, 26, 34}, {150, 90, 230}));
   const F e = k.e;
-  k.P = 0.9f;  // balance (sim_test balance)
+  k.P = 1.06f;  // balance (sim_test balance)
   k.c.weight -= 6;  // balance
   skills(k, -1, shot("Orbe d'ombre", e, PV::Orb, k.fx("x", "n"), 5.5f, 22, 9),
          through("Pas de l'ombre", e, k.fx("x", "s"), 9), blink("Ascension spectrale", e, k.fx("x", "u")),
@@ -340,7 +340,7 @@ CharacterDef make02() {
                     colours({34, 32, 42}, {230, 232, 240}, {110, 170, 240}, {214, 218, 232}, {150, 130, 220}),
                     colours({200, 220, 245}, {60, 80, 130}, {110, 170, 240}, {214, 218, 232}, {150, 130, 220}));
   const F e = k.e;
-  k.P = 1.08f;  // balance (sim_test balance)
+  k.P = 1.16f;  // balance (sim_test balance)
   k.c.weight += 4;  // balance
   skills(k, -1, shot("Éclat de givre", e, PV::Star, k.fx("x", "n"), 9, 16, 7),
          rush("Glissade gelée", e, k.fx("x", "s"), 13, 0, 9, L::LegFront),
@@ -373,7 +373,7 @@ CharacterDef make03() {
                     colours({30, 26, 28}, {200, 40, 40}, {240, 110, 40}, {30, 24, 26}, {220, 50, 50}),
                     colours({240, 236, 230}, {200, 40, 40}, {240, 110, 40}, {30, 24, 26}, {220, 50, 50}));
   const F e = k.e;
-  k.P = 1.12f;  // balance (sim_test balance)
+  k.P = 1.08f;  // balance (sim_test balance)
   k.c.weight += 8;  // balance
   skills(k, -1, shot("Poing ardent", e, PV::Orb, k.fx("x", "n"), 8, 20, 9, 30),
          rush("Charge brûlante", e, k.fx("x", "s"), 14, 0, 11, L::Body),
@@ -406,7 +406,7 @@ CharacterDef make07() {
                     colours({28, 24, 28}, {200, 30, 40}, {255, 80, 80}, {26, 22, 26}, {220, 50, 50}),
                     colours({236, 232, 230}, {200, 30, 40}, {255, 80, 80}, {26, 22, 26}, {220, 50, 50}));
   const F e = k.e;
-  k.P = 0.85f;  // balance (sim_test balance)
+  k.P = 0.71f;  // balance (sim_test balance)
   k.c.weight -= 6;  // balance
   skills(k, -1, piercing(shot("Éclair rouge", e, PV::Bolt, k.fx("x", "n"), 15, 12, 6, 30)),
          through("Pas-éclair", e, k.fx("x", "s"), 8),
@@ -438,7 +438,7 @@ CharacterDef make08() {
                     colours({236, 236, 240}, {40, 40, 46}, {230, 196, 90}, {232, 232, 238}, {110, 170, 220}),
                     colours({40, 40, 46}, {236, 236, 240}, {230, 196, 90}, {232, 232, 238}, {110, 170, 220}));
   const F e = k.e;
-  k.P = 1.35f;  // balance (sim_test balance)
+  k.P = 1.31f;  // balance (sim_test balance)
   k.c.weight += 18;  // balance
   skills(k, -1, shot("Plume de lumière", e, PV::Feather, k.fx("x", "n"), 11, 14, 7),
          rush("Rafale", e, k.fx("x", "s"), 15, 0, 10, L::Body),

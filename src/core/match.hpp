@@ -37,8 +37,9 @@ enum class EvType : uint8_t {
   Capture      // a = attacker, b = victim: caught by a cinematic ultimate
 };
 
-// A fighter's weapon lying on the stage (or falling on it): its owner takes it by standing on it and pressing the
-// weapon button.
+// A fighter's weapon lying on the stage (or falling on it): its owner takes it by standing on it and holding the
+// weapon button for kPickupFrames in all (a hit pauses the count, it does not reset it).
+constexpr int kPickupFrames = 120;  // 2 s
 struct WeaponItem {
   int character = 0;  // roster index: only this character can take it
   int slot = 0;       // index in CharacterDef::weapons
@@ -46,6 +47,7 @@ struct WeaponItem {
   bool grounded = false;
   int life = 0;       // frames left before it vanishes (nobody took it)
   int age = 0;
+  int hold = 0;       // frames its owner has held the weapon button over it
 };
 
 // The Clash Orb: floats around the stage, whoever breaks it gets a final smash.

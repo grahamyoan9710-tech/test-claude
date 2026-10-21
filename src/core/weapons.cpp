@@ -109,29 +109,26 @@ void Match::updateItems() {
     if (it.pos.y > blast.bottom()) it.life = 0;
   }
 
-  // The weapon button: takes the own weapon it stands on, else switches A <-> B
+  // The weapon button: held over the own weapon, takes it; armed, a press switches A <-> B
   for (auto& f : fighters) {
+    if (f.weapon < 0) {
+      WeaponItem* under = nullptr;
+      const Rect hurt = f.hurtbox();
+      for (auto& it : items)
+        if (it.life > 0 && it.character == f.charIndex && circleRect({it.pos.x, it.pos.y - 18.0f}, 34.0f, hurt)) under = &it;
+      if (!under || !f.in.weapon || !canAct(f)) continue;
+      if (++under->hold >= kPickupFrames) {
+        equipWeapon(f, under->slot);
+        under->life = 0;
+      }
+      continue;
+    }
     if (f.pressed(&InputState::weapon)) f.weaponBuffer = kWeaponBuffer;
     if (f.weaponBuffer <= 0) continue;
     --f.weaponBuffer;
-    if (f.weapon >= 0) {
-      if (!canAct(f)) continue;
-      f.weaponBuffer = 0;
-      switchWeapon(f);
-      continue;
-    }
-    WeaponItem* under = nullptr;
-    const Rect hurt = f.hurtbox();
-    for (auto& it : items)
-      if (it.life > 0 && it.character == f.charIndex && circleRect({it.pos.x, it.pos.y - 18.0f}, 34.0f, hurt)) under = &it;
-    if (!under) {  // nothing to take: the press is spent
-      f.weaponBuffer = 0;
-      continue;
-    }
     if (!canAct(f)) continue;
     f.weaponBuffer = 0;
-    equipWeapon(f, under->slot);
-    under->life = 0;
+    switchWeapon(f);
   }
   items.erase(std::remove_if(items.begin(), items.end(), [](const WeaponItem& i) { return i.life <= 0; }), items.end());
 }
