@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "b12f8542-75ae-4b88-8c34-1a8ddb94fdf0",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:54733726-9c55-4070-be70-3ba4183a9995",
+  "last_frame_url": "upload:65f41ec2-d7d2-475c-8acb-9359d51528a4",
+  "description": "leans forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves her hands. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: b12f8542-75ae-4b88-8c34-1a8ddb94fdf0\njob_id: b12f8542-75ae-4b88-8c34-1a8ddb94fdf0\ndescription: leans forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves her hands. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b12f8542-75ae-4b88-8c34-1a8ddb94fdf0\")\nasset_id: 524a836f-fa02-5d04-a4e1-87a6718f8ee2\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+}
