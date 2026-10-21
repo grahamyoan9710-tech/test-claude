@@ -55,6 +55,16 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 21/10 ~1 h 20 UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **reprise après la passation.**
+  - Jeton remis dans `px/.token`. Compilation et `sim_test` : « all tests passed ». Codesign connecté ; Asset Generator
+    (blueprint-studio) et Icons8 demandent une autorisation dans les connecteurs de claude.ai.
+  - `fetch_orphans.sh` : 10 jobs du 03 (w0_bthrow, dthrow, fthrow, sspecial, ultimate, uspecial, uthrow, w1_idle,
+    runstart, walk) « Generation stalled and was automatically failed » chez PixelLab, absents de la galerie :
+    passés en `rejected`. 6 jobs encore en cours (01 bthrow, w1_dspecial ; 02 w0_dthrow ; 03 w1_crouch, land, jump) :
+    relancer `fetch_orphans.sh` plus tard.
+  - Lancé : `driver.py p01 p02 p03 p07 p08`. Les 25 clips `p02/w1_*` (bâton) étaient refusés avant l'envoi
+    (description du perso à 302 caractères, limite 300) : « with blue ribbons » → « with ribbons »
+    (`new_specs.py`, `wkits/p02.json`), renvoyés à part (`pxa/jobs_p02w1_fix.json`).
 - 21/10 ~2 h UTC, session cloud (ponytail), branche `claude/cool-sagan-8wiysw` : **PASSATION à une nouvelle session**
   (pour les plugins Codesign, Asset Generator et Icons8, connectés seulement au démarrage d'une session).
   - **Arrêté proprement** : driver et lots arrêtés, tout est poussé. 16 jobs ont un numéro (`"submitted"`), dont 6

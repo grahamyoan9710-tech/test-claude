@@ -3,8 +3,8 @@
  "error": "1 validation error for call[animate_image_pixminimax]\nsubject_description\n  String should have at most 300 characters [type=string_too_long, input_value='a young woman with very ... star with blue ribbons', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:d6d612b6-ba97-4645-a4a2-174f539b8ebf",
-  "last_frame_url": "upload:d4bdd31c-2fa7-4335-bd53-4d55c6d0e6ad",
+  "first_frame_url": "upload:5bdacf25-0c8c-4a52-a66d-68f0e6ebef7e",
+  "last_frame_url": "upload:be52b7cb-9fa6-44c9-9db8-a922cf3e6746",
   "description": "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a staff topped by a blue crystal star with blue ribbons held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
   "frame_count": 8,
   "view": "side",

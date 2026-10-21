@@ -85,8 +85,8 @@ F["p02"] = {
                 "dspecial": clip(12, "stabs the spear point into the ground in front of her, then pulls it back out", "down"),
                 "ultimate": clip(16, "plants the spear upright in the ground beside her and holds it with both hands, head bowed, then pulls it out", "none"),
             }},
-        1: {"held": "a staff topped by a blue crystal star with blue ribbons",
-            "take": "raises one hand and grips a staff topped by a blue crystal star with blue ribbons, then holds it upright beside her",
+        1: {"held": "a staff topped by a blue crystal star with ribbons",
+            "take": "raises one hand and grips a staff topped by a blue crystal star with ribbons, then holds it upright beside her",
             "moves": {
                 "jab": clip(8, "a short swing of the star staff forward"),
                 "jab2": clip(8, "a backhand swing of the star staff"),
