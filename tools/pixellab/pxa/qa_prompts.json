@@ -34,5 +34,9 @@
   "w1_airdodge": "air dodge: curls up tightly in mid-air in the same place, a huge spiked black and red greatsword, larger and more jagged held still against his body, the body staying in the middle of the picture, then opens up again in the same pose",
   "w1_pummel": "taps the invisible opponent he is holding with the pommel of a huge spiked black and red greatsword, larger and more jagged: a small short motion of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w1_dthrow": "bends his knees and slowly lowers the invisible opponent he is holding with his free hand, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time, then straightens back up into the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+ },
+ "p07": {
+  "dash": "leans the torso far forward and takes one long low step to the right from the stance, both arms swept back, ending on the front foot in a running pose",
+  "dashattack": "from a running stride, steps into a long low front stance and drives a straight punch far forward with her right arm fully extended, holds the punch, then pulls back into the stance"
  }
 }
