@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "70d7eb10-547a-42bc-a024-0a223a0492c0",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c1aa3938-a541-4d34-a436-a3c13048d8b0",
+  "last_frame_url": "upload:b91eba2b-b8f9-4a60-8920-96bb2a3db0d7",
+  "description": "karate rising palm strike: standing still with both feet on the floor, pushes one open palm straight up above her head, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 70d7eb10-547a-42bc-a024-0a223a0492c0\njob_id: 70d7eb10-547a-42bc-a024-0a223a0492c0\ndescription: karate rising palm strike: standing still with both feet on the floor, pushes one open palm straight up above her head, then lowers it back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"70d7eb10-547a-42bc-a024-0a223a0492c0\")\nasset_id: 28434135-66ea-5c5a-b5c6-c48a8ae0514b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_guard256.png"
+}
