@@ -365,6 +365,14 @@ bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha, bo
   DrawTexturePro(P->tex, src, dst, {0, 0}, 0.0f, withAlpha(tint, alpha * tint.a / 255.0f));
   return true;
 }
+
+bool drawPicture3(const char* name, Rectangle dst, int cap) {
+  const Picture* P = pictureOf(name);
+  if (!P) return false;
+  const NPatchInfo n{{0, 0, float(P->tex.width), float(P->tex.height)}, cap, 0, cap, 0, NPATCH_THREE_PATCH_HORIZONTAL};
+  DrawTextureNPatch(P->tex, n, dst, {0, 0}, 0.0f, WHITE);
+  return true;
+}
 }  // namespace art
 
 namespace {

@@ -19,9 +19,10 @@ enum class StageTheme : uint8_t {
   MoonDesert, WhiteCity,                // desert and city
   OldDen, TowerOfLore,                  // forest
   NeonCrossroads, ShadowTemple,         // night
-  PeakVillage, SkyValley                // mountain temples
+  PeakVillage, SkyValley,               // mountain temples
+  Lunar, Frost, Crimson, Kurenai, Clouds  // the five arenas painted with PixelLab (one per fighter)
 };
-constexpr int kStageThemeCount = 11;
+constexpr int kStageThemeCount = 16;
 
 struct StageDef {
   std::string name;

@@ -53,6 +53,8 @@ bool pictureSize(const char* name, float& w, float& h);
 // Draws `src` (pixels of the picture) into `dst`; flipX mirrors it.
 bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha = 1.0f, bool flipX = false,
                  Color tint = WHITE);
+// Draws the whole picture into `dst` stretched only in its middle: its `cap` left and right pixels keep their shape.
+bool drawPicture3(const char* name, Rectangle dst, int cap);
 
 struct FxInfo {
   int frames = 0;
