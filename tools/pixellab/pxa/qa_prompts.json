@@ -52,5 +52,8 @@
   "w1_dspecial": "lowers the jagged sword point-down in front of her and holds it there a moment, then raises it back into the stance",
   "w1_jab3": "a short straight thrust of the jagged sword forward at chest height, the blade staying well inside the picture, then back into the stance",
   "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, the broad black and red sword held flat against her back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture"
+ },
+ "p08": {
+  "usmash": "kung fu crescent kick: standing on one leg, swings the other leg in a high arc above his head, then lowers it back into the stance, the standing foot stays planted"
  }
 }
