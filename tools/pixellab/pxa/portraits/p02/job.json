@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "7c672536-6cc3-49fa-a946-b6c684ecd177",
  "tool": "create_image_pro",
  "args": {
@@ -14,5 +14,7 @@
    }
   ]
  },
- "reply": "id: 7c672536-6cc3-49fa-a946-b6c684ecd177\njob_id: 7c672536-6cc3-49fa-a946-b6c684ecd177\nmodel: pro\ndescription: head and shoulders bust portrait of a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, modest fully covered outfit, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference, no border, no frame, nothing touching the edges\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: 0bbe0502-baee-5172-a16a-bdbbb8fbf86c\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"7c672536-6cc3-49fa-a946-b6c684ecd177\")"
+ "reply": "id: 7c672536-6cc3-49fa-a946-b6c684ecd177\njob_id: 7c672536-6cc3-49fa-a946-b6c684ecd177\nmodel: pro\ndescription: head and shoulders bust portrait of a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, modest fully covered outfit, three-quarter view facing right, confident look, detailed anime pixel art, the same character as the reference, no border, no frame, nothing touching the edges\nsize: 168x168px\ntransparent: True\ncandidates: 4\nreferences: 1\nasset_id: 0bbe0502-baee-5172-a16a-bdbbb8fbf86c\nasset_status: pending (saved when generation completes)\ncost: 15 generations\nstatus: processing (~1-10 min)\n\nhint: get_image(job_id=\"7c672536-6cc3-49fa-a946-b6c684ecd177\")",
+ "frames": 4,
+ "charged": "15 generations"
 }

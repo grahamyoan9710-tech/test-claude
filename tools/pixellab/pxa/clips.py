@@ -183,7 +183,7 @@ COMMON = {
     "usmash": (12, "guard", True, False, "up", "upward smash: crouches, then springs up on his toes and strikes straight upward above his head with both fists, then lands back in the stance"),
     "dsmash": (12, "guard", True, False, "around", "low split kicks: drops low and kicks fast low in front, then spins and kicks low behind, then back into the stance"),
     "grab": (8, "guard", True, False, "forward", "leans forward and reaches out with both open hands, closes them on empty air, then pulls back; nothing leaves his hands"),
-    "ledgeattack": (8, "guard", True, False, "forward", "rises from a low crouch with a quick low sweeping kick forward, then back into the fighting stance; his foot passes just above the floor, nothing is kicked up"),
+    "ledgeattack": (8, "guard", True, False, "forward", "rises from a low crouch and swings one leg forward in a low arc, then back into the fighting stance"),
 }
 STAGE_B = {
     "run": (8, "runstart@last", True, True, "none", "fast run cycle to the right: leaning far forward, both arms swept straight back, long fast strides, a seamless loop that ends exactly on the first pose"),
