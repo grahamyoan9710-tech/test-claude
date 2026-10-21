@@ -1,1 +1,18 @@
-{"status": "rejected"}
+{
+ "status": "submitted",
+ "job_id": "9a7aa3de-9306-4fb1-9ce9-f081aa43bfe0",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:344c2c8e-d09a-43b0-8f5a-de1e1fbf7687",
+  "last_frame_url": "upload:5f2a0bc1-7213-4f93-8818-cf25c87bcbee",
+  "description": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+  "initial_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons"
+ },
+ "reply": "id: 9a7aa3de-9306-4fb1-9ce9-f081aa43bfe0\njob_id: 9a7aa3de-9306-4fb1-9ce9-f081aa43bfe0\ndescription: a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9a7aa3de-9306-4fb1-9ce9-f081aa43bfe0\")\nasset_id: 0afee914-5666-576e-b43f-ee91a382f7fd\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png"
+}
