@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "e52086d8-851a-47b2-9b36-d087db4b0804",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4d169bc1-4d04-427d-bab2-2debecc6a2c2",
+  "last_frame_url": "upload:655ae568-3bc6-4d13-a0f1-e4ed89e373ab",
+  "description": "hangs from her raised free hand, the arm stretched straight up with the hand closed on nothing near the top of the picture, legs swaying gently below, her other hand holding a broad black and red sword, larger and more jagged, with red ribbons pointing down, a seamless loop; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword, larger and more jagged, with red ribbons",
+  "initial_pose": "hanging from her raised hands, arms stretched straight up, legs dangling, empty background above the hands"
+ },
+ "reply": "id: e52086d8-851a-47b2-9b36-d087db4b0804\njob_id: e52086d8-851a-47b2-9b36-d087db4b0804\ndescription: hangs from her raised free hand, the arm stretched straight up with the hand closed on nothing near the top of the picture, legs swaying gently below, her other hand holding a broad black and red sword, larger and more jagged, with red ribbons pointing down, a seamless loop; empty background above and around the raised hand: no log, no bar, no branch, no cliff, no rock, no wall, no platform. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"e52086d8-851a-47b2-9b36-d087db4b0804\")\nasset_id: 3e41e767-cb02-5dee-af1e-b0414114d381\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_ledgegrab/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p07/w1_ledgegrab/f_08.png"
+}
