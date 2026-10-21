@@ -34,7 +34,8 @@
   "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, a huge spiked black and red greatsword, larger and more jagged held flat against his back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture",
   "w1_airdodge": "air dodge: curls up tightly in mid-air in the same place, a huge spiked black and red greatsword, larger and more jagged held still against his body, the body staying in the middle of the picture, then opens up again in the same pose",
   "w1_pummel": "taps the invisible opponent he is holding with the pommel of a huge spiked black and red greatsword, larger and more jagged: a small short motion of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
-  "w1_dthrow": "bends his knees and slowly lowers the invisible opponent he is holding with his free hand, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time, then straightens back up into the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+  "w1_dthrow": "bends his knees and slowly lowers the invisible opponent he is holding with his free hand, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder the whole time, then straightens back up into the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
+  "w1_fthrow": "pushes the invisible opponent he is holding forward with his free hand, a huge spiked black and red greatsword, larger and more jagged resting still on his shoulder, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
  },
  "p07": {
   "dash": "leans the torso far forward and takes one long low step to the right from the stance, both arms swept back, ending on the front foot in a running pose",
@@ -47,16 +48,18 @@
   "usmash": "karate rising palm strike: standing still with both feet on the floor, pushes one open palm straight up above her head, then lowers it back into the stance",
   "bthrow": "holding an invisible opponent, turns her body around and pushes both open hands behind her, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "ledgeattack": "rises from a crouch and kicks one leg forward at knee height, then back into the fighting stance",
-  "sspecial": "leans forward low, takes one long step forward and drives one knee up in a flying knee, then lands back in the stance",
+  "sspecial": "leans forward and takes one long step, raising one knee high in front of her, then lowers it back into the stance; her colours stay the same",
   "w0_jab3": "a short straight thrust of the sword forward at chest height, the blade staying well inside the picture, then back into the stance",
   "w0_sspecial": "leans forward low and takes one long fast step forward, ending with the sword extended far ahead",
   "w1_dspecial": "lowers the jagged sword point-down in front of her and holds it there a moment, then raises it back into the stance",
   "w1_jab3": "a short straight thrust of the jagged sword forward at chest height, the blade staying well inside the picture, then back into the stance",
   "w1_roll": "dodge roll: tucks into a tight ball and rolls forward, the broad black and red sword held flat against her back the whole time, then springs back up into the same stance. The whole weapon stays inside the picture",
-  "w0_ultimate": "steps forward three times, swinging the sword in a wide arc at each step, then stops with her back turned and the sword lowered"
+  "w0_ultimate": "steps forward three times, swinging the sword in a wide arc at each step, then stops with her back turned and the sword lowered",
+  "w1_ultimate": "steps forward three times, swinging the jagged sword in a wide arc at each step, then stops with her back turned and the sword lowered"
  },
  "p08": {
   "usmash": "kung fu crescent kick: standing on one leg, swings the other leg in a high arc above his head, then lowers it back into the stance, the standing foot stays planted; nothing flashes where the foot passes",
-  "nspecial": "pushes one open palm forward at chest height, then pulls it back into the stance"
+  "nspecial": "pushes one open palm forward at chest height, then pulls it back into the stance",
+  "roll": "curls up into a ball and somersaults forward once, his white coat wrapped around him, then stands back up into the same stance"
  }
 }
