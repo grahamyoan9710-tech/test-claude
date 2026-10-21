@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "16bfc8f8-ffc0-42ca-8668-dfd505239cfb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c3c3922e-5cad-40cc-a812-d28b1aa2e516",
+  "last_frame_url": "upload:ffc5f84a-5e32-433e-943c-c87415e5b8b4",
+  "description": "swings the greatsword low along the ground in a wide forward arc. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins"
+ },
+ "reply": "id: 16bfc8f8-ffc0-42ca-8668-dfd505239cfb\njob_id: 16bfc8f8-ffc0-42ca-8668-dfd505239cfb\ndescription: swings the greatsword low along the ground in a wide forward arc. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"16bfc8f8-ffc0-42ca-8668-dfd505239cfb\")\nasset_id: 31ca60fe-abd6-5b4b-b58c-602f728fb1c5\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png"
+}

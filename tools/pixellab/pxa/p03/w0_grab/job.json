@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "a17cc0f6-bfe2-4f96-a7a0-52f189b679d3",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:eb506c07-f6e3-47c7-829e-a255c61845f6",
+  "last_frame_url": "upload:5fb3c6d5-c17a-4d08-8df6-ff6e4d44732a",
+  "description": "leans forward and reaches out with his free open hand, closes it on empty air, then pulls back, the other hand keeping a huge jagged black greatsword with glowing red veins still at his side; nothing leaves his hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins"
+ },
+ "reply": "id: a17cc0f6-bfe2-4f96-a7a0-52f189b679d3\njob_id: a17cc0f6-bfe2-4f96-a7a0-52f189b679d3\ndescription: leans forward and reaches out with his free open hand, closes it on empty air, then pulls back, the other hand keeping a huge jagged black greatsword with glowing red veins still at his side; nothing leaves his hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a17cc0f6-bfe2-4f96-a7a0-52f189b679d3\")\nasset_id: d5edc517-3e46-5294-8db1-e2594f9a7ade\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

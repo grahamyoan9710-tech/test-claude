@@ -77,7 +77,7 @@ WSTATES = {
     "airdodge": (8, "jump@last", True, False, "none", "air dodge: curls up tightly in mid-air in the same place holding {held} close to his body, the body staying in the middle of the picture, then opens up again in the same pose"),
     "hurt": (4, "guard", None, False, "none", "recoils in pain: head thrown back, body leaning backwards, the free arm flung up, still gripping {held}, then holds that pained pose"),
     "tumble": (8, "jump@last", True, True, "none", "tumbles head over heels through the air after a heavy blow, spinning out of control, still gripping {held}, a seamless loop"),
-    "knockdown": (8, "guard", None, False, "none", "tips slowly backwards off balance and sinks down until he lies flat on his back on the floor, still gripping {held}, ending lying still; nothing else is drawn around him"),
+    "knockdown": (8, "guard", None, False, "none", "tips slowly backwards off balance and sinks down until he lies flat on his back on the floor, {held} lying flat on the floor beside him, still in his hand, ending lying still; nothing else is drawn around him"),
     "getup": (8, "knockdown@last", "guard", False, "none", "gets up from lying on his back: rolls onto his feet and stands back up into the ready stance, {held} in hand"),
     "helpless": (8, "jump@last", True, True, "none", "falls helplessly, exhausted: the free arm hangs limp above his head, {held} dangling loosely from the other hand, head drooping, legs dangling, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn"),
     "ledgegrab": (8, "jump@last", None, False, "none", ARMED_LEDGE["ledgegrab"]),

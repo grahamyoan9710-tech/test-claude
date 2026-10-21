@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "4c1b0c08-9fab-4e3a-b320-7b810357bde7",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a5514d28-547d-4813-b7dc-00439455a1c5",
+  "last_frame_url": "upload:5af613af-9e50-4e3a-b0c2-6744510cbed5",
+  "description": "drives the greatsword point down into the ground in front of him with both hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins"
+ },
+ "reply": "id: 4c1b0c08-9fab-4e3a-b320-7b810357bde7\njob_id: 4c1b0c08-9fab-4e3a-b320-7b810357bde7\ndescription: drives the greatsword point down into the ground in front of him with both hands. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4c1b0c08-9fab-4e3a-b320-7b810357bde7\")\nasset_id: 24dfbe25-ab9b-5117-b03e-c513a75f1d98\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png"
+}
