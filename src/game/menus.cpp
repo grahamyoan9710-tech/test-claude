@@ -709,15 +709,15 @@ void App::drawStage() {
   Rectangle big = bigPreviewRect();
   DrawRectangleRounded({big.x + 8, big.y + 10, big.width, big.height}, 0.04f, 8, withAlpha(BLACK, 0.45f));
   drawStagePreview(cur, big, t);
-  DrawRectangleRoundedLinesEx(ui::grow(big, 3), 0.04f, 8, 3, ui::kGold);
-  DrawRectangleRoundedLinesEx(ui::grow(big, -5), 0.03f, 8, 1, withAlpha(ui::kGold, 0.4f));
-  ui::corners(ui::grow(big, 9), 0, 30, 3, ui::kGold);
+  DrawRectangleRoundedLinesEx(ui::grow(big, 3), 0.04f, 8, 3, ui::kRed);
+  DrawRectangleRoundedLinesEx(ui::grow(big, -5), 0.03f, 8, 1, withAlpha(ui::kRed, 0.4f));
+  ui::corners(ui::grow(big, 9), 0, 30, 3, ui::kRed);
   if (stageRandom_) {
     DrawRectangleRec(big, withAlpha(ui::kInk, 0.45f));
     const float pulse = 0.5f + 0.5f * std::sin(t * 3.0f);
     drawTextCentered("?", big.x + big.width * 0.5f, big.y + big.height * 0.5f - 90, 170,
-                     mixColor(ui::kGold, ui::kCream, pulse), true, FontKind::Title);
-    drawTextCentered("ARÈNE ALÉATOIRE", big.x + big.width * 0.5f, big.y + big.height - 60, 34, ui::kCream, true,
+                     mixColor(ui::kRed, WHITE, pulse), true, FontKind::Title);
+    drawTextCentered("ARÈNE ALÉATOIRE", big.x + big.width * 0.5f, big.y + big.height - 60, 34, WHITE, true,
                      FontKind::Title);
   }
 
@@ -729,14 +729,14 @@ void App::drawStage() {
   const float chipW = textWidth(series.c_str(), 17) + 26;
   DrawRectangleRounded({px, big.y + 6, chipW, 28}, 0.5f, 8, withAlpha(sc, 0.9f));
   DrawRectangleRoundedLinesEx({px, big.y + 6, chipW, 28}, 0.5f, 8, 1.5f, withAlpha(mixColor(sc, WHITE, 0.5f), 0.9f));
-  drawText(series.c_str(), px + 13, big.y + 11, 17, ui::kCream);
+  drawText(series.c_str(), px + 13, big.y + 11, 17, WHITE);
   float nameSize = 46.0f;
   nameSize = std::min(nameSize, nameSize * pw / std::max(1.0f, textWidth(name.c_str(), nameSize, FontKind::Title)));
-  drawTextOutlined(name.c_str(), px, big.y + 46, nameSize, ui::kCream, ui::kInk, 3.5f, FontKind::Title);
+  drawTextOutlined(name.c_str(), px, big.y + 46, nameSize, WHITE, ui::kInk, 3.5f, FontKind::Title);
   float y = big.y + 46 + nameSize * 1.25f;
-  DrawRectangleGradientH(int(px), int(y), int(pw * 0.8f), 2, withAlpha(ui::kGold, 0.8f), withAlpha(ui::kGold, 0.0f));
+  DrawRectangleGradientH(int(px), int(y), int(pw * 0.8f), 2, withAlpha(ui::kRed, 0.8f), withAlpha(ui::kRed, 0.0f));
   y = drawWrapped(stageRandom_ ? std::string("Une des arènes, tirée au sort au début du combat.") : cur.blurb, px,
-                  y + 14, pw, 21, ui::kCream) + 10;
+                  y + 14, pw, 21, WHITE) + 10;
   int solids = 0, plats = 0, moving = 0;
   for (const Platform& p : cur.platforms) {
     if (p.solid) ++solids;
@@ -747,15 +747,15 @@ void App::drawStage() {
   if (plats > 0) layout += TextFormat(", %d plateforme%s", plats, plats > 1 ? "s" : "");
   if (moving > 0) layout += moving == plats ? (plats > 1 ? " mobiles" : " mobile") : TextFormat(" dont %d mobile%s", moving, moving > 1 ? "s" : "");
   if (!stageRandom_) {
-    ui::diamond({px + 5, y + 11}, 4, ui::kGold);
-    drawTextOutlined(layout.c_str(), px + 18, y, 19, ui::kMuted, ui::kInk, 2.0f);
+    ui::diamond({px + 5, y + 11}, 4, ui::kRed);
+    drawTextOutlined(layout.c_str(), px + 18, y, 19, Color{220, 220, 230, 255}, ui::kInk, 2.0f);
   }
   const Settings& s = settings();
   std::string info = training_ ? "Entraînement  •  vies infinies"
                                : TextFormat("%d combattants  •  %d vie%s  •  orbe %s", activeSlots(), s.stocks,
                                             s.stocks > 1 ? "s" : "", s.items ? "activée" : "désactivée");
-  ui::diamond({px + 5, big.y + big.height - 12}, 4, ui::kGold);
-  drawTextOutlined(info.c_str(), px + 18, big.y + big.height - 23, 19, ui::kCream, ui::kInk, 2.0f);
+  ui::diamond({px + 5, big.y + big.height - 12}, 4, ui::kRed);
+  drawTextOutlined(info.c_str(), px + 18, big.y + big.height - 23, 19, WHITE, ui::kInk, 2.0f);
 
   // Every stage: a still each, the series as a coloured edge.
   for (int i = 0; i < int(stages.size()); ++i) {
@@ -771,12 +771,12 @@ void App::drawStage() {
     DrawRectangle(int(base.x), int(base.y + base.height - 26), 5, 26, seriesColor(stages[i].series));
     float ns = 17.0f;
     ns = std::min(ns, ns * (base.width - 20) / std::max(1.0f, textWidth(stages[i].name.c_str(), ns)));
-    drawText(stages[i].name.c_str(), base.x + 12, base.y + base.height - 13 - ns * 0.62f, ns, sel ? ui::kGold : ui::kCream);
+    drawText(stages[i].name.c_str(), base.x + 12, base.y + base.height - 13 - ns * 0.62f, ns, sel ? ui::kRed : WHITE);
     if (sel) {
       const float pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
-      DrawRectangleRoundedLinesEx(ui::grow(rr, 4 + pulse * 2), 0.08f, 8, 4, withAlpha(ui::kTeal, 0.14f + 0.14f * pulse));
-      DrawRectangleRoundedLinesEx(rr, 0.08f, 8, 3.0f, ui::kGold);
-      ui::corners(ui::grow(rr, 6 + pulse * 2), 0, 14, 3, ui::kGold);
+      DrawRectangleRoundedLinesEx(ui::grow(rr, 4 + pulse * 2), 0.08f, 8, 4, withAlpha(ui::kRed, 0.14f + 0.14f * pulse));
+      DrawRectangleRoundedLinesEx(rr, 0.08f, 8, 3.0f, ui::kRed);
+      ui::corners(ui::grow(rr, 6 + pulse * 2), 0, 14, 3, ui::kRed);
     } else {
       DrawRectangleRoundedLinesEx(base, 0.08f, 8, 1.5f, withAlpha(ui::kStone, 0.6f));
     }
@@ -787,13 +787,13 @@ void App::drawStage() {
     const float pulse = 0.5f + 0.5f * std::sin(t * 3.0f);
     DrawRectangleRounded({rr.x + 5, rr.y + 7, rr.width, rr.height}, 0.08f, 8, withAlpha(BLACK, 0.4f));
     DrawRectangleRounded(rr, 0.08f, 8, withAlpha(mixColor(ui::kSlate, ui::kInk, 0.4f), 0.95f));
-    drawTextCentered("?", base.x + base.width * 0.5f, base.y + 2, 56, stageRandom_ ? mixColor(ui::kGold, ui::kCream, pulse)
-                                                                                 : ui::kCream, true, FontKind::Title);
+    drawTextCentered("?", base.x + base.width * 0.5f, base.y + 2, 56, stageRandom_ ? mixColor(ui::kRed, WHITE, pulse)
+                                                                                 : WHITE, true, FontKind::Title);
     DrawRectangle(int(base.x), int(base.y + base.height - 26), int(base.width), 26, withAlpha(ui::kInk, 0.88f));
-    drawText("Aléatoire", base.x + 12, base.y + base.height - 24, 17, stageRandom_ ? ui::kGold : ui::kCream);
+    drawText("Aléatoire", base.x + 12, base.y + base.height - 24, 17, stageRandom_ ? ui::kRed : WHITE);
     if (stageRandom_) {
-      DrawRectangleRoundedLinesEx(rr, 0.08f, 8, 3.0f, ui::kGold);
-      ui::corners(ui::grow(rr, 6 + pulse * 2), 0, 14, 3, ui::kGold);
+      DrawRectangleRoundedLinesEx(rr, 0.08f, 8, 3.0f, ui::kRed);
+      ui::corners(ui::grow(rr, 6 + pulse * 2), 0, 14, 3, ui::kRed);
     } else {
       DrawRectangleRoundedLinesEx(base, 0.08f, 8, 1.5f, withAlpha(ui::kStone, 0.6f));
     }

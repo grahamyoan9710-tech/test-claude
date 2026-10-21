@@ -475,22 +475,20 @@ void drawSprite(Sprite s, float x, float y, float size, float alpha) {
 }
 
 void header(const char* title, const char* subtitle, Color accent, float time) {
+  // The main menu's look: a dark slanted plate, the screen's accent fading in, then a crimson and a white slash.
+  (void)time;
   const Rectangle r{-60, 24, 640, 72};
   const float s = 40;
-  slanted({r.x + 8, r.y + 8, r.width, r.height}, s, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
-  slanted(r, s, withAlpha({32, 50, 54, 255}, 0.96f), withAlpha(kInk, 0.96f));
+  slanted({r.x + 8, r.y + 8, r.width, r.height}, s, withAlpha(BLACK, 0.45f), withAlpha(BLACK, 0.45f));
+  slanted(r, s, withAlpha({36, 36, 48, 255}, 0.95f), withAlpha({14, 14, 22, 255}, 0.95f));
   DrawRectangleGradientH(0, int(r.y), 340, int(r.height), withAlpha(accent, 0.38f), withAlpha(accent, 0.0f));
-  DrawLineEx({0, r.y + r.height - 7}, {r.x + r.width - s * (r.height - 7) / r.height - 9, r.y + r.height - 7}, 1.0f,
-             withAlpha(kGold, 0.35f));
-  slantedOutline(r, s, 2.0f, kGold);
-  rune({r.x + r.width - 86, r.y + r.height * 0.5f}, 17, 0, time * 0.4f, withAlpha(kTeal, 0.6f), 2.0f);
-  // Trailing slashes: the screen's accent, then a gold one.
+  DrawRectangleGradientH(0, int(r.y + r.height - 4), int(r.x + r.width - s * 0.9f), 4, kRed, withAlpha(kRed, 0.0f));
+  slantedOutline(r, s, 1.5f, withAlpha({130, 130, 150, 255}, 0.6f));
   const Rectangle a{r.x + r.width + 10, r.y, 24, r.height};
-  slanted(a, s, accent, shade(accent, 0.6f));
-  slantedOutline(a, s, 1.5f, withAlpha(kGold, 0.8f));
-  slanted({r.x + r.width + 44, r.y, 6, r.height}, s, kGold, shade(kGold, 0.7f));
-  drawTextOutlined(title, 36, r.y + 10, 52, kCream, kInk, 4.0f, FontKind::Title);
-  if (subtitle) drawTextOutlined(subtitle, 44, r.y + r.height + 10, 19, kMuted, kInk, 2.0f);
+  slanted(a, s, kRed, kRedDark);
+  slanted({r.x + r.width + 44, r.y, 6, r.height}, s, WHITE, withAlpha(WHITE, 0.7f));
+  drawTextOutlined(title, 36, r.y + 10, 52, WHITE, withAlpha(BLACK, 0.7f), 4.0f, FontKind::Title);
+  if (subtitle) drawTextOutlined(subtitle, 44, r.y + r.height + 10, 19, {220, 220, 230, 255}, withAlpha(BLACK, 0.7f), 2.0f);
 }
 
 float keycapWidth(const char* label, float h) { return std::max(h, textWidth(label, h * 0.48f) + h * 0.7f); }
