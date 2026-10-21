@@ -1451,128 +1451,6 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
               withAlpha({44, 24, 18, 255}, 0.32f * k * alpha));
 }
 
-// Ultimate ready: soft glow of the hero's element, a turning hexagon and a tilted rune ring
-// orbiting the body (its front half passes in front of the fighter).
-// The hero's aura drawn by PixelLab (behind it, from its feet), if it has one.
-const char* auraSprite(const Fighter& f) {
-  (void)f;
-  return "ult_ready";  // the same aura for everyone, in PixelLab
-}
-
-void drawUltAura(Vec2 c, float H, float t, bool front, float k, Color z) {
-  if (!front) {
-    additive(true);
-    DrawCircleGradient(int(c.x), int(c.y), 0.95f * H, withAlpha(z, (0.26f + 0.08f * std::sin(t * 5.0f)) * k),
-                       withAlpha(z, 0.0f));
-    additive(false);
-    DrawPolyLinesEx(V(c), 6, 0.84f * H, t * 18.0f, 2.0f, withAlpha(z, 0.24f * k));
-    DrawPolyLinesEx(V(c), 6, 0.72f * H, -t * 26.0f + 30.0f, 1.5f, withAlpha(z, 0.14f * k));
-  }
-  const float rx = 0.66f * H, ry = 0.17f * H, tilt = -0.2f;
-  const Vec2 oc = c + Vec2{0.0f, 0.06f * H};
-  auto at = [&](float ang) { return oc + rotate({std::cos(ang) * rx, std::sin(ang) * ry}, tilt); };
-  const int n = 32;
-  for (int i = 0; i < n; ++i) {
-    float a0 = i * 2.0f * kPi / n, a1 = (i + 1) * 2.0f * kPi / n;
-    if ((std::sin((a0 + a1) * 0.5f) > 0.0f) != front) continue;
-    Vec2 p0 = at(a0), p1 = at(a1);
-    DrawLineEx(V(p0), V(p1), 6.0f, withAlpha(z, 0.16f * k));
-    DrawLineEx(V(p0), V(p1), 2.0f, withAlpha(mixColor(z, WHITE, 0.35f), (front ? 0.8f : 0.45f) * k));
-  }
-  for (int i = 0; i < 6; ++i) {  // rune glyphs riding the ring
-    float ang = t * 1.3f + i * kPi / 3.0f;
-    if ((std::sin(ang) > 0.0f) != front) continue;
-    Vec2 p = at(ang);
-    float sz = (i % 2 ? 4.5f : 3.4f) * (0.75f + 0.25f * std::sin(ang));
-    DrawCircleV(V(p), sz * 2.2f, withAlpha(z, 0.22f * k));
-    DrawPoly(V(p), i % 2 ? 4 : 3, sz, ang * 40.0f, withAlpha(mixColor(z, WHITE, 0.5f), (front ? 1.0f : 0.6f) * k));
-  }
-}
-
-// Ultimate: light pillar, magic circle and converging energy behind; core and shock waves in
-// front, all in the hero's element.
-void drawFinalSmashFx(const Fighter& f, Vec2 c, float t, bool front) {
-  const MoveDef& mv = f.moveDef(FinalSmash);
-  const float H = f.height();
-  const int ft = f.moveFrame;
-  const Color z = hitFxGlow(heroElement(f.def->hero));
-  const Color sig = hitFxColor(mv.hitboxes.empty() ? heroElement(f.def->hero) : mv.hitboxes[0].fx);
-  if (!front) {
-    float pil = clampf(ft / 8.0f, 0.0f, 1.0f) * clampf((40 - ft) / 8.0f, 0.0f, 1.0f);
-    additive(true);
-    if (pil > 0.0f) {  // light pillar: soft edges, brightest on the fighter, fading out under the feet
-      const float top = c.y - 1600.0f, bot = c.y + 0.7f * H;
-      auto beam = [&](float w, Color col, float a) {
-        const Color e = withAlpha(col, 0.0f), up = withAlpha(col, 0.25f * a), mid = withAlpha(col, a);
-        for (float s : {-1.0f, 1.0f}) {
-          const float x = c.x + s * w;
-          gradQuad({x, top}, e, {x, c.y}, e, {c.x, c.y}, mid, {c.x, top}, up);
-          gradQuad({x, c.y}, e, {x, bot}, e, {c.x, bot}, e, {c.x, c.y}, mid);
-        }
-      };
-      beam(H * (0.3f + 0.25f * pil), z, 0.32f * pil);
-      beam(H * (0.1f + 0.08f * pil), WHITE, 0.3f * pil);
-    }
-    float core = ft < 34 ? ft / 34.0f : clampf(1.0f - (ft - 60) / 20.0f, 0.0f, 1.0f);
-    if (core > 0.0f)
-      DrawCircleGradient(int(c.x), int(c.y), H * (0.45f + 0.35f * core), withAlpha(mixColor(z, WHITE, 0.5f), 0.5f * core),
-                         withAlpha(z, 0.0f));
-    for (const auto& h : mv.hitboxes) {  // light rays of each shock wave
-      int tt = ft - h.start + 4;
-      if (tt < 0 || tt > 10) continue;
-      float rk = 1.0f - tt / 10.0f;
-      float r = h.radius * easeOut(tt / 12.0f);
-      for (int i = 0; i < 12; ++i) {
-        float ang = i * kPi / 6.0f + h.start * 0.3f;
-        Vec2 dir{std::cos(ang), std::sin(ang)}, perp{-dir.y, dir.x};
-        Vec2 p0 = c + dir * (r * 0.2f);
-        tri(p0 + perp * 7.0f, p0 - perp * 7.0f, c + dir * (r * 1.2f), withAlpha(mixColor(z, WHITE, 0.6f), 0.4f * rk));
-      }
-    }
-    additive(false);
-    for (const auto& h : mv.hitboxes) {  // shock waves
-      int tt = ft - h.start + 4;
-      if (tt < 0 || tt > 24) continue;
-      float r = h.radius * easeOut(tt / 12.0f);
-      float a = 1.0f - tt / 24.0f;
-      DrawCircleV(V(c), r, withAlpha(z, 0.1f * a));
-      DrawRing(V(c), std::max(0.0f, r - 20.0f), r, 0, 360, 72, withAlpha(sig, 0.5f * a));
-    }
-    float grow = easeOut(ft / 26.0f) * clampf((96 - ft) / 20.0f, 0.0f, 1.0f);
-    if (grow > 0.0f) {  // magic circle
-      float R = H * 1.25f * grow;
-      DrawRing(V(c), R - 3.0f, R, 0, 360, 64, withAlpha(z, 0.65f * grow));
-      DrawRing(V(c), R * 0.84f - 1.5f, R * 0.84f, 0, 360, 64, withAlpha(z, 0.4f * grow));
-      DrawPolyLinesEx(V(c), 6, R * 0.82f, t * 40.0f, 2.5f, withAlpha(mixColor(z, WHITE, 0.3f), 0.55f * grow));
-      DrawPolyLinesEx(V(c), 3, R * 0.8f, -t * 30.0f, 2.0f, withAlpha(sig, 0.45f * grow));
-      DrawPolyLinesEx(V(c), 3, R * 0.8f, -t * 30.0f + 60.0f, 2.0f, withAlpha(sig, 0.45f * grow));
-      for (int i = 0; i < 12; ++i) {
-        float a = t * 0.8f + i * kPi / 6.0f;
-        Vec2 dir{std::cos(a), std::sin(a)};
-        DrawLineEx(V(c + dir * (R * 0.87f)), V(c + dir * (R * 0.97f)), i % 3 ? 2.0f : 4.0f, withAlpha(z, 0.75f * grow));
-      }
-    }
-    if (ft < 34) {  // energy converging on the fighter
-      for (int i = 0; i < 12; ++i) {
-        float a = i * kPi / 6.0f + std::sin(i * 3.1f) * 0.3f;
-        float u = std::fmod(ft / 17.0f + i * 0.37f, 1.0f);
-        float rr = H * (2.0f - 1.6f * u);
-        Vec2 dir{std::cos(a), std::sin(a)};
-        DrawLineEx(V(c + dir * rr), V(c + dir * (rr * 0.82f)), 3.0f, withAlpha(i % 3 ? z : sig, 0.8f * u));
-      }
-    }
-    return;
-  }
-  for (const auto& h : mv.hitboxes) {  // bright fronts of the shock waves, over everything
-    int tt = ft - h.start + 4;
-    if (tt < 0 || tt > 24) continue;
-    float r = h.radius * easeOut(tt / 12.0f);
-    float a = 1.0f - tt / 24.0f;
-    if (r < 0.6f * H) continue;  // still inside the body: drawn behind only
-    DrawRing(V(c), std::max(0.0f, r - 8.0f), r, 0, 360, 72, withAlpha(mixColor(z, WHITE, 0.45f), 0.9f * a));
-    DrawPolyLinesEx(V(c), 6, r * 1.07f, tt * 4.0f + h.start * 10.0f, 3.0f, withAlpha(z, 0.6f * a));
-  }
-}
 }  // namespace
 
 namespace {
@@ -1667,20 +1545,6 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       DrawCircleV({feet.x + std::cos(a) * 55.0f, feet.y + 6 + std::sin(a) * 10.0f}, 4, withAlpha(WHITE, 0.9f));
     }
   }
-  float ultK = f.finalSmash ? alpha : 0.0f;
-  const Color ultCol = hitFxGlow(heroElement(d.hero));
-  // The hero's PixelLab aura (its reiatsu...) replaces the drawn ring and pillar when it has one: the ultimate
-  // ready, then unleashed (bigger).
-  const char* aura = auraSprite(f);
-  const bool power = false;
-  if (aura && art::fxInfo(aura) && (ultK > 0.0f || usingFs || power)) {
-    art::drawFx(aura, at, feet, (H / 170.0f) * (usingFs ? 1.3f : 1.0f), 0.0f, f.facing < 0,
-                usingFs ? 1.0f : std::max(ultK, power ? 0.7f : 0.0f));
-    ultK = 0.0f;
-    usingFs = false;
-  }
-  if (ultK > 0.0f) drawUltAura(c, H, at, false, ultK, ultCol);
-  if (usingFs) drawFinalSmashFx(f, c, at, false);
 
   // The character and its afterimages: one pixel-art sprite (big enough for the longest weapons).
   const float rx = std::max(H * 1.7f, 200.0f);
@@ -1708,8 +1572,6 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   drawFormAvatar(f, at, true);
   if (!(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
     drawSmear(anim, pose, alpha);
-  if (ultK > 0.0f) drawUltAura(c, H, at, true, ultK, ultCol);
-  if (usingFs) drawFinalSmashFx(f, c, at, true);
   if (f.state == FState::Shield || f.state == FState::ShieldStun) {
     float r = H * 0.62f * (0.35f + 0.65f * f.shield / kMaxShield);
     Color pc = slotColor(f);

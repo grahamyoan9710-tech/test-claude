@@ -103,8 +103,10 @@ static bool shotSprite(const Projectile& p, const Shot& s, float time) {
   const art::FxInfo* fx = p.fx ? art::fxInfo(p.fx) : nullptr;
   if (!fx) return false;
   const float size = s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
-  const float t = time + hash01(s.seed) * fx->duration();  // copies side by side do not pulse together
-  if (p.visual == ProjVisual::Pillar) return art::drawFx(p.fx, t, s.c + Vec2{0.0f, s.r * 1.2f}, size, 0.0f, false, s.k);
+  // A flying shape cycles its frames (copies side by side do not pulse together); a column plays once as it rises.
+  const float t = art::fxLoopTime(p.fx, time + hash01(s.seed) * fx->duration());
+  if (p.visual == ProjVisual::Pillar)
+    return art::drawFx(p.fx, s.age / 60.0f, s.c + Vec2{0.0f, s.r * 1.2f}, size, 0.0f, false, s.k);
   if (p.vel.len2() < 1.0f) return art::drawFx(p.fx, t, s.c, size, 0.0f, (s.seed & 1u) != 0, s.k);
   const bool flip = s.d.x < 0.0f;  // mirrored, not upside down, when it flies to the left
   const float rot = flip ? std::atan2(-s.d.y, -s.d.x) : std::atan2(s.d.y, s.d.x);

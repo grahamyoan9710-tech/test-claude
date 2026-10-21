@@ -344,11 +344,11 @@ static bool drawSpriteBeam(Vec2 a, Vec2 dir, float len, float w, const char* nam
   const art::FxInfo* seg = name ? art::fxInfo(name) : nullptr;
   if (!seg) return false;
   const float size = 0.5f * w / (seg->hit > 0.0f ? seg->hit : 0.4f * seg->fh);
-  art::drawFxStrip(name, time, a, dir, len, size, 1.0f, std::min(len, 0.6f * w));
+  art::drawFxStrip(name, art::fxLoopTime(name, time), a, dir, len, size, 1.0f, std::min(len, 0.6f * w));
   const std::string head = std::string(name) + "_head";
   if (art::fxInfo(head.c_str())) {
     const bool flip = dir.x < 0.0f;
-    art::drawFx(head.c_str(), time, a + dir * len, size, flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
+    art::drawFx(head.c_str(), art::fxLoopTime(head.c_str(), time), a + dir * len, size, flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
   }
   // The flare at the hand, as on the drawn beams: the segment fades in under it.
   const BeamStyle s = beamStyle(fx);

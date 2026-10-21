@@ -101,6 +101,8 @@ bool drawWeaponIcon(const CharacterDef& def, int slot, Vec2 center, float size, 
 // A floating weapon (WeaponVisual::Floating) beside the fighter holding it.
 void drawFloatingWeapon(const Fighter& f, float time, float alpha);
 void drawItems(const Match& m, float time);
+// Over each weapon on the stage: its owner's portrait, the weapon button (players) and the hold that takes it.
+void drawItemPrompts(const Match& m, const Camera2D& cam, const std::array<int, 4>& devices, float time);
 
 // ---- Big effects (render_vfx.cpp) -------------------------------------------------
 void drawBeams(const Match& m, float time);              // beams of the moves being performed (world space)

@@ -598,6 +598,7 @@ void MatchScreen::draw() {
   fx_.drawScreen(cam);
   if (const Fx::Impact* im = fx_.impact()) drawImpactFrame(m_, *im, cam, time_);
   drawOffscreenBubbles(m_, cam, time_);
+  drawItemPrompts(m_, cam, devices_, time_);
   drawHud(m_, fx_.hudShake, time_, &devices_);
   if (!paused_) drawCountdown(m_);  // (an unplugged gamepad can pause before "GO !")
   if (training()) drawTrainingPanel();

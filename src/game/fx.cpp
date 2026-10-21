@@ -699,10 +699,13 @@ void Fx::onEvents(const Match& m) {
         const int ch = std::clamp(int(e.strength), 0, int(chars.size()) - 1);
         const WeaponDef& w = chars[ch].weapons[e.b & 1];
         const Color c = hitFxColor(w.fx), g = hitFxGlow(w.fx);
+        // The weapon's name, above the fighter's J1 / CPU tag (render_fighter.cpp, tagY)
+        const Vec2 name = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos - Vec2{0.0f, m.fighters[e.a].height() + 64.0f}
+                                               : e.pos - Vec2{0.0f, 70.0f};
         if (art::fxInfo("move_appear")) {
           const Vec2 feet = e.a >= 0 && e.a < nf ? m.fighters[e.a].pos : e.pos;
           playFx("move_appear", feet, chars[ch].height / 170.0f, 0.0f, false, mixColor(c, WHITE, 0.25f));
-          texts_.push_back({e.pos + Vec2{0.0f, -70.0f}, w.name, g, 0});
+          texts_.push_back({name, w.name, g, 0});
           au.play(Sfx::WeaponPickup, 0.9f);
           break;
         }
@@ -714,7 +717,7 @@ void Fx::onEvents(const Match& m) {
         for (int i = 0; i < 18; ++i)
           add(PK::Star, e.pos, rdir() * rng_.range(3, 9), rng_.range(24, 40), rng_.range(3, 6), 1, i % 2 ? g : WHITE);
         elementBurst(e.pos, {0, -1}, w.fx, 0.6f);
-        texts_.push_back({e.pos + Vec2{0.0f, -70.0f}, w.name, g, 0});
+        texts_.push_back({name, w.name, g, 0});
         au.play(Sfx::WeaponPickup, 0.9f);
         break;
       }
@@ -977,12 +980,17 @@ void Fx::drawBack(const Match& m, float time) const {
     const std::string own = f.def->id + "_t_aura";
     const bool mine = art::fxInfo(own.c_str()) != nullptr;
     const AuraLook look = auraLook(f.def->hero);
-    art::drawFx(mine ? own.c_str() : "sys_aura", time + f.id * 0.37f, f.pos, f.def->height / 170.0f * (0.95f + 0.1f * k),
+    const char* aura = mine ? own.c_str() : "sys_aura";
+    art::drawFx(aura, art::fxLoopTime(aura, time + f.id * 0.37f), f.pos, f.def->height / 170.0f * (0.95f + 0.1f * k),
                 0.0f, f.facing < 0, 0.85f * std::min(1.0f, k), mine ? WHITE : (look.dark ? look.inner : look.outer));
   }
 }
 
 void Fx::drawWorld() const {
+  auto drawSprites = [&] {  // the PixelLab effects, on top of the particles
+    for (const auto& f : sprites_)
+      if (f.follow == -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
+  };
   bool glows = false;
   for (const auto& p : parts_) {
     const float k = p.life / p.maxLife;  // 1 -> 0
@@ -1109,7 +1117,7 @@ void Fx::drawWorld() const {
       }
     }
   }
-  if (!glows) return;
+  if (!glows) return drawSprites();
   vfx::additive(true);  // light adds up
   for (const auto& p : parts_) {
     const float k = p.life / p.maxLife;
@@ -1139,8 +1147,7 @@ void Fx::drawWorld() const {
     }
   }
   vfx::additive(false);
-  for (const auto& f : sprites_)
-    if (f.follow == -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
+  drawSprites();
 }
 
 void Fx::drawScreen(const Camera2D& cam) const {

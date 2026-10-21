@@ -64,6 +64,8 @@ struct FxInfo {
   float duration() const { return frames / fps; }
 };
 const FxInfo* fxInfo(const char* name);
+// Time of an effect shown for as long as something lasts (projectile, beam, aura): its frames cycle.
+float fxLoopTime(const char* name, float t);
 bool drawFx(const char* name, float t, Vec2 at, float size, float rot = 0.0f, bool flip = false, float alpha = 1.0f,
             Color tint = WHITE);
 bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0.0f, bool flip = false,

@@ -423,6 +423,11 @@ const FxInfo* fxInfo(const char* name) {
   return F ? &F->info : nullptr;
 }
 
+float fxLoopTime(const char* name, float t) {
+  const Fx* F = fxOf(name);
+  return F ? std::fmod(std::max(0.0f, t), F->info.duration()) : t;
+}
+
 bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bool flip, float alpha, Color tint) {
   const Fx* F = fxOf(name);
   if (!F || alpha <= 0.0f) return false;

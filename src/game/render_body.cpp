@@ -36,12 +36,17 @@ void drawCharacter(const CharacterDef& d, int palette, const Pose& pose, Vec2 fe
                    float alpha, Color flashColor, float flash, float time) {
   (void)palette;
   (void)time;
+  // A clip is the whole animation: drawn flat on the feet, without the skeleton's bob, squash and spin on top.
+  Pose flat = pose;
+  flat.rot = 0.0f;
+  flat.shift = {0.0f, 0.0f};
+  flat.squash = flat.sx = 1.0f;
   if (pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet) &&
-      art::drawSheet(d, pose, xform(d, pose, feet, facing, scale), alpha, flashColor, flash))
+      art::drawSheet(d, pose, xform(d, flat, feet + pose.sheetOffset * scale, facing, scale), alpha, flashColor, flash))
     return;
   // No clip for this pose yet: the fighter's idle clip, else its still picture.
   if (art::hasSheet(d.hero, art::kSheetIdle)) {
-    Pose idle = pose;
+    Pose idle = flat;
     idle.sheet = art::kSheetIdle;
     idle.sheetT = time;
     idle.sheetPhase = -1.0f;
