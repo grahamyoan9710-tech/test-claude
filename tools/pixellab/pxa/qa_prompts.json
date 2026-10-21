@@ -79,6 +79,7 @@
   "fair": "in mid-air, extends one leg straight forward, then pulls the leg back, staying high in the air, nothing below him",
   "w1_nspecial": "draws the golden halberd back and thrusts it forward at arm's length as if throwing a javelin, without letting go, then pulls it back into the stance",
   "w1_sspecial": "leans forward low with the golden halberd held out in front, takes one long step forward, then stops with the feet planted",
-  "w1_uspecial": "swings the golden halberd in a rising arc above his head while rising on his toes, then ends holding it raised"
+  "w1_uspecial": "swings the golden halberd in a rising arc above his head while rising on his toes, then ends holding it raised",
+  "w1_bthrow": "holding an invisible opponent with his free hand, turns his body around and pushes that hand behind him, the golden halberd held still in the other hand, then returns to the ready stance; nothing shines. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
  }
 }
