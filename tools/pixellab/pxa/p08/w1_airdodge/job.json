@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "7da1ea62-014f-4d7a-baee-a41e31ce1398",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e95296e6-f3c2-4fd5-b409-15dff2537134",
+  "last_frame_url": "upload:a068b492-fa1f-449f-a607-921082db0101",
+  "description": "air dodge: curls up tightly in mid-air in the same place holding a golden halberd close to his body, the body staying in the middle of the picture, then opens up again in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a golden halberd",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a golden halberd"
+ },
+ "reply": "id: 7da1ea62-014f-4d7a-baee-a41e31ce1398\njob_id: 7da1ea62-014f-4d7a-baee-a41e31ce1398\ndescription: air dodge: curls up tightly in mid-air in the same place holding a golden halberd close to his body, the body staying in the middle of the picture, then opens up again in the same pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7da1ea62-014f-4d7a-baee-a41e31ce1398\")\nasset_id: 093c24a4-94d1-5d6a-972c-488960aec3bb\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w1_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p08/w1_jump/f_08.png"
+}
