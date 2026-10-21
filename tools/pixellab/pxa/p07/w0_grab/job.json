@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "d2942a1d-3f04-43bb-80bb-ac0a276260f9",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4ee58830-0a68-4504-87d9-c9a029c0f669",
+  "last_frame_url": "upload:7917e54e-2946-4733-9b23-2403b8cc78fc",
+  "description": "leans forward and reaches out with her free open hand, closes it on empty air, then pulls back, the other hand keeping a broad black and red sword with red ribbons still at her side; nothing leaves her hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
+  "initial_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons"
+ },
+ "reply": "id: d2942a1d-3f04-43bb-80bb-ac0a276260f9\njob_id: d2942a1d-3f04-43bb-80bb-ac0a276260f9\ndescription: leans forward and reaches out with her free open hand, closes it on empty air, then pulls back, the other hand keeping a broad black and red sword with red ribbons still at her side; nothing leaves her hands. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d2942a1d-3f04-43bb-80bb-ac0a276260f9\")\nasset_id: 73dfe4d2-27b8-5ab6-a67f-a4f77239f64a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png"
+}
