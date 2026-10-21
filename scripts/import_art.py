@@ -14,6 +14,7 @@ from PIL import Image
 PX = "tools/pixellab/pxa"
 OUT = "assets/sprites"
 ARENAS = ["lunaire", "givre", "ecarlate", "kurenai", "nuees"]
+MIRRORED = {"kurenai"}  # the main platform cut at the kit's left edge: its right half, mirrored, makes the left one
 PORTRAITS = {"p01": 0, "p02": 0, "p03": 0, "p07": 0, "p08": 3}  # the candidate kept for each fighter
 
 
@@ -68,6 +69,11 @@ def main():
         kit = f"{PX}/arenas/{key}_kit/f_00.png"
         if os.path.exists(kit):
             solid, thin = split_kit(Image.open(kit).convert("RGBA"))
+            if key in MIRRORED:
+                half = solid.crop((solid.width // 2, 0, solid.width, solid.height))
+                solid = Image.new("RGBA", (half.width * 2, solid.height))
+                solid.paste(half.transpose(Image.FLIP_LEFT_RIGHT), (0, 0))
+                solid.paste(half, (half.width, 0))
             x2(solid).save(f"{OUT}/arena_{key}_solid.png")
             x2(thin).save(f"{OUT}/arena_{key}_thin.png")
             print(f'{key}: solidTop {walk_top(solid) * 2}, thinTop {walk_top(thin) * 2}')
