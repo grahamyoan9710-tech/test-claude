@@ -52,9 +52,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud (cool-sagan) | 22/10 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 22/10 ~0 h 25 UTC, session cloud : **v10.4 publiée, effets en pause** (demande du propriétaire, déçu des effets) :
+  `kVfx = false` dans `src/game/render.hpp` coupe étincelles, fumées, auras, traînées, flashs, cadres d'impact et
+  balise d'arme ; projectiles et rayons en formes blanches. Les effets refaits d'après ses maquettes restent garés
+  (`tools/pixellab/vfx/maquette_*.py`, `skill_gen.py`, `gen/`). M1 aérien avec arme du 03 (A) et du 08 (A, B)
+  régénérés (entailles visibles), fitall repassé. Verrou de version libre. **Ne plus générer d'effets PixelLab.**
 - 21/10 ~21 h UTC, session cloud : **v10.3 publiée** (M1 gardé 8 images pendant l'élan du saut et la réception ;
   avec une arme, Haut + M1 dans l'élan donne le M1 aérien). Verrou de version libre. Maquettes d'effets du
   propriétaire (style Rivals of Aether) dans `docs/refonte/vfx_maquette_*.png` : planche 1 (coups, sol, saut, dash,
