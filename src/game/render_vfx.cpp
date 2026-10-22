@@ -372,6 +372,10 @@ void drawBeams(const Match& m, float time) {
     env *= std::min(1.0f, left / 5.0f + 0.2f);
     const float pulse = 1.0f + 0.06f * std::sin(time * 47.0f) + 0.04f * std::sin(time * 91.0f + f.id);
     const float len = b.length * std::min(1.0f, (u + 1) / 3.0f);
+    if (!kVfx) {  // a plain white band on the hitbox
+      DrawLineEx(V(a), V(a + dir * len), b.width, withAlpha(WHITE, 0.45f));
+      continue;
+    }
     if (b.sprite && drawSpriteBeam(a, dir, len, b.width * env * pulse, b.sprite, b.fx, time)) continue;
     drawBeam(a, dir, len, b.width * env * pulse, beamStyle(b.fx), time, uint32_t(f.id * 977 + 13));
   }

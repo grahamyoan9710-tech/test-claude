@@ -453,6 +453,15 @@ FX["sys_form_end"] = recipe(170, 220, 85, 200, 14, [
      "size": [2, 4], "shape": "sparkle", "lifespan": 0.7, "ramp": "glow", "fade_out": 0.3, "y": -60}])
 
 
+# Full ultimate meter, a smash charging: motes of light rising round the fighter (the game tints them in its colour).
+FX["sys_ult_motes"] = recipe(120, 200, 60, 188, 16, [
+    {"id": "motes", "type": "particles", "mode": "rise", "radius": 42, "squash": 0.3, "speed": 160, "count": 24,
+     "size": [1, 3], "shape": "dot", "lifespan": 0.75, "ramp": "glow", "fade_out": 0.4},
+    {"id": "glints", "type": "particles", "mode": "rise", "radius": 46, "squash": 0.35, "speed": 110, "count": 10,
+     "size": [2, 4], "shape": "sparkle", "lifespan": 0.65, "ramp": "glow", "fade_out": 0.4, "y": -30}],
+    loop=True, outline="none")
+
+
 def call(argv):
     r = subprocess.run(["python3", PX, "vfx_workbench", json.dumps({"argv": argv})], capture_output=True, text=True,
                        timeout=300)

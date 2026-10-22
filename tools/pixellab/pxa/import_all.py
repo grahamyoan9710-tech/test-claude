@@ -26,6 +26,8 @@ EXTRA = {("sasuke", "uspecial"): ["--only", "1-8"]}  # flung up: what follows (l
 IMPACTS = {("kakashi", "w0_nspecial"): "5", ("kakashi", "w0_ultimate"): "16",  # the eye techniques: the held stare
            ("sasuke", "w1_nspecial"): "5", ("sasuke", "w1_ultimate"): "12",
            ("naruto", "nair"): "3", ("kakashi", "w1_ultimate"): "12"}  # the spin with its chakra rings at their biggest
+# Clips generated from their start picture moved down in the canvas (room for a big swing): px lower feet.
+SHIFT = {("p03", "w0_nair"): 40, ("p08", "w0_nair"): 48, ("p08", "w1_nair"): 46}
 HELPERS = {"runstart", "ledgegrab", "holdstart", "drawsword", "airsword", "w0guard", "w1guard"}  # bases only, not clips of the game
 HELPERS |= {f"w{s}_{h}" for s in (0, 1) for h in ("runstart", "ledgegrab", "holdstart")}  # ... of a weapon's look
 
@@ -228,7 +230,7 @@ def main():
             print("missing", name)
             continue
         subprocess.run(["python3", os.path.join(os.path.dirname(S), "tools", "greyfix.py"), d, "--fix"], check=True)
-        cax, cay = ax, ay
+        cax, cay = ax, ay + SHIFT.get((fighter, name), 0)
         state = name[3:] if wslot_name(name) else name  # a weapon's look: w1_ledge is anchored like the ledge
         if state == "ledge":  # the hands on the ledge
             a = np.asarray(Image.open(os.path.join(d, "f_01.png")).convert("RGBA"))[..., 3] > 0

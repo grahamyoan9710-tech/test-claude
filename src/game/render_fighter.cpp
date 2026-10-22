@@ -1557,7 +1557,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   }
   drawFormAvatar(f, at, false);
   auto drawAll = [&](float a) {
-    for (int i = 0; i < 4; ++i) {  // afterimages, oldest first
+    for (int i = 0; kVfx && i < 4; ++i) {  // afterimages, oldest first
       const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
       if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
     }
@@ -1571,18 +1571,15 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     pix::sprite(box, alpha, drawAll);
 
   drawFormAvatar(f, at, true);
-  if (!(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
+  if (kVfx && !(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
     drawSmear(anim, pose, alpha);
-  if (f.state == FState::Shield || f.state == FState::ShieldStun) {
-    float r = H * 0.62f * (0.35f + 0.65f * f.shield / kMaxShield);
-    Color pc = slotColor(f);
-    float k = f.shield / kMaxShield;
-    Color sc = mixColor({255, 60, 60, 255}, pc, k);
-    DrawCircleV(V(c), r, withAlpha(sc, 0.32f));
-    DrawRing(V(c), r - 3.0f, r, 0, 360, 48, withAlpha(mixColor(sc, WHITE, 0.4f), 0.85f));
-    DrawCircleV({c.x - r * 0.35f, c.y - r * 0.4f}, r * 0.18f, withAlpha(WHITE, 0.35f));
+  if (kVfx && (f.state == FState::Shield || f.state == FState::ShieldStun)) {  // the owner's bubble, smaller as it wears out
+    const float r = H * 0.62f * (0.35f + 0.65f * f.shield / kMaxShield);
+    float w, h;
+    if (art::pictureSize("sys_shield_bubble", w, h))
+      art::drawPicture("sys_shield_bubble", {0, 0, w, h}, {c.x - r, c.y - r, 2.0f * r, 2.0f * r}, 0.9f);
   }
-  if (f.state == FState::ShieldBreak && f.grounded) {
+  if (kVfx && f.state == FState::ShieldBreak && f.grounded) {
     for (int i = 0; i < 3; ++i) {
       float a = at * 5.0f + i * 2.094f;
       Vec2 sp{c.x + std::cos(a) * H * 0.3f, c.y - H * 0.55f + std::sin(a) * H * 0.08f};

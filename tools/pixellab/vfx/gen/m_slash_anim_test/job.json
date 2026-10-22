@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "072c9208-0cee-4619-8d29-e7ba4c11e81e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:610bc731-0aaa-45b9-8d6b-ce262f2bc511",
+  "description": "pixel art hit effect animation: the blue slash flashes bright for a moment, then breaks apart into small blue shards that scatter outward and fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; it stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a bright blue sword slash effect, a crescent swoosh with a white core and small blue shards"
+ },
+ "reply": "id: 072c9208-0cee-4619-8d29-e7ba4c11e81e\njob_id: 072c9208-0cee-4619-8d29-e7ba4c11e81e\ndescription: pixel art hit effect animation: the blue slash flashes bright for a moment, then breaks apart into small blue shards that scatter outward and fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; it stays inside the picture.\nframes: 8\nsize: 128x128px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"072c9208-0cee-4619-8d29-e7ba4c11e81e\")\nasset_id: 917c6431-29f5-594d-ab21-ac73969b1bd1\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "vfx/gen/m_slash_b/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

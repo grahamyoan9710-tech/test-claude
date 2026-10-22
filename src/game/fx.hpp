@@ -39,7 +39,7 @@ class Fx {
   void playFx(const char* name, Vec2 at, float size, float rot, bool flip, Color tint);  // tinted (shared effects)
   // A shared movement effect (move_*: PixelLab, grey and white) in fighter `who`'s colour, mirrored to its facing.
   // False when the effect is not imported.
-  bool moveFx(const Match& m, int who, const char* name, Vec2 at, float size = 1.0f);
+  bool moveFx(const Match& m, int who, const char* name, Vec2 at, float size = 1.0f, bool tinted = false);
   Vec2 punchFocus() const { return punchPos_; }
 
  private:
@@ -88,10 +88,9 @@ class Fx {
   Particle& add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity = 0.0f,
                 float drag = 0.92f);
   void burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, float size);
-  void dust(Vec2 feet, int count, float spread);
   void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kZonaiGlow);
   void hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big);
-  void groundImpact(const Match& m, Vec2 feet, float strength);  // cracks, rubble and dust where a blow hits the ground
+  void groundImpact(const Match& m, Vec2 feet, float strength);  // the ground bursts where a powerful blow lands
   void elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy);
   void explosion(Vec2 pos, float r, HitFx fx, bool drawn = false);  // drawn: an effect sprite plays there too
   void startImpact(const Match& m, Vec2 pos, Vec2 dir, int attacker, int victim, HitFx fx, int len, bool ko);

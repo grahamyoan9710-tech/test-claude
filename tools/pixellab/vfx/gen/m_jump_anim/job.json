@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "bdfb0c36-c831-458f-a70f-4ba23fb7fb9a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:16077429-1262-4e07-a388-dc5569d68671",
+  "description": "pixel art effect animation: the streaks fly up and vanish, the burst shrinks into the ground and fades away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a jump take-off effect: a small white burst of spikes from the ground with thin blue streaks shooting straight up, a flat white line on the ground"
+ },
+ "reply": "id: bdfb0c36-c831-458f-a70f-4ba23fb7fb9a\njob_id: bdfb0c36-c831-458f-a70f-4ba23fb7fb9a\ndescription: pixel art effect animation: the streaks fly up and vanish, the burst shrinks into the ground and fades away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 120x128px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bdfb0c36-c831-458f-a70f-4ba23fb7fb9a\")\nasset_id: d068ab46-ecff-5e98-9dc2-e322f6fd0fa3\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_jump/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

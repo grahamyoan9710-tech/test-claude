@@ -5,6 +5,10 @@
 
 #include "game/common.hpp"
 
+// Visual effects (sparks, smoke, auras, trails, impact frames...): paused by the owner on 22/10/2026 until new ones
+// are made elsewhere. Projectiles and beams are then drawn as plain white shapes so that attacks stay readable.
+constexpr bool kVfx = false;
+
 // ---- Fighters (render_fighter.cpp) ----------------------------------------
 // kZonaiGlow (ancient-tech teal-green) lives with the palette in common.hpp.
 

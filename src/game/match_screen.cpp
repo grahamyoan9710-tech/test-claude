@@ -557,12 +557,12 @@ void MatchScreen::draw() {
   Camera2D cam = camera();
   drawBackground(m_.stage(), W(cam.target), cam.zoom, time_);
   beginWorld(cam);
-  drawUltimateBackdrop(m_, time_);  // an ultimate's domain replaces the sky; the stage stays readable
+  if (kVfx) drawUltimateBackdrop(m_, time_);  // an ultimate's domain replaces the sky; the stage stays readable
   drawPlatforms(m_, time_);
   drawUltimateFront(m_, time_);
   drawOrb(m_, time_);
   drawItems(m_, time_);
-  fx_.drawBack(m_, time_);  // ki auras, pillars of light: behind the fighters
+  if (kVfx) fx_.drawBack(m_, time_);  // ki auras, pillars of light: behind the fighters
   // Grabbed fighters and victims are drawn last so they stay visible;
   // during a final smash cinematic the scene darkens behind its user.
   const int star = m_.freezeTimer > 0 ? m_.freezeOwner : -1;
@@ -579,7 +579,7 @@ void MatchScreen::draw() {
   drawBeams(m_, time_);
   drawFighterTags(m_);
   drawProjectiles(m_, time_);
-  fx_.drawWorld();
+  if (kVfx) fx_.drawWorld();
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);
@@ -589,7 +589,7 @@ void MatchScreen::draw() {
   endWorld();
   drawStageForeground(m_.stage(), W(cam.target), time_);
   fx_.drawScreen(cam);
-  if (const Fx::Impact* im = fx_.impact()) drawImpactFrame(m_, *im, cam, time_);
+  if (const Fx::Impact* im = fx_.impact(); kVfx && im) drawImpactFrame(m_, *im, cam, time_);
   drawOffscreenBubbles(m_, cam, time_);
   drawItemPrompts(m_, cam, devices_, time_);
   drawHud(m_, fx_.hudShake, time_, &devices_);

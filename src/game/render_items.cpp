@@ -24,7 +24,7 @@ void drawItems(const Match& m, float time) {
     const Vec2 base = it.pos;
     const Vec2 center = base + Vec2{0.0f, -46.0f + bob};
     // Once landed, the PixelLab beacon (falling, the pillar of light of fx.cpp guides it down)
-    if (it.grounded) art::drawFx("sys_weapon_beacon", time, base, 1.1f, 0.0f, false, 0.9f, mixColor(g, WHITE, 0.3f));
+    if (kVfx && it.grounded) art::drawFx("sys_weapon_beacon", time, base, 1.1f, 0.0f, false, 0.9f, mixColor(g, WHITE, 0.3f));
     // The weapon itself (whose it is: drawItemPrompts)
     drawWeaponIcon(d, it.slot, center, 76.0f);
   }

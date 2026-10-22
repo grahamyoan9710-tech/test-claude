@@ -1,0 +1,17 @@
+{
+ "status": "done",
+ "job_id": "6600eaee-b369-4f86-b2fd-f4dd36bf5fc4",
+ "tool": "create_image_pixflux",
+ "args": {
+  "description": "pixel art game VFX: a concentrated energy shot, a cone of energy narrowing to a sharp point, in gold and pale yellow with white highlights, crisp clean pixel art, transparent background, no character, nothing else",
+  "width": 194,
+  "height": 32,
+  "no_background": true,
+  "view": "side",
+  "init_image_base64": "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",
+  "init_image_strength": 300
+ },
+ "reply": "id: 6600eaee-b369-4f86-b2fd-f4dd36bf5fc4\njob_id: 6600eaee-b369-4f86-b2fd-f4dd36bf5fc4\ndescription: pixel art game VFX: a concentrated energy shot, a cone of energy narrowing to a sharp point, in gold and pale yellow with white highlights, crisp clean pixel art, transparent background, no character, nothing else\nsize: 194x32px\ntransparent: True\nasset_id: b46c910b-fe6b-56f1-9e61-703a3ae74c38\nasset_status: pending (saved when generation completes)\ninit_image: yes (strength 300)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"6600eaee-b369-4f86-b2fd-f4dd36bf5fc4\")",
+ "frames": 1,
+ "charged": "1 generation"
+}

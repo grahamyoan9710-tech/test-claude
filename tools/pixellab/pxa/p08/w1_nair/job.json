@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "d080f173-eb40-4329-910c-d54a3a134be4",
+ "job_id": "f71dd904-9a2f-4393-bde4-91bfc2ce243e",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:4ed54065-9daf-4f73-9372-e0d2892a06f0",
-  "last_frame_url": "upload:265b0302-f6d7-4b0f-b422-d2e7e8f76736",
-  "description": "in mid-air, twirls the halberd in a full circle around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "first_frame_url": "upload:9f680caa-5e44-47ee-9aec-b2e3e9b2fada",
+  "last_frame_url": "upload:8bd40290-4d5e-47a6-8625-d040110c617f",
+  "description": "in mid-air, two fast sweeps with the golden halberd in front of him: first a horizontal sweep forward, then a rising sweep upward, a short golden trail following the blade, then he tucks again. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds and the blade's slash trail: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.",
   "frame_count": 12,
   "view": "side",
   "direction": "east",
   "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a golden halberd",
   "initial_pose": "in mid-air facing right, knees tucked, holding a golden halberd"
  },
- "reply": "id: d080f173-eb40-4329-910c-d54a3a134be4\njob_id: d080f173-eb40-4329-910c-d54a3a134be4\ndescription: in mid-air, twirls the halberd in a full circle around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d080f173-eb40-4329-910c-d54a3a134be4\")\nasset_id: d30514e0-21fc-5896-8a1b-c8d605912a1a\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w1_jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p08/w1_jump/f_08.png",
+ "reply": "id: f71dd904-9a2f-4393-bde4-91bfc2ce243e\njob_id: f71dd904-9a2f-4393-bde4-91bfc2ce243e\ndescription: in mid-air, two fast sweeps with the golden halberd in front of him: first a horizontal sweep forward, then a rising sweep upward, a short golden trail following the blade, then he tucks again. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds and the blade's slash trail: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f71dd904-9a2f-4393-bde4-91bfc2ce243e\")\nasset_id: b4c9ed8f-e597-51de-9d96-48bee6fdc245\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/p08/nair_src_p08b.png",
+ "last": "pxa/p08/nair_src_p08b.png",
  "frames": 13,
  "charged": "2 generations"
 }

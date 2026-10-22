@@ -124,6 +124,10 @@ void drawProjectiles(const Match& m, float time) {
     s.k = std::min(1.0f, p.life / 8.0f) * std::min(1.0f, (p.age + 1) / 3.0f);
     s.age = float(p.age);
     s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
+    if (!kVfx) {  // a plain white ring on the hitbox (fainter: the warning before the strike)
+      DrawRing(V(s.c), std::max(1.0f, s.r - 2.5f), s.r, 0, 360, 32, withAlpha(WHITE, (p.armed() ? 0.75f : 0.3f) * s.k));
+      continue;
+    }
     if (!p.armed()) {  // the warning before the strike
       shotWarning(p, s, time, p.visual == ProjVisual::Pillar && p.vel.y > 0.5f);
       continue;

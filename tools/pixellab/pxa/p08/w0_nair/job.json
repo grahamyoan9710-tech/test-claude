@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "5260782f-85ea-40a7-89d1-393a79334f5a",
+ "job_id": "51eeaa2d-963a-4054-80af-f83c28b2eac7",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:8ac01451-de56-4fe6-85c4-0d582d78be11",
-  "last_frame_url": "upload:4df3a428-8f2e-425d-b072-9426434b4421",
-  "description": "in mid-air, holds the sword out to the side at arm's length for a moment, then tucks again, staying high in the air; nothing below him, nothing around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "first_frame_url": "upload:c346ca74-ceae-4ef8-81e8-715d8592e706",
+  "last_frame_url": "upload:8a555521-be76-4fd6-b0e2-e45f9e9fa2ff",
+  "description": "in mid-air, two fast slashes with the white and gold sword in front of him: first a horizontal cut forward, then a rising cut upward, a short white slash trail following the blade, then he tucks again. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds and the blade's slash trail: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.",
   "frame_count": 12,
   "view": "side",
   "direction": "east",
   "subject_description": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
   "initial_pose": "in mid-air facing right, knees tucked, holding a white and gold sword with white ribbons"
  },
- "reply": "id: 5260782f-85ea-40a7-89d1-393a79334f5a\njob_id: 5260782f-85ea-40a7-89d1-393a79334f5a\ndescription: in mid-air, holds the sword out to the side at arm's length for a moment, then tucks again, staying high in the air; nothing below him, nothing around him. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5260782f-85ea-40a7-89d1-393a79334f5a\")\nasset_id: f7b72eda-2820-597a-afcc-09d9ab6d75f2\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p08/w0_jump/f_08.png",
+ "reply": "id: 51eeaa2d-963a-4054-80af-f83c28b2eac7\njob_id: 51eeaa2d-963a-4054-80af-f83c28b2eac7\ndescription: in mid-air, two fast slashes with the white and gold sword in front of him: first a horizontal cut forward, then a rising cut upward, a short white slash trail following the blade, then he tucks again. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds and the blade's slash trail: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"51eeaa2d-963a-4054-80af-f83c28b2eac7\")\nasset_id: 654c85e0-1d0d-5423-9aa1-2d2277c4725b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/p08/nair_src_p08a.png",
+ "last": "pxa/p08/nair_src_p08a.png",
  "frames": 13,
  "charged": "2 generations"
 }

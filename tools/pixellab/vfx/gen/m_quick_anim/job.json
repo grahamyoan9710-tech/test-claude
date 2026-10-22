@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "10d621f3-60e0-4cee-87ed-e95b8e73a0c4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0fc72f14-4716-4c1b-91b0-0ae2630632c7",
+  "description": "pixel art effect animation: the spark flashes, then shrinks and breaks into tiny golden sparks that fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a small golden four-pointed star spark of a quick hit, white-hot centre, orange edges, two tiny sparks"
+ },
+ "reply": "id: 10d621f3-60e0-4cee-87ed-e95b8e73a0c4\njob_id: 10d621f3-60e0-4cee-87ed-e95b8e73a0c4\ndescription: pixel art effect animation: the spark flashes, then shrinks and breaks into tiny golden sparks that fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 80x80px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"10d621f3-60e0-4cee-87ed-e95b8e73a0c4\")\nasset_id: b568b33d-f551-55f4-9a6b-ba02453dee57\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_quick/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

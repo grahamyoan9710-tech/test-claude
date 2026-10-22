@@ -8,16 +8,6 @@
 namespace {
 constexpr size_t kMaxParticles = 1400;
 
-// Blade-like elements leave slash streaks across the impact; blunt ones a heavier shock ring.
-bool bladeFx(HitFx fx) {
-  switch (fx) {
-    case HitFx::Slash: case HitFx::Shadow: case HitFx::Arcane: case HitFx::Rose: case HitFx::Blood:
-    case HitFx::Wind: case HitFx::Ice: case HitFx::Light: case HitFx::Dark: case HitFx::Sand:
-      return true;
-    default: return false;
-  }
-}
-
 // DBZ-like ki aura colours per hero: outer flame, inner light; dark auras are drawn with normal blending.
 struct AuraLook {
   Color outer, inner;
@@ -66,14 +56,6 @@ void Fx::burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, f
   }
 }
 
-void Fx::dust(Vec2 feet, int count, float spread) {
-  for (int i = 0; i < count; ++i) {
-    float dir = (i % 2 == 0) ? 1.0f : -1.0f;
-    add(PK::Smoke, feet + Vec2{rng_.range(-8, 8), -4}, {dir * rng_.range(1.0f, spread), rng_.range(-1.2f, -0.2f)},
-        rng_.range(18, 28), rng_.range(5, 8), rng_.range(12, 18), {235, 225, 210, 200});
-  }
-}
-
 void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise, Color col) {
   for (int i = 0; i < count; ++i) {
     Vec2 dir = rdir();
@@ -95,26 +77,6 @@ static const char* waveOf(Hero h) {
 }
 
 // ---- Hit sparks ----------------------------------------------------------------------
-// The PixelLab hit effect of an element, if it has one (it replaces the drawn sparks).
-static const char* hitSprite(HitFx fx) {
-  switch (fx) {
-    case HitFx::Slash: return "hit_slash";
-    case HitFx::Arcane: return "hit_reiatsu";
-    case HitFx::Dark: case HitFx::Shadow: case HitFx::Moon: return "hit_dark";
-    case HitFx::Sun: return "hit_chakra";
-    case HitFx::Lightning: case HitFx::Electric: return "hit_lightning";
-    case HitFx::Fire: return "hit_fire";
-    case HitFx::Water: return "hit_water";
-    case HitFx::Wind: return "hit_wind";
-    case HitFx::Ice: return "hit_ice";
-    case HitFx::Blood: return "hit_blood";
-    case HitFx::Star: return "hit_cursed";
-    case HitFx::Normal: return "hit_impact";
-    case HitFx::Light: return "hit_light";
-    default: return nullptr;
-  }
-}
-
 // The PixelLab blast of an element's explosions (nullptr: the particles alone).
 static const char* explosionSprite(HitFx fx) {
   switch (fx) {
@@ -125,43 +87,15 @@ static const char* explosionSprite(HitFx fx) {
 }
 
 void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
+  // The owner's sheet 1 (docs/refonte/vfx_maquette_1_systeme.png), in its own colours for everyone: a critical
+  // blow, a blade's cut, a launch upward or a quick hit.
   const float heavy = clampf(kb / 120.0f, 0.12f, 1.6f) * (big ? 1.3f : 1.0f);
   if (dir.len2() < 0.01f) dir = {1.0f, 0.0f};
-  if (const char* s = hitSprite(fx); s && art::fxInfo(s)) {  // across the blow, near the clips' pixel size (0.6)
-    const bool flip = dir.x < 0.0f;
-    playFx(s, pos, 0.5f + 0.3f * std::min(heavy, 1.2f), flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x), flip);
-    return;
-  }
-  const bool black = fx == HitFx::Shadow;
-  const Color c = hitFxColor(fx), g = hitFxGlow(fx);
-  const Color light = black ? Color{236, 236, 246, 255} : g;
-  // Flash disc, white core and a star burst of rays
-  add(PK::Flash, pos, {}, 6 + heavy * 3, 14 + 26 * heavy, 36 + 58 * heavy, light);
-  add(PK::Flash, pos, {}, 5, 6 + 12 * heavy, 18 + 26 * heavy, WHITE);
-  Particle& b = add(PK::Burst, pos, {}, 8 + heavy * 2, 24 + 40 * heavy, 50 + 84 * heavy, light);
-  b.rot = rng_.range(0, 2 * kPi);
-  // Directional slash streaks across the impact
-  if (bladeFx(fx)) {
-    const int n = 1 + int(heavy * 1.6f);
-    const float base = std::atan2(dir.y, dir.x) + kPi * 0.5f;
-    for (int i = 0; i < n; ++i) {
-      Particle& s = add(PK::Streak, pos + dir * rng_.range(-8, 8), dir * 1.2f, 9 + heavy * 3, 70 + 120 * heavy,
-                        6 + 10 * heavy, black ? Color{14, 12, 18, 255} : c);
-      s.rot = base + rng_.range(-0.45f, 0.45f) + i * 0.5f;
-      s.color2 = black ? Color{240, 240, 250, 255} : WHITE;
-    }
-  }
-  // Shock waves
-  add(PK::Ring, pos, {}, 12 + heavy * 4, 8, 36 + 56 * heavy, withAlpha(black ? Color{40, 36, 48, 255} : c, 0.9f));
-  if (heavy > 0.55f || !bladeFx(fx)) add(PK::Ring, pos, {}, 16 + heavy * 4, 12, 56 + 74 * heavy, withAlpha(light, 0.6f));
-  // Sparks
-  const int n = std::min(30, 6 + int(kb / 8.0f));
-  for (int i = 0; i < n; ++i) {
-    Vec2 v = rdir() * rng_.range(4.0f, 9.0f + kb * 0.06f) + dir * 3.0f;
-    Color col = i % 3 == 0 ? WHITE : i % 3 == 1 ? (black ? Color{20, 18, 26, 255} : c) : light;
-    add(PK::Spark, pos, v, rng_.range(10, 18), rng_.range(2.0f, 4.0f) + heavy, 0.0f, col);
-  }
-  elementBurst(pos, dir, fx, heavy);
+  const bool crit = big || kb >= 110.0f, cut = fx == HitFx::Slash, up = dir.y < -0.8f && kb >= 40.0f;
+  const char* s = crit ? "m_crit" : cut ? "m_slash" : up ? "m_rise" : "m_quick";
+  const bool flip = dir.x < 0.0f;
+  const float rot = cut && !crit ? (flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x)) : 0.0f;
+  playFx(s, pos, 0.55f + 0.25f * std::min(heavy, 1.2f), rot, flip);
 }
 
 void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
@@ -169,16 +103,7 @@ void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
     const Rect& r = p.rect;
     if (!p.solid || feet.x < r.left() + 6.0f || feet.x > r.right() - 6.0f || feet.y < r.top() - 30.0f || feet.y > r.top() + 40.0f)
       continue;
-    const Vec2 at{feet.x, r.top()};
-    const float k = clampf(strength / 160.0f, 0.5f, 1.6f);
-    Particle& c = add(PK::Crack, at, {}, 150, 34.0f + 34.0f * k, 0.0f, {32, 24, 30, 255});
-    c.seed = uint32_t(feet.x * 13.0f) * 2654435761u + uint32_t(strength);
-    for (int i = 0; i < int(4 + 5 * k); ++i)  // rubble thrown up
-      add(PK::Debris, at + Vec2{rng_.range(-14.0f, 14.0f), -4.0f}, {rng_.range(-4.5f, 4.5f), -rng_.range(3.0f, 7.5f) * k}, rng_.range(30, 46),
-          rng_.range(2.5f, 5.0f), 2.0f, i % 2 ? Color{120, 110, 104, 255} : Color{84, 76, 74, 255}, 0.4f, 0.98f).rotVel =
-          rng_.range(-12.0f, 12.0f);
-    add(PK::Shock, at, {}, 18, 70.0f * k, 14.0f, {240, 232, 220, 200});
-    dust(at, 6, 4.0f * k);
+    playFx(strength >= 160.0f ? "m_ground_heavy" : "m_ground_big", {feet.x, r.top()}, 0.8f);
     return;
   }
 }
@@ -461,12 +386,8 @@ void Fx::onEvents(const Match& m) {
         }
         const bool big = e.impact || kb >= 140.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
-        if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf) {  // a powerful blow: the attacker's wave rises
-          int atk = e.a;                                             // from under the victim's feet
-          if (atk < 0 && m.fighters[e.b].lastHitFrame >= m.frame - 1) atk = m.fighters[e.b].lastHitBy;
-          if (atk < 0 || atk >= nf || !moveFx(m, atk, waveOf(m.fighters[atk].def->hero), m.fighters[e.b].pos, kWaveSize))
-            groundImpact(m, m.fighters[e.b].pos, kb);
-        }
+        if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
+          groundImpact(m, m.fighters[e.b].pos, kb);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
           const Fighter& v = m.fighters[e.b];
           Combo& c = combos_[e.b & 3];
@@ -521,30 +442,23 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Jump:
-        if (!(moveFx(m, e.a, "move_smoke_jump", e.pos) && moveFx(m, e.a, "move_jump", e.pos))) dust(e.pos, 4, 3.0f);
+        moveFx(m, e.a, "m_jump", e.pos);
         au.play(Sfx::Jump, 0.35f, rng_.range(0.95f, 1.05f));
         break;
       case EvType::AirJump:
-        if (!(moveFx(m, e.a, "move_jump_air", e.pos) && moveFx(m, e.a, "move_smoke_airjump", e.pos)))
-          add(PK::Ring, e.pos, {}, 16, 6, 40, withAlpha(WHITE, 0.8f));
+        moveFx(m, e.a, "m_jump", e.pos, 0.8f);
         au.play(Sfx::AirJump, 0.35f, rng_.range(0.95f, 1.05f));
         break;
-      case EvType::Land: {  // a hard landing, or a slide when it lands running
-        const bool sliding = e.a >= 0 && e.a < nf && std::fabs(m.fighters[e.a].vel.x) > 5.0f;
-        if (!moveFx(m, e.a, sliding ? "move_smoke_slide" : "move_land", e.pos))
-          dust(e.pos, 2 + int(std::min(6.0f, e.strength * 0.4f)), 2.5f + e.strength * 0.2f);
+      case EvType::Land: {  // a landing, a slide when it lands running, the body thrown down on the ground
+        const Fighter* f = e.a >= 0 && e.a < nf ? &m.fighters[e.a] : nullptr;
+        const bool down = f && (f->state == FState::Knockdown || f->state == FState::Hitstun);
+        const bool sliding = f && std::fabs(f->vel.x) > 5.0f;
+        moveFx(m, e.a, down ? "m_ground" : sliding ? "m_dash" : "m_land", e.pos);
         au.play(Sfx::Land, clampf(0.2f + e.strength / 25.0f, 0.2f, 0.8f));
         break;
       }
-      case EvType::Dash:
-        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, "move_smoke_run", e.pos)) {
-          moveFx(m, e.a, "move_dash", m.fighters[e.a].center());
-        } else if (e.a >= 0) {
-          const Fighter& f = m.fighters[e.a];
-          for (int i = 0; i < 3; ++i)
-            add(PK::Smoke, e.pos + Vec2{-f.facing * 10.0f, -4}, {-f.facing * rng_.range(1, 3), rng_.range(-1, 0)}, 20, 5, 13,
-                {235, 225, 210, 200});
-        }
+      case EvType::Dash:  // the dust on the ground only
+        moveFx(m, e.a, "m_dash", e.pos);
         break;
       case EvType::Grab: au.play(Sfx::Grab, 0.8f); break;
       case EvType::Throw: au.play(Sfx::Swing, 0.8f, 0.8f); break;
@@ -572,7 +486,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Respawn:
-        if (!moveFx(m, e.a, "move_appear", e.pos)) burst(e.pos + Vec2{0, -40}, 20, 5, {255, 255, 220, 255}, PK::Star, 30, 5);
+        if (!moveFx(m, e.a, "move_appear", e.pos, 1.0f, true)) burst(e.pos + Vec2{0, -40}, 20, 5, {255, 255, 220, 255}, PK::Star, 30, 5);
         break;
       case EvType::Tech:
         playFx("sys_tech", e.pos, 0.7f, 0.0f, false, kShieldTint);
@@ -650,7 +564,6 @@ void Fx::onEvents(const Match& m) {
       }
       case EvType::UltReady: {  // meter full: runes light up in the hero's element
         const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kZonaiGlow;
-        if (e.a >= 0 && e.a < nf) moveFx(m, e.a, "sys_ult_ready", m.fighters[e.a].pos);
         flash_ = std::max(flash_, 0.1f);
         flashCol_ = el;
         shake_ = std::max(shake_, 3.0f);
@@ -722,7 +635,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Transform: {  // a transformation: its shock wave (the owner's sheet: one per transformation)
-        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, waveOf(m.fighters[e.a].def->hero), m.fighters[e.a].pos, kWaveSize)) {
+        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, waveOf(m.fighters[e.a].def->hero), m.fighters[e.a].pos, kWaveSize, true)) {
           shake_ = std::max(shake_, 12.0f);
           au.play(Sfx::UltReady, 0.9f, 0.8f);
           au.play(Sfx::BeamBlast, 0.7f, 0.7f);
@@ -740,7 +653,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::FormEnd:
-        if (e.a >= 0 && e.a < nf) moveFx(m, e.a, "sys_form_end", m.fighters[e.a].pos);
+        if (e.a >= 0 && e.a < nf) moveFx(m, e.a, "sys_form_end", m.fighters[e.a].pos, 1.0f, true);
         break;
       case EvType::Capture:
         flash_ = std::max(flash_, 0.2f);
@@ -786,10 +699,10 @@ void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip) {
   playFx(name, at, size, rot, flip, WHITE);
 }
 
-bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at, float size) {
+bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at, float size, bool tinted) {
   if (who < 0 || who >= int(m.fighters.size()) || !art::fxInfo(name)) return false;
   const Fighter& f = m.fighters[who];
-  const Color tint = mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f);
+  const Color tint = tinted ? mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f) : WHITE;
   playFx(name, at, size * f.def->height / 170.0f, 0.0f, f.facing < 0, tint);
   return true;
 }
@@ -963,7 +876,8 @@ void Fx::drawBack(const Match& m, float time) const {
                   mixColor(p.glow, WHITE, 0.3f));
     }
   }
-  // DBZ ki auras: full ultimate meter, charging a smash, unleashing the ultimate
+  // Motes of light rising around the fighter, in its colour: full ultimate meter, charging a smash, unleashing the
+  // ultimate (no flame aura).
   for (const auto& f : m.fighters) {
     if (!f.active() || f.state == FState::Respawn) continue;
     const bool fs = f.state == FState::Attack && f.move == FinalSmash;
@@ -976,13 +890,10 @@ void Fx::drawBack(const Match& m, float time) const {
       k = std::max(k, 0.45f + 0.55f * ratio);
     }
     if (k <= 0.0f) continue;
-    // The PixelLab aura: the fighter's transformation aura if it has one, else the grey one in its colour
-    const std::string own = f.def->id + "_t_aura";
-    const bool mine = art::fxInfo(own.c_str()) != nullptr;
     const AuraLook look = auraLook(f.def->hero);
-    const char* aura = mine ? own.c_str() : "sys_aura";
-    art::drawFx(aura, art::fxLoopTime(aura, time + f.id * 0.37f), f.pos, f.def->height / 170.0f * (0.95f + 0.1f * k),
-                0.0f, f.facing < 0, 0.85f * std::min(1.0f, k), mine ? WHITE : (look.dark ? look.inner : look.outer));
+    art::drawFx("sys_ult_motes", art::fxLoopTime("sys_ult_motes", time + f.id * 0.37f), f.pos,
+                f.def->height / 170.0f * (0.95f + 0.1f * k), 0.0f, f.facing < 0, std::min(1.0f, k),
+                look.dark ? look.inner : look.outer);
   }
 }
 
@@ -1152,6 +1063,7 @@ void Fx::drawWorld() const {
 
 void Fx::drawScreen(const Camera2D& cam) const {
   for (const auto& k : kos_) {
+    if (!kVfx) break;
     Vector2 sp = GetWorldToScreen2D(V(k.pos), cam);
     Vec2 o{clampf(sp.x, 0.0f, float(kScreenW)), clampf(sp.y, 0.0f, float(kScreenH))};
     Vec2 in = -k.dir;
@@ -1200,7 +1112,7 @@ void Fx::drawScreen(const Camera2D& cam) const {
     const float x = clampf(sp.x - w * 0.5f, 10.0f, kScreenW - w - 10.0f), y = clampf(sp.y - u * 50.0f, 10.0f, kScreenH - 140.0f);
     drawTextOutlined(s, x, y, size, withAlpha(t.color, a), withAlpha(kOutline, a), 3.0f, FontKind::Title);
   }
-  if (flash_ > 0.01f) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(flashCol_, flash_));
+  if (kVfx && flash_ > 0.01f) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(flashCol_, flash_));
 }
 
 Vec2 Fx::shakeOffset() {
