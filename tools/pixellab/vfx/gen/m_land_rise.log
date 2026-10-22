@@ -1,0 +1,15 @@
+submitted 09bda291-8629-4719-ac1e-851ee7aabc66
+id: 09bda291-8629-4719-ac1e-851ee7aabc66
+job_id: 09bda291-8629-4719-ac1e-851ee7aabc66
+description: pixel art effect animation: the dust cloud puffs out quickly from the ground and grows into the whole cloud. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.
+frames: 4
+size: 160x64px
+transparent: True
+last_frame: yes (animating toward it)
+cost: 1 generation
+status: processing (~1-5 min)
+
+hint: get_image(job_id="09bda291-8629-4719-ac1e-851ee7aabc66")
+asset_id: fcdc5da2-6cfa-5867-be0e-94a365b72196
+asset_status: pending (saved to your ga
+done 09bda291-8629-4719-ac1e-851ee7aabc66: 5 frames -> vfx/gen/m_land_rise (1 generation)
