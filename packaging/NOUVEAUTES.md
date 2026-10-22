@@ -8,13 +8,12 @@
 
 ## Nouveautés
 
-Version 10.3 : **le M1 n'est plus perdu**.
+Version 10.4 : **les effets visuels sont en pause**.
 
-- **M1 en l'air** : une attaque appuyée juste après le saut (pendant l'élan) sortait parfois sans rien faire ; elle
-  attend maintenant le saut et sort en l'air. Avec une arme, Haut + M1 juste après le saut annulait le saut en coup
-  au sol : le perso saute et fait son M1 aérien.
-- **M1 au sol** : une attaque appuyée à la réception d'un saut ou à la fin d'un coup est gardée un court instant et
-  sort dès que le perso peut bouger.
+- **Aucun effet** : plus d'étincelles, de fumées, d'auras, de traînées, de flashs ni d'éclairs de rayon, en attendant
+  de nouveaux effets. Les projectiles et les rayons sont de simples formes blanches, pour voir ce qui touche.
+- **Le 03 et le 08** : leur M1 aérien avec arme montait plusieurs coups sans qu'on les voie ; les animations sont
+  refaites, on voit maintenant chaque entaille.
+- **Calage des coups** : les attaques à plusieurs touches montrent un coup par touche.
 
-Version 10.2 : des arènes en profondeur, comme dans Smash (plateformes redessinées, aucune coupée) ; une arme se prend
-en maintenant la touche Arme 1 seconde ; la touche et la barre s'affichent aussi sur la deuxième arme.
+Version 10.3 : le M1 n'est plus perdu juste après un saut ou à la réception.
