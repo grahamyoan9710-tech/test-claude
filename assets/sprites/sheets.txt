@@ -158,7 +158,7 @@ icon sharingan 84 84
 icon six_eyes 86 80
 sheet p01 airdodge 8 146 133 76.0 232.0 136.0 0 -1 15
 sheet p01 airjump 8 169 142 82.0 234.0 136.0 0 -1 15
-sheet p01 bair 8 213 208 112.0 232.0 136.0 0 5 15
+sheet p01 bair 8 213 208 101.0 232.0 136.0 0 5 15
 sheet p01 bthrow 12 129 144 71.0 143.0 136.0 0 7 15
 sheet p01 climb 8 156 220 82.0 219.0 136.0 0 -1 15 116.0
 sheet p01 crouch 4 132 102 83.0 101.0 136.0 0 -1 15
