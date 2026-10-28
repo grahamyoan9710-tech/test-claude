@@ -1,4 +1,3 @@
-#include <cstdio>
 #include "game/fx.hpp"
 
 #include "game/fighter_art.hpp"
@@ -769,7 +768,6 @@ void Fx::update(const Match& m) {
                  (m.frame / 3) % 2 == 0, 0};
       s.move = true;
       sprites_.push_back(s);
-      std::fprintf(stderr, "TRAIL %d %.1f\n", m.frame, f.vel.len());
     }
   // The PixelLab effects of the techniques: started on the move's frame, they follow their fighter.
   for (size_t i = 0; i < m.fighters.size() && i < castSeen_.size(); ++i) {
