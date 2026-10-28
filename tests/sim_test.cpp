@@ -481,27 +481,17 @@ static void testUltMeter() {
   p.idle(30);
   float dealt = v.percent - before;
   CHECK(dealt > 0.0f, "jab connects (%.1f%%)", dealt);
-  CHECK(std::fabs(f.ult - dealt * kUltPerDamageDealt) < 0.01f, "attacker meter +%.1f for %.1f%% dealt", f.ult, dealt);
-  CHECK(std::fabs(v.ult - dealt * kUltPerDamageTaken) < 0.01f, "victim meter +%.1f for %.1f%% taken", v.ult, dealt);
+  CHECK(f.ult == 0.0f && v.ult == 0.0f, "blows do not fill the meter (%.1f, %.1f): the Clash Orb gives it", f.ult, v.ult);
   int readyEvents = 0;
-  for (int i = 0; i < 4000 && !f.finalSmash; ++i) {
-    v.pos = {10, 0};
-    v.vel = v.kbVel = {0, 0};
-    v.percent = 0.0f;
-    f.pos = {-40, 0};
-    f.facing = 1;
-    m.step({key(0, 0, i % 12 == 0), InputState{}, InputState{}, InputState{}});
-    for (const auto& e : m.events) readyEvents += e.type == EvType::UltReady && e.a == f.id;
-  }
-  CHECK(f.finalSmash && f.ult == kUltMax, "hitting fills the meter (%.0f)", f.ult);
+  m.gainUlt(f, kUltMax);  // what breaking the orb does
+  for (const auto& e : m.events) readyEvents += e.type == EvType::UltReady && e.a == f.id;
+  CHECK(f.finalSmash && f.ult == kUltMax, "the orb fills the meter (%.0f)", f.ult);
   CHECK(readyEvents == 1, "one UltReady event (%d)", readyEvents);
   p.idle(40);
   p.run(1, ult);
   CHECK(f.state == FState::Attack && f.move == FinalSmash, "full meter + ultimate button = final smash");
-  float vUlt = v.ult;
   p.idle(200);
-  CHECK(f.ult == 0.0f, "no meter gained from the final smash itself (%.1f)", f.ult);
-  CHECK(v.ult > vUlt, "the victim still charges its meter (%.1f -> %.1f)", vUlt, v.ult);
+  CHECK(f.ult == 0.0f && v.ult == 0.0f, "no meter gained from the final smash (%.1f, %.1f)", f.ult, v.ult);
 }
 
 static void testUltEdgeCases() {
@@ -1038,7 +1028,10 @@ static void testRecovery() {
         std::array<InputState, 4> in{};
         in[0] = brain.think(m, 0);
         m.step(in);
-        if (f.state == FState::LedgeHang || (f.grounded && f.groundPlat == 0)) safe = true;
+        if (f.state == FState::LedgeHang || (f.grounded && f.groundPlat == 0)) {
+          safe = true;
+          break;  // back on the stage: what the CPU does next is not the recovery
+        }
       }
       CHECK(safe && f.stocks == 3, "%s failed to recover from x=%d (pos %.0f,%.0f state %d)",
             roster()[c].name.c_str(), side * 700, f.pos.x, f.pos.y, int(f.state));
@@ -1196,7 +1189,7 @@ static void testBalance() {
     }
   for (int c = 0; c < n; ++c)
     std::printf("  %-6s win rate %3.0f%%\n", roster()[c].name.c_str(), 100.0f * wins[c] / std::max(1, games[c]));
-  CHECK(timeouts <= 3, "%d duels timed out", timeouts);
+  CHECK(timeouts <= 8, "%d duels timed out", timeouts);  // 2 %: skills recharge, the ultimate only comes from the orb
   // How early the KOs come (the "win rate" lines above are read by tools/pixellab/fitall.sh: keep them apart).
   int early = 0, all = 0;
   for (int c = 0; c < n; ++c) {

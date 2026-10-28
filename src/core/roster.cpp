@@ -69,8 +69,11 @@ Fighter start(int number, const char* element, Build b, F e, Palette main, Palet
 }
 
 // The four skills of the bare hands (slot < 0) or of a weapon, scaled to the fighter.
+constexpr int kSkillCooldown = 180;  // 3 s: no skill can be spammed (the up special, a recovery, keeps its helpless fall)
+
 void skills(Fighter& k, int slot, MoveDef n, MoveDef s, MoveDef u, MoveDef d) {
   for (MoveDef* m : {&n, &s, &u, &d}) sc(*m, k.S, k.P);
+  for (MoveDef* m : {&n, &s, &d}) m->cooldown = std::max(m->cooldown, kSkillCooldown);
   if (slot < 0) {
     k.c.moves[NSpecial] = n, k.c.moves[SSpecial] = s, k.c.moves[USpecial] = u, k.c.moves[DSpecial] = d;
     return;

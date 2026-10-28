@@ -14,11 +14,12 @@ enum class FState : uint8_t {
 };
 
 constexpr float kMaxShield = 50.0f;
-// Ultimate meter: fills up by dealing and taking damage; once full the ultimate button unleashes the final smash.
+// Ultimate meter: filled by breaking the Clash Orb; once full the ultimate button unleashes the final smash.
 constexpr float kUltMax = 100.0f;
-constexpr float kUltPerDamageDealt = 0.45f;
-constexpr float kUltPerDamageTaken = 0.35f;
-constexpr float kUltPerShieldHit = 0.15f;  // attacker, per damage blocked by a shield
+// The ultimate comes from the Clash Orb only (the owner's rule): blows do not fill the meter.
+constexpr float kUltPerDamageDealt = 0.0f;
+constexpr float kUltPerDamageTaken = 0.0f;
+constexpr float kUltPerShieldHit = 0.0f;  // attacker, per damage blocked by a shield
 // CPU levels go from 1 to 10; level 10 plays like a perfect level 9 and hits twice as hard.
 constexpr int kMaxCpuLevel = 10;
 constexpr float kLevel10Power = 2.0f;
