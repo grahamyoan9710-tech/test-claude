@@ -52,9 +52,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud (28/10) | v10.7 en cours |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 28/10 ~23 h UTC : **v10.7 publiée**, verrou libre. **Le propriétaire met le projet en pause** (« on fera un autre
+  jeu »). Après la 10.7, poussé mais pas publié : l'éclat d'impact (l'éclat du saut, tourné selon le coup, bord foncé
+  de la couleur du coup) et la traînée de fumée derrière un perso éjecté vite (`Fx::update`). La traînée n'a pas pu
+  être vue nettement sur capture. Essai « façon Rivals » (persos de 48 px, décor à pixels fins) refusé : il voulait
+  parler de la dynamique des coups et des effets, pas du style.
 - 28/10 ~23 h UTC : **v10.7** : `kVfx = false` à nouveau ; restent les fumées de mouvement (`SpriteFx::move`, tracées
   par `Fx::drawImpacts`), la bulle de bouclier (toujours) et les éclats en pixels. Le propriétaire a choisi le plan
   « perso témoin » (un perso et une arène au niveau Rivals of Aether : même taille de pixel, palette fixe, clips relus,
