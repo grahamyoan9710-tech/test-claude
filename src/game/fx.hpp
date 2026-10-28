@@ -17,6 +17,7 @@ class Fx {
   void update(const Match& m);
   void drawBack(const Match& m, float time) const;  // behind the fighters: ki auras, pillars of light
   void drawWorld() const;                            // in front of everything in the world: particles
+  void drawImpacts() const;  // only the light pixel impacts (chips, impact stars): what shows while kVfx is off
   void drawScreen(const Camera2D& cam) const;        // screen space: KO beams, weapon names, flashes
   Vec2 shakeOffset();
   std::array<float, 4> hudShake{};
@@ -58,6 +59,8 @@ class Fx {
     Debris,    // chunk of rock / metal, falls
     Shock,     // flat shock wave along the ground, half width size -> size1
     Crack,     // cracks running down the face of a platform from pos (its top edge): reach size
+    Chip,      // square pixel chip of a blow (white-hot, then its colour): size -> size1
+    Ray,       // stroke of a blow's impact star, angle `rot`: length size, travelling out by size1
   };
   struct Particle {
     Vec2 pos, vel;
@@ -90,6 +93,8 @@ class Fx {
   void burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, float size);
   void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kZonaiGlow);
   void hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big);
+  // Light pixel-art impact: chips (and a star of short rays) thrown along dir, more and further when stronger.
+  void pixelImpact(Vec2 pos, Vec2 dir, float strength, Color c, bool star = true);
   void groundImpact(const Match& m, Vec2 feet, float strength);  // the ground bursts where a powerful blow lands
   void elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy);
   void explosion(Vec2 pos, float r, HitFx fx, bool drawn = false);  // drawn: an effect sprite plays there too

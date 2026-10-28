@@ -199,8 +199,7 @@ void runPose(Pose& p, const Fighter& f, float H, float sf) {
   }
 }
 
-// flip: the air-jump somersault (never for attacks: the striking limb must stay on its hitbox).
-Pose airPose(const Fighter& f, const Match& m, float time, bool flip = true) {
+Pose airPose(const Fighter& f, float time) {
   const float H = f.height();
   Pose p = restPose(*f.def, time, heldVisual(f));
   float k = smoothstep((f.vel.y + 3.0f) / 6.0f);  // rising -> falling, no pop at the apex
@@ -219,17 +218,6 @@ Pose airPose(const Fighter& f, const Match& m, float time, bool flip = true) {
   float st = f.vel.y < 0.0f ? std::min(0.12f, -f.vel.y * 0.009f) : std::min(0.05f, f.vel.y * 0.004f);
   p.squash = 1.0f + st;  // stretched along the vertical speed
   p.sx = 1.0f - st * 0.6f;
-  int since = m.frame - f.airJumpFrame;
-  if (flip && since >= 0 && since < 24) {  // somersault, tucked in the middle
-    float u = since / 24.0f;
-    float tuck = std::sin(u * kPi);
-    p.rot = smoothstep(u) * 2.0f * kPi;
-    p.crouch = 0.1f + 0.5f * tuck;
-    p.footF = lerpv(p.footF, {0.14f * H, 0.22f * H}, tuck);
-    p.footB = lerpv(p.footB, {0.0f, 0.26f * H}, tuck);
-    p.handF = lerpv(p.handF, {0.16f * H, 0.02f * H}, tuck);
-    p.handB = lerpv(p.handB, {0.06f * H, 0.04f * H}, tuck);
-  }
   return p;
 }
 
@@ -857,8 +845,9 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
       break;
     case FState::Air: {
       if (f.tumble && loop(art::kSheetTumble)) break;  // still flying from a heavy blow
+      // The air jump replays the jump clip: the airjump clips are somersaults, and the owner wants no spin.
       const int since = m.frame - f.airJumpFrame;
-      if (since >= 0 && since < 24 && once(art::kSheetAirJump, since / 24.0f)) break;
+      if (since >= 0 && since < 20 && once(art::kSheetJump, since / 20.0f)) break;
       if (f.vel.y < 0.0f && once(art::kSheetJump, sf / 20.0f)) break;
       loop(art::kSheetFall);
       break;
@@ -960,9 +949,9 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       p.handB = lerpv(p.handB, {-0.14f * H, 0.08f * H}, k);
       break;
     }
-    case FState::Air: p = airPose(f, m, tt); break;
+    case FState::Air: p = airPose(f, tt); break;
     case FState::AirDodge: {
-      p = airPose(f, m, tt);
+      p = airPose(f, tt);
       float k = std::sin(clampf(sf / 20.0f, 0.0f, 1.0f) * kPi);  // curl up, then open again
       p.crouch = 0.1f + 0.6f * k;
       p.handF = lerpv(p.handF, {0.12f * H, 0.02f * H}, k);
@@ -975,7 +964,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
       break;
     }
     case FState::Helpless: {  // limp, arms up, legs flailing slowly
-      p = airPose(f, m, tt);
+      p = airPose(f, tt);
       float w = std::sin(tt * 7.0f);
       p.handF = {0.12f * H + w * 0.03f * H, -0.45f * H};
       p.handB = {-0.12f * H - w * 0.03f * H, -0.42f * H};
@@ -1103,7 +1092,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
     case FState::Attack:
       if (f.move == FinalSmash) {
         const MoveDef& fs = f.moveDef(FinalSmash);
-        Pose base = f.grounded ? p : airPose(f, m, tt, false);
+        Pose base = f.grounded ? p : airPose(f, tt);
         if (fs.pose == PoseHint::Auto) {
           p = finalSmashPose(f, base);
         } else {  // each ultimate has its own body language; its blows are animated like any move
@@ -1138,7 +1127,7 @@ Pose computePose(const Fighter& f, const Match& m, float time) {
         }
         break;
       }
-      if (!f.grounded) p = airPose(f, m, tt, false);
+      if (!f.grounded) p = airPose(f, tt);
       applyMove(p, f, tt);
       break;
     default:
@@ -1533,7 +1522,10 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     flash = std::max(flash, (usingFs ? 0.1f : 0.05f) + 0.04f * std::sin(at * 6.0f));
   }
   Vec2 feet = f.pos;
-  if (f.hitlag > 0 && f.state == FState::Hitstun) feet.x += std::sin(m.frame * 2.7f) * 4.0f;
+  if (f.hitlag > 0 && f.state == FState::Hitstun) {  // hit-stop: the blow shakes the victim along its launch
+    const Vec2 d = f.kbVel.len2() > 0.01f ? f.kbVel.norm() : Vec2{1.0f, 0.0f};
+    feet += d * (std::sin(m.frame * 2.7f) * std::min(9.0f, 2.0f + 0.5f * float(f.hitlag)));
+  }
   const Vec2 c = f.center();
 
   drawGroundShadow(f, m, alpha);

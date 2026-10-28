@@ -98,6 +98,23 @@ void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
   playFx(s, pos, 0.55f + 0.25f * std::min(heavy, 1.2f), rot, flip);
 }
 
+void Fx::pixelImpact(Vec2 pos, Vec2 dir, float strength, Color c, bool star) {
+  if (dir.len2() < 0.01f) dir = {1.0f, 0.0f};
+  const float s = clampf(strength / 100.0f, 0.2f, 1.8f), a0 = std::atan2(dir.y, dir.x);
+  for (int i = 0, n = 3 + int(s * 8.0f); i < n; ++i) {
+    const float a = a0 + rng_.range(-1.1f, 1.1f);
+    add(PK::Chip, pos, Vec2{std::cos(a), std::sin(a)} * rng_.range(2.0f, 3.5f + 3.5f * s), rng_.range(10.0f, 14.0f + 8.0f * s),
+        rng_.range(3.0f, 4.0f + 1.5f * s), 2.0f, c, 0.3f, 0.9f);
+  }
+  if (!star) return;
+  const int rays = s < 0.4f ? 4 : s < 1.0f ? 6 : 8;
+  const float r0 = rng_.range(0.0f, 2.0f * kPi);
+  for (int i = 0; i < rays; ++i) {
+    Particle& r = add(PK::Ray, pos, {}, s < 1.0f ? 6.0f : 8.0f, 10.0f + 12.0f * s, 8.0f + 10.0f * s, c);
+    r.rot = r0 + 2.0f * kPi * float(i) / float(rays) + rng_.range(-0.2f, 0.2f);
+  }
+}
+
 void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
   for (const auto& p : m.platforms) {  // the solid ground right under the feet, if any
     const Rect& r = p.rect;
@@ -368,7 +385,10 @@ void Fx::hitSound(HitFx fx, float kb, bool big) {
     default: break;
   }
   Sfx s = kb < 40 ? Sfx::HitLight : kb < 100 ? Sfx::HitMedium : Sfx::HitHeavy;
-  au.play(s, clampf(0.5f + kb / 150.0f, 0.5f, 1.0f) * (big ? 1.0f : 0.9f), rng_.range(0.92f, 1.08f));
+  // A heavier blow sounds lower, with a thump under it (a big one gets the impact boom already).
+  const float pitch = clampf(1.15f - kb / 600.0f, 0.85f, 1.15f) * rng_.range(0.96f, 1.04f);
+  au.play(s, clampf(0.5f + kb / 150.0f, 0.5f, 1.0f) * (big ? 1.0f : 0.9f), pitch);
+  if (kb >= 100.0f && !big) au.play(Sfx::ImpactBoom, clampf(kb / 400.0f, 0.25f, 0.45f), 1.3f);
 }
 
 void Fx::onEvents(const Match& m) {
@@ -386,6 +406,8 @@ void Fx::onEvents(const Match& m) {
         }
         const bool big = e.impact || kb >= 140.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
+        pixelImpact(pos, e.dir, big ? std::max(kb, 140.0f) : kb,
+                    e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx));  // (normal: too pale on snow)
         if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
           groundImpact(m, m.fighters[e.b].pos, kb);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
@@ -407,7 +429,7 @@ void Fx::onEvents(const Match& m) {
           flash_ = std::max(flash_, 0.12f);
           flashCol_ = WHITE;
         }
-        shake_ = std::max(shake_, std::min(18.0f, kb / 11.0f));
+        shake_ = std::max(shake_, std::min(12.0f, kb / 12.0f));
         if (e.b >= 0) hudShake[e.b & 3] = std::min(9.0f, 2.0f + kb / 14.0f);
         hitSound(e.fx, kb, big);
         if (big) {
@@ -420,6 +442,7 @@ void Fx::onEvents(const Match& m) {
       }
       case EvType::ShieldHit:
         playFx("sys_shield_hit", e.pos, 0.6f, 0.0f, false, kShieldTint);
+        pixelImpact(e.pos, e.dir, 25.0f, kShieldTint, false);
         shake_ = std::max(shake_, 2.5f);
         au.play(Sfx::ShieldHit, 0.6f, rng_.range(0.95f, 1.1f));
         break;
@@ -454,6 +477,10 @@ void Fx::onEvents(const Match& m) {
         const bool down = f && (f->state == FState::Knockdown || f->state == FState::Hitstun);
         const bool sliding = f && std::fabs(f->vel.x) > 5.0f;
         moveFx(m, e.a, down ? "m_ground" : sliding ? "m_dash" : "m_land", e.pos);
+        if (down) {  // thrown onto the ground: dust chips and a jolt
+          pixelImpact(e.pos, {0.0f, -1.0f}, 20.0f + e.strength * 3.0f, {226, 222, 214, 255}, false);
+          shake_ = std::max(shake_, std::min(6.0f, e.strength * 0.4f));
+        }
         au.play(Sfx::Land, clampf(0.2f + e.strength / 25.0f, 0.2f, 0.8f));
         break;
       }
@@ -528,7 +555,12 @@ void Fx::onEvents(const Match& m) {
         au.voice("game");
         au.play(Sfx::Crowd, 0.9f, 0.9f);
         break;
-      case EvType::Clank: playFx("sys_clank", e.pos, 0.6f); break;
+      case EvType::Clank:
+        playFx("sys_clank", e.pos, 0.6f);
+        pixelImpact(e.pos, {0.0f, -1.0f}, 60.0f, WHITE);
+        shake_ = std::max(shake_, 4.0f);
+        au.play(Sfx::ShieldHit, 0.6f, 1.6f);
+        break;
       case EvType::OrbSpawn:
         playFx("sys_orb_hit", e.pos, 1.2f, 0.0f, false, {255, 246, 200, 255});
         au.play(Sfx::Go, 0.6f, 1.4f);
@@ -832,7 +864,7 @@ void Fx::update(const Match& m) {
              sp > 16.0f ? Color{255, 190, 140, 255} : WHITE);
   }
   projectileTrails(m);
-  shake_ *= 0.86f;
+  shake_ *= 0.8f;  // brief
   flash_ *= 0.85f;
   for (auto& s : hudShake) s *= 0.88f;
 }
@@ -895,6 +927,30 @@ void Fx::drawBack(const Match& m, float time) const {
                 f.def->height / 170.0f * (0.95f + 0.1f * k), 0.0f, f.facing < 0, std::min(1.0f, k),
                 look.dark ? look.inner : look.outer);
   }
+}
+
+namespace {
+// The light pixel impacts: crisp squares and strokes, no glow.
+void drawImpactPart(Vec2 pos, float k, float size, float size1, float rot, Color color, bool ray) {
+  const float a = std::min(1.0f, k * (ray ? 2.0f : 3.0f));
+  if (ray) {  // shoots out from the blow and thins away: white, edged with the blow's colour
+    const Vec2 d{std::cos(rot), std::sin(rot)};
+    const float r0 = 6.0f + size1 * (1.0f - k), r1 = r0 + size * k, w = 2.0f + 2.0f * k;
+    DrawLineEx(V(pos + d * r0), V(pos + d * r1), w + 2.0f, withAlpha(color, a));
+    DrawLineEx(V(pos + d * r0), V(pos + d * r1), w, withAlpha(WHITE, a));
+    return;
+  }
+  const float s = std::max(2.0f, std::round(lerpf(size1, size, k)));  // a square chip with a dark rim, like the sprites
+  const Vector2 at{std::round(pos.x - s * 0.5f), std::round(pos.y - s * 0.5f)};
+  DrawRectangleV({at.x - 1.0f, at.y - 1.0f}, {s + 2.0f, s + 2.0f}, withAlpha({34, 26, 38, 255}, a));
+  DrawRectangleV(at, {s, s}, withAlpha(k > 0.75f ? WHITE : color, a));
+}
+}  // namespace
+
+void Fx::drawImpacts() const {
+  for (const auto& p : parts_)
+    if (p.kind == PK::Chip || p.kind == PK::Ray)
+      drawImpactPart(p.pos, p.life / p.maxLife, p.size, p.size1, p.rot, p.color, p.kind == PK::Ray);
 }
 
 void Fx::drawWorld() const {
@@ -1015,6 +1071,7 @@ void Fx::drawWorld() const {
       }
       case PK::Debris: DrawPoly(V(p.pos), 5, size, p.rot, withAlpha(p.color, std::min(1.0f, k * 3.0f))); break;
       case PK::Crack: break;  // drawn in drawBack, under the fighters
+      case PK::Chip: case PK::Ray: drawImpactPart(p.pos, k, p.size, p.size1, p.rot, p.color, p.kind == PK::Ray); break;
       case PK::Shock: {  // flat ellipse expanding along the ground
         const float rx = lerpf(p.size1, p.size, k), ry = rx * 0.22f;
         Vec2 prev{};

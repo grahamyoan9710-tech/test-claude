@@ -405,7 +405,8 @@ void MatchScreen::updateCamera(bool snap) {
     maxY = std::max(maxY, c.y + 130.0f);
   }
   float w = maxX - minX, h = maxY - minY;
-  float zoom = clampf(std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.32f);
+  // 0.87: the camera stands a little further back (the owner's wish), on its own and at its closest.
+  float zoom = clampf(0.87f * std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
   // An ultimate: the camera tightens on its user and on the fighters it is dealing with.
   int ultUser = -1;
@@ -580,6 +581,7 @@ void MatchScreen::draw() {
   drawFighterTags(m_);
   drawProjectiles(m_, time_);
   if (kVfx) fx_.drawWorld();
+  else fx_.drawImpacts();  // the light pixel impacts stay while the other effects are paused
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);
