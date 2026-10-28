@@ -52,9 +52,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud (28/10) | v10.6 en cours |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 28/10 ~22 h 30 UTC : **v10.6 publiée** (run réussi), verrou de version libre.
 - 28/10 ~22 h 15 UTC, session cloud : v10.5 publiée (run réussi). **v10.6 : effets remis** à la demande du
   propriétaire (« utilise les vfx de manière intelligente ») : `kVfx = true`. Images d'impact noir et blanc et flash
   seulement si le coup a l'air mortel (`lethal` : finisher à 140 de recul ou plus, ou 200 et plus) et aux KO ; gerbe
