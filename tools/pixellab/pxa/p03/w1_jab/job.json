@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "684ce7ab-3066-464a-9b4f-4fb5b4d42ca3",
+ "job_id": "24d587cc-409e-496f-a476-0f1679dbbfc4",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:870d7627-b0aa-4896-af10-47792f1278f8",
-  "last_frame_url": "upload:6b813290-acbe-468b-a7cc-c379f9d6b96b",
-  "description": "a heavy diagonal cut of the spiked greatsword. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "first_frame_url": "upload:aba61492-9cd7-48d1-aca1-edb0b9b57c29",
+  "last_frame_url": "upload:84c539f3-bbd9-4f53-9228-6729ec678c3f",
+  "description": "a fast horizontal slash of the huge greatsword forward at chest height, a short red slash trail following the blade, then back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds and the blade's slash trail: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge spiked black and red greatsword, larger and more jagged",
   "initial_pose": "fighting stance facing right, holding a huge spiked black and red greatsword, larger and more jagged"
  },
- "reply": "id: 684ce7ab-3066-464a-9b4f-4fb5b4d42ca3\njob_id: 684ce7ab-3066-464a-9b4f-4fb5b4d42ca3\ndescription: a heavy diagonal cut of the spiked greatsword. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"684ce7ab-3066-464a-9b4f-4fb5b4d42ca3\")\nasset_id: db5da4b6-3dea-509c-8623-058f20159e79\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w1guard256.png",
+ "reply": "id: 24d587cc-409e-496f-a476-0f1679dbbfc4\njob_id: 24d587cc-409e-496f-a476-0f1679dbbfc4\ndescription: a fast horizontal slash of the huge greatsword forward at chest height, a short red slash trail following the blade, then back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds and the blade's slash trail: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"24d587cc-409e-496f-a476-0f1679dbbfc4\")\nasset_id: 865020e2-5518-5f1a-9326-9bd94bbb5075\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/base/p03_w1guard256.png",
+ "last": "pxa/base/p03_w1guard256.png",
  "frames": 9,
  "charged": "1 generation"
 }

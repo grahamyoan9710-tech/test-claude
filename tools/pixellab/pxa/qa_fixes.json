@@ -213,6 +213,22 @@
   },
   "w1_nair": {
    "impact": "1,3"
+  },
+  "w1_jab": {
+   "degrey": {
+    "frames": [
+     0
+    ],
+    "open": 0
+   }
+  },
+  "w1_jab3": {
+   "degrey": {
+    "frames": [
+     3
+    ],
+    "open": 0
+   }
   }
  },
  "p02": {
