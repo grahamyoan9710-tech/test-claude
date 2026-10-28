@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 10.6 : **les effets reviennent, avec mesure**.
+
+- Étincelles, fumées de saut et d'atterrissage, bulle de bouclier, projectiles : les effets sont de retour, dosés
+  pour qu'on voie toujours le combat.
+- Chaque coup a son étincelle et ses éclats, selon sa force. La gerbe au sol ne sort que pour les coups forts.
+- Les images d'impact noir et blanc et le flash sont gardés pour les coups qui peuvent tuer et pour les KO (avant,
+  chaque fin de combo les déclenchait).
+
 Version 10.5 : **des coups qui claquent**.
 
 - **Impacts** : chaque coup fait jaillir de petits éclats en pixels et une étoile, plus grands pour un coup fort. La

@@ -120,7 +120,7 @@ void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
     const Rect& r = p.rect;
     if (!p.solid || feet.x < r.left() + 6.0f || feet.x > r.right() - 6.0f || feet.y < r.top() - 30.0f || feet.y > r.top() + 40.0f)
       continue;
-    playFx(strength >= 160.0f ? "m_ground_heavy" : "m_ground_big", {feet.x, r.top()}, 0.8f);
+    playFx(strength >= 160.0f ? "m_ground_heavy" : "m_ground_big", {feet.x, r.top()}, 0.5f);  // small: the fighters stay readable
     return;
   }
 }
@@ -385,10 +385,9 @@ void Fx::hitSound(HitFx fx, float kb, bool big) {
     default: break;
   }
   Sfx s = kb < 40 ? Sfx::HitLight : kb < 100 ? Sfx::HitMedium : Sfx::HitHeavy;
-  // A heavier blow sounds lower, with a thump under it (a big one gets the impact boom already).
+  // A heavier blow sounds lower.
   const float pitch = clampf(1.15f - kb / 600.0f, 0.85f, 1.15f) * rng_.range(0.96f, 1.04f);
   au.play(s, clampf(0.5f + kb / 150.0f, 0.5f, 1.0f) * (big ? 1.0f : 0.9f), pitch);
-  if (kb >= 100.0f && !big) au.play(Sfx::ImpactBoom, clampf(kb / 400.0f, 0.25f, 0.45f), 1.3f);
 }
 
 void Fx::onEvents(const Match& m) {
@@ -405,10 +404,13 @@ void Fx::onEvents(const Match& m) {
           if (d.len() > v.height() * 0.6f) pos = v.center() + d.norm() * (v.height() * 0.3f);
         }
         const bool big = e.impact || kb >= 140.0f;
+        // The black and white impact frames and the white flash only for blows that look lethal (a finisher sent
+        // far, or a huge blow): on every combo finisher they hid the fight.
+        const bool lethal = (e.impact && kb >= 140.0f) || kb >= 200.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
-        pixelImpact(pos, e.dir, big ? std::max(kb, 140.0f) : kb,
-                    e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx));  // (normal: too pale on snow)
-        if ((kb >= 110.0f || e.impact) && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
+        pixelImpact(pos, e.dir, kb,  // (the PixelLab spark is the star when effects are on)
+                    e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx), !kVfx);  // (normal: too pale on snow)
+        if (kb >= 140.0f && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
           groundImpact(m, m.fighters[e.b].pos, kb);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
           const Fighter& v = m.fighters[e.b];
@@ -425,14 +427,15 @@ void Fx::onEvents(const Match& m) {
           c.lastHit = m.frame;
           c.since = 0;
         }
-        if (kb > 100.0f) {
+        if (lethal) {
           flash_ = std::max(flash_, 0.12f);
           flashCol_ = WHITE;
         }
         shake_ = std::max(shake_, std::min(12.0f, kb / 12.0f));
         if (e.b >= 0) hudShake[e.b & 3] = std::min(9.0f, 2.0f + kb / 14.0f);
         hitSound(e.fx, kb, big);
-        if (big) {
+        if (kb >= 100.0f && !lethal) au.play(Sfx::ImpactBoom, clampf(kb / 400.0f, 0.25f, 0.45f), 1.3f);  // a thump
+        if (lethal) {
           int attacker = e.a;  // projectiles hit without an attacker: credit their owner
           if (attacker < 0 && e.b >= 0 && e.b < nf && m.fighters[e.b].lastHitFrame >= m.frame - 1)
             attacker = m.fighters[e.b].lastHitBy;
