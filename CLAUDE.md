@@ -90,9 +90,18 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   tient tant que la hitbox est active.
 - Effets : **tous** faits avec PixelLab (`vfx_workbench`), menus compris, et joués par le jeu (effets `fx`). Aucun
   effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
+  - En pause depuis le 22/10 (`kVfx = false`, `src/game/render.hpp`), à la demande du propriétaire.
+  - Seule exception, demandée le 28/10 : les impacts légers en pixels dessinés par le code (`Fx::pixelImpact` :
+    éclats carrés et petite étoile, selon la force du coup), avec le hit-stop, la secousse et les sons.
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
-  exception : les traînées des coups rapides et des épées sont gardées. Un clip où un autre effet est collé au perso
-  est régénéré, pas découpé avec `erase` ou `degrey`. Aucun perso coupé au bord du cadre.
+  exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en
+  ont une. Un clip où un autre effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun
+  perso coupé au bord du cadre.
+- Catégorie bâton (aujourd'hui : 02-B, le sceptre-étoile) : le perso se bat comme Wukong dans Black Myth: Wukong
+  (grands balayages, moulinets, frappes écrasantes, vrilles). Les faux et les lances n'en font pas partie.
+- Double saut : aucun salto ni tournoiement (le jeu rejoue le clip de saut).
+- Compétences (neutre, côté, bas) : au moins 3 s de recharge, pour tous les persos, futurs compris. L'ultime ne
+  vient que de la Clash Orb.
 - Sans arme, chaque perso se bat dans un art martial (`docs/refonte/FICHES.md`, §1.7). Les ondes 1 à 5 de la planche
   servent aussi d'ondes d'impact des coups puissants ; elles partent du sol et montent.
 - Armes (refonte) : tout le monde commence à mains nues. Les deux armes d'un perso (A et B) tombent sur l'arène, l'une

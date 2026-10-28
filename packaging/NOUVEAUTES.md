@@ -8,6 +8,20 @@
 
 ## Nouveautés
 
+Version 10.5 : **des coups qui claquent**.
+
+- **Impacts** : chaque coup fait jaillir de petits éclats en pixels et une étoile, plus grands pour un coup fort. La
+  victime tremble pendant l'arrêt sur le coup, dans le sens où elle part. Les secousses sont plus brèves, et les gros
+  coups sonnent plus grave. Lames qui se croisent, coups dans le bouclier et chutes au sol ont aussi leurs éclats.
+- **Compétences** : 3 secondes de recharge (neutre, côté, bas), pour tous les persos.
+- **Ultime** : il ne vient plus que de la Clash Orb.
+- **Caméra** un peu plus reculée, et **plus de salto** au double saut.
+- **Le 03** : ses M1 avec l'épée éveillée et sa compétence avec la grande épée sont refaits (l'épée bouge vraiment) ;
+  il respire plus calmement.
+- **Le 02 au sceptre-étoile** se bat au bâton comme Wukong : balayages, moulinets, frappe écrasante, vrille en l'air.
+- **Traînées** : chaque coup d'arme laisse sa traînée (lance du 02, épées du 07 et du 08 refaites).
+- **Armes au sol** redessinées en pixel art, propres et colorées, d'après tes dessins.
+
 Version 10.4 : **les effets visuels sont en pause**.
 
 - **Aucun effet** : plus d'étincelles, de fumées, d'auras, de traînées, de flashs ni d'éclairs de rayon, en attendant

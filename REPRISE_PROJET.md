@@ -52,9 +52,27 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud (28/10) | v10.5 en cours |
 
 ### Journal (le plus récent en haut)
+- 28/10, session cloud (branche `claude/wonderful-davinci-gr7v02`) : **v10.5, des coups qui claquent.**
+  - Impacts légers en pixels dessinés par le code (`Fx::pixelImpact`, `Fx::drawImpacts`), visibles malgré
+    `kVfx = false` : éclats carrés à contour sombre et étoile de traits, selon la force ; aussi sur les heurts
+    (clank, bouclier, chute au sol). La victime tremble pendant le hit-stop, le long de son éjection.
+  - Secousse plus brève (0,8 par image) ; coups lourds plus graves, avec un bruit sourd.
+  - Compétences N, côté et bas : 3 s de recharge minimum (`kSkillCooldown`). Ultime : seulement la Clash Orb.
+  - Caméra reculée (×0,87, zoom max 1,15). Double saut : le clip de saut est rejoué (les `airjump` sont des saltos).
+  - 03 : M1 de l'arme B et compétence N de l'arme A régénérés, idle à 9 i/s.
+  - 02-B, catégorie bâton (règle du propriétaire : façon Wukong ; ni faux ni lances) : M1 1-3 et M1 aérien régénérés.
+  - Traînées (règle : à mains nues, coups rapides seulement ; avec une arme, tous les coups) : 02 `w0_jab`,
+    07 `w0_jab2`, `w0_jab3`, `w0_nair`, `w1_jab3`, 08 `w0_jab2` régénérés avec traînée.
+  - Armes au sol des 5 persos redessinées par PixelLab (pixflux, `tools/pixellab/icons/make_icons.py`).
+  - Reste :
+    - Traînées des smashs à mains nues : 9 régénérations « sans traînée » (01 usmash, 02 fsmash/dsmash, 03
+      fsmash/dsmash, 07 fsmash, 08 fsmash/usmash/dsmash) en ont toutes remis une (et parfois éclats et poussière) :
+      jetées, les anciens clips restent. Tilts, aériens et attaque en course gardent la leur (coups rapides).
+    - Clip `p03_dspecial` (mains nues) avec des gerbes jaunes collées.
+    - Équilibrage (simulation) : 07 à 37 % (42 % sans la recharge des compétences), les autres entre 51 et 54 %.
 - 22/10 ~0 h 25 UTC, session cloud : **v10.4 publiée, effets en pause** (demande du propriétaire, déçu des effets) :
   `kVfx = false` dans `src/game/render.hpp` coupe étincelles, fumées, auras, traînées, flashs, cadres d'impact et
   balise d'arme ; projectiles et rayons en formes blanches. Les effets refaits d'après ses maquettes restent garés
