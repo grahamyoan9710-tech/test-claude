@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "game/fx.hpp"
 
 #include "game/fighter_art.hpp"
@@ -408,8 +409,16 @@ void Fx::onEvents(const Match& m) {
         // far, or a huge blow): on every combo finisher they hid the fight.
         const bool lethal = (e.impact && kb >= 140.0f) || kb >= 200.0f;
         hitSpark(pos, e.dir, kb, e.fx, big);
-        pixelImpact(pos, e.dir, kb,  // (the PixelLab spark is the star when effects are on)
-                    e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx), !kVfx);  // (normal: too pale on snow)
+        const Color hitCol = e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx);  // (normal: too pale on snow)
+        pixelImpact(pos, e.dir, kb, hitCol, false);
+        if (art::fxInfo("m_jump")) {  // the spark: the jump burst the owner likes, shot along the blow, bigger when stronger
+          const Vec2 d = e.dir.len2() > 0.01f ? e.dir.norm() : Vec2{1.0f, 0.0f};
+          const float size = 0.4f + 0.35f * clampf(kb / 120.0f, 0.0f, 1.5f), rot = std::atan2(d.x, -d.y);
+          playFx("m_jump", pos, size * 1.18f, rot, false, mixColor(hitCol, BLACK, 0.45f));  // a dark rim in the blow's colour
+          sprites_.back().move = true;  // drawn with the movement smoke, even with kVfx off
+          playFx("m_jump", pos, size, rot, false, mixColor(hitCol, WHITE, 0.75f));
+          sprites_.back().move = true;
+        }
         if (kb >= 140.0f && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
           groundImpact(m, m.fighters[e.b].pos, kb);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
@@ -752,6 +761,16 @@ void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip, Col
 
 void Fx::update(const Match& m) {
   for (auto& f : sprites_) ++f.t;
+  // Launched hard, a fighter leaves a trail of the movement smoke behind it, like in Rivals of Aether.
+  for (const auto& f : m.fighters)
+    if (f.active() && f.state == FState::Hitstun && !f.grounded && f.hitlag == 0 && f.vel.len2() > 144.0f &&
+        m.frame % 3 == 0 && art::fxInfo("m_land")) {  // (behind it: not on the body)
+      SpriteFx s{"m_land", f.center() - f.vel.norm() * (0.45f * f.height()), 0.35f * f.def->height / 170.0f, 0.0f,
+                 (m.frame / 3) % 2 == 0, 0};
+      s.move = true;
+      sprites_.push_back(s);
+      std::fprintf(stderr, "TRAIL %d %.1f\n", m.frame, f.vel.len());
+    }
   // The PixelLab effects of the techniques: started on the move's frame, they follow their fighter.
   for (size_t i = 0; i < m.fighters.size() && i < castSeen_.size(); ++i) {
     const Fighter& f = m.fighters[i];
