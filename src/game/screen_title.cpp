@@ -214,7 +214,7 @@ void App::drawMainMenu() {
   const bool gearHot = ui::hovered(kGear);
   ui::chunky(gearHot ? ui::grow(kGear, 2) : kGear, gearHot ? ui::Tone::Gold : ui::Tone::Blue, 1.0f, 14.0f);
   icon("menu_icon_options", {kGear.x + kGear.width * 0.5f, kGear.y + kGear.height * 0.45f}, 28.0f, WHITE);
-  drawTextOutlined("v10.6", kGear.x + 4, kGear.y + kGear.height + 8, 16, ui::kCream, ui::kInk, 2.0f);
+  drawTextOutlined("v10.7", kGear.x + 4, kGear.y + kGear.height + 8, 16, ui::kCream, ui::kInk, 2.0f);
   const Tip& tip = kTips[settings().menuBg % 3];
   const std::string key = keyName(settings().keys[0][tip.action]);
   const float th = 26, tw = ui::promptWidth(key.c_str(), ui::padButtonFor(tip.action), th) + 12 + textWidth(tip.text, 16);

@@ -17,7 +17,7 @@ class Fx {
   void update(const Match& m);
   void drawBack(const Match& m, float time) const;  // behind the fighters: ki auras, pillars of light
   void drawWorld() const;                            // in front of everything in the world: particles
-  void drawImpacts() const;  // only the light pixel impacts (chips, impact stars): what shows while kVfx is off
+  void drawImpacts() const;  // what shows while kVfx is off: the movement smoke and the light pixel impacts
   void drawScreen(const Camera2D& cam) const;        // screen space: KO beams, weapon names, flashes
   Vec2 shakeOffset();
   std::array<float, 4> hudShake{};
@@ -117,6 +117,7 @@ class Fx {
     int follow = -1;  // a technique's effect: on that fighter, behind it (-2: behind, where it began)
     Vec2 off;
     Color tint = WHITE;
+    bool move = false;  // a movement effect (moveFx): shown even with kVfx off
   };
   std::vector<SpriteFx> sprites_;
   std::array<std::pair<int, int>, 8> castSeen_{};  // each fighter's move and move frame at the last update

@@ -739,6 +739,7 @@ bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at, float size, 
   const Fighter& f = m.fighters[who];
   const Color tint = tinted ? mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f) : WHITE;
   playFx(name, at, size * f.def->height / 170.0f, 0.0f, f.facing < 0, tint);
+  sprites_.back().move = true;
   return true;
 }
 
@@ -951,6 +952,8 @@ void drawImpactPart(Vec2 pos, float k, float size, float size1, float rot, Color
 }  // namespace
 
 void Fx::drawImpacts() const {
+  for (const auto& f : sprites_)  // the movement smoke the owner likes
+    if (f.move && f.follow == -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
   for (const auto& p : parts_)
     if (p.kind == PK::Chip || p.kind == PK::Ray)
       drawImpactPart(p.pos, p.life / p.maxLife, p.size, p.size1, p.rot, p.color, p.kind == PK::Ray);

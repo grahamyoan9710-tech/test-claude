@@ -90,10 +90,10 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   tient tant que la hitbox est active.
 - Effets : **tous** faits avec PixelLab (`vfx_workbench`), menus compris, et joués par le jeu (effets `fx`). Aucun
   effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
-  - Mis en pause le 22/10, remis le 28/10 (`kVfx = true`, `src/game/render.hpp`), à utiliser **avec mesure**
-    (demande du propriétaire) : étincelle et éclats à chaque coup, selon sa force ; gerbe au sol pour les coups
-    forts seulement ; images d'impact noir et blanc et flash pour les coups qui ont l'air mortels et les KO.
-  - Seule exception au « tout PixelLab » (28/10) : les éclats en pixels dessinés par le code (`Fx::pixelImpact`).
+  - Coupés (`kVfx = false`, `src/game/render.hpp`) sauf ce que le propriétaire aime (28/10 : « les vfx de mouvement
+    sont parfaits mais le reste… ») : fumées de saut, de dash et d'atterrissage (`moveFx`), sa bulle de bouclier,
+    et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seule exception au « tout PixelLab »).
+  - Les remettre un par un, seulement quand ils sont au niveau de ceux-là.
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
   exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en
   ont une. Un clip où un autre effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun

@@ -581,7 +581,7 @@ void MatchScreen::draw() {
   drawFighterTags(m_);
   drawProjectiles(m_, time_);
   if (kVfx) fx_.drawWorld();
-  else fx_.drawImpacts();  // the light pixel impacts stay while the other effects are paused
+  else fx_.drawImpacts();  // the movement smoke and the pixel impacts stay while the other effects are off
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);

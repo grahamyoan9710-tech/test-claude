@@ -8,6 +8,13 @@
 
 ## Nouveautés
 
+Version 10.7 : **seulement les bons effets**.
+
+- On garde ceux que tu aimes : la fumée de saut, de dash et d'atterrissage.
+- La bulle de bouclier est de nouveau visible (elle avait disparu avec la pause des effets).
+- Les coups gardent leurs petits éclats en pixels et leur étoile.
+- Retirés : étincelles, gerbes au sol, images d'impact noir et blanc, flashs, auras et traînées dessinées.
+
 Version 10.6 : **les effets reviennent, avec mesure**.
 
 - Étincelles, fumées de saut et d'atterrissage, bulle de bouclier, projectiles : les effets sont de retour, dosés

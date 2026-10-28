@@ -5,9 +5,10 @@
 
 #include "game/common.hpp"
 
-// Visual effects (sparks, smoke, auras, trails, impact frames...): paused by the owner on 22/10/2026, back on 28/10.
-// Off, projectiles and beams are plain white shapes and only the light pixel impacts (Fx::pixelImpact) remain.
-constexpr bool kVfx = true;
+// Visual effects (sparks, auras, trails, impact frames...): off at the owner's request (22/10, again 28/10: "the
+// movement effects are perfect, but the rest..."). Off, projectiles and beams are plain white shapes; what stays is
+// the movement smoke (jump, land, dash), the owner's shield bubble and the light pixel impacts (Fx::pixelImpact).
+constexpr bool kVfx = false;
 
 // ---- Fighters (render_fighter.cpp) ----------------------------------------
 // kZonaiGlow (ancient-tech teal-green) lives with the palette in common.hpp.

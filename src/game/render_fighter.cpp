@@ -1565,7 +1565,7 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   drawFormAvatar(f, at, true);
   if (kVfx && !(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
     drawSmear(anim, pose, alpha);
-  if (kVfx && (f.state == FState::Shield || f.state == FState::ShieldStun)) {  // the owner's bubble, smaller as it wears out
+  if (f.state == FState::Shield || f.state == FState::ShieldStun) {  // the owner's bubble (always on), smaller as it wears out
     const float r = H * 0.62f * (0.35f + 0.65f * f.shield / kMaxShield);
     float w, h;
     if (art::pictureSize("sys_shield_bubble", w, h))
