@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "dd43998d-b9d2-4851-864c-5e1d9679cc6e",
+ "job_id": "bd288644-91e7-453a-91b4-cf61a2a77605",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:410821ab-57fe-4028-8e25-6871e0ab1ee0",
-  "last_frame_url": "upload:4d807b23-209d-417f-86a6-8121ddd52342",
-  "description": "in mid-air, turns once on herself holding the sword out to the side, the blade staying inside the picture, then tucks again. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "first_frame_url": "upload:280d7450-ffeb-4e9a-a5dc-e7f173c646aa",
+  "last_frame_url": "upload:a93ef9cf-d830-468d-8b50-0c421bd2d6ba",
+  "description": "in mid-air, a spinning slash: she turns once on herself swinging the broad sword in a full circle around her, a red slash trail following the blade, then tucks again. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and its trail: no flash, no burst, no sparks, no glow, no energy, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.",
   "frame_count": 12,
   "view": "side",
   "direction": "east",
   "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
   "initial_pose": "in mid-air facing right, knees tucked, holding a broad black and red sword with red ribbons"
  },
- "reply": "id: dd43998d-b9d2-4851-864c-5e1d9679cc6e\njob_id: dd43998d-b9d2-4851-864c-5e1d9679cc6e\ndescription: in mid-air, turns once on herself holding the sword out to the side, the blade staying inside the picture, then tucks again. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"dd43998d-b9d2-4851-864c-5e1d9679cc6e\")\nasset_id: 281eca86-0aaa-5c33-8a57-fe381f12dddc\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/p07/w0_jump/f_08.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/p07/w0_jump/f_08.png",
+ "reply": "id: bd288644-91e7-453a-91b4-cf61a2a77605\njob_id: bd288644-91e7-453a-91b4-cf61a2a77605\ndescription: in mid-air, a spinning slash: she turns once on herself swinging the broad sword in a full circle around her, a red slash trail following the blade, then tucks again. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and its trail: no flash, no burst, no sparks, no glow, no energy, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bd288644-91e7-453a-91b4-cf61a2a77605\")\nasset_id: c449a0d5-939c-59ab-812a-d40becd9f6b9\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/p07/w0_jump/f_08.png",
+ "last": "pxa/p07/w0_jump/f_08.png",
  "frames": 13,
  "charged": "2 generations"
 }

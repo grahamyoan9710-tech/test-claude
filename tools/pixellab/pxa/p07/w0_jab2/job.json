@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "c389b509-2174-4f71-8660-839c3c25a801",
+ "job_id": "0167f5d1-d77d-43c3-88a0-38831e879f44",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:3533a4b4-a2ca-493a-bbc8-dc7201852077",
-  "last_frame_url": "upload:48b05127-81a3-479a-8164-96f7d759050c",
-  "description": "a fast return cut of the sword the other way. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "first_frame_url": "upload:4ef70f2a-9ee0-4120-b300-0efaa25b3511",
+  "last_frame_url": "upload:dd2f77d4-0354-4284-99e5-531c9a47bd75",
+  "description": "a fast wide return cut of the broad sword the other way, a short red slash trail following the blade, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and its trail: no flash, no burst, no sparks, no glow, no energy, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "a young woman with a long black and red ponytail and red eyes, a closed black and red top covering the stomach, wide black and red sleeves, long black shorts over opaque black tights, black and red boots, holding a broad black and red sword with red ribbons",
   "initial_pose": "fighting stance facing right, holding a broad black and red sword with red ribbons"
  },
- "reply": "id: c389b509-2174-4f71-8660-839c3c25a801\njob_id: c389b509-2174-4f71-8660-839c3c25a801\ndescription: a fast return cut of the sword the other way. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c389b509-2174-4f71-8660-839c3c25a801\")\nasset_id: 375042d8-8966-5dd7-a801-30f029527138\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p07_w0guard256.png",
+ "reply": "id: 0167f5d1-d77d-43c3-88a0-38831e879f44\njob_id: 0167f5d1-d77d-43c3-88a0-38831e879f44\ndescription: a fast wide return cut of the broad sword the other way, a short red slash trail following the blade, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and its trail: no flash, no burst, no sparks, no glow, no energy, no smoke, no dust, no ground; the whole body, the weapon and its trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0167f5d1-d77d-43c3-88a0-38831e879f44\")\nasset_id: a5d423ff-ddce-58a2-aac3-cac38228092a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/base/p07_w0guard256.png",
+ "last": "pxa/base/p07_w0guard256.png",
  "frames": 9,
  "charged": "1 generation"
 }

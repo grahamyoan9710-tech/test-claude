@@ -235,5 +235,24 @@
   "w1_nair": {
    "impact": "3,8"
   }
+ },
+ "p07": {
+  "w0_nair": {
+   "degrey": {
+    "frames": [
+     3,
+     4
+    ],
+    "open": 0
+   }
+  },
+  "w1_jab3": {
+   "degrey": {
+    "frames": [
+     0
+    ],
+    "open": 0
+   }
+  }
  }
 }

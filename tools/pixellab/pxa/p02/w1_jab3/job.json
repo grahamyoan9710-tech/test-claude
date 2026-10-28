@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "f764f4f6-301d-43ca-8df7-bcbfcaf3b645",
+ "job_id": "f47d1ac3-9e3c-41fd-b6e0-f1a7ab91f0b2",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:bac7a815-41b2-4023-90cd-5ec191e4f175",
-  "last_frame_url": "upload:9be30f81-4e1f-4735-8c4d-2bd03afa1884",
-  "description": "raises the star staff and strikes forward with its star head. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "first_frame_url": "upload:f501c578-94bf-45b3-904d-79f290b66191",
+  "last_frame_url": "upload:1b76c347-d41f-4b1f-b64b-645ac3585653",
+  "description": "she raises the long star staff high above her head with both hands, then smashes it straight down in front of her with full force, stopping just above the ground line, like the Monkey King's heavy staff strike in Black Myth Wukong, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and the staff's short pale blue trail: no flash, no burst, no sparks, no dust, no debris, no smoke, no glow, no ground; the whole body, the staff and its trail stay inside the picture.",
   "frame_count": 12,
   "view": "side",
   "direction": "east",
   "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
   "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
  },
- "reply": "id: f764f4f6-301d-43ca-8df7-bcbfcaf3b645\njob_id: f764f4f6-301d-43ca-8df7-bcbfcaf3b645\ndescription: raises the star staff and strikes forward with its star head. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f764f4f6-301d-43ca-8df7-bcbfcaf3b645\")\nasset_id: 296c05ad-dc9a-52ea-87cb-8afa325db80e\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "reply": "id: f47d1ac3-9e3c-41fd-b6e0-f1a7ab91f0b2\njob_id: f47d1ac3-9e3c-41fd-b6e0-f1a7ab91f0b2\ndescription: she raises the long star staff high above her head with both hands, then smashes it straight down in front of her with full force, stopping just above the ground line, like the Monkey King's heavy staff strike in Black Myth Wukong, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and the staff's short pale blue trail: no flash, no burst, no sparks, no dust, no debris, no smoke, no glow, no ground; the whole body, the staff and its trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f47d1ac3-9e3c-41fd-b6e0-f1a7ab91f0b2\")\nasset_id: 81eef8b4-a770-57af-9ba6-f6d35059171c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/base/p02_w1guard256.png",
+ "last": "pxa/base/p02_w1guard256.png",
  "frames": 13,
  "charged": "2 generations"
 }

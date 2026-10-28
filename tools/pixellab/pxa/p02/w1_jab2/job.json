@@ -1,20 +1,20 @@
 {
  "status": "done",
- "job_id": "eb7f576d-9e37-482d-887c-9208a6d11150",
+ "job_id": "07491692-91d8-4244-a1fb-68ef16b00b88",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:7cd2b10a-27ab-495a-8e28-8807a1476fe0",
-  "last_frame_url": "upload:4c2a9a8c-5e4b-4902-abad-166b7b80c703",
-  "description": "turns the staff over in a small backhand motion in front of her chest, then back into the stance; the star-shaped head of the staff stays plain. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "first_frame_url": "upload:0326fdf6-8adb-4f31-8f04-b2b9a34062b4",
+  "last_frame_url": "upload:829c91d8-305c-4834-9172-00ae5b12c246",
+  "description": "she twirls the long star staff in a fast full windmill circle in front of her with both hands, the star passing over her head then in front of her chest, like the Monkey King's staff fighting in Black Myth Wukong, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and the staff's short pale blue trail: no flash, no burst, no sparks, no dust, no debris, no smoke, no glow, no ground; the whole body, the staff and its trail stay inside the picture.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
   "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
  },
- "reply": "id: eb7f576d-9e37-482d-887c-9208a6d11150\njob_id: eb7f576d-9e37-482d-887c-9208a6d11150\ndescription: turns the staff over in a small backhand motion in front of her chest, then back into the stance; the star-shaped head of the staff stays plain. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"eb7f576d-9e37-482d-887c-9208a6d11150\")\nasset_id: bd7acf18-c857-5d66-b9a1-f6c68b23ba24\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w1guard256.png",
+ "reply": "id: 07491692-91d8-4244-a1fb-68ef16b00b88\njob_id: 07491692-91d8-4244-a1fb-68ef16b00b88\ndescription: she twirls the long star staff in a fast full windmill circle in front of her with both hands, the star passing over her head then in front of her chest, like the Monkey King's staff fighting in Black Myth Wukong, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and the staff's short pale blue trail: no flash, no burst, no sparks, no dust, no debris, no smoke, no glow, no ground; the whole body, the staff and its trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"07491692-91d8-4244-a1fb-68ef16b00b88\")\nasset_id: 31358504-ecb7-547a-bfbd-77a392d16b22\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/base/p02_w1guard256.png",
+ "last": "pxa/base/p02_w1guard256.png",
  "frames": 9,
  "charged": "1 generation"
 }
