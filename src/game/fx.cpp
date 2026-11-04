@@ -121,6 +121,8 @@ void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
     if (!p.solid || feet.x < r.left() + 6.0f || feet.x > r.right() - 6.0f || feet.y < r.top() - 30.0f || feet.y > r.top() + 40.0f)
       continue;
     playFx(strength >= 160.0f ? "m_ground_heavy" : "m_ground_big", {feet.x, r.top()}, 0.5f);  // small: the fighters stay readable
+    playFx("px_shockwave", {feet.x, r.top()}, strength >= 160.0f ? 1.3f : 1.0f);  // trial: PixelLab's preset shockwave
+    sprites_.back().move = true;
     return;
   }
 }
@@ -410,13 +412,10 @@ void Fx::onEvents(const Match& m) {
         hitSpark(pos, e.dir, kb, e.fx, big);
         const Color hitCol = e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx);  // (normal: too pale on snow)
         pixelImpact(pos, e.dir, kb, hitCol, false);
-        if (art::fxInfo("m_jump")) {  // the spark: the jump burst the owner likes, shot along the blow, bigger when stronger
-          const Vec2 d = e.dir.len2() > 0.01f ? e.dir.norm() : Vec2{1.0f, 0.0f};
-          const float size = 0.4f + 0.35f * clampf(kb / 120.0f, 0.0f, 1.5f), rot = std::atan2(d.x, -d.y);
-          playFx("m_jump", pos, size * 1.18f, rot, false, mixColor(hitCol, BLACK, 0.45f));  // a dark rim in the blow's colour
+        if (art::fxInfo("px_impact_burst")) {  // trial: PixelLab's ready-made hit spark (preset impact_burst), bigger when stronger
+          playFx("px_impact_burst", pos, 2.4f * (0.5f + 0.35f * clampf(kb / 120.0f, 0.0f, 1.5f)), 0.0f, false,
+                 mixColor(hitCol, WHITE, 0.5f));
           sprites_.back().move = true;  // drawn with the movement smoke, even with kVfx off
-          playFx("m_jump", pos, size, rot, false, mixColor(hitCol, WHITE, 0.75f));
-          sprites_.back().move = true;
         }
         if (kb >= 140.0f && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
           groundImpact(m, m.fighters[e.b].pos, kb);
