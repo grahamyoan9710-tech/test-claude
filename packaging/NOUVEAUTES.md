@@ -8,6 +8,21 @@
 
 ## Nouveautés
 
+Version 11.1 : **nouvelle direction artistique « Ligne d'horizon », 3e partie**.
+
+- **HUD refait** : une carte par joueur en bas de l'écran (visage, numéro, vies en losanges, armes, recharge de la
+  compétence). Les dégâts chauffent du blanc à l'or, puis à l'orange et au rouge.
+- **Nouvelle Clash Orb** : une sphère mi-ciel, mi-or, coupée par la ligne d'horizon, avec l'éclat du logo au centre ;
+  elle se fissure sous les coups. Un bandeau en haut montre ses points de vie et le temps qui lui reste.
+- Quand on la brise, son éclat vole jusqu'au gagnant : il s'entoure d'or, porte l'éclat au-dessus de son nom et sa
+  carte affiche « ULTIME PRÊT » jusqu'à l'ultime.
+- Les dégâts reçus s'affichent au-dessus du joueur (« +14 % ») ; pendant un combo, le compteur « N COUPS ! » prend le
+  relais. Bulles des joueurs hors de l'écran refaites, avec leur distance.
+- **Nouvelle pause** : le menu à gauche, l'état du combat (vies, dégâts, orbe) et la **liste des coups** de celui qui
+  a mis en pause, en trois onglets (mains nues, arme A, arme B), avec ses propres touches. Les options s'ouvrent depuis
+  la pause et ramènent au combat. Quitter demande une confirmation.
+- À venir : les résultats et les paramètres.
+
 Version 11.0 : **nouvelle direction artistique « Ligne d'horizon », 2e partie**.
 
 - **Choix des combattants** refait : les combattants se tiennent en grand sur la ligne d'horizon, de part et d'autre

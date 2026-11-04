@@ -6,19 +6,6 @@
 #include "game/ui.hpp"
 
 namespace {
-const char* dummyName(const CpuBrain& b, int level) {
-  switch (b.dummy()) {
-    case CpuBrain::kDummyStand: return "IMMOBILE";
-    case CpuBrain::kDummyJump: return "SAUTE";
-    case CpuBrain::kDummyShield: return "BOUCLIER";
-    default: return TextFormat("ORDINATEUR (niv. %d)", level);
-  }
-}
-Rectangle pauseItemRect(int i, int n) {
-  const float h = n > 6 ? 44.0f : 52.0f, gap = n > 6 ? 8.0f : 12.0f;  // the training menu is longer
-  float top = kScreenH * 0.5f - (n * (h + gap)) * 0.5f + 40;
-  return {kScreenW * 0.5f - 260, top + i * (h + gap), 520, h};
-}
 constexpr bool InputState::*kButtons[] = {&InputState::attack, &InputState::special, &InputState::jump,
                                           &InputState::shield, &InputState::grab,    &InputState::smash,
                                           &InputState::ultimate};
@@ -180,112 +167,6 @@ MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devic
   updateCamera(true);
 }
 
-std::vector<std::string> MatchScreen::pauseItems() const {
-  if (!training()) return {"REPRENDRE", "QUITTER LE COMBAT"};
-  int dummy = -1;
-  for (const auto& f : m_.fighters)
-    if (f.cpu) dummy = f.id;
-  std::string mode = dummy >= 0 ? dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel) : "-";
-  const Fighter& me = m_.fighters[0];
-  std::string weapon = upperFr("ARME " + std::to_string((dropSlot_ & 1) + 1) + "/2 : " + me.def->weapons[dropSlot_ & 1].name);
-  auto onOff = [](bool b) { return std::string(b ? "OUI" : "NON"); };
-  return {"REPRENDRE",
-          "RÉINITIALISER LES POSITIONS",
-          "MANNEQUIN : " + mode,
-          "ULTI INFINIE : " + onOff(m_.trainInfiniteUlt),
-          "RESTER À 0 % : " + onOff(m_.trainZeroPercent),
-          "MODE COMBAT (3 VIES) : " + onOff(m_.trainFight),
-          "ZONES DE COUP : " + onOff(debug_),
-          weapon,
-          "QUITTER L'ENTRAÎNEMENT"};
-}
-
-MatchScreen::Result MatchScreen::updatePause() {
-  MenuNav nav = readMenuNav();
-  const auto items = pauseItems();
-  const int n = int(items.size());
-  int before = pauseSel_;
-  if (nav.up) pauseSel_ = (pauseSel_ + n - 1) % n;
-  if (nav.down) pauseSel_ = (pauseSel_ + 1) % n;
-  bool click = false;
-  int clickSide = 0;  // a click on the left (-1) or right (+1) arrow of a training setting
-  for (int i = 0; i < n; ++i) {
-    const Rectangle r = pauseItemRect(i, n);
-    if (!ui::hovered(r)) continue;
-    if (ui::mouseMoved()) pauseSel_ = i;
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-      pauseSel_ = i;
-      click = true;
-      const float mx = GetMousePosition().x;
-      if (training() && i >= 2 && i <= 7) clickSide = mx < r.x + 70.0f ? -1 : mx > r.x + r.width - 70.0f ? 1 : 0;
-    }
-  }
-  if (pauseSel_ != before) audio_.play(Sfx::MenuMove);
-  bool unpause = padAnyPressed(kPadB);
-  for (const auto& f : m_.fighters)
-    if (!f.cpu && devicePausePressed(devices_[f.port])) unpause = true;
-  if (unpause) {
-    resume();
-    audio_.play(Sfx::MenuBack);
-    return Result::Running;
-  }
-  const bool left = nav.left || clickSide < 0, right = nav.right || clickSide > 0;
-  const bool activate = nav.confirm || (click && clickSide == 0);
-  const bool cycle = activate || left || right;
-  if (training()) {
-    if (pauseSel_ == 2 && cycle) {
-      int d = left ? -1 : 1;
-      for (auto& b : brains_) b.setDummy((b.dummy() + d + CpuBrain::kDummyCount) % CpuBrain::kDummyCount);
-      audio_.play(Sfx::MenuMove);
-      return Result::Running;
-    }
-    if (pauseSel_ == 3 && cycle) {
-      m_.trainInfiniteUlt = !m_.trainInfiniteUlt;
-      audio_.play(Sfx::MenuMove);
-      return Result::Running;
-    }
-    if (pauseSel_ == 4 && cycle) {
-      m_.trainZeroPercent = !m_.trainZeroPercent;
-      audio_.play(Sfx::MenuMove);
-      return Result::Running;
-    }
-    if (pauseSel_ == 5 && cycle) {  // a 3-stock fight against the dummy, starting over at each end
-      m_.setTrainFight(!m_.trainFight);
-      std::fill(combo_.begin(), combo_.end(), 0);
-      std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
-      audio_.play(Sfx::MenuMove);
-      return Result::Running;
-    }
-    if (pauseSel_ == 6 && cycle) {
-      debug_ = !debug_;
-      audio_.play(Sfx::MenuMove);
-      return Result::Running;
-    }
-    if (pauseSel_ == 7 && (left || right)) {  // which weapon: its arrows (ENTRÉE or a click in the middle drops it)
-      dropSlot_ ^= 1;
-      audio_.play(Sfx::MenuMove);
-      return Result::Running;
-    }
-  }
-  if (!activate) return Result::Running;
-  audio_.play(Sfx::MenuSelect);
-  if (pauseSel_ == 0) {
-    resume();
-  } else if (pauseSel_ == n - 1) {
-    return Result::Quit;
-  } else if (training() && pauseSel_ == 1) {
-    m_.resetPositions();
-    std::fill(combo_.begin(), combo_.end(), 0);
-    std::fill(prevPercent_.begin(), prevPercent_.end(), 0.0f);
-    resume();
-  } else if (training() && pauseSel_ == 7) {  // the weapon falls in front of the player (one it has: back to bare hands)
-    if ((m_.fighters[0].weapons >> (dropSlot_ & 1)) & 1) m_.loseWeapon(m_.fighters[0]);
-    m_.dropWeaponFor(0, dropSlot_);
-    resume();
-  }
-  return Result::Running;
-}
-
 void MatchScreen::resume() {
   paused_ = false;
   for (const auto& f : m_.fighters) {
@@ -319,6 +200,76 @@ void MatchScreen::trackCombos() {
   }
 }
 
+void MatchScreen::trackCallouts() {
+  const size_t n = m_.fighters.size();
+  if (popValue_.size() != n) {
+    popValue_.assign(n, 0.0f);
+    popAge_.assign(n, 1000);
+    seenPercent_.assign(n, 0.0f);
+  }
+  for (const auto& f : m_.fighters) {  // the damage taken, summed while the hits keep coming (a combo)
+    const int i = f.id;
+    const float gain = f.percent - seenPercent_[i];
+    seenPercent_[i] = f.percent;
+    if (gain > 0.01f && f.active()) {
+      popValue_[i] = popAge_[i] < 45 ? popValue_[i] + gain : gain;
+      popAge_[i] = 0;
+    } else if (popAge_[i] < 1000) {
+      ++popAge_[i];
+    }
+  }
+  for (const auto& e : m_.events) {
+    if (e.type != EvType::UltReady || e.a < 0 || e.a >= int(n)) continue;
+    const GameEvent* orb = nullptr;  // won by breaking the Clash Orb: its spark flies to the winner first
+    for (const auto& o : m_.events)
+      if (o.type == EvType::OrbBreak && o.a == e.a) orb = &o;
+    if (orb) {
+      starFrom_ = orb->pos;
+      starTo_ = e.a;
+      starT_ = 0;
+    } else {
+      fx_.moveFx(m_, e.a, "sys_ult_ready", m_.fighters[e.a].pos);
+    }
+  }
+  if (starTo_ >= 0 && ++starT_ >= 36) {  // there: its column of light
+    if (m_.fighters[starTo_].active()) fx_.moveFx(m_, starTo_, "sys_ult_ready", m_.fighters[starTo_].pos);
+    starTo_ = -1;
+  }
+}
+
+void MatchScreen::drawCallouts() {
+  if (m_.freezeTimer > 0) return;  // not over an ultimate's cinematic
+  for (const auto& f : m_.fighters) {
+    if (!f.active() || f.state == FState::Grabbed) continue;
+    const int i = f.id;
+    if (f.finalSmash && i != starTo_) {  // the Clash Orb's spark turning over whoever holds the ultimate
+      const Vec2 c = ultStarPos(m_, i);
+      const float rot = time_ * 2.0f * kPi / 9.0f;
+      ui::spark(V(c), 15.0f, rot, ui::kInk, 0.24f);
+      ui::spark(V(c), 12.0f, rot, WHITE);
+    }
+    if (i < int(popAge_.size()) && popAge_[i] < 70 && !fx_.comboShown(i)) {  // "+14 %" rising over its tag (a combo has its counter)
+      const float t = popAge_[i] / 70.0f, a = popAge_[i] < 50 ? 1.0f : 1.0f - (popAge_[i] - 50) / 20.0f;
+      const float pop = popAge_[i] < 8 ? 1.0f + 0.15f * (1.0f - popAge_[i] / 8.0f) : 1.0f;
+      const char* txt = TextFormat("+%d %%", std::max(1, int(std::round(popValue_[i]))));
+      const float size = 30.0f * pop, w = textWidth(txt, size, FontKind::Title);
+      const float y = tagTop(m_, i) - 22.0f - 16.0f * (1.0f - (1.0f - t) * (1.0f - t));
+      drawTextOutlined(txt, f.pos.x - w * 0.5f, capsY(y, size, FontKind::Title), size, withAlpha({255, 200, 112, 255}, a),
+                       withAlpha(ui::kInk, a), 2.5f, FontKind::Title);
+    }
+  }
+  if (starTo_ >= 0) {  // flying from the broken orb to its winner, on an arc
+    const Fighter& f = m_.fighters[starTo_];
+    const Vec2 to = ultStarPos(m_, starTo_), mid = (starFrom_ + to) * 0.5f + Vec2{0.0f, -140.0f};
+    for (int k = 2; k >= 0; --k) {  // two fading copies behind it
+      const float t = smoothstep(std::max(0.0f, starT_ - k * 3.0f) / 36.0f), u = 1.0f - t;
+      const Vec2 p = starFrom_ * (u * u) + mid * (2.0f * u * t) + to * (t * t);
+      const float r = (k == 0 ? 18.0f : 14.0f - k * 2.0f) * (f.active() ? 1.0f : 0.0f);
+      ui::spark(V(p), r, time_ * 6.0f, withAlpha(WHITE, k == 0 ? 1.0f : 0.35f));
+    }
+  }
+}
+
 void MatchScreen::showUltimate(int slot) {
   ultShow_ = std::clamp(slot, -1, 1);
   if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
@@ -332,8 +283,7 @@ MatchScreen::Result MatchScreen::update() {
     const int d = devices_[f.port];
     const bool lost = !f.cpu && !f.eliminated && d >= kPad1 && !deviceAvailable(d);
     if (lost && !padLost_[f.port] && !m_.finished && !paused_) {
-      paused_ = true;
-      pauseSel_ = 0;
+      openPause(f.port);
       audio_.play(Sfx::MenuBack);
     }
     padLost_[f.port] = lost;
@@ -345,15 +295,13 @@ MatchScreen::Result MatchScreen::update() {
     if (f.cpu) continue;
     anyHuman = true;
     if (m_.started() && !m_.finished && devicePausePressed(devices_[f.port])) {
-      paused_ = true;
-      pauseSel_ = 0;
+      openPause(f.port);
       audio_.play(Sfx::MenuSelect);
       return Result::Running;
     }
   }
   if (!anyHuman && !attract_ && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
-    paused_ = true;
-    pauseSel_ = 0;
+    openPause(-1);
     return Result::Running;
   }
 
@@ -391,6 +339,7 @@ MatchScreen::Result MatchScreen::update() {
   m_.step(inputs);
   fx_.onEvents(m_);
   fx_.update(m_);
+  if (!attract_) trackCallouts();
   if (training()) trackCombos();
   updateCamera(false);
   shake_ = fx_.shakeOffset() * shakeScale() * (attract_ ? 0.5f : 1.0f);
@@ -528,48 +477,6 @@ void MatchScreen::drawTrainingPanel() {
   }
 }
 
-void MatchScreen::drawPause() {
-  // The menus' look: a navy veil, chunky buttons (the chosen one gold).
-  DrawRectangleGradientV(0, 0, kScreenW, kScreenH, withAlpha(ui::kNavyDeep, 0.6f), withAlpha(ui::kInk, 0.85f));
-  ui::vignette(0.4f);
-  const auto items = pauseItems();
-  const int n = int(items.size());
-  Rectangle first = pauseItemRect(0, n);
-  const float pw = ui::spriteWidth(ui::Sprite::Pause, 96);
-  ui::drawSprite(ui::Sprite::Pause, kScreenW * 0.5f - pw * 0.5f, first.y - 128, 96);
-  for (int i = 0; i < n; ++i) {
-    const Rectangle r = pauseItemRect(i, n);
-    const bool sel = i == pauseSel_;
-    ui::button(r, items[i].c_str(), sel ? ui::Tone::Gold : ui::Tone::Navy, sel, time_, 1.0f, sel ? 25.0f : 22.0f);
-    if (sel && training() && i >= 2 && i <= 7) {
-      const float cy = r.y + (r.height - ui::chunkyLip(r)) * 0.5f;
-      ui::arrowTri({r.x + 30, cy}, 18, -1, ui::kInk);
-      ui::arrowTri({r.x + r.width - 30, cy}, 18, 1, ui::kInk);
-    }
-  }
-  // Unplugged gamepads
-  int lostCount = 0, lostPort = 0;
-  for (const auto& f : m_.fighters)
-    if (padLost_[f.port]) ++lostCount, lostPort = f.port;
-  if (lostCount > 0) {
-    Rectangle b{kScreenW * 0.5f - 340, kScreenH - 146.0f, 680, 82};
-    ui::card(b, 1.0f, {150, 34, 52, 250}, {84, 14, 30, 250});
-    std::string title = lostCount > 1 ? std::string("MANETTES DÉBRANCHÉES")
-                                      : std::string(deviceName(devices_[lostPort])) + " DÉBRANCHÉE (JOUEUR " +
-                                            std::to_string(lostPort + 1) + ")";
-    ui::boldCentered(title.c_str(), b.x + b.width * 0.5f, b.y + 12, 26);
-    drawTextCentered(lostCount > 1 ? "Rebranchez-les : chacune retrouve son joueur. Ou reprenez le combat sans elles."
-                                   : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
-                     b.x + b.width * 0.5f, b.y + 48, 17, {250, 218, 200, 255}, false);
-  }
-  if (training())
-    ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"GAUCHE/DROITE", ui::Btn::DPadLR, "Changer"},
-                {"ENTRÉE", ui::Btn::A, "Valider"}, {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
-  else
-    ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
-                {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
-}
-
 void MatchScreen::drawAttract() {
   float w, h;
   const bool bg = art::pictureSize("menu_horizon", w, h);
@@ -619,6 +526,7 @@ void MatchScreen::draw() {
   drawProjectiles(m_, time_);
   if (kVfx) fx_.drawWorld();
   else fx_.drawImpacts();  // the movement smoke and the pixel impacts stay while the other effects are off
+  drawCallouts();          // over the effects: the orb's spark flies out of its own burst
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);

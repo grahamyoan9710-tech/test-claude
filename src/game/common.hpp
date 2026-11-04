@@ -99,7 +99,6 @@ inline void drawTextCentered(const char* text, float cx, float y, float size, Co
   else drawText(text, cx - w * 0.5f, y, size, col, k);
 }
 
-// Percent colour, white -> yellow -> orange -> red -> dark red.
 // Upper case for French UTF-8 text (é -> É, ç -> Ç, ō -> Ō...).
 inline std::string upperFr(std::string s) {
   for (size_t i = 0; i < s.size(); ++i) {
@@ -153,9 +152,9 @@ inline Color hitFxGlow(HitFx fx) {
   }
 }
 
-inline Color percentColor(float p) {
-  if (p < 50) return mixColor(WHITE, {255, 240, 120, 255}, p / 50.0f);
-  if (p < 100) return mixColor({255, 240, 120, 255}, {255, 150, 40, 255}, (p - 50) / 50.0f);
-  if (p < 150) return mixColor({255, 150, 40, 255}, {235, 40, 30, 255}, (p - 100) / 50.0f);
-  return mixColor({235, 40, 30, 255}, {140, 10, 20, 255}, (p - 150) / 80.0f);
+inline Color percentColor(float p) {  // « Ligne d'horizon »: Éclat, gold from 60 %, coral from 110 %, then red
+  if (p < 60) return mixColor({238, 243, 255, 255}, {255, 200, 112, 255}, p / 60.0f);
+  if (p < 110) return mixColor({255, 200, 112, 255}, {255, 122, 82, 255}, (p - 60) / 50.0f);
+  if (p < 170) return mixColor({255, 122, 82, 255}, {232, 52, 44, 255}, (p - 110) / 60.0f);
+  return mixColor({232, 52, 44, 255}, {150, 20, 28, 255}, std::min(1.0f, (p - 170) / 80.0f));
 }

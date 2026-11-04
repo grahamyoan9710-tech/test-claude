@@ -75,7 +75,8 @@ void App::enterScreen(Screen s) {
   screen_ = s;
   screenFrames_ = 0;
   if (s != Screen::MainMenu) demo_.reset();
-  if (s != Screen::Match && s != Screen::Versus) {  // the VS screen shows the match about to start
+  // The VS screen shows the match about to start; the settings opened from the pause go back to it.
+  if (s != Screen::Match && s != Screen::Versus && !(s == Screen::Settings && settingsReturn_ == Screen::Match)) {
     match_.reset();
     audio_.setMusic(1);
   }
@@ -277,6 +278,10 @@ void App::run() {
           MatchScreen::Result r = match_->update();
           if (r == MatchScreen::Result::Finished) finishMatch();
           else if (r == MatchScreen::Result::Quit) goTo(Screen::CharSelect);
+          else if (r == MatchScreen::Result::Options) {  // from the pause: the settings, then back to it
+            settingsReturn_ = Screen::Match;
+            goTo(Screen::Settings);
+          }
           break;
         }
       }

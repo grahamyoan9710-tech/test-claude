@@ -74,7 +74,11 @@ void drawCharacterSprite(const CharacterDef& def, int palette, const Pose& pose,
 Vec2 limbWorld(const CharacterDef& def, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb,
                bool weaponTip = false);
 void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes);
-void drawFighterTags(const Match& m);  // "J1" / "CPU" above everyone, after all the fighters
+void drawFighterTags(const Match& m);  // "J1" / "CPU" chips above everyone, after all the fighters
+// Over a fighter whose ultimate is ready, the Clash Orb's spark turns between its head and its tag (world space).
+Vec2 ultStarPos(const Match& m, int id);
+// The top of a fighter's tag (world y), whether tags are shown or not: what pops up over it goes above.
+float tagTop(const Match& m, int id);
 // --export-pose (export_pose.cpp): a fighter alone, rest pose, facing right, feet at (ax, ay), pxh pixels tall,
 // optionally holding its weapon `slot`, on a transparent size x size PNG (the first frame of a PixelLab clip).
 struct ExportPose {
@@ -158,6 +162,11 @@ void drawPlatforms(const Match& m, float time);
 void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, float time);
 void drawProjectiles(const Match& m, float time);
 void drawOrb(const Match& m, float time);
+// The Clash Orb (« Ligne d'horizon »): sky above, gold earth below, cut by the horizon line, the logo's spark at its
+// heart. r: the sphere's radius. detail 0: a small icon (the line across, no spark); 1: the HUD's (thick outline, the
+// spark); 2: in play (halo, dashed ring turning, glint, the line out of the sphere, the spark beating, `damage` 0..1
+// cracking it).
+void drawClashOrb(Vec2 c, float r, float time, int detail, float damage = 0.0f);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);
 // A still of stage `index` in `area`, rendered once and kept (the stage select's thumbnails); cut > 0: with the top-left
 // and bottom-right corners cut, like ui::bevel.

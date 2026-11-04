@@ -40,7 +40,9 @@ Fiche fiche(const CharacterDef& d);
 
 class MatchScreen {
  public:
-  enum class Result { Running, Finished, Quit };
+  enum class Result { Running, Finished, Quit, Options };  // Options: the pause menu opens the settings
+  // The pause menu's lines (match_pause.cpp)
+  enum class PauseItem { Resume, Moves, Reset, Dummy, InfiniteUlt, ZeroPercent, Fight, Boxes, Weapon, Options, Quit };
   // attract: the title screen's demo fight (CPUs only): silent with an Audio never initialised, never paused, filmed
   // by a fixed camera on the title's terrace, over at its first K.O.
   MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug, bool attract = false);
@@ -49,7 +51,7 @@ class MatchScreen {
   void drawAttract();  // the title's backdrop, the fighters and their effects: no HUD; they fade in and out
   const Match& match() const { return m_; }
   bool training() const { return m_.cfg.training; }
-  void forcePause() { paused_ = true; }
+  void forcePause() { openPause(-1); }
   // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
   void showUltimate(int slot);
   void showWeapon(int slot) { weaponShow_ = slot; }
@@ -57,12 +59,20 @@ class MatchScreen {
  private:
   void updateCamera(bool snap);
   Camera2D camera();
+  // The pause (match_pause.cpp): opened by `port` (-1: the game); its menu, and the move list of whoever paused.
+  void openPause(int port);
   Result updatePause();
   void drawPause();
+  void drawMoveList(const Fighter& f);
+  std::vector<std::pair<PauseItem, std::string>> pauseItems() const;
+  const Fighter& listFighter() const;  // whose moves the list shows
+  int keysChoice(int k) const;         // the "TOUCHES" switch: 0 that player's device, 1 the other kind
+  static const char* dummyName(const CpuBrain& b, int level);
   void resume();
   void trackCombos();
+  void trackCallouts();
   void drawTrainingPanel();
-  std::vector<std::string> pauseItems() const;
+  void drawCallouts();  // world space: the damage popping over the fighters, the Clash Orb's spark
 
   Match m_;
   std::array<int, 4> devices_;
@@ -74,6 +84,10 @@ class MatchScreen {
   Vec2 shake_;
   bool paused_ = false;
   int pauseSel_ = 0;
+  int pausedBy_ = -1;     // the port that paused
+  int listTab_ = 0;       // the move list's tab: 0 bare hands, 1 weapon A, 2 weapon B
+  int keysDevice_ = -1;   // whose keys the move list shows
+  bool quitAsk_ = false;  // QUITTER pressed once: once more quits
   int dropSlot_ = 0;  // training: which of the player's two weapons the pause menu drops
   std::array<bool, 4> padLost_{};      // the player's gamepad got unplugged (auto pause)
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
@@ -89,6 +103,11 @@ class MatchScreen {
   std::vector<int> combo_;
   std::vector<float> comboStart_;
   std::vector<int> comboShow_;
+  // Over the fighters: the damage each takes (summed while hits keep coming); the Clash Orb's spark flying to its winner
+  std::vector<float> popValue_, seenPercent_;
+  std::vector<int> popAge_;
+  Vec2 starFrom_;
+  int starTo_ = -1, starT_ = 0;
   int lastCombo_ = 0;
   float lastComboDamage_ = 0.0f;
   int bestCombo_ = 0;

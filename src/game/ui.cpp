@@ -371,6 +371,21 @@ void diamond(Vector2 c, float r, Color col) {
   quad({c.x, c.y - r}, {c.x + r, c.y}, {c.x, c.y + r}, {c.x - r, c.y}, col, col, col, col);
 }
 
+void spark(Vector2 c, float r, float rot, Color col, float waist) {
+  Vector2 p[8];
+  for (int i = 0; i < 8; ++i) {
+    const float a = rot + i * kPi / 4.0f - kPi / 2.0f, q = i % 2 == 0 ? r : r * waist * 1.41f;
+    p[i] = {c.x + std::cos(a) * q, c.y + std::sin(a) * q};
+  }
+  rlBegin(RL_TRIANGLES);
+  for (int i = 0; i < 8; ++i) {
+    vtx(c, col);
+    vtx(p[i], col);
+    vtx(p[(i + 1) % 8], col);
+  }
+  rlEnd();
+}
+
 void corners(Rectangle r, float s, float len, float t, Color col) {
   const Vector2 p[4] = {{r.x + s, r.y}, {r.x + r.width, r.y}, {r.x + r.width - s, r.y + r.height}, {r.x, r.y + r.height}};
   for (int i = 0; i < 4; ++i) {
@@ -936,6 +951,17 @@ void selector(Rectangle r, const char* value, bool focused, float time) {
   const float bob = focused ? std::sin(time * 8.0f) * 1.5f : 0.0f, s = r.height * 0.36f;
   for (int side = -1; side <= 1; side += 2)  // a chevron at each end, gold when focused
     arrowTri({side < 0 ? r.x + 14 - bob : r.x + r.width - 14 + bob, cy}, s, side, focused ? kGold : kSky);
+}
+
+float trackedWidth(const char* text, float size, float em) {
+  const float s = size * fontScale(FontKind::Title);
+  return MeasureTextEx(gameFont(FontKind::Title), text, s, em * s / 1.574f).x;  // the font's em is 1/1.574 of s
+}
+
+float tracked(const char* text, float x, float y, float size, float em, Color col) {
+  const float s = size * fontScale(FontKind::Title);
+  DrawTextEx(gameFont(FontKind::Title), text, {x, y - size * fontRaise(FontKind::Title)}, s, em * s / 1.574f, col);
+  return trackedWidth(text, size, em);
 }
 
 float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw) {

@@ -1466,16 +1466,22 @@ float tagY(const Match& m, int id) {
 }
 }  // namespace
 
+Vec2 ultStarPos(const Match& m, int id) { return {m.fighters[id].pos.x, tagY(m, id) + 16.0f}; }
+
+float tagTop(const Match& m, int id) { return tagY(m, id) + (m.fighters[id].finalSmash ? -24.0f : 2.0f); }
+
 void drawFighterTags(const Match& m) {
   if (!settings().playerTags || m.freezeTimer > 0) return;  // no tags during an ultimate cinematic
   for (const auto& f : m.fighters) {
     if (!f.active() || f.state == FState::Grabbed) continue;
-    Color pc = slotColor(f);
+    const Color pc = slotColor(f);
     char tag[8];
     std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-    float ty = tagY(m, f.id);
-    DrawTriangle({f.pos.x - 8, ty + 20}, {f.pos.x, ty + 29}, {f.pos.x + 8, ty + 20}, pc);
-    drawTextCentered(tag, f.pos.x, ty, 20, pc, true, FontKind::Title);
+    const float w = textWidth(tag, 19, FontKind::Title) + 16.0f, top = tagTop(m, f.id);
+    const Rectangle r{f.pos.x - w * 0.5f, top, w, 22.0f};
+    DrawRectangleRec(r, pc);  // a chip of its colour (« Ligne d'horizon »)
+    if (!f.finalSmash) DrawTriangle({f.pos.x - 6, r.y + r.height}, {f.pos.x, r.y + r.height + 6}, {f.pos.x + 6, r.y + r.height}, pc);
+    drawText(tag, r.x + 8.0f, capsY(r.y + r.height * 0.5f, 19, FontKind::Title), 19, ui::kInk, FontKind::Title);
   }
 }
 
@@ -1517,9 +1523,9 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     flashCol = {30, 30, 50, 255};
     flash = 0.35f;
   }
-  if (f.finalSmash || usingFs) {  // power pulsing in the hero's element
+  if (usingFs) {  // power pulsing in the hero's element
     flashCol = mixColor(hitFxGlow(heroElement(f.def->hero)), WHITE, 0.3f);
-    flash = std::max(flash, (usingFs ? 0.1f : 0.05f) + 0.04f * std::sin(at * 6.0f));
+    flash = std::max(flash, 0.1f + 0.04f * std::sin(at * 6.0f));
   }
   Vec2 feet = f.pos;
   if (f.hitlag > 0 && f.state == FState::Hitstun) {  // hit-stop: the blow shakes the victim along its launch
@@ -1552,6 +1558,14 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     for (int i = 0; kVfx && i < 4; ++i) {  // afterimages, oldest first
       const Ghost& g = anim.ghosts[(anim.ghostNext + i) % 4];
       if (g.life > 0) drawCharacter(d, f.palette, g.pose, g.feet, g.facing, 1.0f, 0.34f * g.life / 12.0f, g.tint, 1.0f, at);
+    }
+    if (f.finalSmash && !usingFs) {  // the Clash Orb's prize: a white outline in a gold glow, everyone sees whom to flee
+      const float beat = 0.75f + 0.25f * std::sin(at * 2.0f * kPi / 1.4f);
+      for (int i = 0; i < 16; ++i) {
+        const float r = i < 8 ? 5.0f : 2.0f, ang = i * kPi / 4.0f + (i < 8 ? 0.0f : kPi / 8.0f);
+        drawCharacter(d, f.palette, pose, feet + Vec2{std::cos(ang) * r, std::sin(ang) * r}, f.facing, 1.0f,
+                      i < 8 ? a * 0.45f * beat : a, i < 8 ? ui::kGold : WHITE, 1.0f, at);
+      }
     }
     drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, a, flashCol, flash, at);
   };

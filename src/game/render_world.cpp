@@ -9,17 +9,32 @@
 using namespace paint;
 
 namespace {
+// A colour along three stops: c0 at 0, c1 at m, c2 at 1.
+Color ramp3(float t, Color c0, float m, Color c1, Color c2) {
+  t = clampf(t, 0.0f, 1.0f);
+  return t < m ? mixColor(c0, c1, t / m) : mixColor(c1, c2, (t - m) / (1.0f - m));
+}
 
-// Zonai spiral rune.
-void spiral(Vector2 c, float r, float turns, float thick, Color col, float rot = 0.0f) {
-  const int n = int(clampf(r * 0.8f, 8.0f, 20.0f) * turns);
-  Vector2 prev = c;
-  for (int i = 1; i <= n; ++i) {
-    float t = float(i) / n, a = rot + t * turns * 2.0f * kPi;
-    Vector2 p{c.x + std::cos(a) * r * t, c.y + std::sin(a) * r * t};
-    DrawLineEx(prev, p, thick, col);
-    prev = p;
-  }
+// One half of the Clash Orb, the sky (top) or the gold earth (bottom), shaded like the mockup's SVG: a radial gradient
+// set in the half's bounding box (so elliptical), as a polar mesh of vertex colours.
+void orbHalf(Vec2 c, float r, bool top) {
+  const float gx = (top ? -0.24f : 0.2f) * r, gy = (top ? -0.7f : 0.75f) * r, rx = 1.8f * r, ry = 0.9f * r;
+  const float sy = top ? -1.0f : 1.0f;
+  auto at = [&](int i, int j) {
+    constexpr int kA = 18, kR = 4;
+    const float a = kPi * i / kA, q = r * j / kR;
+    return Vec2{std::cos(a) * q, sy * std::sin(a) * q};
+  };
+  auto col = [&](Vec2 p) {
+    const float d = std::sqrt((p.x - gx) * (p.x - gx) / (rx * rx) + (p.y - gy) * (p.y - gy) / (ry * ry));
+    return top ? ramp3(d, {216, 236, 255, 255}, 0.35f, {95, 162, 255, 255}, {11, 30, 85, 255})
+               : ramp3(d, {255, 226, 168, 255}, 0.4f, {255, 181, 71, 255}, {106, 50, 8, 255});
+  };
+  for (int i = 0; i < 18; ++i)
+    for (int j = 0; j < 4; ++j) {
+      const Vec2 p0 = at(i, j), p1 = at(i + 1, j), p2 = at(i + 1, j + 1), p3 = at(i, j + 1);
+      vfx::quad(c + p0, c + p1, c + p2, c + p3, col(p0), col(p1), col(p2), col(p3));
+    }
 }
 }  // namespace
 
@@ -137,54 +152,54 @@ void drawProjectiles(const Match& m, float time) {
   }
 }
 
+void drawClashOrb(Vec2 c, float r, float time, int detail, float damage) {
+  const float k = r / 62.0f;  // the mockup draws it 62 units wide
+  if (detail >= 2) {  // in play: its halo and the dashed ring turning around it
+    vfx::ring(c, r, r * 1.58f, withAlpha(WHITE, 0.26f), withAlpha(WHITE, 0.0f));
+    const float spin = time * 2.0f * kPi / 9.0f, thick = std::max(1.5f, 3.0f * k);
+    for (int i = 0; i < 36; ++i) {
+      const float a = spin + i * 2.0f * kPi / 36.0f;
+      DrawRing(V(c), 80.0f * k - thick * 0.5f, 80.0f * k + thick * 0.5f, rad2deg(a), rad2deg(a + 0.05f), 2,
+               withAlpha(ui::kCream, 0.55f));
+    }
+  }
+  orbHalf(c, r, true);
+  orbHalf(c, r, false);
+  if (detail >= 2) {
+    const Vector2 g[4] = {{c.x - 44 * k, c.y - 30 * k}, {c.x - 36 * k, c.y - 46 * k}, {c.x - 20 * k, c.y - 50 * k},
+                          {c.x - 30 * k, c.y - 36 * k}};
+    ui::quad(g[0], g[1], g[2], g[3], withAlpha(WHITE, 0.5f), withAlpha(WHITE, 0.5f), withAlpha(WHITE, 0.5f),
+             withAlpha(WHITE, 0.5f));  // the glint of the sky
+    const float w = std::max(1.5f, 4.0f * k);  // cracks, as it loses its life
+    auto crack = [&](std::initializer_list<Vec2> pts) {
+      const Vec2* p = pts.begin();
+      for (size_t i = 1; i < pts.size(); ++i) DrawLineEx(V(c + p[i - 1] * k), V(c + p[i] * k), w, WHITE);
+    };
+    if (damage >= 0.3f) crack({{-10, -60}, {-4, -30}, {-22, -14}});
+    if (damage >= 0.65f) crack({{30, 26}, {14, 18}, {18, 50}});
+  }
+  const float outline = (detail == 1 ? 10.0f : detail >= 2 ? 6.0f : 8.0f) * k;
+  DrawRing(V(c), r - outline * 0.5f, r + outline * 0.5f, 0.0f, 360.0f, 48, ui::kInk);
+  if (detail != 1) {  // the horizon line, out of the sphere in play
+    const float half = detail >= 2 ? 96.0f * k : r;
+    if (detail >= 2) ui::horizonLine(c.x - half, c.x + half, c.y, 6.0f * k);
+    else DrawRectangleRec({c.x - half, c.y - std::max(0.75f, k * 4.0f), half * 2.0f, std::max(1.5f, k * 8.0f)}, WHITE);
+  }
+  if (detail >= 1) {  // the logo's spark at its heart
+    const float beat = detail >= 2 ? 1.0f + 0.12f * std::sin(time * 2.0f * kPi / 1.8f) : 1.0f;
+    ui::spark(V(c), 40.0f * k * beat, 0.0f, WHITE, detail >= 2 ? 0.15f : 0.2f);
+    if (detail >= 2) DrawCircleV(V(c), 6.0f * k, WHITE);
+  }
+}
+
 void drawOrb(const Match& m, float time) {
   const Orb& o = m.orb;
   if (!o.active) return;
   if (o.life < 120 && (o.life / 6) % 2 == 0) return;  // about to vanish: blink
-  const Vector2 c = V(o.pos);
-  const float r = o.radius, pulse = 0.5f + 0.5f * std::sin(time * 5.0f);
-  const Color teal{100, 250, 220, 255}, core{225, 255, 245, 255};
-  const Color stone{170, 164, 140, 255}, stoneDk{96, 96, 88, 255}, ink{30, 34, 36, 255};
-  glow(c, r * 2.7f, teal, 0.22f + 0.12f * pulse);
-  const float rot = time * 1.1f;  // rune ring
-  DrawRing(c, r * 1.42f, r * 1.5f, 0, 360, 48, withAlpha(teal, 0.4f + 0.2f * pulse));
-  for (int i = 0; i < 12; ++i) {
-    float a = rot + i * kPi / 6.0f;
-    Vec2 d = rotate({1, 0}, a), t = rotate({0, 1}, a);
-    Vector2 p{c.x + d.x * r * 1.72f, c.y + d.y * r * 1.72f};
-    if (i % 3 == 0) {
-      DrawCircleV(p, r * 0.13f, withAlpha(teal, 0.9f));
-      DrawCircleV(p, r * 0.06f, core);
-    } else {
-      DrawLineEx({p.x - t.x * r * 0.14f, p.y - t.y * r * 0.14f}, {p.x + t.x * r * 0.14f, p.y + t.y * r * 0.14f}, 3.0f,
-                 withAlpha(teal, 0.85f));
-    }
-  }
-  const float spin = -time * 0.6f * 57.3f;  // stone shell (octagon, lit from the top left)
-  DrawPoly(c, 8, r + 3.5f, spin, ink);
-  DrawPoly(c, 8, r, spin, stoneDk);
-  DrawPoly({c.x - r * 0.08f, c.y - r * 0.08f}, 8, r * 0.88f, spin, stone);
-  for (int i = 0; i < 8; ++i) {  // carved notches glowing at the corners
-    float a = deg2rad(spin) + i * kPi / 4.0f;
-    Vector2 p0{c.x + std::cos(a) * r * 0.9f, c.y + std::sin(a) * r * 0.9f};
-    Vector2 p1{c.x + std::cos(a) * r * 0.68f, c.y + std::sin(a) * r * 0.68f};
-    DrawLineEx(p0, p1, 3.0f, withAlpha(teal, 0.6f + 0.4f * pulse));
-  }
-  DrawCircleV(c, r * 0.62f, ink);
-  glow(c, r * 0.58f, r * 0.58f, core, mixColor(teal, {20, 120, 110, 255}, 0.4f));
-  spiral(c, r * 0.42f, 1.5f, 2.5f, withAlpha({20, 110, 100, 255}, 0.9f), time * 2.0f);
-  DrawCircleV(c, r * 0.12f, WHITE);
-  if (o.hp < 25.0f) {  // cracks leaking light
-    Color k = mixColor(teal, WHITE, 0.5f);
-    DrawLineEx({c.x - r * 0.95f, c.y - r * 0.2f}, {c.x - r * 0.5f, c.y + r * 0.1f}, 2.5f, k);
-    DrawLineEx({c.x - r * 0.5f, c.y + r * 0.1f}, {c.x - r * 0.35f, c.y + r * 0.7f}, 2.5f, k);
-  }
-  if (o.hp < 12.0f) {
-    Color k = mixColor(teal, WHITE, 0.5f);
-    DrawLineEx({c.x + r * 0.9f, c.y - r * 0.4f}, {c.x + r * 0.55f, c.y - r * 0.05f}, 2.5f, k);
-    DrawLineEx({c.x + r * 0.55f, c.y - r * 0.05f}, {c.x + r * 0.7f, c.y + r * 0.5f}, 2.5f, k);
-  }
-  if (o.flash > 0) DrawCircleV(c, r * 1.1f, withAlpha(WHITE, o.flash / 8.0f));
+  const float grow = smoothstep(float(60 * 18 - o.life) / 18.0f);  // it opens up as it appears
+  const Vec2 c = o.pos + Vec2{0.0f, -std::sin(time * 2.0f * kPi / 3.0f) * o.radius * 0.15f};
+  drawClashOrb(c, o.radius * grow, time, 2, 1.0f - o.hp / 40.0f);
+  if (o.flash > 0) DrawCircleV(V(c), o.radius * 1.05f, withAlpha(WHITE, 0.8f * o.flash / 8.0f));
 }
 
 void drawStagePreview(const StageDef& s, Rectangle area, float time) {

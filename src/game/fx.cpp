@@ -583,7 +583,13 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::OrbBreak:
-        playFx("sys_orb_break", e.pos, 1.2f, 0.0f, false, {255, 246, 200, 255});
+        if (art::fxInfo("sys_orb_break")) {  // the PixelLab burst (shown with kVfx off: in the owner's validated mockup)
+          playFx("sys_orb_break", e.pos, 1.2f, 0.0f, false, {255, 246, 200, 255});
+          sprites_.back().move = true;
+        }
+        for (int i = 0; i < 4; ++i)  // shards of its sky and of its earth
+          pixelImpact(e.pos, {std::cos(i * kPi * 0.5f), std::sin(i * kPi * 0.5f)}, 140.0f,
+                      i % 2 ? Color{255, 181, 71, 255} : Color{95, 162, 255, 255}, i == 0);
         flash_ = std::max(flash_, 0.45f);
         flashCol_ = WHITE;
         shake_ = std::max(shake_, 14.0f);
@@ -604,7 +610,7 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::Crowd, 0.9f, 1.15f);
         break;
       }
-      case EvType::UltReady: {  // meter full: runes light up in the hero's element
+      case EvType::UltReady: {  // ultimate ready: a flash in the hero's element (its light: MatchScreen)
         const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kZonaiGlow;
         flash_ = std::max(flash_, 0.1f);
         flashCol_ = el;

@@ -52,9 +52,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | pris | session cloud « DA v2 », 11.1 |
 
 ### Journal (le plus récent en haut)
+- 04/11 23 h 15 UTC, session cloud « DA v2 » : **11.1** (3e livraison de la DA) : HUD (`render_hud.cpp` : cartes des
+  joueurs, bandeau de l'orbe, badge « ULTIME PRÊT », bulles hors écran), Clash Orb redessinée (`drawClashOrb` dans
+  `render_world.cpp`, aussi en icône), éclat qui vole de l'orbe au gagnant et dégâts « +N % » (`trackCallouts` /
+  `drawCallouts` dans `match_screen.cpp`), pause et liste des coups (`match_pause.cpp`, textes `kMoveText` pour 01, 02,
+  03, 07, 08), options depuis la pause. Verrou « Version et paquets » pris.
 - 04/11 22 h 45 UTC, session cloud « DA v2 » : **v11.0 publiée** (workflow_dispatch sur `claude/project-thread-dj46dj`,
   archives Linux et Windows). Verrou « Version et paquets » libéré. Suite : HUD, Clash Orb, pause et liste des coups.
 - 04/11 22 h 30 UTC, session cloud « DA v2 » : **11.0** (2e livraison de la DA) : choix des combattants

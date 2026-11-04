@@ -80,6 +80,8 @@ void sunburst(Vector2 c, float radius, int rays, float rot, Color col);
 void vignette(float strength);
 void star(Vector2 c, float rOut, float rIn, float rot, Color col);
 void diamond(Vector2 c, float r, Color col);
+// The logo's spark, a four-pointed star: its tips at r, the corners of its waist at (±r·waist, ±r·waist); turned by rot.
+void spark(Vector2 c, float r, float rot, Color col, float waist = 0.2f);
 // Short L brackets on the corners of a slanted box (slant 0 = rectangle).
 void corners(Rectangle r, float slant, float len, float thick, Color col);
 // A card in the given colours (the slant is ignored: everything is rounded now).
@@ -148,6 +150,9 @@ struct Hint {
 void footer(std::initializer_list<Hint> hints, const char* info = nullptr, const Hint* go = nullptr, bool goOn = true);
 Rectangle goRect(const Hint& go);  // where the footer puts it (mouse clicks)
 
+// Small capitals spaced out like the charte's labels (CSS letter-spacing, in em), title font; returns the width.
+float tracked(const char* text, float x, float y, float size, float em, Color col);
+float trackedWidth(const char* text, float size, float em);
 // Draws `text` wrapped to `width`, line after line; returns the y under the last line (draw = false: only measures).
 float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw = true);
 // Title text with a horizontal gradient, left -> middle -> right (the "VS").

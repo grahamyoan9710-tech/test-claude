@@ -42,6 +42,7 @@ class Fx {
   // False when the effect is not imported.
   bool moveFx(const Match& m, int who, const char* name, Vec2 at, float size = 1.0f, bool tinted = false);
   Vec2 punchFocus() const { return punchPos_; }
+  bool comboShown(int id) const { return combos_[id & 3].hits >= 3; }  // its "4 COUPS !" counter is up
 
  private:
   enum class PK : uint8_t {
