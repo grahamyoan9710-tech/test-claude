@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "cc2f9cc3-fafa-476f-a2c8-f1846d37cd73",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a5d1348b-2e24-4e01-8e68-414132546ca8",
+  "last_frame_url": "upload:6bb35ff7-5b75-4c08-9a17-05299ff1e9b4",
+  "description": "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, two curved violet daggers, one in each hand held exactly as in the first frame, the feet stay planted, returns exactly to the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding two curved violet daggers, one in each hand",
+  "initial_pose": "fighting stance facing right, holding two curved violet daggers, one in each hand"
+ },
+ "reply": "id: cc2f9cc3-fafa-476f-a2c8-f1846d37cd73\njob_id: cc2f9cc3-fafa-476f-a2c8-f1846d37cd73\ndescription: idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, two curved violet daggers, one in each hand held exactly as in the first frame, the feet stay planted, returns exactly to the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"cc2f9cc3-fafa-476f-a2c8-f1846d37cd73\")\nasset_id: 1ed2bdf6-8e35-5307-84fc-8b30d279151a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

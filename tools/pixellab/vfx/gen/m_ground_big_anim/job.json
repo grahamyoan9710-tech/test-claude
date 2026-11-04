@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "2c05f4ca-6112-4e8d-b77b-46a7fccfa524",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:8be4fa48-1337-4f8f-8424-1b6f8dd481ca",
+  "description": "pixel art effect animation: the spikes sink back into the ground, the rocks fall down, the dust fades away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a big ground impact: white and light grey shockwave spikes bursting up from the ground in a wide fan, dark grey rocks flying, small debris"
+ },
+ "reply": "id: 2c05f4ca-6112-4e8d-b77b-46a7fccfa524\njob_id: 2c05f4ca-6112-4e8d-b77b-46a7fccfa524\ndescription: pixel art effect animation: the spikes sink back into the ground, the rocks fall down, the dust fades away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 160x120px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"2c05f4ca-6112-4e8d-b77b-46a7fccfa524\")\nasset_id: fd93e3cc-8bac-5272-af95-ca58dddabcfc\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_ground_big/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

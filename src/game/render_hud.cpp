@@ -5,50 +5,7 @@
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
-namespace {
-// Ultimate meter: a row of glowing "Zonai battery" cells above the damage card.
-void drawUltBar(const Fighter& f, float x, float y, float w, float fill, float time) {
-  const int cells = 5;
-  const float h = 13.0f, slant = 3.0f, gap = 4.0f, labelW = 44.0f;
-  const bool ready = f.finalSmash;
-  const float pulse = ready ? 0.5f + 0.5f * std::sin(time * 7.0f) : 0.0f;
-  const Color hi = {150, 255, 214, 255}, lo = {24, 176, 140, 255};
-  ui::slanted({x - 4, y - 3, w + 8, h + 6}, slant + 1, withAlpha(ui::kInk, 0.82f), withAlpha(ui::kInk, 0.92f));
-  ui::slantedOutline({x - 4, y - 3, w + 8, h + 6}, slant + 1, 1.5f,
-                     ready ? mixColor(lo, hi, pulse) : withAlpha({120, 210, 190, 255}, 0.55f));
-  drawText("ULTI", x + 2, y - 2.5f, 15, ready ? mixColor(hi, WHITE, pulse) : Color{170, 220, 205, 255});
-  const float cx0 = x + labelW, cw = (w - labelW - gap * (cells - 1)) / cells;
-  for (int i = 0; i < cells; ++i) {
-    Rectangle c{cx0 + i * (cw + gap), y, cw, h};
-    ui::slanted(c, slant, {38, 52, 58, 255}, {22, 30, 36, 255});
-    float k = clampf(fill * cells - i, 0.0f, 1.0f);
-    if (k <= 0.0f) continue;
-    Rectangle in{c.x, c.y, c.width * k, c.height};
-    Color top = ready ? mixColor(hi, WHITE, 0.35f * pulse) : hi;
-    Color bottom = ready ? mixColor(lo, hi, 0.5f * pulse) : lo;
-    ui::slanted(in, slant * k, top, bottom);
-    ui::slanted({in.x + 2, in.y + 1, in.width - 3, 3}, 0.5f, withAlpha(WHITE, 0.45f), withAlpha(WHITE, 0.0f));
-  }
-  if (ready) {  // shimmer running along the cells + soft glow
-    float sx = cx0 + std::fmod(time * 260.0f, w - labelW + 60.0f) - 30.0f;
-    for (int i = 0; i < 3; ++i)
-      ui::glow({cx0 + (w - labelW) * (0.17f + 0.33f * i), y + h * 0.5f}, 30.0f + 6.0f * pulse,
-               withAlpha(hi, 0.22f + 0.12f * pulse), 4);
-    if (sx > cx0 && sx < x + w - 10)
-      ui::quad({sx + slant, y}, {sx + 10 + slant, y}, {sx + 10, y + h}, {sx, y + h}, withAlpha(WHITE, 0.0f),
-               withAlpha(WHITE, 0.7f), withAlpha(WHITE, 0.7f), withAlpha(WHITE, 0.0f));
-  }
-}
-}  // namespace
-
 void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices) {
-  static float shown[4] = {0, 0, 0, 0};  // displayed ultimate fill, eased towards the real meter
-  static const Match* lastMatch = nullptr;
-  static int lastFrame = 0;
-  if (&m != lastMatch || m.frame < lastFrame)  // a new match: no easing from the previous one
-    for (const auto& f : m.fighters) shown[f.id & 3] = f.ult / kUltMax;
-  lastMatch = &m;
-  lastFrame = m.frame;
   const int n = int(m.fighters.size());
   const float pw = 240.0f, ph = 90.0f, gap = 18.0f;
   const float total = n * pw + (n - 1) * gap;
@@ -57,48 +14,46 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
   for (const auto& f : m.fighters) {
     Color pc = slotColor(f);
     Rectangle card{x, y, pw, ph};
-    ui::slanted({x + 5, y + 6, pw, ph}, 16, withAlpha(BLACK, 0.4f), withAlpha(BLACK, 0.4f));
-    if (f.eliminated) {
-      ui::slanted(card, 16, {70, 76, 76, 235}, {34, 40, 42, 235});
-    } else {  // slate card tinted by the player colour, a bright band of it on top
-      ui::slanted(card, 16, withAlpha(mixColor(pc, ui::kInk, 0.5f), 0.94f), withAlpha(mixColor(pc, ui::kInk, 0.84f), 0.94f));
-      ui::slanted({x + 16 - 16 * 6 / ph, y, pw - 16 + 16 * 6 / ph - 2, 6}, 16 * 6 / ph, pc, shade(pc, 0.8f));
-      DrawLineEx({x + 15, y + 6.5f}, {x + pw - 1.5f, y + 6.5f}, 1.0f, withAlpha(ui::kGold, 0.6f));
+    if (f.eliminated) {  // a navy card, the player's colour along the top
+      ui::card(card, 0.9f, {70, 76, 96, 255}, {34, 40, 58, 255});
+    } else {
+      ui::card(card, 0.94f);
+      ui::roundRect({x + 3, y + 3, pw - 6, 7}, 3, mixColor(pc, WHITE, 0.25f), shade(pc, 0.8f));
     }
-    ui::slantedOutline(card, 16, 2.5f, withAlpha(ui::kInk, 0.95f));
-    ui::corners(card, 16, 12, 2.0f, withAlpha(ui::kGold, f.eliminated ? 0.3f : 0.8f));
-    float& sh = shown[f.id & 3];
-    const float fill = f.ult / kUltMax;
-    sh = fill < sh ? std::max(fill, sh - 0.08f) : sh + (fill - sh) * 0.12f;
-    if (!f.eliminated) drawUltBar(f, x + 22, y - 22, pw - 30, sh, time + f.id);
     if (f.finalSmash) {
       float pulse = 0.5f + 0.5f * std::sin(time * 7.0f);
-      Color zon = mixColor({90, 240, 200, 255}, {220, 255, 240, 255}, pulse);
-      ui::slantedOutline(ui::grow(card, 3), 16, 3.5f, zon);
+      Color zon = mixColor(ui::kGold, WHITE, pulse);
+      ui::rim(card, 16, time);
       const char* ready = "ULTI PRÊTE !";
       float tw = textWidth(ready, 22, FontKind::Title);
       float ty = y - 50 - 3 * pulse;
       float bw = devices && !f.cpu ? ui::actionPromptWidth((*devices)[f.port & 3], kActUltimate, 24) : 0.0f;
       float tx = x + pw - tw - 4 - (bw > 0 ? bw + 6 : 0);
-      drawTextOutlined(ready, tx, ty, 22, zon, ui::kInk, 3.0f, FontKind::Title);
+      ui::bold(ready, tx, ty, 22, zon);
       if (bw > 0) ui::actionPrompt((*devices)[f.port & 3], kActUltimate, tx + tw + 6, ty, 24, true);
     }
-    DrawCircleV({x + 50, y + 46}, 36, withAlpha(ui::kInk, 0.5f));
-    DrawRing({x + 50, y + 46}, 33.5f, 37, 0, 360, 36, withAlpha(pc, 0.9f));
-    DrawRing({x + 50, y + 46}, 37, 38.5f, 0, 360, 36, withAlpha(ui::kGold, 0.5f));
-    drawPortrait(*f.def, f.palette, {x + 50, y + 44}, 62, time + f.id);
-    if (const WeaponDef* w = f.weaponDef()) {  // held weapon: badge on the portrait, ring = time left
+    DrawCircleV({x + 50, y + 46}, 39, ui::kInk);
+    DrawCircleV({x + 50, y + 46}, 36.5f, pc);
+    drawPortraitDisc(*f.def, f.palette, {x + 50, y + 46}, 36, time + f.id);
+    if (const WeaponDef* w = f.weaponDef()) {  // the weapon in hand: a badge on the portrait
       const Vector2 b{x + 80, y + 72};
       const Color c = hitFxColor(w->fx), g = hitFxGlow(w->fx);
-      const float left = clampf(float(f.weaponTimer) / float(std::max(1, w->duration)), 0.0f, 1.0f);
-      const bool blink = left < 0.2f && int(time * 8.0f) % 2 == 0;
-      ui::glow(b, 26, withAlpha(g, 0.35f), 4);
-      DrawCircleV(b, 16, ui::kInk);
+      DrawCircleV(b, 17, ui::kInk);
       DrawCircleV(b, 13.5f, mixColor(c, ui::kInk, 0.55f));
-      DrawRing(b, 13.5f, 16.5f, -90, -90 + 360 * left, 32, blink ? WHITE : g);
-      const float len = std::max(12.0f, weaponVisualLength(w->visual)) * 0.26f;
-      const Vec2 dir = Vec2{0.7f, -0.7f}.norm();
-      drawWeaponVisual(w->visual, W(b) - dir * (len * 0.5f), dir, 0.26f, 1.0f, time);
+      DrawRing(b, 13.5f, 16.5f, 0, 360, 32, g);
+      drawWeaponIcon(*f.def, f.weapon, W(b), 26.0f);
+      if (f.weapons == 3) {  // the other one, the weapon button switches to it
+        const Vector2 o{x + 20, y + 74};
+        DrawCircleV(o, 13, ui::kInk);
+        DrawCircleV(o, 10.5f, mixColor(hitFxColor(f.def->weapons[f.weapon ^ 1].fx), ui::kInk, 0.55f));
+        drawWeaponIcon(*f.def, f.weapon ^ 1, W(o), 19.0f);
+      }
+      if (f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging
+        DrawCircleV(b, 13.5f, withAlpha(ui::kInk, 0.65f));
+        char sec[16];
+        std::snprintf(sec, sizeof sec, "%d", (f.moveCooldown[NSpecial] + 59) / 60);
+        drawTextOutlined(sec, b.x - textWidth(sec, 16) * 0.5f, b.y - 9, 16, ui::kCream, ui::kInk, 2.0f);
+      }
     }
 
     char label[16];
@@ -106,14 +61,13 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
     float lw = textWidth(label, 15) + 16;
     float ns = 22.0f;  // long names shrink to leave room for the player label
     while (ns > 13.0f && textWidth(f.def->name.c_str(), ns, FontKind::Title) > pw - 94 - lw - 20) ns -= 1.0f;
-    drawTextOutlined(f.def->name.c_str(), x + 94, y + 9 + (22 - ns) * 0.5f, ns, ui::kCream, ui::kInk, 2.5f,
-                     FontKind::Title);
-    DrawRectangleRounded({x + pw - lw - 11.5f, y + 9.5f, lw + 3, 23}, 0.5f, 6, ui::kInk);
-    DrawRectangleRounded({x + pw - lw - 10, y + 11, lw, 20}, 0.5f, 6, shade(pc, 0.85f));
-    drawText(label, x + pw - lw - 2, y + 12, 15, WHITE);
+    ui::bold(f.def->name.c_str(), x + 94, y + 12 + (22 - ns) * 0.5f, ns);
+    ui::roundRect({x + pw - lw - 12, y + 12, lw + 4, 24}, 10, ui::kInk, ui::kInk);
+    ui::roundRect({x + pw - lw - 10, y + 14, lw, 20}, 8, mixColor(pc, WHITE, 0.2f), shade(pc, 0.7f));
+    drawTextOutlined(label, x + pw - lw - 2, y + 15, 15, WHITE, ui::kInk, 2.0f);
 
     if (f.eliminated) {
-      drawTextOutlined("K.O.", x + 104, y + 34, 42, {200, 204, 196, 255}, ui::kInk, 3.0f, FontKind::Title);
+      ui::bold("K.O.", x + 104, y + 36, 42, {200, 208, 224, 255});
     } else {
       char pct[16];
       std::snprintf(pct, sizeof pct, "%d", int(f.percent));
@@ -123,9 +77,9 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
       Color col = percentColor(f.percent);
       float size = 50.0f + std::min(8.0f, sh);
       float w = textWidth(pct, size, FontKind::Title);
-      drawTextOutlined(pct, x + 180 - w + jx, y + 30 + jy, size, col, ui::kInk, 4.0f, FontKind::Title);
-      drawTextOutlined("%", x + 184 + jx, y + 50 + jy, 26, col, ui::kInk, 3.0f, FontKind::Title);
-      if (!m.cfg.training) {
+      ui::bold(pct, x + 180 - w + jx, y + 32 + jy, size, col);
+      ui::bold("%", x + 184 + jx, y + 52 + jy, 26, col);
+      if (!m.cfg.training || m.trainFight) {
         for (int i = 0; i < std::min(f.stocks, 6); ++i) {
           Vector2 c{x + 104.0f + i * 17.0f, y + 78.0f};
           DrawCircleV(c, 7, ui::kInk);
@@ -159,8 +113,8 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
     DrawCircleV(b, 39, withAlpha({235, 240, 250, 255}, 0.9f));
     float scale = 52.0f / f.def->height;
     Pose pose = computePose(f, m, time);
-    drawCharacter(*f.def, f.palette, pose, {b.x, b.y + f.def->height * scale * 0.5f}, f.facing, scale, 1.0f, WHITE,
-                  f.flash > 0 ? 0.5f : 0.0f, time);
+    drawCharacterSprite(*f.def, f.palette, pose, {b.x, b.y + f.def->height * scale * 0.5f}, f.facing, scale, 1.0f, WHITE,
+                        f.flash > 0 ? 0.5f : 0.0f, time);
     float dist = (W(sp) - W(b)).len();
     if (dist > 200.0f) drawTextCentered(TextFormat("%dm", int(dist / 30.0f)), b.x, b.y + 46, 14, WHITE);
   }

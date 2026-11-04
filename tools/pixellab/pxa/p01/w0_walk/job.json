@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "f6e15927-4550-4523-9966-1286990d1f4a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ec52026c-210a-44f1-a9c2-0c1f143ecbe5",
+  "last_frame_url": "upload:edf7a8c6-ec76-48ef-95a8-8352cdcf447e",
+  "description": "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a long curved black odachi sword with a violet ribbon held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: f6e15927-4550-4523-9966-1286990d1f4a\njob_id: f6e15927-4550-4523-9966-1286990d1f4a\ndescription: walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, a long curved black odachi sword with a violet ribbon held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f6e15927-4550-4523-9966-1286990d1f4a\")\nasset_id: cdbc0b6e-890f-54f3-8357-8f0ba729a1da\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

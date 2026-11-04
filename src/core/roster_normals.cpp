@@ -77,8 +77,10 @@ void buildBrawlerNormals(CharacterDef& c, float S, float P, HitFx fx) {
                                   hb(16, 22, 0, 48, 18, 8.0f, 361, 20, 80, L::LegFront)}, 16);
 
   for (int id : {Jab, Jab2, Jab3, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir,
-                 FAir, BAir, UAir, DAir})
-    scale(m[id], S, P);
+                 FAir, BAir, UAir, DAir}) {
+    scale(m[id], S, P * 1.14f);  // bare hands: shorter reach, more damage
+    for (auto& h : m[id].hitboxes) h.radius *= 1.04f;  // fists and feet land a little more easily
+  }
   buildCommonMoves(c, S, P);
 }
 
@@ -112,6 +114,90 @@ HitboxDef sw(int start, int end, float a0, float a1, float reach0, float reach1,
   h.reach0 = reach0;
   h.reach1 = reach1;
   return h;
+}
+
+// The M1 of a blade's weapon kit: a 3-hit combo on the ground (a downward cut, a second cut, a launching finisher)
+// and an air combo of `airCuts` cuts (2 or 3). `speed` < 1 swings faster; `thrust2`: the second hit is a thrust.
+void addBladeKit(WeaponDef& w, float S, float P, HitFx fx, float speed, bool thrust2, int airCuts) {
+  const HitFx sl = HitFx::Slash;
+  auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
+  auto pair = [&](int s0, int e0, float a0, float a1, float r, float dmg, float ang, float bkb, float kbg, int group,
+                  HitFx hfx) {  // a strong tip first, a weaker base, along the same arc
+    return std::vector<HitboxDef>{sw(T(s0), T(e0), a0, a1, 0.55f, 1.0f, r, dmg, ang, bkb, kbg, group, hfx),
+                                  sw(T(s0), T(e0), a0, a1, 0.0f, 0.55f, r, dmg * 0.8f, ang, bkb, kbg, group, hfx)};
+  };
+  MoveDef jab = mv("Taille", T(24), pair(5, 8, 110, -40, 18, 4.5f, 361, 10, 25, 0, sl));
+  jab.nextMove = Jab2, jab.comboStart = T(4), jab.comboEnd = T(22), jab.comboAt = T(12);
+  MoveDef jab2 = thrust2 ? mv("Estoc éclair", T(26), pair(5, 8, 4, 4, 17, 4.5f, 361, 12, 28, 0, sl))
+                         : mv("Revers", T(26), pair(5, 8, 30, -15, 18, 4.5f, 361, 12, 28, 0, sl));
+  jab2.nextMove = Jab3, jab2.comboStart = T(4), jab2.comboEnd = T(24), jab2.comboAt = T(13);
+  MoveDef jab3 = mv("Taille montante", T(36), pair(9, 14, -50, 130, 22, 9.5f, 55, 50, 98, 0, fx));  // it ejects
+  for (auto& h : jab3.hitboxes) h.impact = true;
+  std::vector<HitboxDef> air = pair(5, 8, 100, -60, 24, 5.0f, 70, 20, 35, 0, sl);
+  if (airCuts > 2) {
+    auto up = pair(11, 14, -60, 80, 24, 4.0f, 80, 20, 35, 1, sl);
+    air.insert(air.end(), up.begin(), up.end());
+  }
+  auto last = pair(airCuts > 2 ? 18 : 13, airCuts > 2 ? 23 : 18, -90, 180, 26, 8.0f, 361, 35, 98, airCuts > 2 ? 2 : 1,
+                   fx);
+  air.insert(air.end(), last.begin(), last.end());
+  MoveDef nair = mv("Taille aérienne", T(airCuts > 2 ? 40 : 38), air, 8);
+  for (MoveDef* m : {&jab, &jab2, &jab3, &nair}) {
+    scale(*m, S, P * 0.88f);  // like the sword normals: blades reach far, a little less damage
+    w.moves.push_back({m == &jab ? Jab : m == &jab2 ? Jab2 : m == &jab3 ? Jab3 : NAir, *m});
+  }
+  w.kit = true;
+}
+
+// The M1 of a lance's weapon kit: a thrust, a longer thrust, a wide rising sweep that ejects, and in the air a thrust
+// down in front then one straight ahead.
+void addLanceKit(WeaponDef& w, float S, float P, HitFx fx, float speed) {
+  const HitFx sl = HitFx::Slash;
+  auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
+  auto pair = [&](int s0, int e0, float a0, float a1, float r, float dmg, float ang, float bkb, float kbg, int group,
+                  HitFx hfx) {  // the point first, then the shaft
+    return std::vector<HitboxDef>{sw(T(s0), T(e0), a0, a1, 0.6f, 1.0f, r, dmg, ang, bkb, kbg, group, hfx),
+                                  sw(T(s0), T(e0), a0, a1, 0.2f, 0.6f, r, dmg * 0.8f, ang, bkb, kbg, group, hfx)};
+  };
+  MoveDef jab = mv("Coup de lance", T(24), pair(5, 8, 4, 4, 17, 4.5f, 361, 10, 25, 0, sl));
+  jab.nextMove = Jab2, jab.comboStart = T(4), jab.comboEnd = T(22), jab.comboAt = T(12);
+  MoveDef jab2 = mv("Estoc appuyé", T(26), pair(6, 9, 2, 2, 18, 5.0f, 361, 12, 28, 0, sl));
+  jab2.nextMove = Jab3, jab2.comboStart = T(4), jab2.comboEnd = T(24), jab2.comboAt = T(13);
+  MoveDef jab3 = mv("Balayage", T(38), pair(9, 15, -50, 130, 22, 9.5f, 55, 50, 98, 0, fx));  // it ejects
+  for (auto& h : jab3.hitboxes) h.impact = true;
+  std::vector<HitboxDef> air = pair(5, 8, -35, -35, 20, 5.0f, 70, 20, 35, 0, sl);
+  auto last = pair(13, 17, 0, 0, 22, 8.0f, 361, 35, 98, 1, fx);
+  air.insert(air.end(), last.begin(), last.end());
+  MoveDef nair = mv("Estoc aérien", T(38), air, 8);
+  for (MoveDef* m : {&jab, &jab2, &jab3, &nair}) {
+    scale(*m, S, P * 0.88f);  // like the blades
+    w.moves.push_back({m == &jab ? Jab : m == &jab2 ? Jab2 : m == &jab3 ? Jab3 : NAir, *m});
+  }
+  w.kit = true;
+}
+
+// The M1 of a fighting style's kit (fists, feet, chakra): a 3-hit combo (a punch, a kick, a finisher that ejects) and
+// a 2-hit air combo. `reach` stretches the blows (chakra arms, nature energy), `upper`: the finisher launches upward.
+void addFistKit(WeaponDef& w, float S, float P, HitFx fx, float speed, float reach, bool upper) {
+  using L = Limb;
+  auto T = [&](int f) { return std::max(1, int(f * speed + 0.5f)); };
+  // The first two hits barely push (like the bare-handed jabs): the combo stays connected.
+  MoveDef jab = mv("Frappe", T(20), {hb(T(4), T(7), 38 * reach, -8, 18, 4.0f, 361, 6, 18, L::ArmFront, 0, fx)});
+  jab.nextMove = Jab2, jab.comboStart = T(3), jab.comboEnd = T(18), jab.comboAt = T(10);
+  MoveDef jab2 = mv("Enchaînement", T(22), {hb(T(5), T(8), 42 * reach, -10, 20, 4.5f, 361, 7, 20, L::LegFront, 0, fx)});
+  jab2.nextMove = Jab3, jab2.comboStart = T(3), jab2.comboEnd = T(20), jab2.comboAt = T(11);
+  HitboxDef fin = hb(T(9), T(13), 46 * reach, upper ? -40.0f : -8.0f, 26, 9.5f, upper ? 80.0f : 50.0f, 50, 98,
+                     L::ArmFront, 0, fx);
+  fin.impact = true;
+  MoveDef jab3 = mv("Coup final", T(34), {fin});  // it ejects: the heavy attack
+  MoveDef nair = mv("Combo aérien", T(36), {hb(T(5), T(8), 30 * reach, -10, 30, 5.0f, 70, 20, 35, L::LegFront, 0, fx),
+                                            hb(T(12), T(17), -26 * reach, -10, 30, 7.5f, 361, 35, 98, L::LegBack, 1, fx)},
+                    8);
+  for (MoveDef* m : {&jab, &jab2, &jab3, &nair}) {
+    scale(*m, S, P * 1.14f);  // like the bare-handed normals
+    w.moves.push_back({m == &jab ? Jab : m == &jab2 ? Jab2 : m == &jab3 ? Jab3 : NAir, *m});
+  }
+  w.kit = true;
 }
 
 void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
@@ -164,8 +250,14 @@ void buildSwordNormals(CharacterDef& c, float S, float P, HitFx smashFx) {
   for (auto& h : m[DAir].hitboxes) h.reach1 = std::min(h.reach1, 0.85f);
 
   for (int id : {Jab, Jab2, FTilt, UTilt, DTilt, DashAttack, FSmash, USmash, DSmash, NAir, FAir,
-                 BAir, UAir, DAir})
-    scale(m[id], S, P);
+                 BAir, UAir, DAir}) {
+    scale(m[id], S, P * 0.88f);  // blades reach further and sweep wide: less damage, less launching power
+    for (auto& h : m[id].hitboxes) {
+      h.radius *= 0.95f;
+      h.baseKB *= 0.92f;
+      h.growth *= 0.94f;
+    }
+  }
   buildCommonMoves(c, S, P);
 }
 

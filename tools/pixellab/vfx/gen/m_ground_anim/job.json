@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "43495b4e-a7fe-413d-9b91-0f7ce43f2d8d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:d46daec0-2fe6-4cce-9914-da085bf43dca",
+  "description": "pixel art effect animation: the ring widens and thins out, the rocks fall, everything fades away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a ground impact ring: a flat white oval shockwave ring on the ground with small white spikes around its rim and dark grey rocks flying up"
+ },
+ "reply": "id: 43495b4e-a7fe-413d-9b91-0f7ce43f2d8d\njob_id: 43495b4e-a7fe-413d-9b91-0f7ce43f2d8d\ndescription: pixel art effect animation: the ring widens and thins out, the rocks fall, everything fades away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 160x80px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"43495b4e-a7fe-413d-9b91-0f7ce43f2d8d\")\nasset_id: 07087bf9-77d5-5e56-80b9-eb561f610985\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_ground/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

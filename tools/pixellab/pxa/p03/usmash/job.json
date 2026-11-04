@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "57051770-6a8b-4bd1-9364-74d8b11e5207",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0feeb59b-14ab-49b4-bdd6-92fd71c762de",
+  "last_frame_url": "upload:669f00a4-a25e-44e1-9419-75231e0fc37c",
+  "description": "muay thai jumping knee: springs straight up driving one knee high above, arms reaching up, then lands in the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 57051770-6a8b-4bd1-9364-74d8b11e5207\njob_id: 57051770-6a8b-4bd1-9364-74d8b11e5207\ndescription: muay thai jumping knee: springs straight up driving one knee high above, arms reaching up, then lands in the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"57051770-6a8b-4bd1-9364-74d8b11e5207\")\nasset_id: 16c906b1-c4ae-59e9-9ab7-dc6d898ade08\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

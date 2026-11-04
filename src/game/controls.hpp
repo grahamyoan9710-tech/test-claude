@@ -49,3 +49,7 @@ struct MenuNav {
   int device = -1;  // device behind confirm / start (-1: none)
 };
 MenuNav readMenuNav();
+// One device only (its own key repeat): keyboard 1 = WASD, confirm Space/J, previous K; keyboard 2 = arrows,
+// confirm . or numpad 1, previous / or numpad 2; a gamepad = stick/d-pad, A, X. Start: Enter / numpad Enter /
+// START. Back (Escape, B) is left to readMenuNav. Call it after readMenuNav (which reads the sticks).
+MenuNav readMenuNavFor(int device);

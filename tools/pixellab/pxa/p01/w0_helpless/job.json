@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "4c145657-5370-4c39-972e-d58d566ce512",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:af63d261-f879-4f2f-8926-2666bf1517f5",
+  "last_frame_url": "upload:ee528e64-4b4f-42b0-adea-b39d5d5d0be5",
+  "description": "falls helplessly, exhausted: the free arm hangs limp above his head, a long curved black odachi sword with a violet ribbon dangling loosely from the other hand, head drooping, legs dangling, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "in mid-air facing right, knees tucked, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 4c145657-5370-4c39-972e-d58d566ce512\njob_id: 4c145657-5370-4c39-972e-d58d566ce512\ndescription: falls helplessly, exhausted: the free arm hangs limp above his head, a long curved black odachi sword with a violet ribbon dangling loosely from the other hand, head drooping, legs dangling, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4c145657-5370-4c39-972e-d58d566ce512\")\nasset_id: 8cc0b68c-84d7-541d-8fa7-24fc0fbc4a6b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

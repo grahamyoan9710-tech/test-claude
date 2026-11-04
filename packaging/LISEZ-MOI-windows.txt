@@ -1,18 +1,18 @@
-SUPER CLASH BROS. - version Windows (64 bits)
-=============================================
+CLASH HORIZON - version Windows (64 bits)
+========================================
 
 POUR JOUER
 ----------
 1. Décompressez l'archive (clic droit > « Extraire tout... »).
    Ne lancez pas le jeu directement depuis le fichier .zip.
-2. Double-cliquez sur super_clash.exe.
+2. Double-cliquez sur clash_horizon.exe.
 
 Windows peut afficher « Windows a protégé votre ordinateur » car le jeu
 n'est pas signé : cliquez sur « Informations complémentaires », puis sur
 « Exécuter quand même ».
 
 Aucune installation n'est nécessaire : tout (polices, sons, musique) est
-dans le fichier super_clash.exe.
+dans le fichier clash_horizon.exe.
 
 COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
 --------------------------------------------------------------
@@ -53,19 +53,21 @@ Start = pause
 ASTUCES
 -------
 - Direction + attaque en même temps = attaque smash (maintenez pour charger).
-- Donnez et recevez des coups pour remplir votre barre d'ulti (ou brisez
-  l'Orbe Clash qui flotte au-dessus de l'arène) : appuyez alors sur ULTIME
-  pour déclencher l'ultime de votre combattant !
-- Des armes tombent du ciel : chacune appartient à un combattant (son
-  portrait flotte au-dessus). Marchez dessus avec ce combattant pour la
-  ramasser : plus de puissance, plus d'allonge et des spéciales changées
-  pendant une vingtaine de secondes. (Réglage ARMES dans la sélection.)
-- 9 combattants : Asta et Yuno (Black Clover), Ichigo et Byakuya (Bleach),
-  Link et Ganondorf (Zelda TOTK), Kratos (God of War), Gojo et Sukuna
-  (Jujutsu Kaisen). Projet de fan non officiel.
+- Donnez et recevez des coups (ou brisez l'Orbe Clash qui flotte au-dessus
+  de l'arène) : quand « ULTI PRÊTE ! » s'affiche sur votre carte, appuyez
+  sur ULTIME pour déclencher l'ultime de votre combattant !
+- Tout le monde commence à mains nues. Les deux armes de chaque combattant
+  tombent sur l'arène, l'une après l'autre : tenez-vous sur la vôtre et
+  maintenez la touche ARME (E au clavier, Y à la manette) 1 seconde pour
+  la prendre. Avec les deux, la touche ARME passe de l'une à l'autre.
+  Les armes sont perdues au K.O.
+- 5 combattants originaux et 5 arènes, en pixel art.
+- Ordinateurs du niveau 1 au niveau 10 (le niveau 10 frappe deux fois plus fort).
+- Les combattants sont en pixel art (Paramètres > Affichage pour revenir au
+  dessin lisse).
 - Le mode Entraînement permet de s'exercer contre un mannequin.
 
-Les réglages sont enregistrés dans super_clash.cfg, à côté du jeu.
+Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
 Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
 Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
 

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "b49db351-5b1d-4f70-8723-d5ed19a62c8a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c3d87768-72be-4c89-8266-b3071f49a50e",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: b49db351-5b1d-4f70-8723-d5ed19a62c8a\njob_id: b49db351-5b1d-4f70-8723-d5ed19a62c8a\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air with the arms out for balance, hair and clothes fly upward. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b49db351-5b1d-4f70-8723-d5ed19a62c8a\")\nasset_id: 26e90e84-4853-530f-b168-39ca52e48f25\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

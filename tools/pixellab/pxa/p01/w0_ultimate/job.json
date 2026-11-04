@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "944bfa13-82f5-46d7-97bc-9fffbe50a7bb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:572e83ff-3735-46b4-a248-a4bb805568f5",
+  "last_frame_url": "upload:2918a515-ad4e-4664-a720-6e6b90a8127a",
+  "description": "crouches low with the odachi drawn back, holds perfectly still, then rises and slowly slides the blade home into an invisible sheath at his hip. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 944bfa13-82f5-46d7-97bc-9fffbe50a7bb\njob_id: 944bfa13-82f5-46d7-97bc-9fffbe50a7bb\ndescription: crouches low with the odachi drawn back, holds perfectly still, then rises and slowly slides the blade home into an invisible sheath at his hip. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"944bfa13-82f5-46d7-97bc-9fffbe50a7bb\")\nasset_id: afa085ae-5d65-584e-821f-e21a3e94d337\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 17,
+ "charged": "2 generations"
+}

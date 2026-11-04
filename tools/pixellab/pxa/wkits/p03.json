@@ -1,0 +1,166 @@
+{
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "a huge jagged black greatsword with glowing red veins",
+   "subject": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+   "guard_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins",
+   "air_pose": "in mid-air facing right, knees tucked, holding a huge jagged black greatsword with glowing red veins",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a heavy downward cut of the greatsword from the shoulder to the front"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a heavy backhand sweep of the greatsword at chest height"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "lifts the greatsword overhead with both hands and smashes it into the ground in front"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, swings the greatsword in a full circle around him"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "swings the greatsword low along the ground in a wide forward arc"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "lunges forward with a huge horizontal swing of the greatsword"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "leaps up with a rising cut of the greatsword above his head"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "drives the greatsword point down into the ground in front of him with both hands"
+    ],
+    "w0_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "down",
+     "raises the greatsword high overhead with both hands, holds it, then cuts straight down"
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": "a huge spiked black and red greatsword, larger and more jagged",
+   "subject": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge spiked black and red greatsword, larger and more jagged",
+   "guard_pose": "fighting stance facing right, holding a huge spiked black and red greatsword, larger and more jagged",
+   "air_pose": "in mid-air facing right, knees tucked, holding a huge spiked black and red greatsword, larger and more jagged",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a heavy diagonal cut of the spiked greatsword"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a crossing cut of the spiked greatsword the other way"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "a heavy overhead blow of the spiked greatsword into the ground"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, swings the spiked greatsword in a full circle around him"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "swings the spiked greatsword forward in a big overhead arc and stops it pointing straight ahead"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward dragging the spiked greatsword low behind him, then swings it up"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "spins upward with the spiked greatsword held out"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "around",
+     "spins once in place with the spiked greatsword held out at waist height"
+    ],
+    "w1_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "up",
+     "hurls the spiked greatsword straight up into the sky, then holds his arms up waiting, then catches it"
+    ]
+   }
+  }
+ }
+}

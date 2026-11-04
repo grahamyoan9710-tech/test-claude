@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "a16e8d72-9549-4df6-98c0-c82ee42b0fad",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:912dcd92-257d-4bd1-abf3-046bf954169a",
+  "last_frame_url": "upload:f0c406e7-c1e6-4900-b3cc-ad06c58cc667",
+  "description": "lunging grab: reaches forward with his free hand to seize an opponent, the other hand keeping a long curved black odachi sword with a violet ribbon ready, then pulls back. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: a16e8d72-9549-4df6-98c0-c82ee42b0fad\njob_id: a16e8d72-9549-4df6-98c0-c82ee42b0fad\ndescription: lunging grab: reaches forward with his free hand to seize an opponent, the other hand keeping a long curved black odachi sword with a violet ribbon ready, then pulls back. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a16e8d72-9549-4df6-98c0-c82ee42b0fad\")\nasset_id: 143e773a-3b52-521c-b61a-3d7698ddea72\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

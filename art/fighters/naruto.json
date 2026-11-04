@@ -1,0 +1,21 @@
+{
+  "image": "naruto.png",
+  "output": "assets/fighters/naruto",
+  "ground": 930,
+  "top": 55,
+  "joints": {
+    "neck": [300, 200], "head": [315, 120], "hips": [275, 470],
+    "shF": [393, 268], "elbowF": [432, 402], "handF": [490, 332],
+    "shB": [205, 265], "elbowB": [158, 380], "handB": [103, 508],
+    "hipF": [318, 500], "kneeF": [390, 660], "ankleF": [472, 810], "footF": [475, 930], "toeF": [552, 915],
+    "hipB": [228, 500], "kneeB": [163, 660], "ankleB": [122, 795], "footB": [118, 930], "toeB": [22, 890]
+  },
+  "radius": {
+    "armF": [36, 30, 28], "handF": 34,
+    "armB": [34, 30, 28], "handB": 32,
+    "legF": [46, 50, 40], "footF": [38, 30], "heelF": [36, 34],
+    "legB": [46, 48, 40], "footB": [36, 28], "heelB": [34, 30]
+  },
+  "blend": {"neck": 10, "shoulder": 14, "elbow": 14, "hip": 18, "knee": 18, "ankle": 12},
+  "neckCut": [[190, 212], [240, 203], [300, 199], [350, 197], [372, 188]]
+}
