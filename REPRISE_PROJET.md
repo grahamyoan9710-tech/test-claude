@@ -52,9 +52,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud « DA v2 » | 04/11 22 h UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 04/11 22 h UTC, session cloud « DA v2 » : **v10.9 publiée** (release faite à la main, workflow_dispatch sur
+  `claude/project-thread-dj46dj`). Verrou « Version et paquets » libéré. Suite : sélection, arènes et écran VS.
 - 04/11 ~22 h UTC, session cloud « DA v2 » (branche `claude/project-thread-dj46dj`, partie de la 10.8) : le
   propriétaire a validé la nouvelle DA « Ligne d'horizon » (canevas v2, voir la mémoire du projet). Codée en 4
   livraisons. **10.9** : la charte dans `ui.cpp` (polices Saira Condensed et Saira, panneaux en biseau, ligne
