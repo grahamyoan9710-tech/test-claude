@@ -52,9 +52,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud « DA v2 » | 04/11 22 h 30 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 04/11 22 h 45 UTC, session cloud « DA v2 » : **v11.0 publiée** (workflow_dispatch sur `claude/project-thread-dj46dj`,
+  archives Linux et Windows). Verrou « Version et paquets » libéré. Suite : HUD, Clash Orb, pause et liste des coups.
 - 04/11 22 h 30 UTC, session cloud « DA v2 » : **11.0** (2e livraison de la DA) : choix des combattants
   (`menus.cpp` : combattants sur la ligne d'horizon, fiches dessous, places libres en puces « Rejoindre »), choix de
   l'arène (plan des plateformes), nouvel écran VS (`screen_versus.cpp`, entre l'arène et le combat, sauf en
