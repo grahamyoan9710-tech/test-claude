@@ -8,6 +8,12 @@
 
 ## Nouveautés
 
+Version 10.8 : **essai des effets tout faits de PixelLab**.
+
+- Chaque coup fait un éclat PixelLab (flash, rayons et anneau), à la couleur de l'élément du coup.
+- Un coup puissant envoie une onde de choc au sol sous l'adversaire.
+- Aussi : l'éclat d'impact orienté selon le coup et la traînée de fumée derrière un perso éjecté vite.
+
 Version 10.7 : **seulement les bons effets**.
 
 - On garde ceux que tu aimes : la fumée de saut, de dash et d'atterrissage.
