@@ -19,7 +19,7 @@ void App::drawResults() {
   const float t = time_;
   const auto& r = roster();
   Color wc = winnerTeam_ >= 0 ? teamColor(winnerTeam_)
-             : winnerChar_ >= 0 ? (winnerCpu_ ? cpuColor() : portColor(winnerPort_)) : Color{180, 184, 176, 255};
+             : winnerChar_ >= 0 ? portColor(winnerPort_) : Color{180, 184, 176, 255};
   // The main menu's background under a navy veil, chunky cards and plates
   const int bg = settings().menuBg % 3;
   art::drawPicture(TextFormat("menu_fond_%d", bg + 1), {0, 0, kScreenW, kScreenH}, {0, 0, kScreenW, kScreenH});
@@ -75,7 +75,7 @@ void App::drawResults() {
     float enter = clampf((screenFrames_ - 20 - i * 8) / 16.0f, 0.0f, 1.0f);
     float y = ty + 36 + i * 96.0f;
     float x = tx + (1.0f - enter) * 700.0f;
-    Color pc = row.team >= 0 ? teamColor(row.team) : row.cpu ? cpuColor() : portColor(row.port);
+    Color pc = row.team >= 0 ? teamColor(row.team) : portColor(row.port);
     const Rectangle rr{x, y, 570, 84};
     ui::chunky(rr, i == 0 ? ui::Tone::Gold : ui::Tone::Navy);  // the winner's row is gold
     ui::roundRect({x + 6, y + 8, 10, 62}, 5, mixColor(pc, WHITE, 0.25f), shade(pc, 0.7f));  // player colour edge

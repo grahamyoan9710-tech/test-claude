@@ -52,9 +52,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud « DA v2 » | 04/11 22 h 30 UTC |
 
 ### Journal (le plus récent en haut)
+- 04/11 22 h 30 UTC, session cloud « DA v2 » : **11.0** (2e livraison de la DA) : choix des combattants
+  (`menus.cpp` : combattants sur la ligne d'horizon, fiches dessous, places libres en puces « Rejoindre »), choix de
+  l'arène (plan des plateformes), nouvel écran VS (`screen_versus.cpp`, entre l'arène et le combat, sauf en
+  entraînement), bouton doré « COMBATTRE ! » dans `ui::footer`, couleurs des joueurs (J1 azur, J2 or, J3 vert,
+  J4 rose ; un CPU garde la couleur de sa place). Fiches des persos (titre, art martial, style, gabarit) :
+  `fiche()` dans `screen_gallery.cpp`. Verrou « Version et paquets » pris.
 - 04/11 22 h UTC, session cloud « DA v2 » : **v10.9 publiée** (release faite à la main, workflow_dispatch sur
   `claude/project-thread-dj46dj`). Verrou « Version et paquets » libéré. Suite : sélection, arènes et écran VS.
 - 04/11 ~22 h UTC, session cloud « DA v2 » (branche `claude/project-thread-dj46dj`, partie de la 10.8) : le

@@ -29,6 +29,15 @@ struct Options {
   int weaponShow = -1;           // --weapon SLOT: the demo's first fighter keeps that weapon in hand (its kit)
 };
 
+// What the menus say of a fighter, from its fiche (screen_gallery.cpp).
+struct Fiche {
+  std::string nick;   // the fiche's title: "OMBRE VIOLETTE"
+  std::string art;    // its martial art, bare-handed
+  std::string style;  // its style in a word: "Polyvalent"
+  int build = 3;       // its build, 1 (small) to 5 (huge): « gabarit léger » = 2
+};
+Fiche fiche(const CharacterDef& d);
+
 class MatchScreen {
  public:
   enum class Result { Running, Finished, Quit };
@@ -85,7 +94,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { MainMenu, CharSelect, StageSelect, Match, Results, Settings, Poses, Anim, Gallery };
+enum class Screen { MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -130,6 +139,9 @@ class App {
   void drawCss();
   void updateStage(const MenuNav& nav);
   void drawStage();
+  // the VS screen, between the arena and the fight (screen_versus.cpp)
+  void updateVersus(const MenuNav& nav);
+  void drawVersus();
   // by: the device that pressed (-1: mouse / unknown).
   void changeField(int col, int row, int delta, int by = -1);
   bool padJoins();
@@ -185,6 +197,7 @@ class App {
   int rulesCol_ = 0;
   std::array<CssCursor, kDeviceCount> cssCur_{};
   bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random
+  int vsTip_ = 0;             // the VS screen's tip (drawn when it opens)
   bool teamsForced_ = false;  // --teams
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join

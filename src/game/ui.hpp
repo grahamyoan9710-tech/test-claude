@@ -143,11 +143,15 @@ struct Hint {
   Btn pad;
   const char* label;
 };
-// Bottom bar with control hints: {{"ENTRÉE", Btn::A, "Choisir"}, {"ÉCHAP", Btn::B, "Retour"}}.
-void footer(std::initializer_list<Hint> hints, const char* info = nullptr);
+// Bottom bar with control hints: {{"ENTRÉE", Btn::A, "Choisir"}, {"ÉCHAP", Btn::B, "Retour"}}; `go`: the gold call to
+// action at its right end (e.g. {"ENTRÉE", Btn::Start, "COMBATTRE !"}), dimmed when not `goOn`.
+void footer(std::initializer_list<Hint> hints, const char* info = nullptr, const Hint* go = nullptr, bool goOn = true);
+Rectangle goRect(const Hint& go);  // where the footer puts it (mouse clicks)
 
-// Draws `text` wrapped to `width`, line after line; returns the y under the last line.
-float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col);
+// Draws `text` wrapped to `width`, line after line; returns the y under the last line (draw = false: only measures).
+float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw = true);
+// Title text with a horizontal gradient, left -> middle -> right (the "VS").
+void gradientText(const char* text, float x, float y, float size, Color left, Color mid, Color right);
 
 // ---- Widgets ----------------------------------------------------------------------
 void panel(Rectangle r, Color fill, Color border, float roundness = 0.08f);

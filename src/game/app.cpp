@@ -67,6 +67,7 @@ void App::enterScreen(Screen s) {
   }
   if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
   if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
+  if (s == Screen::Versus) vsTip_ = GetRandomValue(0, 99);
   if (s == Screen::MainMenu) {  // each visit shows the next of the owner's three backgrounds
     settings().menuBg = (settings().menuBg + 1) % 3;
     saveSettings();
@@ -74,7 +75,7 @@ void App::enterScreen(Screen s) {
   screen_ = s;
   screenFrames_ = 0;
   if (s != Screen::MainMenu) demo_.reset();
-  if (s != Screen::Match) {
+  if (s != Screen::Match && s != Screen::Versus) {  // the VS screen shows the match about to start
     match_.reset();
     audio_.setMusic(1);
   }
@@ -123,7 +124,7 @@ void App::startMatch() {
     devices[i] = s.device;
   }
   match_ = std::make_unique<MatchScreen>(cfg, devices, audio_, st.showHitboxes || opt_.debug);
-  goTo(Screen::Match);
+  goTo(training_ ? Screen::Match : Screen::Versus);  // a fight shows who fights whom first
 }
 
 void App::finishMatch() {
@@ -185,6 +186,13 @@ void App::run() {
     enterScreen(Screen::CharSelect);
   } else if (opt_.screen == "stage") {
     enterScreen(Screen::StageSelect);
+  } else if (opt_.screen == "versus") {
+    const int n = int(roster().size());
+    for (int i = 0; i < int(std::min<size_t>(4, opt_.fighters.size())); ++i)  // --fighters: who fights
+      slots_[i] = {i == 0 ? 1 : 2, i == 0 ? kKeyboard1 : kKeyboard2, std::clamp(opt_.fighters[i], 0, n - 1), 7};
+    startMatch();
+    transition_ = -1;
+    enterScreen(Screen::Versus);
   } else if (opt_.screen == "gallery") {
     gallerySel_ = std::max(0, opt_.tab);
     enterScreen(Screen::Gallery);
@@ -258,6 +266,7 @@ void App::run() {
         case Screen::MainMenu: updateMainMenu(nav); break;
         case Screen::CharSelect: updateCss(nav); break;
         case Screen::StageSelect: updateStage(nav); break;
+        case Screen::Versus: updateVersus(nav); break;
         case Screen::Results: updateResults(nav); break;
         case Screen::Gallery: updateGallery(nav); break;
         case Screen::Settings: updateSettings(nav); break;
@@ -284,6 +293,7 @@ void App::run() {
       case Screen::MainMenu: drawMainMenu(); break;
       case Screen::CharSelect: drawCss(); break;
       case Screen::StageSelect: drawStage(); break;
+      case Screen::Versus: drawVersus(); break;
       case Screen::Results: drawResults(); break;
       case Screen::Gallery: drawGallery(); break;
       case Screen::Settings: drawSettings(); break;

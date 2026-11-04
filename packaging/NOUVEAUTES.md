@@ -8,6 +8,18 @@
 
 ## Nouveautés
 
+Version 11.0 : **nouvelle direction artistique « Ligne d'horizon », 2e partie**.
+
+- **Choix des combattants** refait : les combattants se tiennent en grand sur la ligne d'horizon, de part et d'autre
+  du « VS », chacun avec sa fiche dessous (numéro, art martial, gabarit, transformation, ses deux armes). La grille
+  des visages est au-dessus du « VS », les règles en dessous. Les places libres attendent en bas à gauche : J3 et J4
+  rejoignent d'une touche.
+- **Choix de l'arène** refait : l'arène remplit l'écran, avec le plan de ses plateformes (sols, plateformes fines,
+  planche mobile qui bouge).
+- **Nouvel écran VS** avant chaque combat : qui contre qui, l'arène, les règles et une astuce (ENTRÉE pour passer).
+- Couleurs des joueurs : J1 bleu, J2 or, J3 vert, J4 rose ; un ordinateur prend la couleur de sa place.
+- À venir : le HUD, l'orbe et la pause, puis les résultats et les paramètres.
+
 Version 10.9 : **nouvelle direction artistique « Ligne d'horizon », 1re partie**.
 
 - Écran titre refait : un vrai combat entre deux ordinateurs (niveau 9) se joue derrière le menu, sur la terrasse

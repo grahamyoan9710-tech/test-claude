@@ -6,16 +6,17 @@
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
-namespace {
-// Bare-handed, each fighter fights in a martial art (docs/refonte/FICHES.md, §1.7).
-const char* martialArt(const std::string& id) {
-  if (id == "p01") return "Penchak Silat";
-  if (id == "p02") return "Taekwondo";
-  if (id == "p03") return "Muay Thaï";
-  if (id == "p07") return "Karaté";
-  if (id == "p08") return "Kung-fu";
-  return "Combat libre";
+// docs/refonte/FICHES.md: the fiche's title, the martial art of the bare hands (§1.7), the style in a word, the build.
+Fiche fiche(const CharacterDef& d) {
+  if (d.id == "p01") return {"OMBRE VIOLETTE", "Penchak Silat", "Polyvalent", 3};
+  if (d.id == "p02") return {"GIVRE STELLAIRE", "Taekwondo", "Rapide en l'air", 2};
+  if (d.id == "p03") return {"BRASIER ROUGE", "Muay Thaï", "Puissant", 4};
+  if (d.id == "p07") return {"FOUDRE ROUGE", "Karaté", "Très rapide", 2};
+  if (d.id == "p08") return {"LUMIÈRE BLANCHE", "Kung-fu", "Équilibré", 3};
+  return {upperFr(d.series), "Combat libre", "", 3};
 }
+
+namespace {
 Rectangle plateRect(int i) { return {44, 116.0f + i * 82.0f, 310, 68}; }
 constexpr Color kSoft{184, 204, 240, 255};  // labels and secondary lines
 }  // namespace
@@ -72,7 +73,7 @@ void App::drawGallery() {
   const float x = sheet.x + 30;
   float y = sheet.y + 18;
   ui::bold(d.name.c_str(), x, y, 44);
-  drawTextOutlined(TextFormat("%s  •  %s", d.series.c_str(), martialArt(d.id)), x + 2, y + 54, 18, kSoft, ui::kInk, 2.0f);
+  drawTextOutlined(TextFormat("%s  •  %s", d.series.c_str(), fiche(d).art.c_str()), x + 2, y + 54, 18, kSoft, ui::kInk, 2.0f);
   DrawRectangleGradientH(int(x), int(y + 86), 300, 3, ui::kGold, withAlpha(ui::kGold, 0.0f));
   y += 100;
   drawTextOutlined("ARMES", x, y, 15, ui::kGold, ui::kInk, 2.0f);

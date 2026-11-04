@@ -159,8 +159,9 @@ void drawPlatformList(const std::vector<Platform>& platforms, StageTheme theme, 
 void drawProjectiles(const Match& m, float time);
 void drawOrb(const Match& m, float time);
 void drawStagePreview(const StageDef& stage, Rectangle area, float time);
-// A still of stage `index` in `area`, rendered once and kept (the stage select's thumbnails).
-void drawStageThumb(int index, const StageDef& stage, Rectangle area);
+// A still of stage `index` in `area`, rendered once and kept (the stage select's thumbnails); cut > 0: with the top-left
+// and bottom-right corners cut, like ui::bevel.
+void drawStageThumb(int index, const StageDef& stage, Rectangle area, float cut = 0.0f);
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------
 // devices (indexed by port, optional): shows each human's ultimate button once the meter is full.

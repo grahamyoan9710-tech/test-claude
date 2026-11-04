@@ -207,7 +207,7 @@ void drawStagePreview(const StageDef& s, Rectangle area, float time) {
   endClip();
 }
 
-void drawStageThumb(int index, const StageDef& s, Rectangle area) {
+void drawStageThumb(int index, const StageDef& s, Rectangle area, float cut) {
   static std::vector<Layer> cache;
   if (index < 0) return;
   if (int(cache.size()) <= index) cache.resize(index + 1);
@@ -216,5 +216,30 @@ void drawStageThumb(int index, const StageDef& s, Rectangle area) {
     if (L.rt.id != 0) UnloadRenderTexture(L.rt);
     L = bake(area.width, area.height, g_renderScale, [&] { drawStagePreview(s, {0, 0, area.width, area.height}, 2.0f); }, false);
   }
-  drawBackdrop(L, area.x, area.y, area.y + area.height);
+  if (cut <= 0.0f) {
+    drawBackdrop(L, area.x, area.y, area.y + area.height);
+    return;
+  }
+  // The texture on the six corners of the cut box (a fan from its centre); the texture is upside down.
+  const float tw = float(L.rt.texture.width), th = float(L.rt.texture.height);
+  const Vector2 p[6] = {{area.x + cut, area.y}, {area.x + area.width, area.y}, {area.x + area.width, area.y + area.height - cut},
+                        {area.x + area.width - cut, area.y + area.height}, {area.x, area.y + area.height}, {area.x, area.y + cut}};
+  const Vector2 c{area.x + area.width * 0.5f, area.y + area.height * 0.5f};
+  auto vertex = [&](Vector2 q) {
+    rlTexCoord2f((q.x - area.x) * L.scale / tw, 1.0f - (q.y - area.y) * L.scale / th);
+    rlVertex2f(q.x, q.y);
+  };
+  rlDrawRenderBatchActive();
+  SetTextureFilter(L.rt.texture, g_preview ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
+  rlSetTexture(L.rt.texture.id);
+  rlBegin(RL_QUADS);  // rlgl textures quads only: each triangle is a quad with its last corner twice
+  rlColor4ub(255, 255, 255, 255);
+  for (int i = 0; i < 6; ++i) {
+    vertex(c);
+    vertex(p[(i + 1) % 6]);
+    vertex(p[i]);
+    vertex(p[i]);
+  }
+  rlEnd();
+  rlSetTexture(0);
 }

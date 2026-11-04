@@ -9,6 +9,7 @@
 
 namespace ui {
 namespace {
+int g_uiFrames = 0;  // frames seen by newFrame: the clock of what the kit animates by itself
 float hash(int i) {
   uint32_t x = uint32_t(i) * 2654435761u + 0x9E37u;
   x ^= x >> 13;
@@ -848,15 +849,31 @@ float actionPrompt(int device, int action, float x, float y, float h, bool lit) 
   return padGlyph(b, x, y, h, f);
 }
 
-void footer(std::initializer_list<Hint> hints, const char* info) {
+Rectangle goRect(const Hint& go) {
+  const float w = 20 + textWidth(go.label, 22, FontKind::Title) + 10 + promptWidth(go.key, go.pad, 22) + 12;
+  return {kScreenW - 24 - w, kScreenH - 43.0f, w, 36};
+}
+
+void footer(std::initializer_list<Hint> hints, const char* info, const Hint* go, bool goOn) {
   // The hints on a dark fade at the bottom, right-aligned; the info on the left.
   const float h = 50, y = kScreenH - h, kh = 26, ts = 16;
   DrawRectangleGradientV(0, int(y - 46), kScreenW, 46, withAlpha(kInk, 0.0f), withAlpha(kInk, 0.7f));
   DrawRectangle(0, int(y), kScreenW, int(h), withAlpha(kInk, 0.7f));
   horizonLine(0, kScreenW, y, 1.0f, 0.3f);
+  float right = kScreenW - 28;
+  if (go) {  // the call to action: gold when it can be pressed, its key at its right
+    const Rectangle r = goRect(*go);
+    const bool hot = goOn && hovered(r);
+    chunky(r, goOn ? (hot ? mixColor(kGold, WHITE, 0.2f) : kGold) : kNavy, goOn ? kGoldDeep : kNavyDeep, 1.0f, 10.0f);
+    if (goOn) shimmer(r, g_uiFrames / 60.0f, 0.8f);
+    const float lx = r.x + 20;
+    drawText(go->label, lx, capsY(r.y + r.height * 0.5f, 22, FontKind::Title), 22, goOn ? kInk : kDisabled, FontKind::Title);
+    prompt(go->key, go->pad, lx + textWidth(go->label, 22, FontKind::Title) + 10, r.y + 7, 22);
+    right = r.x;
+  }
   float total = 0;
   for (const Hint& hint : hints) total += promptWidth(hint.key, hint.pad, kh) + 8 + textWidth(hint.label, ts) + 24;
-  float x = kScreenW - 28 - total;
+  float x = right - total;
   for (const Hint& hint : hints) {
     x += prompt(hint.key, hint.pad, x, y + (h - kh) * 0.5f, kh) + 8;
     drawText(hint.label, x, y + (h - ts) * 0.5f, ts, kSoft);
@@ -921,11 +938,11 @@ void selector(Rectangle r, const char* value, bool focused, float time) {
     arrowTri({side < 0 ? r.x + 14 - bob : r.x + r.width - 14 + bob, cy}, s, side, focused ? kGold : kSky);
 }
 
-float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col) {
+float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw) {
   std::string line, word;
   auto flush = [&] {
     if (line.empty()) return;
-    drawTextOutlined(line.c_str(), x, y, size, col, kInk, 2.0f);
+    if (draw) drawTextOutlined(line.c_str(), x, y, size, col, kInk, 2.0f);
     y += size * 1.3f;
     line.clear();
   };
@@ -947,13 +964,25 @@ float drawWrapped(const std::string& text, float x, float y, float width, float 
   return y;
 }
 
+void gradientText(const char* text, float x, float y, float size, Color left, Color mid, Color right) {
+  // Drawn once per thin vertical strip, each in its own colour.
+  constexpr int kStrips = 24;
+  const float w = textWidth(text, size, FontKind::Title);
+  for (int i = 0; i < kStrips; ++i) {
+    const float u = (i + 0.5f) / kStrips;
+    const Color c = u < 0.5f ? mixColor(left, mid, u * 2.0f) : mixColor(mid, right, u * 2.0f - 1.0f);
+    beginClip({x + w * i / kStrips, y - size, w / kStrips + 1.0f, size * 3.0f});
+    drawText(text, x, y, size, c, FontKind::Title);
+    endClip();
+  }
+}
+
 // ---- Input helpers ----------------------------------------------------------------
 bool hovered(Rectangle r) { return CheckCollisionPointRec(GetMousePosition(), r); }
 bool clicked(Rectangle r) { return hovered(r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT); }
 namespace {
 Vector2 g_prevMouse{-1.0f, -1.0f};
 bool g_mouseMoved = false;
-int g_uiFrames = 0;
 }  // namespace
 
 void newFrame() {

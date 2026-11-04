@@ -52,17 +52,15 @@ inline void endClip() { EndScissorMode(); }
 constexpr Color kZonaiGlow = {72, 228, 190, 255};
 constexpr Color kOutline = {10, 14, 36, 255};  // default text outline (navy ink)
 
+// The colour of each card, a CPU's too (« Ligne d'horizon »): J1 azure, J2 gold, J3 green, J4 pink.
 inline Color portColor(int port) {
-  static const Color cols[4] = {{230, 68, 56, 255}, {62, 124, 236, 255}, {240, 196, 52, 255}, {68, 192, 100, 255}};
+  static const Color cols[4] = {{61, 139, 255, 255}, {255, 181, 71, 255}, {61, 220, 151, 255}, {255, 111, 156, 255}};
   return cols[port & 3];
 }
-inline Color cpuColor() { return {150, 156, 152, 255}; }
 // Team battles: red, blue.
-inline Color teamColor(int team) { return team == 1 ? Color{62, 124, 236, 255} : Color{230, 68, 56, 255}; }
+inline Color teamColor(int team) { return team == 1 ? Color{61, 139, 255, 255} : Color{255, 96, 82, 255}; }
 inline const char* teamName(int team) { return team == 1 ? "BLEUE" : "ROUGE"; }
-inline Color slotColor(const Fighter& f) {
-  return f.inTeam ? teamColor(f.team) : f.cpu ? cpuColor() : portColor(f.port);
-}
+inline Color slotColor(const Fighter& f) { return f.inTeam ? teamColor(f.team) : portColor(f.port); }
 
 // ---- Text ------------------------------------------------------------------
 inline float textSpacing(float size, FontKind k) { return k == FontKind::Title ? size * 0.02f : size * 0.01f; }
