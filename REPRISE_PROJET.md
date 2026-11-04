@@ -52,9 +52,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | pris | session cloud « DA v2 », 11.1 |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 04/11 23 h 30 UTC, session cloud « DA v2 » : **v11.1 publiée** (workflow_dispatch sur `claude/project-thread-dj46dj`,
+  archives Linux et Windows). Verrou « Version et paquets » libéré. Suite : résultats et paramètres (11.2).
 - 04/11 23 h 15 UTC, session cloud « DA v2 » : **11.1** (3e livraison de la DA) : HUD (`render_hud.cpp` : cartes des
   joueurs, bandeau de l'orbe, badge « ULTIME PRÊT », bulles hors écran), Clash Orb redessinée (`drawClashOrb` dans
   `render_world.cpp`, aussi en icône), éclat qui vole de l'orbe au gagnant et dégâts « +N % » (`trackCallouts` /
