@@ -8,6 +8,16 @@
 
 ## Nouveautés
 
+Version 10.9 : **nouvelle direction artistique « Ligne d'horizon », 1re partie**.
+
+- Écran titre refait : un vrai combat entre deux ordinateurs (niveau 9) se joue derrière le menu, sur la terrasse
+  face à l'horizon. À chaque K.O., une nouvelle paire.
+- Nouveau menu : quatre grands boutons (Jouer, Versus, Entraînement, En ligne), quatre petits, une astuce par bouton.
+- Nouvelle charte pour tous les menus : polices Saira, panneaux aux coins en biseau, ligne d'horizon bleu, blanc et
+  or, touches dessinées au trait.
+- À venir : la sélection, les arènes et l'écran VS, puis le HUD, l'orbe et la pause, puis les résultats et les
+  paramètres.
+
 Version 10.8 : **essai des effets tout faits de PixelLab**.
 
 - Chaque coup fait un éclat PixelLab (flash, rayons et anneau), à la couleur de l'élément du coup.

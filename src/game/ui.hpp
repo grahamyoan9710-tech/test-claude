@@ -1,7 +1,9 @@
 #pragma once
-// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon: the logo's royal blue and gold,
-// chunky rounded buttons with a thick dark outline, a lip and a gloss, deep navy cards, gold ribbons).
+// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon, « Ligne d'horizon »: flat night
+// blue panels with bevelled corners, azure for the idle lines and player 1, gold for what is chosen and player 2, the
+// horizon line azure -> white -> gold, Saira Condensed type).
 #include <initializer_list>
+#include <string>
 #include <utility>
 
 #include "game/common.hpp"
@@ -9,27 +11,31 @@
 
 namespace ui {
 
-constexpr Color kInk = {10, 14, 36, 255};        // outlines, the deepest navy
-constexpr Color kNavy = {30, 54, 118, 255};      // cards (top)
-constexpr Color kNavyDeep = {13, 25, 68, 255};   // cards (bottom)
+constexpr Color kInk = {6, 10, 24, 255};         // « Nuit »: the deepest blue, outlines, text on gold
+constexpr Color kNavy = {20, 29, 64, 255};       // « Panneau »: cards (top)
+constexpr Color kNavyDeep = {13, 20, 48, 255};   // « Abysse »: cards (bottom)
 constexpr Color kSlate = kNavy;
-constexpr Color kBlue = {72, 156, 255, 255};     // secondary buttons
-constexpr Color kSky = {160, 218, 255, 255};     // light trims and highlights
-constexpr Color kStone = {104, 124, 172, 255};   // idle lines
-constexpr Color kGold = {255, 210, 74, 255};     // primary buttons, focus
-constexpr Color kGoldDeep = {238, 140, 24, 255};
-constexpr Color kCream = {255, 250, 238, 255};   // text
-constexpr Color kMuted = {170, 190, 230, 255};   // secondary text
+constexpr Color kBlue = {61, 139, 255, 255};     // « Azur »: idle lines, player 1
+constexpr Color kSky = {191, 217, 255, 255};     // light trims and small labels
+constexpr Color kStone = {58, 76, 128, 255};     // idle marks
+constexpr Color kGold = {255, 181, 71, 255};     // « Or »: what is chosen, player 2
+constexpr Color kGoldDeep = {222, 132, 30, 255};
+constexpr Color kCream = {238, 243, 255, 255};   // « Éclat »: text
+constexpr Color kSoft = {212, 222, 245, 255};    // body text
+constexpr Color kMuted = {154, 168, 199, 255};   // « Brume »: secondary text
+constexpr Color kDisabled = {130, 144, 179, 255};  // what is not open yet
+constexpr Color kTrack = {26, 37, 80, 255};      // slider tracks, idle segments
 constexpr Color kUmber = kInk;                   // outline of the big titles
 constexpr Color kTeal = kSky;                    // light accents
-constexpr Color kRed = {246, 72, 80, 255};       // cancel, danger
-constexpr Color kRedDark = {168, 28, 46, 255};
-constexpr Color kGreen = {126, 226, 74, 255};    // go
+constexpr Color kRed = {255, 96, 82, 255};       // cancel, danger
+constexpr Color kRedDark = {168, 34, 44, 255};
+constexpr Color kGreen = {61, 220, 151, 255};    // go
 
 // The tones of the chunky buttons.
 enum class Tone : int { Gold, Blue, Navy, Red, Green, Grey };
 Color toneTop(Tone t);
 Color toneBottom(Tone t);
+Color toneInk(Tone t);  // the text that reads on it
 
 // ---- Shapes -------------------------------------------------------------------
 // Quad with one colour per corner (a = top-left, b = top-right, c = bottom-right, d = bottom-left).
@@ -37,24 +43,33 @@ void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color ca, Color cb, Color 
 // Parallelogram leaning right ("/") inside the bounding box r, vertical gradient.
 void slanted(Rectangle r, float slant, Color top, Color bottom);
 void slantedOutline(Rectangle r, float slant, float thick, Color c);
+// A box with its top-left and bottom-right corners cut (the charte's shape), vertical gradient; and its outline.
+void bevel(Rectangle r, float cut, Color top, Color bottom);
+void bevelLines(Rectangle r, float cut, float thick, Color c);
+// The horizon line: azure -> white -> gold, fading at both ends.
+void horizonLine(float x0, float x1, float y, float thick, float alpha = 1.0f);
+// The white diamond spark of the logo, with its glow.
+void eclat(Vector2 c, float r, float alpha = 1.0f, Color col = WHITE);
 // Rounded rectangle with a vertical gradient (radius in pixels), and its outline.
 void roundRect(Rectangle r, float radius, Color top, Color bottom);
 void roundLines(Rectangle r, float radius, float thick, Color c);
-// The chunky look: drop shadow, thick dark outline, a darker lip under the face, a gloss on top. radius < 0: from
-// the height.
+// A flat bevelled plate (the old chunky look's name); with a Tone, the idle ones have an azure line underneath.
+// radius: the cut of the corners (< 0: from the height).
 void chunky(Rectangle r, Color top, Color bottom, float alpha = 1.0f, float radius = -1.0f);
 void chunky(Rectangle r, Tone tone, float alpha = 1.0f, float radius = -1.0f);
-float chunkyLip(Rectangle r);  // the lip's height: the face is r without it
-// A button: its chunky body, the label in white; focused: lifted, a gold rim, a shine running over it.
+float chunkyLip(Rectangle r);  // 0 now: the face is the whole plate
+// The chosen button's shimmer: a soft white band crossing r every 2.6 s.
+void shimmer(Rectangle r, float time, float alpha = 1.0f);
+// A button: its plate, the label in the tone's ink; focused: a white rim and a shimmer running over it.
 void button(Rectangle r, const char* label, Tone tone, bool focused, float time, float alpha = 1.0f, float size = 0.0f);
-// Navy card: panels and sheets.
+// Night blue card with a faint inner line: panels and sheets.
 void card(Rectangle r, float alpha = 1.0f, Color top = kNavy, Color bottom = kNavyDeep);
-// Ribbon banner with folded tails, centred on cx, its text on it; returns its width.
+// A bevelled plate centred on cx, its text on it; returns its width.
 float ribbon(const char* text, float cx, float y, float size, Tone tone = Tone::Gold, float alpha = 1.0f);
 float ribbonWidth(const char* text, float size);
-// The gold rim of what is focused.
+// The white rim of what is focused.
 void rim(Rectangle r, float radius, float time);
-// Big type: white (or fill) with a thick dark outline and a dark drop under it (title font).
+// Big type: white (or fill) with a thin dark outline and a soft drop under it (title font).
 void bold(const char* text, float x, float y, float size, Color fill = WHITE, float alpha = 1.0f);
 void boldCentered(const char* text, float cx, float y, float size, Color fill = WHITE, float alpha = 1.0f);
 // The main menu's plate (the old look's name): a chunky button, gold when chosen, navy otherwise.
@@ -69,7 +84,7 @@ void diamond(Vector2 c, float r, Color col);
 void corners(Rectangle r, float slant, float len, float thick, Color col);
 // A card in the given colours (the slant is ignored: everything is rounded now).
 void plate(Rectangle r, float slant, Color top, Color bottom, Color line);
-// Hairline rule with a small dot at both ends.
+// Hairline rule with a small diamond at both ends.
 void rule(float x0, float x1, float y, Color col);
 // Zonai rune glyph (kind 0 spiral, 1 eye, 2 three dots, 3 compass) inside a circle of radius r.
 void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
@@ -96,7 +111,7 @@ void drawSprite(Sprite s, float x, float y, float size, float alpha = 1.0f);
 float spriteWidth(Sprite s, float size);
 // Blend mode used for the whole frame (keeps the off-screen image opaque).
 void frameBlend();
-// Screen title on a slanted ribbon (top-left) + optional subtitle.
+// Screen title, big at the top left, the horizon line under it, an optional subtitle.
 void header(const char* title, const char* subtitle, Color accent, float time);
 // Key cap (e.g. [ENTRÉE]) - returns its width.
 float keycap(const char* label, float x, float y, float h, bool lit = false);
@@ -130,6 +145,9 @@ struct Hint {
 };
 // Bottom bar with control hints: {{"ENTRÉE", Btn::A, "Choisir"}, {"ÉCHAP", Btn::B, "Retour"}}.
 void footer(std::initializer_list<Hint> hints, const char* info = nullptr);
+
+// Draws `text` wrapped to `width`, line after line; returns the y under the last line.
+float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col);
 
 // ---- Widgets ----------------------------------------------------------------------
 void panel(Rectangle r, Color fill, Color border, float roundness = 0.08f);

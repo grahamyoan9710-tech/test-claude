@@ -1,5 +1,6 @@
 // The fight itself: inputs -> simulation -> effects -> camera -> drawing.
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -155,8 +156,14 @@ void drawUltCutIn(const Match& m, float time) {
 }
 }  // namespace
 
-MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug)
-    : m_(cfg), devices_(devices), audio_(audio), fx_(&audio), debug_(debug) {
+namespace {
+// The demo fight of the title screen: where its stage stands on the screen, and how long it lasts after the K.O.
+constexpr float kAttractZoom = 1.3f, kAttractX = 720.0f, kAttractGround = 612.0f;
+constexpr int kAttractEnd = 100;
+}  // namespace
+
+MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug, bool attract)
+    : m_(cfg), devices_(devices), audio_(audio), fx_(&audio), debug_(debug), attract_(attract) {
   for (const auto& f : m_.fighters) {
     brains_.emplace_back(f.cpuLevel, cfg.seed + 31u * uint32_t(f.id + 1));
     if (cfg.training && f.cpu) brains_.back().setDummy(CpuBrain::kDummyStand);
@@ -165,8 +172,12 @@ MatchScreen::MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devic
   combo_.assign(m_.fighters.size(), 0);
   comboStart_.assign(m_.fighters.size(), 0.0f);
   comboShow_.assign(m_.fighters.size(), 0);
+  if (attract_) {  // no "3, 2, 1": the fighters stand a moment, then fight
+    while (m_.countdown > 40) m_.step({});
+  } else {
+    audio_.setMusic(2, "battle");  // music_battle.mp3, else the synthesized battle theme
+  }
   updateCamera(true);
-  audio_.setMusic(2, "battle");  // music_battle.mp3, else the synthesized battle theme
 }
 
 std::vector<std::string> MatchScreen::pauseItems() const {
@@ -315,7 +326,7 @@ void MatchScreen::showUltimate(int slot) {
 
 MatchScreen::Result MatchScreen::update() {
   time_ += 1.0f / 60.0f;
-  if (IsKeyPressed(KEY_F1)) debug_ = !debug_;
+  if (!attract_ && IsKeyPressed(KEY_F1)) debug_ = !debug_;
   // A player's gamepad got unplugged: pause until it is back (or until the players resume anyway).
   for (const auto& f : m_.fighters) {
     const int d = devices_[f.port];
@@ -340,7 +351,7 @@ MatchScreen::Result MatchScreen::update() {
       return Result::Running;
     }
   }
-  if (!anyHuman && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
+  if (!anyHuman && !attract_ && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
     paused_ = true;
     pauseSel_ = 0;
     return Result::Running;
@@ -382,16 +393,21 @@ MatchScreen::Result MatchScreen::update() {
   fx_.update(m_);
   if (training()) trackCombos();
   updateCamera(false);
-  shake_ = fx_.shakeOffset() * shakeScale();
+  shake_ = fx_.shakeOffset() * shakeScale() * (attract_ ? 0.5f : 1.0f);
 
   if (m_.finished) {
-    if (endTimer_ == 0) audio_.setMusic(0);
-    if (++endTimer_ > 170) return Result::Finished;
+    if (endTimer_ == 0 && !attract_) audio_.setMusic(0);
+    if (++endTimer_ > (attract_ ? kAttractEnd : 170)) return Result::Finished;
   }
   return Result::Running;
 }
 
 void MatchScreen::updateCamera(bool snap) {
+  if (attract_) {  // the stage's middle right of the title's menu, its floor on the terrace's line
+    camZoom_ = kAttractZoom;
+    camPos_ = {(kScreenW * 0.5f - kAttractX) / kAttractZoom, (kScreenH * 0.5f - kAttractGround) / kAttractZoom};
+    return;
+  }
   const Rect& blast = m_.stage().blast;
   float minX = -260, maxX = 260, minY = -260, maxY = 60;
   for (const auto& f : m_.fighters) {
@@ -464,7 +480,7 @@ Camera2D MatchScreen::camera() {
   cam.offset = {kScreenW * 0.5f + shake_.x, kScreenH * 0.5f + shake_.y};
   Vec2 target = camPos_;
   float zoom = camZoom_;
-  if (const float k = fx_.zoomPunch(); k > 0.0f) {  // impact: the camera punches in on the blow
+  if (const float k = fx_.zoomPunch(); k > 0.0f && !attract_) {  // impact: the camera punches in on the blow
     Vec2 to = fx_.punchFocus() - camPos_;
     if (to.len() > 260.0f) to = to.norm() * 260.0f;
     target = camPos_ + to * (k / (1.0f + k) + 0.3f * k);
@@ -552,6 +568,27 @@ void MatchScreen::drawPause() {
   else
     ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ENTRÉE", ui::Btn::A, "Valider"},
                 {"ÉCHAP", ui::Btn::Start, "Reprendre"}});
+}
+
+void MatchScreen::drawAttract() {
+  float w, h;
+  const bool bg = art::pictureSize("menu_horizon", w, h);
+  if (bg) art::drawPicture("menu_horizon", {0, 0, w, h}, {0, 0, kScreenW, kScreenH});
+  beginWorld(camera());
+  drawItems(m_, time_);
+  for (int pass = 0; pass < 2; ++pass)
+    for (const auto& f : m_.fighters) {
+      const bool late = f.state == FState::Hitstun || f.state == FState::Grabbed;
+      if ((pass == 1) == late) drawFighter(f, m_, time_, false);
+    }
+  drawBeams(m_, time_);
+  drawProjectiles(m_, time_);
+  if (kVfx) fx_.drawWorld();
+  else fx_.drawImpacts();
+  endWorld();
+  // Fading in and out: the empty terrace drawn over them.
+  const float fade = std::max(1.0f - time_ * 2.0f, clampf((endTimer_ - (kAttractEnd - 40)) / 40.0f, 0.0f, 1.0f));
+  if (bg && fade > 0.0f) art::drawPicture("menu_horizon", {0, 0, w, h}, {0, 0, kScreenW, kScreenH}, fade);
 }
 
 void MatchScreen::draw() {

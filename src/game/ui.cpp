@@ -132,26 +132,89 @@ void slantedOutline(Rectangle r, float s, float t, Color c) {
   }
 }
 
-// ---- The Clash Horizon look ---------------------------------------------------------
+// ---- The Clash Horizon look (« Ligne d'horizon ») -------------------------------------
 Color toneTop(Tone t) {
   switch (t) {
-    case Tone::Gold: return {255, 218, 90, 255};
-    case Tone::Blue: return {90, 170, 255, 255};
-    case Tone::Navy: return {52, 84, 164, 255};
-    case Tone::Red: return {255, 104, 104, 255};
-    case Tone::Green: return {150, 234, 88, 255};
-    default: return {156, 166, 190, 255};
+    case Tone::Gold: return {255, 190, 92, 255};
+    case Tone::Blue: return {30, 66, 148, 255};
+    case Tone::Navy: return {22, 32, 70, 255};
+    case Tone::Red: return {214, 58, 64, 255};
+    case Tone::Green: return {78, 228, 162, 255};
+    default: return {12, 18, 40, 255};
   }
 }
 Color toneBottom(Tone t) {
   switch (t) {
-    case Tone::Gold: return {240, 140, 24, 255};
-    case Tone::Blue: return {30, 96, 222, 255};
-    case Tone::Navy: return {20, 38, 98, 255};
-    case Tone::Red: return {198, 36, 56, 255};
-    case Tone::Green: return {48, 156, 40, 255};
-    default: return {80, 88, 114, 255};
+    case Tone::Gold: return {255, 176, 62, 255};
+    case Tone::Blue: return {22, 52, 122, 255};
+    case Tone::Navy: return {16, 24, 54, 255};
+    case Tone::Red: return {176, 40, 52, 255};
+    case Tone::Green: return {50, 200, 136, 255};
+    default: return {10, 16, 36, 255};
   }
+}
+Color toneInk(Tone t) {
+  switch (t) {
+    case Tone::Gold: case Tone::Green: return kInk;
+    case Tone::Grey: return kDisabled;
+    default: return kCream;
+  }
+}
+
+namespace {
+// The six corners of a box with its top-left and bottom-right corners cut, clockwise from the top left.
+void bevelPoints(Rectangle r, float cut, Vector2* p) {
+  cut = clampf(cut, 0.0f, std::min(r.width, r.height) * 0.45f);
+  p[0] = {r.x + cut, r.y};
+  p[1] = {r.x + r.width, r.y};
+  p[2] = {r.x + r.width, r.y + r.height - cut};
+  p[3] = {r.x + r.width - cut, r.y + r.height};
+  p[4] = {r.x, r.y + r.height};
+  p[5] = {r.x, r.y + cut};
+}
+float cutFor(Rectangle r, float rad) { return rad < 0.0f ? std::min(14.0f, r.height * 0.26f) : std::min(rad, 14.0f); }
+}  // namespace
+
+void bevel(Rectangle r, float cut, Color top, Color bottom) {
+  if (r.width <= 0.0f || r.height <= 0.0f) return;
+  Vector2 p[6];
+  bevelPoints(r, cut, p);
+  auto at = [&](float y) { return mixColor(top, bottom, (y - r.y) / r.height); };
+  const Vector2 m{r.x + r.width * 0.5f, r.y + r.height * 0.5f};
+  const Color mc = at(m.y);
+  rlBegin(RL_TRIANGLES);
+  for (int i = 0; i < 6; ++i) {  // a fan from the centre: the gradient stays exact
+    const Vector2 a = p[i], b = p[(i + 1) % 6];
+    vtx(m, mc);
+    vtx(b, at(b.y));
+    vtx(a, at(a.y));
+  }
+  rlEnd();
+}
+
+void bevelLines(Rectangle r, float cut, float thick, Color c) {
+  Vector2 p[6];
+  bevelPoints(r, cut, p);
+  const Vector2 mid{(p[0].x + p[1].x) * 0.5f, r.y};  // start and end on a straight part: no notch at a corner
+  const Vector2 loop[8] = {mid, p[1], p[2], p[3], p[4], p[5], p[0], mid};
+  polyline(loop, 8, thick, c);
+}
+
+void horizonLine(float x0, float x1, float y, float thick, float a) {
+  if (x1 <= x0) return;
+  const float stops[5] = {0.0f, 0.18f, 0.5f, 0.82f, 1.0f};
+  const Color cols[5] = {withAlpha(kBlue, 0.0f), withAlpha(kBlue, a), withAlpha(WHITE, a), withAlpha(kGold, a),
+                         withAlpha(kGold, 0.0f)};
+  const float y0 = y - thick * 0.5f, y1 = y + thick * 0.5f;
+  for (int i = 0; i < 4; ++i) {
+    const float l = x0 + (x1 - x0) * stops[i], r = x0 + (x1 - x0) * stops[i + 1];
+    quad({l, y0}, {r, y0}, {r, y1}, {l, y1}, cols[i], cols[i + 1], cols[i + 1], cols[i]);
+  }
+}
+
+void eclat(Vector2 c, float r, float a, Color col) {
+  radial(c, r * 3.2f, withAlpha(col, 0.45f * a), withAlpha(col, 0.0f), 24);
+  diamond(c, r, withAlpha(col, a));
 }
 
 void roundRect(Rectangle r, float rad, Color top, Color bottom) {
@@ -186,26 +249,24 @@ void roundLines(Rectangle r, float rad, float thick, Color c) {
   DrawRectangleRoundedLinesEx(r, clampf(rad * 2.0f / m, 0.0f, 1.0f), 8, thick, c);
 }
 
-float chunkyLip(Rectangle r) { return clampf(r.height * 0.1f, 3.0f, 7.0f); }
+float chunkyLip(Rectangle) { return 0.0f; }
 
 void chunky(Rectangle r, Color top, Color bottom, float a, float rad) {
-  if (rad < 0.0f) rad = std::min(16.0f, r.height * 0.3f);
-  const float lip = chunkyLip(r);
-  roundRect({r.x + 1, r.y + 5, r.width, r.height}, rad + 3, withAlpha(BLACK, 0.3f * a), withAlpha(BLACK, 0.3f * a));
-  roundRect(grow(r, 3), rad + 3, withAlpha(kInk, a), withAlpha(kInk, a));
-  roundRect(r, rad, withAlpha(shade(bottom, 0.66f), a), withAlpha(shade(bottom, 0.5f), a));  // the lip
-  const Rectangle face{r.x, r.y, r.width, r.height - lip};
-  roundRect(face, rad, withAlpha(top, a * top.a / 255.0f), withAlpha(bottom, a * bottom.a / 255.0f));
-  const float gh = face.height * 0.46f;  // the gloss on the top half
-  roundRect({face.x + 5, face.y + 3, face.width - 10, gh}, std::max(2.0f, std::min(rad - 3.0f, gh * 0.5f)),
-            withAlpha(WHITE, 0.32f * a), withAlpha(WHITE, 0.06f * a));
+  bevel(r, cutFor(r, rad), withAlpha(top, a * top.a / 255.0f), withAlpha(bottom, a * bottom.a / 255.0f));
 }
-void chunky(Rectangle r, Tone t, float a, float rad) { chunky(r, toneTop(t), toneBottom(t), a, rad); }
+void chunky(Rectangle r, Tone t, float a, float rad) {
+  chunky(r, toneTop(t), toneBottom(t), a, rad);
+  if (t != Tone::Navy && t != Tone::Blue) return;
+  const float cut = cutFor(r, rad), b = r.y + r.height, th = 2.0f;  // the azure line along the bottom edge
+  const Color c = withAlpha(kBlue, (t == Tone::Blue ? 1.0f : 0.6f) * a);
+  quad({r.x, b - th}, {r.x + r.width - cut + th, b - th}, {r.x + r.width - cut, b}, {r.x, b}, c, c, c, c);
+}
 
 void bold(const char* text, float x, float y, float size, Color fill, float a) {
-  const float th = std::max(2.0f, size * 0.085f);
+  const float th = std::max(1.5f, size * 0.05f);
   const Color ink = withAlpha(kInk, a);
-  drawTextOutlined(text, x, y + std::max(2.0f, size * 0.07f), size, ink, ink, th, FontKind::Title);  // the drop
+  drawTextOutlined(text, x, y + std::max(1.5f, size * 0.045f), size, withAlpha(kInk, 0.45f * a),
+                   withAlpha(kInk, 0.45f * a), th, FontKind::Title);  // a soft drop
   drawTextOutlined(text, x, y, size, withAlpha(fill, a * fill.a / 255.0f), ink, th, FontKind::Title);
 }
 void boldCentered(const char* text, float cx, float y, float size, Color fill, float a) {
@@ -213,62 +274,50 @@ void boldCentered(const char* text, float cx, float y, float size, Color fill, f
 }
 
 void rim(Rectangle r, float rad, float time) {
-  const float p = 0.5f + 0.5f * std::sin(time * 6.0f);
-  roundLines(grow(r, 7.0f + 2.0f * p), rad + 7.0f, 4.0f, withAlpha(kGold, 0.22f + 0.16f * p));
-  roundLines(grow(r, 3.0f), rad + 3.0f, 3.0f, kGold);
+  const float p = 0.5f + 0.5f * std::sin(time * 5.0f);
+  bevelLines(grow(r, 4.0f), cutFor(r, rad) + 1.5f, 2.5f, withAlpha(WHITE, 0.7f + 0.3f * p));
+}
+
+void shimmer(Rectangle r, float time, float a) {
+  // A soft white band slanted like the bevels, crossing the face every 2.6 s.
+  const float u = std::fmod(time, 2.6f) / 2.6f, e = 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+  const float w = r.height * 0.85f, k = r.height * 0.36f, x = r.x - w - k + e * (r.width + 2.0f * (w + k));
+  const Color peak = withAlpha(WHITE, 0.5f * a), clear = withAlpha(WHITE, 0.0f);
+  const float y0 = r.y, y1 = r.y + r.height, xm = x + w * 0.5f;
+  beginClip(r);
+  quad({x + k, y0}, {xm + k, y0}, {xm - k, y1}, {x - k, y1}, clear, peak, peak, clear);
+  quad({xm + k, y0}, {x + w + k, y0}, {x + w - k, y1}, {xm - k, y1}, peak, clear, clear, peak);
+  endClip();
 }
 
 void button(Rectangle r, const char* label, Tone tone, bool focused, float time, float a, float size) {
-  const float rad = std::min(16.0f, r.height * 0.3f);
-  if (focused) r = grow(r, 3.0f);
-  chunky(r, tone, a, rad);
-  const float lip = chunkyLip(r);
+  const float cut = cutFor(r, -1.0f);
+  chunky(r, tone, a, cut);
   if (focused) {
-    const float u = std::fmod(time * 0.8f, 1.8f) - 0.3f;  // a shine running over the face now and then
-    if (u < 1.2f) {
-      const float x = r.x + u * r.width, w = r.height * 0.45f, k = (r.height - lip) * 0.5f;
-      beginClip({r.x + rad * 0.5f, r.y, r.width - rad, r.height - lip});
-      quad({x + k, r.y}, {x + k + w, r.y}, {x - k + w, r.y + r.height - lip}, {x - k, r.y + r.height - lip},
-           withAlpha(WHITE, 0.3f * a), withAlpha(WHITE, 0.0f), withAlpha(WHITE, 0.0f), withAlpha(WHITE, 0.3f * a));
-      endClip();
-    }
-    rim(r, rad, time);
+    shimmer(r, time, a);
+    rim(r, cut, time);
   }
   if (label && *label) {
-    if (size <= 0.0f) size = std::min(30.0f, (r.height - lip) * 0.58f);
-    boldCentered(label, r.x + r.width * 0.5f, r.y + (r.height - lip - size) * 0.5f + size * 0.06f, size, WHITE, a);
+    if (size <= 0.0f) size = std::min(30.0f, r.height * 0.56f);
+    const float w = textWidth(label, size, FontKind::Title);
+    drawText(label, r.x + (r.width - w) * 0.5f, capsY(r.y + r.height * 0.5f, size, FontKind::Title), size, withAlpha(toneInk(tone), a),
+             FontKind::Title);
   }
 }
 
 void card(Rectangle r, float a, Color top, Color bottom) {
-  const float rad = std::min(18.0f, std::min(r.width, r.height) * 0.25f);
-  roundRect({r.x + 2, r.y + 7, r.width, r.height}, rad + 3, withAlpha(BLACK, 0.35f * a), withAlpha(BLACK, 0.35f * a));
-  roundRect(grow(r, 3), rad + 3, withAlpha(kInk, a), withAlpha(kInk, a));
-  roundRect(r, rad, withAlpha(top, a * top.a / 255.0f), withAlpha(bottom, a * bottom.a / 255.0f));
-  roundRect({r.x + 6, r.y + 4, r.width - 12, std::min(30.0f, r.height * 0.22f)}, std::max(2.0f, rad - 4.0f),
-            withAlpha(WHITE, 0.1f * a), withAlpha(WHITE, 0.0f));
-  roundLines(grow(r, -5), std::max(2.0f, rad - 5.0f), 1.5f, withAlpha(kSky, 0.3f * a));
+  const float cut = std::min(14.0f, std::min(r.width, r.height) * 0.2f);
+  bevel(r, cut, withAlpha(top, a * top.a / 255.0f), withAlpha(bottom, a * bottom.a / 255.0f));
+  bevelLines(grow(r, -1.0f), cut - 0.4f, 1.0f, withAlpha(kSky, 0.16f * a));
 }
 
-float ribbonWidth(const char* text, float size) { return textWidth(text, size, FontKind::Title) + size * 1.4f; }
+float ribbonWidth(const char* text, float size) { return textWidth(text, size, FontKind::Title) + size * 1.2f; }
 
 float ribbon(const char* text, float cx, float y, float size, Tone tone, float a) {
-  const float w = ribbonWidth(text, size), h = size * 1.42f, x0 = cx - w * 0.5f, x1 = cx + w * 0.5f;
-  const float drop = h * 0.22f, tail = h * 0.8f, notch = h * 0.32f;
-  const Color tb = toneBottom(tone), ink = withAlpha(kInk, a);
-  for (int side = -1; side <= 1; side += 2) {  // the tails, folded behind the band's ends
-    const float e = side < 0 ? x0 : x1, out = e + side * tail, in = e - side * h * 0.4f;
-    const float t0 = y + drop, t1 = y + drop + h, tm = (t0 + t1) * 0.5f, nx = out - side * notch;
-    const Color c = withAlpha(shade(tb, 0.78f), a);
-    quad({in, t0}, {out, t0}, {nx, tm}, {in, tm}, c, c, c, c);
-    quad({in, tm}, {nx, tm}, {out, t1}, {in, t1}, c, c, c, c);
-    const Color fold = withAlpha(shade(tb, 0.45f), a);  // the fold, under the band
-    quad({in, y + h}, {e, y + h}, {e + side * drop, t1}, {in, t1}, fold, fold, fold, fold);
-    const Vector2 edge[6] = {{in, t0}, {out, t0}, {nx, tm}, {out, t1}, {in, t1}, {in, t0}};
-    polyline(edge, 6, 3.0f, ink);
-  }
-  chunky({x0, y, w, h}, tone, a, h * 0.2f);
-  boldCentered(text, cx, y + (h - chunkyLip({x0, y, w, h}) - size) * 0.5f + size * 0.07f, size, WHITE, a);
+  const float w = ribbonWidth(text, size), h = size * 1.4f;
+  chunky({cx - w * 0.5f, y, w, h}, tone, a, h * 0.3f);
+  drawText(text, cx - textWidth(text, size, FontKind::Title) * 0.5f, capsY(y + h * 0.5f, size, FontKind::Title), size,
+           withAlpha(toneInk(tone), a), FontKind::Title);
   return w;
 }
 
@@ -341,9 +390,9 @@ void plate(Rectangle r, float s, Color top, Color bottom, Color line) {
 }
 
 void rule(float x0, float x1, float y, Color col) {
-  DrawLineEx({x0 + 4, y}, {x1 - 4, y}, 2.0f, col);
-  DrawCircleV({x0, y}, 4, col);
-  DrawCircleV({x1, y}, 4, col);
+  DrawLineEx({x0 + 6, y}, {x1 - 6, y}, 1.5f, col);
+  diamond({x0, y}, 4, col);
+  diamond({x1, y}, 4, col);
 }
 
 void rune(Vector2 c, float r, int kind, float rot, Color col, float t) {
@@ -522,24 +571,32 @@ void drawSprite(Sprite s, float x, float y, float size, float alpha) {
 }
 
 void header(const char* title, const char* subtitle, Color accent, float time) {
-  // A gold ribbon in the top left corner, the screen's name on it.
+  // The screen's name, big at the top left, on the horizon line.
   (void)accent;
   (void)time;
-  const float size = 40.0f, w = ribbonWidth(title, size);
-  ribbon(title, 72 + w * 0.5f, 18, size);
-  if (subtitle) drawTextOutlined(subtitle, 76, 18 + size * 1.42f + 16, 18, kCream, kInk, 2.5f);
+  const float size = 54.0f, x = 64.0f, y = 18.0f, w = textWidth(title, size, FontKind::Title);
+  bold(title, x, y, size);
+  horizonLine(x - 24, x + w + 64, y + size + 8, 2.0f);
+  eclat({x + w * 0.5f + 20, y + size + 8}, 4.0f);
+  if (subtitle) drawTextOutlined(subtitle, x, y + size + 18, 16, kSky, kInk, 1.5f);
 }
 
-float keycapWidth(const char* label, float h) { return std::max(h, textWidth(label, h * 0.48f) + h * 0.7f); }
+float keycapWidth(const char* label, float h) {
+  return std::max(h, textWidth(label, h * 0.52f, FontKind::Title) + h * 0.62f);
+}
 
 float keycap(const char* label, float x, float y, float h, bool lit) {
-  const float ts = h * 0.46f, w = keycapWidth(label, h), rad = h * 0.28f, lip = std::max(2.0f, h * 0.13f);
-  const Color top = lit ? Color{255, 228, 120, 255} : Color{252, 250, 244, 255};
-  const Color bottom = lit ? Color{246, 168, 40, 255} : Color{206, 218, 242, 255};
-  roundRect({x - 2, y - 2, w + 4, h + 4}, rad + 2, kInk, kInk);
-  roundRect({x, y, w, h}, rad, shade(bottom, 0.62f), shade(bottom, 0.52f));
-  roundRect({x, y, w, h - lip}, rad, top, bottom);
-  drawText(label, x + (w - textWidth(label, ts)) * 0.5f, y + (h - lip - ts) * 0.5f, ts, kInk);
+  // Outlined, like on the charte; lit: filled gold.
+  const float ts = h * 0.52f, w = keycapWidth(label, h), rad = std::max(3.0f, h * 0.18f);
+  const Rectangle r{x, y, w, h};
+  if (lit) {
+    roundRect(r, rad, kGold, kGold);
+  } else {
+    roundRect(r, rad, withAlpha(kInk, 0.65f), withAlpha(kInk, 0.65f));
+    roundLines(grow(r, -1.0f), rad, 2.0f, kCream);
+  }
+  drawText(label, x + (w - textWidth(label, ts, FontKind::Title)) * 0.5f, capsY(y + h * 0.5f, ts, FontKind::Title), ts, lit ? kInk : kCream,
+           FontKind::Title);
   return w;
 }
 
@@ -792,30 +849,27 @@ float actionPrompt(int device, int action, float x, float y, float h, bool lit) 
 }
 
 void footer(std::initializer_list<Hint> hints, const char* info) {
-  const float h = 48, y = kScreenH - h, kh = 28;
-  DrawRectangleGradientV(0, int(y - 26), kScreenW, 26, withAlpha(kInk, 0.0f), withAlpha(kInk, 0.55f));
-  DrawRectangleGradientV(0, int(y), kScreenW, int(h), withAlpha(kNavy, 0.96f), withAlpha(kNavyDeep, 0.98f));
-  DrawRectangle(0, int(y - 3), kScreenW, 3, kInk);
-  DrawRectangle(0, int(y), kScreenW, 3, kGold);
-  // Measure from the right
+  // The hints on a dark fade at the bottom, right-aligned; the info on the left.
+  const float h = 50, y = kScreenH - h, kh = 26, ts = 16;
+  DrawRectangleGradientV(0, int(y - 46), kScreenW, 46, withAlpha(kInk, 0.0f), withAlpha(kInk, 0.7f));
+  DrawRectangle(0, int(y), kScreenW, int(h), withAlpha(kInk, 0.7f));
+  horizonLine(0, kScreenW, y, 1.0f, 0.3f);
   float total = 0;
-  for (const Hint& hint : hints) total += promptWidth(hint.key, hint.pad, kh) + 8 + textWidth(hint.label, 18) + 26;
-  float x = kScreenW - 24 - total;
+  for (const Hint& hint : hints) total += promptWidth(hint.key, hint.pad, kh) + 8 + textWidth(hint.label, ts) + 24;
+  float x = kScreenW - 28 - total;
   for (const Hint& hint : hints) {
-    x += prompt(hint.key, hint.pad, x, y + 11, kh) + 8;
-    drawTextOutlined(hint.label, x, y + 15, 18, kCream, kInk, 2.0f);
-    x += textWidth(hint.label, 18) + 26;
+    x += prompt(hint.key, hint.pad, x, y + (h - kh) * 0.5f, kh) + 8;
+    drawText(hint.label, x, y + (h - ts) * 0.5f, ts, kSoft);
+    x += textWidth(hint.label, ts) + 24;
   }
-  if (info) drawTextOutlined(info, 24, y + 15, 18, kMuted, kInk, 2.0f);
+  if (info) drawText(info, 28, y + (h - ts) * 0.5f, ts, kMuted);
 }
 
 // ---- Widgets ----------------------------------------------------------------------
 void panel(Rectangle r, Color fill, Color border, float roundness) {
-  const float rad = roundness * std::min(r.width, r.height) * 0.5f;
-  roundRect({r.x + 2, r.y + 7, r.width, r.height}, rad + 3, withAlpha(BLACK, 0.35f), withAlpha(BLACK, 0.35f));
-  roundRect(grow(r, 3), rad + 3, kInk, kInk);
-  roundRect(r, rad, fill, mixColor(fill, kNavyDeep, 0.5f));
-  roundLines(grow(r, -5), std::max(2.0f, rad - 5.0f), 1.5f, withAlpha(border, border.a / 255.0f * 0.5f));
+  const float cut = clampf(roundness * std::min(r.width, r.height) * 0.5f, 4.0f, 14.0f);
+  bevel(r, cut, fill, mixColor(fill, kNavyDeep, 0.35f));
+  bevelLines(grow(r, -1.0f), cut - 0.4f, 1.0f, withAlpha(border, border.a / 255.0f * 0.5f));
 }
 
 void focusFrame(Rectangle r, float time, float roundness) {
@@ -828,51 +882,69 @@ void arrowTri(Vector2 c, float s, int dir, Color col) {
 }
 
 void slider(Rectangle r, float v, bool focused, Color fill, float time) {
+  // A thin track, its filled part from the colour to white, a diamond knob (gold when focused).
   v = clampf(v, 0.0f, 1.0f);
-  const float rad = r.height * 0.5f;
-  roundRect(grow(r, 3), rad + 3, kInk, kInk);
-  roundRect(r, rad, {8, 14, 40, 255}, {24, 40, 92, 255});  // the groove
-  if (v > 0.01f) {
-    const Rectangle f{r.x, r.y, std::max(r.height, r.width * v), r.height};
-    roundRect(f, rad, mixColor(fill, WHITE, 0.3f), shade(fill, 0.72f));
-    roundRect({f.x + 4, f.y + 2, f.width - 8, f.height * 0.4f}, rad * 0.6f, withAlpha(WHITE, 0.35f), withAlpha(WHITE, 0.05f));
-  }
-  if (focused) rim(r, rad, time);
-  const Vector2 k{r.x + r.width * v, r.y + r.height * 0.5f};
-  const float kr = r.height * 0.95f;
-  DrawCircleV({k.x, k.y + 3}, kr + 3, withAlpha(BLACK, 0.3f));
-  DrawCircleV(k, kr + 3, kInk);
-  DrawCircleV(k, kr, focused ? kGold : kCream);
-  DrawCircleV({k.x, k.y - kr * 0.3f}, kr * 0.55f, withAlpha(WHITE, 0.45f));
+  const float th = 6.0f, cy = r.y + r.height * 0.5f, x0 = r.x, x1 = r.x + r.width * v;
+  DrawRectangleRec({r.x, cy - th * 0.5f, r.width, th}, kTrack);
+  if (v > 0.0f) quad({x0, cy - th * 0.5f}, {x1, cy - th * 0.5f}, {x1, cy + th * 0.5f}, {x0, cy + th * 0.5f}, fill, WHITE, WHITE, fill);
+  const Vector2 k{x1, cy};
+  const float kr = focused ? 10.0f + std::sin(time * 6.0f) : 8.0f;
+  if (focused) radial(k, kr * 3.0f, withAlpha(kGold, 0.45f), withAlpha(kGold, 0.0f), 24);
+  diamond(k, kr + 2.0f, kInk);
+  diamond(k, kr, focused ? kGold : WHITE);
 }
 
 void toggle(Rectangle r, bool on, bool focused, float time) {
-  chunky(r, on ? Tone::Green : Tone::Grey, 1.0f, r.height * 0.45f);
-  if (focused) rim(r, r.height * 0.45f, time);
-  const float lip = chunkyLip(r), cy = r.y + (r.height - lip) * 0.5f, kr = (r.height - lip) * 0.5f - 3;
-  const char* txt = on ? "OUI" : "NON";
-  const float ts = r.height * 0.46f;
-  const float tx = on ? r.x + 14 : r.x + r.width - 14 - textWidth(txt, ts, FontKind::Title);
-  bold(txt, tx, cy - ts * 0.48f, ts);
-  const Vector2 kc{on ? r.x + r.width - kr - 6 : r.x + kr + 6, cy};
-  DrawCircleV(kc, kr + 3, kInk);
-  DrawCircleV(kc, kr, WHITE);
-  DrawCircleV({kc.x, kc.y + kr * 0.3f}, kr * 0.7f, {214, 226, 246, 255});
+  // Two segments, OUI and NON: the current one gold.
+  const float half = std::floor(r.width * 0.5f), ts = std::min(26.0f, r.height * 0.5f);
+  const Rectangle yes{r.x, r.y, half, r.height}, no{r.x + half, r.y, r.width - half, r.height};
+  DrawRectangleRec(on ? yes : no, kGold);
+  DrawRectangleRec(on ? no : yes, kTrack);
+  const Rectangle seg[2] = {yes, no};
+  const char* txt[2] = {"OUI", "NON"};
+  for (int i = 0; i < 2; ++i) {
+    const bool cur = (i == 0) == on;
+    drawText(txt[i], seg[i].x + (seg[i].width - textWidth(txt[i], ts, FontKind::Title)) * 0.5f,
+             capsY(seg[i].y + seg[i].height * 0.5f, ts, FontKind::Title), ts, cur ? kInk : kMuted, FontKind::Title);
+  }
+  if (focused) rim(r, 2.0f, time);
 }
 
 void selector(Rectangle r, const char* value, bool focused, float time) {
-  const float rad = std::min(14.0f, r.height * 0.35f);
-  chunky(r, focused ? Tone::Blue : Tone::Navy, 1.0f, rad);
-  if (focused) rim(r, rad, time);
-  const float lip = chunkyLip(r), cy = r.y + (r.height - lip) * 0.5f, ts = r.height * 0.44f;
-  drawTextOutlined(value, r.x + (r.width - textWidth(value, ts)) * 0.5f, cy - ts * 0.55f, ts, kCream, kInk, 2.0f);
-  const float bob = focused ? std::sin(time * 8.0f) * 1.5f : 0.0f, br = (r.height - lip) * 0.32f;
-  for (int side = -1; side <= 1; side += 2) {  // a round gold button with an arrow at each end
-    const Vector2 c{side < 0 ? r.x + br + 6 - bob : r.x + r.width - br - 6 + bob, cy};
-    DrawCircleV(c, br + 2, kInk);
-    DrawCircleV(c, br, focused ? kGold : kStone);
-    arrowTri({c.x + side * 1.0f, c.y}, br * 1.1f, side, focused ? kInk : kCream);
+  const float cut = std::min(10.0f, r.height * 0.3f), cy = r.y + r.height * 0.5f, ts = r.height * 0.48f;
+  chunky(r, focused ? Tone::Blue : Tone::Navy, 1.0f, cut);
+  if (focused) rim(r, cut, time);
+  drawText(value, r.x + (r.width - textWidth(value, ts, FontKind::Title)) * 0.5f, capsY(cy, ts, FontKind::Title), ts, kCream,
+           FontKind::Title);
+  const float bob = focused ? std::sin(time * 8.0f) * 1.5f : 0.0f, s = r.height * 0.36f;
+  for (int side = -1; side <= 1; side += 2)  // a chevron at each end, gold when focused
+    arrowTri({side < 0 ? r.x + 14 - bob : r.x + r.width - 14 + bob, cy}, s, side, focused ? kGold : kSky);
+}
+
+float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col) {
+  std::string line, word;
+  auto flush = [&] {
+    if (line.empty()) return;
+    drawTextOutlined(line.c_str(), x, y, size, col, kInk, 2.0f);
+    y += size * 1.3f;
+    line.clear();
+  };
+  for (size_t i = 0; i <= text.size(); ++i) {
+    if (i < text.size() && text[i] != ' ') {
+      word += text[i];
+      continue;
+    }
+    const std::string next = line.empty() ? word : line + " " + word;
+    if (!line.empty() && textWidth(next.c_str(), size) > width) {
+      flush();
+      line = word;
+    } else {
+      line = next;
+    }
+    word.clear();
   }
+  flush();
+  return y;
 }
 
 // ---- Input helpers ----------------------------------------------------------------

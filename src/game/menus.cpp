@@ -71,33 +71,6 @@ Rectangle stageCardRect(int i) {
   return {(kScreenW - (inRow * w + (inRow - 1) * gap)) * 0.5f + col * (w + gap), 476.0f + row * (h + 14), w, h};
 }
 
-// Draws `text` wrapped to `width`, line after line; returns the y under the last line.
-float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col) {
-  std::string line, word;
-  auto flush = [&] {
-    if (line.empty()) return;
-    drawTextOutlined(line.c_str(), x, y, size, col, ui::kInk, 2.0f);
-    y += size * 1.3f;
-    line.clear();
-  };
-  for (size_t i = 0; i <= text.size(); ++i) {
-    if (i < text.size() && text[i] != ' ') {
-      word += text[i];
-      continue;
-    }
-    const std::string next = line.empty() ? word : line + " " + word;
-    if (!line.empty() && textWidth(next.c_str(), size) > width) {
-      flush();
-      line = word;
-    } else {
-      line = next;
-    }
-    word.clear();
-  }
-  flush();
-  return y;
-}
-
 // Input device selector: "MANETTE 2" with, under it, the model of the gamepad (or "non branchée").
 void deviceSelector(Rectangle r, int device, bool focused, float t) {
   const bool plugged = deviceAvailable(device);
@@ -664,7 +637,7 @@ void App::updateStage(const MenuNav& nav) {
   if (!stageRandom_) stage_ = sel;
   if (sel != before) audio_.play(Sfx::MenuMove);
   if (go && stageBrowse_) {  // opened from the main menu: a training in that arena
-    activateMenu(1, nav.device);
+    activateMenu(2, nav.device);  // ENTRAÎNEMENT
   } else if (go) {
     audio_.play(Sfx::MenuSelect);
     startMatch();
@@ -710,7 +683,7 @@ void App::drawStage() {
   ui::bold(name.c_str(), px, big.y + 46, nameSize);
   float y = big.y + 46 + nameSize * 1.25f;
   DrawRectangleGradientH(int(px), int(y), int(pw * 0.8f), 3, ui::kGold, withAlpha(ui::kGold, 0.0f));
-  y = drawWrapped(stageRandom_ ? std::string("Une des arènes, tirée au sort au début du combat.") : cur.blurb, px,
+  y = ui::drawWrapped(stageRandom_ ? std::string("Une des arènes, tirée au sort au début du combat.") : cur.blurb, px,
                   y + 14, pw, 21, WHITE) + 10;
   int solids = 0, plats = 0, moving = 0;
   for (const Platform& p : cur.platforms) {

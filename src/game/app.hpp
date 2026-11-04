@@ -32,9 +32,12 @@ struct Options {
 class MatchScreen {
  public:
   enum class Result { Running, Finished, Quit };
-  MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug);
+  // attract: the title screen's demo fight (CPUs only): silent with an Audio never initialised, never paused, filmed
+  // by a fixed camera on the title's terrace, over at its first K.O.
+  MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug, bool attract = false);
   Result update();
   void draw();
+  void drawAttract();  // the title's backdrop, the fighters and their effects: no HUD; they fade in and out
   const Match& match() const { return m_; }
   bool training() const { return m_.cfg.training; }
   void forcePause() { paused_ = true; }
@@ -67,6 +70,7 @@ class MatchScreen {
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;
   bool debug_ = false;
+  bool attract_ = false;
   int ultShow_ = -2;
   int weaponShow_ = -1;
   bool ultFired_ = false;
@@ -169,6 +173,7 @@ class App {
 
   // main menu
   int menuSel_ = 0;
+  float markY_ = -1.0f;  // the spark beside the chosen big button, gliding to it
   bool introDone_ = false;
   int gallerySel_ = 0;
   bool stageBrowse_ = false;  // the arenas opened from the main menu: ENTRÉE trains there, ÉCHAP goes back
@@ -184,6 +189,9 @@ class App {
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
+  std::unique_ptr<MatchScreen> demo_;  // the title screen's demo fight
+  Audio silent_;                       // never initialised: the demo fight makes no sound
+  void updateDemo();                   // steps it; a new random pair after each K.O.
   // settings
   int setTab_ = 0;
   int setRow_ = -1;   // -1 = tab bar

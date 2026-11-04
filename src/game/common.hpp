@@ -66,11 +66,19 @@ inline Color slotColor(const Fighter& f) {
 
 // ---- Text ------------------------------------------------------------------
 inline float textSpacing(float size, FontKind k) { return k == FontKind::Title ? size * 0.02f : size * 0.01f; }
+// Saira's capitals are smaller and lower in their line box than those of the fonts every layout was made for
+// (Luckiest Guy, Poppins): the text is drawn larger and raised so that its capitals keep their place.
+inline float fontScale(FontKind k) { return k == FontKind::Title ? 1.45f : 1.15f; }
+inline float fontRaise(FontKind k) { return k == FontKind::Title ? 0.373f : 0.08f; }  // in asked sizes
+// The y to draw a line of text at so that its capitals are centred on cy.
+inline float capsY(float cy, float size, FontKind k) { return cy - size * (k == FontKind::Title ? 0.356f : 0.498f); }
 inline float textWidth(const char* text, float size, FontKind k = FontKind::Ui) {
-  return MeasureTextEx(gameFont(k), text, size, textSpacing(size, k)).x;
+  const float s = size * fontScale(k);
+  return MeasureTextEx(gameFont(k), text, s, textSpacing(s, k)).x;
 }
 inline void drawText(const char* text, float x, float y, float size, Color col, FontKind k = FontKind::Ui) {
-  DrawTextEx(gameFont(k), text, {x, y}, size, textSpacing(size, k), col);
+  const float s = size * fontScale(k);
+  DrawTextEx(gameFont(k), text, {x, y - size * fontRaise(k)}, s, textSpacing(s, k), col);
 }
 // Text with a smooth dark outline. thick < 0 picks a thickness from the size.
 inline void drawTextOutlined(const char* text, float x, float y, float size, Color col,

@@ -73,6 +73,7 @@ void App::enterScreen(Screen s) {
   }
   screen_ = s;
   screenFrames_ = 0;
+  if (s != Screen::MainMenu) demo_.reset();
   if (s != Screen::Match) {
     match_.reset();
     audio_.setMusic(1);
@@ -250,6 +251,7 @@ void App::run() {
       if (transition_ >= kHalfTransition * 2) transition_ = -1;
     }
     ui::newFrame();
+    if (screen_ == Screen::MainMenu) updateDemo();  // the demo fight runs on, even under a transition
     MenuNav nav = (screen_ != Screen::Match && !blocked) ? readMenuNav() : MenuNav{};
     if (!blocked) {
       switch (screen_) {

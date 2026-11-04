@@ -52,9 +52,16 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud « DA v2 » | 04/11 22 h UTC |
 
 ### Journal (le plus récent en haut)
+- 04/11 ~22 h UTC, session cloud « DA v2 » (branche `claude/project-thread-dj46dj`, partie de la 10.8) : le
+  propriétaire a validé la nouvelle DA « Ligne d'horizon » (canevas v2, voir la mémoire du projet). Codée en 4
+  livraisons. **10.9** : la charte dans `ui.cpp` (polices Saira Condensed et Saira, panneaux en biseau, ligne
+  d'horizon ; `fontScale`/`fontRaise` de `common.hpp` gardent les mises en page faites pour les anciennes polices),
+  l'écran titre v2 et son combat de démo (mode « attract » de `MatchScreen` : CPU niveau 9 sur l'Abîme Lunaire, sans
+  son, caméra fixe sur la terrasse de `menu_horizon.png`, nouvelle paire à chaque K.O.). Ensuite : sélection, arènes
+  et VS ; HUD, orbe, pause et liste des coups ; résultats et paramètres.
 - 28/10 ~23 h UTC : **v10.7 publiée**, verrou libre. **Le propriétaire met le projet en pause** (« on fera un autre
   jeu »). Après la 10.7, poussé mais pas publié : l'éclat d'impact (l'éclat du saut, tourné selon le coup, bord foncé
   de la couleur du coup) et la traînée de fumée derrière un perso éjecté vite (`Fx::update`). La traînée n'a pas pu

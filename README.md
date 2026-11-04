@@ -398,7 +398,7 @@ Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`ClashHorizon-10.8-linux-x64.tar.gz` et `ClashHorizon-10.8-windows-x64.zip`).
+dans `dist/` (`ClashHorizon-10.9-linux-x64.tar.gz` et `ClashHorizon-10.9-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64
@@ -537,11 +537,10 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 
 ## Crédits
 
-- Police **Luckiest Guy** par Astigmatic — licence Apache 2.0 (`assets/fonts/LuckiestGuy-LICENSE.txt`).
-- Police **Poppins** par Indian Type Foundry — licence SIL Open Font License 1.1 (`assets/fonts/Poppins-OFL.txt`).
+- Polices **Saira Condensed** et **Saira** par Omnibus-Type — licence SIL Open Font License 1.1
+  (`assets/fonts/SairaCondensed-OFL.txt`, `assets/fonts/Saira-OFL.txt`).
 - Base de manettes **SDL_GameControllerDB** — licence zlib (`assets/gamecontrollerdb-LICENSE.txt`).
-- Direction artistique inspirée de *The Legend of Zelda: Tears of the Kingdom* (Nintendo) ; aucun élément
-  du jeu n'est repris.
+- Direction artistique « Ligne d'horizon », créée pour le jeu : sa palette vient du logo (bleu nuit, ambre).
 - Illustrations des **17 combattants** (`art/fighters/`) : générées par l'auteur du projet avec ChatGPT,
   détourées et découpées par `scripts/`.
 - Animations de Naruto, Sasuke et Kakashi, attaques M1 des armes et dessins des armes (`assets/sprites/`) :

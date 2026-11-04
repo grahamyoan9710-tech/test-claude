@@ -71,5 +71,5 @@ Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
 Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
 Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
 
-Polices : Luckiest Guy (Apache 2.0) et Poppins (SIL OFL 1.1). Manettes :
+Polices : Saira Condensed et Saira (SIL OFL 1.1). Manettes :
 base SDL_GameControllerDB (zlib). Voir le dossier « licences ».
