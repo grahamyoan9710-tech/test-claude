@@ -52,9 +52,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | pris | session cloud « DA v2 », 11.2 |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 05/11 03 h 05 UTC, session cloud « DA v2 » : **v11.2 publiée** (workflow_dispatch sur `claude/project-thread-dj46dj`,
+  archives Linux et Windows). Verrou « Version et paquets » libéré. Les 4 livraisons de la DA « Ligne d'horizon » sont
+  faites ; suite selon les retours de yoyo.
 - 05/11 02 h 50 UTC, session cloud « DA v2 » : **11.2** (4e et dernière livraison de la DA) : résultats
   (`screen_results.cpp` : lumière de victoire, classement avec KO, chutes, dégâts et orbes, récompenses, revanche quand
   chaque joueur est prêt ; stats suivies dans `trackCallouts`), paramètres (`screen_settings.cpp` : onglets avec
