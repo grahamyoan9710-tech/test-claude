@@ -321,7 +321,7 @@ CharacterDef make01() {
 
   arm(k, 0, "Odachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 95, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Grande coupe descendante"});
-  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, k.fx("a", "n"), 9, 24, 9)),
+  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
          rush("Iaï", e, k.fx("a", "s"), 17, 0, 11), rise("Lune montante", e, k.fx("a", "u"), 15.5f, 4),
          counter("Garde-lame", e, k.fx("a", "d"), false));
   ultimateOf(k, 0, ult::ambush("MILLE LUNES", e, k.fx("a", "ult"), L::Weapon, 7));
@@ -455,7 +455,7 @@ CharacterDef make08() {
   skills(k, 0, piercing(shot("Lame de lumière", e, PV::Crescent, k.fx("a", "n"), 11, 20, 9)),
          rush("Éclair blanc", e, k.fx("a", "s"), 18, 0, 11), rise("Ascension sacrée", e, k.fx("a", "u"), 16, 4),
          counter("Contre sacré", e, k.fx("a", "d"), false));
-  ultimateOf(k, 0, ult::rain("JUGEMENT CÉLESTE", e, k.fx("a", "ult"), PV::Pillar, 3));
+  ultimateOf(k, 0, ult::downpour("JUGEMENT CÉLESTE", e, "pfx_sword_rain", 80, 5));
 
   arm(k, 1, "Lance dorée", "Hallebarde d'or", WeaponVisual::Held, Kit::Lance, 115, 1.0f,
       {"Estoc", "Balayage", "Estoc tournant"});

@@ -163,7 +163,8 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
 - **01-A, odachi** (longue lame courbe, ruban violet) :
   - Repos : à deux mains, lame basse en arrière. Traînée violette. Éveil : la lame fume d'ombre.
   - M1 : coupe horizontale → coupe montante → grande coupe descendante.
-  - Neutre « Croissant du néant » : une vague d'ombre au sol.
+  - Neutre « Croissant du néant » : un croissant d'énergie au ras du sol (effet ParticleFX choisi par le
+    propriétaire, 05/11).
   - Côté « Iaï » : ruée et coupe éclair.
   - Haut « Lune montante » : coupe en spirale qui s'élève.
   - Bas « Garde-lame » : contre puis coupe.
@@ -359,7 +360,8 @@ Pour les 12 suivants : Boxe anglaise, Savate, Judo, Kickboxing et Aïkido, puis 
   - Côté « Éclair blanc » : une ruée.
   - Haut « Ascension sacrée ».
   - Bas « Contre sacré ».
-  - Ultime « Jugement céleste » : une épée géante de lumière tombe du ciel.
+  - Ultime « Jugement céleste » : une pluie d'épées de lumière s'abat sur chaque adversaire, puis le jugement
+    l'éjecte (effet ParticleFX choisi par le propriétaire, 05/11).
 - **08-B, lance dorée** (hallebarde) :
   - Repos : à deux mains, verticale. Traînée dorée.
   - M1 : estoc → balayage → estoc tournant.

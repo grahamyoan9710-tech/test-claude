@@ -1,4 +1,6 @@
 // Stage backgrounds and platforms (the arenas: render_stages.cpp), projectiles and the Clash Orb.
+#include <cstring>
+
 #include "game/fighter_art.hpp"
 #include "game/paint.hpp"
 #include "game/pixel.hpp"
@@ -111,6 +113,9 @@ void shotPlaceholder(const Projectile& p, const Shot& s, float time) {
 }
 }  // namespace
 
+// A ParticleFX effect (pfx_*, art/particlefx): picked by the owner, so shown even with kVfx off.
+static bool chosenFx(const char* fx) { return fx && std::strncmp(fx, "pfx_", 4) == 0; }
+
 // A projectile drawn by its PixelLab effect (ProjectileDef::fx, an "fx" line of sheets.txt), sized on its hitbox:
 // the effect's hit radius is the projectile's radius. Flying shapes turn with their course; a column rises from the
 // ground; a still mine or orb stays upright.
@@ -118,8 +123,10 @@ static bool shotSprite(const Projectile& p, const Shot& s, float time) {
   const art::FxInfo* fx = p.fx ? art::fxInfo(p.fx) : nullptr;
   if (!fx) return false;
   const float size = s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
-  // A flying shape cycles its frames (copies side by side do not pulse together); a column plays once as it rises.
-  const float t = art::fxLoopTime(p.fx, time + hash01(s.seed) * fx->duration());
+  // A flying shape cycles its frames (copies side by side do not pulse together); a column plays once as it rises;
+  // a ParticleFX one-shot plays once over the flight.
+  float t = art::fxLoopTime(p.fx, time + hash01(s.seed) * fx->duration());
+  if (chosenFx(p.fx) && !fx->loop) t = s.age / 60.0f;
   if (p.visual == ProjVisual::Pillar)
     return art::drawFx(p.fx, s.age / 60.0f, s.c + Vec2{0.0f, s.r * 1.2f}, size, 0.0f, false, s.k);
   if (p.vel.len2() < 1.0f) return art::drawFx(p.fx, t, s.c, size, 0.0f, (s.seed & 1u) != 0, s.k);
@@ -139,6 +146,10 @@ void drawProjectiles(const Match& m, float time) {
     s.k = std::min(1.0f, p.life / 8.0f) * std::min(1.0f, (p.age + 1) / 3.0f);
     s.age = float(p.age);
     s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
+    if (chosenFx(p.fx)) {  // its own warning: it fades in until it strikes
+      if (!p.armed()) s.k *= 0.3f + 0.7f * s.age / float(std::max(1, p.armDelay));
+      if (shotSprite(p, s, time)) continue;
+    }
     if (!kVfx) {  // a plain white ring on the hitbox (fainter: the warning before the strike)
       DrawRing(V(s.c), std::max(1.0f, s.r - 2.5f), s.r, 0, 360, 32, withAlpha(WHITE, (p.armed() ? 0.75f : 0.3f) * s.k));
       continue;

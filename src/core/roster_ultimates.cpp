@@ -106,6 +106,19 @@ MoveDef rain(const char* name, HitFx e, const char* fx, ProjVisual vis, int stri
   return m;
 }
 
+// A rain over every opponent (the swords of a ParticleFX loop): it hits again and again as it falls, then its last
+// strike launches whoever is still under it.
+MoveDef downpour(const char* name, HitFx e, const char* fx, float radius, int hits) {
+  const int warn = 14, every = 12;
+  MoveDef m = cine(name, 36 + warn + hits * every + 12, {}, PoseHint::Raise, UltFx::Cinematic);
+  ProjectileDef p = strikeOnAll(radius, warn, warn + hits * every, 2.4f, 20, 10, e, PV::Spear, fx);
+  p.rehit = every;
+  p.explodeRadius = radius + 30.0f;
+  p.explode = imp(hb(0, 0, 0, 0, radius + 30.0f, 20, 80, 92, 104, L::None, 0, e));
+  m.shots.push_back({36, p});
+  return m;
+}
+
 // One huge projectile that explodes.
 MoveDef blast(const char* name, HitFx e, const char* fx, ProjVisual vis, float speed, float radius, float explode) {
   MoveDef m = cine(name, 104, {}, PoseHint::Throw, UltFx::Cinematic);

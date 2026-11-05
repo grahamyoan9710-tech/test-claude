@@ -50,11 +50,23 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session cloud « VFX ParticleFX » | 05/11 11 h 05 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session cloud « VFX ParticleFX » | 05/11 11 h 05 UTC |
 
 ### Journal (le plus récent en haut)
+- 05/11 11 h 05 UTC, session cloud « VFX ParticleFX » (branche `claude/project-thread-y4vuco`, partie de la 11.2) :
+  **11.3**, deux effets ParticleFX Studio choisis par le propriétaire (GIF gratuits, sources dans `art/particlefx/`) :
+  - `pfx_crescent` sur la compétence neutre du 01 avec l'odachi (« Croissant du néant ») : le croissant est recentré
+    image par image (`import_fx.py --track`) et joué une fois sur le vol du projectile.
+  - `pfx_sword_rain` sur l'ultime du 08 avec l'épée (« Jugement céleste ») : nouvelle forme `ult::downpour`, une zone
+    par adversaire qui frappe toutes les 12 images (5 fois), puis une explosion qui éjecte (40,5 % à 30 %, KO à 130 %).
+  - `scripts/import_fx.py` lit les GIF (`--step`, `--scale`, `--track`). Les effets `pfx_*` s'affichent même avec
+    `kVfx = false` (`chosenFx`, `render_world.cpp`). Les anciens `p01_a_n` et `p08_a_ult` ne servent plus.
+  - Imports : `pfx_crescent art/particlefx/crescent.gif --only 4-13 --track --anchor 0 344 --hit 105 --fps 12` (l'image
+    3 du GIF est une silhouette noire qui clignote en jeu) et `pfx_sword_rain art/particlefx/sword_rain.gif --step 2
+    --scale 0.5 --loop --anchor 286 476 --hit 69`.
+  Verrous « Effets » et « Version et paquets » pris.
 - 05/11 03 h 05 UTC, session cloud « DA v2 » : **v11.2 publiée** (workflow_dispatch sur `claude/project-thread-dj46dj`,
   archives Linux et Windows). Verrou « Version et paquets » libéré. Les 4 livraisons de la DA « Ligne d'horizon » sont
   faites ; suite selon les retours de yoyo.

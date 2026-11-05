@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 11.3 : **deux nouveaux effets**.
+
+- **Croissant du néant** (N° 01, avec l'odachi) : la compétence neutre lance un croissant d'énergie rose et bleu qui
+  file au ras du sol.
+- **Jugement céleste** (N° 08, avec l'épée blanche et or) : l'ultime fait tomber une pluie d'épées de lumière sur
+  chaque adversaire. Chaque épée qui touche blesse un peu, puis le jugement final l'éjecte.
+- Ces deux effets restent affichés même quand les autres effets sont coupés.
+
 Version 11.2 : **nouvelle direction artistique « Ligne d'horizon », 4e et dernière partie**.
 
 - **Nouvel écran des résultats** : le gagnant en grand dans la lumière de la victoire, et le classement à droite

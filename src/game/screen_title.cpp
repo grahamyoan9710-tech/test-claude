@@ -9,7 +9,7 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr const char* kVersion = "v11.2";
+constexpr const char* kVersion = "v11.3";
 
 float easeOut(float t) {
   t = clampf(t, 0.0f, 1.0f);

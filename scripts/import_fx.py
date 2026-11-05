@@ -3,13 +3,17 @@
 
 SOURCE is either
 - the spritesheet PNG exported by PixelLab's vfx_workbench (its JSON, same name with .json, gives the frames, the
-  frame time and the pivot), or
+  frame time and the pivot),
 - a folder of frames f_00.png, f_01.png... returned by animate_image_pixminimax (f_00 is the input picture: left
-  out unless --keep-first).
-Options: --anchor X Y (the effect's origin in the frame: where the game puts it; default: the JSON pivot, else the
-frame centre), --fps N (default: from the JSON, else 15), --loop, --only A-B (frames to keep), --keep-first,
---flip (mirror the frames: the game expects effects travelling to the right), --hit R (the radius, in frame pixels,
-the hitbox should have to match the drawing: the game then sizes the effect on the hitbox).
+  out unless --keep-first), or
+- a GIF with a transparent background, such as a ParticleFX Studio export (its frame time gives the fps).
+Options: --anchor X Y (the effect's origin in the source frame: where the game puts it; default: the JSON pivot,
+else the frame centre), --fps N (default: from the JSON or the GIF, else 15), --loop, --only A-B (frames to keep),
+--keep-first, --step N (keep one frame in N: a 30 fps GIF at the game's 15 fps), --scale S (resize the frames:
+each effect is one texture, keep its strip under 8192 px), --flip (mirror the frames: the game expects effects
+travelling to the right), --track (keep the effect's centre still, its anchor x: for one that travels across its
+frames, drawn on a moving projectile), --hit R (the radius, in frame pixels after --scale, the hitbox should have to
+match the drawing: the game then sizes the effect on the hitbox).
 
 Writes assets/sprites/fx_NAME.png (the frames side by side, cropped to their common box, paletted when it fits)
 and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop [hit].
@@ -19,7 +23,7 @@ import json
 import os
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageSequence
 
 
 def paletted(img):
@@ -50,6 +54,13 @@ def load(a):
         frames = [Image.open(os.path.join(a.source, f"f_{i:02d}.png")).convert("RGBA") for i in idx]
         w, h = frames[0].size
         return frames, (w / 2, h / 2), 15.0
+    if a.source.lower().endswith(".gif"):
+        frames, ms = [], []
+        for f in ImageSequence.Iterator(Image.open(a.source)):
+            frames.append(f.convert("RGBA"))
+            ms.append(f.info.get("duration", 67))
+        w, h = frames[0].size
+        return frames, (w / 2, h / 2), 1000.0 / max(1.0, sum(ms) / len(ms))
     sheet = Image.open(a.source).convert("RGBA")
     meta = json.load(open(os.path.splitext(a.source)[0] + ".json"))
     fr = meta["frames"]
@@ -64,6 +75,27 @@ def load(a):
     return frames, (piv["x"] * w, piv["y"] * h), 1000.0 / max(1, dur)
 
 
+def centre_x(f):
+    """The x of the centre of the drawn pixels, None for an empty frame."""
+    alpha = np.asarray(f.getchannel("A"), dtype=np.float64).sum(axis=0)
+    return float((alpha * np.arange(len(alpha))).sum() / alpha.sum()) if alpha.sum() else None
+
+
+def tracked(frames):
+    """The frames moved sideways so that their centre (of the drawn pixels) stays at one x, and that x."""
+    cx = [centre_x(f) for f in frames]
+    seen = [c for c in cx if c is not None]
+    mid = float(np.median(seen))
+    pad = int(np.ceil(max(abs(mid - c) for c in seen)))
+    out = []
+    for f, c in zip(frames, cx):
+        g = Image.new("RGBA", (f.width + 2 * pad, f.height), (0, 0, 0, 0))
+        g.alpha_composite(f, (pad + (round(mid - c) if c is not None else 0), 0))
+        assert c is None or abs(centre_x(g) - (mid + pad)) <= 1.0
+        out.append(g)
+    return out, mid + pad
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("name")
@@ -75,20 +107,31 @@ def main():
     ap.add_argument("--keep-first", action="store_true")
     ap.add_argument("--flip", action="store_true")
     ap.add_argument("--hit", type=float, default=0.0)
+    ap.add_argument("--step", type=int, default=1)
+    ap.add_argument("--scale", type=float, default=1.0)
+    ap.add_argument("--track", action="store_true")
     a = ap.parse_args()
 
     frames, (ax, ay), fps = load(a)
     if a.only:
         lo, hi = (int(v) for v in a.only.split("-"))
         frames = frames[lo:hi + 1]
+    frames, fps = frames[::a.step], fps / a.step
     if a.anchor:
         ax, ay = a.anchor
     if a.fps:
         fps = a.fps
+    if a.scale != 1.0:
+        size = (round(frames[0].width * a.scale), round(frames[0].height * a.scale))
+        frames = [f.resize(size, Image.Resampling.LANCZOS) for f in frames]
+        ax, ay = ax * a.scale, ay * a.scale
     w, h = frames[0].size
     if a.flip:
         frames = [f.transpose(Image.Transpose.FLIP_LEFT_RIGHT) for f in frames]
         ax = w - ax
+    if a.track:
+        frames, ax = tracked(frames)
+        w = frames[0].width
     for f in frames:  # pixel art: hard alpha
         f.putalpha(f.getchannel("A").point(lambda v: 255 if v >= 128 else 0))
     boxes = [f.getbbox() for f in frames if f.getbbox()]

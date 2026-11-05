@@ -94,6 +94,10 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
     sont parfaits mais le reste… ») : fumées de saut, de dash et d'atterrissage (`moveFx`), sa bulle de bouclier,
     et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seule exception au « tout PixelLab »).
   - Les remettre un par un, seulement quand ils sont au niveau de ceux-là.
+  - Exception (05/11, choix du propriétaire) : les effets ParticleFX Studio qu'il envoie en GIF, gardés dans
+    `art/particlefx/` et importés par `scripts/import_fx.py` sous le nom `pfx_*`. Ils s'affichent même avec
+    `kVfx = false` (`chosenFx`, `render_world.cpp`). Une bande d'effet tient en une texture : moins de 8192 px de
+    large (`--step`, `--scale`).
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
   exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en
   ont une. Un clip où un autre effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun
