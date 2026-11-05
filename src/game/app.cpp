@@ -66,7 +66,6 @@ void App::enterScreen(Screen s) {
     audio_.voice(training_ ? "training" : "choose");
   }
   if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
-  if (s == Screen::Settings) lastPadPrompts_ = padPrompts();
   if (s == Screen::Versus) vsTip_ = GetRandomValue(0, 99);
   if (s == Screen::MainMenu) {  // each visit shows the next of the owner's three backgrounds
     settings().menuBg = (settings().menuBg + 1) % 3;
@@ -134,7 +133,19 @@ void App::finishMatch() {
   for (int id : m.ranking()) {
     const Fighter& f = m.fighters[id];
     results_.push_back({f.charIndex, f.palette, f.port, f.cpu, f.kos, f.falls, f.damageDealt, f.inTeam ? f.team : -1});
+    ResultRow& r = results_.back();
+    r.orbs = match_->orbsBroken(id);
+    r.bestHit = match_->bestHit(id);
+    r.stocks = f.stocks;
+    r.weapon = f.weapon;
+    r.level = slots_[f.port & 3].level;
   }
+  resultStage_ = m.stage().name;
+  resultStocks_ = m.cfg.stocks;
+  resultSeconds_ = match_->fightFrames() / 60;
+  resSel_ = 0;
+  resReady_ = {};
+  resGo_ = -1;
   winnerChar_ = -1;
   winnerTeam_ = m.cfg.teams ? m.winnerTeam : -1;
   if (m.winner >= 0) {  // a team battle shows the best of the winning team (ranked first)
@@ -215,8 +226,8 @@ void App::run() {
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "results") {
-    for (int i = 0; i < 4; ++i)
-      slots_[i] = {2, kKeyboard1, i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, int(roster().size()) - 1) : i, 9};
+    for (int i = 0; i < 4; ++i)  // J1 a human (it stands still), the others CPUs
+      slots_[i] = {i == 0 ? 1 : 2, kKeyboard1, i < int(opt_.fighters.size()) ? std::clamp(opt_.fighters[i], 0, int(roster().size()) - 1) : i, 9};
     startMatch();
     while (match_->update() != MatchScreen::Result::Finished) {}
     finishMatch();

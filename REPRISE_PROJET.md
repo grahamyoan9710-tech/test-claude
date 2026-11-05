@@ -52,9 +52,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | pris | session cloud « DA v2 », 11.2 |
 
 ### Journal (le plus récent en haut)
+- 05/11 02 h 50 UTC, session cloud « DA v2 » : **11.2** (4e et dernière livraison de la DA) : résultats
+  (`screen_results.cpp` : lumière de victoire, classement avec KO, chutes, dégâts et orbes, récompenses, revanche quand
+  chaque joueur est prêt ; stats suivies dans `trackCallouts`), paramètres (`screen_settings.cpp` : onglets avec
+  icônes, aide de la ligne choisie, cartes en direct « volume réel », « aperçu en direct » et « règles des prochains
+  combats », une seule table des commandes : clavier 1, clavier 2 et les deux boutons de la manette).
+  Verrou « Version et paquets » pris.
 - 04/11 23 h 30 UTC, session cloud « DA v2 » : **v11.1 publiée** (workflow_dispatch sur `claude/project-thread-dj46dj`,
   archives Linux et Windows). Verrou « Version et paquets » libéré. Suite : résultats et paramètres (11.2).
 - 04/11 23 h 15 UTC, session cloud « DA v2 » : **11.1** (3e livraison de la DA) : HUD (`render_hud.cpp` : cartes des

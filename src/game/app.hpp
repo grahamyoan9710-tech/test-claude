@@ -37,6 +37,7 @@ struct Fiche {
   int build = 3;       // its build, 1 (small) to 5 (huge): « gabarit léger » = 2
 };
 Fiche fiche(const CharacterDef& d);
+const char* gameVersion();  // "v11.2"...: the title screen's version, also in the settings footer
 
 class MatchScreen {
  public:
@@ -55,6 +56,10 @@ class MatchScreen {
   // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
   void showUltimate(int slot);
   void showWeapon(int slot) { weaponShow_ = slot; }
+  // For the results: Clash Orbs broken and biggest blow (in %) of each fighter, the fight's length since "GO !"
+  int orbsBroken(int id) const { return id >= 0 && id < 4 ? orbs_[id] : 0; }
+  float bestHit(int id) const { return id >= 0 && id < 4 ? bestHit_[id] : 0.0f; }
+  int fightFrames() const { return goFrame_ < 0 ? 0 : m_.frame - goFrame_; }
 
  private:
   void updateCamera(bool snap);
@@ -108,6 +113,9 @@ class MatchScreen {
   std::vector<int> popAge_;
   Vec2 starFrom_;
   int starTo_ = -1, starT_ = 0;
+  std::array<int, 4> orbs_{};
+  std::array<float, 4> bestHit_{};
+  int goFrame_ = -1;
   int lastCombo_ = 0;
   float lastComboDamage_ = 0.0f;
   int bestCombo_ = 0;
@@ -227,10 +235,10 @@ class App {
   // settings
   int setTab_ = 0;
   int setRow_ = -1;   // -1 = tab bar
-  int setCol_ = 0;    // keyboard column in the controls tab
+  int setCol_ = 0;    // controls tab: keyboard 1, keyboard 2, pad button 1, pad button 2
   bool waitingKey_ = false;
-  bool waitingPad_ = false;  // rebinding a gamepad button (Commandes tab, gamepad mode)
-  bool lastPadPrompts_ = false;  // prompt mode seen by the settings screen (keyboard <-> pad table)
+  bool waitingPad_ = false;  // rebinding a gamepad button (Commandes tab)
+  int soundTestAt_ = -1000;  // frame of the last sound test (the audio card's meters move)
   bool bindPadButton(int action, int slot, int button);
   int dragSlider_ = -1;
   Screen settingsReturn_ = Screen::MainMenu;
@@ -241,8 +249,16 @@ class App {
     int kos, falls;
     float damage;
     int team = -1;  // team battles: the fighter's team
+    int orbs = 0;           // Clash Orbs broken
+    float bestHit = 0.0f;   // its biggest blow, in %
+    int stocks = 0, weapon = -1, level = 0;  // lives left, weapon in hand at the end, CPU level
   };
   std::vector<ResultRow> results_;
+  std::string resultStage_;                  // the fight's arena, lives and length
+  int resultStocks_ = 3, resultSeconds_ = 0;
+  int resSel_ = 0;                  // the results' buttons: rematch, fighters, arena, main menu
+  std::array<bool, 4> resReady_{};  // players ready for the rematch (by port)
+  int resGo_ = -1;                  // frames left before the rematch once everyone is ready (-1: waiting)
   int winnerChar_ = -1, winnerPalette_ = 0, winnerPort_ = 0;
   bool winnerCpu_ = false;
   int winnerTeam_ = -1;  // team battles: the team that won

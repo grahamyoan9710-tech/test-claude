@@ -8,6 +8,20 @@
 
 ## Nouveautés
 
+Version 11.2 : **nouvelle direction artistique « Ligne d'horizon », 4e et dernière partie**.
+
+- **Nouvel écran des résultats** : le gagnant en grand dans la lumière de la victoire, et le classement à droite
+  (KO, chutes, dégâts et orbes brisées), avec la durée du combat et l'arène.
+- Des récompenses sous les noms : « Le plus de KO », « Casseur d'orbe » ou « Plus gros coup : N % ».
+- **Revanche** : chaque joueur se dit prêt avec sa propre touche (ou un clic sur sa case) ; quand tout le monde l'est,
+  le combat repart tout seul. On peut aussi changer de perso, d'arène ou revenir au menu.
+- **Nouveaux paramètres** : des onglets avec icônes, l'aide de la ligne choisie, et une carte en direct à côté :
+  le volume réel (musique et effets passent par le volume général), un aperçu du combat qui suit les réglages
+  d'affichage (noms, FPS, zones de coup, secousses), et les règles des prochains combats.
+- **Une seule table des commandes** : clavier 1, clavier 2 et les deux boutons de la manette côte à côte. Les
+  directions de la manette restent sur le stick gauche et la croix. Réinitialiser un clavier, la manette ou tout.
+- Pour changer un bouton, la manette est dessinée avec le bouton actuel entouré.
+
 Version 11.1 : **nouvelle direction artistique « Ligne d'horizon », 3e partie**.
 
 - **HUD refait** : une carte par joueur en bas de l'écran (visage, numéro, vies en losanges, armes, recharge de la

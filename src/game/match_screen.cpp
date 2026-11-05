@@ -207,9 +207,11 @@ void MatchScreen::trackCallouts() {
     popAge_.assign(n, 1000);
     seenPercent_.assign(n, 0.0f);
   }
+  std::array<float, 4> gained{};  // this frame's damage per fighter (the results' biggest hit)
   for (const auto& f : m_.fighters) {  // the damage taken, summed while the hits keep coming (a combo)
     const int i = f.id;
     const float gain = f.percent - seenPercent_[i];
+    if (i < 4) gained[i] = gain;
     seenPercent_[i] = f.percent;
     if (gain > 0.01f && f.active()) {
       popValue_[i] = popAge_[i] < 45 ? popValue_[i] + gain : gain;
@@ -217,6 +219,12 @@ void MatchScreen::trackCallouts() {
     } else if (popAge_[i] < 1000) {
       ++popAge_[i];
     }
+  }
+  for (const auto& e : m_.events) {  // the results' stats
+    if (e.type == EvType::Go && goFrame_ < 0) goFrame_ = m_.frame;
+    if (e.type == EvType::OrbBreak && e.a >= 0 && e.a < 4) ++orbs_[e.a];
+    if (e.type == EvType::Hit && e.a >= 0 && e.a < 4 && e.b >= 0 && e.b < 4 && e.a != e.b)
+      bestHit_[e.a] = std::max(bestHit_[e.a], gained[e.b]);  // e.strength is the knockback, not the damage
   }
   for (const auto& e : m_.events) {
     if (e.type != EvType::UltReady || e.a < 0 || e.a >= int(n)) continue;
