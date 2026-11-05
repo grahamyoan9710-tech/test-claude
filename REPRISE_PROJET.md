@@ -50,11 +50,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session cloud « VFX ParticleFX » | 05/11 11 h 05 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session cloud « VFX ParticleFX » | 05/11 11 h 05 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 05/11 11 h 35 UTC, session cloud « VFX ParticleFX » : **v11.3 publiée** (workflow_dispatch sur
+  `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
+  Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
+  Studio encore à vérifier avant la vente.
 - 05/11 11 h 05 UTC, session cloud « VFX ParticleFX » (branche `claude/project-thread-y4vuco`, partie de la 11.2) :
   **11.3**, deux effets ParticleFX Studio choisis par le propriétaire (GIF gratuits, sources dans `art/particlefx/`) :
   - `pfx_crescent` sur la compétence neutre du 01 avec l'odachi (« Croissant du néant ») : le croissant est recentré
