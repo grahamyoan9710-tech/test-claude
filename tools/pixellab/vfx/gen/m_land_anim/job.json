@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "6bf90230-83de-45e9-80c5-fcdd32585a83",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:142d447f-0d25-417c-904c-4517b8ceab08",
+  "description": "pixel art effect animation: the puffs spread a little wider, shrink and fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a landing dust cloud: round white and light grey cartoon smoke puffs spreading on the ground on both sides, small dust dots"
+ },
+ "reply": "id: 6bf90230-83de-45e9-80c5-fcdd32585a83\njob_id: 6bf90230-83de-45e9-80c5-fcdd32585a83\ndescription: pixel art effect animation: the puffs spread a little wider, shrink and fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 160x64px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6bf90230-83de-45e9-80c5-fcdd32585a83\")\nasset_id: 92198479-defd-5e51-9fb8-66867d4754b4\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_land/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

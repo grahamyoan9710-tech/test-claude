@@ -1,39 +1,64 @@
-// Weapons lying on the stage: a glowing pedestal of light, the weapon floating above it,
+// Weapons lying on the stage: a PixelLab beacon of light, the weapon floating above it,
 // the owner's portrait and a blink when they are about to vanish.
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
+#include "game/settings.hpp"
+#include "game/ui.hpp"
+
+namespace {
+const CharacterDef& ownerOf(const WeaponItem& it) {
+  const auto& chars = roster();
+  return chars[std::clamp(it.character, 0, int(chars.size()) - 1)];
+}
+float bobOf(const WeaponItem& it, float time) { return it.grounded ? std::sin(time * 3.0f + it.age * 0.02f) * 5.0f : 0.0f; }
+bool blinkedOut(const WeaponItem& it) { return it.life < 120 && (it.life / 6) % 2 == 0; }  // about to vanish
+}  // namespace
 
 void drawItems(const Match& m, float time) {
-  const auto& chars = roster();
   for (const auto& it : m.items) {
-    const CharacterDef& d = chars[std::clamp(it.character, 0, int(chars.size()) - 1)];
+    const CharacterDef& d = ownerOf(it);
     const WeaponDef& w = d.weapons[it.slot & 1];
-    if (it.life < 120 && (it.life / 6) % 2 == 0) continue;  // about to vanish
-    const Color c = hitFxColor(w.fx), g = hitFxGlow(w.fx);
-    const float bob = it.grounded ? std::sin(time * 3.0f + it.age * 0.02f) * 5.0f : 0.0f;
+    if (blinkedOut(it)) continue;
+    const Color g = hitFxGlow(w.fx);
+    const float bob = bobOf(it, time);
     const Vec2 base = it.pos;
     const Vec2 center = base + Vec2{0.0f, -46.0f + bob};
-    // Pillar of light while it falls / beacon once landed
-    if (!it.grounded) {
-      DrawRectangleGradientV(int(base.x - 10), int(base.y - 160), 20, 140, withAlpha(g, 0.0f), withAlpha(g, 0.35f));
-    } else {
-      float pulse = 0.5f + 0.5f * std::sin(time * 4.0f);
-      DrawRectangleGradientV(int(base.x - 22), int(base.y - 140), 44, 140, withAlpha(g, 0.0f), withAlpha(c, 0.22f + 0.1f * pulse));
-      DrawEllipse(int(base.x), int(base.y - 2), 34 + 6 * pulse, 8, withAlpha(c, 0.45f));
-      DrawEllipseLines(int(base.x), int(base.y - 2), 40 + 6 * pulse, 10, withAlpha(g, 0.8f));
+    // Once landed, the PixelLab beacon (falling, the pillar of light of fx.cpp guides it down)
+    if (kVfx && it.grounded) art::drawFx("sys_weapon_beacon", time, base, 1.1f, 0.0f, false, 0.9f, mixColor(g, WHITE, 0.3f));
+    // The weapon itself (whose it is: drawItemPrompts)
+    drawWeaponIcon(d, it.slot, center, 76.0f);
+  }
+}
+
+void drawItemPrompts(const Match& m, const Camera2D& cam, const std::array<int, 4>& devices, float time) {
+  for (const auto& it : m.items) {
+    if (blinkedOut(it)) continue;
+    // Whose weapon: the owner's portrait in a ring, on the screen (the portrait is clipped in screen space)
+    const CharacterDef& d = ownerOf(it);
+    const Vector2 tag = GetWorldToScreen2D(V(it.pos + Vec2{0.0f, -104.0f + bobOf(it, time)}), cam);
+    DrawCircleV(tag, 21.0f * cam.zoom, withAlpha(hitFxColor(d.weapons[it.slot & 1].fx), 0.9f));
+    DrawCircleV(tag, 18.0f * cam.zoom, {24, 30, 34, 235});
+    drawPortraitDisc(d, 0, W(tag), 18.0f * cam.zoom, time);
+    if (!it.grounded) continue;
+    const Fighter* owner = nullptr;  // the closest one that does not have it yet (both, in a mirror match)
+    for (const auto& f : m.fighters)
+      if (f.active() && !((f.weapons >> it.slot) & 1) && f.charIndex == it.character &&
+          (!owner || (f.pos - it.pos).len2() < (owner->pos - it.pos).len2()))
+        owner = &f;
+    if (!owner || (owner->cpu && it.hold <= 0)) continue;
+    // Above the portrait: the hold so far (a hit pauses it), and over it the button to hold
+    const Rectangle bar{tag.x - 34.0f, tag.y - 21.0f * cam.zoom - 17.0f, 68.0f, 9.0f};
+    const float h = 26.0f;
+    if (!owner->cpu) {
+      const int dev = devices[owner->port & 3];
+      ui::actionPrompt(dev, kActWeapon, tag.x - ui::actionPromptWidth(dev, kActWeapon, h) * 0.5f, bar.y - 8.0f - h, h,
+                       it.hold > 0);
     }
-    DrawCircleGradient(int(center.x), int(center.y), 44, withAlpha(g, 0.35f), withAlpha(c, 0.0f));
-    // The weapon itself, tilted, slowly turning
-    const float a = -1.1f + std::sin(time * 1.6f + it.age * 0.01f) * 0.25f;
-    const Vec2 dir{std::cos(a), std::sin(a)};
-    const float len = std::max(30.0f, weaponVisualLength(w.visual) * 0.8f);
-    drawWeaponVisual(w.visual, center - dir * (len * 0.5f), dir, 0.8f, 1.0f, time);
-    if (w.visual == WeaponVisual::SixEyes || w.visual == WeaponVisual::CursedFinger || w.visual == WeaponVisual::Grimoire ||
-        w.visual == WeaponVisual::HollowPurple)
-      DrawCircleV(V(center), 10.0f, withAlpha(g, 0.9f));
-    // Whose weapon: the owner's portrait in a ring
-    const Vec2 tag = center + Vec2{0.0f, -58.0f};
-    DrawCircleV(V(tag), 21, withAlpha(c, 0.9f));
-    DrawCircleV(V(tag), 18, {24, 30, 34, 235});
-    drawPortrait(d, 0, tag, 30, time);
+    if (it.hold > 0) {
+      const float k = std::min(1.0f, float(it.hold) / kPickupFrames);
+      ui::slanted(ui::grow(bar, 2.0f), 4.0f, {12, 12, 18, 230}, {12, 12, 18, 230});
+      if (k > 0.0f) ui::slanted({bar.x, bar.y, bar.width * k, bar.height}, 3.0f, ui::kRed, ui::kRedDark);
+      ui::slantedOutline(ui::grow(bar, 2.0f), 4.0f, 1.5f, WHITE);
+    }
   }
 }

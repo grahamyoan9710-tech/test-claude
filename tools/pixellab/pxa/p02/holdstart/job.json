@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "766f1f2d-e763-4cab-9fa7-660240526986",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4fd52bff-10e0-49e4-b376-71a7f5635d1c",
+  "description": "thrusts her right arm straight forward at shoulder height, the open hand closing on the collar of an invisible opponent in front of her, ending with the arm fully extended forward, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 766f1f2d-e763-4cab-9fa7-660240526986\njob_id: 766f1f2d-e763-4cab-9fa7-660240526986\ndescription: thrusts her right arm straight forward at shoulder height, the open hand closing on the collar of an invisible opponent in front of her, ending with the arm fully extended forward, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"766f1f2d-e763-4cab-9fa7-660240526986\")\nasset_id: 873b2fa2-0e8e-51e5-9d61-727e53fd20a0\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

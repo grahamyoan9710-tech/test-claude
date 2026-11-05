@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "8be599a7-298b-4474-9f63-1616e89a97da",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6261efb7-44fa-4fc6-83ea-f29a4ec07453",
+  "last_frame_url": "upload:660b71cc-0187-4760-b3ad-b269113a1fd9",
+  "description": "dodge roll: tucks and rolls in a tight ball along the ground, then springs back up into the same stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 8be599a7-298b-4474-9f63-1616e89a97da\njob_id: 8be599a7-298b-4474-9f63-1616e89a97da\ndescription: dodge roll: tucks and rolls in a tight ball along the ground, then springs back up into the same stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"8be599a7-298b-4474-9f63-1616e89a97da\")\nasset_id: a9584e76-033a-5a0c-bcef-da2fe86f5c2b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

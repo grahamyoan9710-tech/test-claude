@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "07491692-91d8-4244-a1fb-68ef16b00b88",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0326fdf6-8adb-4f31-8f04-b2b9a34062b4",
+  "last_frame_url": "upload:829c91d8-305c-4834-9172-00ae5b12c246",
+  "description": "she twirls the long star staff in a fast full windmill circle in front of her with both hands, the star passing over her head then in front of her chest, like the Monkey King's staff fighting in Black Myth Wukong, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and the staff's short pale blue trail: no flash, no burst, no sparks, no dust, no debris, no smoke, no glow, no ground; the whole body, the staff and its trail stay inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a staff topped by a blue crystal star with ribbons",
+  "initial_pose": "fighting stance facing right, holding a staff topped by a blue crystal star with ribbons"
+ },
+ "reply": "id: 07491692-91d8-4244-a1fb-68ef16b00b88\njob_id: 07491692-91d8-4244-a1fb-68ef16b00b88\ndescription: she twirls the long star staff in a fast full windmill circle in front of her with both hands, the star passing over her head then in front of her chest, like the Monkey King's staff fighting in Black Myth Wukong, then back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds and the staff's short pale blue trail: no flash, no burst, no sparks, no dust, no debris, no smoke, no glow, no ground; the whole body, the staff and its trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"07491692-91d8-4244-a1fb-68ef16b00b88\")\nasset_id: 31358504-ecb7-547a-bfbd-77a392d16b22\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "pxa/base/p02_w1guard256.png",
+ "last": "pxa/base/p02_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

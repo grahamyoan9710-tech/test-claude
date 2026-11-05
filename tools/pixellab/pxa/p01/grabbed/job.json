@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "27541379-af43-4bf0-8eba-5e07d66c522a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3e093768-2234-4862-9c3e-b81e5409a508",
+  "last_frame_url": "upload:63ab4555-2af9-4b5b-bad2-94a3f7514fe0",
+  "description": "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, hands clutching at the collar at his throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 27541379-af43-4bf0-8eba-5e07d66c522a\njob_id: 27541379-af43-4bf0-8eba-5e07d66c522a\ndescription: held up by the collar from in front of him: chest pulled forward, head tilted back in pain, hands clutching at the collar at his throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"27541379-af43-4bf0-8eba-5e07d66c522a\")\nasset_id: 2f75a467-9336-52e8-8ef1-9f4ca3f46932\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

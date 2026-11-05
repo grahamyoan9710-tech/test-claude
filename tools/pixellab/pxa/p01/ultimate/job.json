@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "08bfce2c-e39e-45f4-aa4b-dcc44908cd99",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:d22df065-3ca7-4724-92c4-dc1d3067d391",
+  "last_frame_url": "upload:f5325027-5eda-482c-976b-07de4d21d8a9",
+  "description": "spreads his arms wide and throws his head back, his coat and hair lifting, then settles into a stronger stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 08bfce2c-e39e-45f4-aa4b-dcc44908cd99\njob_id: 08bfce2c-e39e-45f4-aa4b-dcc44908cd99\ndescription: spreads his arms wide and throws his head back, his coat and hair lifting, then settles into a stronger stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"08bfce2c-e39e-45f4-aa4b-dcc44908cd99\")\nasset_id: e8492eb5-f2e8-5358-b232-ad1880554440\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 17,
+ "charged": "2 generations"
+}

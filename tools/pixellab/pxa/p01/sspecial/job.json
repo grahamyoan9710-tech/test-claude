@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "990c8edb-8df5-4b1b-93c6-ba2d627312cd",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0e22ed68-4020-464d-9b6d-8a31c1b93330",
+  "last_frame_url": "upload:92c253bc-b166-41da-bdb3-ab2f5fde85d8",
+  "description": "dashes forward very low and fast, then spins around on the spot and swings his elbow back behind him, then turns back into the stance; nothing leaves his body, his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: 990c8edb-8df5-4b1b-93c6-ba2d627312cd\njob_id: 990c8edb-8df5-4b1b-93c6-ba2d627312cd\ndescription: dashes forward very low and fast, then spins around on the spot and swings his elbow back behind him, then turns back into the stance; nothing leaves his body, his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"990c8edb-8df5-4b1b-93c6-ba2d627312cd\")\nasset_id: 574fa1fc-1019-5a5c-8d22-f395a042ddad\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

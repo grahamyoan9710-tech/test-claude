@@ -17,7 +17,9 @@ std::vector<int> frenchCodepoints() {
   std::vector<int> cps;
   for (int c = 32; c < 127; ++c) cps.push_back(c);
   for (int c = 160; c < 256; ++c) cps.push_back(c);  // Latin-1: é è à ç ô « » ...
-  for (int c : {0x152, 0x153, 0x2013, 0x2014, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0x20AC}) cps.push_back(c);
+  for (int c : {0x152, 0x153, 0x2013, 0x2014, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0x20AC, 0x2212}) cps.push_back(c);
+  for (int c : {0x14C, 0x14D, 0x16A, 0x16B}) cps.push_back(c);  // Ō ō Ū ū (Tenshō, Bijūdama...)
+  for (int c = 0x2190; c <= 0x2193; ++c) cps.push_back(c);      // ← ↑ → ↓ (key caps)
   return cps;
 }
 
@@ -33,7 +35,7 @@ Font loadEmbedded(const unsigned char* data, unsigned int size, int baseSize) {
 
 void loadFonts() {
   g_fonts[0] = loadEmbedded(font_ui_ttf, font_ui_ttf_size, 72);
-  g_fonts[1] = loadEmbedded(font_title_ttf, font_title_ttf_size, 176);
+  g_fonts[1] = loadEmbedded(font_title_ttf, font_title_ttf_size, 224);
   g_loaded[0] = g_fonts[0].texture.id != GetFontDefault().texture.id;
   g_loaded[1] = g_fonts[1].texture.id != GetFontDefault().texture.id;
 }

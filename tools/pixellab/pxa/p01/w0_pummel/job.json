@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "9c8275f3-37fb-408b-80a1-96f825023a38",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:00841df4-c87b-4d0a-9eab-30fd81df8889",
+  "last_frame_url": "upload:b4b8d7d1-b067-4d55-8858-7f256da25e0e",
+  "description": "strikes the invisible opponent he is holding with the pommel of a long curved black odachi sword with a violet ribbon: a quick short jab of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: 9c8275f3-37fb-408b-80a1-96f825023a38\njob_id: 9c8275f3-37fb-408b-80a1-96f825023a38\ndescription: strikes the invisible opponent he is holding with the pommel of a long curved black odachi sword with a violet ribbon: a quick short jab of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9c8275f3-37fb-408b-80a1-96f825023a38\")\nasset_id: 7c9ff6bb-7fe6-50f7-9755-684dcbe34e12\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_holdstart/f_04.png",
+ "frames": 5,
+ "charged": ""
+}

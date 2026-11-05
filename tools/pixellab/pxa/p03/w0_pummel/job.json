@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "c1dcd94a-6ea6-4196-aa3f-aca226fee939",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:b6ba993e-8dcb-48b9-845f-c125d7f3e837",
+  "last_frame_url": "upload:2004cff8-d6e3-4d03-a9a5-ca7ad6a587cf",
+  "description": "strikes the invisible opponent he is holding with the pommel of a huge jagged black greatsword with glowing red veins: a quick short jab of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: c1dcd94a-6ea6-4196-aa3f-aca226fee939\njob_id: c1dcd94a-6ea6-4196-aa3f-aca226fee939\ndescription: strikes the invisible opponent he is holding with the pommel of a huge jagged black greatsword with glowing red veins: a quick short jab of the hilt, then back to holding. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c1dcd94a-6ea6-4196-aa3f-aca226fee939\")\nasset_id: 7df2a1ba-007b-59ae-b599-e3ecb01cce6f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/p03/w0_holdstart/f_04.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "78428030-d15c-49e0-8df5-368ae37a8d45",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c6616584-5372-4a5b-b421-f414a47bf7a0",
+  "last_frame_url": "upload:21d2ab52-ecec-47f5-a202-2b1e2f986f57",
+  "description": "spins upward with the spear twirling above her head. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots, holding a long silver spear with white ribbons",
+  "initial_pose": "fighting stance facing right, holding a long silver spear with white ribbons"
+ },
+ "reply": "id: 78428030-d15c-49e0-8df5-368ae37a8d45\njob_id: 78428030-d15c-49e0-8df5-368ae37a8d45\ndescription: spins upward with the spear twirling above her head. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"78428030-d15c-49e0-8df5-368ae37a8d45\")\nasset_id: 5f337f9f-521f-5076-ad71-da22585d2c44\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "dea66b45-ab70-4806-843d-1f785e7321ab",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a7f80035-b764-4438-bc2d-1a8cade7792b",
+  "last_frame_url": "upload:bd30b0b8-d11f-4732-8270-6d210dffb1e3",
+  "description": "gets up from lying on her back: rolls onto her feet and stands back up into the fighting stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young woman with very long silver hair, a blue ribbon and violet eyes, a closed high-collared black and white top, a long black coat, loose black shorts reaching her knees over fully opaque black tights from waist to ankle, black boots",
+  "initial_pose": "lying on her back on the ground"
+ },
+ "reply": "id: dea66b45-ab70-4806-843d-1f785e7321ab\njob_id: dea66b45-ab70-4806-843d-1f785e7321ab\ndescription: gets up from lying on her back: rolls onto her feet and stands back up into the fighting stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"dea66b45-ab70-4806-843d-1f785e7321ab\")\nasset_id: 95c5e420-e621-50d3-84c6-f7eb5ff74f99\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p02/knockdown/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p02_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

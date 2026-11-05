@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "86e68134-c4ce-405d-8be2-57aa7c11625d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3bcf82ac-f95f-497a-aa09-922feafea261",
+  "last_frame_url": "upload:83b9dc4a-48e3-40ce-8595-7e61e1a122ad",
+  "description": "dashes forward low and draws a lightning-fast horizontal cut, ending far ahead with the blade extended. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 86e68134-c4ce-405d-8be2-57aa7c11625d\njob_id: 86e68134-c4ce-405d-8be2-57aa7c11625d\ndescription: dashes forward low and draws a lightning-fast horizontal cut, ending far ahead with the blade extended. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"86e68134-c4ce-405d-8be2-57aa7c11625d\")\nasset_id: 954cf76b-3ce7-5f35-b024-63cc702b1b71\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}
