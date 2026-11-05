@@ -88,16 +88,19 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - C++17, style du code voisin : commentaires courts en anglais, noms explicites, pas de dépendance nouvelle.
 - Un clip regardé vers la droite ; le jeu le retourne. Dans un clip d'attaque, l'image « impact » est celle que le jeu
   tient tant que la hitbox est active.
-- Effets : **tous** faits avec PixelLab (`vfx_workbench`), menus compris, et joués par le jeu (effets `fx`). Aucun
-  effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
+- Effets : **les nouveaux viennent de ParticleFX Studio** (décision du propriétaire, 05/11) ; PixelLab reste pour les
+  persos, et les effets PixelLab déjà faits (`vfx_workbench`) restent. Tous sont joués par le jeu (effets `fx`), menus
+  compris. Aucun effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
   - Coupés (`kVfx = false`, `src/game/render.hpp`) sauf ce que le propriétaire aime (28/10 : « les vfx de mouvement
     sont parfaits mais le reste… ») : fumées de saut, de dash et d'atterrissage (`moveFx`), sa bulle de bouclier,
-    et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seule exception au « tout PixelLab »).
+    et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seul effet codé gardé).
   - Les remettre un par un, seulement quand ils sont au niveau de ceux-là.
-  - Exception (05/11, choix du propriétaire) : les effets ParticleFX Studio qu'il envoie en GIF, gardés dans
-    `art/particlefx/` et importés par `scripts/import_fx.py` sous le nom `pfx_*`. Ils s'affichent même avec
-    `kVfx = false` (`chosenFx`, `render_world.cpp`). Une bande d'effet tient en une texture : moins de 8192 px de
-    large (`--step`, `--scale`).
+  - ParticleFX : le propriétaire envoie les GIF (export gratuit), gardés dans `art/particlefx/` et importés par
+    `scripts/import_fx.py` sous le nom `pfx_*`. Ils s'affichent même avec `kVfx = false` (`chosenFx`,
+    `render_world.cpp`). Une bande d'effet tient en une texture : moins de 8192 px de large (`--step`, `--scale`).
+    Licence (page des prix, 05/11) : permis dans un jeu vendu, même en compte gratuit, sans crédit ; interdit de
+    revendre leurs effets en pack. Un effet de leur bibliothèque fait avec des sprites de CodeManu (CC BY 4.0) doit
+    être crédité.
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
   exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en
   ont une. Un clip où un autre effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun

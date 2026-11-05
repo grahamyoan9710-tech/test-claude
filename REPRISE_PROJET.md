@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 05/11 12 h 00 UTC, session cloud « VFX ParticleFX » : **décision de yoyo : les nouveaux effets viennent de
+  ParticleFX Studio, PixelLab reste pour les persos** (CLAUDE.md mis à jour). Licence lue sur leur page des prix :
+  jeu vendu permis même en compte gratuit, sans crédit, pas de revente en pack ; en gratuit, les effets enregistrés
+  sont publics dans leur galerie. Le texte complet des CGU (particlefx.studio/terms) n'a pas pu être lu (page
+  rendue en JavaScript).
 - 05/11 11 h 35 UTC, session cloud « VFX ParticleFX » : **v11.3 publiée** (workflow_dispatch sur
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
