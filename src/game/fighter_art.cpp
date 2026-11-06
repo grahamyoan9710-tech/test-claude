@@ -476,12 +476,25 @@ Texture2D glowOf(const Image& strip, const art::FxInfo& I) {
     Image cell = GenImageColor(fw + 2 * kGlowPad, fh + 2 * kGlowPad, BLANK);
     ImageDraw(&cell, strip, {float(k * fw), 0, float(fw), float(fh)}, {float(kGlowPad), float(kGlowPad), float(fw), float(fh)},
               WHITE);
+    Image cover = ImageCopy(cell);
     Color* px = (Color*)cell.data;  // premultiplied, opaque: black adds no light
-    for (int i = 0; i < cell.width * cell.height; ++i)
+    Color* cv = (Color*)cover.data;
+    for (int i = 0; i < cell.width * cell.height; ++i) {
+      cv[i] = {px[i].a, px[i].a, px[i].a, 255};
       px[i] = {(unsigned char)(px[i].r * px[i].a / 255), (unsigned char)(px[i].g * px[i].a / 255),
                (unsigned char)(px[i].b * px[i].a / 255), 255};
+    }
     ImageResize(&cell, gw, gh);
     ImageBlurGaussian(&cell, 4);
+    ImageResize(&cover, gw, gh);
+    ImageBlurGaussian(&cover, 4);
+    // Inside a filled shape (a sphere) the sprite already shines: the halo there would burn it to white
+    px = (Color*)cell.data, cv = (Color*)cover.data;
+    for (int i = 0; i < gw * gh; ++i) {
+      const float c = cv[i].r / 255.0f, keep = 1.0f - 0.8f * c * c;  // squared: thin shapes keep their glow
+      px[i] = {(unsigned char)(px[i].r * keep), (unsigned char)(px[i].g * keep), (unsigned char)(px[i].b * keep), 255};
+    }
+    UnloadImage(cover);
     ImageDraw(&out, cell, {0, 0, float(gw), float(gh)}, {float(k * gw), 0, float(gw), float(gh)}, WHITE);
     UnloadImage(cell);
   }

@@ -345,7 +345,7 @@ CharacterDef make02() {
   const F e = k.e;
   k.P = 1.16f;  // balance (sim_test balance)
   k.c.weight += 4;  // balance
-  skills(k, -1, shot("Éclat de givre", e, PV::Star, k.fx("x", "n"), 9, 16, 7),
+  skills(k, -1, shot("Sphère de givre", e, PV::Orb, "pfx_spiral_sphere", 9, 16, 7),
          rush("Glissade gelée", e, k.fx("x", "s"), 13, 0, 9, L::LegFront),
          rise("Pilier de glace", e, k.fx("x", "u"), 15.5f, 3, L::Body),
          counter("Miroir de glace", e, k.fx("x", "d"), true, L::ArmFront));
@@ -397,7 +397,7 @@ CharacterDef make03() {
   skills(k, 1, exploding(shot("Météore", e, PV::Bomb, k.fx("b", "n"), 9, 22, 7, 45), 60, 8),
          rush("Traînée de feu", e, k.fx("b", "s"), 15, 3, 9), rise("Phénix", e, k.fx("b", "u"), 16, 4),
          burst("Cercle de brasier", e, k.fx("b", "d"), 80, 6, 4));
-  ultimateOf(k, 1, ult::blast("APOCALYPSE", e, k.fx("b", "ult"), PV::Bomb, 8, 70, 300));
+  ultimateOf(k, 1, ult::blast("APOCALYPSE", e, "pfx_giant_sphere", PV::Orb, 8, 70, 300));
   return k.c;
 }
 

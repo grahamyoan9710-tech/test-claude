@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 11.9 : **deux sphères d'énergie de ParticleFX**.
+
+- N° 02, mains nues : sa compétence neutre devient la « Sphère de givre », une sphère bleue tourbillonnante lancée
+  droit devant.
+- N° 03 avec la grande épée éveillée : son ultime « Apocalypse » lance une sphère d'énergie géante et dorée qui
+  explose au contact.
+- En qualité Haute, le halo des effets ne brûle plus en blanc l'intérieur des formes pleines comme ces sphères : leur
+  couleur et leurs détails restent visibles.
+
 Version 11.8 : **lumière façon RTX sur les arènes**.
 
 - Les sols brillants reflètent la scène : le ciel, les persos, leurs coups et les effets s'y mirent, un peu flous et

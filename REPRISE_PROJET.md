@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 06/11 12 h 50 UTC, session cloud « Refaire 10 persos » : **11.9**, deux GIF ParticleFX du PC de yoyo
+  (`Documents/Projets/Clash Horizon/Art/VFX`) pas encore en jeu : `pfx_spiral_sphere` (neutre mains nues du 02,
+  « Sphère de givre ») et `pfx_giant_sphere` (ultime « Apocalypse » du 03-B). Le halo des `pfx_*` (`glowOf`) baisse
+  à l'intérieur des formes pleines, qui brûlaient en blanc. Tout validé par yoyo dans le Claude Doc (12 h 18), mais
+  **rien n'est généré** sur PixelLab ni ParticleFX avant qu'il prenne ses abonnements.
 - 05/11 12 h 00 UTC, session cloud « VFX ParticleFX » : **décision de yoyo : les nouveaux effets viennent de
   ParticleFX Studio, PixelLab reste pour les persos** (CLAUDE.md mis à jour). Licence lue sur leur page des prix :
   jeu vendu permis même en compte gratuit, sans crédit, pas de revente en pack ; en gratuit, les effets enregistrés
