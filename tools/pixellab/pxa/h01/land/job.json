@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "4aefa4db-3d25-446e-822e-6c0ce1650529",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:0686d8f0-b545-4b8f-8a22-8ee19d7e3fbc",
+  "last_frame_url": "upload:9cfded68-f75e-408d-9601-205e77961341",
+  "description": "standing on the floor, bends the knees deeply as if just landed, then rises back into the stance; the feet stay on the floor, nothing is drawn around them. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 4aefa4db-3d25-446e-822e-6c0ce1650529\njob_id: 4aefa4db-3d25-446e-822e-6c0ce1650529\ndescription: standing on the floor, bends the knees deeply as if just landed, then rises back into the stance; the feet stay on the floor, nothing is drawn around them. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4aefa4db-3d25-446e-822e-6c0ce1650529\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/4aefa4db-3d25-446e-822e-6c0ce1650529/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 5c36f03d-2629-5a14-acfb-5f88a0d02d9b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

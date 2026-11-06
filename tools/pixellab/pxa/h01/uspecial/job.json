@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "68223745-ad2b-4f1a-84ba-296c4a37c34e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:b2636160-6e20-4789-88e9-83cf0adde8a2",
+  "last_frame_url": "upload:fb279bf6-06fe-4ae5-9e98-0f976e2854d3",
+  "description": "crouches low, then springs straight up, turning around once in the air with the right arm raised straight above his head, the coat and the ponytail streaming below him, then comes back down into the guard; his hand stays empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 68223745-ad2b-4f1a-84ba-296c4a37c34e\njob_id: 68223745-ad2b-4f1a-84ba-296c4a37c34e\ndescription: crouches low, then springs straight up, turning around once in the air with the right arm raised straight above his head, the coat and the ponytail streaming below him, then comes back down into the guard; his hand stays empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"68223745-ad2b-4f1a-84ba-296c4a37c34e\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/68223745-ad2b-4f1a-84ba-296c4a37c34e/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: c6c06783-ca52-52e8-8175-8446f06e0144\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

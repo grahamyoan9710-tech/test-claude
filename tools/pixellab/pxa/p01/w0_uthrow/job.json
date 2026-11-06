@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "4f4c9a7a-4598-4796-8f18-1ea0173f4cc2",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e5d28b16-d01a-41a5-812a-bab27df9a5d0",
+  "last_frame_url": "upload:f6d1e259-1010-428d-abfc-dc821b6e1cdd",
+  "description": "hurls the invisible opponent he is holding straight up with his free hand, then slashes upward over his head with a long curved black odachi sword with a violet ribbon, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: 4f4c9a7a-4598-4796-8f18-1ea0173f4cc2\njob_id: 4f4c9a7a-4598-4796-8f18-1ea0173f4cc2\ndescription: hurls the invisible opponent he is holding straight up with his free hand, then slashes upward over his head with a long curved black odachi sword with a violet ribbon, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4f4c9a7a-4598-4796-8f18-1ea0173f4cc2\")\nasset_id: 8ed0922b-8d7b-5cd2-8c61-b95b45d32dfe\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/p01/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 9,
+ "charged": ""
+}

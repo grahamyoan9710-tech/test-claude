@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "51d7cb93-fe2c-4124-b916-783adb6c9e07",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e5b1998e-6412-49b5-813f-c3f92b1cae48",
+  "last_frame_url": "upload:1142286d-48d3-4315-86cd-79ad9947caea",
+  "description": "draws his open right hand back to his left hip as if gripping a sword in its sheath, holds, then thrusts the arm straight forward at chest height, fingers together, then recovers into the guard; his hand stays empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 51d7cb93-fe2c-4124-b916-783adb6c9e07\njob_id: 51d7cb93-fe2c-4124-b916-783adb6c9e07\ndescription: draws his open right hand back to his left hip as if gripping a sword in its sheath, holds, then thrusts the arm straight forward at chest height, fingers together, then recovers into the guard; his hand stays empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"51d7cb93-fe2c-4124-b916-783adb6c9e07\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/51d7cb93-fe2c-4124-b916-783adb6c9e07/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 27362646-7e86-5050-b0af-002c02c9286d\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

@@ -1,0 +1,166 @@
+{
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "a white and gold sword with white ribbons",
+   "subject": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a white and gold sword with white ribbons",
+   "guard_pose": "fighting stance facing right, holding a white and gold sword with white ribbons",
+   "air_pose": "in mid-air facing right, knees tucked, holding a white and gold sword with white ribbons",
+   "clips": {
+    "w0_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a clean horizontal cut of the sword"
+    ],
+    "w0_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a return cut of the sword the other way"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "two crossing cuts of the sword in an X, ending with the blade forward"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins and cuts all around him with the sword"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "thrusts the sword straight forward and holds it extended"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward with a fast cut, ending far ahead with the sword extended"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "spins upward with the sword held out, cutting all around"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "holds the sword vertical in front of him to parry, then counters with a quick cut"
+    ],
+    "w0_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "down",
+     "raises the sword to the sky with both hands and holds it, then points it down at the ground ahead"
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": "a golden halberd",
+   "subject": "a young man with messy white hair and blue eyes, a long white coat with grey tails, a black shirt, black trousers and grey boots, holding a golden halberd",
+   "guard_pose": "fighting stance facing right, holding a golden halberd",
+   "air_pose": "in mid-air facing right, knees tucked, holding a golden halberd",
+   "clips": {
+    "w1_jab": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a straight thrust of the halberd forward"
+    ],
+    "w1_jab2": [
+     8,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a wide horizontal sweep of the halberd"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "spins the halberd once and finishes with a long thrust forward"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, twirls the halberd in a full circle around him"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "throws the halberd forward like a javelin, then catches it as it comes back"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "charges forward with the halberd held out in front, then skids to a stop"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "leaps up with a rising sweep of the halberd above his head"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "down",
+     "slams the halberd's butt into the ground in front of him, then lifts it"
+    ],
+    "w1_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "none",
+     "raises the halberd high to the sky with both hands and holds it, then lowers it"
+    ]
+   }
+  }
+ }
+}

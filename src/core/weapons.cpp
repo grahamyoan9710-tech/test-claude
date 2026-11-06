@@ -1,14 +1,26 @@
-// Weapons that drop during a match: each one belongs to a character (its two signature weapons),
-// lands on a platform and is picked up by walking over it. It boosts its owner for a while.
+// The fighters' weapons. Everyone starts bare-handed; now and then one of a fighter's two weapons (A or B, one it does
+// not have) drops on the stage: only its owner can take it, by standing on it and holding the weapon button. The
+// weapon taken is in hand; with both, the button switches A <-> B, with no cooldown, as soon as the fighter is free to
+// act (a press during a move waits for it to end). The weapons stay until a KO; then they drop again later.
 #include <algorithm>
 
 #include "core/match.hpp"
 
 namespace {
-constexpr int kMaxItems = 2;
-constexpr int kItemLife = 60 * 16;
+constexpr int kMaxItems = 4;  // two fighters, both weapons each
+constexpr int kItemLife = 60 * 20;
 constexpr float kItemGravity = 0.45f;
 constexpr float kItemMaxFall = 9.0f;
+constexpr int kWeaponBuffer = 45;  // frames a press waits for the fighter to be free (a move to end)
+
+bool canAct(const Fighter& f) {
+  switch (f.state) {
+    case FState::Idle: case FState::Walk: case FState::Run: case FState::Crouch: case FState::Air:
+    case FState::Landing: case FState::JumpSquat: case FState::Shield:
+      return f.active();
+    default: return false;
+  }
+}
 }  // namespace
 
 void Match::spawnWeapon(int character, int slot, Vec2 pos) {
@@ -29,36 +41,41 @@ void Match::dropWeaponFor(int id, int slot) {
 }
 
 void Match::equipWeapon(Fighter& f, int slot) {
+  if (f.weapon >= 0) emit(EvType::WeaponVanish, f.center(), f.id, f.weapon, float(f.charIndex));
   f.weapon = slot & 1;
-  f.weaponTimer = f.def->weapons[f.weapon].duration;
-  emit(EvType::WeaponPickup, f.center(), f.id, f.weapon, float(f.charIndex));
+  f.weapons |= 1 << f.weapon;
+  emit(EvType::WeaponSummon, f.center(), f.id, f.weapon, float(f.charIndex));
 }
 
-void Match::loseWeapon(Fighter& f, bool broken) {
+void Match::switchWeapon(Fighter& f) {
+  if (f.weapons == 3 && f.weapon >= 0) equipWeapon(f, f.weapon ^ 1);
+}
+
+void Match::loseWeapon(Fighter& f) {
+  f.weapons = 0;
   if (f.weapon < 0) return;
-  if (broken) emit(EvType::WeaponBreak, f.center(), f.id, f.weapon, float(f.charIndex));
+  emit(EvType::WeaponVanish, f.center(), f.id, f.weapon, float(f.charIndex));
   f.weapon = -1;
-  f.weaponTimer = 0;
 }
 
 void Match::updateItems() {
   if (!started()) return;
-  // Held weapons wear out
-  for (auto& f : fighters)
-    if (f.weapon >= 0 && --f.weaponTimer <= 0) loseWeapon(f, true);
 
-  // A new drop now and then, for a fighter who has no weapon
+  // A new drop now and then: a weapon a fighter does not have, and that is not already waiting on the stage
   if (cfg.weapons && --itemTimer <= 0) {
-    itemTimer = rng.irange(60 * 10, 60 * 17);
-    std::vector<int> wanting;
+    itemTimer = rng.irange(60 * 6, 60 * 11);
+    std::vector<std::pair<int, int>> wanting;  // fighter, weapon slot
     for (const auto& f : fighters) {
-      if (!f.active() || f.weapon >= 0) continue;
-      bool onStage = false;
-      for (const auto& it : items) onStage = onStage || it.character == f.charIndex;
-      if (!onStage) wanting.push_back(f.id);
+      if (!f.active()) continue;
+      for (int slot = 0; slot < 2; ++slot) {
+        bool onStage = (f.weapons >> slot) & 1;
+        for (const auto& it : items) onStage = onStage || (it.character == f.charIndex && it.slot == slot);
+        if (!onStage) wanting.push_back({f.id, slot});
+      }
     }
     if (!wanting.empty() && int(items.size()) < kMaxItems) {
-      const Fighter& f = fighters[wanting[rng.irange(0, int(wanting.size()) - 1)]];
+      const auto [id, slot] = wanting[rng.irange(0, int(wanting.size()) - 1)];
+      const Fighter& f = fighters[id];
       // Above a random platform (the main one more often), inside the camera's usual view
       std::vector<int> plats;
       for (int i = 0; i < int(platforms.size()); ++i) {
@@ -67,7 +84,7 @@ void Match::updateItems() {
       }
       const Rect& r = platforms[plats[rng.irange(0, int(plats.size()) - 1)]].rect;
       const float x = rng.range(r.left() + 30.0f, std::max(r.left() + 30.0f, r.right() - 30.0f));
-      spawnWeapon(f.charIndex, rng.irange(0, 1), {x, r.top() - 620.0f});
+      spawnWeapon(f.charIndex, slot, {x, r.top() - 620.0f});
     }
   }
 
@@ -95,19 +112,30 @@ void Match::updateItems() {
       it.pos += it.vel;
     }
     if (it.pos.y > blast.bottom()) it.life = 0;
-    // Picked up by its owner walking over it
-    if (it.life <= 0) continue;
-    for (auto& f : fighters) {
-      if (f.charIndex != it.character || !f.active() || f.weapon >= 0) continue;
-      if (f.state == FState::Respawn || f.state == FState::Grabbed || f.state == FState::Holding ||
-          f.state == FState::LedgeHang || f.state == FState::Hitstun)
-        continue;
-      Rect hurt = f.hurtbox();
-      if (!circleRect({it.pos.x, it.pos.y - 18.0f}, 26.0f, hurt)) continue;
-      equipWeapon(f, it.slot);
-      it.life = 0;
-      break;
+  }
+
+  // The weapon button: held over an own weapon it does not have, takes it; with both, a press switches A <-> B
+  for (auto& f : fighters) {
+    WeaponItem* under = nullptr;
+    const Rect hurt = f.hurtbox();
+    for (auto& it : items)
+      if (it.life > 0 && it.character == f.charIndex && !((f.weapons >> it.slot) & 1) &&
+          circleRect({it.pos.x, it.pos.y - 18.0f}, 34.0f, hurt))
+        under = &it;
+    if (under) {
+      if (f.in.weapon && canAct(f) && ++under->hold >= kPickupFrames) {
+        equipWeapon(f, under->slot);
+        under->life = 0;
+      }
+      continue;
     }
+    if (f.weapons != 3) continue;
+    if (f.pressed(&InputState::weapon)) f.weaponBuffer = kWeaponBuffer;
+    if (f.weaponBuffer <= 0) continue;
+    --f.weaponBuffer;
+    if (!canAct(f)) continue;
+    f.weaponBuffer = 0;
+    switchWeapon(f);
   }
   items.erase(std::remove_if(items.begin(), items.end(), [](const WeaponItem& i) { return i.life <= 0; }), items.end());
 }

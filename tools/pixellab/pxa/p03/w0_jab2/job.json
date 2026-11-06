@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "44758827-39a8-41b0-a1e2-e6a04ee43746",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:072275f9-51b4-4aac-b1b9-cba97a48b3e2",
+  "last_frame_url": "upload:5f9bb7c4-22db-4a3b-985a-b0988587d5bd",
+  "description": "a heavy backhand sweep of the greatsword at chest height. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with spiky black hair streaked with red, red eyes, a long red scarf, an open black and red coat over a bare chest, black trousers, red and black boots, holding a huge jagged black greatsword with glowing red veins",
+  "initial_pose": "fighting stance facing right, holding a huge jagged black greatsword with glowing red veins"
+ },
+ "reply": "id: 44758827-39a8-41b0-a1e2-e6a04ee43746\njob_id: 44758827-39a8-41b0-a1e2-e6a04ee43746\ndescription: a heavy backhand sweep of the greatsword at chest height. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"44758827-39a8-41b0-a1e2-e6a04ee43746\")\nasset_id: b44a7550-8bf2-59c8-abc5-16d73f9b4a8c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p03_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "b6b1921e-4e1c-424f-a422-b5cc303b9baf",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fcc3b10b-16a1-400b-83e1-b1cad00768c4",
+  "description": "pixel art effect animation: the puffs drift a little, shrink and fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a dash dust cloud on the ground: round white and light grey cartoon smoke puffs, bigger on the left, trailing into small puffs and dots to the right"
+ },
+ "reply": "id: b6b1921e-4e1c-424f-a422-b5cc303b9baf\njob_id: b6b1921e-4e1c-424f-a422-b5cc303b9baf\ndescription: pixel art effect animation: the puffs drift a little, shrink and fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 152x56px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b6b1921e-4e1c-424f-a422-b5cc303b9baf\")\nasset_id: 445ea847-7b8d-5834-983b-bd210b2d4653\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_dash/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

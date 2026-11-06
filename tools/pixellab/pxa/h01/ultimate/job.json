@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "4451c15d-1377-4c77-85e6-c0f6527b201a",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c2b426bc-ffe3-4fdf-9b47-6ac1433ddea6",
+  "last_frame_url": "upload:2488e8f0-0852-4816-8554-f6e3ec8e8878",
+  "description": "crouches low with his right hand pressed flat against his left hip and his eyes closed, holds perfectly still, then sweeps the right arm fully across to the right at chest height with the fingers together, ending turned away, then slowly stands back up into the karate guard; his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 4451c15d-1377-4c77-85e6-c0f6527b201a\njob_id: 4451c15d-1377-4c77-85e6-c0f6527b201a\ndescription: crouches low with his right hand pressed flat against his left hip and his eyes closed, holds perfectly still, then sweeps the right arm fully across to the right at chest height with the fingers together, ending turned away, then slowly stands back up into the karate guard; his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4451c15d-1377-4c77-85e6-c0f6527b201a\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/4451c15d-1377-4c77-85e6-c0f6527b201a/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 44cc1471-6d36-50be-9678-921d59fcd481\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 17,
+ "charged": "2 generations"
+}

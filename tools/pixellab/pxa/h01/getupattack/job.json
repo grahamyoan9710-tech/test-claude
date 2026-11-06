@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "b9e51330-ea75-4308-a583-46339efcefe4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5f0482a8-539d-4b0d-af5e-2afbfd783b1e",
+  "last_frame_url": "upload:8277ad7b-f80c-49ca-a905-5be08b2bdb9b",
+  "description": "lying on his back, he lifts one leg and stretches it out in front of him, then rolls over and stretches the other leg out behind him, then gets up into the fighting stance; only his legs move and nothing appears around them. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "lying on his back on the ground"
+ },
+ "reply": "id: b9e51330-ea75-4308-a583-46339efcefe4\njob_id: b9e51330-ea75-4308-a583-46339efcefe4\ndescription: lying on his back, he lifts one leg and stretches it out in front of him, then rolls over and stretches the other leg out behind him, then gets up into the fighting stance; only his legs move and nothing appears around them. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b9e51330-ea75-4308-a583-46339efcefe4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/b9e51330-ea75-4308-a583-46339efcefe4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d7824bba-150b-5abc-9521-8796f68e750e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/knockdown/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

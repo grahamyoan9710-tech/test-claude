@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "09bda291-8629-4719-ac1e-851ee7aabc66",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:27570b69-cc63-412a-adff-f1443d40e1dc",
+  "last_frame_url": "upload:a28b302d-cca4-4569-83fd-38aebb9da99a",
+  "description": "pixel art effect animation: the dust cloud puffs out quickly from the ground and grows into the whole cloud. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "white and light grey cartoon dust puffs on the ground"
+ },
+ "reply": "id: 09bda291-8629-4719-ac1e-851ee7aabc66\njob_id: 09bda291-8629-4719-ac1e-851ee7aabc66\ndescription: pixel art effect animation: the dust cloud puffs out quickly from the ground and grows into the whole cloud. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 4\nsize: 160x64px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"09bda291-8629-4719-ac1e-851ee7aabc66\")\nasset_id: fcdc5da2-6cfa-5867-be0e-94a365b72196\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "vfx/gen/seed_m_land.png",
+ "last": "vfx/gen/m_land/f_00.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

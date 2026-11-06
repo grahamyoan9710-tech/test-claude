@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "9b716f1f-9c1b-4238-98ed-71fd3abfeead",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5db5d7c0-ec22-4674-b3cf-93652bb4718a",
+  "last_frame_url": "upload:d49a1bfa-1451-4279-b763-743d9c60ee53",
+  "description": "calm idle loop: stands tall and still in the same upright stance, the chest rising and falling slowly with calm breaths (a very small movement), shoulders relaxed, knees soft and never bending lower, hips at the same height the whole time; the ponytail, the red ribbons and the coat tails drift gently in a soft wind, a little after the body; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 9b716f1f-9c1b-4238-98ed-71fd3abfeead\njob_id: 9b716f1f-9c1b-4238-98ed-71fd3abfeead\ndescription: calm idle loop: stands tall and still in the same upright stance, the chest rising and falling slowly with calm breaths (a very small movement), shoulders relaxed, knees soft and never bending lower, hips at the same height the whole time; the ponytail, the red ribbons and the coat tails drift gently in a soft wind, a little after the body; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9b716f1f-9c1b-4238-98ed-71fd3abfeead\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/9b716f1f-9c1b-4238-98ed-71fd3abfeead/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 320799af-2bb5-59cb-b01a-b4b6f5df1c61\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

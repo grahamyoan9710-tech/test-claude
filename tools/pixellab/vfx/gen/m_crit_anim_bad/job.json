@@ -1,0 +1,18 @@
+{
+ "status": "done",
+ "job_id": "e2cfd6ed-55da-48e6-8d3f-bcc86c61e157",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:aaf572f6-c072-4967-95aa-c08060cfe6fa",
+  "description": "pixel art effect animation: the star flashes white, its rays stretch and thin out, then it breaks into red sparks that fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a critical hit burst: a big red and white star explosion with long sharp red rays crossing, a white-hot core, small red sparks"
+ },
+ "reply": "id: e2cfd6ed-55da-48e6-8d3f-bcc86c61e157\njob_id: e2cfd6ed-55da-48e6-8d3f-bcc86c61e157\ndescription: pixel art effect animation: the star flashes white, its rays stretch and thin out, then it breaks into red sparks that fade away, until almost nothing is left. Only the effect is drawn: no character, no background, nothing else; the whole effect stays inside the picture.\nframes: 8\nsize: 136x136px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"e2cfd6ed-55da-48e6-8d3f-bcc86c61e157\")\nasset_id: b4271ba4-4b16-5b99-88b7-ca4511c45443\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/vfx/gen/m_crit/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "06b22049-9b98-45e3-8438-06a9f1e14775",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ce6864de-b3c0-4a13-b38c-936c63a691d8",
+  "description": "explosive start of a sprint: drops low for an instant, then pushes off hard with the back foot and launches forward, the torso leaning forward, the arms bent and pumping, the coat and the ponytail whipping back, already in a long running stride. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 06b22049-9b98-45e3-8438-06a9f1e14775\njob_id: 06b22049-9b98-45e3-8438-06a9f1e14775\ndescription: explosive start of a sprint: drops low for an instant, then pushes off hard with the back foot and launches forward, the torso leaning forward, the arms bent and pumping, the coat and the ponytail whipping back, already in a long running stride. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"06b22049-9b98-45e3-8438-06a9f1e14775\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/06b22049-9b98-45e3-8438-06a9f1e14775/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: f795f1fb-99a9-5f6c-819a-e05c225a9fdf\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

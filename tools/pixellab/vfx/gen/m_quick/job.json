@@ -1,0 +1,17 @@
+{
+ "status": "done",
+ "job_id": "124de59b-dd48-457a-b8be-e993a67865a2",
+ "tool": "create_image_pixflux",
+ "args": {
+  "description": "pixel art game VFX: a small golden four-pointed star spark of a quick hit, white-hot centre, orange edges, two tiny sparks, crisp clean pixel art, transparent background, no character, nothing else",
+  "width": 80,
+  "height": 80,
+  "no_background": true,
+  "view": "side",
+  "init_image_base64": "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",
+  "init_image_strength": 300
+ },
+ "reply": "id: 124de59b-dd48-457a-b8be-e993a67865a2\njob_id: 124de59b-dd48-457a-b8be-e993a67865a2\ndescription: pixel art game VFX: a small golden four-pointed star spark of a quick hit, white-hot centre, orange edges, two tiny sparks, crisp clean pixel art, transparent background, no character, nothing else\nsize: 80x80px\ntransparent: True\nasset_id: c35b183e-5afb-5605-bdc1-45c326a76b60\nasset_status: pending (saved when generation completes)\ninit_image: yes (strength 300)\ncost: 1 generation\nstatus: processing (~10-40s)\n\nhint: get_image(job_id=\"124de59b-dd48-457a-b8be-e993a67865a2\")",
+ "frames": 1,
+ "charged": "1 generation"
+}

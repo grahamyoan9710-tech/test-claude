@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "a4c3bfea-7013-4a99-9302-703a64b74e8f",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:d7e772fe-c458-49d3-8d22-094d93024243",
+  "last_frame_url": "upload:8d7c06fb-bb7f-4b00-89aa-dbb628dade7a",
+  "description": "karate side kick: turns the hips and thrusts the heel straight forward at chest height, the leg fully extended, then back into the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: a4c3bfea-7013-4a99-9302-703a64b74e8f\njob_id: a4c3bfea-7013-4a99-9302-703a64b74e8f\ndescription: karate side kick: turns the hips and thrusts the heel straight forward at chest height, the leg fully extended, then back into the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a4c3bfea-7013-4a99-9302-703a64b74e8f\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/a4c3bfea-7013-4a99-9302-703a64b74e8f/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: db838181-95ad-557c-b494-1d6bd523ef8f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

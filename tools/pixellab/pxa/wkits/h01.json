@@ -1,0 +1,310 @@
+{
+ "slots": {
+  "0": {
+   "look": "new",
+   "held": "the nodachi",
+   "subject": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+   "guard_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip",
+   "air_pose": "in mid-air facing right, knees tucked, holding the drawn nodachi",
+   "clips": {
+    "w0_jab": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a fast flat horizontal cut: the nodachi sweeps from low beside him forward at chest height to full reach in one clean stroke, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance, calm and precise"
+    ],
+    "w0_jab2": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance"
+    ],
+    "w0_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard"
+    ],
+    "w0_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins once and sweeps the nodachi in a full circle around him"
+    ],
+    "w0_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through"
+    ],
+    "w0_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward very low and fast and draws a lightning-fast horizontal cut with the nodachi, ending far ahead with his back half turned and the blade extended"
+    ],
+    "w0_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "springs up spinning with the nodachi held out, cutting in a rising spiral above his head"
+    ],
+    "w0_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "holds the nodachi crosswise in front of him in a calm still parry, eyes narrowed, then answers with a quick straight thrust"
+    ],
+    "w0_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "none",
+     "stands still with his eyes closed and slowly slides the nodachi into the scabbard at his left hip, the last part of the blade sliding home until the gold guard touches the scabbard, then stands calm and still"
+    ],
+    "w0_rengaine": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slides the nodachi into the scabbard at his left hip in one smooth motion, then holds a still iai stance: right hand on the hilt, left hand on the scabbard, knees bent, eyes narrowed, perfectly still"
+    ],
+    "w0_coupeeclair": [
+     8,
+     "w0_rengaine@last",
+     "guard",
+     false,
+     "forward",
+     "from the still iai stance, draws the nodachi from the scabbard in one blinding horizontal cut, lunging far forward with the blade fully extended, holds the cut for an instant, then returns to the stance with the blade drawn"
+    ],
+    "w0_idle": [
+     12,
+     "guard",
+     true,
+     true,
+     "none",
+     "idle loop of a calm swordsman: stands tall holding the drawn nodachi low in his right hand, the point lowered forward and perfectly still, his left hand resting on the scabbard at his hip; deep slow breaths lift the chest a little; the knees soft, never bending lower; the ponytail, the ribbons, the coat tails and the red tassel of the sword drift in a soft wind; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
+    ],
+    "w0_walk": [
+     12,
+     "guard",
+     true,
+     true,
+     "none",
+     "a real calm walk: upright chest, unhurried heel-to-toe steps, the nodachi held low and steady in his right hand with the point forward, the left hand resting on the scabbard at his hip, the coat tails and the ponytail swaying with each step: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time, a seamless two-step walk cycle that ends exactly on the first pose"
+    ],
+    "w0_runstart": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "explosive start of a sprint: drops low for an instant, then pushes off hard and launches forward, the nodachi held low and back in his right hand, the left hand holding the scabbard against his hip, the coat and the ponytail whipping back, already in a long running stride"
+    ],
+    "w0_run": [
+     8,
+     "runstart@last",
+     true,
+     true,
+     "none",
+     "a real sprint cycle to the right: the torso leaning forward, the nodachi held low and back in his right hand, the left hand holding the scabbard against his hip, long powerful strides with both feet off the ground in the middle of each stride, the coat tails and the ponytail streaming behind him, a seamless loop that ends exactly on the first pose"
+    ],
+    "w0_dash": [
+     12,
+     "guard",
+     null,
+     false,
+     "none",
+     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet"
+    ],
+    "w0_bthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "back",
+     "holding an invisible opponent with his free hand, turns his body around and swings that arm behind him, lets go, the nodachi in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands. The whole weapon stays inside the picture."
+    ],
+    "w0_dthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "down",
+     "bends forward and slowly lowers the invisible opponent he is holding with his free hand, the nodachi held still at his side, then straightens back up into the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture."
+    ]
+   }
+  },
+  "1": {
+   "look": "new",
+   "held": "the star-guarded sword",
+   "subject": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a sword with a gold star guard",
+   "guard_pose": "calm iai fighting stance facing right, holding the drawn star-guarded sword low in his right hand, the point forward, his left hand on the scabbard at his hip",
+   "air_pose": "in mid-air facing right, knees tucked, holding the drawn star-guarded sword",
+   "clips": {
+    "w1_jab": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a fast diagonal cut: the star-guarded sword sweeps from high to low in front of him in one clean stroke, a long crisp crescent trail, white along the edge and gold inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance"
+    ],
+    "w1_jab2": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a reverse rising cut: the star-guarded sword sweeps from low behind him up in front of him in one clean stroke, a long crisp crescent trail, white along the edge and gold inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance"
+    ],
+    "w1_jab3": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "a spinning finishing cut: turns once on the spot and finishes with a wide horizontal cut of the star-guarded sword at chest height, a long crisp crescent trail, white along the edge and gold inside, following the blade on the strike frames only; ends facing right and lowers the blade back into the stance"
+    ],
+    "w1_nair": [
+     12,
+     "jump@last",
+     true,
+     false,
+     "around",
+     "in mid-air, spins once and sweeps the star-guarded sword in a full circle around him"
+    ],
+    "w1_nspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "swings the star-guarded sword in a big upward diagonal arc in front of him, sending its edge forward, then holds the follow-through"
+    ],
+    "w1_sspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "dashes forward very low and fast and draws a lightning-fast horizontal cut with the star-guarded sword, ending far ahead with his back half turned and the blade extended"
+    ],
+    "w1_uspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "up",
+     "springs up spinning with the star-guarded sword held out, cutting in a rising spiral above his head"
+    ],
+    "w1_dspecial": [
+     12,
+     "guard",
+     true,
+     false,
+     "forward",
+     "holds the star-guarded sword crosswise in front of him in a calm still parry, eyes narrowed, then answers with a quick straight thrust"
+    ],
+    "w1_ultimate": [
+     16,
+     "guard",
+     true,
+     false,
+     "none",
+     "stands still with his eyes closed and slowly slides the star-guarded sword into the scabbard at his left hip, the last part of the blade sliding home until the gold guard touches the scabbard, then stands calm and still"
+    ],
+    "w1_rengaine": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slides the star-guarded sword into the scabbard at his left hip in one smooth motion, then holds a still iai stance: right hand on the hilt, left hand on the scabbard, knees bent, eyes narrowed, perfectly still"
+    ],
+    "w1_coupeeclair": [
+     8,
+     "w1_rengaine@last",
+     "guard",
+     false,
+     "forward",
+     "from the still iai stance, draws the star-guarded sword from the scabbard in one blinding horizontal cut, lunging far forward with the blade fully extended, holds the cut for an instant, then returns to the stance with the blade drawn"
+    ],
+    "w1_idle": [
+     12,
+     "guard",
+     true,
+     true,
+     "none",
+     "idle loop of a calm swordsman: stands tall holding the drawn star-guarded sword low in his right hand, the point lowered forward and perfectly still, his left hand resting on the scabbard at his hip; deep slow breaths lift the chest a little; the knees soft, never bending lower; the ponytail, the ribbons, the coat tails and the red tassel of the sword drift in a soft wind; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
+    ],
+    "w1_walk": [
+     12,
+     "guard",
+     true,
+     true,
+     "none",
+     "a real calm walk: upright chest, unhurried heel-to-toe steps, the star-guarded sword held low and steady in his right hand with the point forward, the left hand resting on the scabbard at his hip, the coat tails and the ponytail swaying with each step: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time, a seamless two-step walk cycle that ends exactly on the first pose"
+    ],
+    "w1_runstart": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "explosive start of a sprint: drops low for an instant, then pushes off hard and launches forward, the star-guarded sword held low and back in his right hand, the left hand holding the scabbard against his hip, the coat and the ponytail whipping back, already in a long running stride"
+    ],
+    "w1_run": [
+     8,
+     "runstart@last",
+     true,
+     true,
+     "none",
+     "a real sprint cycle to the right: the torso leaning forward, the star-guarded sword held low and back in his right hand, the left hand holding the scabbard against his hip, long powerful strides with both feet off the ground in the middle of each stride, the coat tails and the ponytail streaming behind him, a seamless loop that ends exactly on the first pose"
+    ],
+    "w1_dash": [
+     12,
+     "guard",
+     null,
+     false,
+     "none",
+     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the star-guarded sword held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet"
+    ],
+    "w1_bthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "back",
+     "holding an invisible opponent with his free hand, turns his body around and swings that arm behind him, lets go, the star-guarded sword in the other hand, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands. The whole weapon stays inside the picture."
+    ],
+    "w1_dthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "down",
+     "bends forward and slowly lowers the invisible opponent he is holding with his free hand, the star-guarded sword held still at his side, then straightens back up into the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture."
+    ]
+   }
+  }
+ }
+}

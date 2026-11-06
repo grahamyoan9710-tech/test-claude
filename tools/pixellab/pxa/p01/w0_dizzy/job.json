@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "3efde68e-23f4-4c18-a0dc-416e1c2879bf",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5e7c99d9-5991-4fa8-8b6c-67d3a559f110",
+  "last_frame_url": "upload:4a7ecc6f-df89-4be8-abc4-52dfbfecb791",
+  "description": "dazed and dizzy after his guard breaks: stands slumped on wobbly bent knees, arms hanging limp, a long curved black odachi sword with a violet ribbon dangling from one loose hand with its tip on the ground, head drooping and rolling slowly in a circle, the body swaying from side to side on the spot, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots, holding a long curved black odachi sword with a violet ribbon",
+  "initial_pose": "fighting stance facing right, holding a long curved black odachi sword with a violet ribbon"
+ },
+ "reply": "id: 3efde68e-23f4-4c18-a0dc-416e1c2879bf\njob_id: 3efde68e-23f4-4c18-a0dc-416e1c2879bf\ndescription: dazed and dizzy after his guard breaks: stands slumped on wobbly bent knees, arms hanging limp, a long curved black odachi sword with a violet ribbon dangling from one loose hand with its tip on the ground, head drooping and rolling slowly in a circle, the body swaying from side to side on the spot, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3efde68e-23f4-4c18-a0dc-416e1c2879bf\")\nasset_id: 71b53007-91c0-57d2-913b-f8b28fc36e4b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

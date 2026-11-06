@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "b55e80c7-af21-4c6e-aae8-76b78f400187",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:903405f1-1ef5-461a-96d7-5920f5b9858d",
+  "last_frame_url": "upload:7f4556d6-6318-4269-8c8d-941d88808188",
+  "description": "silat side kick: turns sideways and thrusts the heel straight forward at waist height, then back into the low stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "a young man with messy black hair and violet eyes, a long black coat with a ragged violet lining worn open over a dark shirt, black trousers and black boots",
+  "initial_pose": "fighting stance facing right, fists raised"
+ },
+ "reply": "id: b55e80c7-af21-4c6e-aae8-76b78f400187\njob_id: b55e80c7-af21-4c6e-aae8-76b78f400187\ndescription: silat side kick: turns sideways and thrusts the heel straight forward at waist height, then back into the low stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b55e80c7-af21-4c6e-aae8-76b78f400187\")\nasset_id: 82358e00-3d24-519c-b498-1d9042f80449\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/p01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}
