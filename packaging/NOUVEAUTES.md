@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 11.7 : **étincelles d'ultime et étoiles des persos sonnés**.
+
+- Pendant son ultime, le perso est entouré d'étincelles dorées, blanches et bleues qui scintillent. Les effets de
+  l'ultime restent tous là, les étincelles s'ajoutent par-dessus.
+- Un perso sonné (bouclier brisé) a maintenant des étoiles qui tournent au-dessus de sa tête.
+- Ces deux effets viennent de ParticleFX et brillent avec « Qualité graphique : Haute », mais n'éclairent pas le perso
+  qui les porte.
+
 Version 11.6 : **la lumière vient de l'effet**.
 
 - Un perso près d'un effet lumineux est éclairé du côté de l'effet : ce côté prend la couleur de la lumière (les

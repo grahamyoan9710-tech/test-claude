@@ -579,7 +579,8 @@ float fxLoopTime(const char* name, float t) {
   return F ? std::fmod(std::max(0.0f, t), F->info.duration()) : t;
 }
 
-bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bool flip, float alpha, Color tint) {
+bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bool flip, float alpha, Color tint,
+                 bool castLight) {
   const Fx* F = fxOf(name);
   if (!F || alpha <= 0.0f) return false;
   const FxInfo& I = F->info;
@@ -622,7 +623,7 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
     ui::frameBlend();
     const Vector4& B = F->beams[size_t(i)];
     const Vector2 from = P(B.x, B.y);
-    g_lights[1].push_back({{from.x, from.y}, B.z * size, F->light, B.w * a / 255.0f});
+    if (castLight) g_lights[1].push_back({{from.x, from.y}, B.z * size, F->light, B.w * a / 255.0f});
   }
   return true;
 }
@@ -671,12 +672,13 @@ bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, floa
   return true;
 }
 
-bool drawFx(const char* name, float t, Vec2 at, float size, float rot, bool flip, float alpha, Color tint) {
+bool drawFx(const char* name, float t, Vec2 at, float size, float rot, bool flip, float alpha, Color tint,
+            bool castLight) {
   const Fx* F = fxOf(name);
   if (!F) return false;
   const FxInfo& I = F->info;
   int frame = int(std::floor(std::max(0.0f, t) * I.fps));
   frame = I.loop ? frame % I.frames : std::min(frame, I.frames - 1);
-  return drawFxFrame(name, frame, at, size, rot, flip, alpha, tint);
+  return drawFxFrame(name, frame, at, size, rot, flip, alpha, tint, castLight);
 }
 }  // namespace art

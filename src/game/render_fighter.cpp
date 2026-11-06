@@ -1585,13 +1585,12 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     if (art::pictureSize("sys_shield_bubble", w, h))
       art::drawPicture("sys_shield_bubble", {0, 0, w, h}, {c.x - r, c.y - r, 2.0f * r, 2.0f * r}, 0.9f);
   }
-  if (kVfx && f.state == FState::ShieldBreak && f.grounded) {
-    for (int i = 0; i < 3; ++i) {
-      float a = at * 5.0f + i * 2.094f;
-      Vec2 sp{c.x + std::cos(a) * H * 0.3f, c.y - H * 0.55f + std::sin(a) * H * 0.08f};
-      DrawPoly(V(sp), 5, 7, a * 50.0f, {255, 230, 80, 255});
-    }
-  }
+  // The owner's ParticleFX decorations (shown with kVfx off): sparkles all around during the ultimate, on top of
+  // its own effects, and stars turning over the head of a dazed fighter.
+  if (const art::FxInfo* I = usingFs ? art::fxInfo("pfx_sparkle") : nullptr)
+    art::drawFx("pfx_sparkle", at, c, 1.5f * H / I->fh, 0.0f, f.facing < 0, alpha, WHITE, false);
+  if (const art::FxInfo* I = f.state == FState::ShieldBreak && f.grounded ? art::fxInfo("pfx_stun_stars") : nullptr)
+    art::drawFx("pfx_stun_stars", at, {c.x, c.y - H * 0.55f}, 0.62f * H / I->fw, 0.0f, false, alpha, WHITE, false);
   if (debugBoxes) {
     Rect hr = f.hurtbox();
     DrawRectangleLinesEx({hr.x, hr.y, hr.w, hr.h}, 2, f.isIntangible() ? BLUE : YELLOW);

@@ -64,6 +64,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 03 h 30 UTC, même session : **11.7**, deux GIF ParticleFX envoyés par yoyo (sources `art/particlefx/sparkle.gif`
+  et `stun_stars.gif`) : `pfx_sparkle` (`import_fx.py --step 3 --loop` : 20 images de 326 px, sous 8192 px) autour du
+  perso pendant son ultime, en plus de ses effets, et `pfx_stun_stars` (`--loop`, 30 images) au-dessus de la tête d'un
+  perso sonné (`ShieldBreak` au sol), à la place des étoiles dessinées par le code (supprimées). `drawFx` et
+  `drawFxFrame` prennent `castLight` : ces décorations ont leur halo mais n'éclairent pas leur perso. 11.6 publiée.
 - 06/11 03 h 05 UTC, même session : **11.6**, lumière directionnelle (yoyo : la lumière doit venir de la direction
   de l'effet, et l'ombre à l'opposé). Chaque image d'un effet `pfx_*` éclaire depuis le centre de ses pixels clairs,
   sur leur étendue, avec une force selon leur quantité (`Fx::beams`, calculés au chargement) ; plus de clignotement

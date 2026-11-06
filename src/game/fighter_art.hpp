@@ -64,12 +64,13 @@ struct FxInfo {
 const FxInfo* fxInfo(const char* name);
 // Time of an effect shown for as long as something lasts (projectile, beam, aura): its frames cycle.
 float fxLoopTime(const char* name, float t);
+// castLight false: a decoration on a fighter (its ultimate's sparkles, the stars of a daze) does not light him.
 bool drawFx(const char* name, float t, Vec2 at, float size, float rot = 0.0f, bool flip = false, float alpha = 1.0f,
-            Color tint = WHITE);
+            Color tint = WHITE, bool castLight = true);
 // Starts a frame: the light the ParticleFX effects threw two frames ago no longer falls on the fighters.
 void newFrame();
 bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0.0f, bool flip = false,
-                 float alpha = 1.0f, Color tint = WHITE);
+                 float alpha = 1.0f, Color tint = WHITE, bool castLight = true);
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha = 1.0f,
                  float fadeIn = 0.0f);
 }  // namespace art
