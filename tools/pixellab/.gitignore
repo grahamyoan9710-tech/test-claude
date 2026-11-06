@@ -4,3 +4,4 @@ el/
 .token
 .key
 __pycache__/
+pfx/

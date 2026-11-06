@@ -64,6 +64,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 12 h 15 UTC, même session : yoyo confirme que les 10 nouveaux persos remplacent les persos actuels, et que
+  de PixelLab on ne garde que les effets de déplacement ; le reste vient de ParticleFX, que Claude pilote maintenant
+  par MCP (`tools/pixellab/tools/pfxmcp.py`, hôte mcp.particlefx.studio autorisé dans l'environnement cloud). Rien
+  n'est généré avant que tout soit prêt et validé.
 - 06/11 12 h 10 UTC, même session : compétences et ultimes des 10 écrits dans le Claude Doc des fiches (01 d'après
   Alpha de PGR, demandé par yoyo ; 02 à 10 proposés). Armes de la planche v2 repeintes aux couleurs de chaque perso :
   `docs/refonte/ref_armes_v2_normales.png` et `ref_armes_v2_alt.png` (formes inchangées ; 01, 02, 05, 06 et 09
