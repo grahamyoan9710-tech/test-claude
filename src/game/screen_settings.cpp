@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
@@ -416,6 +417,9 @@ float previewCard(float y, int stage, float t) {
       drawText(w.tag, feet.x - tw * 0.5f + 4, capsY(ty, 13, kT), 13, ui::kInk, kT);
     }
   }
+  // J1's blow: a ParticleFX effect, so "Haute" shows its halo and the light it throws on the fighters
+  if (const art::FxInfo* I = art::fxInfo("pfx_crescent"))
+    art::drawFx("pfx_crescent", art::fxLoopTime("pfx_crescent", t), at(-40, -50), fh * 1.1f / I->fh);
   if (s.showHitboxes) {  // J1's punch, orange
     const Vec2 p = at(-40, -50);
     const Rectangle hb{p.x - 10, p.y - 6, 20, 12};
@@ -427,11 +431,11 @@ float previewCard(float y, int stage, float t) {
     DrawRectangleRec({view.x + 6, view.y + 4, 44, 15}, withAlpha(ui::kInk, 0.75f));
     drawText("60 FPS", view.x + 9, capsY(view.y + 11.5f, 13, kT), 13, Color{61, 220, 151, 255}, kT);
   }
-  const char* q = TextFormat("%s%s", s.highQuality ? "Rendu ×2 · lissé" : "Rendu normal", s.fullscreen ? " · plein écran" : "");
+  const char* q = TextFormat("%s%s", s.highQuality ? "Haute : lissé · halo · lumière" : "Normale", s.fullscreen ? " · plein écran" : "");
   const float qw = textWidth(q, 13.7f, kU) + 10;
   DrawRectangleRec({view.x + view.width - 6 - qw, view.y + view.height - 20, qw, 16}, withAlpha(ui::kInk, 0.75f));
   drawText(q, view.x + view.width - 1 - qw, capsY(view.y + view.height - 12, 13.7f, kU), 13.7f, kSoft, kU);
-  const auto lines = wrapLines("L'aperçu suit tes réglages : essaie les noms, les FPS, les zones de coup ou les secousses.", 332, 16.4f);
+  const auto lines = wrapLines("L'aperçu suit tes réglages : essaie la qualité, les noms, les FPS, les zones de coup ou les secousses.", 332, 16.4f);
   float ly = frame.y + frame.height + 18;
   for (const auto& l : lines) {
     drawText(l.c_str(), r.x + 14, capsY(ly, 16.4f, kU), 16.4f, kDim, kU);
