@@ -64,6 +64,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 03 h 05 UTC, même session : **11.5**, les effets `pfx_*` éclairent les persos proches (demande de yoyo, d'après
+  une planche où le perso devient cyan sous un éclair). `drawFxFrame` note chaque effet dessiné (centre, rayon,
+  couleur moyenne saturée) ; `drawSheet` lit les lumières de l'image courante et de la précédente (`art::newFrame`,
+  appelé par `App` avant chaque image) et passe `lit` au shader de teinte : couleur de l'effet, parties claires vers le
+  blanc, clignotement 2 images sur 3. Les armes tenues ne sont pas éclairées.
 - 06/11 02 h 45 UTC, session cloud « Refaire 10 persos » (branche `claude/project-thread-58u7pf`, partie de la 11.3) :
   **11.4**, halo lumineux des effets ParticleFX. Leurs GIF n'ont qu'une transparence tout ou rien : la lumière du site
   (particules additives, bloom) est recréée au chargement (`glowOf`, `fighter_art.cpp` : chaque image complétée de 32 px,

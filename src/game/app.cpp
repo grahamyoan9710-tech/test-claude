@@ -1,5 +1,6 @@
 // Application shell: window, main loop, screen flow and transitions.
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 
 #include "game/pixel.hpp"
 #include "game/render.hpp"
@@ -298,6 +299,7 @@ void App::run() {
       }
     }
 
+    art::newFrame();
     BeginTextureMode(target_);
     pix::setFrameTarget(&target_);
     rlScalef(g_renderScale, g_renderScale, 1.0f);

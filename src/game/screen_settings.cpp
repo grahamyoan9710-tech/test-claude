@@ -31,7 +31,7 @@ const RowInfo kRows[3][7] = {
      {"Effets sonores", "Coups, sauts, K.O., cris de la foule..."},
      {"Tester le son", "Joue un coup puissant et les cris de la foule."}},
     {{"Plein écran", "Bascule aussi avec la touche F11."},
-     {"Qualité graphique", "Haute : contours lissés (rendu en double résolution) et halo lumineux des effets. Normale : pour les petites machines."},
+     {"Qualité graphique", "Haute : contours lissés (rendu en double résolution), halo des effets et persos éclairés par eux. Normale : pour les petites machines."},
      {"Secousses de l'écran", "Tremblements de la caméra lors des gros coups et des K.O."},
      {"Noms au-dessus des joueurs", "Affiche J1, J2... ou CPU au-dessus de chaque combattant."},
      {"Compteur d'images (FPS)", "Affiche le nombre d'images par seconde en haut à gauche."},

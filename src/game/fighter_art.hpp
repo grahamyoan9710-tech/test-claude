@@ -66,6 +66,8 @@ const FxInfo* fxInfo(const char* name);
 float fxLoopTime(const char* name, float t);
 bool drawFx(const char* name, float t, Vec2 at, float size, float rot = 0.0f, bool flip = false, float alpha = 1.0f,
             Color tint = WHITE);
+// Starts a frame: the light the ParticleFX effects threw two frames ago no longer falls on the fighters.
+void newFrame();
 bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0.0f, bool flip = false,
                  float alpha = 1.0f, Color tint = WHITE);
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha = 1.0f,

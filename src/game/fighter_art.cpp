@@ -74,12 +74,36 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 uniform vec4 tint;
+uniform vec4 lit;
 out vec4 finalColor;
 void main() {
   vec4 t = texture(texture0, fragTexCoord);
-  finalColor = vec4(mix(t.rgb, tint.rgb, tint.a), t.a) * fragColor * colDiffuse;
+  vec3 c = mix(t.rgb, tint.rgb, tint.a);
+  float l = dot(c, vec3(0.299, 0.587, 0.114));  // lit by an effect: its colour, the bright parts towards white
+  c = mix(c, min(vec3(1.0), lit.rgb * (0.3 + 1.0 * l) + vec3(0.35 * l * l)), lit.a);
+  finalColor = vec4(c, t.a) * fragColor * colDiffuse;
 }
 )";
+int g_litLoc = -1;
+// The light of the ParticleFX effects drawn this frame and the one before (the fighters may be drawn first).
+struct Light {
+  Vec2 at;
+  float r;
+  Color c;
+};
+std::array<std::vector<Light>, 2> g_lights;
+int g_lightFrame = 0;
+// How much the effects light a fighter centred on c, H tall: full inside an effect, nothing past half a height
+// beyond it, flickering like the light of a spark (2 frames lit, 1 dimmer).
+float litBy(Vec2 c, float H, Color& col) {
+  float best = 0.0f;
+  for (const auto& list : g_lights)
+    for (const Light& L : list) {
+      const float k = clampf(1.0f - ((c - L.at).len() - L.r) / (0.5f * H), 0.0f, 1.0f);
+      if (k > best) best = k, col = L.c;
+    }
+  return best * (g_lightFrame / 2 % 3 == 2 ? 0.25f : 0.7f);
+}
 
 // Tint of the fighter: hit flash, afterimage, transformation. False when nothing tints it.
 bool tintOf(const Pose& pose, Color flashColor, float flash, Color& tc, float& amount) {
@@ -100,13 +124,16 @@ bool tintOf(const Pose& pose, Color flashColor, float flash, Color& tc, float& a
     g_tintTried = true;
     g_tint = LoadShaderFromMemory(nullptr, kTintFrag);
     g_tintLoc = g_tint.id ? GetShaderLocation(g_tint, "tint") : -1;
+    g_litLoc = g_tint.id ? GetShaderLocation(g_tint, "lit") : -1;
   }
   return amount > 0.01f && g_tint.id != 0 && g_tintLoc >= 0;
 }
-void beginTint(Color tc, float amount) {
+void beginTint(Color tc, float amount, Color lc = BLANK, float lit = 0.0f) {
   BeginShaderMode(g_tint);
   const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
   SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
+  const float w[4] = {lc.r / 255.0f, lc.g / 255.0f, lc.b / 255.0f, lit};
+  if (g_litLoc >= 0) SetShaderValue(g_tint, g_litLoc, w, SHADER_UNIFORM_VEC4);
 }
 
 void loadSheets(Art& A, const char* fighter) {
@@ -308,8 +335,12 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, S.fh / th}, {u0, S.fh / th}};
   Color tc;
   float amount = 0.0f;
-  const bool shaded = tintOf(pose, flashColor, flash, tc, amount);
-  if (shaded) beginTint(tc, amount);
+  bool shaded = tintOf(pose, flashColor, flash, tc, amount);
+  Color lc{};
+  const Vector2 mid = X(Vec2{0.0f, 0.0f});
+  const float lit = settings().highQuality ? litBy({mid.x, mid.y}, H, lc) : 0.0f;
+  if (lit > 0.01f && g_tint.id != 0 && g_tintLoc >= 0) shaded = true;
+  if (shaded) beginTint(tc, amount, lc, lit);
   rlSetTexture(S.tex.id);
   rlBegin(RL_QUADS);
   const unsigned char a = (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f));
@@ -375,6 +406,7 @@ struct Fx {
   art::FxInfo info;
   Texture2D tex{};
   Texture2D glow{};  // a ParticleFX effect's halo: its frames blurred, premultiplied, kGlowDown times smaller
+  Color light{};     // its mean colour, brightened: the light it throws on the fighters
   bool ok = false;
 };
 // The halo of a ParticleFX effect (pfx_*): their GIF export has on/off transparency, so the light their site draws
@@ -431,6 +463,16 @@ const Fx* fxOf(const char* name) {
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
       F.glow = glowOf(img, F.info);
+      const Color* px = (const Color*)img.data;
+      double r = 0, g = 0, b = 0, n = 0;
+      for (int i = 0; i < img.width * img.height; ++i)
+        if (px[i].a > 0) r += px[i].r, g += px[i].g, b += px[i].b, ++n;
+      const float m = n > 0 ? 255.0f / float(std::max({r, g, b, 1.0}) / n) : 1.0f;  // its hue at full brightness
+      if (n > 0) {  // saturated: a white effect still lights in its tint, like the reference sheet's cyan
+        const Vector3 hsv = ColorToHSV({(unsigned char)std::min(255.0, r / n * m), (unsigned char)std::min(255.0, g / n * m),
+                                        (unsigned char)std::min(255.0, b / n * m), 255});
+        F.light = ColorFromHSV(hsv.x, std::max(hsv.y, 0.55f), 1.0f);
+      }
     }
     UnloadImage(img);
     if (F.tex.id == 0) break;
@@ -495,8 +537,15 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
     rlEnd();
     rlSetTexture(0);
     ui::frameBlend();
+    g_lights[1].push_back({at, 0.5f * std::max(I.fw, I.fh) * size, F->light});
   }
   return true;
+}
+
+void newFrame() {
+  g_lights[0].swap(g_lights[1]);
+  g_lights[1].clear();
+  ++g_lightFrame;
 }
 
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha, float fadeIn) {

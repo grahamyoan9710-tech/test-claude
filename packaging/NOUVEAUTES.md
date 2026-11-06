@@ -8,6 +8,12 @@
 
 ## Nouveautés
 
+Version 11.5 : **les effets éclairent les persos**.
+
+- Quand un effet lumineux passe près d'un perso (la pluie d'épées du Jugement céleste, le Croissant du néant), le
+  perso prend sa couleur et clignote comme sous un éclair : les ombres se teintent, les parties claires blanchissent.
+- Comme le halo, cette lumière est active avec « Qualité graphique : Haute ».
+
 Version 11.4 : **les effets brillent**.
 
 - Le Croissant du néant (N° 01) et la pluie d'épées du Jugement céleste (N° 08) ont maintenant un halo lumineux qui
