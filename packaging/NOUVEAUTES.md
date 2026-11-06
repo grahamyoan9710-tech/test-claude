@@ -8,6 +8,17 @@
 
 ## Nouveautés
 
+Version 11.6 : **la lumière vient de l'effet**.
+
+- Un perso près d'un effet lumineux est éclairé du côté de l'effet : ce côté prend la couleur de la lumière (les
+  parties sombres dans une teinte profonde, les claires vers le blanc), avec un bord net et un liseré de lumière sur
+  le contour. L'autre côté reste dans l'ombre.
+- Plus l'effet est proche et fort, plus la lumière couvre le corps ; collé à lui, le perso est éclairé en entier. Sous
+  la pluie d'épées, la lumière vient d'en haut.
+- La lumière suit l'effet image par image : elle part de là où il brille, aussi fort qu'il brille (le clignotement de
+  la 11.5 est retiré).
+- Toujours avec « Qualité graphique : Haute ».
+
 Version 11.5 : **les effets éclairent les persos**.
 
 - Quand un effet lumineux passe près d'un perso (la pluie d'épées du Jugement céleste, le Croissant du néant), le

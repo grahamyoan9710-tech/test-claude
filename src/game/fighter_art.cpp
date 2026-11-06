@@ -74,35 +74,62 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 uniform vec4 tint;
-uniform vec4 lit;
+uniform vec4 lit;    // an effect's light: colour, strength
+uniform vec4 ldir;   // towards it, in texture space (xy), and how much it comes from one side (z)
+uniform vec4 body;   // the body's centre in the texture (xy) and its height there (zw)
+uniform vec4 cell;   // the frame in the texture: u0, v0, u1, v1
+uniform vec2 texel;  // one texture pixel
 out vec4 finalColor;
 void main() {
   vec4 t = texture(texture0, fragTexCoord);
   vec3 c = mix(t.rgb, tint.rgb, tint.a);
-  float l = dot(c, vec3(0.299, 0.587, 0.114));  // lit by an effect: its colour, the bright parts towards white
-  c = mix(c, min(vec3(1.0), lit.rgb * (0.3 + 1.0 * l) + vec3(0.35 * l * l)), lit.a);
+  if (lit.a > 0.001) {
+    // Lit like a hand-drawn flash: the part of the body facing the effect takes its colour (darks to a deep tone of
+    // it, lights to white), with a crisp edge; it covers more of the body the stronger the light, all of it when
+    // the light is all around. The rest stays in its shadow, and the outline facing the light catches a rim.
+    vec2 p = (fragTexCoord - body.xy) / body.zw;  // in body heights, from the body's centre
+    float lim = mix(-1.0, 0.3 - 0.6 * lit.a, ldir.z);
+    float m = smoothstep(lim - 0.012, lim + 0.012, dot(p, ldir.xy));
+    float a = min(0.95, 1.6 * lit.a);
+    float l = dot(c, vec3(0.299, 0.587, 0.114));
+    vec3 lc = l < 0.2 ? mix(lit.rgb * 0.22, lit.rgb * 0.8, l / 0.2)
+                      : mix(lit.rgb * 0.8, mix(lit.rgb, vec3(1.0), 0.85), smoothstep(0.2, 0.85, l));
+    vec2 q = clamp(fragTexCoord + ldir.xy * texel * 2.5, cell.xy, cell.zw);
+    float edge = (1.0 - texture(texture0, q).a) * ldir.z;
+    c *= 1.0 - 0.35 * a * ldir.z * (1.0 - m);
+    c = mix(c, lc, a * m);
+    c = mix(c, mix(lit.rgb, vec3(1.0), 0.7), a * m * edge);
+  }
   finalColor = vec4(c, t.a) * fragColor * colDiffuse;
 }
 )";
-int g_litLoc = -1;
+int g_litLoc = -1, g_ldirLoc = -1, g_bodyLoc = -1, g_cellLoc = -1, g_texelLoc = -1;
 // The light of the ParticleFX effects drawn this frame and the one before (the fighters may be drawn first).
 struct Light {
   Vec2 at;
   float r;
   Color c;
+  float k;  // its strength: its frame's, faded with it
 };
 std::array<std::vector<Light>, 2> g_lights;
-int g_lightFrame = 0;
-// How much the effects light a fighter centred on c, H tall: full inside an effect, nothing past half a height
-// beyond it, flickering like the light of a spark (2 frames lit, 1 dimmer).
-float litBy(Vec2 c, float H, Color& col) {
-  float best = 0.0f;
+// How much the effects light a fighter centred on c, H tall: all their strength inside one, nothing past a height
+// beyond it.
+// to: where the light comes from, its length how much from one side (1: all from there, 0: all around, as under
+// a rain of swords). Each light counts for its strength, and for its direction a body away or more.
+float litBy(Vec2 c, float H, Color& col, Vec2& to) {
+  float best = 0.0f, sum = 0.0f;
+  Vec2 dir{};
   for (const auto& list : g_lights)
     for (const Light& L : list) {
-      const float k = clampf(1.0f - ((c - L.at).len() - L.r) / (0.5f * H), 0.0f, 1.0f);
+      const Vec2 d = L.at - c;
+      const float k = L.k * clampf(1.0f - (d.len() - L.r) / H, 0.0f, 1.0f);
+      if (k <= 0.0f) continue;
       if (k > best) best = k, col = L.c;
+      sum += k;
+      if (d.len() > 1e-3f) dir = dir + d.norm() * (k * clampf(d.len() / (0.6f * H), 0.0f, 1.0f));
     }
-  return best * (g_lightFrame / 2 % 3 == 2 ? 0.25f : 0.7f);
+  to = sum > 0.0f ? dir / sum : Vec2{};
+  return best;
 }
 
 // Tint of the fighter: hit flash, afterimage, transformation. False when nothing tints it.
@@ -125,15 +152,31 @@ bool tintOf(const Pose& pose, Color flashColor, float flash, Color& tc, float& a
     g_tint = LoadShaderFromMemory(nullptr, kTintFrag);
     g_tintLoc = g_tint.id ? GetShaderLocation(g_tint, "tint") : -1;
     g_litLoc = g_tint.id ? GetShaderLocation(g_tint, "lit") : -1;
+    g_ldirLoc = g_tint.id ? GetShaderLocation(g_tint, "ldir") : -1;
+    g_bodyLoc = g_tint.id ? GetShaderLocation(g_tint, "body") : -1;
+    g_cellLoc = g_tint.id ? GetShaderLocation(g_tint, "cell") : -1;
+    g_texelLoc = g_tint.id ? GetShaderLocation(g_tint, "texel") : -1;
   }
   return amount > 0.01f && g_tint.id != 0 && g_tintLoc >= 0;
 }
-void beginTint(Color tc, float amount, Color lc = BLANK, float lit = 0.0f) {
+// The light (c, k) needs the direction towards it in texture space (to: x, y, side), the body there (centre, height),
+// the frame's cell (u0, v0, u1, v1) and the texel size.
+struct Lit {
+  Color c{};
+  float k = 0.0f;
+  float to[4] = {}, body[4] = {}, cell[4] = {}, texel[2] = {};
+};
+void beginTint(Color tc, float amount, const Lit& L = {}) {
   BeginShaderMode(g_tint);
   const float v[4] = {tc.r / 255.0f, tc.g / 255.0f, tc.b / 255.0f, amount};
   SetShaderValue(g_tint, g_tintLoc, v, SHADER_UNIFORM_VEC4);
-  const float w[4] = {lc.r / 255.0f, lc.g / 255.0f, lc.b / 255.0f, lit};
+  const float w[4] = {L.c.r / 255.0f, L.c.g / 255.0f, L.c.b / 255.0f, L.k};
   if (g_litLoc >= 0) SetShaderValue(g_tint, g_litLoc, w, SHADER_UNIFORM_VEC4);
+  if (L.k <= 0.0f) return;
+  if (g_ldirLoc >= 0) SetShaderValue(g_tint, g_ldirLoc, L.to, SHADER_UNIFORM_VEC4);
+  if (g_bodyLoc >= 0) SetShaderValue(g_tint, g_bodyLoc, L.body, SHADER_UNIFORM_VEC4);
+  if (g_cellLoc >= 0) SetShaderValue(g_tint, g_cellLoc, L.cell, SHADER_UNIFORM_VEC4);
+  if (g_texelLoc >= 0) SetShaderValue(g_tint, g_texelLoc, L.texel, SHADER_UNIFORM_VEC2);
 }
 
 void loadSheets(Art& A, const char* fighter) {
@@ -336,11 +379,27 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   Color tc;
   float amount = 0.0f;
   bool shaded = tintOf(pose, flashColor, flash, tc, amount);
-  Color lc{};
+  Lit L;
   const Vector2 mid = X(Vec2{0.0f, 0.0f});
-  const float lit = settings().highQuality ? litBy({mid.x, mid.y}, H, lc) : 0.0f;
-  if (lit > 0.01f && g_tint.id != 0 && g_tintLoc >= 0) shaded = true;
-  if (shaded) beginTint(tc, amount, lc, lit);
+  Vec2 to{};
+  if (settings().highQuality) L.k = litBy({mid.x, mid.y}, H * X.scale, L.c, to);
+  if (L.k > 0.01f && g_tint.id != 0 && g_tintLoc >= 0) {
+    shaded = true;
+    // The screen's direction in the frame's pixels: undo the turn, then the mirrors (by the corners, the facing).
+    const float side = to.len(), m = flip * float(X.facing) * (X.sx < 0.0f ? -1.0f : 1.0f);
+    Vec2 d = side > 1e-3f ? rotate(to / side, -X.rot) : Vec2{};
+    d.x *= m;
+    const float in[14] = {d.x, d.y, side, 0.0f,
+                          u0 + S.ax / tw, (S.ay - 0.5f * S.pxPerH) / th, S.pxPerH / tw, S.pxPerH / th,
+                          u0, 0.0f, u1, S.fh / th, 1.0f / tw, 1.0f / th};
+    std::copy(in, in + 4, L.to);
+    std::copy(in + 4, in + 8, L.body);
+    std::copy(in + 8, in + 12, L.cell);
+    std::copy(in + 12, in + 14, L.texel);
+  } else {
+    L.k = 0.0f;
+  }
+  if (shaded) beginTint(tc, amount, L);
   rlSetTexture(S.tex.id);
   rlBegin(RL_QUADS);
   const unsigned char a = (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f));
@@ -407,6 +466,7 @@ struct Fx {
   Texture2D tex{};
   Texture2D glow{};  // a ParticleFX effect's halo: its frames blurred, premultiplied, kGlowDown times smaller
   Color light{};     // its mean colour, brightened: the light it throws on the fighters
+  std::vector<Vector4> beams;  // per frame, that light: from (x, y, frame pixels), spreading z, strength w
   bool ok = false;
 };
 // The halo of a ParticleFX effect (pfx_*): their GIF export has on/off transparency, so the light their site draws
@@ -473,6 +533,29 @@ const Fx* fxOf(const char* name) {
                                         (unsigned char)std::min(255.0, b / n * m), 255});
         F.light = ColorFromHSV(hsv.x, std::max(hsv.y, 0.55f), 1.0f);
       }
+      // Each frame lights from the centre of its bright pixels, as wide as they spread, as strongly as they are
+      // many: a flash lights the fighters, its fading frames hardly.
+      float most = 0.0f;
+      for (int f = 0; f < frames; ++f) {
+        double w = 0, x = 0, y = 0, x2 = 0;
+        for (int v = 0; v < int(fh) && v < img.height; ++v)
+          for (int u = 0; u < int(fw); ++u) {
+            const int at = f * int(fw) + u;
+            if (at >= img.width) break;
+            const Color& c = px[size_t(v) * img.width + at];
+            if (c.a == 0) continue;
+            const double e = (c.r + c.g + c.b) / 765.0;
+            w += e, x += e * u, y += e * v, x2 += e * (double(u) * u + double(v) * v);
+          }
+        Vector4 B{0.5f * fw, 0.5f * fh, 0.0f, float(w)};
+        if (w > 0) {
+          B.x = float(x / w), B.y = float(y / w);
+          B.z = 1.4f * std::sqrt(float(std::max(0.0, x2 / w - double(B.x) * B.x - double(B.y) * B.y)));
+        }
+        most = std::max(most, B.w);
+        F.beams.push_back(B);
+      }
+      for (Vector4& B : F.beams) B.w = most > 0.0f ? std::sqrt(B.w / most) : 0.0f;
     }
     UnloadImage(img);
     if (F.tex.id == 0) break;
@@ -537,7 +620,9 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
     rlEnd();
     rlSetTexture(0);
     ui::frameBlend();
-    g_lights[1].push_back({at, 0.5f * std::max(I.fw, I.fh) * size, F->light});
+    const Vector4& B = F->beams[size_t(i)];
+    const Vector2 from = P(B.x, B.y);
+    g_lights[1].push_back({{from.x, from.y}, B.z * size, F->light, B.w * a / 255.0f});
   }
   return true;
 }
@@ -545,7 +630,6 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
 void newFrame() {
   g_lights[0].swap(g_lights[1]);
   g_lights[1].clear();
-  ++g_lightFrame;
 }
 
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha, float fadeIn) {

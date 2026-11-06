@@ -64,12 +64,20 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
-- 06/11 03 h 05 UTC, même session : **11.5**, les effets `pfx_*` éclairent les persos proches (demande de yoyo, d'après
+- 06/11 03 h 05 UTC, même session : **11.6**, lumière directionnelle (yoyo : la lumière doit venir de la direction
+  de l'effet, et l'ombre à l'opposé). Chaque image d'un effet `pfx_*` éclaire depuis le centre de ses pixels clairs,
+  sur leur étendue, avec une force selon leur quantité (`Fx::beams`, calculés au chargement) ; plus de clignotement
+  fixe. Le shader de teinte reçoit la direction de la lumière dans la texture (rotation et miroirs défaits) et le
+  corps (`body` : centre, hauteur) : la partie tournée vers l'effet prend sa couleur (dégradé des sombres vers le
+  blanc) avec un bord net, plus large quand la lumière est forte (tout le corps si elle vient de partout), le reste
+  s'assombrit, et le contour face à la lumière prend un liseré. Portée : une hauteur de perso au-delà de l'effet.
+  11.4 et 11.5 publiées (workflow_dispatch, archives Linux et Windows).
+- 06/11 02 h 37 UTC, même session : **11.5**, les effets `pfx_*` éclairent les persos proches (demande de yoyo, d'après
   une planche où le perso devient cyan sous un éclair). `drawFxFrame` note chaque effet dessiné (centre, rayon,
   couleur moyenne saturée) ; `drawSheet` lit les lumières de l'image courante et de la précédente (`art::newFrame`,
   appelé par `App` avant chaque image) et passe `lit` au shader de teinte : couleur de l'effet, parties claires vers le
   blanc, clignotement 2 images sur 3. Les armes tenues ne sont pas éclairées.
-- 06/11 02 h 45 UTC, session cloud « Refaire 10 persos » (branche `claude/project-thread-58u7pf`, partie de la 11.3) :
+- 06/11 02 h 28 UTC, session cloud « Refaire 10 persos » (branche `claude/project-thread-58u7pf`, partie de la 11.3) :
   **11.4**, halo lumineux des effets ParticleFX. Leurs GIF n'ont qu'une transparence tout ou rien : la lumière du site
   (particules additives, bloom) est recréée au chargement (`glowOf`, `fighter_art.cpp` : chaque image complétée de 32 px,
   prémultipliée, réduite par 4, floutée) et dessinée en additif par-dessus l'effet, deux fois, avec « Qualité : Haute ».
