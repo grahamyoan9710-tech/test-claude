@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 06/11 15 h 05 UTC, session cloud « Hakuen (01) » : le nouveau 01 (`h01`, Hakuen) en bêta à côté des anciens,
+  kit codé (Rengaine → Coupe-éclair ou Coupe, volonté, éveil, Prescience à 3 parades ; test `sim_test hakuen`).
+  Clips PixelLab dans `tools/pixellab/pxa/h01/` (les PNG y sont maintenant suivis par git) : 21 clips refaits
+  parce que le moteur avait collé flammes, traits ou fumée (yoyo : « aucune poussière grise, sinon tu refais ») ;
+  `dustscan.py` les repère. **Répartition des outils (yoyo, 06/11 14 h)** : PixelLab = persos et armes (et fumées
+  de déplacement) ; ParticleFX = coups, coup critique, bouclier, ultimes, ondes d'impact, compétences, états. Son
+  plan Starter ne paie pas les appels MCP (packs seulement) et il ne veut rien payer de plus : il colle lui-même
+  les 15 prompts de `docs/refonte/prompts_vfx_particlefx.md` dans le studio et met les GIF dans son dossier VFX.
 - 06/11 12 h 50 UTC, session cloud « Refaire 10 persos » : **11.9**, deux GIF ParticleFX du PC de yoyo
   (`Documents/Projets/Clash Horizon/Art/VFX`) pas encore en jeu : `pfx_spiral_sphere` (neutre mains nues du 02,
   « Sphère de givre ») et `pfx_giant_sphere` (ultime « Apocalypse » du 03-B). Le halo des `pfx_*` (`glowOf`) baisse

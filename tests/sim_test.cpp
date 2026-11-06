@@ -1219,6 +1219,88 @@ static void testDeterminism() {
         a.winner, b.frames, b.winner);
 }
 
+// The new 01 (Hakuen). The jab held past its end sheathes (Rengaine); let go in the window the Glint shows, it is the
+// Coupe-éclair, earlier the plain cut. The Coupe-éclair's first hit and each parry give a charge of will; full will
+// awakens him, and awake his M1 throw crescents. The Prescience held parries up to 3 blows: the third fills the will.
+static void testHakuen() {
+  std::printf("[hakuen]\n");
+  const int h = charIndex("Hakuen"), o = charIndex("N° 07");
+  CHECK(roster()[h].name == "Hakuen", "Hakuen is in the roster");
+  auto fresh = [&](float gap) {
+    MatchConfig cfg = duel(0, h, o, false, false);
+    cfg.items = false;
+    cfg.weapons = false;
+    Match* m = new Match(cfg);
+    skipCountdown(*m);
+    m->fighters[0].pos = {0, 0};
+    m->fighters[0].facing = 1;
+    m->fighters[1].pos = {gap, 0};
+    m->fighters[1].facing = -1;
+    return m;
+  };
+  std::array<InputState, 4> in{};
+  auto sheathe = [&](Match& m) {  // hold the jab until it sheathes
+    in[0] = key(0, 0, true);
+    for (int i = 0; i < 120 && m.fighters[0].move != Extra1; ++i) m.step(in);
+    CHECK(m.fighters[0].move == Extra1, "holding the jab sheathes (move %d)", m.fighters[0].move);
+  };
+  {  // let go in the window: the Coupe-éclair, whose hit gives will
+    Match& m = *fresh(70);
+    Fighter& f = m.fighters[0];
+    sheathe(m);
+    bool glint = false;
+    for (int i = 0; i < 200 && f.charge < f.moveDef(Extra1).perfectFrom + 2; ++i) {
+      m.step(in);
+      for (const auto& e : m.events) glint |= e.type == EvType::Glint;
+    }
+    CHECK(glint, "the Glint shows the perfect window");
+    in[0] = InputState{};
+    m.step(in);
+    CHECK(f.move == Extra2, "let go in the window: the Coupe-éclair (move %d)", f.move);
+    for (int i = 0; i < 60 && f.state == FState::Attack; ++i) m.step(in);
+    CHECK(m.fighters[1].percent > 0.0f && f.will == 1, "it hits and gives one will (%.0f%%, will %d)",
+          m.fighters[1].percent, f.will);
+    f.will = kWillMax;  // full will: he awakens as soon as he can act
+    for (int i = 0; i < 5 && f.form < 0; ++i) m.step(in);
+    CHECK(f.form == f.def->willForm && f.will == 0, "full will awakens him (form %d, will %d)", f.form, f.will);
+    for (int i = 0; i < 120 && f.state != FState::Idle; ++i) m.step(in);
+    m.fighters[1].pos = {300, 0};
+    const size_t shots = m.projectiles.size();
+    in[0] = key(0, 0, true);
+    for (int i = 0; i < 12; ++i) {
+      m.step(in);
+      in[0] = InputState{};
+    }
+    CHECK(m.projectiles.size() > shots, "awake, his jab throws a crescent (%zu -> %zu)", shots, m.projectiles.size());
+    delete &m;
+  }
+  {  // let go too early: the plain cut
+    Match& m = *fresh(70);
+    sheathe(m);
+    in[0] = InputState{};
+    for (int i = 0; i < 40 && m.fighters[0].move == Extra1; ++i) m.step(in);
+    CHECK(m.fighters[0].move == Extra3, "let go too early: the plain cut (move %d)", m.fighters[0].move);
+    delete &m;
+  }
+  {  // the Prescience held: the opponent's blows are parried, the third fills the will and he ripostes
+    Match& m = *fresh(40);
+    Fighter& f = m.fighters[0];
+    Fighter& v = m.fighters[1];
+    for (int i = 0; i < 260 && f.parried < 3; ++i) {
+      in[0] = key(0, 1, false, false, false, true);
+      in[1] = key(0, 0, i >= 12 && i % 4 < 2);  // once he is in the parry window
+      m.step(in);
+    }
+    CHECK(f.parried == 3, "three blows parried (%d)", f.parried);
+    CHECK(f.will == kWillMax, "the third parry fills the will (%d)", f.will);
+    in[1] = InputState{};
+    const float before = v.percent;
+    for (int i = 0; i < 40; ++i) m.step(in);
+    CHECK(v.percent > before, "the riposte hits (%.0f%% -> %.0f%%)", before, v.percent);
+    delete &m;
+  }
+}
+
 int main(int argc, char** argv) {
   std::string only = argc > 1 ? argv[1] : "";
   if (only.empty() || only == "kb") testKnockback();
@@ -1238,6 +1320,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "cpu10") testLevel10();
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();
+  if (only.empty() || only == "hakuen") testHakuen();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "recovery") testRecoveryStages();
   if (only.empty() || only == "battle") testBattles();

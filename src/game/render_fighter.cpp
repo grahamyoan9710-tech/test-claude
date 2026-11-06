@@ -811,8 +811,10 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
   const Hero h = f.def->hero;
   if (!art::hasClips(h)) return;
   const float sf = float(f.stateFrame);
-  // A weapon that changes the look has its own states (w1_idle...): the weapon is seen in every animation.
-  const int wstates = f.weapon == 0 ? art::kSheetWState0 : f.weapon == 1 ? art::kSheetWState1 : -1;
+  // A weapon that changes the look has its own states (w1_idle...): the weapon is seen in every animation. A weapon
+  // whose clips are not made yet borrows the other one's (the new 01's awakened blade is the same blade).
+  const int slot = f.weapon == 1 && !art::hasSheet(h, art::kSheetWState1 + art::kSheetIdle) ? 0 : f.weapon;
+  const int wstates = slot == 0 ? art::kSheetWState0 : slot == 1 ? art::kSheetWState1 : -1;
   auto own = [&](int a) { return wstates >= 0 && art::hasSheet(h, wstates + a) ? wstates + a : a; };
   auto loop = [&](int a) {
     a = own(a);
@@ -832,7 +834,8 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     case FState::Idle: case FState::Respawn: loop(art::kSheetIdle); break;
     case FState::Walk: case FState::Run: {  // the steps follow the ground covered (no skating)
       const bool run = f.state == FState::Run;
-      if (run && sf < 12.0f && once(art::kSheetDash, sf / 12.0f)) break;  // the dash, then the run
+      constexpr float kDash = 22.0f;  // the dash, then the run (the owner wants the dash well seen)
+      if (run && sf < kDash && once(art::kSheetDash, sf / kDash)) break;
       if (loop(run ? art::kSheetRun : art::kSheetWalk)) {
         const float cycle = f.def->height * (run ? 1.4f : 0.8f), u = f.pos.x * float(f.facing) / cycle;
         p.sheetPhase = u - std::floor(u);
@@ -878,7 +881,7 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     case FState::Attack: {
       const MoveDef* md = f.currentMove();
       if (!md || f.move < 0 || f.move >= MOVE_COUNT) break;
-      const int withWeapon = f.weapon == 0 ? art::kSheetWeapon0 : f.weapon == 1 ? art::kSheetWeapon1 : -1;
+      const int withWeapon = slot == 0 ? art::kSheetWeapon0 : slot == 1 ? art::kSheetWeapon1 : -1;
       int clip = withWeapon >= 0 && art::hasSheet(h, withWeapon + f.move) ? withWeapon + f.move
                                                                             : art::kSheetMove0 + f.move;
       if (!art::hasSheet(h, clip)) break;

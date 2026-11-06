@@ -62,11 +62,19 @@ float computeKnockback(float p, float d, float w, float g, float b) {
 
 bool Match::tryCounter(Fighter& v, Fighter* attacker) {
   const MoveDef* m = v.currentMove();
-  if (!m || m->counterStart < 0 || v.counterTriggered) return false;
+  const bool held = m && m->parries > 0;  // a held counter keeps parrying until its last parry
+  if (!m || m->counterStart < 0 || (v.counterTriggered && !(held && v.parried < m->parries))) return false;
   if (v.moveFrame < m->counterStart || v.moveFrame >= m->counterEnd) return false;
   v.counterTriggered = true;
-  v.moveFrame = m->counterEnd - 1;
-  v.intangible = 20;
+  if (held) ++v.parried;
+  if (m->fillsWill) v.gainWill(held && v.parried >= m->parries ? kWillMax : 1);
+  const bool last = !held || v.parried >= m->parries || !v.charging;
+  if (last) {
+    v.charging = false;
+    v.moveFrame = m->counterEnd - 1;
+  }
+  if (held && v.parried >= m->parries) v.intangible = m->duration - m->counterEnd + 20;  // untouchable riposte
+  else v.intangible = last ? 20 : 6;  // still on guard: the next blow is parried too
   v.hitlag = 6;
   if (attacker) {
     v.facing = attacker->pos.x > v.pos.x ? 1 : -1;
@@ -93,7 +101,8 @@ void Match::resolveHits() {
     if (m->counterStart >= 0 && !a.counterTriggered) continue;
     float mul = a.damageMul();
     if (a.move == FinalSmash) mul *= kUltDamageMul;
-    if (m->chargeFrame >= 0) mul *= 1.0f + m->chargeDamageMul * float(a.charge) / float(m->maxCharge);
+    if (m->chargeFrame >= 0 && m->parries == 0) mul *= 1.0f + m->chargeDamageMul * float(a.charge) / float(m->maxCharge);
+    if (m->parries > 0) mul *= 1.0f + 0.35f * float(std::max(0, a.parried - 1));  // harder for each parry
     // A held weapon: harder hits; the base moves also reach further and take its element (a
     // transformation's element wins).
     const WeaponDef* w = a.weaponDef();
@@ -175,6 +184,10 @@ void Match::resolveHits() {
     if (!ult && tryCounter(v, &a)) continue;  // ultimates cannot be countered
     int dir = ph.h.reverse ? -a.facing : a.facing;
     applyHit(&a, v, ph.h, ph.pos, dir, ph.mul, false, ult);
+    if (const MoveDef* am = a.currentMove(); am && am->fillsWill && am->counterStart < 0 && !a.willGiven) {
+      a.willGiven = true;
+      a.gainWill(1);
+    }
   }
 
   for (auto [ai, vi] : grabs) {

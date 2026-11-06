@@ -245,6 +245,8 @@ def clips(fighter):
                 c[k] = (n, base, pin, loop, direction,
                         desc + f" He keeps holding {held} the whole time; the weapon stays visible.")
         add_kits(fighter, c)
+        for k in sp.get("skip", []):  # ... with a weapon too (w0_airjump)
+            c.pop(k, None)
         for k, desc in QA_PROMPTS.get(fighter, {}).items():  # prompts rewritten after the clip review (qa14)
             if k in c:
                 n, base, pin, loop, direction, _ = c[k]

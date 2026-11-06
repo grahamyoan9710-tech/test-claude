@@ -230,6 +230,14 @@ struct MoveDef {
   int comboStart = 0, comboEnd = 0; // window to buffer the follow-up
   int comboAt = 0;                  // frame where the follow-up begins
   bool comboOnSpecial = false;      // follow-up uses special instead of attack
+  // A timed draw (the new 01's sheathing): its charge (chargeFrame) released inside [perfectFrom, perfectTo] starts
+  // perfectMove, released outside it releaseMove. A move ending with the attack held since it began: holdMove follows.
+  int perfectMove = -1, perfectFrom = 0, perfectTo = 0;
+  int releaseMove = -1;
+  int holdMove = -1;
+  bool fillsWill = false;           // its first hit (a counter: each parry) gives a charge of will (willForm)
+  int parries = 0;                  // a held counter (chargeFrame in its window): parries up to that many blows, then
+                                    // ripostes on release, harder for each parry, untouchable after the last one
   // Cinematic ultimates
   UltFx ultFx = UltFx::None;        // the cinematic the renderer draws while the move runs
   Vec2 holdAt;                      // captured fighters are pulled there (from the center, facing right)
@@ -256,6 +264,7 @@ struct Palette {
 // Who the fighter is: its clips and pictures are assets/sprites/<id>_*.png (CharacterDef::id).
 enum class Hero : uint8_t {
   P01, P02, P03, P04, P05, P06, P07, P08, P09, P10, P11, P12, P13, P14, P15, P16, P17,
+  H01,  // the new 01 (Hakuen), a beta beside the old 01
   Count
 };
 
@@ -288,6 +297,8 @@ struct FormDef {
   bool superArmor = false;    // weak hits do not make it flinch
   const char* aura = nullptr; // its PixelLab aura, looping around the fighter
   std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while transformed
+  bool m1Waves = false;       // its M1 blows (jab, jab2, jab3, the air M1) also fire m1Wave (the new 01's awakening)
+  ProjectileDef m1Wave;
 };
 
 struct CharacterDef {
@@ -311,6 +322,7 @@ struct CharacterDef {
   std::array<MoveDef, MOVE_COUNT> moves;
   std::array<WeaponDef, 2> weapons;
   std::vector<FormDef> forms;
+  int willForm = -1;  // 3 charges of will (MoveDef::fillsWill): this transformation begins once the fighter is free
 };
 
 const std::vector<CharacterDef>& roster();

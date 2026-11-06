@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "c096179b-83fb-4030-8f6e-d234503c3177",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:2e087047-b4eb-4ea6-b740-adf0a73f7e5d",
+  "last_frame_url": "upload:7f976700-52fe-4a17-8750-1c9992cf3830",
+  "description": "karate high kick to finish the combo, eyes narrowed: he lifts the rear knee high, then snaps the leg out forward at head height in a fast arc, holds it an instant, then sets the foot down back into the stance. His body stays seen from the side, facing right; the coat and the ponytail fly out with the kick. On the two frames of the kick only, a thin curved white smear edged with red follows just behind the foot along the end of its path, a short arc, never a full circle, staying close to the leg; it is gone after. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: c096179b-83fb-4030-8f6e-d234503c3177\njob_id: c096179b-83fb-4030-8f6e-d234503c3177\ndescription: karate high kick to finish the combo, eyes narrowed: he lifts the rear knee high, then snaps the leg out forward at head height in a fast arc, holds it an instant, then sets the foot down back into the stance. His body stays seen from the side, facing right; the coat and the ponytail fly out with the kick. On the two frames of the kick only, a thin curved white smear edged with red follows just behind the foot along the end of its path, a short arc, never a full circle, staying close to the leg; it is gone after. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c096179b-83fb-4030-8f6e-d234503c3177\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/c096179b-83fb-4030-8f6e-d234503c3177/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 46a4d4b8-2401-5fa0-ac15-00617ca7de57\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

@@ -17,6 +17,9 @@ dist/
 tools/pixellab/pxa/p[0-9][0-9]/*.qa*/
 tools/pixellab/pxa/p[0-9][0-9]/*.generic*/
 tools/pixellab/pxa/p[0-9][0-9]/_test*/
+!tools/pixellab/pxa/h[0-9][0-9]/**/*.png
+tools/pixellab/pxa/h[0-9][0-9]/*.v[0-9]*/
+tools/pixellab/pxa/h[0-9][0-9]/*.fx*/
 tools/pixellab/pxa/jobs_*.json
 tools/pixellab/pxa/jobs_*.log
 tools/pixellab/vfx/move/

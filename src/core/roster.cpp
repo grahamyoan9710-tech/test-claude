@@ -466,6 +466,94 @@ CharacterDef make08() {
   return k.c;
 }
 
+// ---------------------------------------------------------------------------------------------
+// The new 01 · Hakuen, the white blade (a beta beside the old 01; docs: the fiches' Claude Doc). Karate bare-handed.
+// ---------------------------------------------------------------------------------------------
+// His draw: the attack held after an M1 sheathes the blade (Rengaine, a red glint); released on the glint, the
+// Coupe-éclair (through the opponent, untouchable, a charge of will), else a plain cut. Bare-handed, the hand's edge.
+void drawCut(Fighter& k, int slot, Limb limb, float dmg) {
+  const F e = k.e;
+  MoveDef sheathe = mv("Rengaine", 14, {});
+  sheathe.chargeFrame = 12;
+  sheathe.maxCharge = 75;
+  sheathe.perfectMove = Extra2;
+  sheathe.perfectFrom = 18;
+  sheathe.perfectTo = 32;
+  sheathe.releaseMove = Extra3;
+  MoveDef flash = rush("Coupe-éclair", e, k.fx(slot < 0 ? "x" : slot == 0 ? "a" : "b", "draw"), 22, 0, dmg, limb);
+  flash.intangibleStart = 4;
+  flash.intangibleEnd = 18;
+  flash.fillsWill = true;
+  flash.hitboxes = {imp(hb(6, 12, 20, -6, 40, dmg, 40, 55, 80, limb, 0, e))};  // cuts all along the dash, not after it
+  MoveDef plain = mv("Coupe", 28, {hb(4, 8, 46, -8, 26, dmg * 0.6f, 361, 40, 85, limb, 0, e)});
+  for (MoveDef* m : {&sheathe, &flash, &plain}) sc(*m, k.S, k.P);
+  if (slot < 0) {
+    k.c.moves[Extra1] = sheathe, k.c.moves[Extra2] = flash, k.c.moves[Extra3] = plain;
+    for (int id : {Jab, Jab2, Jab3}) k.c.moves[id].holdMove = Extra1;
+    return;
+  }
+  auto& w = k.c.weapons[slot].moves;
+  for (auto& [id, m] : w)
+    if (id == Jab || id == Jab2 || id == Jab3) m.holdMove = Extra1;
+  w.insert(w.end(), {{Extra1, sheathe}, {Extra2, flash}, {Extra3, plain}});
+}
+
+// Prescience: the guard held (the special held) parries up to three blows, a spark each; on release the riposte,
+// harder for each parry; after the third, untouchable and the will full.
+MoveDef prescience(MoveDef m) {
+  m.chargeFrame = 8;
+  m.maxCharge = 120;
+  m.parries = 3;
+  m.fillsWill = true;
+  return m;
+}
+
+CharacterDef makeH01() {
+  Fighter k = start(1, "Lame blanche", Build::Medium, F::Fire,
+                    colours({236, 232, 228}, {200, 36, 44}, {232, 178, 64}, {224, 222, 236}, {214, 40, 48}),
+                    colours({236, 232, 228}, {120, 64, 180}, {232, 178, 64}, {224, 222, 236}, {150, 90, 230}));
+  k.c.id = "h01";
+  k.c.name = "Hakuen";
+  k.c.hero = Hero::H01;
+  const F e = k.e;
+  skills(k, -1, along(shot("Tranchant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
+         through("Pas-iaï", e, k.fx("x", "s"), 9), rise("Spirale montante", e, k.fx("x", "u"), 15.5f, 4, L::ArmFront),
+         prescience(counter("Prescience", e, k.fx("x", "d"), false, L::ArmFront)));
+  ultimateOf(k, -1, ult::ambush("FORGE DE L'AUBE", e, k.fx("x", "ult"), L::ArmFront, 9));
+  drawCut(k, -1, L::ArmFront, 11);
+
+  arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
+      {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
+  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
+         through("Ruée-iaï", e, k.fx("a", "s"), 11), rise("Coupe en spirale", e, k.fx("a", "u"), 15.5f, 4),
+         prescience(counter("Prescience de la lame", e, k.fx("a", "d"), false)));
+  ultimateOf(k, 0, ult::ambush("FORGE DE L'AUBE", e, k.fx("a", "ult"), L::Weapon, 9));
+  drawCut(k, 0, L::Weapon, 14);
+
+  arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
+      {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
+  skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, "pfx_crescent", 11, 28, 10)),
+         through("Ruée ardente", e, k.fx("b", "s"), 12), rise("Spirale de feu", e, k.fx("b", "u"), 16, 5),
+         prescience(counter("Prescience ardente", e, k.fx("b", "d"), false)));
+  ultimateOf(k, 1, ult::ambush("FORGE DE L'AUBE", e, k.fx("b", "ult"), L::Weapon, 11));
+  drawCut(k, 1, L::Weapon, 15);
+
+  // Volonté de la lame: 3 charges (Coupe-éclair, parries) and he awakens for 8 s: his M1 send cutting waves, his
+  // neutral three crescents in a fan (great crescents of fire with the awakened blade).
+  const int awake = ult::form(k.c, k.fx("t", "aura"), e, 8, 1.1f, 1.0f);
+  FormDef& aw = k.c.forms[awake];
+  aw.m1Waves = true;
+  aw.m1Wave = proj({30, -6}, {11, 0}, 0, 26, 16, 3.5f, 20, 40, e, PV::Crescent);
+  aw.m1Wave.fx = "pfx_crescent";
+  aw.m1Wave.piercing = true;
+  MoveDef fan = spread(piercing(shot("Trois croissants", e, PV::Crescent, "pfx_crescent", 10, 22, 7)), 3, 14);
+  sc(fan, k.S, k.P);
+  fan.cooldown = kSkillCooldown;
+  aw.moves.push_back({NSpecial, fan});
+  k.c.willForm = awake;
+  return k.c;
+}
+
 }  // namespace
 
 bool g_rawHitboxes = false;
@@ -517,7 +605,7 @@ void applyHitFit(std::vector<CharacterDef>& v) {
 
 const std::vector<CharacterDef>& roster() {
   static const std::vector<CharacterDef> r = [] {
-    std::vector<CharacterDef> v = {make01(), make02(), make03(), make07(), make08()};
+    std::vector<CharacterDef> v = {make01(), make02(), make03(), make07(), make08(), makeH01()};
     if (!g_rawHitboxes) applyHitFit(v);
     return v;
   }();

@@ -73,3 +73,9 @@ p03/ledgegrab
 p03/w0_jump
 p08/w0_ledgegrab
 p03/w0_ledgegrab
+h01/runstart
+h01/jump
+h01/holdstart
+h01/knockdown
+h01/ledgegrab
+h01/rengaine

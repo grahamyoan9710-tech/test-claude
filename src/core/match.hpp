@@ -34,7 +34,8 @@ enum class EvType : uint8_t {
   Reflect,
   Transform,   // a = fighter, b = form index: a transformation begins
   FormEnd,     // a = fighter: it wears off
-  Capture      // a = attacker, b = victim: caught by a cinematic ultimate
+  Capture,     // a = attacker, b = victim: caught by a cinematic ultimate
+  Glint        // a = fighter, b = move: a timed draw is ready, released now it is perfect
 };
 
 // A fighter's weapon lying on the stage (or falling on it): its owner takes it by standing on it and holding the

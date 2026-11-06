@@ -23,6 +23,7 @@ constexpr float kUltPerShieldHit = 0.0f;  // attacker, per damage blocked by a s
 // CPU levels go from 1 to 10; level 10 plays like a perfect level 9 and hits twice as hard.
 constexpr int kMaxCpuLevel = 10;
 constexpr float kLevel10Power = 2.0f;
+constexpr int kWillMax = 3;  // charges of will (CharacterDef::willForm)
 
 struct Fighter {
   int id = 0;          // index in Match::fighters
@@ -66,6 +67,8 @@ struct Fighter {
   bool counterTriggered = false;
   bool moveLeftGround = false;
   bool moveStartedAir = false;
+  int parried = 0;           // blows parried by the current held counter (MoveDef::parries)
+  bool willGiven = false;    // the current move already gave its charge of will
   std::vector<int> hitList;  // victim * 64 + group
 
   // Combat
@@ -101,6 +104,8 @@ struct Fighter {
   int captor = -1;           // Captured: the fighter whose ultimate holds this one
   Vec2 capturePos;           // Captured with holdInPlace: where it was caught
   bool finalSmash = false;   // ultimate ready (full meter or Clash Orb broken): the ultimate button unleashes it
+  int will = 0;              // charges of will (CharacterDef::willForm), 0..kWillMax
+  int attackHeld = 0;        // frames the attack button has been held
 
   // Input
   InputState in, prev;
@@ -175,5 +180,8 @@ struct Fighter {
     return false;
   }
   bool isIntangible() const { return intangible > 0 || invincible > 0; }
+  void gainWill(int n) {
+    if (def->willForm >= 0) will = will + n > kWillMax ? kWillMax : will + n;
+  }
   bool active() const { return !eliminated && state != FState::Dead; }
 };

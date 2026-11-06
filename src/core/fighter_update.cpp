@@ -106,6 +106,8 @@ void Match::startMove(Fighter& f, int id) {
   f.charging = m.chargeFrame >= 0;
   f.comboQueued = false;
   f.counterTriggered = false;
+  f.parried = 0;
+  f.willGiven = false;
   f.moveLeftGround = false;
   f.moveStartedAir = !f.grounded;
   f.hitList.clear();
@@ -125,6 +127,12 @@ void Match::startChargedSmash(Fighter& f, int id) {
 
 bool Match::tryGroundActions(Fighter& f) {
   const IS& in = f.in;
+  if (f.will >= kWillMax && f.def->willForm >= 0 && f.form < 0) {  // full will: one step back, and it awakens
+    f.will = 0;
+    startForm(f, f.def->willForm);
+    f.vel.x = -6.0f * float(f.facing);
+    return true;
+  }
   // The ultimate: its own button only (U on the keyboard), never the special.
   if (f.finalSmash && freezeTimer == 0 && f.pressed(&IS::ultimate)) {
     startFinalSmash(f);
@@ -584,14 +592,20 @@ void Match::updateMove(Fighter& f) {
   const MoveDef& m = f.moveDef(f.move);
   const IS& in = f.in;
   if (f.charging && f.moveFrame == m.chargeFrame) {
-    bool held = isSpecialMove(f.move) ? in.special : (in.attack || in.smash || in.cstick.len() > 0.5f);
+    // a draw (the Rengaine, after a held jab) is held with the attack button; a special with its own
+    bool held = isSpecialMove(f.move) && m.releaseMove < 0 ? in.special : (in.attack || in.smash || in.cstick.len() > 0.5f);
     if (held && f.charge < m.maxCharge) {
       f.charge++;
+      if (m.perfectMove >= 0 && f.charge == m.perfectFrom) emit(EvType::Glint, f.center(), f.id, f.move);
       if (f.grounded) groundFriction(f);
       else applyGravity(f, 0.5f);
       return;
     }
     f.charging = false;
+    const bool perfect = f.charge >= m.perfectFrom && f.charge <= m.perfectTo;
+    if (m.perfectMove >= 0 && perfect) return startMove(f, m.perfectMove);
+    if (m.releaseMove >= 0) return startMove(f, m.releaseMove);
+    if (m.parries > 0 && f.counterTriggered) f.moveFrame = m.counterEnd - 1;  // released after a parry: the riposte
   }
   f.moveFrame++;
   const int t = f.moveFrame;
@@ -603,6 +617,12 @@ void Match::updateMove(Fighter& f) {
         emit(EvType::Swing, f.center(), f.id, -1, h.damage, {}, h.fx);
         break;
       }
+  }
+  const FormDef* fd = f.formDef();
+  if (fd && fd->m1Waves && (f.move <= Jab3 || f.move == NAir) && !m.hitboxes.empty() && m.hitboxes[0].start == t) {
+    ProjectileDef w = fd->m1Wave;
+    if (f.weapon == 1) w.radius *= 1.5f, w.hit.radius *= 1.5f, w.hit.damage *= 1.3f;  // B: great crescents of fire
+    spawnProjectiles(f, w);
   }
   for (const auto& e : m.vel) {
     if (e.frame != t || (e.airOnly && f.grounded)) continue;
@@ -706,6 +726,7 @@ void Match::updateMove(Fighter& f) {
   }
 
   if (f.moveFrame >= m.duration) {
+    if (m.holdMove >= 0 && f.grounded && f.in.attack && f.attackHeld > m.duration) return startMove(f, m.holdMove);
     if (f.move == Pummel || ((f.move >= FThrow && f.move <= DThrow) && f.grabPartner >= 0)) {
       setState(f, FState::Holding);
       f.stateFrame = 7;

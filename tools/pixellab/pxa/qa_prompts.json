@@ -93,5 +93,29 @@
   "bthrow": "holding an invisible opponent, turns around and lowers both open hands behind him, then returns to the fighting stance; nothing shines, nothing appears around him, no dust. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w0_fthrow": "holding an invisible opponent with his free hand, pushes that hand forward, the sword held still at his side, then returns to the ready stance. Nothing appears around him: no dust, no flash, no sparks. Only the character is drawn: the opponent is invisible, there is no other person in the frame",
   "w0_nair": "in mid-air, holds the sword out to the side at arm's length for a moment, then tucks again, staying high in the air; nothing below him, nothing around him"
+ },
+ "h01": {
+  "bthrow": "holding an invisible opponent in front of him, turns his upper body around to the left and brings both arms back behind him, opens his hands, then turns back into the fighting stance. There is no other person in the frame and his hands stay empty.",
+  "dair": "in mid-air, lifts one leg high with the knee bent, then drives the heel straight down beneath him with the leg stretched, then pulls the leg back up into the tucked pose; only his leg moves and nothing appears under his feet",
+  "dash": "from the upright stance he dips for an instant, then takes one long low step to the right, the body leaning far forward and the back leg fully stretched behind him, the arms held back, the coat and the ponytail flowing back, then lands on the front foot already in a running stride; he is alone on an empty background in every frame",
+  "dtilt": "crouching karate foot sweep: drops low on the back leg and stretches the front leg out along the floor in front of him, then pulls it back and rises into the guard; only his leg moves and nothing appears around the foot",
+  "fthrow": "holding an invisible opponent, steps forward and pushes both open palms straight forward, then returns to the fighting stance. There is no other person in the frame and his hands stay empty.",
+  "getupattack": "lying on his back, rolls onto his side and kicks one leg out in front of him and then behind him, then springs up into the fighting stance",
+  "hurt": "recoils from a hit: teeth clenched, eyes squeezed shut, head jerked back, the body leaning backwards, arms flung out, then holds that pained pose; there are no marks, symbols or lines around him",
+  "ledgeattack": "rises from a low crouch and kicks one leg forward low, then steps back into the fighting stance",
+  "nair": "in mid-air, turns his body once around on the spot with both arms stretched out to the sides, hands open and flat, then tucks back in; his hands stay empty",
+  "nspecial": "draws his open right hand back to his left hip as if gripping a sword in its sheath, then throws the arm forward and out to the right at hip height, fingers together, holds the pose, then returns to the guard; his hand stays empty and nothing leaves it",
+  "pummel": "holding the invisible opponent in front of him with both hands, lifts one knee sharply up toward it, then lowers it. There is no other person in the frame and his hands stay empty.",
+  "sspecial": "leans far forward and takes three long low steps to the right, the right arm stretched straight out ahead with the open hand flat, ends with his back half turned, then straightens up into the guard; his hand stays empty",
+  "uair": "in mid-air, raises one open hand straight up over his head, fingers together, then brings it back down to the tucked pose; his hand stays empty",
+  "ultimate": "crouches low, his right hand resting at his left hip as if on a sword hilt, holds perfectly still with his eyes closed, then stretches the right arm fully across to the right at chest height, ending turned away, then slowly stands back into the guard; his hands stay empty",
+  "usmash": "plants the front foot and lifts the rear leg straight up high over his head, the leg stretched, then brings it down and lands back in the guard",
+  "uspecial": "crouches low, then springs straight up, turning around once in the air with the right arm raised straight above his head, the coat and the ponytail streaming below him, then comes back down into the guard; his hand stays empty",
+  "uthrow": "lifts the invisible opponent he is holding high above his head with both arms and lets go upward, then returns to the fighting stance. There is no other person in the frame and his hands stay empty.",
+  "utilt": "raises his open right hand, fingers together, from low in front straight up above his head, then lowers it back into the guard; his hand stays empty",
+  "dsmash": "drops low and kicks one leg out along the floor in front of him, then turns on the spot and kicks it out behind him, then rises back into the guard",
+  "fsmash": "draws his open right hand back to his left hip as if gripping a sword in its sheath, holds, then thrusts the arm straight forward at chest height, fingers together, then recovers into the guard; his hand stays empty",
+  "bair": "in mid-air, looks back over his shoulder and pushes one heel straight out behind him, a karate back kick, then back to the tucked pose",
+  "coupeeclair": "from the still iai stance, pulls his right hand out from his left hip and stretches the arm straight forward at chest height, fingers together, the body leaning far forward, holds that pose for an instant, then returns to the karate guard; his hands stay empty"
  }
 }

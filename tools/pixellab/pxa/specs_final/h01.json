@@ -1,0 +1,263 @@
+{
+ "guard_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip",
+ "armed": "none",
+ "she": false,
+ "style": "Karate",
+ "overrides": {
+  "idle": [
+   12,
+   "guard",
+   true,
+   true,
+   "none",
+   "calm idle loop: stands tall and still in the same upright stance, the chest rising and falling slowly with calm breaths (a very small movement), shoulders relaxed, knees soft and never bending lower, hips at the same height the whole time; the ponytail, the red ribbons and the coat tails drift gently in a soft wind, a little after the body; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
+  ],
+  "walk": [
+   8,
+   "guard",
+   true,
+   true,
+   "none",
+   "walks to the right: keeps exactly the same three-quarter view facing right as in the first frame, his chest, face and toes pointing to the right, never turning towards the viewer; slow, measured heel-to-toe steps, upright chest, chin up, relaxed hands swinging a little opposite to the legs, the head bobbing only slightly, the coat tails and the ponytail swaying with each step: the back foot steps forward past the front foot, then the other; a seamless two-step cycle that ends exactly on the first pose"
+  ],
+  "victory": [
+   12,
+   "guard",
+   null,
+   false,
+   "none",
+   "victory pose: straightens up calmly, lowers his hands, then rests his right hand at his left hip as if on a sword hilt and gives a small confident side smile, holding still, the ponytail and ribbons floating"
+  ],
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate jab, fast and precise, eyes narrowed: from the calm upright stance his right hand closes into a fist and snaps straight forward at face height to full extension, then snaps straight back into the stance. His body stays seen from the side, facing right, never facing the viewer; the white coat stays off his shoulders, open over his black top. On the one frame of full extension only, a thin short white smear edged with red trails just behind the fist, no longer than his forearm; it is gone on the next frame"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate reverse punch, eyes narrowed: a short step in, the hips turn and his left fist drives straight forward at chest height to full extension while his right fist pulls back tight against his right hip, then he settles back into the stance. His body stays seen from the side, facing right, never facing the viewer; the white coat stays off his shoulders, open over his black top. On the one frame of full extension only, a thin short white smear edged with red trails just behind the fist, no longer than his forearm; it is gone on the next frame"
+  ],
+  "jab3": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate high kick to finish the combo, eyes narrowed: he lifts the rear knee high, then snaps the leg out forward at head height in a fast arc, holds it an instant, then sets the foot down back into the stance. His body stays seen from the side, facing right; the coat and the ponytail fly out with the kick. On the two frames of the kick only, a thin curved white smear edged with red follows just behind the foot along the end of its path, a short arc, never a full circle, staying close to the leg; it is gone after"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "karate side kick: turns the hips and thrusts the heel straight forward at chest height, the leg fully extended, then back into the guard"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising knife-hand: sweeps his open right hand, fingers together like a blade, in a big arc from low in front straight up above his head, then back into the guard"
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "crouching karate foot sweep: drops low on the back leg and sweeps the front foot in a low arc just above the floor, then rises back into the guard"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "flying side kick: leaps forward from the run and thrusts one heel straight ahead in mid-air, the leg fully extended, then lands and stands back up in the karate guard"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "charged knife-hand slash: draws his open right hand back to his left hip like a sword in its sheath, holds, then whips it forward in a flat horizontal cut at chest height, the arm fully extended like a blade, then recovers into the guard"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising crescent kick: plants the front foot and swings the rear leg in a high vertical crescent arc over his head, then lands back in the guard"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "low spinning sweeps: drops low and sweeps the floor in front of him with one leg, then spins and sweeps behind him, then rises back into the guard"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "in mid-air, spins once with both knife-hands held out like blades, cutting all around him, then opens up again"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "in mid-air, a sharp flying side kick straight forward, the leg fully extended, then pulls the leg back in"
+  ],
+  "bair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "in mid-air, looks back over his shoulder and thrusts one heel straight out behind him, a karate back kick, then back to the tucked pose"
+  ],
+  "uair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "in mid-air, an upward knife-hand cut sweeping his open hand in an arc over his head, then back to the tucked pose"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "in mid-air, raises one leg high and brings the heel straight down beneath him in an axe kick, then pulls the leg back up"
+  ],
+  "runstart": [
+   8,
+   "guard",
+   null,
+   false,
+   "none",
+   "explosive start of a sprint: drops low for an instant, then pushes off hard with the back foot and launches forward, the torso leaning forward, the arms bent and pumping, the coat and the ponytail whipping back, already in a long running stride"
+  ],
+  "run": [
+   8,
+   "runstart@last",
+   true,
+   true,
+   "none",
+   "a real athletic sprint cycle to the right: the torso leaning slightly forward, the arms bent and pumping hard opposite to the legs, long powerful strides with both feet off the ground in the middle of each stride, the coat tails and the long ponytail streaming behind him, a seamless loop that ends exactly on the first pose"
+  ],
+  "dash": [
+   12,
+   "guard",
+   null,
+   false,
+   "none",
+   "a very visible dash: from the upright stance he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward and the back leg fully extended behind him, the arms swept back, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet"
+  ],
+  "bthrow": [
+   8,
+   "holdstart@last",
+   "guard",
+   false,
+   "back",
+   "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands, no beam, no motion streak, no trail behind the arms"
+  ],
+  "dthrow": [
+   8,
+   "holdstart@last",
+   "guard",
+   false,
+   "down",
+   "holding an invisible opponent, crouches and brings both hands down to the floor in front of him, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"
+  ],
+  "hurt": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "recoils in pain from a hit: teeth clenched, eyes squeezed shut, head jerked back, the body leaning backwards, arms flung out, then holds that pained pose"
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "draws his open right hand back to his left hip like a sword in its sheath, then slashes it horizontally forward low along the ground, the knife-hand fully extended, holds the pose, then back into the guard"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "dashes forward very low and fast, then a lightning-fast horizontal knife-hand cut, ending far ahead with the arm extended like a blade and his back half turned, then back into the guard"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "crouches low, then springs straight up spinning, his knife-hand cutting in a rising spiral above his head, the coat and ponytail streaming below him"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "raises both open hands into a calm still parry guard, eyes narrowed, holds it, then answers with a fast straight knife-hand thrust forward, then back into the guard"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "crouches low into an iai stance, his right hand resting at his left hip as if on a sword hilt, holds perfectly still with his eyes closed, then whips the knife-hand across in one blinding cut, ending turned away, then slowly settles back into the guard"
+  ],
+  "rengaine": [
+   8,
+   "guard",
+   null,
+   false,
+   "none",
+   "settles into a still iai stance: brings his right hand to his left hip as if gripping the hilt of a sheathed sword, the left hand holding the invisible sheath, knees bent, eyes narrowed, and holds that pose perfectly still"
+  ],
+  "coupeeclair": [
+   8,
+   "rengaine@last",
+   "guard",
+   false,
+   "forward",
+   "from the still iai stance, whips his right knife-hand out of the invisible sheath in one blinding horizontal cut forward, the arm fully extended like a blade and the body lunging far forward, holds the cut for an instant, then returns to the karate guard"
+  ]
+ },
+ "skip": [
+  "airjump",
+  "w0_airjump",
+  "w1_airjump"
+ ]
+}

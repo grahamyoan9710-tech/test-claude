@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "5df4b6af-cba4-49a7-ba63-b3fffb4c439c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ac94c1b4-9de2-465e-821f-97c9eee9d327",
+  "last_frame_url": "upload:ad8029f6-b72b-47a7-b52c-68de690786b6",
+  "description": "lying on his back, rolls onto his side and kicks one leg out in front of him and then behind him, then springs up into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "lying on his back on the ground"
+ },
+ "reply": "id: 5df4b6af-cba4-49a7-ba63-b3fffb4c439c\njob_id: 5df4b6af-cba4-49a7-ba63-b3fffb4c439c\ndescription: lying on his back, rolls onto his side and kicks one leg out in front of him and then behind him, then springs up into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5df4b6af-cba4-49a7-ba63-b3fffb4c439c\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/5df4b6af-cba4-49a7-ba63-b3fffb4c439c/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 8b5c05d8-3ce0-559a-ae19-f83eb38d1a06\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/knockdown/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png"
+}
