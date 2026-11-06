@@ -7,6 +7,9 @@ propriétaire : `docs/refonte/*.png`.
 Avant toute chose, lire **REPRISE_PROJET.md** : il donne l'état exact du travail et la suite.
 
 ## Règles
+- Méthode (propriétaire, 06/11) : code du jeu en mode Ponytail full ; DA et UI avec Claude Design ; textes avec
+  Claude Docs ; son coffre Obsidian sert de 2e cerveau (note `Projets/Clash Horizon.md`) ; les tâches peuvent être
+  réparties entre agents ; avant chaque tâche, juger sa difficulté et choisir le modèle et l'effort en conséquence.
 - Le propriétaire du projet écrit en français : répondre en français.
 - Ne jamais recommencer le moteur ni retirer une fonctionnalité existante, **sauf la refonte décidée par le
   propriétaire** :
