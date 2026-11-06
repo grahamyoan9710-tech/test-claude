@@ -64,6 +64,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 04 h 35 UTC, même session : `scripts/recolor.py` (gratuit) repeint les images d'un perso NN dans ses
+  couleurs alternatives (palette 2 des matchs miroirs), apprises sur les deux planches v2 (`ref_persos_v2.png` et
+  `ref_persos_v2_alt.png`) : chaque pixel est rangé par sa couleur, la couleur autour de lui et sa hauteur dans le
+  dessin, et garde son ombrage. `--test` repeint les 10 persos de la planche normale et les compare à la planche
+  alternative (rendu envoyé à yoyo : `/mnt/project-files/refonte_v2/palette2_test.png`). Le jeu ne lit pas encore la
+  palette 2 (`drawCharacter` ignore `palette`) : à brancher quand les clips des nouveaux persos existeront. Limite :
+  03 (veste et cheveux blancs) et 07 (cheveux et manteau noirs) sont à vérifier sur leurs vrais clips.
 - 06/11 04 h 20 UTC, même session : **11.8**, lumière façon RTX en shaders, sans dépendance
   (`src/game/render_light.cpp`, « Qualité graphique : Haute » seulement). `light::backdrop` et `light::arena` : les
   lumières des effets `pfx_*` (`art::lastLights`) éclairent le fond et les plateformes (mélange dst × (1 + lumière)),
