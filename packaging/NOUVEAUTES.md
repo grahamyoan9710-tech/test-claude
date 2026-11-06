@@ -8,6 +8,18 @@
 
 ## Nouveautés
 
+Version 11.8 : **lumière façon RTX sur les arènes**.
+
+- Les sols brillants reflètent la scène : le ciel, les persos, leurs coups et les effets s'y mirent, un peu flous et
+  de plus en plus pâles vers l'avant. Le sol mouillé des Toits Kurenai reflète aussi ses lanternes rouges, et la pluie
+  le fait onduler. La pierre de l'Abîme Lunaire et du Monastère des Nuées est polie, les tuiles gelées de la Citadelle
+  de Givre brillent un peu, le grès du Canyon Écarlate reste mat.
+- Les effets lumineux éclairent le décor et le sol autour d'eux : leur lumière s'étale sur le sol en profondeur, plus
+  visible la nuit qu'en plein jour.
+- Chaque perso projette une ombre douce à l'opposé de l'effet qui l'éclaire : courte sous une lumière haute, longue
+  quand elle est basse à côté de lui.
+- Tout cela avec « Qualité graphique : Haute ». L'ombre sous les pieds est adoucie partout.
+
 Version 11.7 : **étincelles d'ultime et étoiles des persos sonnés**.
 
 - Pendant son ultime, le perso est entouré d'étincelles dorées, blanches et bleues qui scintillent. Les effets de

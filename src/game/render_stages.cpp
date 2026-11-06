@@ -13,10 +13,17 @@ struct Arena {
   // Where the fighters walk on each platform picture, in pixels below its first row: the middle of its top floor, seen
   // in depth as on a Smash stage.
   float solidTop, thinTop, smallTop;
+  // The top floor of the solid picture: its back and front edges (rows), how much it mirrors, rain on it.
+  float floorBack, floorFront, gloss;
+  bool rain;
+  float light;  // how much the effects' light shows: more at night than in daylight
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 26, 0, 0}, kFrost{"givre", 18, 12, 0}, kCrimson{"ecarlate", 22, 14, 0},
-      kKurenai{"kurenai", 54, 10, 0}, kClouds{"nuees", 72, 18, 10};
+  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 0.9f},  // polished stone
+      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 0.6f},                  // icy roof tiles, snow all around
+      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 1.0f},               // dry sandstone
+      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 1.6f},                 // wet stone under the rain, at night
+      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 0.5f};               // polished flagstones, in daylight
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
@@ -58,4 +65,19 @@ void drawPlatform(const Platform& p, StageTheme theme, float) {
 }
 
 void drawForeground(StageTheme, Vec2, float) {}
+
+float lightGain(StageTheme theme) {
+  const Arena* a = arena(theme);
+  return a ? a->light : 1.0f;
+}
+
+bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
+  const Arena* a = arena(theme);
+  float w, h;
+  if (!a || !p.solid || p.rect.w < 300.0f || !art::pictureSize(pictureName(*a, "solid").c_str(), w, h)) return false;
+  const float k = (p.rect.w + 20.0f) / w;  // as drawPlatform scales it
+  out = {p.rect.y - (a->solidTop - a->floorBack) * k, p.rect.y, p.rect.y + (a->floorFront - a->solidTop) * k, a->gloss,
+         a->rain};
+  return true;
+}
 }  // namespace stageart

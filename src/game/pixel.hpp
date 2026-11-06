@@ -15,6 +15,7 @@ float artPixel();
 bool enabled();  // settings: "Personnages en pixel art"
 // The frame's render texture (set by the app before drawing a frame): sprites draw back into it.
 void setFrameTarget(const RenderTexture2D* target);
+const RenderTexture2D* frameTarget();  // null outside a frame
 // Draws `draw` (in the current coordinate space: world with a camera, or screen) as a pixel-art sprite.
 // `bounds` (same space) must contain everything it draws. `draw` gets the alpha to draw with: 1 in pixel
 // art (the whole sprite is faded by `alpha` afterwards), `alpha` itself in smooth HD.

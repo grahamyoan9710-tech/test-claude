@@ -69,6 +69,16 @@ bool drawFx(const char* name, float t, Vec2 at, float size, float rot = 0.0f, bo
             Color tint = WHITE, bool castLight = true);
 // Starts a frame: the light the ParticleFX effects threw two frames ago no longer falls on the fighters.
 void newFrame();
+unsigned frameId();  // counts the frames newFrame started
+// The light of a ParticleFX effect (world units): where its bright pixels are, how far they spread, its colour and
+// strength (its frame's, faded with it).
+struct Light {
+  Vec2 at;
+  float r;
+  Color c;
+  float k;
+};
+const std::vector<Light>& lastLights();  // the effects of the frame before, all drawn
 bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0.0f, bool flip = false,
                  float alpha = 1.0f, Color tint = WHITE, bool castLight = true);
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha = 1.0f,

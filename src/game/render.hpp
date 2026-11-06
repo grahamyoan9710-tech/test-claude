@@ -172,6 +172,15 @@ void drawStagePreview(const StageDef& stage, Rectangle area, float time);
 // and bottom-right corners cut, like ui::bevel.
 void drawStageThumb(int index, const StageDef& stage, Rectangle area, float cut = 0.0f);
 
+// ---- Light (render_light.cpp), with "Qualité graphique : Haute" only --------------
+namespace light {
+void backdrop(const Match& m, const Camera2D& cam);  // after the backdrop: the effects light it, faintly
+// After the platforms: the effects light them, the fighters' shadows fall away from the effects.
+void arena(const Match& m, const Camera2D& cam, float time);
+// After the fighters and the effects, before the name tags: the glossy floors mirror the scene where they show.
+void reflections(const Match& m, const Camera2D& cam, float time);
+}  // namespace light
+
 // ---- HUD (render_hud.cpp) ---------------------------------------------------
 // devices (indexed by port, optional): shows each human's ultimate button once the meter is full.
 void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices = nullptr);

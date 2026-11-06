@@ -510,8 +510,10 @@ void MatchScreen::draw() {
   Camera2D cam = camera();
   drawBackground(m_.stage(), W(cam.target), cam.zoom, time_);
   beginWorld(cam);
+  light::backdrop(m_, cam);
   if (kVfx) drawUltimateBackdrop(m_, time_);  // an ultimate's domain replaces the sky; the stage stays readable
   drawPlatforms(m_, time_);
+  light::arena(m_, cam, time_);  // the effects' light on the platforms, the shadows
   drawUltimateFront(m_, time_);
   drawOrb(m_, time_);
   drawItems(m_, time_);
@@ -530,10 +532,11 @@ void MatchScreen::draw() {
     drawFighter(m_.fighters[star], m_, time_, debug_);
   }
   drawBeams(m_, time_);
-  drawFighterTags(m_);
   drawProjectiles(m_, time_);
   if (kVfx) fx_.drawWorld();
   else fx_.drawImpacts();  // the movement smoke and the pixel impacts stay while the other effects are off
+  light::reflections(m_, cam, time_);  // the floors mirror the scene (not the name tags)
+  drawFighterTags(m_);
   drawCallouts();          // over the effects: the orb's spark flies out of its own burst
   if (debug_) {
     const Rect& b = m_.stage().blast;

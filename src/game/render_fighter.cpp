@@ -1436,8 +1436,13 @@ void drawGroundShadow(const Fighter& f, const Match& m, float alpha) {
   float h = ground - f.pos.y;
   if (h > 480.0f) return;
   float k = 1.0f - std::max(0.0f, h) / 480.0f;
-  DrawEllipse(int(f.pos.x), int(ground), f.width() * (0.5f + 0.4f * k), 4.0f + 3.0f * k,
-              withAlpha({44, 24, 18, 255}, 0.32f * k * alpha));
+  const float rx = f.width() * (0.55f + 0.45f * k), ry = 5.0f + 3.5f * k;  // soft: darkest under the feet
+  const Color c = withAlpha({44, 24, 18, 255}, 0.62f * k * alpha);
+  rlPushMatrix();
+  rlTranslatef(f.pos.x, ground, 0.0f);
+  rlScalef(1.0f, ry / rx, 1.0f);
+  vfx::glow({0.0f, 0.0f}, rx, c, withAlpha(c, 0.0f));
+  rlPopMatrix();
 }
 
 }  // namespace

@@ -91,6 +91,8 @@ float artUnit() { return g_artUnit; }
 
 void setFrameTarget(const RenderTexture2D* target) { g_frame = target; }
 
+const RenderTexture2D* frameTarget() { return g_frame; }
+
 void sprite(Rect b, float alpha, const std::function<void(float)>& draw, float pixel, float levels) {
   if (alpha <= 0.0f) return;
   if (!enabled() || !g_frame || !ready()) {

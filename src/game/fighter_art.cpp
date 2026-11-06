@@ -105,13 +105,8 @@ void main() {
 )";
 int g_litLoc = -1, g_ldirLoc = -1, g_bodyLoc = -1, g_cellLoc = -1, g_texelLoc = -1;
 // The light of the ParticleFX effects drawn this frame and the one before (the fighters may be drawn first).
-struct Light {
-  Vec2 at;
-  float r;
-  Color c;
-  float k;  // its strength: its frame's, faded with it
-};
 std::array<std::vector<Light>, 2> g_lights;
+unsigned g_frameId = 0;
 // How much the effects light a fighter centred on c, H tall: all their strength inside one, nothing past a height
 // beyond it.
 // to: where the light comes from, its length how much from one side (1: all from there, 0: all around, as under
@@ -631,7 +626,12 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
 void newFrame() {
   g_lights[0].swap(g_lights[1]);
   g_lights[1].clear();
+  ++g_frameId;
 }
+
+const std::vector<Light>& lastLights() { return g_lights[0]; }
+
+unsigned frameId() { return g_frameId; }
 
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha, float fadeIn) {
   const Fx* F = fxOf(name);

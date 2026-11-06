@@ -126,6 +126,7 @@ if(CLASH_BUILD_GAME)
     src/game/fighter_art.cpp
     src/game/render_world.cpp
     src/game/render_stages.cpp
+    src/game/render_light.cpp
     src/game/paint.cpp
     src/game/render_hud.cpp
     src/game/render_weapons.cpp

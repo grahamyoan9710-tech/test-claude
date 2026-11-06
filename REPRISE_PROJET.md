@@ -64,6 +64,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 04 h 20 UTC, même session : **11.8**, lumière façon RTX en shaders, sans dépendance
+  (`src/game/render_light.cpp`, « Qualité graphique : Haute » seulement). `light::backdrop` et `light::arena` : les
+  lumières des effets `pfx_*` (`art::lastLights`) éclairent le fond et les plateformes (mélange dst × (1 + lumière)),
+  en ellipse sur le sol vu en profondeur ; ombres douces des persos à l'opposé de chaque lumière, coupées à la bande du
+  sol. `light::reflections` (après les persos et les effets, avant les noms) : reflet du fond (copie de l'image avant
+  les persos) et des persos et effets (copie de l'image finie) sur les sols brillants, en mélange « écran », jamais
+  sur un pied ou un effet posé sur le sol. Réglages par arène dans `render_stages.cpp` (`Arena` : bords du sol,
+  brillance, pluie, gain de lumière : nuit 1,6, jour 0,5) et `stageart::floorOf` / `lightGain`. Ombre sous les pieds
+  adoucie (dégradé). Verrou « Version et paquets » pris et libéré dans ce commit.
 - 06/11 03 h 35 UTC, même session : **11.7 publiée**. Fiches des 10 nouveaux persos de la planche ChatGPT (noms,
   histoires, idle, marche, expressions, armes A et B) dans le Claude Doc « Clash Horizon : fiches des 10 nouveaux
   persos », à valider par yoyo. Le jeton PixelLab de cette session cloud est dans la variable `PIXELLAB_TOKEN`

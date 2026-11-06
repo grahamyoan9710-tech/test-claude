@@ -6,7 +6,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DIST="$ROOT/dist"
-VERSION="${1:-11.7}"
+VERSION="${1:-11.8}"
 rm -rf "$DIST"
 mkdir -p "$DIST"
 
