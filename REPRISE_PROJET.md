@@ -64,6 +64,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 03 h 35 UTC, même session : **11.7 publiée**. Fiches des 10 nouveaux persos de la planche ChatGPT (noms,
+  histoires, idle, marche, expressions, armes A et B) dans le Claude Doc « Clash Horizon : fiches des 10 nouveaux
+  persos », à valider par yoyo. Le jeton PixelLab de cette session cloud est dans la variable `PIXELLAB_TOKEN`
+  (`pxcli.py` la lit si `px/.token` manque) : 172,9 générations jusqu'au 13/11, aucun job en cours, rien lancé
+  (accord de yoyo par perso). Commence : lumière façon RTX en shaders (11.8).
 - 06/11 03 h 30 UTC, même session : **11.7**, deux GIF ParticleFX envoyés par yoyo (sources `art/particlefx/sparkle.gif`
   et `stun_stars.gif`) : `pfx_sparkle` (`import_fx.py --step 3 --loop` : 20 images de 326 px, sous 8192 px) autour du
   perso pendant son ultime, en plus de ses effets, et `pfx_stun_stars` (`--loop`, 30 images) au-dessus de la tête d'un
