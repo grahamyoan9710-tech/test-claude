@@ -107,6 +107,8 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
     Licence (page des prix, 05/11) : permis dans un jeu vendu, même en compte gratuit, sans crédit ; interdit de
     revendre leurs effets en pack. Un effet de leur bibliothèque fait avec des sprites de CodeManu (CC BY 4.0) doit
     être crédité.
+- Règle du jeu (propriétaire, 06/11) : style « RTX », **tous les effets ont du bloom**, et aucun effet ne teinte
+  les persos au point de les salir (les effets pixel art ne les éclairent pas : ils les rendaient olive).
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
   exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en
   ont une. Un clip où un autre effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun
