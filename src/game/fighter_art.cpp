@@ -541,10 +541,12 @@ const Fx* fxOf(const char* name) {
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
     F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
-    // (pixel art keeps its own crisp light: no halo, and it does not tint the fighters)
-    if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0 && !F.info.pixel) {
+    if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-      F.glow = glowOf(img, F.info);
+      F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)
+    }
+    // Pixel art does not tint the fighters: its yellow turned the dark ones olive.
+    if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0 && !F.info.pixel) {
       const Color* px = (const Color*)img.data;
       double r = 0, g = 0, b = 0, n = 0;
       for (int i = 0; i < img.width * img.height; ++i)
@@ -643,9 +645,11 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
     rlEnd();
     rlSetTexture(0);
     ui::frameBlend();
-    const Vector4& B = F->beams[size_t(i)];
-    const Vector2 from = P(B.x, B.y);
-    if (castLight) g_lights[1].push_back({{from.x, from.y}, B.z * size, F->light, B.w * a / 255.0f});
+    if (castLight && size_t(i) < F->beams.size()) {  // (pixel art has no light: no beams)
+      const Vector4& B = F->beams[size_t(i)];
+      const Vector2 from = P(B.x, B.y);
+      g_lights[1].push_back({{from.x, from.y}, B.z * size, F->light, B.w * a / 255.0f});
+    }
   }
   return true;
 }
