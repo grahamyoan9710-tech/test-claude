@@ -93,10 +93,12 @@ class Fx {
                 float drag = 0.92f);
   void burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, float size);
   void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kZonaiGlow);
-  void hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big);
+  // The hit's mark; tint: the attacker's colour, for the white ParticleFX cut; px: the fighters' pixel size (a
+  // pixel-art mark is drawn with it). True: a ParticleFX mark was played.
+  bool hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big, Color tint, float px);
   // Light pixel-art impact: chips (and a star of short rays) thrown along dir, more and further when stronger.
   void pixelImpact(Vec2 pos, Vec2 dir, float strength, Color c, bool star = true);
-  void groundImpact(const Match& m, Vec2 feet, float strength);  // the ground bursts where a powerful blow lands
+  void groundImpact(const Match& m, Vec2 feet, float strength, Color tint, float px);  // the ground bursts under a powerful blow
   void elementBurst(Vec2 pos, Vec2 dir, HitFx fx, float heavy);
   void explosion(Vec2 pos, float r, HitFx fx, bool drawn = false);  // drawn: an effect sprite plays there too
   void startImpact(const Match& m, Vec2 pos, Vec2 dir, int attacker, int victim, HitFx fx, int len, bool ko);

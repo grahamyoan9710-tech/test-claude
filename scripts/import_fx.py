@@ -13,10 +13,12 @@ else the frame centre), --fps N (default: from the JSON or the GIF, else 15), --
 each effect is one texture, keep its strip under 8192 px), --flip (mirror the frames: the game expects effects
 travelling to the right), --track (keep the effect's centre still, its anchor x: for one that travels across its
 frames, drawn on a moving projectile), --hit R (the radius, in frame pixels after --scale, the hitbox should have to
-match the drawing: the game then sizes the effect on the hitbox).
+match the drawing: the game then sizes the effect on the hitbox), --pixel (pixel art made at its final size, one source
+pixel block per fighter pixel: --scale keeps its pixels (nearest) and the game draws it with the fighters' pixel size,
+never stretched).
 
 Writes assets/sprites/fx_NAME.png (the frames side by side, cropped to their common box, paletted when it fits)
-and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop [hit].
+and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop [hit [pixel]].
 """
 import argparse
 import json
@@ -110,6 +112,7 @@ def main():
     ap.add_argument("--step", type=int, default=1)
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--track", action="store_true")
+    ap.add_argument("--pixel", action="store_true")
     a = ap.parse_args()
 
     frames, (ax, ay), fps = load(a)
@@ -123,7 +126,7 @@ def main():
         fps = a.fps
     if a.scale != 1.0:
         size = (round(frames[0].width * a.scale), round(frames[0].height * a.scale))
-        frames = [f.resize(size, Image.Resampling.LANCZOS) for f in frames]
+        frames = [f.resize(size, Image.Resampling.NEAREST if a.pixel else Image.Resampling.LANCZOS) for f in frames]
         ax, ay = ax * a.scale, ay * a.scale
     w, h = frames[0].size
     if a.flip:
@@ -155,7 +158,7 @@ def main():
     header = [l for l in lines if l.startswith("#")]
     body = [l for l in lines if l.strip() and not l.startswith("#") and not l.split()[:2] == ["fx", a.name]]
     line = f"fx {a.name} {len(frames)} {fw} {fh} {ax - x0:.1f} {ay - y0:.1f} {fps:g} {1 if a.loop else 0}"
-    body.append(line + (f" {a.hit:g}" if a.hit > 0 else ""))
+    body.append(line + (f" {a.hit:g}" if a.hit > 0 or a.pixel else "") + (" 1" if a.pixel else ""))
     open(index, "w").write("\n".join(header + sorted(body)) + "\n")
     print(f"fx {a.name}: {len(frames)} frames {fw}x{fh} @ {fps:g} fps, {os.path.getsize(out) // 1024} KB")
 

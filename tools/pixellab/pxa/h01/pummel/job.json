@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "b8216168-4279-466a-bc6f-6fa5485431c8",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e7fbe1c4-12ef-4523-9085-ce54b689bf18",
+  "last_frame_url": "upload:b96d83d6-0ae3-4d8a-85c6-69d821e7f30c",
+  "description": "holding the invisible opponent in front of him with both hands, lifts one knee sharply up toward it, then lowers it. There is no other person in the frame and his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "holding an invisible opponent in front of him with both hands"
+ },
+ "reply": "id: b8216168-4279-466a-bc6f-6fa5485431c8\njob_id: b8216168-4279-466a-bc6f-6fa5485431c8\ndescription: holding the invisible opponent in front of him with both hands, lifts one knee sharply up toward it, then lowers it. There is no other person in the frame and his hands stay empty. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b8216168-4279-466a-bc6f-6fa5485431c8\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/b8216168-4279-466a-bc6f-6fa5485431c8/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 35e55144-c095-5cfb-b73c-03729a244ea8\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/holdstart/f_04.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

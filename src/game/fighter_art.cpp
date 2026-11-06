@@ -301,6 +301,18 @@ bool hasSheet(Hero h, int a) {
   return A && a >= 0 && a < kSheetCount && A->sheets[a].ok;
 }
 
+float pixelScale(const CharacterDef& d) {
+  if (const Art* A = clipsOf(d.hero))
+    for (const auto& S : A->sheets)
+      if (S.ok) return d.height / S.pxPerH;
+  return d.height / 170.0f;  // no clips: the effects' old scale
+}
+
+float fxSize(const char* name, const CharacterDef& d, float size) {
+  const FxInfo* I = fxInfo(name);
+  return I && I->pixel ? pixelScale(d) : size * d.height / 170.0f;
+}
+
 float sheetDrop(const CharacterDef& d, int a) {
   const Art* A = clipsOf(d.hero);
   if (!A || a < 0 || a >= kSheetCount || !A->sheets[a].ok) return 0.0f;
@@ -516,9 +528,10 @@ const Fx* fxOf(const char* name) {
     const std::string line = index.substr(pos, end - pos);
     pos = end + 1;
     char key[64] = {};
-    int frames = 0, loop = 0;
+    int frames = 0, loop = 0, pixel = 0;
     float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f, hit = 0.0f;
-    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop, &hit) < 6 ||
+    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop, &hit,
+                    &pixel) < 6 ||
         std::strcmp(key, name) != 0 || frames <= 0)
       continue;
     const unsigned char* data = nullptr;
@@ -527,8 +540,9 @@ const Fx* fxOf(const char* name) {
     Image img = LoadImageFromMemory(".png", data, int(size));
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
-    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit};
-    if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
+    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
+    // (pixel art keeps its own crisp light: no halo, and it does not tint the fighters)
+    if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0 && !F.info.pixel) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
       F.glow = glowOf(img, F.info);
       const Color* px = (const Color*)img.data;

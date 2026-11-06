@@ -59,9 +59,15 @@ struct FxInfo {
   float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f;
   bool loop = false;
   float hit = 0.0f;  // the radius (half-thickness for a beam), in frame pixels, that its hitbox should have; 0: unknown
+  bool pixel = false;  // pixel art made at its final size (import_fx.py --pixel): drawn with the fighters' pixels
   float duration() const { return frames / fps; }
 };
 const FxInfo* fxInfo(const char* name);
+// World units per pixel of the fighter's clips: a pixel-art effect drawn at this size has the same pixels.
+float pixelScale(const CharacterDef& d);
+// The size to draw effect `name` at on fighter d: a pixel-art one at d's pixel size (never stretched), the others
+// `size` times d's height over 170.
+float fxSize(const char* name, const CharacterDef& d, float size = 1.0f);
 // Time of an effect shown for as long as something lasts (projectile, beam, aura): its frames cycle.
 float fxLoopTime(const char* name, float t);
 // castLight false: a decoration on a fighter (its ultimate's sparkles, the stars of a daze) does not light him.

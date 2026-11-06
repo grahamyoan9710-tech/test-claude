@@ -30,6 +30,8 @@ IMPACTS = {("kakashi", "w0_nspecial"): "5", ("kakashi", "w0_ultimate"): "16",  #
 SHIFT = {("p03", "w0_nair"): 40, ("p08", "w0_nair"): 48, ("p08", "w1_nair"): 46}
 HELPERS = {"runstart", "ledgegrab", "holdstart", "drawsword", "airsword", "w0guard", "w1guard"}  # bases only, not clips of the game
 HELPERS |= {f"w{s}_{h}" for s in (0, 1) for h in ("runstart", "ledgegrab", "holdstart")}  # ... of a weapon's look
+# Clips the game plays under the sheet names of a fighter's extra moves (w0_rengaine -> w0_extra1 too).
+SHEET_AS = {"rengaine": ["extra1"], "coupeeclair": ["extra2", "extra3"]}  # Hakuen's draw; the plain cut reuses it
 
 
 QA_FIXES = json.load(open(os.path.join(S, "qa_fixes.json"))) if os.path.exists(os.path.join(S, "qa_fixes.json")) else {}
@@ -272,8 +274,10 @@ def main():
                 dust(args[4], fx["dust"])
             if fx.get("specks"):
                 specks(args[4], fx["specks"], extra)
-        r = subprocess.run(args, capture_output=True, text=True)
-        print((r.stdout.strip() or r.stderr.strip()[-300:]))
+        for sheet in SHEET_AS.get(state, [state]):
+            args[3] = name[:3] + sheet if wslot_name(name) else sheet
+            r = subprocess.run(args, capture_output=True, text=True)
+            print((r.stdout.strip() or r.stderr.strip()[-300:]))
 
 
 if __name__ == "__main__":

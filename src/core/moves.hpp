@@ -218,6 +218,7 @@ struct MoveDef {
   Vec2 castFxAt;
   bool castFxStays = false;         // stays where it started (a trail) instead of following the fighter
   float castFxScale = 1.0f;         // its size (1: drawn for a fighter 170 px tall in its clips)
+  const char* sparkFx = nullptr;    // played on the move's Glint (a draw ready) or on each of its parries
   PoseHint pose = PoseHint::Auto;
   BeamDef beam;
   bool reflects = false;            // a counter that sends projectiles back instead of taking them

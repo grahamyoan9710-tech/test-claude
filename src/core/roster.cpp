@@ -37,6 +37,7 @@ struct Fighter {
   float S = 1.0f, P = 1.0f;
   F e = F::Normal;
   const char* fx(const char* slot, const char* what) const { return intern(c.id + "_" + slot + "_" + what); }
+  const char* pfx(const char* what) const { return intern("pfx_" + c.id + "_" + what); }  // its ParticleFX effect
 };
 
 Fighter start(int number, const char* element, Build b, F e, Palette main, Palette alt) {
@@ -480,7 +481,8 @@ void drawCut(Fighter& k, int slot, Limb limb, float dmg) {
   sheathe.perfectFrom = 18;
   sheathe.perfectTo = 32;
   sheathe.releaseMove = Extra3;
-  MoveDef flash = rush("Coupe-éclair", e, k.fx(slot < 0 ? "x" : slot == 0 ? "a" : "b", "draw"), 22, 0, dmg, limb);
+  sheathe.sparkFx = k.pfx("glint");
+  MoveDef flash = rush("Coupe-éclair", e, k.pfx("draw"), 22, 0, dmg, limb);
   flash.intangibleStart = 4;
   flash.intangibleEnd = 18;
   flash.fillsWill = true;
@@ -500,7 +502,8 @@ void drawCut(Fighter& k, int slot, Limb limb, float dmg) {
 
 // Prescience: the guard held (the special held) parries up to three blows, a spark each; on release the riposte,
 // harder for each parry; after the third, untouchable and the will full.
-MoveDef prescience(MoveDef m) {
+MoveDef prescience(MoveDef m, const char* spark) {
+  m.sparkFx = spark;
   m.chargeFrame = 8;
   m.maxCharge = 120;
   m.parries = 3;
@@ -517,30 +520,30 @@ CharacterDef makeH01() {
   k.c.hero = Hero::H01;
   const F e = k.e;
   skills(k, -1, along(shot("Tranchant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
-         through("Pas-iaï", e, k.fx("x", "s"), 9), rise("Spirale montante", e, k.fx("x", "u"), 15.5f, 4, L::ArmFront),
-         prescience(counter("Prescience", e, k.fx("x", "d"), false, L::ArmFront)));
-  ultimateOf(k, -1, ult::ambush("FORGE DE L'AUBE", e, k.fx("x", "ult"), L::ArmFront, 9));
+         through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
+         prescience(counter("Prescience", e, nullptr, false, L::ArmFront), k.pfx("parry")));
+  ultimateOf(k, -1, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::ArmFront, 9));
   drawCut(k, -1, L::ArmFront, 11);
 
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
   skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
-         through("Ruée-iaï", e, k.fx("a", "s"), 11), rise("Coupe en spirale", e, k.fx("a", "u"), 15.5f, 4),
-         prescience(counter("Prescience de la lame", e, k.fx("a", "d"), false)));
-  ultimateOf(k, 0, ult::ambush("FORGE DE L'AUBE", e, k.fx("a", "ult"), L::Weapon, 9));
+         through("Ruée-iaï", e, k.pfx("draw"), 11), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
+         prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
+  ultimateOf(k, 0, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 9));
   drawCut(k, 0, L::Weapon, 14);
 
   arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
   skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, "pfx_crescent", 11, 28, 10)),
-         through("Ruée ardente", e, k.fx("b", "s"), 12), rise("Spirale de feu", e, k.fx("b", "u"), 16, 5),
-         prescience(counter("Prescience ardente", e, k.fx("b", "d"), false)));
-  ultimateOf(k, 1, ult::ambush("FORGE DE L'AUBE", e, k.fx("b", "ult"), L::Weapon, 11));
+         through("Ruée ardente", e, k.pfx("draw"), 12), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
+         prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
+  ultimateOf(k, 1, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 11));
   drawCut(k, 1, L::Weapon, 15);
 
   // Volonté de la lame: 3 charges (Coupe-éclair, parries) and he awakens for 8 s: his M1 send cutting waves, his
   // neutral three crescents in a fan (great crescents of fire with the awakened blade).
-  const int awake = ult::form(k.c, k.fx("t", "aura"), e, 8, 1.1f, 1.0f);
+  const int awake = ult::form(k.c, k.pfx("aura"), e, 8, 1.1f, 1.0f);
   FormDef& aw = k.c.forms[awake];
   aw.m1Waves = true;
   aw.m1Wave = proj({30, -6}, {11, 0}, 0, 26, 16, 3.5f, 20, 40, e, PV::Crescent);

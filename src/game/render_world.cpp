@@ -119,10 +119,11 @@ static bool chosenFx(const char* fx) { return fx && std::strncmp(fx, "pfx_", 4) 
 // A projectile drawn by its PixelLab effect (ProjectileDef::fx, an "fx" line of sheets.txt), sized on its hitbox:
 // the effect's hit radius is the projectile's radius. Flying shapes turn with their course; a column rises from the
 // ground; a still mine or orb stays upright.
-static bool shotSprite(const Projectile& p, const Shot& s, float time) {
+static bool shotSprite(const Projectile& p, const Shot& s, float time, float px) {
   const art::FxInfo* fx = p.fx ? art::fxInfo(p.fx) : nullptr;
   if (!fx) return false;
-  const float size = s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
+  // (pixel art keeps its owner's pixel size: its hitbox is made to fit the drawing instead)
+  const float size = fx->pixel ? px : s.r / (fx->hit > 0.0f ? fx->hit : 0.4f * std::min(fx->fw, fx->fh));
   // A flying shape cycles its frames (copies side by side do not pulse together); a column plays once as it rises;
   // a ParticleFX one-shot plays once over the flight.
   float t = art::fxLoopTime(p.fx, time + hash01(s.seed) * fx->duration());
@@ -148,7 +149,8 @@ void drawProjectiles(const Match& m, float time) {
     s.seed = uint32_t(i) * 7919u + uint32_t(p.owner + 1) * 104729u;
     if (chosenFx(p.fx)) {  // its own warning: it fades in until it strikes
       if (!p.armed()) s.k *= 0.3f + 0.7f * s.age / float(std::max(1, p.armDelay));
-      if (shotSprite(p, s, time)) continue;
+      const bool own = p.owner >= 0 && p.owner < int(m.fighters.size());
+      if (shotSprite(p, s, time, own ? art::pixelScale(*m.fighters[p.owner].def) : 1.0f)) continue;
     }
     if (!kVfx) {  // a plain white ring on the hitbox (fainter: the warning before the strike)
       DrawRing(V(s.c), std::max(1.0f, s.r - 2.5f), s.r, 0, 360, 32, withAlpha(WHITE, (p.armed() ? 0.75f : 0.3f) * s.k));
@@ -158,7 +160,8 @@ void drawProjectiles(const Match& m, float time) {
       shotWarning(p, s, time, p.visual == ProjVisual::Pillar && p.vel.y > 0.5f);
       continue;
     }
-    if (shotSprite(p, s, time)) continue;
+    if (shotSprite(p, s, time, p.owner >= 0 && p.owner < int(m.fighters.size()) ? art::pixelScale(*m.fighters[p.owner].def) : 1.0f))
+      continue;
     shotPlaceholder(p, s, time);
   }
 }

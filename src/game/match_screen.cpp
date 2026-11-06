@@ -226,6 +226,9 @@ void MatchScreen::trackCallouts() {
     if (e.type == EvType::Hit && e.a >= 0 && e.a < 4 && e.b >= 0 && e.b < 4 && e.a != e.b)
       bestHit_[e.a] = std::max(bestHit_[e.a], gained[e.b]);  // e.strength is the knockback, not the damage
   }
+  auto ultReadyFx = [&](int who) {  // its column of light: the owner's ParticleFX one, else the PixelLab one
+    if (!fx_.moveFx(m_, who, "pfx_ult_ready", m_.fighters[who].pos)) fx_.moveFx(m_, who, "sys_ult_ready", m_.fighters[who].pos);
+  };
   for (const auto& e : m_.events) {
     if (e.type != EvType::UltReady || e.a < 0 || e.a >= int(n)) continue;
     const GameEvent* orb = nullptr;  // won by breaking the Clash Orb: its spark flies to the winner first
@@ -236,11 +239,11 @@ void MatchScreen::trackCallouts() {
       starTo_ = e.a;
       starT_ = 0;
     } else {
-      fx_.moveFx(m_, e.a, "sys_ult_ready", m_.fighters[e.a].pos);
+      ultReadyFx(e.a);
     }
   }
   if (starTo_ >= 0 && ++starT_ >= 36) {  // there: its column of light
-    if (m_.fighters[starTo_].active()) fx_.moveFx(m_, starTo_, "sys_ult_ready", m_.fighters[starTo_].pos);
+    if (m_.fighters[starTo_].active()) ultReadyFx(starTo_);
     starTo_ = -1;
   }
 }
@@ -517,7 +520,7 @@ void MatchScreen::draw() {
   drawUltimateFront(m_, time_);
   drawOrb(m_, time_);
   drawItems(m_, time_);
-  if (kVfx) fx_.drawBack(m_, time_);  // ki auras, pillars of light: behind the fighters
+  fx_.drawBack(m_, time_);  // ki auras, pillars of light, the techniques' effects: behind the fighters
   // Grabbed fighters and victims are drawn last so they stay visible;
   // during a final smash cinematic the scene darkens behind its user.
   const int star = m_.freezeTimer > 0 ? m_.freezeOwner : -1;

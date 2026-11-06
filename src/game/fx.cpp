@@ -1,5 +1,7 @@
 #include "game/fx.hpp"
 
+#include <cstring>
+
 #include "game/fighter_art.hpp"
 
 #include "game/render.hpp"
@@ -86,7 +88,7 @@ static const char* explosionSprite(HitFx fx) {
   }
 }
 
-void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
+bool Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big, Color tint, float px) {
   // The owner's sheet 1 (docs/refonte/vfx_maquette_1_systeme.png), in its own colours for everyone: a critical
   // blow, a blade's cut, a launch upward or a quick hit.
   const float heavy = clampf(kb / 120.0f, 0.12f, 1.6f) * (big ? 1.3f : 1.0f);
@@ -95,7 +97,17 @@ void Fx::hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big) {
   const char* s = crit ? "m_crit" : cut ? "m_slash" : up ? "m_rise" : "m_quick";
   const bool flip = dir.x < 0.0f;
   const float rot = cut && !crit ? (flip ? std::atan2(-dir.y, -dir.x) : std::atan2(dir.y, dir.x)) : 0.0f;
-  playFx(s, pos, 0.55f + 0.25f * std::min(heavy, 1.2f), rot, flip);
+  const float size = 0.55f + 0.25f * std::min(heavy, 1.2f);
+  // The owner's ParticleFX marks (06/11: every hit effect is ParticleFX), in pixels as fine as the fighters'.
+  const char* p = crit ? "pfx_hit_crit" : cut ? "pfx_hit_slash" : up ? "pfx_hit_rise" : "pfx_hit_quick";
+  const art::FxInfo* I = art::fxInfo(p);
+  if (!I) {
+    playFx(s, pos, size, rot, flip);
+    return false;
+  }
+  // Pixel art is never stretched nor turned (its pixels would break): the strength picks the mark, not its size.
+  playFx(p, pos, I->pixel ? px : 1.8f * size, I->pixel ? 0.0f : rot, flip, cut && !crit ? tint : WHITE);
+  return true;
 }
 
 void Fx::pixelImpact(Vec2 pos, Vec2 dir, float strength, Color c, bool star) {
@@ -115,11 +127,15 @@ void Fx::pixelImpact(Vec2 pos, Vec2 dir, float strength, Color c, bool star) {
   }
 }
 
-void Fx::groundImpact(const Match& m, Vec2 feet, float strength) {
+void Fx::groundImpact(const Match& m, Vec2 feet, float strength, Color tint, float px) {
   for (const auto& p : m.platforms) {  // the solid ground right under the feet, if any
     const Rect& r = p.rect;
     if (!p.solid || feet.x < r.left() + 6.0f || feet.x > r.right() - 6.0f || feet.y < r.top() - 30.0f || feet.y > r.top() + 40.0f)
       continue;
+    if (art::fxInfo("pfx_hit_wave")) {  // the owner's ParticleFX wave, rising from the ground in the attacker's colour
+      playFx("pfx_hit_wave", {feet.x, r.top()}, art::fxInfo("pfx_hit_wave")->pixel ? px : 1.0f, 0.0f, false, tint);
+      return;
+    }
     playFx(strength >= 160.0f ? "m_ground_heavy" : "m_ground_big", {feet.x, r.top()}, 0.5f);  // small: the fighters stay readable
     playFx("px_shockwave", {feet.x, r.top()}, strength >= 160.0f ? 1.3f : 1.0f);  // trial: PixelLab's preset shockwave
     sprites_.back().move = true;
@@ -409,16 +425,20 @@ void Fx::onEvents(const Match& m) {
         // The black and white impact frames and the white flash only for blows that look lethal (a finisher sent
         // far, or a huge blow): on every combo finisher they hid the fight.
         const bool lethal = (e.impact && kb >= 140.0f) || kb >= 200.0f;
-        hitSpark(pos, e.dir, kb, e.fx, big);
         const Color hitCol = e.fx == HitFx::Normal ? Color{255, 196, 72, 255} : hitFxColor(e.fx);  // (normal: too pale on snow)
-        pixelImpact(pos, e.dir, kb, hitCol, false);
-        if (art::fxInfo("px_impact_burst")) {  // trial: PixelLab's ready-made hit spark (preset impact_burst), bigger when stronger
+        const Color tint = e.a >= 0 && e.a < nf ? mixColor(hitFxColor(heroElement(m.fighters[e.a].def->hero)), WHITE, 0.35f)
+                                                : mixColor(hitCol, WHITE, 0.35f);
+        const Fighter* on = e.b >= 0 && e.b < nf ? &m.fighters[e.b] : e.a >= 0 && e.a < nf ? &m.fighters[e.a] : nullptr;
+        const float px = on ? art::pixelScale(*on->def) : 1.0f;
+        const bool marked = hitSpark(pos, e.dir, kb, e.fx, big, tint, px);
+        if (!marked) pixelImpact(pos, e.dir, kb, hitCol, false);  // a ParticleFX mark has its own pixel sparks
+        if (!marked && art::fxInfo("px_impact_burst")) {  // trial: PixelLab's ready-made hit spark (preset impact_burst), bigger when stronger
           playFx("px_impact_burst", pos, 2.4f * (0.5f + 0.35f * clampf(kb / 120.0f, 0.0f, 1.5f)), 0.0f, false,
                  mixColor(hitCol, WHITE, 0.5f));
           sprites_.back().move = true;  // drawn with the movement smoke, even with kVfx off
         }
         if (kb >= 140.0f && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
-          groundImpact(m, m.fighters[e.b].pos, kb);
+          groundImpact(m, m.fighters[e.b].pos, kb, tint, px);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
           const Fighter& v = m.fighters[e.b];
           Combo& c = combos_[e.b & 3];
@@ -451,13 +471,17 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::ShieldHit:
-        playFx("sys_shield_hit", e.pos, 0.6f, 0.0f, false, kShieldTint);
+        if (art::fxInfo("pfx_shield_hit") && e.b >= 0 && e.b < nf)
+          playFx("pfx_shield_hit", e.pos, art::fxSize("pfx_shield_hit", *m.fighters[e.b].def));
+        else playFx("sys_shield_hit", e.pos, 0.6f, 0.0f, false, kShieldTint);
         pixelImpact(e.pos, e.dir, 25.0f, kShieldTint, false);
         shake_ = std::max(shake_, 2.5f);
         au.play(Sfx::ShieldHit, 0.6f, rng_.range(0.95f, 1.1f));
         break;
       case EvType::ShieldBreak:
-        playFx("sys_shield_break", e.pos, 0.8f, 0.0f, false, kShieldTint);
+        if (art::fxInfo("pfx_shield_break") && e.a >= 0 && e.a < nf)
+          playFx("pfx_shield_break", e.pos, art::fxSize("pfx_shield_break", *m.fighters[e.a].def));
+        else playFx("sys_shield_break", e.pos, 0.8f, 0.0f, false, kShieldTint);
         shake_ = std::max(shake_, 12.0f);
         au.play(Sfx::ShieldBreak, 1.0f);
         break;
@@ -530,8 +554,21 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::ShieldHit, 0.6f, 1.5f);
         break;
       case EvType::LedgeGrab: au.play(Sfx::Ledge, 0.6f); break;
+      case EvType::Glint:  // a timed draw is ready: the move's spark on the hand at the hip, and a ting
+        if (e.a >= 0 && e.a < nf) {
+          const Fighter& f = m.fighters[e.a];
+          const MoveDef* md = f.currentMove();
+          if (md && md->sparkFx)
+            playFx(md->sparkFx, f.pos + Vec2{0.18f * f.height() * float(f.facing), -0.45f * f.height()}, art::fxSize(md->sparkFx, *f.def));
+          au.play(Sfx::Counter, 0.45f, 1.6f);
+        }
+        break;
       case EvType::Counter:
-        if (art::fxInfo("counter_flash")) {  // the PixelLab parry, at the clips' pixel size
+        if (const MoveDef* md = e.a >= 0 && e.a < nf ? m.fighters[e.a].currentMove() : nullptr; md && md->sparkFx &&
+            art::fxInfo(md->sparkFx)) {  // the parrying move's own spark (Prescience), where the blade meets the blow
+          const Fighter& f = m.fighters[e.a];
+          playFx(md->sparkFx, e.pos + Vec2{0.2f * f.height() * float(f.facing), 0.0f}, art::fxSize(md->sparkFx, *f.def));
+        } else if (art::fxInfo("counter_flash")) {  // the PixelLab parry, at the clips' pixel size
           playFx("counter_flash", e.pos, 0.62f);
         } else {
           add(PK::Ring, e.pos, {}, 20, 10, 90, {140, 200, 255, 255});
@@ -751,7 +788,7 @@ bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at, float size, 
   if (who < 0 || who >= int(m.fighters.size()) || !art::fxInfo(name)) return false;
   const Fighter& f = m.fighters[who];
   const Color tint = tinted ? mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f) : WHITE;
-  playFx(name, at, size * f.def->height / 170.0f, 0.0f, f.facing < 0, tint);
+  playFx(name, at, art::fxSize(name, *f.def, size), 0.0f, f.facing < 0, tint);
   sprites_.back().move = true;
   return true;
 }
@@ -760,6 +797,7 @@ void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip, Col
   if (!art::fxInfo(name)) return;
   SpriteFx s{name, at, size, rot, flip, 0};
   s.tint = tint;
+  s.move = std::strncmp(name, "pfx_", 4) == 0;  // ParticleFX: chosen by the owner, shown even with kVfx off
   sprites_.push_back(s);
 }
 
@@ -780,11 +818,12 @@ void Fx::update(const Match& m) {
     const MoveDef* md = f.currentMove();
     const std::pair<int, int> now{md ? f.move : -1, md ? f.moveFrame : -1};
     if (md && md->castFx && f.moveFrame == md->castFxFrame && now != castSeen_[i] && art::fxInfo(md->castFx)) {
-      SpriteFx s{md->castFx, f.pos, f.def->height / 170.0f * md->castFxScale, 0.0f, f.facing < 0, 0};
+      SpriteFx s{md->castFx, f.pos, art::fxSize(md->castFx, *f.def, md->castFxScale), 0.0f, f.facing < 0, 0};
       s.follow = int(i);
       s.off = md->castFxAt;
       s.pos = f.pos + Vec2{s.off.x * float(f.facing), s.off.y};
       if (md->castFxStays) s.follow = -2;  // behind, but left where it began
+      s.move = std::strncmp(md->castFx, "pfx_", 4) == 0;  // ParticleFX: shown even with kVfx off
       sprites_.push_back(s);
     }
     castSeen_[i] = now;
@@ -897,8 +936,9 @@ void Fx::update(const Match& m) {
 
 // ---- Drawing ---------------------------------------------------------------------------
 void Fx::drawBack(const Match& m, float time) const {
-  for (const auto& f : sprites_)  // the techniques' effects, behind their fighter
-    if (f.follow != -1) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
+  for (const auto& f : sprites_)  // the techniques' effects, behind their fighter (kVfx off: the ParticleFX ones)
+    if (f.follow != -1 && (kVfx || f.move)) art::drawFx(f.name, f.t / 60.0f, f.pos, f.size, f.rot, f.flip, 1.0f, f.tint);
+  if (!kVfx) return;
   for (const auto& p : parts_) {  // cracks in the ground, under everything that moves
     if (p.kind != PK::Crack) continue;
     const float a = clampf(p.life / 40.0f, 0.0f, 1.0f), grow = clampf((p.maxLife - p.life) / 5.0f, 0.0f, 1.0f);

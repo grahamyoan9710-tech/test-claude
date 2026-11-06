@@ -76,8 +76,8 @@ no floor, no smoke, no dark grey, no dithering. Stays inside the canvas.
 
 ### pfx_ult_ready : effet d'état, ultime prêt
 Pixel art ULTIMATE READY effect around a fighter in a 2D side-view fighting game: the fighter has just been charged
-with their ultimate. Transparent background, pixel art mode with pixel size 2 (canvas 192x256), plays ONCE in 1.0 s.
-The fighter (not drawn) stands with feet at x 96, y 240 and is about 170 px tall. Look: a gold #ffcf40 light ring
+with their ultimate. Transparent background, pixel art mode with pixel size 2 (canvas 384x512), plays ONCE in 1.0 s.
+The fighter (not drawn) stands with feet at x 192, y 480 and is about 312 px tall. Look: a gold #ffcf40 light ring
 flashes on the ground (a flat ellipse), a column of vertical gold and white light streaks rushes up around the body,
 gold 4-point stars and motes spiral up and twinkle, a brief white-gold flash at chest height. Timing: the ring and the
 flash in 3 frames, the streaks rise for 0.4 s, the motes linger and fade by 1.0 s. No text, no character, no smoke,
@@ -128,9 +128,9 @@ no character, no smoke, no grey, no dithering.
 
 ### pfx_h01_aura : Lame éveillée (aura de l'éveil, en boucle)
 Pixel art FLAME AURA LOOP to place behind a fighter sprite in a 2D side-view fighting game (an awakened swordsman).
-Transparent background, pixel art mode with pixel size 2 (canvas 192x256), seamless LOOP of 1.0 s. The fighter (not
-drawn) stands with feet at x 96, y 240 and is about 170 px tall, so keep the middle (x 60 to 132, y 70 to 240) mostly
-open. Look: stepped flame tongues licking up around an open oval around the body and meeting above the head, a
+Transparent background, pixel art mode with pixel size 2 (canvas 384x512), seamless LOOP of 1.0 s. The fighter (not
+drawn) stands with feet at x 192, y 480 and is about 312 px tall, so keep the middle (x 130 to 254, y 160 to 480)
+mostly open. Look: stepped flame tongues licking up around an open oval around the body and meeting above the head, a
 white-hot inner edge, crimson red #c8242c body, gold #e8b240 tips, a flat red and gold ring pulsing on the ground (an
 ellipse), rising gold embers and short vertical light streaks. No text, no character, no smoke, no grey, no dithering.
 Stays inside the canvas.

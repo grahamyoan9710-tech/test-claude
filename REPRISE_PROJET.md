@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 06/11 16 h 00 UTC, session cloud « Hakuen (01) » : yoyo a **acheté le pack de 150 builds ParticleFX** : Claude
+  fait les effets par MCP (3 builds dépensés). Portée (yoyo) : coups, coup critique, onde, bouclier et « ultime
+  prêt » pour tous les persos ; compétences, éveil et ultime pour Hakuen seulement. Les effets pixel art
+  (`import_fx.py --pixel`, 10e champ des lignes `fx`) sont dessinés à la taille des pixels du perso
+  (`art::pixelScale`), jamais étirés ni tournés, sans halo ni lumière sur les persos (ils les rendaient olive).
+  Premier fait : `pfx_hit_quick` (coup rapide, environ la moitié du perso, source `art/particlefx/pfx_hit_quick.png`) ;
+  quand il joue, les éclats codés (`pixelImpact`) ne sont plus dessinés. L'ultime du 01 avait un fourreau inventé :
+  refait sans. Les 14 autres effets attendent l'accord de yoyo sur la capture du coup rapide.
 - 06/11 15 h 05 UTC, session cloud « Hakuen (01) » : le nouveau 01 (`h01`, Hakuen) en bêta à côté des anciens,
   kit codé (Rengaine → Coupe-éclair ou Coupe, volonté, éveil, Prescience à 3 parades ; test `sim_test hakuen`).
   Clips PixelLab dans `tools/pixellab/pxa/h01/` (les PNG y sont maintenant suivis par git) : 21 clips refaits
