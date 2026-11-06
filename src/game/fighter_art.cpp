@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+#include "game/settings.hpp"
+#include "game/ui.hpp"
 #include "rlgl.h"
 
 extern "C" {
@@ -372,8 +374,35 @@ namespace {
 struct Fx {
   art::FxInfo info;
   Texture2D tex{};
+  Texture2D glow{};  // a ParticleFX effect's halo: its frames blurred, premultiplied, kGlowDown times smaller
   bool ok = false;
 };
+// The halo of a ParticleFX effect (pfx_*): their GIF export has on/off transparency, so the light their site draws
+// live (additive particles, bloom) is lost. Each frame is padded by kGlowPad source pixels, shrunk and blurred, and
+// drawn additively over the sprite.
+constexpr int kGlowPad = 32, kGlowDown = 4;
+Texture2D glowOf(const Image& strip, const art::FxInfo& I) {
+  const int fw = int(I.fw), fh = int(I.fh);
+  const int gw = (fw + 2 * kGlowPad) / kGlowDown, gh = (fh + 2 * kGlowPad) / kGlowDown;
+  Image out = GenImageColor(gw * I.frames, gh, BLANK);
+  for (int k = 0; k < I.frames; ++k) {
+    Image cell = GenImageColor(fw + 2 * kGlowPad, fh + 2 * kGlowPad, BLANK);
+    ImageDraw(&cell, strip, {float(k * fw), 0, float(fw), float(fh)}, {float(kGlowPad), float(kGlowPad), float(fw), float(fh)},
+              WHITE);
+    Color* px = (Color*)cell.data;  // premultiplied, opaque: black adds no light
+    for (int i = 0; i < cell.width * cell.height; ++i)
+      px[i] = {(unsigned char)(px[i].r * px[i].a / 255), (unsigned char)(px[i].g * px[i].a / 255),
+               (unsigned char)(px[i].b * px[i].a / 255), 255};
+    ImageResize(&cell, gw, gh);
+    ImageBlurGaussian(&cell, 4);
+    ImageDraw(&out, cell, {0, 0, float(gw), float(gh)}, {float(k * gw), 0, float(gw), float(gh)}, WHITE);
+    UnloadImage(cell);
+  }
+  Texture2D t = LoadTextureFromImage(out);
+  UnloadImage(out);
+  SetTextureFilter(t, TEXTURE_FILTER_BILINEAR);
+  return t;
+}
 const Fx* fxOf(const char* name) {
   static std::map<std::string, Fx> cache;
   auto it = cache.find(name);
@@ -398,11 +427,15 @@ const Fx* fxOf(const char* name) {
     Image img = LoadImageFromMemory(".png", data, int(size));
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
+    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit};
+    if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
+      ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+      F.glow = glowOf(img, F.info);
+    }
     UnloadImage(img);
     if (F.tex.id == 0) break;
     GenTextureMipmaps(&F.tex);
     SetTextureFilter(F.tex, TEXTURE_FILTER_TRILINEAR);
-    F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit};
     F.ok = true;
     break;
   }
@@ -445,6 +478,24 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
   }
   rlEnd();
   rlSetTexture(0);
+  if (F->glow.id != 0 && settings().highQuality) {  // the halo, over the sprite: its core glows too
+    const float p = float(kGlowPad);
+    const Vector2 g[4] = {P(-p, -p), P(I.fw + p, -p), P(I.fw + p, I.fh + p), P(-p, I.fh + p)};
+    const float gu0 = float(i) / I.frames, gu1 = float(i + 1) / I.frames;
+    const float guv[4][2] = {{gu0, 0.0f}, {gu1, 0.0f}, {gu1, 1.0f}, {gu0, 1.0f}};
+    BeginBlendMode(BLEND_ADDITIVE);
+    rlSetTexture(F->glow.id);
+    rlBegin(RL_QUADS);
+    for (int pass = 0; pass < 2; ++pass)  // twice: the light reads over the bright arenas too
+      for (int k = 0; k < 4; ++k) {
+        rlColor4ub(tint.r, tint.g, tint.b, a);
+        rlTexCoord2f(guv[k][0], guv[k][1]);
+        rlVertex2f(g[k].x, g[k].y);
+      }
+    rlEnd();
+    rlSetTexture(0);
+    ui::frameBlend();
+  }
   return true;
 }
 

@@ -8,6 +8,13 @@
 
 ## Nouveautés
 
+Version 11.4 : **les effets brillent**.
+
+- Le Croissant du néant (N° 01) et la pluie d'épées du Jugement céleste (N° 08) ont maintenant un halo lumineux qui
+  déborde autour d'eux, comme une vraie lumière.
+- Le halo est actif avec « Qualité graphique : Haute » (Paramètres, Affichage). En « Normale », pour les petites
+  machines, il est coupé.
+
 Version 11.3 : **deux nouveaux effets**.
 
 - **Croissant du néant** (N° 01, avec l'odachi) : la compétence neutre lance un croissant d'énergie rose et bleu qui

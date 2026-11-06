@@ -64,6 +64,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 02 h 45 UTC, session cloud « Refaire 10 persos » (branche `claude/project-thread-58u7pf`, partie de la 11.3) :
+  **11.4**, halo lumineux des effets ParticleFX. Leurs GIF n'ont qu'une transparence tout ou rien : la lumière du site
+  (particules additives, bloom) est recréée au chargement (`glowOf`, `fighter_art.cpp` : chaque image complétée de 32 px,
+  prémultipliée, réduite par 4, floutée) et dessinée en additif par-dessus l'effet, deux fois, avec « Qualité : Haute ».
+  Seuls les effets `pfx_*` l'ont. Les ombres au sol des persos existaient déjà (`drawGroundShadow`).
 - 05/11 11 h 05 UTC, session cloud « VFX ParticleFX » (branche `claude/project-thread-y4vuco`, partie de la 11.2) :
   **11.3**, deux effets ParticleFX Studio choisis par le propriétaire (GIF gratuits, sources dans `art/particlefx/`) :
   - `pfx_crescent` sur la compétence neutre du 01 avec l'odachi (« Croissant du néant ») : le croissant est recentré
