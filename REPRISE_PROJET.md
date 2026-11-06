@@ -71,7 +71,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   alternative (rendu envoyé à yoyo : `/mnt/project-files/refonte_v2/palette2_test.png`). Le jeu ne lit pas encore la
   palette 2 (`drawCharacter` ignore `palette`) : à brancher quand les clips des nouveaux persos existeront. Limite :
   03 (veste et cheveux blancs) et 07 (cheveux et manteau noirs) sont à vérifier sur leurs vrais clips.
-- 06/11 04 h 20 UTC, même session : **11.8**, lumière façon RTX en shaders, sans dépendance
+- 06/11 04 h 20 UTC, même session : **11.8 publiée** (workflow_dispatch, archives Linux et Windows), lumière façon RTX en shaders, sans dépendance
   (`src/game/render_light.cpp`, « Qualité graphique : Haute » seulement). `light::backdrop` et `light::arena` : les
   lumières des effets `pfx_*` (`art::lastLights`) éclairent le fond et les plateformes (mélange dst × (1 + lumière)),
   en ellipse sur le sol vu en profondeur ; ombres douces des persos à l'opposé de chaque lumière, coupées à la bande du
