@@ -126,6 +126,7 @@ fx p08_x_u 14 220 149 110.0 186.0 14.9254 0
 fx pfx_crescent 10 372 316 198.6 202.0 12 0 105
 fx pfx_giant_sphere 30 267 267 138.4 128.1 10 1 75
 fx pfx_hit_quick 12 102 95 45.0 50.0 30 0 0 1
+fx pfx_hit_rise 12 92 113 46.0 64.0 30 0 0 1
 fx pfx_hit_slash 19 68 78 31.0 41.7 30 0 0 1
 fx pfx_sparkle 20 326 342 149.0 173.0 10 1
 fx pfx_spiral_sphere 18 362 362 197.0 180.0 15 1 95
