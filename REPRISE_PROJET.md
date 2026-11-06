@@ -64,6 +64,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   `claude/project-thread-y4vuco`, archives Linux et Windows). Verrous « Effets » et « Version et paquets » libérés.
   Les persos (01 et 08) ont été choisis par Claude : à changer si yoyo le veut. Licence commerciale de ParticleFX
   Studio encore à vérifier avant la vente.
+- 06/11 12 h 10 UTC, même session : compétences et ultimes des 10 écrits dans le Claude Doc des fiches (01 d'après
+  Alpha de PGR, demandé par yoyo ; 02 à 10 proposés). Armes de la planche v2 repeintes aux couleurs de chaque perso :
+  `docs/refonte/ref_armes_v2_normales.png` et `ref_armes_v2_alt.png` (formes inchangées ; 01, 02, 05, 06 et 09
+  étaient dessinées aux couleurs alternatives, 03 et 04 à aucune des deux). À valider par yoyo.
 - 06/11 04 h 35 UTC, même session : `scripts/recolor.py` (gratuit) repeint les images d'un perso NN dans ses
   couleurs alternatives (palette 2 des matchs miroirs), apprises sur les deux planches v2 (`ref_persos_v2.png` et
   `ref_persos_v2_alt.png`) : chaque pixel est rangé par sa couleur, la couleur autour de lui et sa hauteur dans le
