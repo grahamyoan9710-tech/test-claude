@@ -20,7 +20,8 @@ then f_01.. the generated ones; OUT/result.json keeps the reply.
 import argparse, base64, fcntl, json, os, ssl, subprocess, sys, time, urllib.error, urllib.request
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TOKEN = open(os.path.join(BASE, 'px', '.token')).read().strip()
+TOKEN_FILE = os.path.join(BASE, 'px', '.token')  # or the PIXELLAB_TOKEN variable of a cloud environment
+TOKEN = open(TOKEN_FILE).read().strip() if os.path.exists(TOKEN_FILE) else os.environ['PIXELLAB_TOKEN']
 SESSION = os.path.join(BASE, 'px', 'session_cli')
 LOCK = os.path.join(BASE, 'px', 'session_cli.lock')
 URL = 'https://api.pixellab.ai/mcp'

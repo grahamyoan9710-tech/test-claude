@@ -3,7 +3,8 @@ The token is read from scratchpad/px/.token and never printed; long strings (bas
 import json, os, ssl, sys, urllib.request
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TOKEN = open(os.path.join(BASE, 'px', '.token')).read().strip()
+TOKEN_FILE = os.path.join(BASE, 'px', '.token')  # or the PIXELLAB_TOKEN variable of a cloud environment
+TOKEN = open(TOKEN_FILE).read().strip() if os.path.exists(TOKEN_FILE) else os.environ['PIXELLAB_TOKEN']
 SESSION = os.path.join(BASE, 'px', 'session')
 URL = 'https://api.pixellab.ai/mcp'
 ctx = ssl.create_default_context(cafile='/root/.ccr/ca-bundle.crt')
