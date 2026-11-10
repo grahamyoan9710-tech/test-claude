@@ -655,11 +655,13 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
   // RTX: the effect gives the traced light, sprite and halo; pixel art too (the traced light only brightens a
   // sprite's own colours, it cannot turn them olive), not the decorations (castLight).
   if (F->glow.id != 0 && castLight && rtx::on())
-    rtx::light([&] {
-      sprite();
-      halo(1);
-    });
-  if (F->glow.id != 0 && settings().highQuality) {  // the halo, over the sprite: its core glows too
+    rtx::light(
+        [&] {
+          sprite();
+          halo(1);
+        },
+        sprite);
+  if (F->glow.id != 0 && (settings().highQuality || rtx::on())) {  // the halo, over the sprite: its core glows too
     BeginBlendMode(BLEND_ADDITIVE);
     halo(2);  // twice: the light reads over the bright arenas too
     ui::frameBlend();
@@ -721,7 +723,7 @@ bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, floa
     rlSetTexture(0);
   };
   strip();
-  if (F->glow.id != 0 && rtx::on()) rtx::light(strip);  // RTX: a beam gives light too
+  if (F->glow.id != 0 && rtx::on()) rtx::light(strip, strip);  // RTX: a beam gives light too
   return true;
 }
 

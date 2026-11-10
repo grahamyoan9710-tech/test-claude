@@ -259,8 +259,9 @@ Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquemen
 - **Affichage** : plein écran, qualité graphique (*Haute* = contours lissés, rendu en double
   résolution ; *Normale* pour les petites machines), secousses de l'écran, noms au-dessus des joueurs,
   compteur d'images (FPS), zones de coup, **personnages en pixel art** (OUI par défaut ; NON = dessin
-  lisse), **RTX** (OUI = vrai lancer de rayons : la lumière des effets est calculée rayon par rayon, avec de
-  vraies ombres ; NON par défaut = l'éclairage dessiné, plus léger ; coupé tout seul si le jeu rame).
+  lisse), **RTX** (OUI = vrai lancer de rayons, façon path tracing : décor plus sombre et chaud, la lumière des
+  effets calculée rayon par rayon, vraies ombres, reflets forts ; très gourmand ; NON par défaut = l'éclairage
+  dessiné, plus léger).
 - **Jeu** : nombre de vies, Orbe Clash, armes, niveau des ordinateurs par défaut (1 à 10), tout réinitialiser.
 - **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
   est échangée). Quand une manette est utilisée, l'onglet montre **ses boutons, réassignables eux

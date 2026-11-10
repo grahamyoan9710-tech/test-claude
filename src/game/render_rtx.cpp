@@ -1,7 +1,7 @@
 // The real "RTX" (rtx.hpp): 2D ray traced light. The traced scene is small (kW x kH): what gives light (the effects,
-// additive), what blocks it (the mask, at the frame's size so its edges are the sprites' own: alpha the solids, green
-// the floors that catch the light). The shaders work in pixels of their target (gl_FragCoord), every target the
-// frame's way up, so the same uv reads the same place in all of them.
+// additive), what blocks it (the mask, at the frame's size so its edges are the sprites' own). The shaders work in
+// pixels of their target (gl_FragCoord), every target the frame's way up, so the same uv reads the same place in all
+// of them.
 #include "game/rtx.hpp"
 
 #include <algorithm>
@@ -18,6 +18,9 @@
 namespace rtx {
 namespace {
 constexpr int kW = kScreenW / 2, kH = kScreenH / 2;  // the traced scene: 2 virtual pixels per pixel
+// The mask's channels: a sprite (a fighter, an item), a floor that catches the light, an effect's own pixels (not its
+// halo), what blocks the light.
+enum : int { kSprite = 1, kFloor = 2, kCore = 4, kSolid = 8 };
 
 // Mask draws: the picture's coverage only (the colour mask picks the channel).
 const char* kMaskFrag = R"(#version 330
@@ -74,7 +77,7 @@ void main() {
 }
 )";
 
-// The light at each pixel: 16 rays (turned by a noise that changes every frame) march the distance field. A glow (an
+// The light at each pixel: 32 rays (turned by a noise that changes every frame) march the distance field. A glow (an
 // effect, a lantern): the ray goes through it, gathering its light all along, so its core counts more than its halo.
 // A solid: the ray stops, with the light that solid caught the frame before, in its colour (one bounce, more over the
 // frames). Off screen or too far: nothing. A pixel inside a solid sees out only through the few pixels next to its
@@ -87,8 +90,8 @@ uniform vec2 size;
 uniform vec4 reproj;  // where a pixel was the frame before: p * xy + zw
 uniform vec3 gains;   // the light, the bounce, the noise's frame
 out vec4 finalColor;
-const int RAYS = 16, STEPS = 40;
-const float SKIN = 2.0, FAR = 420.0, DENSITY = 0.04;  // the glows' light per pixel crossed
+const int RAYS = 32, STEPS = 64;
+const float SKIN = 2.0, FAR = 640.0, DENSITY = 0.04;  // the glows' light per pixel crossed
 vec3 emission(vec2 uv) { return texture(emitT, uv).rgb + lamp(uv) * (1.0 - texture(maskT, uv).a); }
 float solid(vec2 q) { return texture(maskT, q / size).a; }
 float sdf(vec2 q) { vec4 s = texture(texture0, q / size); return s.z > 0.5 ? distance(s.xy, q) : 1e4; }
@@ -132,33 +135,38 @@ void main() {
   vec3 L = sum / float(RAYS);
   vec2 was = p * reproj.xy + reproj.zw;
   vec3 before = was.x >= 0.0 && was.y >= 0.0 && was.x <= size.x && was.y <= size.y ? texture(prevT, was / size).rgb : L;
-  finalColor = vec4(mix(L, before, 0.8), 1.0);
+  finalColor = vec4(mix(L, before, 0.85), 1.0);
 }
 )";
 
-// Adds the light to the frame (blend: dst * (1 + src), each surface brightened in its own colour, never tinted dirty).
-// On the solids (the sprites, the platforms' bodies) one light per art pixel, in flat bands; the floors catch it all;
-// the far backdrop a little; the effects themselves not at all (they would burn to white), unless over a sprite.
-const char* kCompositeFrag = "#version 330\n" LAMP_FN R"(
+// The frame, lit as in a path traced picture: the arena darker and a little warmer where no light comes, more toward
+// the screen's edges (its highlights, snow or a bright sky, keep their white), lit in the light's own colour where it
+// comes, the light hanging in the air around what gives it. The fighters keep their colours (never dirtied): a slight neutral shade and a rim
+// of light, one per art pixel in flat bands, as on the platforms' bodies. The effects and the lanterns stay as drawn.
+const char* kCompositeFrag = R"(#version 330
 uniform sampler2D texture0;  // the light
-uniform sampler2D maskT, emitT;
+uniform sampler2D maskT, frameT;
 uniform vec2 size;   // the frame
 uniform vec4 gain;   // backdrop, floor, solid, art pixel (frame pixels)
+uniform vec4 shade;  // the unlit arena's colour; whether this target holds the fighters and the effects yet
+uniform vec2 extra;  // the haze, the lanterns
 out vec4 finalColor;
 void main() {
-  vec2 g = gl_FragCoord.xy;
-  vec4 m = texture(maskT, g / size);
-  float s = step(0.5, m.a);
-  vec2 at = mix(g, (floor(g / gain.w) + 0.5) * gain.w, s);
-  vec3 L = texture(texture0, at / size).rgb;
-  // On the sprites: a rim of light, half of it white (a dark coat must not turn the light's colour), at most +60 %, in
-  // three flat steps.
-  vec3 R = mix(vec3(max(L.r, max(L.g, L.b))), L, 0.5) * gain.z;
-  R = floor(min(R, vec3(0.6)) * 5.0 + 0.4) / 5.0;
-  vec3 e = texture(emitT, g / size).rgb + lamp(g / size);
-  float lum = max(e.r, max(e.g, e.b));
-  vec3 B = min(L * mix(gain.x, gain.y, m.g), vec3(0.9)) * (1.0 - smoothstep(0.3, 1.2, lum));
-  finalColor = vec4(mix(B, R * (1.0 - smoothstep(0.4, 1.0, lum)), s), 1.0);
+  vec2 g = gl_FragCoord.xy, uv = g / size;
+  vec4 m = texture(maskT, uv), c = texture(frameT, uv);
+  float s = step(0.5, m.a), f = step(0.5, m.r) * shade.a;
+  vec3 L = texture(texture0, mix(g, (floor(g / gain.w) + 0.5) * gain.w, s) / size).rgb;
+  float lum = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+  vec2 d = uv - 0.5;
+  vec3 base = mix(shade.rgb, vec3(0.92, 0.9, 0.86), smoothstep(0.72, 1.0, lum)) * (1.0 - 0.3 * dot(d, d));
+  vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s), vec3(1.6));
+  k = mix(k, floor(k * 5.0 + 0.5) / 5.0, s);
+  vec3 arena = c.rgb * (base + k) + L * extra.x * (1.0 - s);
+  vec3 R = floor(min(mix(vec3(max(L.r, max(L.g, L.b))), L, 0.5) * gain.z, vec3(0.8)) * 5.0 + 0.4) / 5.0;
+  vec3 fighter = c.rgb * (0.9 + R);
+  float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
+  float lamp = step(0.001, extra.y) * smoothstep(0.72, 0.95, mx) * smoothstep(0.35, 0.6, (mx - mn) / max(mx, 1e-3));
+  finalColor = vec4(mix(mix(arena, fighter, f), c.rgb, max(m.b * shade.a, lamp)), c.a);
 }
 )";
 
@@ -168,7 +176,8 @@ struct Pass {
 };
 Pass g_mask, g_seed, g_jump, g_trace, g_comp;
 bool g_tried = false, g_on = false;
-RenderTexture2D g_maskT{}, g_emit{}, g_albedo{}, g_jfa[2]{}, g_gi[2]{};
+// (g_copy: a target as it was before its lighting.)
+RenderTexture2D g_maskT{}, g_copy{}, g_emit{}, g_albedo{}, g_jfa[2]{}, g_gi[2]{};
 int g_cur = 0;
 struct View {
   float z = 0, tx = 0, ty = 0, ox = 0, oy = 0, H = 0;
@@ -190,7 +199,7 @@ bool ready() {
     g_seed = load(kSeedFrag, {"emitT", "albedoT", "lamps"});
     g_jump = load(kJumpFrag, {"jump"});
     g_trace = load(kTraceFrag, {"emitT", "maskT", "albedoT", "prevT", "reproj", "gains", "lamps"});
-    g_comp = load(kCompositeFrag, {"maskT", "emitT", "gain", "albedoT", "lamps"});
+    g_comp = load(kCompositeFrag, {"maskT", "frameT", "gain", "shade", "extra"});
   }
   for (const Pass* p : {&g_mask, &g_seed, &g_jump, &g_trace, &g_comp})
     if (p->sh.id == 0 || p->sh.id == rlGetShaderIdDefault()) return false;
@@ -230,6 +239,14 @@ void clear(const RenderTexture2D& t) {
     rlClearScreenBuffers();
   });
 }
+void blit(const RenderTexture2D& from, const RenderTexture2D& to) {
+  rlDrawRenderBatchActive();
+  rlBindFramebuffer(RL_READ_FRAMEBUFFER, from.id);
+  rlBindFramebuffer(RL_DRAW_FRAMEBUFFER, to.id);
+  rlBlitFramebuffer(0, 0, from.texture.width, from.texture.height, 0, 0, to.texture.width, to.texture.height,
+                    0x00004000);  // GL_COLOR_BUFFER_BIT
+  rlEnableFramebuffer(pix::frameTarget()->id);
+}
 void blend(int src, int dst) {
   rlSetBlendFactors(src, dst, RL_FUNC_ADD);
   BeginBlendMode(BLEND_CUSTOM);
@@ -256,11 +273,11 @@ void pass(const RenderTexture2D& to, const Pass& p, Texture2D src, F set) {
   ui::frameBlend();
 }
 
-// Draws into the mask's channels (r, g, b, a) the coverage of what `draw` draws, or (erase) clears them there.
+// Draws into the mask's channels the coverage of what `draw` draws, or (erase) clears them there.
 template <class F>
-void maskDraw(bool g, bool a, bool erase, F draw) {
+void maskDraw(int channels, bool erase, F draw) {
   into(g_maskT, [&] {
-    rlColorMask(false, g, false, a);
+    rlColorMask(channels & kSprite, channels & kFloor, channels & kCore, channels & kSolid);
     if (erase) {
       blend(RL_ZERO, RL_ZERO);
     } else {
@@ -289,9 +306,12 @@ void beginFrame() {
   if (!settings().rtx || !fr || !ready()) return;
   const int W = fr->texture.width, H = fr->texture.height;
   if (g_maskT.texture.width != W || g_maskT.texture.height != H) {
-    if (g_maskT.id) UnloadRenderTexture(g_maskT);
-    g_maskT = LoadRenderTexture(W, H);
-    SetTextureFilter(g_maskT.texture, TEXTURE_FILTER_POINT);
+    for (auto* t : {&g_maskT, &g_copy}) {
+      if (t->id) UnloadRenderTexture(*t);
+      *t = LoadRenderTexture(W, H);
+      SetTextureFilter(t->texture, TEXTURE_FILTER_POINT);
+    }
+    rlEnableFramebuffer(fr->id);
   }
   if (g_emit.id == 0) {
     g_emit = floatTarget(kW, kH, true);
@@ -301,7 +321,9 @@ void beginFrame() {
     rlEnableFramebuffer(fr->id);  // (making a target unbinds the frame)
     for (auto* t : {&g_gi[0], &g_gi[1]}) clear(*t);
   }
-  if (!g_emit.id || !g_jfa[0].id || !g_jfa[1].id || !g_gi[0].id || !g_gi[1].id || !g_albedo.id || !g_maskT.id) return;
+  if (!g_emit.id || !g_jfa[0].id || !g_jfa[1].id || !g_gi[0].id || !g_gi[1].id || !g_albedo.id || !g_maskT.id ||
+      !g_copy.id)
+    return;
   clear(g_maskT);
   clear(g_emit);
   g_on = true;
@@ -309,16 +331,17 @@ void beginFrame() {
 
 // (Not from inside a pixel-art layer: its framebuffer is not the frame's.)
 void solid(const std::function<void()>& draw) {
-  if (g_on && pix::artUnit() == 0.0f) maskDraw(false, true, false, draw);
+  if (g_on && pix::artUnit() == 0.0f) maskDraw(kSprite | kSolid, false, draw);
 }
 
-void light(const std::function<void()>& draw) {
+void light(const std::function<void()>& draw, const std::function<void()>& core) {
   if (!g_on || pix::artUnit() != 0.0f) return;
   into(g_emit, [&] {
     blend(RL_SRC_ALPHA, RL_ONE);
     draw();
   });
   ui::frameBlend();
+  maskDraw(kCore, false, core);
 }
 
 void platforms(const Match& m) {
@@ -330,11 +353,11 @@ void platforms(const Match& m) {
     for (const auto& p : m.platforms) {
       stageart::Floor fl{};
       if (stageart::floorOf(p, theme, fl) != bool(floored)) continue;
-      maskDraw(floored, true, false, [&] { stageart::drawPlatform(p, theme, 0.0f); });
+      maskDraw(floored ? kFloor | kSolid : kSolid, false, [&] { stageart::drawPlatform(p, theme, 0.0f); });
       if (!floored) continue;
       const float l = p.rect.left() - 40.0f, w = p.rect.w + 80.0f;
-      maskDraw(false, true, true, [&] { DrawRectangleRec({l, fl.front - 4000.0f, w, 4000.0f}, WHITE); });
-      maskDraw(true, false, true, [&] {
+      maskDraw(kSolid, true, [&] { DrawRectangleRec({l, fl.front - 4000.0f, w, 4000.0f}, WHITE); });
+      maskDraw(kFloor, true, [&] {
         DrawRectangleRec({l, fl.front, w, 4000.0f}, WHITE);
         DrawRectangleRec({l, fl.back - 4000.0f, w, 4000.0f}, WHITE);
       });
@@ -347,12 +370,7 @@ void resolve(const Match& m, const Camera2D& cam) {
   const RenderTexture2D* fr = pix::frameTarget();
   const float W = float(fr->texture.width), H = float(fr->texture.height);
 
-  // The colours, small: what the light bounces off.
-  rlDrawRenderBatchActive();
-  rlBindFramebuffer(RL_READ_FRAMEBUFFER, fr->id);
-  rlBindFramebuffer(RL_DRAW_FRAMEBUFFER, g_albedo.id);
-  rlBlitFramebuffer(0, 0, int(W), int(H), 0, 0, kW, kH, 0x00004000);  // GL_COLOR_BUFFER_BIT
-  rlEnableFramebuffer(fr->id);
+  blit(*fr, g_albedo);  // the colours, small: what the light bounces off
 
   // The distance field.
   const float lamps = stageart::lampGain(m.stage().theme);
@@ -374,7 +392,7 @@ void resolve(const Match& m, const Camera2D& cam) {
                            (H - (H - v.oy) * r - (v.ty - p.ty) * p.z - p.oy) / S};
   g_prev = v;
   const float tone = stageart::lightGain(m.stage().theme);
-  const float gains[3] = {1.5f, 0.35f, float(art::frameId() % 64)};
+  const float gains[3] = {3.0f, 0.6f, float(art::frameId() % 64)};
   const RenderTexture2D &now = g_gi[g_cur ^ 1], &before = g_gi[g_cur];
   pass(now, g_trace, g_jfa[j].texture, [&] {
     SetShaderValueTexture(g_trace.sh, g_trace.a, g_emit.texture);
@@ -387,22 +405,25 @@ void resolve(const Match& m, const Camera2D& cam) {
   });
   g_cur ^= 1;
 
-  // Into the frame, and into its copy before the fighters that the floors mirror (else the light would read there as
-  // something standing on the floor, and hide the reflection).
+  // Into the frame, and into its copy before the fighters and the effects that the floors mirror (lit the same way,
+  // else the floor would read there as something standing on it, and hide the reflection).
   const Matrix mv = rlGetMatrixModelview();
-  const float size[2] = {W, H}, gain[4] = {0.35f * tone, 1.6f * tone, 1.5f * tone, g_renderScale * pix::artPixel()};
+  const float size[2] = {W, H}, gain[4] = {0.7f * tone, 3.0f * tone, 1.8f * tone, g_renderScale * pix::artPixel()};
+  const float extra[2] = {0.35f * tone, lamps};
   for (const RenderTexture2D* t : {fr, light::beforeFighters()}) {
     if (!t || t->texture.width != fr->texture.width || t->texture.height != fr->texture.height) continue;
+    blit(*t, g_copy);
+    const float shade[4] = {0.68f, 0.61f, 0.52f, t == fr ? 1.0f : 0.0f};
     into(*t, [&] {
       rlSetMatrixModelview(MatrixIdentity());
       BeginShaderMode(g_comp.sh);
-      blend(RL_DST_COLOR, RL_ONE);
+      blend(RL_ONE, RL_ZERO);
       SetShaderValue(g_comp.sh, g_comp.size, size, SHADER_UNIFORM_VEC2);
       SetShaderValue(g_comp.sh, g_comp.c, gain, SHADER_UNIFORM_VEC4);
-      SetShaderValue(g_comp.sh, g_comp.e, &lamps, SHADER_UNIFORM_FLOAT);
+      SetShaderValue(g_comp.sh, g_comp.d, shade, SHADER_UNIFORM_VEC4);
+      SetShaderValue(g_comp.sh, g_comp.e, extra, SHADER_UNIFORM_VEC2);
       SetShaderValueTexture(g_comp.sh, g_comp.a, g_maskT.texture);
-      SetShaderValueTexture(g_comp.sh, g_comp.b, g_emit.texture);
-      SetShaderValueTexture(g_comp.sh, g_comp.d, g_albedo.texture);
+      SetShaderValueTexture(g_comp.sh, g_comp.b, g_copy.texture);
       DrawTexturePro(now.texture, {0, 0, float(kW), float(kH)}, {0, 0, W, H}, {0, 0}, 0.0f, WHITE);
       rlDrawRenderBatchActive();
       EndShaderMode();
