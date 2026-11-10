@@ -4,7 +4,8 @@
 // lanterns of the night arenas, read off their pictures). A distance field (jump flooding) lets 32 rays per pixel
 // march through it: the light stops at the fighters (real shadows), bounces off what it hits (the frame before's
 // light, so more over time), is cleaned of its grain and of the frame before where it no longer fits, and is added to
-// the frame, in flat bands on the pixel-art sprites. "RTX : Non" keeps the drawn light of render_light.cpp.
+// the frame, in flat bands on the pixel-art sprites. Each arena's moon or sun (render_stages.cpp) lights it all too,
+// casting the shadows of the fighters and the platforms. "RTX : Non" keeps the drawn light of render_light.cpp.
 #include <functional>
 
 #include "game/common.hpp"

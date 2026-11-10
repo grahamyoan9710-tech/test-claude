@@ -82,17 +82,45 @@ void main() {
 // A solid: the ray stops, with the light that solid caught the frame before, in its colour (one bounce, more over the
 // frames). Off screen or too far: nothing. A pixel inside a solid sees out only through the few pixels next to its
 // edge: a fighter is lit on the side that faces the light, never through his body. Grainy: kResolveFrag cleans it.
+// Alpha: how much the arena's moon or sun lights it (its colour: keyCol).
 const char* kTraceFrag = "#version 330\n" LAMP_FN R"(
 uniform sampler2D texture0;  // the distance field
 uniform sampler2D emitT, maskT, prevT;
 uniform vec2 size;
 uniform vec3 gains;   // the light, the bounce, the noise's frame
+uniform vec4 key;     // the moon or the sun: where, how wide, how far it lights (0: none)
+uniform vec3 keyCol;  // its colour times its strength
 out vec4 finalColor;
 const int RAYS = 32, STEPS = 64;
 const float SKIN = 2.0, FAR = 640.0, DENSITY = 0.04;  // the glows' light per pixel crossed
+const float SHADOW = 260.0;  // a shadow of the moon or the sun fades over this length behind what casts it
 vec3 emission(vec2 uv) { return texture(emitT, uv).rgb + lamp(uv) * (1.0 - texture(maskT, uv).a); }
 float solid(vec2 q) { return texture(maskT, q / size).a; }
 float sdf(vec2 q) { vec4 s = texture(texture0, q / size); return s.z > 0.5 ? distance(s.xy, q) : 1e4; }
+// The moon or the sun: one ray toward a point of its disk (another each frame: soft shadows). Lit unless a solid is in
+// the way (the nearer, the darker its shadow), dimmer far from it.
+float keyLight(vec2 p, bool inside, float n) {
+  if (key.w <= 0.0) return 0.0;
+  float a = 6.2831853 * fract(n * 7.0 + 0.3), r = key.z * sqrt(n);
+  vec2 v = key.xy + r * vec2(cos(a), sin(a)) - p, d = v / max(length(v), 1e-3);
+  float t = 0.0, lit = 1.0;
+  if (inside) {
+    while (t <= SKIN && solid(p + d * t) > 0.5) t += 1.0;
+    if (t > SKIN) return 0.0;
+  }
+  for (int k = 0; k < STEPS && t < min(length(v), SHADOW); ++k) {
+    vec2 q = p + d * t;
+    if (q.x < 0.0 || q.y < 0.0 || q.x > size.x || q.y > size.y) break;
+    float dist = sdf(q);
+    if (dist < 0.75 && solid(q + d * 0.5) > 0.5) {
+      lit = smoothstep(0.0, SHADOW, t);
+      break;
+    }
+    t += max(dist, 1.0);
+  }
+  float f = distance(key.xy, p) / key.w;
+  return lit / (1.0 + f * f);
+}
 void main() {
   vec2 p = gl_FragCoord.xy;
   float n = fract(52.9829189 * fract(dot(p, vec2(0.06711056, 0.00583715))) + gains.z * 0.618034);
@@ -113,7 +141,8 @@ void main() {
       if (dist < 0.75) {
         if (solid(q + d * 0.5) > 0.5) {  // a solid: the light it caught, bounced
           vec2 h = (q + d * 0.5) / size;
-          sum += texture(prevT, h).rgb * texture(albedoT, h).rgb * gains.y;
+          vec4 b = texture(prevT, h);
+          sum += (b.rgb + keyCol * b.a) * texture(albedoT, h).rgb * gains.y;
           break;
         }
         // An effect: a glow the light passes through, adding up all along (its core shines more than its halo), till
@@ -130,7 +159,7 @@ void main() {
       t += max(dist, 1.0);
     }
   }
-  finalColor = vec4(sum / float(RAYS), 1.0);
+  finalColor = vec4(sum / float(RAYS), keyLight(p, inside, n));
 }
 )";
 
@@ -147,28 +176,29 @@ out vec4 finalColor;
 void main() {
   vec2 p = gl_FragCoord.xy;
   float s = step(0.5, texture(maskT, p / size).a);
-  vec3 sum = vec3(0.0), sq = vec3(0.0);
+  vec4 sum = vec4(0.0), sq = vec4(0.0);
   float n = 0.0;
   for (int y = -2; y <= 2; ++y)
     for (int x = -2; x <= 2; ++x) {
       vec2 q = clamp(p + vec2(x, y), vec2(0.5), size - 0.5);
       float w = float((3 - abs(x)) * (3 - abs(y))) * (1.0 - abs(step(0.5, texture(maskT, q / size).a) - s));
-      vec3 c = texture(texture0, q / size).rgb;
+      vec4 c = texture(texture0, q / size);
       sum += c * w;
       sq += c * c * w;
       n += w;
     }
-  vec3 mean = sum / n, spread = sqrt(max(sq / n - mean * mean, 0.0));
+  vec4 mean = sum / n, spread = sqrt(max(sq / n - mean * mean, 0.0));
   vec2 was = p * reproj.xy + reproj.zw;
-  vec3 before = was.x >= 0.0 && was.y >= 0.0 && was.x <= size.x && was.y <= size.y ? texture(prevT, was / size).rgb : mean;
-  finalColor = vec4(mix(mean, clamp(before, mean - spread, mean + spread), 0.85), 1.0);
+  vec4 before = was.x >= 0.0 && was.y >= 0.0 && was.x <= size.x && was.y <= size.y ? texture(prevT, was / size) : mean;
+  finalColor = mix(mean, clamp(before, mean - spread, mean + spread), 0.85);
 }
 )";
 
 // The frame, lit as in a path traced picture: the arena darker and a little warmer where no light comes, more toward
 // the screen's edges (its highlights, snow or a bright sky, keep their white), lit in the light's own colour where it
-// comes, the light hanging in the air around what gives it. The fighters keep their colours (never dirtied): a slight neutral shade and a rim
-// of light, one per art pixel in flat bands, as on the platforms' bodies. The effects and the lanterns stay as drawn.
+// comes, the light hanging in the air around what gives it; the moon or the sun lights it all but the shadows. The
+// fighters keep their colours (never dirtied): a slight neutral shade and a rim of light, one per art pixel in flat
+// bands, as on the platforms' bodies. The effects and the lanterns stay as drawn.
 const char* kCompositeFrag = R"(#version 330
 uniform sampler2D texture0;  // the light
 uniform sampler2D maskT, frameT;
@@ -176,20 +206,23 @@ uniform vec2 size;   // the frame
 uniform vec4 gain;   // backdrop, floor, solid, art pixel (frame pixels)
 uniform vec4 shade;  // the unlit arena's colour; whether this target holds the fighters and the effects yet
 uniform vec2 extra;  // the haze, the lanterns
+uniform vec3 keyCol;  // the moon's or the sun's colour times its strength
 out vec4 finalColor;
 void main() {
   vec2 g = gl_FragCoord.xy, uv = g / size;
   vec4 m = texture(maskT, uv), c = texture(frameT, uv);
   float s = step(0.5, m.a), f = step(0.5, m.r) * shade.a;
-  vec3 L = texture(texture0, mix(g, (floor(g / gain.w) + 0.5) * gain.w, s) / size).rgb;
+  vec4 T = texture(texture0, mix(g, (floor(g / gain.w) + 0.5) * gain.w, s) / size);
+  vec3 L = T.rgb, K = keyCol * T.a;
   float lum = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
   vec2 d = uv - 0.5;
   vec3 base = mix(shade.rgb, vec3(0.92, 0.9, 0.86), smoothstep(0.72, 1.0, lum)) * (1.0 - 0.3 * dot(d, d));
-  vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s), vec3(1.6));
+  vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s) + K * mix(mix(0.3, 0.7, m.g), 1.2, s), vec3(1.6));
   k = mix(k, floor(k * 5.0 + 0.5) / 5.0, s);
-  vec3 arena = c.rgb * (base + k) + L * extra.x * (1.0 - s);
+  vec3 arena = c.rgb * (base + k) + (L * extra.x + K * 0.06) * (1.0 - s);
   arena = mix(vec3(dot(arena, vec3(0.2126, 0.7152, 0.0722))), arena, 1.15);  // richer colours, not greyed
-  vec3 R = floor(min(mix(vec3(max(L.r, max(L.g, L.b))), L, 0.5) * gain.z, vec3(0.8)) * 5.0 + 0.4) / 5.0;
+  vec3 F = L * gain.z + K * 0.7;  // the light on a fighter, half its colour (whites stay white)
+  vec3 R = floor(min(mix(vec3(max(F.r, max(F.g, F.b))), F, 0.5), vec3(0.8)) * 5.0 + 0.4) / 5.0;
   vec3 fighter = c.rgb * (0.9 + R);
   float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
   // A lantern's pale hot centre counts too (graded alone it turned into a brown blot); never a fighter's skin.
@@ -201,7 +234,7 @@ void main() {
 
 struct Pass {
   Shader sh{};
-  int size = -1, a = -1, b = -1, c = -1, d = -1, e = -1, f = -1, g = -1;
+  int size = -1, a = -1, b = -1, c = -1, d = -1, e = -1, f = -1, g = -1, h = -1;
 };
 Pass g_mask, g_seed, g_jump, g_trace, g_resolve, g_comp;
 bool g_tried = false, g_on = false;
@@ -216,7 +249,7 @@ Pass load(const char* frag, std::initializer_list<const char*> names) {
   Pass p;
   p.sh = LoadShaderFromMemory(nullptr, frag);
   p.size = GetShaderLocation(p.sh, "size");
-  int* out[] = {&p.a, &p.b, &p.c, &p.d, &p.e, &p.f, &p.g};
+  int* out[] = {&p.a, &p.b, &p.c, &p.d, &p.e, &p.f, &p.g, &p.h};
   int i = 0;
   for (const char* n : names) *out[i++] = GetShaderLocation(p.sh, n);
   return p;
@@ -227,9 +260,9 @@ bool ready() {
     g_mask = load(kMaskFrag, {});
     g_seed = load(kSeedFrag, {"emitT", "albedoT", "lamps"});
     g_jump = load(kJumpFrag, {"jump"});
-    g_trace = load(kTraceFrag, {"emitT", "maskT", "albedoT", "prevT", "gains", "lamps"});
+    g_trace = load(kTraceFrag, {"emitT", "maskT", "albedoT", "prevT", "gains", "lamps", "key", "keyCol"});
     g_resolve = load(kResolveFrag, {"maskT", "prevT", "reproj"});
-    g_comp = load(kCompositeFrag, {"maskT", "frameT", "gain", "shade", "extra"});
+    g_comp = load(kCompositeFrag, {"maskT", "frameT", "gain", "shade", "extra", "keyCol"});
   }
   for (const Pass* p : {&g_mask, &g_seed, &g_jump, &g_trace, &g_resolve, &g_comp})
     if (p->sh.id == 0 || p->sh.id == rlGetShaderIdDefault()) return false;
@@ -417,8 +450,15 @@ void resolve(const Match& m, const Camera2D& cam) {
   }
 
   // The rays, then cleaned. Where each traced pixel was the frame before: through the world, from this camera to the
-  // last one.
-  const float gains[3] = {3.0f, 0.6f, float(art::frameId() % 64)};
+  // last one. The moon or the sun: from the screen to the traced pixels (y up, as in the targets).
+  const float S = W / kW, gains[3] = {3.0f, 0.6f, float(art::frameId() % 64)};
+  float key[4] = {}, keyCol[3] = {};
+  if (stageart::KeyLight kl; stageart::keyLight(m.stage().theme, kl)) {
+    const float u = g_renderScale / S;
+    const float k[4] = {kl.at.x * u, (H - kl.at.y * g_renderScale) / S, kl.radius * u, kl.reach * u};
+    std::copy(k, k + 4, key);
+    std::copy(kl.light, kl.light + 3, keyCol);
+  }
   const RenderTexture2D &now = g_gi[g_cur ^ 1], &before = g_gi[g_cur];
   pass(g_raw, g_trace, g_jfa[j].texture, [&] {
     SetShaderValueTexture(g_trace.sh, g_trace.a, g_emit.texture);
@@ -427,9 +467,11 @@ void resolve(const Match& m, const Camera2D& cam) {
     SetShaderValueTexture(g_trace.sh, g_trace.d, before.texture);
     SetShaderValue(g_trace.sh, g_trace.e, gains, SHADER_UNIFORM_VEC3);
     SetShaderValue(g_trace.sh, g_trace.f, &lamps, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(g_trace.sh, g_trace.g, key, SHADER_UNIFORM_VEC4);
+    SetShaderValue(g_trace.sh, g_trace.h, keyCol, SHADER_UNIFORM_VEC3);
   });
   const View v = viewOf(cam, *fr), p = g_prev.z > 0.0f ? g_prev : v;
-  const float S = W / kW, r = p.z / v.z;
+  const float r = p.z / v.z;
   const float reproj[4] = {r, r, ((v.tx - p.tx) * p.z + p.ox - v.ox * r) / S,
                            (H - (H - v.oy) * r - (v.ty - p.ty) * p.z - p.oy) / S};
   g_prev = v;
@@ -449,7 +491,8 @@ void resolve(const Match& m, const Camera2D& cam) {
   for (const RenderTexture2D* t : {fr, light::beforeFighters()}) {
     if (!t || t->texture.width != fr->texture.width || t->texture.height != fr->texture.height) continue;
     blit(*t, g_copy);
-    const float shade[4] = {0.7f, 0.65f, 0.6f, t == fr ? 1.0f : 0.0f};
+    const float amb = key[3] > 0.0f ? 0.8f : 1.0f;  // under a moon or a sun, its shadows darker
+    const float shade[4] = {0.7f * amb, 0.65f * amb, 0.6f * amb, t == fr ? 1.0f : 0.0f};
     into(*t, [&] {
       rlSetMatrixModelview(MatrixIdentity());
       BeginShaderMode(g_comp.sh);
@@ -458,6 +501,7 @@ void resolve(const Match& m, const Camera2D& cam) {
       SetShaderValue(g_comp.sh, g_comp.c, gain, SHADER_UNIFORM_VEC4);
       SetShaderValue(g_comp.sh, g_comp.d, shade, SHADER_UNIFORM_VEC4);
       SetShaderValue(g_comp.sh, g_comp.e, extra, SHADER_UNIFORM_VEC2);
+      SetShaderValue(g_comp.sh, g_comp.f, keyCol, SHADER_UNIFORM_VEC3);
       SetShaderValueTexture(g_comp.sh, g_comp.a, g_maskT.texture);
       SetShaderValueTexture(g_comp.sh, g_comp.b, g_copy.texture);
       DrawTexturePro(now.texture, {0, 0, float(kW), float(kH)}, {0, 0, W, H}, {0, 0}, 0.0f, WHITE);
