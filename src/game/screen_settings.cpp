@@ -37,7 +37,7 @@ const RowInfo kRows[3][8] = {
      {"Compteur d'images (FPS)", "Affiche le nombre d'images par seconde en haut à gauche."},
      {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."},
      {"Personnages en pixel art", "Les combattants sont dessinés comme des sprites en pixel art (les menus restent lisses)."},
-     {"RTX", "Oui : vrai lancer de rayons, façon path tracing : décor plus sombre et chaud, vraies ombres, lumière des effets qui rebondit, reflets forts. Très gourmand. Non : l'éclairage dessiné, plus léger."}},
+     {"RTX", "Oui : vrai lancer de rayons, façon path tracing : la lune ou le soleil de l'arène, vraies ombres, lumière des effets qui rebondit, reflets forts. Très gourmand. Non : l'éclairage dessiné, plus léger."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Clash Orb", "L'orbe qui traverse l'arène. La casser donne l'ultime : c'est la seule façon de l'obtenir."},
      {"Armes", "Les deux armes de chaque combattant tombent sur l'arène : il prend la sienne en restant dessus, touche Arme maintenue 1 s. Avec A et B, la touche alterne."},

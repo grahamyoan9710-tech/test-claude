@@ -520,6 +520,13 @@ Texture2D glowOf(const Image& strip, const art::FxInfo& I) {
   SetTextureFilter(t, TEXTURE_FILTER_BILINEAR);
   return t;
 }
+// Dust and smoke: the movement puffs and the trail behind an ejected fighter. No bloom (the owner, 10/11: too bright)
+// and no light (white, they lit the floor like lamps).
+bool smoke(const char* name) {
+  for (const char* s : {"pfx_jump", "pfx_airjump", "pfx_land", "pfx_dash", "pfx_trail"})
+    if (std::strcmp(name, s) == 0) return true;
+  return false;
+}
 const Fx* fxOf(const char* name) {
   static std::map<std::string, Fx> cache;
   auto it = cache.find(name);
@@ -548,7 +555,7 @@ const Fx* fxOf(const char* name) {
     F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-      F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)
+      if (!smoke(name)) F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)
     }
     // Pixel art does not tint the fighters: its yellow turned the dark ones olive.
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0 && !F.info.pixel) {

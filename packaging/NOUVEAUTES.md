@@ -8,6 +8,20 @@
 
 ## Nouveautés
 
+Version 12.8 : **RTX : la lune ou le soleil de chaque arène, ses ombres, des reflets partout**.
+
+- Avec *RTX : Oui*, chaque arène a sa lumière principale : la grande lune de l'Abîme Lunaire, le soleil couchant à
+  gauche de la Citadelle de Givre, le soleil derrière la falaise du Canyon Écarlate, la lune rouge des Toits Kurenai
+  et le soleil haut du Monastère des Nuées. Elle éclaire plus fort près d'elle, flotte dans l'air, et les persos et
+  les plateformes y projettent leur ombre.
+- Plus d'images fantômes ni de « poussière » : la lumière calculée est nettoyée à chaque image, et ce qui bouge ne
+  laisse plus de traînée.
+- Reflets RTX sur toutes les plateformes, selon leur matière : sol poli, tuiles glacées, planches laquées ou
+  mouillées, plus ou moins floues ; le grès reste mat.
+- La fumée et la poussière des déplacements n'ont plus de bloom et n'éclairent plus le décor.
+- La traînée d'éjection fonce avec les pourcentages du perso et la distance parcourue.
+- Plus aucun effet PixelLab : l'apparition au respawn, la fin de transformation et l'orbe brisée sont retirées.
+
 Version 12.7 : **l'ultime de Hakuen, une pluie d'éclairs à esquiver**.
 
 - « Forge de l'aube » fait tomber cinq éclairs rouge sang, l'un après l'autre. Chacun marque le sol sous

@@ -55,7 +55,9 @@ void main() {
 // more toward the front edge so what stands high still shows there. A little blurred, fading toward the front; rain
 // ripples it. Added to the floor, squared: what is bright (an effect, a lantern, a white coat) shines in it, the dark
 // barely shows. Drawn after the fighters, only where the floor still shows, with a screen blend: a bright floor
-// takes less of it than a dark one, so it is never washed out.
+// takes less of it than a dark one, so it is never washed out. RTX: as blurred as its matter (look.x), every platform
+// top mirrors, only on its own pixels (the RTX mask), and the surface's grain shows through: its joints, cracks and
+// gaps (darker than around) mirror less, its polished highlights more.
 const char* kMirrorFrag = R"(#version 330
 in vec2 fragTexCoord;
 in vec4 fragColor;
@@ -67,7 +69,10 @@ uniform vec4 floorW;         // back edge, walk line, front edge (world y), glos
 uniform vec2 size;
 uniform vec2 rain;           // ripple size (world units), time
 uniform vec4 ends;           // the floor's left and right ends at its back edge, then at its front edge (world x)
+uniform vec4 look;           // how blurred (1: polished), RTX (0 or 1), 2 art pixels in framebuffer px
+uniform sampler2D maskT;     // RTX: green a floor, alpha a solid, red a sprite
 out vec4 finalColor;
+float lum(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 vec2 px(float x, float y) { return vec2((x - cur.y) * cur.x + offs.x, cur.w - ((y - cur.z) * cur.x + offs.y)); }
 vec3 tap(sampler2D t, vec2 s) { return texture(t, clamp(s, vec2(0.5), size - 0.5) / size).rgb; }
 void main() {
@@ -83,17 +88,24 @@ void main() {
   float ySky = floorW.x - back * (1.6 + 2.4 * t), yNear = floorW.y - front * (1.2 + 2.0 * u);
   vec3 sky = vec3(0.0), near = vec3(0.0);
   float hit = 0.0;
-  for (int k = -1; k <= 1; ++k) {
-    vec3 a = tap(backdrop, px(x + float(k) * (0.4 + 2.0 * t), ySky));
-    vec2 q = px(x + float(k) * (0.3 + 2.0 * u), yNear);
+  for (int k = -2; k <= 2; ++k) {
+    float f = float(k) * 0.5 * look.x, wk = float(3 - abs(k)) / 9.0;
+    vec3 a = tap(backdrop, px(x + f * (0.4 + 2.0 * t), ySky));
+    vec2 q = px(x + f * (0.3 + 2.0 * u), yNear);
     vec3 b = tap(texture0, q), o = tap(backdrop, q);
-    sky += a * a;
-    near += pow(b, vec3(1.5));
-    hit += smoothstep(0.02, 0.08, length(b - o));  // a fighter or an effect stands there
+    sky += a * a * wk;
+    near += pow(b, vec3(1.5)) * wk;
+    hit += smoothstep(0.02, 0.08, length(b - o)) * wk;  // a fighter or an effect stands there
   }
-  sky *= pow(1.0 - t, 0.7) / 3.0;
-  near *= (1.0 - 0.6 * u) / 3.0;
-  vec3 c = mix(sky, near, (hit / 3.0) * step(0.0, w.y - floorW.y + 2.0));
+  sky *= pow(1.0 - t, 0.7);
+  near *= 1.0 - 0.6 * u;
+  vec3 c = mix(sky, near, hit * step(0.0, w.y - floorW.y + 2.0));
+  if (look.y > 0.5) {
+    vec4 m = texture(maskT, g / size);
+    float around = lum(tap(backdrop, g + vec2(look.z, 0.0))) + lum(tap(backdrop, g - vec2(look.z, 0.0))) +
+                   lum(tap(backdrop, g + vec2(0.0, look.z))) + lum(tap(backdrop, g - vec2(0.0, look.z)));
+    c *= max(m.g, m.a) * (1.0 - m.r) * clamp(4.0 * lum(was) / max(around, 1e-3), 0.3, 1.4);
+  }
   // Only on the floor: its ends (rails, roof ridges...) do not mirror.
   vec2 e = mix(ends.xy, ends.zw, t);
   float inside = smoothstep(e.x, e.x + 3.0, w.x) * smoothstep(e.y, e.y - 3.0, w.x);
@@ -104,10 +116,12 @@ void main() {
 Shader g_lit{}, g_mirror{};
 bool g_tried = false;
 int g_litA = -1, g_litB = -1, g_litCount = -1, g_litFloor = -1, g_litGain = -1, g_litEnds = -1;
-int g_mCur = -1, g_mOffs = -1, g_mFloor = -1, g_mSize = -1, g_mRain = -1, g_mBack = -1, g_mEnds = -1;
+int g_mCur = -1, g_mOffs = -1, g_mFloor = -1, g_mSize = -1, g_mRain = -1, g_mBack = -1, g_mEnds = -1, g_mLook = -1,
+    g_mMask = -1;
 RenderTexture2D g_now{}, g_back{};  // the frame all drawn, the frame before the fighters
 bool g_hasBack = false;
 float g_mirrorGain = 1.0f;  // how strongly the floors mirror (RTX: more)
+bool g_rtx = false;         // RTX this frame: every platform top mirrors
 
 bool ready() {
   if (!g_tried) {
@@ -127,6 +141,8 @@ bool ready() {
     g_mRain = GetShaderLocation(g_mirror, "rain");
     g_mEnds = GetShaderLocation(g_mirror, "ends");
     g_mBack = GetShaderLocation(g_mirror, "backdrop");
+    g_mLook = GetShaderLocation(g_mirror, "look");
+    g_mMask = GetShaderLocation(g_mirror, "maskT");
   }
   return g_lit.id != 0 && g_mirror.id != 0 && g_litA >= 0 && g_mCur >= 0;
 }
@@ -233,6 +249,11 @@ void shadows(const Match& m, const Camera2D& cam) {
     endClip();
   }
 }
+
+// What mirrors on a platform: with RTX, every platform top (as its matter), else the glossy floors.
+bool mirrors(const Platform& p, StageTheme theme, stageart::Floor& fl) {
+  return g_rtx ? stageart::mirrorOf(p, theme, fl) : stageart::floorOf(p, theme, fl) && fl.gloss > 0.0f;
+}
 }  // namespace
 
 void backdrop(const Match& m, const Camera2D& cam) {
@@ -254,6 +275,7 @@ void backdrop(const Match& m, const Camera2D& cam) {
 
 void arena(const Match& m, const Camera2D& cam, float time) {
   g_hasBack = false;
+  g_rtx = rtx::on();
   const RenderTexture2D* fr = pix::frameTarget();
   if (!(settings().highQuality || rtx::on()) || !fr || !ready()) return;
   g_mirrorGain = rtx::on() ? 1.8f : 1.0f;
@@ -290,7 +312,7 @@ void arena(const Match& m, const Camera2D& cam, float time) {
   // 3. What the floors mirror behind the fighters, and what tells them from the floor.
   for (const auto& p : m.platforms) {
     stageart::Floor fl{};
-    if (stageart::floorOf(p, theme, fl) && fl.gloss > 0.0f) {
+    if (mirrors(p, theme, fl)) {
       copyFrame(*fr, g_back);
       g_hasBack = true;
       break;
@@ -316,17 +338,23 @@ void reflections(const Match& m, const Camera2D& cam, float time) {
   SetShaderValue(g_mirror, g_mCur, curU, SHADER_UNIFORM_VEC4);
   SetShaderValue(g_mirror, g_mOffs, offs, SHADER_UNIFORM_VEC2);
   SetShaderValue(g_mirror, g_mSize, size, SHADER_UNIFORM_VEC2);
+  const Texture2D mask = rtx::mask();
   for (const auto& p : m.platforms) {
     stageart::Floor fl{};
-    if (!stageart::floorOf(p, m.stage().theme, fl) || fl.gloss <= 0.0f) continue;
+    if (!mirrors(p, m.stage().theme, fl)) continue;
     const float f[4] = {fl.back, fl.walk, fl.front, fl.gloss * g_mirrorGain}, rain[2] = {fl.rain ? 1.2f : 0.0f, time};
     SetShaderValue(g_mirror, g_mFloor, f, SHADER_UNIFORM_VEC4);
     SetShaderValue(g_mirror, g_mRain, rain, SHADER_UNIFORM_VEC2);
     const float ends[4] = {fl.leftBack, fl.rightBack, fl.leftFront, fl.rightFront};
     SetShaderValue(g_mirror, g_mEnds, ends, SHADER_UNIFORM_VEC4);
+    const float look[4] = {fl.rough, g_rtx ? 1.0f : 0.0f, 2.0f * g_renderScale * pix::artPixel(), 0.0f};
+    SetShaderValue(g_mirror, g_mLook, look, SHADER_UNIFORM_VEC4);
     SetShaderValueTexture(g_mirror, g_mBack, g_back.texture);  // (each draw of the batch forgets it)
-    DrawTexturePro(g_now.texture, {0, 0, 1, 1}, {p.rect.left() + 2.0f, fl.back, p.rect.w - 4.0f, fl.front - fl.back},
-                   {0, 0}, 0.0f, WHITE);
+    if (g_rtx) SetShaderValueTexture(g_mirror, g_mMask, mask);
+    // (RTX: from end to end of the picture, the mask keeps it on the platform; else within the platform)
+    const float l = g_rtx ? std::min(p.rect.left() + 2.0f, fl.leftFront) : p.rect.left() + 2.0f,
+                r = g_rtx ? std::max(p.rect.right() - 2.0f, fl.rightFront) : p.rect.right() - 2.0f;
+    DrawTexturePro(g_now.texture, {0, 0, 1, 1}, {l, fl.back, r - l, fl.front - fl.back}, {0, 0}, 0.0f, WHITE);
     rlDrawRenderBatchActive();
   }
   EndShaderMode();

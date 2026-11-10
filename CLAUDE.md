@@ -102,6 +102,8 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   - Coupés (`kVfx = false`, `src/game/render.hpp`) sauf ce que le propriétaire aime (28/10 : « les vfx de mouvement
     sont parfaits mais le reste… ») : fumées de saut, de dash et d'atterrissage (`moveFx`), sa bulle de bouclier,
     et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seul effet codé gardé).
+    Depuis le 10/11, aucun effet PixelLab ne s'affiche plus (le propriétaire : « retire-les ») : seuls les `pfx_*`
+    passent avec `kVfx = false` (apparition au respawn, fin de transformation, orbe brisée : retirés).
   - Les remettre un par un, seulement quand ils sont au niveau de ceux-là.
   - ParticleFX : le propriétaire envoie les GIF (export gratuit), gardés dans `art/particlefx/` et importés par
     `scripts/import_fx.py` sous le nom `pfx_*`. Ils s'affichent même avec `kVfx = false` (`chosenFx`,
@@ -109,7 +111,8 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
     Licence (page des prix, 05/11) : permis dans un jeu vendu, même en compte gratuit, sans crédit ; interdit de
     revendre leurs effets en pack. Un effet de leur bibliothèque fait avec des sprites de CodeManu (CC BY 4.0) doit
     être crédité.
-- Règle du jeu (propriétaire, 06/11) : style « RTX », **tous les effets ont du bloom**, et aucun effet ne teinte
+- Règle du jeu (propriétaire, 06/11) : style « RTX », **tous les effets ont du bloom** (sauf, depuis le 10/11, la
+  fumée et la poussière des déplacements et la traînée d'éjection : trop lumineuses), et aucun effet ne teinte
   les persos au point de les salir (les effets pixel art ne les éclairent pas : ils les rendaient olive).
 - Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
   exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en

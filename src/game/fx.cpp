@@ -139,7 +139,6 @@ void Fx::groundImpact(const Match& m, Vec2 feet, float strength, Color tint, flo
     }
     playFx(strength >= 160.0f ? "m_ground_heavy" : "m_ground_big", {feet.x, r.top()}, 0.5f);  // small: the fighters stay readable
     playFx("px_shockwave", {feet.x, r.top()}, strength >= 160.0f ? 1.3f : 1.0f);  // trial: PixelLab's preset shockwave
-    sprites_.back().move = true;
     return;
   }
 }
@@ -433,11 +432,6 @@ void Fx::onEvents(const Match& m) {
         const float px = on ? art::pixelScale(*on->def) : 1.0f;
         const bool marked = hitSpark(pos, e.dir, kb, e.fx, big, tint, px);
         if (!marked) pixelImpact(pos, e.dir, kb, hitCol, false);  // a ParticleFX mark has its own pixel sparks
-        if (!marked && art::fxInfo("px_impact_burst")) {  // trial: PixelLab's ready-made hit spark (preset impact_burst), bigger when stronger
-          playFx("px_impact_burst", pos, 2.4f * (0.5f + 0.35f * clampf(kb / 120.0f, 0.0f, 1.5f)), 0.0f, false,
-                 mixColor(hitCol, WHITE, 0.5f));
-          sprites_.back().move = true;  // drawn with the movement smoke, even with kVfx off
-        }
         if (kb >= 140.0f && e.b >= 0 && e.b < nf)  // a powerful blow: the ground bursts under the victim
           groundImpact(m, m.fighters[e.b].pos, kb, tint, px);
         if (e.b >= 0 && e.b < nf && !m.cfg.training) {  // combo counter (training has its own panel)
@@ -623,10 +617,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::OrbBreak:
-        if (art::fxInfo("sys_orb_break")) {  // the PixelLab burst (shown with kVfx off: in the owner's validated mockup)
-          playFx("sys_orb_break", e.pos, 1.2f, 0.0f, false, {255, 246, 200, 255});
-          sprites_.back().move = true;
-        }
+        playFx("sys_orb_break", e.pos, 1.2f, 0.0f, false, {255, 246, 200, 255});  // (PixelLab: hidden with kVfx off)
         for (int i = 0; i < 4; ++i)  // shards of its sky and of its earth
           pixelImpact(e.pos, {std::cos(i * kPi * 0.5f), std::sin(i * kPi * 0.5f)}, 140.0f,
                       i % 2 ? Color{255, 181, 71, 255} : Color{95, 162, 255, 255}, i == 0);
@@ -792,8 +783,7 @@ bool Fx::moveFx(const Match& m, int who, const char* name, Vec2 at, float size, 
   if (who < 0 || who >= int(m.fighters.size()) || !art::fxInfo(name)) return false;
   const Fighter& f = m.fighters[who];
   const Color tint = tinted ? mixColor(hitFxColor(heroElement(f.def->hero)), WHITE, 0.45f) : WHITE;
-  playFx(name, at, art::fxSize(name, *f.def, size), 0.0f, f.facing < 0, tint);
-  sprites_.back().move = true;
+  playFx(name, at, art::fxSize(name, *f.def, size), 0.0f, f.facing < 0, tint);  // (PixelLab: hidden with kVfx off, 10/11)
   return true;
 }
 
@@ -815,6 +805,8 @@ void Fx::update(const Match& m) {
       SpriteFx s{"pfx_trail", f.center() - v.norm() * (0.45f * f.height()), art::fxSize("pfx_trail", *f.def), 0.0f,
                  (m.frame / 2) % 2 == 0, 0};
       s.move = true;
+      // Darker the more hurt it is and the farther it flies (the owner, 10/11): white puffs, then charcoal smoke.
+      s.tint = mixColor(WHITE, {58, 54, 62, 255}, clampf(f.percent / 240.0f + f.stateFrame / 60.0f, 0.0f, 0.85f));
       sprites_.push_back(s);
     }
   }

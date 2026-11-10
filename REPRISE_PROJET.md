@@ -55,6 +55,16 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 soir UTC, session claude/project-thread-ab9ctl : version 12.8, **RTX : lune ou soleil de chaque arène**.
+  yoyo (5070) voyait des images fantômes et de la « poussière » : passe `kResolveFrag` (`render_rtx.cpp`), filtre 5x5
+  qui ne traverse pas les bords des solides + historique borné à la moyenne ± écart ; la fumée des déplacements
+  (`smoke()`, `fighter_art.cpp`) n'a plus ni bloom ni lumière. Reflets RTX sur toutes les plateformes selon leur
+  matière (`stageart::mirrorOf`, rangées `Top` et `floorRough` dans `render_stages.cpp`). Lumière principale par
+  arène (`Key sky`, `stageart::keyLight`) : un rayon d'ombre par pixel vers un point du disque de la lune ou du
+  soleil (canal alpha de la lumière tracée), ombre qui s'efface sur 260 px tracés, plus faible loin de la source ;
+  la teinte du décor non éclairé passe à ×0,8 sous une lune ou un soleil (ombres plus marquées).
+  Plus aucun effet PixelLab avec `kVfx = false` (`moveFx` ne force plus `move`) ; traînée d'éjection plus foncée
+  selon les % et le temps de vol. Verrou « Version et paquets » pris et libéré dans ce commit.
 - 10/11 17 h 10 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.7. Ultime de Hakuen
   façon sort de foudre : 5 éclairs (`ult::thunder(name, e, fx, warn 31, bolts 5)`, un toutes les 14 images), chacun
   posé sur le sol sous l'adversaire à son apparition et frappant toute la colonne (`ProjectileDef::column`), sans
