@@ -8,6 +8,12 @@
 
 ## Nouveautés
 
+Version 12.7 : **l'ultime de Hakuen, une pluie d'éclairs à esquiver**.
+
+- « Forge de l'aube » fait tomber cinq éclairs rouge sang, l'un après l'autre. Chacun marque le sol sous
+  l'adversaire d'un cercle, puis frappe toute la colonne à cet endroit, du ciel jusqu'au sol.
+- Les éclairs ne suivent plus l'adversaire : celui qui bouge vite à temps peut les esquiver. Le dernier éjecte.
+
 Version 12.6 : **Hakuen reprend ses couleurs d'origine**.
 
 - Hakuen retrouve sa tenue noire, or et rouge (clips et portrait). Le reste de la 12.4 et de la 12.5 est gardé :

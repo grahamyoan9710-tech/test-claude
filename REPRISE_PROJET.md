@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 17 h 10 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.7. Ultime de Hakuen
+  façon sort de foudre : 5 éclairs (`ult::thunder(name, e, fx, warn 31, bolts 5)`, un toutes les 14 images), chacun
+  posé sur le sol sous l'adversaire à son apparition et frappant toute la colonne (`ProjectileDef::column`), sans
+  `follow` (l'éclair suivait le perso touché). `fx_pfx_h01_ult.png` : 8 premières images coupées (24 au lieu de 32 ;
+  une réimportation doit passer `--only 8-31`). Test : `sim_test hakuen` (esquive). Le test des ultimes contre un
+  bouclier compte un bouclier usé à 0 comme brisé.
 - 10/11 16 h 40 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.6. yoyo revient sur sa
   demande : Hakuen reprend ses couleurs d'origine (repeinture en blanc de la 12.4 annulée, `scripts/h01_white/`
   retiré). Branche RTX ab9ctl (12.5) fusionnée avant. Verrou « Version et paquets » pris et libéré dans ce commit.
