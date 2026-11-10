@@ -519,7 +519,7 @@ CharacterDef makeH01() {
   k.c.name = "Hakuen";
   k.c.hero = Hero::H01;
   const F e = k.e;
-  skills(k, -1, along(shot("Tranchant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
+  skills(k, -1, along(shot("Tranchant du néant", e, PV::Wave, k.pfx("crescent"), 9, 24, 9)),
          through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
          prescience(counter("Prescience", e, nullptr, false, L::ArmFront), k.pfx("parry")));
   ultimateOf(k, -1, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::ArmFront, 9));
@@ -527,7 +527,7 @@ CharacterDef makeH01() {
 
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
-  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
+  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, k.pfx("crescent"), 9, 24, 9)),
          through("Ruée-iaï", e, k.pfx("draw"), 11), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
          prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 0, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 9));
@@ -535,7 +535,7 @@ CharacterDef makeH01() {
 
   arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
-  skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, "pfx_crescent", 11, 28, 10)),
+  skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
          through("Ruée ardente", e, k.pfx("draw"), 12), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
          prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 1, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 11));
@@ -547,9 +547,9 @@ CharacterDef makeH01() {
   FormDef& aw = k.c.forms[awake];
   aw.m1Waves = true;
   aw.m1Wave = proj({30, -6}, {11, 0}, 0, 26, 16, 3.5f, 20, 40, e, PV::Crescent);
-  aw.m1Wave.fx = "pfx_crescent";
+  aw.m1Wave.fx = k.pfx("crescent");
   aw.m1Wave.piercing = true;
-  MoveDef fan = spread(piercing(shot("Trois croissants", e, PV::Crescent, "pfx_crescent", 10, 22, 7)), 3, 14);
+  MoveDef fan = spread(piercing(shot("Trois croissants", e, PV::Crescent, k.pfx("crescent"), 10, 22, 7)), 3, 14);
   sc(fan, k.S, k.P);
   fan.cooldown = kSkillCooldown;
   aw.moves.push_back({NSpecial, fan});

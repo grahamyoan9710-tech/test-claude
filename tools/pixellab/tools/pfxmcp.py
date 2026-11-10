@@ -12,9 +12,13 @@ def post(body, sid=None):
     r = urllib.request.urlopen(urllib.request.Request(URL, json.dumps(body).encode(), h), timeout=900)  # an agent build takes minutes
     raw = r.read().decode()
     sid = r.headers.get('Mcp-Session-Id') or sid
-    if raw.lstrip().startswith('event:') or 'data:' in raw[:20]:
-        raw = '\n'.join(l[5:] for l in raw.splitlines() if l.startswith('data:'))
-    return (json.loads(raw) if raw.strip() else None), sid
+    data = [l[5:] for l in raw.splitlines() if l.startswith('data:')]
+    if data:  # an event stream (a long build sends progress events first): the reply is the last event
+        raw = data[-1]
+    try:
+        return (json.loads(raw) if raw.strip() else None), sid
+    except ValueError:
+        sys.exit('not JSON: ' + raw[:400])
 res, sid = post({'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {'protocolVersion': '2025-03-26', 'capabilities': {}, 'clientInfo': {'name': 'clash-horizon', 'version': '1'}}})
 print('server:', json.dumps(res.get('result', res).get('serverInfo', res))[:300])
 post({'jsonrpc': '2.0', 'method': 'notifications/initialized'}, sid)
