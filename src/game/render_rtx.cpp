@@ -162,6 +162,7 @@ void main() {
   vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s), vec3(1.6));
   k = mix(k, floor(k * 5.0 + 0.5) / 5.0, s);
   vec3 arena = c.rgb * (base + k) + L * extra.x * (1.0 - s);
+  arena = mix(vec3(dot(arena, vec3(0.2126, 0.7152, 0.0722))), arena, 1.15);  // richer colours, not greyed
   vec3 R = floor(min(mix(vec3(max(L.r, max(L.g, L.b))), L, 0.5) * gain.z, vec3(0.8)) * 5.0 + 0.4) / 5.0;
   vec3 fighter = c.rgb * (0.9 + R);
   float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
@@ -413,7 +414,7 @@ void resolve(const Match& m, const Camera2D& cam) {
   for (const RenderTexture2D* t : {fr, light::beforeFighters()}) {
     if (!t || t->texture.width != fr->texture.width || t->texture.height != fr->texture.height) continue;
     blit(*t, g_copy);
-    const float shade[4] = {0.68f, 0.61f, 0.52f, t == fr ? 1.0f : 0.0f};
+    const float shade[4] = {0.7f, 0.65f, 0.6f, t == fr ? 1.0f : 0.0f};
     into(*t, [&] {
       rlSetMatrixModelview(MatrixIdentity());
       BeginShaderMode(g_comp.sh);
