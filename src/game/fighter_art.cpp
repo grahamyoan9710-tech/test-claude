@@ -136,7 +136,7 @@ bool tintOf(const Pose& pose, Color flashColor, float flash, Color& tc, float& a
   Color formCol{};
   float formK = 0.0f;
   switch (pose.form) {  // a transformation lights the fighter in its colour (its aura is drawn around it)
-    case Form::Awakened: formCol = pose.formColor, formK = 0.22f; break;
+    case Form::Awakened: formCol = pose.formColor, formK = 0.08f; break;  // light: more made her whites look dirty
     default: break;
   }
   if (formK > amount) {

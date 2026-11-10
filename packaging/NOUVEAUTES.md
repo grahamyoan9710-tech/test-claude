@@ -8,6 +8,16 @@
 
 ## Nouveautés
 
+Version 12.2 : **Hakuen, effets refaits**.
+
+- Le croissant part droit devant, à hauteur du corps, aussi grand qu'elle, avec de la foudre rouge (éveillée, elle
+  en lance trois en éventail).
+- Nouvelle aura d'éveil (flammes rouge et or, foudre rouge) et nouvelle onde d'éveil rouge.
+- Pas-iaï : une coupe nette et des éclairs rouges le long de la ruée.
+- Spirale montante : deux tours de lame et de la foudre.
+- Ultime « Forge de l'aube » : une colonne de foudre rouge frappe l'adversaire.
+- Éveillée, ses blancs ne virent plus au beige.
+
 Version 12.1 : **reflets des sols mieux découpés**.
 
 - Les reflets des sols brillants (Abîme Lunaire, Citadelle de Givre, Toits Kurenai, Monastère des Nuées) s'arrêtent

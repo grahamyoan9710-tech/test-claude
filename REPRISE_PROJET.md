@@ -55,6 +55,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 après-midi UTC, session cloud « Hakuen (01) » : version 12.2, effets de Hakuen refaits avec les favoris
+  ParticleFX du propriétaire. Croissant (`pfx_h01_crescent`, effet 61f74d8d…, base Twin Fang X) droit devant (plus
+  `along()`), aura d'éveil (7c8680d4…, base Chakra Energy Charge), onde d'éveil `pfx_h01_wave` (324642af…, base
+  Shockwave Ring ; l'onde PixelLab `move_wave_1` faisait un tourbillon brun), Pas-iaï (8ea1869a…, Dash Wind Burst),
+  Spirale montante (2ef882da…, Rising Uppercut), ultime (6aa8fcd2…, Thunder God Strike en rouge, joué sur
+  l'adversaire : `onFoe`). Foudre rouge partout (Alpha de PGR). Teinte d'éveil 0.22 → 0.08. Pour capturer un coup en
+  démo, un bout de code temporaire dans `match_screen.cpp` (non commité) forçait la touche spéciale.
 - 10/11 09 h 00 UTC, session cloud « Hakuen (01) » : arme A (nodachi) de Hakuen : garde armée placée
   (`pxa/base/h01_w0guard256.png`) et 15 clips générés (toutes les générations PixelLab utilisées). Bons : idle, walk,
   jump, shield, hurt, dspecial, ultimate, rengaine. Refaits le 13/11 (mis de côté en `.qa1`) : dash (traits gris),
