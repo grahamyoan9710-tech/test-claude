@@ -8,6 +8,11 @@
 
 ## Nouveautés
 
+Version 12.6 : **Hakuen reprend ses couleurs d'origine**.
+
+- Hakuen retrouve sa tenue noire, or et rouge (clips et portrait). Le reste de la 12.4 et de la 12.5 est gardé :
+  ultime en éclair rouge sang, effets communs ParticleFX et RTX plus profond.
+
 Version 12.5 : **RTX plus profond, façon path tracing**.
 
 - Avec *RTX : Oui*, le décor est plus sombre et légèrement plus chaud là où aucune lumière n'arrive, un peu plus vers

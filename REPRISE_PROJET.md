@@ -55,6 +55,9 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 16 h 40 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.6. yoyo revient sur sa
+  demande : Hakuen reprend ses couleurs d'origine (repeinture en blanc de la 12.4 annulée, `scripts/h01_white/`
+  retiré). Branche RTX ab9ctl (12.5) fusionnée avant. Verrou « Version et paquets » pris et libéré dans ce commit.
 - 10/11 16 h UTC, session claude/project-thread-ab9ctl : version 12.5, **RTX plus profond** (yoyo veut des zones un
   peu plus sombres aux couleurs légèrement chaudes, des lumières et des reflets bien forts façon path tracing, même si
   ça rame).
