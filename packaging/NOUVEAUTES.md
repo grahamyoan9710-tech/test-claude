@@ -8,6 +8,17 @@
 
 ## Nouveautés
 
+Version 12.5 : **RTX plus profond, façon path tracing**.
+
+- Avec *RTX : Oui*, le décor est plus sombre et légèrement plus chaud là où aucune lumière n'arrive, un peu plus vers
+  les bords de l'écran. Le blanc de la neige et des ciels clairs reste blanc.
+- La lumière des effets est bien plus forte : deux fois plus de rayons, elle porte plus loin, rebondit davantage et
+  flotte dans l'air autour de l'effet.
+- Les reflets des sols brillants sont presque deux fois plus forts (le grès du Canyon Écarlate reste mat).
+- Les persos gardent leurs couleurs, sans être salis : à peine plus sombres, avec leur liseré de lumière en aplats.
+- Le RTX ne se coupe plus tout seul quand le jeu rame : il est très gourmand pour l'instant, il sera optimisé ensuite.
+- Avec le RTX, le halo des effets et les reflets des sols marchent aussi en qualité *Normale*.
+
 Version 12.4 : **Hakuen en blanc, foudre rouge sang, effets communs refaits**.
 
 - Hakuen est repeinte : sa tenue noire et or devient blanche, avec le rouge de son manteau et de ses rubans

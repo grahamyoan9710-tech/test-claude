@@ -107,6 +107,7 @@ int g_litA = -1, g_litB = -1, g_litCount = -1, g_litFloor = -1, g_litGain = -1, 
 int g_mCur = -1, g_mOffs = -1, g_mFloor = -1, g_mSize = -1, g_mRain = -1, g_mBack = -1, g_mEnds = -1;
 RenderTexture2D g_now{}, g_back{};  // the frame all drawn, the frame before the fighters
 bool g_hasBack = false;
+float g_mirrorGain = 1.0f;  // how strongly the floors mirror (RTX: more)
 
 bool ready() {
   if (!g_tried) {
@@ -252,8 +253,10 @@ void backdrop(const Match& m, const Camera2D& cam) {
 }
 
 void arena(const Match& m, const Camera2D& cam, float time) {
+  g_hasBack = false;
   const RenderTexture2D* fr = pix::frameTarget();
-  if (!settings().highQuality || !fr || !ready()) return;
+  if (!(settings().highQuality || rtx::on()) || !fr || !ready()) return;
+  g_mirrorGain = rtx::on() ? 1.8f : 1.0f;
   const View v = viewOf(cam, *fr);
   const StageTheme theme = m.stage().theme;
 
@@ -285,7 +288,6 @@ void arena(const Match& m, const Camera2D& cam, float time) {
   if (!rtx::on()) shadows(m, cam);
 
   // 3. What the floors mirror behind the fighters, and what tells them from the floor.
-  g_hasBack = false;
   for (const auto& p : m.platforms) {
     stageart::Floor fl{};
     if (stageart::floorOf(p, theme, fl) && fl.gloss > 0.0f) {
@@ -300,7 +302,7 @@ const RenderTexture2D* beforeFighters() { return g_hasBack ? &g_back : nullptr; 
 
 void reflections(const Match& m, const Camera2D& cam, float time) {
   const RenderTexture2D* fr = pix::frameTarget();
-  if (!settings().highQuality || !fr || !g_hasBack || !ready() || g_back.texture.width != fr->texture.width ||
+  if (!fr || !g_hasBack || !ready() || g_back.texture.width != fr->texture.width ||
       g_back.texture.height != fr->texture.height)
     return;
   g_hasBack = false;
@@ -317,7 +319,7 @@ void reflections(const Match& m, const Camera2D& cam, float time) {
   for (const auto& p : m.platforms) {
     stageart::Floor fl{};
     if (!stageart::floorOf(p, m.stage().theme, fl) || fl.gloss <= 0.0f) continue;
-    const float f[4] = {fl.back, fl.walk, fl.front, fl.gloss}, rain[2] = {fl.rain ? 1.2f : 0.0f, time};
+    const float f[4] = {fl.back, fl.walk, fl.front, fl.gloss * g_mirrorGain}, rain[2] = {fl.rain ? 1.2f : 0.0f, time};
     SetShaderValue(g_mirror, g_mFloor, f, SHADER_UNIFORM_VEC4);
     SetShaderValue(g_mirror, g_mRain, rain, SHADER_UNIFORM_VEC2);
     const float ends[4] = {fl.leftBack, fl.rightBack, fl.leftFront, fl.rightFront};

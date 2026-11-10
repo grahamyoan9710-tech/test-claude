@@ -247,25 +247,19 @@ void App::run() {
     audio_.update();
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
-    // Weak machine: if the rendering cannot keep up, fall back once: the RTX first (in a match, where it runs), then
-    // the smooth (supersampled) rendering.
+    // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once. Not in a match with the RTX
+    // on: the player chose it knowing it is heavy.
     const bool testRun = !opt_.shots.empty() || !opt_.recordDir.empty() || opt_.quitAfter > 0;
     const bool rtxOn = settings().rtx && screen_ == Screen::Match;
-    if (!testRun && (settings().highQuality || rtxOn) && !autoQualityDone_ && frames_ > 120) {
+    if (!testRun && settings().highQuality && !rtxOn && !autoQualityDone_ && frames_ > 120) {
       const float dt = GetFrameTime();
       slowTime_ = dt > 1.0f / 45.0f ? slowTime_ + dt : std::max(0.0f, slowTime_ - dt * 0.5f);
       if (slowTime_ > 3.0f) {
-        slowTime_ = 0.0f;
-        if (rtxOn) {
-          settings().rtx = false;
-          toast("RTX désactivé pour plus de fluidité");
-        } else {
-          settings().highQuality = false;
-          applyDisplaySettings();
-          autoQualityDone_ = true;
-          toast("Qualité graphique réglée sur « Normale » pour plus de fluidité");
-        }
+        settings().highQuality = false;
+        applyDisplaySettings();
         saveSettings();
+        autoQualityDone_ = true;
+        toast("Qualité graphique réglée sur « Normale » pour plus de fluidité");
       }
     }
     if (IsKeyPressed(KEY_F11)) {

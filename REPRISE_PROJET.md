@@ -55,6 +55,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 16 h UTC, session claude/project-thread-ab9ctl : version 12.5, **RTX plus profond** (yoyo veut des zones un
+  peu plus sombres aux couleurs légèrement chaudes, des lumières et des reflets bien forts façon path tracing, même si
+  ça rame).
+  `render_rtx.cpp` : la composition relit une copie de la cible (`g_copy`) et la réécrit : décor × teinte chaude
+  (0,7 / 0,65 / 0,6, les hautes lumières gardent leur blanc, vignette légère) + lumière tracée + brume de lumière ;
+  persos (canal rouge du masque) à 0,9 neutre + liseré en bandes ; pixels des effets (canal bleu, `rtx::light(draw,
+  core)`) et lanternes gardés tels quels. 32 rayons, 64 pas, portée 640, rebond 0,6. Reflets ×1,8 en RTX
+  (`g_mirrorGain`, `render_light.cpp`), et sans la qualité Haute. `app.cpp` : plus de coupure auto du RTX (yoyo
+  optimisera plus tard). Verrou « Version et paquets » pris et libéré dans ce commit.
 - 10/11 fin d'après-midi UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.4. Ultime à
   mains nues = un seul grand éclair rouge sang foncé sur l'adversaire (`ult::thunder`, PV::Spear, effet ParticleFX
   f20d9da6, `pfx_h01_ult`) ; élément de Hakuen = Lightning (fin du disque doré). Effets communs refaits en

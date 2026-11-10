@@ -12,9 +12,10 @@
 namespace rtx {
 bool on();  // between beginFrame and resolve, with the setting on: the hooks below feed the ray tracer
 void beginFrame();
-// Draws `draw` (current transform) again into the traced scene: as something that blocks the light, or as light.
+// Draws `draw` (current transform) again into the traced scene: as something that blocks the light, or as light
+// (`core`: the effect's own pixels, without its halo, kept as drawn).
 void solid(const std::function<void()>& draw);
-void light(const std::function<void()>& draw);
+void light(const std::function<void()>& draw, const std::function<void()>& core);
 void platforms(const Match& m);  // after the platforms: their bodies block the light, their floors catch it
 void resolve(const Match& m, const Camera2D& cam);  // before the reflections: traces the light, adds it to the frame
 }  // namespace rtx
