@@ -259,7 +259,8 @@ Le menu **Paramètres** a quatre onglets, et tout est enregistré automatiquemen
 - **Affichage** : plein écran, qualité graphique (*Haute* = contours lissés, rendu en double
   résolution ; *Normale* pour les petites machines), secousses de l'écran, noms au-dessus des joueurs,
   compteur d'images (FPS), zones de coup, **personnages en pixel art** (OUI par défaut ; NON = dessin
-  lisse).
+  lisse), **RTX** (OUI = vrai lancer de rayons : la lumière des effets est calculée rayon par rayon, avec de
+  vraies ombres ; NON par défaut = l'éclairage dessiné, plus léger ; coupé tout seul si le jeu rame).
 - **Jeu** : nombre de vies, Orbe Clash, armes, niveau des ordinateurs par défaut (1 à 10), tout réinitialiser.
 - **Commandes** : **toutes les touches des deux claviers sont réassignables** (une touche déjà prise
   est échangée). Quand une manette est utilisée, l'onglet montre **ses boutons, réassignables eux
@@ -398,7 +399,7 @@ Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`ClashHorizon-12.2-linux-x64.tar.gz` et `ClashHorizon-12.2-windows-x64.zip`).
+dans `dist/` (`ClashHorizon-12.3-linux-x64.tar.gz` et `ClashHorizon-12.3-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64
@@ -516,6 +517,8 @@ src/game/   interface raylib
   render_fighter.cpp   poses : chaque attaque anime le membre qui porte la hitbox
   render_world.cpp     décors des arènes Zelda, plateformes, projectiles, aperçus et vignettes des arènes
   render_stages.cpp    les huit arènes des animes (ciel, couches en parallaxe, plateformes, pluie...)
+  render_light.cpp     lumière dessinée des arènes (RTX : Non) : reflets des sols, lumière des effets, ombres
+  render_rtx.cpp       vrai RTX (RTX : Oui) : lumière des effets lancée en rayons 2D sur la carte graphique
   paint.cpp            outils de peinture des décors (dégradés, nuages, montagnes, couches précalculées)
   screen_poses.cpp     planches de développement (poses, pellicules d'animation)
   render_hud.cpp       pourcentages, vies, bulles hors-champ, compte à rebours

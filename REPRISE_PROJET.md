@@ -55,6 +55,16 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 12 h UTC, session claude/project-thread-ab9ctl : version 12.3, **vrai RTX** (réglage Affichage > RTX, `rtx`
+  dans `clash_horizon.cfg`, Non par défaut). Oui : `render_rtx.cpp` (`rtx.hpp`) lance la lumière en 2D sur la carte
+  graphique : masque des persos et des corps des plateformes, lumière des effets (`rtx::light` dans `fighter_art.cpp`,
+  effets pixel art compris) et lanternes lues sur le décor (`lamps` par arène, seulement Kurenai 0,6), champ de
+  distance par jump flooding en 640x360, 16 rayons par pixel, un rebond (lumière de l'image d'avant), accumulation
+  dans le temps. Sur les persos, lumière par case de pixel art, en bandes, plafonnée (pas d'olive). Non : la lumière
+  dessinée de `render_light.cpp`, dont les flaques et les ombres suivent maintenant les bouts du sol (`ends`). Si ça
+  rame, `app.cpp` coupe le RTX d'abord, puis la qualité Haute. Branche à fusionner dans
+  `claude/project-thread-58u7pf` avant la prochaine version, sinon la « latest » perd le RTX. Verrou « Version et
+  paquets » pris et libéré dans ce commit.
 - 10/11 après-midi UTC, session cloud « Hakuen (01) » : version 12.2, effets de Hakuen refaits avec les favoris
   ParticleFX du propriétaire. Croissant (`pfx_h01_crescent`, effet 61f74d8d…, base Twin Fang X) droit devant (plus
   `along()`), aura d'éveil (7c8680d4…, base Chakra Energy Charge), onde d'éveil `pfx_h01_wave` (324642af…, base
