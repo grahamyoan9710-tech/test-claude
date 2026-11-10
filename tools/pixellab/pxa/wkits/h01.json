@@ -13,7 +13,7 @@
      true,
      false,
      "forward",
-     "a fast flat horizontal cut: the nodachi sweeps from low beside him forward at chest height to full reach in one clean stroke, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance, calm and precise"
+     "a fast flat horizontal cut: the nodachi sweeps from low beside him forward at chest height to full reach in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and red inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance, calm and precise; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_jab2": [
      12,
@@ -21,7 +21,7 @@
      true,
      false,
      "forward",
-     "a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance"
+     "a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and red inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_jab3": [
      12,
@@ -29,7 +29,7 @@
      true,
      false,
      "forward",
-     "a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard"
+     "a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and red inside, following the blade on the strike frames only; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_nair": [
      12,
@@ -45,7 +45,7 @@
      true,
      false,
      "forward",
-     "swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through"
+     "swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_sspecial": [
      12,
@@ -53,7 +53,7 @@
      true,
      false,
      "forward",
-     "dashes forward very low and fast and draws a lightning-fast horizontal cut with the nodachi, ending far ahead with his back half turned and the blade extended"
+     "dashes forward very low and fast and draws a lightning-fast horizontal cut with the nodachi, ending far ahead with his back half turned and the blade extended; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_uspecial": [
      12,
@@ -61,7 +61,7 @@
      true,
      false,
      "up",
-     "springs up spinning with the nodachi held out, cutting in a rising spiral above his head"
+     "springs up spinning with the nodachi held out, cutting in a rising spiral above his head; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_dspecial": [
      12,
@@ -133,7 +133,7 @@
      null,
      false,
      "none",
-     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet"
+     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
     ],
     "w0_bthrow": [
      8,
@@ -166,7 +166,7 @@
      true,
      false,
      "forward",
-     "a fast diagonal cut: the star-guarded sword sweeps from high to low in front of him in one clean stroke, a long crisp crescent trail, white along the edge and gold inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance"
+     "a fast diagonal cut: the star-guarded sword sweeps from high to low in front of him in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and gold inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance"
     ],
     "w1_jab2": [
      12,
@@ -174,7 +174,7 @@
      true,
      false,
      "forward",
-     "a reverse rising cut: the star-guarded sword sweeps from low behind him up in front of him in one clean stroke, a long crisp crescent trail, white along the edge and gold inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance"
+     "a reverse rising cut: the star-guarded sword sweeps from low behind him up in front of him in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and gold inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance"
     ],
     "w1_jab3": [
      12,
@@ -182,7 +182,7 @@
      true,
      false,
      "forward",
-     "a spinning finishing cut: turns once on the spot and finishes with a wide horizontal cut of the star-guarded sword at chest height, a long crisp crescent trail, white along the edge and gold inside, following the blade on the strike frames only; ends facing right and lowers the blade back into the stance"
+     "a spinning finishing cut: turns once on the spot and finishes with a wide horizontal cut of the star-guarded sword at chest height, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and gold inside, following the blade on the strike frames only; ends facing right and lowers the blade back into the stance"
     ],
     "w1_nair": [
      12,

@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "7ee48371-cec0-4cf3-8611-6a8177ee2b98",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:901cb620-e6cb-4298-97c6-6177a0900ca8",
+  "last_frame_url": "upload:067493ce-2be2-4f12-a23f-fab6c45faa05",
+  "description": "a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 7ee48371-cec0-4cf3-8611-6a8177ee2b98\njob_id: 7ee48371-cec0-4cf3-8611-6a8177ee2b98\ndescription: a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7ee48371-cec0-4cf3-8611-6a8177ee2b98\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/7ee48371-cec0-4cf3-8611-6a8177ee2b98/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 7a55ee99-e1c0-535b-b220-9aded8698f5c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

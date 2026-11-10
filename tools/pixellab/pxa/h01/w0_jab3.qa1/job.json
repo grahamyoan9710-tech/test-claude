@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "b2f778d4-c844-4f03-94b3-6d932df26960",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6e02d5dd-f3ea-4f03-9de5-665dafe54b2e",
+  "last_frame_url": "upload:4ccd99ae-3ea9-43cd-81e1-003cc0289e89",
+  "description": "a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: b2f778d4-c844-4f03-94b3-6d932df26960\njob_id: b2f778d4-c844-4f03-94b3-6d932df26960\ndescription: a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him, a long crisp crescent trail, white along the edge and red inside, following the blade on the strike frames only; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b2f778d4-c844-4f03-94b3-6d932df26960\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/b2f778d4-c844-4f03-94b3-6d932df26960/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 6371c67c-2795-5dca-8279-08235a6cdd23\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

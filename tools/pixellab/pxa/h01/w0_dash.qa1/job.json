@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "6e86935d-33c2-45b3-96e8-6875b6f3e186",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:363ea02b-1405-496f-b363-18bb4de16ea7",
+  "description": "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 6e86935d-33c2-45b3-96e8-6875b6f3e186\njob_id: 6e86935d-33c2-45b3-96e8-6875b6f3e186\ndescription: a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 12\nsize: 256x256px\ntransparent: True\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6e86935d-33c2-45b3-96e8-6875b6f3e186\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/6e86935d-33c2-45b3-96e8-6875b6f3e186/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 2fbee5be-7eb0-55ec-9159-59171b28faf2\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": null,
+ "frames": 13,
+ "charged": "2 generations"
+}

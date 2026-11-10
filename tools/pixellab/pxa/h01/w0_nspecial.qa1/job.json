@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "9d1eb63d-24e1-4f25-aae4-556dc20523e6",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:da55100a-d3a4-44ed-bd26-141e62a04072",
+  "last_frame_url": "upload:c430ea16-5fa5-42e9-b304-f82a2444b52d",
+  "description": "swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 9d1eb63d-24e1-4f25-aae4-556dc20523e6\njob_id: 9d1eb63d-24e1-4f25-aae4-556dc20523e6\ndescription: swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9d1eb63d-24e1-4f25-aae4-556dc20523e6\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/9d1eb63d-24e1-4f25-aae4-556dc20523e6/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a2700026-c24e-55cb-aa86-06e6ca4ed6c5\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

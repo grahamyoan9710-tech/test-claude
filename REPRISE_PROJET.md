@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 09 h 00 UTC, session cloud « Hakuen (01) » : arme A (nodachi) de Hakuen : garde armée placée
+  (`pxa/base/h01_w0guard256.png`) et 15 clips générés (toutes les générations PixelLab utilisées). Bons : idle, walk,
+  jump, shield, hurt, dspecial, ultimate, rengaine. Refaits le 13/11 (mis de côté en `.qa1`) : dash (traits gris),
+  jab, jab2, jab3, nspecial, sspecial, uspecial (traînées énormes, gris, poussière). Prompts du kit corrigés (traînée
+  fine). Rien n'est importé avant que l'arme A soit complète ; restent aussi ses 11 autres clips.
 - 10/11 05 h 45 UTC, session cloud « Hakuen (01) » : **les 15 effets ParticleFX sont dans le jeu** (pixel art, bloom,
   `import_fx.py --pixel`) : coups rapide, coupe, montant, critique, onde au sol, coup et bris du bouclier, ultime prêt
   (pour tous) ; croissant, éclat, dégainé, parade, spirale, aura et ultime « Forge de l'aube » de Hakuen

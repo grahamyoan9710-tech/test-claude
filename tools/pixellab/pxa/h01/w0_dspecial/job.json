@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "fafc0950-d1b9-4d12-96e2-f3ac4696a425",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c3c62657-8dbe-4f37-9a41-c260c51d0ff2",
+  "last_frame_url": "upload:bfa44e06-e0fc-4d99-9308-913a99423982",
+  "description": "holds the nodachi crosswise in front of him in a calm still parry, eyes narrowed, then answers with a quick straight thrust. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: fafc0950-d1b9-4d12-96e2-f3ac4696a425\njob_id: fafc0950-d1b9-4d12-96e2-f3ac4696a425\ndescription: holds the nodachi crosswise in front of him in a calm still parry, eyes narrowed, then answers with a quick straight thrust. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon and any trail stay inside the picture.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fafc0950-d1b9-4d12-96e2-f3ac4696a425\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/fafc0950-d1b9-4d12-96e2-f3ac4696a425/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 6f1c6d58-11e1-565f-aff3-47659420fa2b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

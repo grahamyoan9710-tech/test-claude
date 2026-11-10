@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "44ae34d1-d40f-4385-92a9-24c8e7a77017",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fb9e9458-3e19-4022-8a31-1234e9fad585",
+  "description": "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, the nodachi held ready in one hand, hair and clothes fly upward; the last frames stay high in the air in that tucked pose, the feet never come back down. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 44ae34d1-d40f-4385-92a9-24c8e7a77017\njob_id: 44ae34d1-d40f-4385-92a9-24c8e7a77017\ndescription: jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, the nodachi held ready in one hand, hair and clothes fly upward; the last frames stay high in the air in that tucked pose, the feet never come back down. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"44ae34d1-d40f-4385-92a9-24c8e7a77017\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/44ae34d1-d40f-4385-92a9-24c8e7a77017/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e4b2c42e-f0d8-5977-9b33-0b17504969b5\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}
