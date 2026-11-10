@@ -837,7 +837,7 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
       constexpr float kDash = 22.0f;  // the dash, then the run (the owner wants the dash well seen)
       if (run && sf < kDash && once(art::kSheetDash, sf / kDash)) break;
       if (loop(run ? art::kSheetRun : art::kSheetWalk)) {
-        const float cycle = f.def->height * (run ? 1.4f : 0.8f), u = f.pos.x * float(f.facing) / cycle;
+        const float cycle = f.def->height * (run ? 1.4f : f.def->walkStride), u = f.pos.x * float(f.facing) / cycle;
         p.sheetPhase = u - std::floor(u);
       }
       break;

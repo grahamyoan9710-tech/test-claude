@@ -315,6 +315,7 @@ struct CharacterDef {
   float width = 50, height = 100;
   float weight = 100;
   float walkSpeed = 4.0f, runSpeed = 8.0f, groundAccel = 1.2f, friction = 0.6f;
+  float walkStride = 0.8f;  // ground one cycle of the walk clip covers, in heights (longer = calmer steps)
   float airSpeed = 5.0f, airAccel = 0.45f, airFriction = 0.06f;
   float gravity = 0.55f, maxFall = 9.0f, fastFall = 14.0f;
   float jumpVel = 14.0f, shortHopVel = 9.5f, airJumpVel = 13.0f;

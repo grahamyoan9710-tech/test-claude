@@ -519,6 +519,7 @@ CharacterDef makeH01() {
   k.c.name = "Hakuen";
   k.c.hero = Hero::H01;
   k.c.armed = false;  // shortcut: bare-handed until his nodachi clips pass QA (13/11), then remove this line
+  k.c.walkStride = 1.6f;  // her short 3/4 steps at the usual stride looked hurried (owner, 10/11)
   const F e = k.e;
   skills(k, -1, piercing(shot("Tranchant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
          through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
