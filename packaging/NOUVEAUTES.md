@@ -8,6 +8,11 @@
 
 ## Nouveautés
 
+Version 12.9 : **Hakuen marche plus calmement**.
+
+- Ses pas sont deux fois moins rapides quand elle marche : ils ne s'agitent plus pour la distance parcourue.
+- Son coup de pied vers le haut sera refait dès que PixelLab le permettra (le 13/11).
+
 Version 12.8 : **RTX : la lune ou le soleil de chaque arène, ses ombres, des reflets partout**.
 
 - Avec *RTX : Oui*, chaque arène a sa lumière principale : la grande lune de l'Abîme Lunaire, le soleil couchant à

@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 21 h 50 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.9 (après la 12.8 RTX,
+  fusionnée). yoyo : la marche de Hakuen trop rapide → `CharacterDef::walkStride` (0.8 par défaut, 1.6 pour h01 : ses
+  pas en 3/4 sont courts). Son coup de pied vers le haut (usmash, « rising crescent kick ») n'a pas l'air naturel : un
+  grand écart figé, le corps raide. PixelLab est à 0 génération jusqu'au 13/11 : à régénérer ce jour-là avec un prompt
+  plus précis (buste penché en arrière, bras en contrepoids, jambe en arc continu sans pause en haut, genou d'appui
+  plié).
 - 10/11 soir UTC, session claude/project-thread-ab9ctl : version 12.8, **RTX : lune ou soleil de chaque arène**.
   yoyo (5070) voyait des images fantômes et de la « poussière » : passe `kResolveFrag` (`render_rtx.cpp`), filtre 5x5
   qui ne traverse pas les bords des solides + historique borné à la moyenne ± écart ; la fumée des déplacements
