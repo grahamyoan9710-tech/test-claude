@@ -64,6 +64,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   core)`) et lanternes gardés tels quels. 32 rayons, 64 pas, portée 640, rebond 0,6. Reflets ×1,8 en RTX
   (`g_mirrorGain`, `render_light.cpp`), et sans la qualité Haute. `app.cpp` : plus de coupure auto du RTX (yoyo
   optimisera plus tard). Verrou « Version et paquets » pris et libéré dans ce commit.
+  Correctif avant l'annonce à yoyo (archives 12.5 refaites à la main, le tag v12.5 reste sur 2e44c39b) : le centre
+  pâle des lanternes de Kurenai devenait une tache brune (gardé tel quel aussi : test « chaud », jamais sur un perso).
 - 10/11 fin d'après-midi UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.4. Ultime à
   mains nues = un seul grand éclair rouge sang foncé sur l'adversaire (`ult::thunder`, PV::Spear, effet ParticleFX
   f20d9da6, `pfx_h01_ult`) ; élément de Hakuen = Lightning (fin du disque doré). Effets communs refaits en
