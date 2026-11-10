@@ -107,6 +107,7 @@ void loadSettings() {
       else if (k == "fullscreen") s.fullscreen = value != 0;
       else if (k == "high_quality") s.highQuality = value != 0;
       else if (k == "pixel_art") s.pixelArt = value != 0;
+      else if (k == "rtx") s.rtx = value != 0;
       else if (k == "screen_shake") s.screenShake = clampi(value, 0, 2);
       else if (k == "show_fps") s.showFps = value != 0;
       else if (k == "show_hitboxes") s.showHitboxes = value != 0;
@@ -175,6 +176,7 @@ bool saveSettings() {
   put("fullscreen", s.fullscreen);
   put("high_quality", s.highQuality);
   put("pixel_art", s.pixelArt);
+  put("rtx", s.rtx);
   put("screen_shake", s.screenShake);
   put("show_fps", s.showFps);
   put("show_hitboxes", s.showHitboxes);

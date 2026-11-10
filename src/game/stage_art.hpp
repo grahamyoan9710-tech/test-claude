@@ -21,4 +21,6 @@ struct Floor {
 bool floorOf(const Platform& p, StageTheme theme, Floor& out);
 // How much the effects' light shows on the arena (1: as is): more at night than in daylight.
 float lightGain(StageTheme theme);
+// RTX: how much the arena's own lights (its lanterns...) light the scene.
+float lampGain(StageTheme theme);
 }  // namespace stageart

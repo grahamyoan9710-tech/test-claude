@@ -5,6 +5,7 @@
 // switched by hand (rlgl) and restored afterwards.
 #include "game/pixel.hpp"
 
+#include "game/rtx.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 #include "raymath.h"
@@ -156,9 +157,13 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw, float p
   const float s = g_renderScale * ap;
   rlSetMatrixModelview(MatrixScale(s, s, 1.0f));
   const unsigned char a = (unsigned char)clampf(alpha * 255.0f, 0.0f, 255.0f);
-  DrawTexturePro(g_out.texture, layerSrc(ix0, iy0, w, h, LH), {float(ix0), float(iy0), float(w), float(h)}, {0, 0}, 0.0f,
-                 {a, a, a, a});
+  auto put = [&] {
+    DrawTexturePro(g_out.texture, layerSrc(ix0, iy0, w, h, LH), {float(ix0), float(iy0), float(w), float(h)}, {0, 0},
+                   0.0f, {a, a, a, a});
+  };
+  put();
   rlDrawRenderBatchActive();
+  rtx::solid(put);  // the sprite blocks the ray traced light
   rlSetMatrixModelview(mv);
   ui::frameBlend();
 }
