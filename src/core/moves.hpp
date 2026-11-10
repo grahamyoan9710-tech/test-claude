@@ -323,6 +323,7 @@ struct CharacterDef {
   std::array<MoveDef, MOVE_COUNT> moves;
   std::array<WeaponDef, 2> weapons;
   std::vector<FormDef> forms;
+  bool armed = true;  // false: its weapon clips are not made yet, so its weapons never drop
   int willForm = -1;  // 3 charges of will (MoveDef::fillsWill): this transformation begins once the fighter is free
 };
 

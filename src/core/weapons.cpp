@@ -66,7 +66,7 @@ void Match::updateItems() {
     itemTimer = rng.irange(60 * 6, 60 * 11);
     std::vector<std::pair<int, int>> wanting;  // fighter, weapon slot
     for (const auto& f : fighters) {
-      if (!f.active()) continue;
+      if (!f.active() || !roster()[f.charIndex].armed) continue;
       for (int slot = 0; slot < 2; ++slot) {
         bool onStage = (f.weapons >> slot) & 1;
         for (const auto& it : items) onStage = onStage || (it.character == f.charIndex && it.slot == slot);

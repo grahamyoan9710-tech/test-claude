@@ -8,6 +8,17 @@
 
 ## Nouveautés
 
+Version 12.0 : **Hakuen, le nouveau N° 01, arrive en bêta**.
+
+- Hakuen, le sabreur aux cheveux blancs, rejoint les combattants (il s'ajoute aux persos actuels). Il se bat à mains
+  nues, avec ses nouvelles animations (garde, marche, course, dash, coups, compétences).
+- Ses compétences et son ultime « Forge de l'aube » ont leurs effets ParticleFX, avec du bloom : croissant, Pas-iaï,
+  Spirale montante, Prescience (parade) et l'aura de son éveil.
+- Nouveaux effets ParticleFX pour tout le monde : coups (rapide, tranchant, montant, critique), onde d'impact,
+  bouclier touché et brisé, ultime prêt.
+- Ses deux armes (le nodachi et la lame éveillée) ne tombent pas encore : leurs animations arrivent dans une
+  prochaine version.
+
 Version 11.9 : **deux sphères d'énergie de ParticleFX**.
 
 - N° 02, mains nues : sa compétence neutre devient la « Sphère de givre », une sphère bleue tourbillonnante lancée

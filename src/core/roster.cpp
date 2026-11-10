@@ -518,6 +518,7 @@ CharacterDef makeH01() {
   k.c.id = "h01";
   k.c.name = "Hakuen";
   k.c.hero = Hero::H01;
+  k.c.armed = false;  // shortcut: bare-handed until his nodachi clips pass QA (13/11), then remove this line
   const F e = k.e;
   skills(k, -1, along(shot("Tranchant du néant", e, PV::Wave, k.pfx("crescent"), 9, 24, 9)),
          through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
