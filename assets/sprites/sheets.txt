@@ -136,6 +136,7 @@ fx pfx_sparkle 20 326 342 149.0 173.0 10 1
 fx pfx_spiral_sphere 18 362 362 197.0 180.0 15 1 95
 fx pfx_stun_stars 30 132 52 66.0 29.5 30 1
 fx pfx_sword_rain 30 193 206 98.0 161.0 15 1 69
+fx pfx_ult_ready 42 114 113 57.0 87.7 15 0 0 1
 fx px_impact_burst 7 44 46 22.0 25.0 15.873 0 20
 fx px_shockwave 8 112 46 56.0 23.0 14.0845 0
 fx smoke_puff 8 99 100 51.0 43.0 14.9254 0 40
