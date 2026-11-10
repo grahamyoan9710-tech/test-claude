@@ -71,6 +71,7 @@ void Fx::motes(Vec2 pos, int count, float radius, float speed, float rise, Color
 constexpr Color kShieldTint{170, 220, 255, 255};
 constexpr float kWaveSize = 1.5f;  // the waves engulf the fighter
 static const char* waveOf(Hero h) {
+  if (h == Hero::H01) return "pfx_h01_wave";  // ParticleFX (the PixelLab waves read as brown dust on her)
   static const char* const kWave[] = {"move_wave_5", "move_wave_3", "move_wave_2", nullptr, nullptr,
                                       "move_wave_4", "move_wave_4", "move_wave_1", nullptr, "move_wave_4",
                                       nullptr, "move_wave_5", nullptr, "move_wave_1", nullptr, "move_wave_2"};
@@ -720,7 +721,8 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Transform: {  // a transformation: its shock wave (the owner's sheet: one per transformation)
-        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, waveOf(m.fighters[e.a].def->hero), m.fighters[e.a].pos, kWaveSize, true)) {
+        if (e.a >= 0 && e.a < nf && moveFx(m, e.a, waveOf(m.fighters[e.a].def->hero), m.fighters[e.a].pos, kWaveSize,
+                                        m.fighters[e.a].def->hero != Hero::H01)) {
           shake_ = std::max(shake_, 12.0f);
           au.play(Sfx::UltReady, 0.9f, 0.8f);
           au.play(Sfx::BeamBlast, 0.7f, 0.7f);

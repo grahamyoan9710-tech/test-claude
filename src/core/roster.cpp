@@ -520,7 +520,7 @@ CharacterDef makeH01() {
   k.c.hero = Hero::H01;
   k.c.armed = false;  // shortcut: bare-handed until his nodachi clips pass QA (13/11), then remove this line
   const F e = k.e;
-  skills(k, -1, along(shot("Tranchant du néant", e, PV::Wave, k.pfx("crescent"), 9, 24, 9)),
+  skills(k, -1, piercing(shot("Tranchant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
          through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
          prescience(counter("Prescience", e, nullptr, false, L::ArmFront), k.pfx("parry")));
   ultimateOf(k, -1, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::ArmFront, 9));
@@ -528,7 +528,7 @@ CharacterDef makeH01() {
 
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
-  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, k.pfx("crescent"), 9, 24, 9)),
+  skills(k, 0, piercing(shot("Croissant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
          through("Ruée-iaï", e, k.pfx("draw"), 11), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
          prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 0, ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 9));
