@@ -119,6 +119,16 @@ MoveDef downpour(const char* name, HitFx e, const char* fx, float radius, int hi
   return m;
 }
 
+// One thunderbolt on every opponent: it gathers over them (`charge` frames, following them), then strikes once.
+MoveDef thunder(const char* name, HitFx e, const char* fx, int charge) {
+  MoveDef m = cine(name, 36 + charge + 20, {}, PoseHint::Raise, UltFx::Cinematic);
+  ProjectileDef p = strikeOnAll(80, charge, charge + 40, 26, 92, 104, e, PV::Spear, fx);  // Spear: drawn on their centre, not under them
+  p.follow = true;
+  p.hit.impact = true;
+  m.shots.push_back({36, p});
+  return m;
+}
+
 // One huge projectile that explodes.
 MoveDef blast(const char* name, HitFx e, const char* fx, ProjVisual vis, float speed, float radius, float explode) {
   MoveDef m = cine(name, 104, {}, PoseHint::Throw, UltFx::Cinematic);
