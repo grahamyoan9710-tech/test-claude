@@ -1590,7 +1590,9 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
   if (f.state == FState::Shield || f.state == FState::ShieldStun) {  // the owner's bubble (always on), smaller as it wears out
     const float r = H * 0.62f * (0.35f + 0.65f * f.shield / kMaxShield);
     float w, h;
-    if (art::pictureSize("sys_shield_bubble", w, h))
+    if (art::fxInfo("pfx_shield"))  // ParticleFX (10/11): its rim is 42 of its pixels from the centre
+      art::drawFx("pfx_shield", art::fxLoopTime("pfx_shield", at), c, r / 42.0f, 0.0f, false, 0.9f, WHITE, false);
+    else if (art::pictureSize("sys_shield_bubble", w, h))
       art::drawPicture("sys_shield_bubble", {0, 0, w, h}, {c.x - r, c.y - r, 2.0f * r, 2.0f * r}, 0.9f);
   }
   // The owner's ParticleFX decorations (shown with kVfx off): sparkles all around during the ultimate, on top of

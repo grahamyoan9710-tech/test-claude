@@ -511,14 +511,8 @@ MoveDef prescience(MoveDef m, const char* spark) {
   return m;
 }
 
-// The ultimate's thunder strikes the caught opponent, not its user.
-MoveDef onFoe(MoveDef m) {
-  m.castFxAt = {46.0f, 0.0f};
-  return m;
-}
-
 CharacterDef makeH01() {
-  Fighter k = start(1, "Lame blanche", Build::Medium, F::Fire,
+  Fighter k = start(1, "Lame blanche", Build::Medium, F::Lightning,  // red lightning (Alpha): her hits, waves and cut-in in red
                     colours({236, 232, 228}, {200, 36, 44}, {232, 178, 64}, {224, 222, 236}, {214, 40, 48}),
                     colours({236, 232, 228}, {120, 64, 180}, {232, 178, 64}, {224, 222, 236}, {150, 90, 230}));
   k.c.id = "h01";
@@ -529,7 +523,7 @@ CharacterDef makeH01() {
   skills(k, -1, piercing(shot("Tranchant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
          through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
          prescience(counter("Prescience", e, nullptr, false, L::ArmFront), k.pfx("parry")));
-  ultimateOf(k, -1, onFoe(ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::ArmFront, 9)));
+  ultimateOf(k, -1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 56));
   drawCut(k, -1, L::ArmFront, 11);
 
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
@@ -537,7 +531,7 @@ CharacterDef makeH01() {
   skills(k, 0, piercing(shot("Croissant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
          through("Ruée-iaï", e, k.pfx("draw"), 11), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
          prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
-  ultimateOf(k, 0, onFoe(ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 9)));
+  ultimateOf(k, 0, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 56));  // shortcut: the katana's own slashing ultimate comes with its clips
   drawCut(k, 0, L::Weapon, 14);
 
   arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
@@ -545,7 +539,7 @@ CharacterDef makeH01() {
   skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
          through("Ruée ardente", e, k.pfx("draw"), 12), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
          prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
-  ultimateOf(k, 1, onFoe(ult::ambush("FORGE DE L'AUBE", e, k.pfx("ult"), L::Weapon, 11)));
+  ultimateOf(k, 1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 56));
   drawCut(k, 1, L::Weapon, 15);
 
   // Volonté de la lame: 3 charges (Coupe-éclair, parries) and he awakens for 8 s: his M1 send cutting waves, his

@@ -123,7 +123,9 @@ fx p08_x_d 14 156 180 78.0 175.0 14.9254 0
 fx p08_x_n 8 51 18 31.0 9.0 14.9254 0 11
 fx p08_x_s 12 237 99 5.0 102.0 14.9254 0
 fx p08_x_u 14 220 149 110.0 186.0 14.9254 0
+fx pfx_airjump 9 81 27 40.0 13.0 30 0 0 1
 fx pfx_crescent 10 372 316 198.6 202.0 12 0 105
+fx pfx_dash 11 54 21 37.0 17.0 30 0 0 1
 fx pfx_giant_sphere 30 267 267 138.4 128.1 10 1 75
 fx pfx_h01_aura 32 158 210 79.0 196.7 20 1 0 1
 fx pfx_h01_crescent 15 97 159 71.7 80.0 30 1 0 1
@@ -131,19 +133,24 @@ fx pfx_h01_draw 16 264 119 7.0 121.0 20 0 0 1
 fx pfx_h01_glint 11 42 42 21.0 21.0 30 0 0 1
 fx pfx_h01_parry 12 76 82 42.0 34.0 30 0 0 1
 fx pfx_h01_spiral 20 132 171 71.0 162.0 20 0 0 1
-fx pfx_h01_ult 29 181 253 92.0 220.0 20 0 0 1
+fx pfx_h01_ult 32 192 538 96.0 429.0 20 0 0 1
 fx pfx_h01_wave 20 142 109 71.0 89.0 20 0 0 1
 fx pfx_hit_crit 12 137 158 69.0 72.0 30 0 0 1
 fx pfx_hit_quick 12 102 95 45.0 50.0 30 0 0 1
 fx pfx_hit_rise 12 92 113 46.0 64.0 30 0 0 1
 fx pfx_hit_slash 19 68 78 31.0 41.7 30 0 0 1
 fx pfx_hit_wave 50 126 40 63.0 19.0 30 0 0 1
+fx pfx_jump 12 76 43 38.0 39.0 30 0 0 1
+fx pfx_ko 17 135 299 62.0 294.0 30 0 0 1
+fx pfx_land 13 124 33 62.0 19.0 30 0 0 1
+fx pfx_shield 24 96 96 48.0 48.0 20 1 0 1
 fx pfx_shield_break 17 169 176 89.0 80.0 30 0 0 1
 fx pfx_shield_hit 17 58 96 17.0 40.0 30 0 0 1
 fx pfx_sparkle 20 326 342 149.0 173.0 10 1
 fx pfx_spiral_sphere 18 362 362 197.0 180.0 15 1 95
 fx pfx_stun_stars 30 132 52 66.0 29.5 30 1
 fx pfx_sword_rain 30 193 206 98.0 161.0 15 1 69
+fx pfx_trail 10 27 28 13.0 14.0 30 0 0 1
 fx pfx_ult_ready 42 114 113 57.0 87.7 15 0 0 1
 fx px_impact_burst 7 44 46 22.0 25.0 15.873 0 20
 fx px_shockwave 8 112 46 56.0 23.0 14.0845 0
