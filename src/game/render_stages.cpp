@@ -8,6 +8,9 @@
 #include "game/stage_art.hpp"
 
 namespace {
+struct Top {
+  float back, front, gloss, rough;
+};
 struct Arena {
   const char* key;
   // Where the fighters walk on each platform picture, in pixels below its first row: the middle of its top floor, seen
@@ -19,13 +22,20 @@ struct Arena {
   float insetBack, insetFront;  // from each end of the picture to the floor, on its back and front rows (pixels)
   float light;  // how much the effects' light shows: more at night than in daylight
   float lamps;  // RTX: how much its lanterns light the scene; 0 where its sky or walls are as bright (they would glow)
+  // RTX, what the reflections show of each matter: how blurred the floor mirrors (1: polished; more: rougher), and the
+  // top of the thin platforms and of the small islands (rows in their picture, how much and how blurred it mirrors).
+  float floorRough;
+  Top thin, small;
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f, 0.0f},  // polished stone
-      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f, 0.0f},                // icy roof tiles, snow around
-      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f, 0.0f},               // dry sandstone
-      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f, 0.6f},            // wet stone in the rain, at night
-      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f, 0.0f};              // polished flagstones, in daylight
+  // Polished stone; icy roof tiles, snow logs; dry sandstone, dry planks; wet stone and wet planks in the rain, at
+  // night; polished flagstones, red lacquered planks and stone slabs, in daylight.
+  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f, 0.0f, 0.8f, {}, {}},
+      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f, 0.0f, 1.6f, {3, 13, 0.1f, 4.0f}, {}},
+      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f, 0.0f, 1.0f, {2, 27, 0.12f, 3.0f}, {}},
+      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f, 0.6f, 0.6f, {2, 12, 0.45f, 1.6f}, {}},
+      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f, 0.0f, 1.0f, {4, 31, 0.3f, 0.8f},
+              {2, 16, 0.22f, 1.0f}};
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
@@ -86,6 +96,25 @@ bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
   const float l = p.rect.x - 10.0f, r = l + w * k;
   out = {p.rect.y - (a->solidTop - a->floorBack) * k, p.rect.y, p.rect.y + (a->floorFront - a->solidTop) * k, a->gloss,
          a->rain, l + a->insetBack * k, r - a->insetBack * k, l + a->insetFront * k, r - a->insetFront * k};
+  return true;
+}
+
+bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) {
+  const Arena* a = arena(theme);
+  if (!a) return false;
+  if (floorOf(p, theme, out)) {
+    out.rough = a->floorRough;
+    return out.gloss > 0.0f;
+  }
+  // As drawPlatform places the picture: a thin platform, or a small island.
+  float w, h;
+  const bool small = p.solid && p.rect.w < 300.0f && art::pictureSize(pictureName(*a, "small").c_str(), w, h);
+  if (p.solid && !small) return false;
+  const Top& t = small ? a->small : a->thin;
+  const float top = small ? a->smallTop : a->thinTop;
+  if (t.gloss <= 0.0f || !art::pictureSize(pictureName(*a, small ? "small" : "thin").c_str(), w, h)) return false;
+  const float k = (p.rect.w + 20.0f) / w, l = p.rect.x - 10.0f, r = l + w * k;
+  out = {p.rect.y - (top - t.back) * k, p.rect.y, p.rect.y + (t.front - top) * k, t.gloss, a->rain, l, r, l, r, t.rough};
   return true;
 }
 }  // namespace stageart

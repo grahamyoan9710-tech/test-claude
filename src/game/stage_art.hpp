@@ -17,8 +17,12 @@ struct Floor {
   float back, walk, front, gloss;
   bool rain;
   float leftBack, rightBack, leftFront, rightFront;
+  float rough = 1.0f;  // how blurred it mirrors (1: polished)
 };
 bool floorOf(const Platform& p, StageTheme theme, Floor& out);
+// RTX: what mirrors on a platform, as a Floor: its floor (blurred as its matter) or else the top of a thin platform or
+// of a small island, from end to end of its picture (only its own pixels mirror). False if it does not mirror.
+bool mirrorOf(const Platform& p, StageTheme theme, Floor& out);
 // How much the effects' light shows on the arena (1: as is): more at night than in daylight.
 float lightGain(StageTheme theme);
 // RTX: how much the arena's own lights (its lanterns...) light the scene.

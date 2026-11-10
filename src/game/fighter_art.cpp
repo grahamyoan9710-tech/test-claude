@@ -520,6 +520,13 @@ Texture2D glowOf(const Image& strip, const art::FxInfo& I) {
   SetTextureFilter(t, TEXTURE_FILTER_BILINEAR);
   return t;
 }
+// Dust and smoke: the movement puffs and the trail behind an ejected fighter. White, they would light the floor like
+// lamps (and the light lingers): with RTX they glow but give none.
+bool smoke(const char* name) {
+  for (const char* s : {"pfx_jump", "pfx_airjump", "pfx_land", "pfx_dash", "pfx_trail"})
+    if (std::strcmp(name, s) == 0) return true;
+  return false;
+}
 const Fx* fxOf(const char* name) {
   static std::map<std::string, Fx> cache;
   auto it = cache.find(name);
@@ -654,7 +661,7 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
   };
   // RTX: the effect gives the traced light, sprite and halo; pixel art too (the traced light only brightens a
   // sprite's own colours, it cannot turn them olive), not the decorations (castLight).
-  if (F->glow.id != 0 && castLight && rtx::on())
+  if (F->glow.id != 0 && castLight && rtx::on() && !smoke(name))
     rtx::light(
         [&] {
           sprite();

@@ -81,13 +81,11 @@ void main() {
 // effect, a lantern): the ray goes through it, gathering its light all along, so its core counts more than its halo.
 // A solid: the ray stops, with the light that solid caught the frame before, in its colour (one bounce, more over the
 // frames). Off screen or too far: nothing. A pixel inside a solid sees out only through the few pixels next to its
-// edge: a fighter is lit on the side that faces the light, never through his body. Blended with the frame before
-// (where it was on screen: the camera moves), which smooths the noise.
+// edge: a fighter is lit on the side that faces the light, never through his body. Grainy: kResolveFrag cleans it.
 const char* kTraceFrag = "#version 330\n" LAMP_FN R"(
 uniform sampler2D texture0;  // the distance field
 uniform sampler2D emitT, maskT, prevT;
 uniform vec2 size;
-uniform vec4 reproj;  // where a pixel was the frame before: p * xy + zw
 uniform vec3 gains;   // the light, the bounce, the noise's frame
 out vec4 finalColor;
 const int RAYS = 32, STEPS = 64;
@@ -132,10 +130,38 @@ void main() {
       t += max(dist, 1.0);
     }
   }
-  vec3 L = sum / float(RAYS);
+  finalColor = vec4(sum / float(RAYS), 1.0);
+}
+)";
+
+// The rays' light, cleaned. Its grain (the dust) is averaged over the pixels around (a 5x5 tent; never across a
+// solid's edge, so a fighter's lit side and the shadow he casts stay sharp), then over the frames: the frame before
+// (where it was on screen: the camera moves) is kept only within this frame's spread around that average, so what
+// moved or went out leaves no trail (the ghost images).
+const char* kResolveFrag = R"(#version 330
+uniform sampler2D texture0;  // this frame's rays
+uniform sampler2D maskT, prevT;
+uniform vec2 size;
+uniform vec4 reproj;  // where a pixel was the frame before: p * xy + zw
+out vec4 finalColor;
+void main() {
+  vec2 p = gl_FragCoord.xy;
+  float s = step(0.5, texture(maskT, p / size).a);
+  vec3 sum = vec3(0.0), sq = vec3(0.0);
+  float n = 0.0;
+  for (int y = -2; y <= 2; ++y)
+    for (int x = -2; x <= 2; ++x) {
+      vec2 q = clamp(p + vec2(x, y), vec2(0.5), size - 0.5);
+      float w = float((3 - abs(x)) * (3 - abs(y))) * (1.0 - abs(step(0.5, texture(maskT, q / size).a) - s));
+      vec3 c = texture(texture0, q / size).rgb;
+      sum += c * w;
+      sq += c * c * w;
+      n += w;
+    }
+  vec3 mean = sum / n, spread = sqrt(max(sq / n - mean * mean, 0.0));
   vec2 was = p * reproj.xy + reproj.zw;
-  vec3 before = was.x >= 0.0 && was.y >= 0.0 && was.x <= size.x && was.y <= size.y ? texture(prevT, was / size).rgb : L;
-  finalColor = vec4(mix(L, before, 0.85), 1.0);
+  vec3 before = was.x >= 0.0 && was.y >= 0.0 && was.x <= size.x && was.y <= size.y ? texture(prevT, was / size).rgb : mean;
+  finalColor = vec4(mix(mean, clamp(before, mean - spread, mean + spread), 0.85), 1.0);
 }
 )";
 
@@ -177,10 +203,10 @@ struct Pass {
   Shader sh{};
   int size = -1, a = -1, b = -1, c = -1, d = -1, e = -1, f = -1, g = -1;
 };
-Pass g_mask, g_seed, g_jump, g_trace, g_comp;
+Pass g_mask, g_seed, g_jump, g_trace, g_resolve, g_comp;
 bool g_tried = false, g_on = false;
 // (g_copy: a target as it was before its lighting.)
-RenderTexture2D g_maskT{}, g_copy{}, g_emit{}, g_albedo{}, g_jfa[2]{}, g_gi[2]{};
+RenderTexture2D g_maskT{}, g_copy{}, g_emit{}, g_albedo{}, g_jfa[2]{}, g_raw{}, g_gi[2]{};
 int g_cur = 0;
 struct View {
   float z = 0, tx = 0, ty = 0, ox = 0, oy = 0, H = 0;
@@ -201,10 +227,11 @@ bool ready() {
     g_mask = load(kMaskFrag, {});
     g_seed = load(kSeedFrag, {"emitT", "albedoT", "lamps"});
     g_jump = load(kJumpFrag, {"jump"});
-    g_trace = load(kTraceFrag, {"emitT", "maskT", "albedoT", "prevT", "reproj", "gains", "lamps"});
+    g_trace = load(kTraceFrag, {"emitT", "maskT", "albedoT", "prevT", "gains", "lamps"});
+    g_resolve = load(kResolveFrag, {"maskT", "prevT", "reproj"});
     g_comp = load(kCompositeFrag, {"maskT", "frameT", "gain", "shade", "extra"});
   }
-  for (const Pass* p : {&g_mask, &g_seed, &g_jump, &g_trace, &g_comp})
+  for (const Pass* p : {&g_mask, &g_seed, &g_jump, &g_trace, &g_resolve, &g_comp})
     if (p->sh.id == 0 || p->sh.id == rlGetShaderIdDefault()) return false;
   return true;
 }
@@ -302,6 +329,7 @@ View viewOf(const Camera2D& cam, const RenderTexture2D& frame) {
 }  // namespace
 
 bool on() { return g_on; }
+Texture2D mask() { return g_maskT.texture; }
 
 void beginFrame() {
   g_on = false;
@@ -319,13 +347,13 @@ void beginFrame() {
   if (g_emit.id == 0) {
     g_emit = floatTarget(kW, kH, true);
     g_albedo = LoadRenderTexture(kW, kH);
-    for (auto* t : {&g_jfa[0], &g_jfa[1]}) *t = floatTarget(kW, kH, false);
+    for (auto* t : {&g_jfa[0], &g_jfa[1], &g_raw}) *t = floatTarget(kW, kH, false);
     for (auto* t : {&g_gi[0], &g_gi[1]}) *t = floatTarget(kW, kH, true);
     rlEnableFramebuffer(fr->id);  // (making a target unbinds the frame)
     for (auto* t : {&g_gi[0], &g_gi[1]}) clear(*t);
   }
-  if (!g_emit.id || !g_jfa[0].id || !g_jfa[1].id || !g_gi[0].id || !g_gi[1].id || !g_albedo.id || !g_maskT.id ||
-      !g_copy.id)
+  if (!g_emit.id || !g_jfa[0].id || !g_jfa[1].id || !g_raw.id || !g_gi[0].id || !g_gi[1].id || !g_albedo.id ||
+      !g_maskT.id || !g_copy.id)
     return;
   clear(g_maskT);
   clear(g_emit);
@@ -388,25 +416,30 @@ void resolve(const Match& m, const Camera2D& cam) {
     pass(g_jfa[j ^ 1], g_jump, g_jfa[j].texture, [&] { SetShaderValue(g_jump.sh, g_jump.a, &k, SHADER_UNIFORM_FLOAT); });
   }
 
-  // The rays. Where each traced pixel was the frame before: through the world, from this camera to the last one.
+  // The rays, then cleaned. Where each traced pixel was the frame before: through the world, from this camera to the
+  // last one.
+  const float gains[3] = {3.0f, 0.6f, float(art::frameId() % 64)};
+  const RenderTexture2D &now = g_gi[g_cur ^ 1], &before = g_gi[g_cur];
+  pass(g_raw, g_trace, g_jfa[j].texture, [&] {
+    SetShaderValueTexture(g_trace.sh, g_trace.a, g_emit.texture);
+    SetShaderValueTexture(g_trace.sh, g_trace.b, g_maskT.texture);
+    SetShaderValueTexture(g_trace.sh, g_trace.c, g_albedo.texture);
+    SetShaderValueTexture(g_trace.sh, g_trace.d, before.texture);
+    SetShaderValue(g_trace.sh, g_trace.e, gains, SHADER_UNIFORM_VEC3);
+    SetShaderValue(g_trace.sh, g_trace.f, &lamps, SHADER_UNIFORM_FLOAT);
+  });
   const View v = viewOf(cam, *fr), p = g_prev.z > 0.0f ? g_prev : v;
   const float S = W / kW, r = p.z / v.z;
   const float reproj[4] = {r, r, ((v.tx - p.tx) * p.z + p.ox - v.ox * r) / S,
                            (H - (H - v.oy) * r - (v.ty - p.ty) * p.z - p.oy) / S};
   g_prev = v;
-  const float tone = stageart::lightGain(m.stage().theme);
-  const float gains[3] = {3.0f, 0.6f, float(art::frameId() % 64)};
-  const RenderTexture2D &now = g_gi[g_cur ^ 1], &before = g_gi[g_cur];
-  pass(now, g_trace, g_jfa[j].texture, [&] {
-    SetShaderValueTexture(g_trace.sh, g_trace.a, g_emit.texture);
-    SetShaderValueTexture(g_trace.sh, g_trace.b, g_maskT.texture);
-    SetShaderValueTexture(g_trace.sh, g_trace.c, g_albedo.texture);
-    SetShaderValueTexture(g_trace.sh, g_trace.d, before.texture);
-    SetShaderValue(g_trace.sh, g_trace.e, reproj, SHADER_UNIFORM_VEC4);
-    SetShaderValue(g_trace.sh, g_trace.f, gains, SHADER_UNIFORM_VEC3);
-    SetShaderValue(g_trace.sh, g_trace.g, &lamps, SHADER_UNIFORM_FLOAT);
+  pass(now, g_resolve, g_raw.texture, [&] {
+    SetShaderValueTexture(g_resolve.sh, g_resolve.a, g_maskT.texture);
+    SetShaderValueTexture(g_resolve.sh, g_resolve.b, before.texture);
+    SetShaderValue(g_resolve.sh, g_resolve.c, reproj, SHADER_UNIFORM_VEC4);
   });
   g_cur ^= 1;
+  const float tone = stageart::lightGain(m.stage().theme);
 
   // Into the frame, and into its copy before the fighters and the effects that the floors mirror (lit the same way,
   // else the floor would read there as something standing on it, and hide the reflection).
