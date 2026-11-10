@@ -166,7 +166,9 @@ void main() {
   vec3 R = floor(min(mix(vec3(max(L.r, max(L.g, L.b))), L, 0.5) * gain.z, vec3(0.8)) * 5.0 + 0.4) / 5.0;
   vec3 fighter = c.rgb * (0.9 + R);
   float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
-  float lamp = step(0.001, extra.y) * smoothstep(0.72, 0.95, mx) * smoothstep(0.35, 0.6, (mx - mn) / max(mx, 1e-3));
+  // A lantern's pale hot centre counts too (graded alone it turned into a brown blot); never a fighter's skin.
+  float hot = max(smoothstep(0.35, 0.6, (mx - mn) / max(mx, 1e-3)), smoothstep(0.2, 0.3, c.r - c.b));
+  float lamp = step(0.001, extra.y) * (1.0 - step(0.5, m.r)) * smoothstep(0.72, 0.95, mx) * hot;
   finalColor = vec4(mix(mix(arena, fighter, f), c.rgb, max(m.b * shade.a, lamp)), c.a);
 }
 )";
