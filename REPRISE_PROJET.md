@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 05 h 45 UTC, session cloud « Hakuen (01) » : **les 15 effets ParticleFX sont dans le jeu** (pixel art, bloom,
+  `import_fx.py --pixel`) : coups rapide, coupe, montant, critique, onde au sol, coup et bris du bouclier, ultime prêt
+  (pour tous) ; croissant, éclat, dégainé, parade, spirale, aura et ultime « Forge de l'aube » de Hakuen
+  (`pfx_h01_*`, ses tirs utilisent `k.pfx("crescent")`). 76 builds sur 150 utilisés. `pfxmcp.py` lit les flux SSE ;
+  `build_effect` plante avec le paramètre `name`. Pas encore validé en jeu par yoyo.
 - 06/11 16 h 00 UTC, session cloud « Hakuen (01) » : yoyo a **acheté le pack de 150 builds ParticleFX** : Claude
   fait les effets par MCP (3 builds dépensés). Portée (yoyo) : coups, coup critique, onde, bouclier et « ultime
   prêt » pour tous les persos ; compétences, éveil et ultime pour Hakuen seulement. Les effets pixel art

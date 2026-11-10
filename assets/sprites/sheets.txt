@@ -131,6 +131,7 @@ fx pfx_h01_draw 14 182 14 2.0 85.0 30 0 0 1
 fx pfx_h01_glint 11 42 42 21.0 21.0 30 0 0 1
 fx pfx_h01_parry 12 76 82 42.0 34.0 30 0 0 1
 fx pfx_h01_spiral 21 56 136 28.0 132.0 30 0 0 1
+fx pfx_h01_ult 24 272 274 136.0 215.0 15 0 0 1
 fx pfx_hit_crit 12 137 158 69.0 72.0 30 0 0 1
 fx pfx_hit_quick 12 102 95 45.0 50.0 30 0 0 1
 fx pfx_hit_rise 12 92 113 46.0 64.0 30 0 0 1
