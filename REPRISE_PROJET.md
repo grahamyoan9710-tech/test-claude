@@ -60,6 +60,9 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
   jump, shield, hurt, dspecial, ultimate, rengaine. Refaits le 13/11 (mis de côté en `.qa1`) : dash (traits gris),
   jab, jab2, jab3, nspecial, sspecial, uspecial (traînées énormes, gris, poussière). Prompts du kit corrigés (traînée
   fine). Rien n'est importé avant que l'arme A soit complète ; restent aussi ses 11 autres clips.
+- 10/11 09 h 50 UTC, même session : yoyo voit des effets « RTX » mal découpés. Les reflets des sols couvraient tout le
+  rectangle de la plateforme (bouts du toit Kurenai, décor à côté de la dalle lunaire) : ils suivent maintenant le
+  trapèze du sol (`insetBack`/`insetFront` par arène, `render_stages.cpp`). Version 12.1.
 - 10/11 09 h 30 UTC, session claude/project-thread-58u7pf : yoyo demande Hakuen dans le jeu sans ses 2 armes. Ses armes
   ne tombent plus (`CharacterDef::armed = false` dans makeH01, à retirer quand les clips du nodachi sont validés).
   Version 12.0 publiée par le workflow lancé à la main sur cette branche. Verrou « Version et paquets » pris et

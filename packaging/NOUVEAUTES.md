@@ -8,6 +8,11 @@
 
 ## Nouveautés
 
+Version 12.1 : **reflets des sols mieux découpés**.
+
+- Les reflets des sols brillants (Abîme Lunaire, Citadelle de Givre, Toits Kurenai, Monastère des Nuées) s'arrêtent
+  au bord du sol : ils ne débordent plus sur les bouts du toit, les rambardes ni le décor derrière.
+
 Version 12.0 : **Hakuen, le nouveau N° 01, arrive en bêta**.
 
 - Hakuen, le sabreur aux cheveux blancs, rejoint les combattants (il s'ajoute aux persos actuels). Il se bat à mains

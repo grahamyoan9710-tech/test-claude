@@ -16,14 +16,15 @@ struct Arena {
   // The top floor of the solid picture: its back and front edges (rows), how much it mirrors, rain on it.
   float floorBack, floorFront, gloss;
   bool rain;
+  float insetBack, insetFront;  // from each end of the picture to the floor, on its back and front rows (pixels)
   float light;  // how much the effects' light shows: more at night than in daylight
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 0.9f},  // polished stone
-      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 0.6f},                  // icy roof tiles, snow all around
-      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 1.0f},               // dry sandstone
-      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 1.6f},                 // wet stone under the rain, at night
-      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 0.5f};               // polished flagstones, in daylight
+  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f},  // polished stone
+      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f},                  // icy roof tiles, snow around
+      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f},                 // dry sandstone
+      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f},              // wet stone in the rain, at night
+      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f};                // polished flagstones, in daylight
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
@@ -76,8 +77,9 @@ bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
   float w, h;
   if (!a || !p.solid || p.rect.w < 300.0f || !art::pictureSize(pictureName(*a, "solid").c_str(), w, h)) return false;
   const float k = (p.rect.w + 20.0f) / w;  // as drawPlatform scales it
+  const float l = p.rect.x - 10.0f, r = l + w * k;
   out = {p.rect.y - (a->solidTop - a->floorBack) * k, p.rect.y, p.rect.y + (a->floorFront - a->solidTop) * k, a->gloss,
-         a->rain};
+         a->rain, l + a->insetBack * k, r - a->insetBack * k, l + a->insetFront * k, r - a->insetFront * k};
   return true;
 }
 }  // namespace stageart

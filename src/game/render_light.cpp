@@ -63,6 +63,7 @@ uniform vec2 offs;           // camera offset in framebuffer px
 uniform vec4 floorW;         // back edge, walk line, front edge (world y), gloss
 uniform vec2 size;
 uniform vec2 rain;           // ripple size (world units), time
+uniform vec4 ends;           // the floor's left and right ends at its back edge, then at its front edge (world x)
 out vec4 finalColor;
 vec2 px(float x, float y) { return vec2((x - cur.y) * cur.x + offs.x, cur.w - ((y - cur.z) * cur.x + offs.y)); }
 vec3 tap(sampler2D t, vec2 s) { return texture(t, clamp(s, vec2(0.5), size - 0.5) / size).rgb; }
@@ -90,14 +91,17 @@ void main() {
   sky *= pow(1.0 - t, 0.7) / 3.0;
   near *= (1.0 - 0.6 * u) / 3.0;
   vec3 c = mix(sky, near, (hit / 3.0) * step(0.0, w.y - floorW.y + 2.0));
-  finalColor = vec4(c * (floorW.w * (1.0 - covered) * fragColor.a), 1.0);
+  // Only on the floor: its ends (rails, roof ridges...) do not mirror.
+  vec2 e = mix(ends.xy, ends.zw, t);
+  float inside = smoothstep(e.x, e.x + 3.0, w.x) * smoothstep(e.y, e.y - 3.0, w.x);
+  finalColor = vec4(c * (floorW.w * (1.0 - covered) * inside * fragColor.a), 1.0);
 }
 )";
 
 Shader g_lit{}, g_mirror{};
 bool g_tried = false;
 int g_litA = -1, g_litB = -1, g_litCount = -1, g_litFloor = -1, g_litGain = -1;
-int g_mCur = -1, g_mOffs = -1, g_mFloor = -1, g_mSize = -1, g_mRain = -1, g_mBack = -1;
+int g_mCur = -1, g_mOffs = -1, g_mFloor = -1, g_mSize = -1, g_mRain = -1, g_mBack = -1, g_mEnds = -1;
 RenderTexture2D g_now{}, g_back{};  // the frame all drawn, the frame before the fighters
 bool g_hasBack = false;
 
@@ -116,6 +120,7 @@ bool ready() {
     g_mFloor = GetShaderLocation(g_mirror, "floorW");
     g_mSize = GetShaderLocation(g_mirror, "size");
     g_mRain = GetShaderLocation(g_mirror, "rain");
+    g_mEnds = GetShaderLocation(g_mirror, "ends");
     g_mBack = GetShaderLocation(g_mirror, "backdrop");
   }
   return g_lit.id != 0 && g_mirror.id != 0 && g_litA >= 0 && g_mCur >= 0;
@@ -303,6 +308,8 @@ void reflections(const Match& m, const Camera2D& cam, float time) {
     const float f[4] = {fl.back, fl.walk, fl.front, fl.gloss}, rain[2] = {fl.rain ? 1.2f : 0.0f, time};
     SetShaderValue(g_mirror, g_mFloor, f, SHADER_UNIFORM_VEC4);
     SetShaderValue(g_mirror, g_mRain, rain, SHADER_UNIFORM_VEC2);
+    const float ends[4] = {fl.leftBack, fl.rightBack, fl.leftFront, fl.rightFront};
+    SetShaderValue(g_mirror, g_mEnds, ends, SHADER_UNIFORM_VEC4);
     SetShaderValueTexture(g_mirror, g_mBack, g_back.texture);  // (each draw of the batch forgets it)
     DrawTexturePro(g_now.texture, {0, 0, 1, 1}, {p.rect.left() + 2.0f, fl.back, p.rect.w - 4.0f, fl.front - fl.back},
                    {0, 0}, 0.0f, WHITE);
