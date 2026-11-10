@@ -160,5 +160,5 @@ MoveDef beam(const char* name, HitFx e, const char* fx, float angle, float lengt
 MoveDef rain(const char* name, HitFx e, const char* fx, ProjVisual vis, int strikes);
 MoveDef downpour(const char* name, HitFx e, const char* fx, float radius, int hits);
 MoveDef blast(const char* name, HitFx e, const char* fx, ProjVisual vis, float speed, float radius, float explode);
-MoveDef thunder(const char* name, HitFx e, const char* fx, int charge);
+MoveDef thunder(const char* name, HitFx e, const char* fx, int warn, int bolts);
 }  // namespace ult

@@ -119,13 +119,20 @@ MoveDef downpour(const char* name, HitFx e, const char* fx, float radius, int hi
   return m;
 }
 
-// One thunderbolt on every opponent: it gathers over them (`charge` frames, following them), then strikes once.
-MoveDef thunder(const char* name, HitFx e, const char* fx, int charge) {
-  MoveDef m = cine(name, 36 + charge + 20, {}, PoseHint::Raise, UltFx::Cinematic);
-  ProjectileDef p = strikeOnAll(80, charge, charge + 40, 26, 92, 104, e, PV::Spear, fx);  // Spear: drawn on their centre, not under them
-  p.follow = true;
-  p.hit.impact = true;
-  m.shots.push_back({36, p});
+// Thunderbolts one after another, like a lightning spell: each marks the floor where its target stands (`warn`
+// frames, then strikes the whole column there, down to the floor). They do not follow: a quick fighter can dodge.
+// The last one launches.
+MoveDef thunder(const char* name, HitFx e, const char* fx, int warn, int bolts) {
+  const int every = 14, life = warn + 20;
+  MoveDef m = cine(name, 36 + (bolts - 1) * every + life, {}, PoseHint::Raise, UltFx::Cinematic);
+  for (int k = 0; k < bolts; ++k) {
+    const bool last = k == bolts - 1;
+    ProjectileDef p = last ? strikeOnAll(50, warn, life, 16, 92, 104, e, PV::Spear, fx)  // Spear: drawn on its spot
+                           : strikeOnAll(50, warn, life, 5, 25, 8, e, PV::Spear, fx);
+    p.column = true;
+    p.hit.impact = last;
+    m.shots.push_back({36 + k * every, p});
+  }
   return m;
 }
 

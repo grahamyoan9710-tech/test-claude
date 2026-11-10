@@ -102,6 +102,7 @@ struct Projectile {
   Vec2 stickOffset;         // from the victim's center
   int armDelay = 0;         // harmless and motionless while age < armDelay
   bool ignoreGround = false;
+  bool column = false;      // hits everything above it, not only its circle
   bool ult = false;         // fired by an ultimate: cannot be blocked, countered or reflected
   bool armed() const { return age >= armDelay; }
 };

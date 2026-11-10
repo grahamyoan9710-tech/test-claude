@@ -871,7 +871,7 @@ static void testUltimatesBlocked() {
       for (int i = 0; i < 360 && f.state == FState::Attack && f.move == FinalSmash; ++i) {
         m.step(in);
         caught = caught || (v.state == FState::Captured && !broke);
-        broke = broke || v.state == FState::ShieldBreak;
+        broke = broke || v.state == FState::ShieldBreak || v.shield <= 0.0f;  // (worn out and hit in the same frame)
         if (!broke) hurtWhileShielded += std::max(0.0f, v.percent - last);
         last = v.percent;
       }
@@ -1297,6 +1297,28 @@ static void testHakuen() {
     const float before = v.percent;
     for (int i = 0; i < 40; ++i) m.step(in);
     CHECK(v.percent > before, "the riposte hits (%.0f%% -> %.0f%%)", before, v.percent);
+    delete &m;
+  }
+  {  // her ultimate: each bolt strikes where the opponent stood when it appeared; stepping away dodges it
+    Match& m = *fresh(200);
+    Fighter& f = m.fighters[0];
+    Fighter& v = m.fighters[1];
+    f.ult = kUltMax;
+    f.finalSmash = true;
+    in[0] = InputState{};
+    in[0].ultimate = true;
+    m.step(in);
+    in[0] = InputState{};
+    for (int i = 0; i < 120 && m.projectiles.empty(); ++i) m.step(in);
+    CHECK(!m.projectiles.empty(), "the first bolt appears");
+    if (m.projectiles.empty()) return;
+    const float spot = m.projectiles[0].pos.x, before = v.percent;
+    v.pos.x = spot - 300.0f;  // steps away before it strikes
+    for (int i = 0; i < 40; ++i) m.step(in);
+    CHECK(m.projectiles[0].pos.x == spot && v.percent == before, "the bolt stays on its spot and misses (%.0f%%)",
+          v.percent - before);
+    for (int i = 0; i < 30; ++i) m.step(in);
+    CHECK(v.percent > before, "the next bolt falls where he stands now (%.0f%%)", v.percent - before);
     delete &m;
   }
 }

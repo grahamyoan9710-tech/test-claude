@@ -406,6 +406,13 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
       const Fighter& o = fighters[t];
       origin = o.center() + p.spawnOffset;
       side = o.pos.x >= f.pos.x ? 1 : -1;  // strikes come from the user's side
+      if (p.column) {  // down to the first floor under them (kept at their height when nothing is under them)
+        float floor = 1e9f;
+        for (const auto& pl : platforms)
+          if (o.pos.x >= pl.rect.left() && o.pos.x <= pl.rect.right() && pl.rect.top() >= o.pos.y - 1.0f)
+            floor = std::min(floor, pl.rect.top());
+        if (floor < 1e8f) origin.y += floor - o.pos.y;
+      }
     } else {  // nobody to target: a few steps ahead
       origin = f.center() + Vec2{f.facing * 220.0f, 0.0f} + p.spawnOffset;
     }
@@ -437,6 +444,7 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
       pr.follow = p.follow;
       pr.armDelay = p.armDelay;
       pr.ignoreGround = p.ignoreGround;
+      pr.column = p.column;
       pr.ult = ult;
       pr.hit.damage *= dmgMul;
       pr.explode.damage *= dmgMul;
@@ -543,7 +551,8 @@ void Match::updateProjectiles() {
       } else if (std::find(pr.hitList.begin(), pr.hitList.end(), v.id) != pr.hitList.end()) {
         continue;
       }
-      if (!circleRect(pr.pos, pr.radius, v.hurtbox())) continue;
+      const Rect sky{pr.pos.x - pr.radius, pr.pos.y - 4000.0f, 2.0f * pr.radius, 4000.0f + pr.radius};
+      if (pr.column ? !sky.overlaps(v.hurtbox()) : !circleRect(pr.pos, pr.radius, v.hurtbox())) continue;
       if (pr.rehit > 0) {
         auto it = std::find_if(pr.lastHit.begin(), pr.lastHit.end(), [&](const auto& e) { return e.first == v.id; });
         if (it != pr.lastHit.end()) it->second = frame;

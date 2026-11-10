@@ -108,6 +108,7 @@ struct ProjectileDef {
   bool follow = false;     // stays on its target while it lives (black flames, vortices, petal spheres)
   int armDelay = 0;        // harmless for its first frames (the warning before a strike from the sky)
   bool ignoreGround = false;  // flies through the stage (strikes from the sky, eruptions)
+  bool column = false;     // a bolt from the sky: falls on the floor under its target, hits all the way up
   Vec2 jitter;             // random spawn offset in [-jitter, +jitter] (rains, eruptions)
 };
 
