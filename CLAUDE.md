@@ -91,8 +91,10 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - C++17, style du code voisin : commentaires courts en anglais, noms explicites, pas de dépendance nouvelle.
 - Un clip regardé vers la droite ; le jeu le retourne. Dans un clip d'attaque, l'image « impact » est celle que le jeu
   tient tant que la hitbox est active.
-- Effets : **les nouveaux viennent de ParticleFX Studio** (décision du propriétaire, 05/11) ; PixelLab reste pour les
-  persos, et de ses effets on ne garde que ceux des déplacements (saut, dash, atterrissage ; propriétaire, 06/11).
+- Effets : **tous viennent de ParticleFX Studio** (décision du propriétaire, 05/11) ; PixelLab reste pour les
+  persos. Depuis le 10/11, même les effets de déplacement (saut, dash, atterrissage, traînée d'éjection), le KO et la
+  bulle du bouclier sont en ParticleFX (`pfx_jump`, `pfx_land`, `pfx_dash`, `pfx_airjump`, `pfx_trail`, `pfx_ko`,
+  `pfx_shield`).
   Le compte ParticleFX du propriétaire se pilote par MCP : `tools/pixellab/tools/pfxmcp.py`, clé dans
   `tools/pixellab/pfx/.key` (ignorée par git). Créer, construire ou exporter un effet coûte des builds : pas sans
   son accord. Tous sont joués par le jeu (effets `fx`), menus

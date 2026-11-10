@@ -15,7 +15,7 @@ travelling to the right), --track (keep the effect's centre still, its anchor x:
 frames, drawn on a moving projectile), --hit R (the radius, in frame pixels after --scale, the hitbox should have to
 match the drawing: the game then sizes the effect on the hitbox), --pixel (pixel art made at its final size, one source
 pixel block per fighter pixel: --scale keeps its pixels (nearest) and the game draws it with the fighters' pixel size,
-never stretched).
+never stretched), --soft (keeps the see-through pixels: otherwise the alpha is all or nothing).
 
 Writes assets/sprites/fx_NAME.png (the frames side by side, cropped to their common box, paletted when it fits)
 and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop [hit [pixel]].
@@ -113,6 +113,7 @@ def main():
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--track", action="store_true")
     ap.add_argument("--pixel", action="store_true")
+    ap.add_argument("--soft", action="store_true")
     a = ap.parse_args()
 
     frames, (ax, ay), fps = load(a)
@@ -135,7 +136,7 @@ def main():
     if a.track:
         frames, ax = tracked(frames)
         w = frames[0].width
-    for f in frames:  # pixel art: hard alpha
+    for f in frames if not a.soft else []:  # pixel art: hard alpha (--soft: a see-through effect, like a bubble)
         f.putalpha(f.getchannel("A").point(lambda v: 255 if v >= 128 else 0))
     boxes = [f.getbbox() for f in frames if f.getbbox()]
     x0 = max(0, min(b[0] for b in boxes) - 1)

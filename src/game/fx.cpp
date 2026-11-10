@@ -489,6 +489,8 @@ void Fx::onEvents(const Match& m) {
       case EvType::KO: {
         const Color c = e.a >= 0 ? slotColor(m.fighters[e.a]) : WHITE;
         playFx("sys_ko", e.pos, 1.3f, 0.0f, false, mixColor(c, WHITE, 0.35f));
+        if (e.a >= 0 && e.a < nf)  // the ParticleFX blast at the edge of the screen, in the fighter's colour
+          kos_.push_back({e.pos, e.dir, mixColor(c, WHITE, 0.35f), 0, art::fxSize("pfx_ko", *m.fighters[e.a].def)});
         shake_ = std::max(shake_, 24.0f);
         flash_ = std::max(flash_, 0.3f);
         flashCol_ = WHITE;
@@ -500,18 +502,18 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Jump:
-        moveFx(m, e.a, "m_jump", e.pos);
+        moveFx(m, e.a, "pfx_jump", e.pos);
         au.play(Sfx::Jump, 0.35f, rng_.range(0.95f, 1.05f));
         break;
       case EvType::AirJump:
-        moveFx(m, e.a, "m_jump", e.pos, 0.8f);
+        moveFx(m, e.a, "pfx_airjump", e.pos);
         au.play(Sfx::AirJump, 0.35f, rng_.range(0.95f, 1.05f));
         break;
       case EvType::Land: {  // a landing, a slide when it lands running, the body thrown down on the ground
         const Fighter* f = e.a >= 0 && e.a < nf ? &m.fighters[e.a] : nullptr;
         const bool down = f && (f->state == FState::Knockdown || f->state == FState::Hitstun);
         const bool sliding = f && std::fabs(f->vel.x) > 5.0f;
-        moveFx(m, e.a, down ? "m_ground" : sliding ? "m_dash" : "m_land", e.pos);
+        moveFx(m, e.a, sliding && !down ? "pfx_dash" : "pfx_land", e.pos);
         if (down) {  // thrown onto the ground: dust chips and a jolt
           pixelImpact(e.pos, {0.0f, -1.0f}, 20.0f + e.strength * 3.0f, {226, 222, 214, 255}, false);
           shake_ = std::max(shake_, std::min(6.0f, e.strength * 0.4f));
@@ -520,7 +522,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::Dash:  // the dust on the ground only
-        moveFx(m, e.a, "m_dash", e.pos);
+        moveFx(m, e.a, "pfx_dash", e.pos);
         break;
       case EvType::Grab: au.play(Sfx::Grab, 0.8f); break;
       case EvType::Throw: au.play(Sfx::Swing, 0.8f, 0.8f); break;
@@ -805,15 +807,17 @@ void Fx::playFx(const char* name, Vec2 at, float size, float rot, bool flip, Col
 
 void Fx::update(const Match& m) {
   for (auto& f : sprites_) ++f.t;
-  // Launched hard, a fighter leaves a trail of the movement smoke behind it, like in Rivals of Aether.
-  for (const auto& f : m.fighters)
-    if (f.active() && f.state == FState::Hitstun && !f.grounded && f.hitlag == 0 && f.vel.len2() > 144.0f &&
-        m.frame % 3 == 0 && art::fxInfo("m_land")) {  // (behind it: not on the body)
-      SpriteFx s{"m_land", f.center() - f.vel.norm() * (0.45f * f.height()), 0.35f * f.def->height / 170.0f, 0.0f,
-                 (m.frame / 3) % 2 == 0, 0};
+  // Launched hard, a fighter leaves a trail of puffs behind it, like in Rivals of Aether (ParticleFX, 10/11).
+  for (const auto& f : m.fighters) {
+    const Vec2 v = f.vel + f.kbVel;  // (the launch itself is in kbVel)
+    if (f.active() && f.state == FState::Hitstun && !f.grounded && f.hitlag == 0 && v.len2() > 144.0f &&
+        m.frame % 2 == 0 && art::fxInfo("pfx_trail")) {  // (behind it: not on the body)
+      SpriteFx s{"pfx_trail", f.center() - v.norm() * (0.45f * f.height()), art::fxSize("pfx_trail", *f.def), 0.0f,
+                 (m.frame / 2) % 2 == 0, 0};
       s.move = true;
       sprites_.push_back(s);
     }
+  }
   // The PixelLab effects of the techniques: started on the move's frame, they follow their fighter.
   for (size_t i = 0; i < m.fighters.size() && i < castSeen_.size(); ++i) {
     const Fighter& f = m.fighters[i];
@@ -1190,8 +1194,15 @@ void Fx::drawWorld() const {
 
 void Fx::drawScreen(const Camera2D& cam) const {
   for (const auto& k : kos_) {
-    if (!kVfx) break;
     Vector2 sp = GetWorldToScreen2D(V(k.pos), cam);
+    if (art::fxInfo("pfx_ko")) {  // shot inward from the edge it left by; turned by quarter turns only (pixel art)
+      const Vec2 in = -k.dir;
+      const float rot = std::round(std::atan2(in.x, -in.y) / (0.5f * kPi)) * 0.5f * kPi;
+      const Vec2 at{clampf(sp.x, 0.0f, float(kScreenW)), clampf(sp.y, 0.0f, float(kScreenH))};
+      art::drawFx("pfx_ko", k.t / 60.0f, at, k.size * cam.zoom, rot, false, 1.0f, k.color, false);
+      continue;
+    }
+    if (!kVfx) break;
     Vec2 o{clampf(sp.x, 0.0f, float(kScreenW)), clampf(sp.y, 0.0f, float(kScreenH))};
     Vec2 in = -k.dir;
     Vec2 perp{-in.y, in.x};
