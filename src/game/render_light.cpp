@@ -8,6 +8,7 @@
 #include "game/fighter_art.hpp"
 #include "game/pixel.hpp"
 #include "game/render.hpp"
+#include "game/rtx.hpp"
 #include "game/settings.hpp"
 #include "game/stage_art.hpp"
 #include "game/ui.hpp"
@@ -29,12 +30,14 @@ uniform vec4 lightA[16];  // centre (framebuffer px), core radius, reach
 uniform vec4 lightB[16];  // colour, strength
 uniform int count;
 uniform vec4 floorY;      // back edge, walk line, front edge (framebuffer y), depth per px of the floor
+uniform vec4 ends;        // the floor's left and right ends at its back edge, then at its front edge (framebuffer x)
 uniform vec2 gain;        // on the floor, elsewhere
 out vec4 finalColor;
 void main() {
   float a = texture(texture0, fragTexCoord).a * fragColor.a;
   vec2 p = gl_FragCoord.xy;
-  bool onFloor = p.y <= floorY.x && p.y >= floorY.z;
+  vec2 e = mix(ends.xy, ends.zw, clamp((floorY.x - p.y) / max(floorY.x - floorY.z, 1.0), 0.0, 1.0));
+  bool onFloor = p.y <= floorY.x && p.y >= floorY.z && p.x >= e.x && p.x <= e.y;  // (its ends are rails, ridges...)
   vec3 L = vec3(0.0);
   for (int i = 0; i < count; ++i) {
     vec2 d = p - lightA[i].xy;
@@ -100,7 +103,7 @@ void main() {
 
 Shader g_lit{}, g_mirror{};
 bool g_tried = false;
-int g_litA = -1, g_litB = -1, g_litCount = -1, g_litFloor = -1, g_litGain = -1;
+int g_litA = -1, g_litB = -1, g_litCount = -1, g_litFloor = -1, g_litGain = -1, g_litEnds = -1;
 int g_mCur = -1, g_mOffs = -1, g_mFloor = -1, g_mSize = -1, g_mRain = -1, g_mBack = -1, g_mEnds = -1;
 RenderTexture2D g_now{}, g_back{};  // the frame all drawn, the frame before the fighters
 bool g_hasBack = false;
@@ -115,6 +118,7 @@ bool ready() {
     g_litCount = GetShaderLocation(g_lit, "count");
     g_litFloor = GetShaderLocation(g_lit, "floorY");
     g_litGain = GetShaderLocation(g_lit, "gain");
+    g_litEnds = GetShaderLocation(g_lit, "ends");
     g_mCur = GetShaderLocation(g_mirror, "cur");
     g_mOffs = GetShaderLocation(g_mirror, "offs");
     g_mFloor = GetShaderLocation(g_mirror, "floorW");
@@ -204,8 +208,11 @@ void shadows(const Match& m, const Camera2D& cam) {
     if (!on || !stageart::floorOf(*on, m.stage().theme, fl)) continue;
     const float H = f.height(), lift = fl.walk - f.pos.y, near = 1.0f - clampf(lift / 300.0f, 0.0f, 1.0f);
     if (near <= 0.0f) continue;
-    // Only on this floor: clipped to its band.
-    const Vector2 a = GetWorldToScreen2D({on->rect.left(), fl.back}, cam), b = GetWorldToScreen2D({on->rect.right(), fl.front}, cam);
+    // Only on this floor: clipped to its band, between its ends where the shadow lies (not on its rails, ridges...).
+    const float k = (fl.walk - fl.back) / std::max(fl.front - fl.back, 1.0f);
+    const float l = std::max(on->rect.left(), lerpf(fl.leftBack, fl.leftFront, k));
+    const float r = std::min(on->rect.right(), lerpf(fl.rightBack, fl.rightFront, k));
+    const Vector2 a = GetWorldToScreen2D({l, fl.back}, cam), b = GetWorldToScreen2D({r, fl.front}, cam);
     rlDrawRenderBatchActive();
     beginClip({a.x, a.y, b.x - a.x, b.y - a.y});
     for (const art::Light& L : lights) {
@@ -229,7 +236,7 @@ void shadows(const Match& m, const Camera2D& cam) {
 
 void backdrop(const Match& m, const Camera2D& cam) {
   const RenderTexture2D* fr = pix::frameTarget();
-  if (!settings().highQuality || !fr || !ready()) return;
+  if (!settings().highQuality || rtx::on() || !fr || !ready()) return;  // (RTX: the light is traced)
   const View v = viewOf(cam, *fr);
   const Lights L = pick(v, *fr, 2.0f * kReach);
   if (L.n == 0) return;
@@ -252,27 +259,30 @@ void arena(const Match& m, const Camera2D& cam, float time) {
 
   // 1. The effects light the platforms: each drawn again, its picture masking the light.
   const Lights L = pick(v, *fr, kReach);
-  if (L.n > 0) {
+  if (L.n > 0 && !rtx::on()) {
     rlDrawRenderBatchActive();
     beginLit(L);
     const float g = stageart::lightGain(theme), gain[2] = {1.4f * g, 0.45f * g};
     SetShaderValue(g_lit, g_litGain, gain, SHADER_UNIFORM_VEC2);
     for (const auto& p : m.platforms) {
       stageart::Floor fl{};
-      float y[4] = {-1.0f, -1.0f, -2.0f, 0.0f};
+      float y[4] = {-1.0f, -1.0f, -2.0f, 0.0f}, x[4] = {0.0f, 0.0f, 0.0f, 0.0f};
       if (stageart::floorOf(p, theme, fl)) {
         y[0] = v.gl({0.0f, fl.back}).y, y[1] = v.gl({0.0f, fl.walk}).y, y[2] = v.gl({0.0f, fl.front}).y;
         y[3] = kDepth;
+        x[0] = v.gl({fl.leftBack, 0.0f}).x, x[1] = v.gl({fl.rightBack, 0.0f}).x;
+        x[2] = v.gl({fl.leftFront, 0.0f}).x, x[3] = v.gl({fl.rightFront, 0.0f}).x;
       }
       SetShaderValue(g_lit, g_litFloor, y, SHADER_UNIFORM_VEC4);
+      SetShaderValue(g_lit, g_litEnds, x, SHADER_UNIFORM_VEC4);
       stageart::drawPlatform(p, theme, time);
       rlDrawRenderBatchActive();
     }
     endLit();
   }
 
-  // 2. The fighters' shadows, away from the effects.
-  shadows(m, cam);
+  // 2. The fighters' shadows, away from the effects (RTX: traced).
+  if (!rtx::on()) shadows(m, cam);
 
   // 3. What the floors mirror behind the fighters, and what tells them from the floor.
   g_hasBack = false;
@@ -285,6 +295,8 @@ void arena(const Match& m, const Camera2D& cam, float time) {
     }
   }
 }
+
+const RenderTexture2D* beforeFighters() { return g_hasBack ? &g_back : nullptr; }
 
 void reflections(const Match& m, const Camera2D& cam, float time) {
   const RenderTexture2D* fr = pix::frameTarget();

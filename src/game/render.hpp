@@ -179,6 +179,7 @@ void backdrop(const Match& m, const Camera2D& cam);  // after the backdrop: the 
 void arena(const Match& m, const Camera2D& cam, float time);
 // After the fighters and the effects, before the name tags: the glossy floors mirror the scene where they show.
 void reflections(const Match& m, const Camera2D& cam, float time);
+const RenderTexture2D* beforeFighters();  // the frame before the fighters, kept this frame for the reflections (or null)
 }  // namespace light
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------

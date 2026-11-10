@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#include "game/rtx.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 #include "rlgl.h"
@@ -389,7 +390,7 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   Lit L;
   const Vector2 mid = X(Vec2{0.0f, 0.0f});
   Vec2 to{};
-  if (settings().highQuality) L.k = litBy({mid.x, mid.y}, H * X.scale, L.c, to);
+  if (settings().highQuality && !rtx::on()) L.k = litBy({mid.x, mid.y}, H * X.scale, L.c, to);  // (RTX: traced)
   if (L.k > 0.01f && g_tint.id != 0 && g_tintLoc >= 0) {
     shaded = true;
     // The screen's direction in the frame's pixels: undo the turn, then the mirrors (by the corners, the facing).
@@ -407,17 +408,21 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
     L.k = 0.0f;
   }
   if (shaded) beginTint(tc, amount, L);
-  rlSetTexture(S.tex.id);
-  rlBegin(RL_QUADS);
   const unsigned char a = (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f));
-  for (int c = 0; c < 4; ++c) {
-    rlColor4ub(255, 255, 255, a);
-    rlTexCoord2f(uv[c][0], uv[c][1]);
-    rlVertex2f(q[c].x, q[c].y);
-  }
-  rlEnd();
-  rlSetTexture(0);
+  auto quad = [&] {
+    rlSetTexture(S.tex.id);
+    rlBegin(RL_QUADS);
+    for (int c = 0; c < 4; ++c) {
+      rlColor4ub(255, 255, 255, a);
+      rlTexCoord2f(uv[c][0], uv[c][1]);
+      rlVertex2f(q[c].x, q[c].y);
+    }
+    rlEnd();
+    rlSetTexture(0);
+  };
+  quad();
   if (shaded) EndShaderMode();
+  rtx::solid(quad);  // the fighter blocks the ray traced light
   return true;
 }
 
@@ -618,25 +623,27 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
   const float tw = float(F->tex.width), th = float(F->tex.height);
   const float u0 = i * I.fw / tw, u1 = (i + 1) * I.fw / tw;
   const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, I.fh / th}, {u0, I.fh / th}};
-  rlSetTexture(F->tex.id);
-  rlBegin(RL_QUADS);
   const unsigned char a = (unsigned char)(tint.a * std::clamp(alpha, 0.0f, 1.0f));
-  for (int k = 0; k < 4; ++k) {
-    rlColor4ub(tint.r, tint.g, tint.b, a);
-    rlTexCoord2f(uv[k][0], uv[k][1]);
-    rlVertex2f(q[k].x, q[k].y);
-  }
-  rlEnd();
-  rlSetTexture(0);
-  if (F->glow.id != 0 && settings().highQuality) {  // the halo, over the sprite: its core glows too
-    const float p = float(kGlowPad);
-    const Vector2 g[4] = {P(-p, -p), P(I.fw + p, -p), P(I.fw + p, I.fh + p), P(-p, I.fh + p)};
-    const float gu0 = float(i) / I.frames, gu1 = float(i + 1) / I.frames;
-    const float guv[4][2] = {{gu0, 0.0f}, {gu1, 0.0f}, {gu1, 1.0f}, {gu0, 1.0f}};
-    BeginBlendMode(BLEND_ADDITIVE);
+  auto sprite = [&] {
+    rlSetTexture(F->tex.id);
+    rlBegin(RL_QUADS);
+    for (int k = 0; k < 4; ++k) {
+      rlColor4ub(tint.r, tint.g, tint.b, a);
+      rlTexCoord2f(uv[k][0], uv[k][1]);
+      rlVertex2f(q[k].x, q[k].y);
+    }
+    rlEnd();
+    rlSetTexture(0);
+  };
+  sprite();
+  const float p = float(kGlowPad);
+  const Vector2 g[4] = {P(-p, -p), P(I.fw + p, -p), P(I.fw + p, I.fh + p), P(-p, I.fh + p)};
+  const float gu0 = float(i) / I.frames, gu1 = float(i + 1) / I.frames;
+  const float guv[4][2] = {{gu0, 0.0f}, {gu1, 0.0f}, {gu1, 1.0f}, {gu0, 1.0f}};
+  auto halo = [&](int passes) {
     rlSetTexture(F->glow.id);
     rlBegin(RL_QUADS);
-    for (int pass = 0; pass < 2; ++pass)  // twice: the light reads over the bright arenas too
+    for (int pass = 0; pass < passes; ++pass)
       for (int k = 0; k < 4; ++k) {
         rlColor4ub(tint.r, tint.g, tint.b, a);
         rlTexCoord2f(guv[k][0], guv[k][1]);
@@ -644,6 +651,17 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
       }
     rlEnd();
     rlSetTexture(0);
+  };
+  // RTX: the effect gives the traced light, sprite and halo; pixel art too (the traced light only brightens a
+  // sprite's own colours, it cannot turn them olive), not the decorations (castLight).
+  if (F->glow.id != 0 && castLight && rtx::on())
+    rtx::light([&] {
+      sprite();
+      halo(1);
+    });
+  if (F->glow.id != 0 && settings().highQuality) {  // the halo, over the sprite: its core glows too
+    BeginBlendMode(BLEND_ADDITIVE);
+    halo(2);  // twice: the light reads over the bright arenas too
     ui::frameBlend();
     if (castLight && size_t(i) < F->beams.size()) {  // (pixel art has no light: no beams)
       const Vector4& B = F->beams[size_t(i)];
@@ -677,29 +695,33 @@ bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, floa
   auto alphaAt = [&](float x) {  // the fade at the start, linear: the GPU interpolates it between the cuts
     return (unsigned char)(a * (fadeIn > 0.0f ? std::clamp(x / fadeIn, 0.0f, 1.0f) : 1.0f));
   };
-  rlSetTexture(F->tex.id);
-  rlBegin(RL_QUADS);
-  for (float x = 0.0f; x < len; x += tile) {
-    const float w = std::min(tile, len - x), u0 = frame * I.fw / tw;
-    // The tile is cut where the fade ends so the ramp stays straight.
-    const float cuts[3] = {x, fadeIn > x && fadeIn < x + w ? fadeIn : x + w, x + w};
-    for (int c = 0; c < 2; ++c) {
-      const float xa = cuts[c], xb = cuts[c + 1];
-      if (xb <= xa) continue;
-      const float ua = u0 + (xa - x) / tile * I.fw / tw, ub = u0 + (xb - x) / tile * I.fw / tw;
-      const Vec2 p0 = from + d * xa, p1 = from + d * xb;
-      const Vec2 q[4] = {p0 - n * top, p1 - n * top, p1 + n * bottom, p0 + n * bottom};
-      const float uv[4][2] = {{ua, 0.0f}, {ub, 0.0f}, {ub, I.fh / th}, {ua, I.fh / th}};
-      const unsigned char qa[4] = {alphaAt(xa), alphaAt(xb), alphaAt(xb), alphaAt(xa)};
-      for (int k = 0; k < 4; ++k) {
-        rlColor4ub(255, 255, 255, qa[k]);
-        rlTexCoord2f(uv[k][0], uv[k][1]);
-        rlVertex2f(q[k].x, q[k].y);
+  auto strip = [&] {
+    rlSetTexture(F->tex.id);
+    rlBegin(RL_QUADS);
+    for (float x = 0.0f; x < len; x += tile) {
+      const float w = std::min(tile, len - x), u0 = frame * I.fw / tw;
+      // The tile is cut where the fade ends so the ramp stays straight.
+      const float cuts[3] = {x, fadeIn > x && fadeIn < x + w ? fadeIn : x + w, x + w};
+      for (int c = 0; c < 2; ++c) {
+        const float xa = cuts[c], xb = cuts[c + 1];
+        if (xb <= xa) continue;
+        const float ua = u0 + (xa - x) / tile * I.fw / tw, ub = u0 + (xb - x) / tile * I.fw / tw;
+        const Vec2 p0 = from + d * xa, p1 = from + d * xb;
+        const Vec2 q[4] = {p0 - n * top, p1 - n * top, p1 + n * bottom, p0 + n * bottom};
+        const float uv[4][2] = {{ua, 0.0f}, {ub, 0.0f}, {ub, I.fh / th}, {ua, I.fh / th}};
+        const unsigned char qa[4] = {alphaAt(xa), alphaAt(xb), alphaAt(xb), alphaAt(xa)};
+        for (int k = 0; k < 4; ++k) {
+          rlColor4ub(255, 255, 255, qa[k]);
+          rlTexCoord2f(uv[k][0], uv[k][1]);
+          rlVertex2f(q[k].x, q[k].y);
+        }
       }
     }
-  }
-  rlEnd();
-  rlSetTexture(0);
+    rlEnd();
+    rlSetTexture(0);
+  };
+  strip();
+  if (F->glow.id != 0 && rtx::on()) rtx::light(strip);  // RTX: a beam gives light too
   return true;
 }
 

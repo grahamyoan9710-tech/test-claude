@@ -8,6 +8,18 @@
 
 ## Nouveautés
 
+Version 12.3 : **vrai RTX**.
+
+- Nouveau réglage **Paramètres > Affichage > RTX**. *Non* (par défaut) garde l'éclairage dessiné des versions
+  précédentes. *Oui* calcule la lumière des effets en vrai lancer de rayons, sur la carte graphique.
+- Avec le RTX, les persos arrêtent la lumière (vraies ombres), sont éclairés du côté tourné vers l'effet, et la
+  lumière rebondit sur eux et sur le décor.
+- Sur les persos, la lumière reste en aplats, façon pixel art, sans les salir.
+- Sur les Toits Kurenai, les lanternes éclairent la scène.
+- Les reflets des sols brillants sont gardés.
+- Si le jeu rame, le RTX se coupe tout seul.
+- Sans RTX : les flaques de lumière et les ombres ne débordent plus des bords des sols.
+
 Version 12.2 : **Hakuen, effets refaits**.
 
 - Le croissant part droit devant, à hauteur du corps, aussi grand qu'elle, avec de la foudre rouge (éveillée, elle

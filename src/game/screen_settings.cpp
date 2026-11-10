@@ -25,7 +25,7 @@ struct RowInfo {
   const char* label;
   const char* help;
 };
-const RowInfo kRows[3][7] = {
+const RowInfo kRows[3][8] = {
     {{"Volume général", "Volume de tout le jeu."},
      {"Musique", "Volume des musiques des menus et des combats."},
      {"Effets sonores", "Coups, sauts, K.O., cris de la foule..."},
@@ -36,7 +36,8 @@ const RowInfo kRows[3][7] = {
      {"Noms au-dessus des joueurs", "Affiche J1, J2... ou CPU au-dessus de chaque combattant."},
      {"Compteur d'images (FPS)", "Affiche le nombre d'images par seconde en haut à gauche."},
      {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."},
-     {"Personnages en pixel art", "Les combattants sont dessinés comme des sprites en pixel art (les menus restent lisses)."}},
+     {"Personnages en pixel art", "Les combattants sont dessinés comme des sprites en pixel art (les menus restent lisses)."},
+     {"RTX", "Oui : vrai lancer de rayons. La lumière des effets est calculée rayon par rayon : vraies ombres, rebonds sur les persos et le décor. Plus gourmand. Non : l'éclairage dessiné, plus léger."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Clash Orb", "L'orbe qui traverse l'arène. La casser donne l'ultime : c'est la seule façon de l'obtenir."},
      {"Armes", "Les deux armes de chaque combattant tombent sur l'arène : il prend la sienne en restant dessus, touche Arme maintenue 1 s. Avec A et B, la touche alterne."},
@@ -48,7 +49,7 @@ const RowInfo kTabHelp[4] = {{"Audio", "Le volume de tout le jeu, de la musique 
                              {"Affichage", "L'écran, la qualité de l'image et ce qui s'affiche pendant les combats."},
                              {"Jeu", "Les règles par défaut des prochains combats."},
                              {"Commandes", ""}};
-const int kRowCounts[4] = {4, 7, 6, kActionCount + 1};  // controls: the actions + the reset row
+const int kRowCounts[4] = {4, 8, 6, kActionCount + 1};  // controls: the actions + the reset row
 
 // ---- Where things are -------------------------------------------------------------------
 Rectangle tabRect(int i) { return {64.0f + i * 206.0f, 120, 200, 48}; }
@@ -56,8 +57,8 @@ Rectangle backRect() {
   const float w = 10 + ui::promptWidth("ÉCHAP", ui::Btn::B, 24) + 10 + ui::trackedWidth("RETOUR", 19.5f, 0.08f) + 16;
   return {1216 - w, 46, w, 40};
 }
-Rectangle rowRect(int row) { return {kPanel.x, kPanel.y + 14 + row * 58.0f, kPanel.width, 58}; }
-float rowCy(int row) { return kPanel.y + 43 + row * 58.0f; }
+Rectangle rowRect(int row) { return {kPanel.x, kPanel.y + 14 + row * 54.0f, kPanel.width, 54}; }  // 8 rows fit
+float rowCy(int row) { return kPanel.y + 41 + row * 54.0f; }
 // The widgets, right-aligned on x 814 like the mockup
 Rectangle minusRect(int row) { return {484, rowCy(row) - 15, 30, 30}; }
 Rectangle trackRect(int row) { return {522, rowCy(row) - 7, 190, 14}; }
@@ -91,7 +92,7 @@ int* volumeFor(int row) {
 }
 bool toggleOn(int tab, int row) {
   const Settings& s = settings();
-  if (tab == 1) return row == 0 ? s.fullscreen : row == 3 ? s.playerTags : row == 4 ? s.showFps : row == 5 ? s.showHitboxes : s.pixelArt;
+  if (tab == 1) return row == 0 ? s.fullscreen : row == 3 ? s.playerTags : row == 4 ? s.showFps : row == 5 ? s.showHitboxes : row == 6 ? s.pixelArt : s.rtx;
   return row == 1 ? s.items : row == 2 ? s.weapons : s.tapJump;
 }
 std::string selectorText(int tab, int row) {
@@ -529,6 +530,7 @@ void App::changeSetting(int row, int delta) {
       if (row == 4) s.showFps = !s.showFps;
       if (row == 5) s.showHitboxes = !s.showHitboxes;
       if (row == 6) s.pixelArt = !s.pixelArt;
+      if (row == 7) s.rtx = !s.rtx;
       break;
     case 2:
       if (row == 0) s.stocks = 1 + (s.stocks - 1 + delta + 5) % 5;

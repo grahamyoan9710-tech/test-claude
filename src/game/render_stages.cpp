@@ -18,13 +18,14 @@ struct Arena {
   bool rain;
   float insetBack, insetFront;  // from each end of the picture to the floor, on its back and front rows (pixels)
   float light;  // how much the effects' light shows: more at night than in daylight
+  float lamps;  // RTX: how much its lanterns light the scene; 0 where its sky or walls are as bright (they would glow)
 };
 const Arena* arena(StageTheme theme) {
-  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f},  // polished stone
-      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f},                  // icy roof tiles, snow around
-      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f},                 // dry sandstone
-      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f},              // wet stone in the rain, at night
-      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f};                // polished flagstones, in daylight
+  static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f, 0.0f},  // polished stone
+      kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f, 0.0f},                // icy roof tiles, snow around
+      kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f, 0.0f},               // dry sandstone
+      kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f, 0.6f},            // wet stone in the rain, at night
+      kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f, 0.0f};              // polished flagstones, in daylight
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
@@ -70,6 +71,11 @@ void drawForeground(StageTheme, Vec2, float) {}
 float lightGain(StageTheme theme) {
   const Arena* a = arena(theme);
   return a ? a->light : 1.0f;
+}
+
+float lampGain(StageTheme theme) {
+  const Arena* a = arena(theme);
+  return a ? a->lamps : 0.0f;
 }
 
 bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
