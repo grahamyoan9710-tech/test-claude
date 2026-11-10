@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 10/11 fin d'après-midi UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.4. Ultime à
+  mains nues = un seul grand éclair rouge sang foncé sur l'adversaire (`ult::thunder`, PV::Spear, effet ParticleFX
+  f20d9da6, `pfx_h01_ult`) ; élément de Hakuen = Lightning (fin du disque doré). Effets communs refaits en
+  ParticleFX (`pfx_jump`, `pfx_land`, `pfx_dash`, `pfx_airjump`, `pfx_trail`, `pfx_ko`, `pfx_shield` ; voir
+  `art/particlefx/`), la traînée d'éjection lisait `vel` au lieu de `kbVel` (jamais affichée) ; `import_fx.py --soft`.
+  Hakuen repeinte en blanc (variante 3 : noir et or en blanc, `scripts/h01_white/`, le propriétaire peut encore
+  choisir la 2 : or en rouge, ou la 1 : l'or reste). Branche RTX (claude/project-thread-ab9ctl, 12.3) fusionnée.
+  Verrou « Version et paquets » pris et libéré dans ce commit.
 - 10/11 12 h UTC, session claude/project-thread-ab9ctl : version 12.3, **vrai RTX** (réglage Affichage > RTX, `rtx`
   dans `clash_horizon.cfg`, Non par défaut). Oui : `render_rtx.cpp` (`rtx.hpp`) lance la lumière en 2D sur la carte
   graphique : masque des persos et des corps des plateformes, lumière des effets (`rtx::light` dans `fighter_art.cpp`,

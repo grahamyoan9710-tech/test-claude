@@ -8,6 +8,17 @@
 
 ## Nouveautés
 
+Version 12.4 : **Hakuen en blanc, foudre rouge sang, effets communs refaits**.
+
+- Hakuen est repeinte : sa tenue noire et or devient blanche, avec le rouge de son manteau et de ses rubans
+  (portrait compris).
+- Son ultime à mains nues, « Forge de l'aube » : elle charge, puis un seul grand éclair rouge sang, très foncé, tombe
+  du ciel sur l'adversaire.
+- Ses coups et ses ondes sont en foudre rouge (plus de disque doré au sol).
+- Les effets communs à tous les persos sont refaits avec ParticleFX : saut, double saut, atterrissage, dash, bulle du
+  bouclier et explosion au bord de l'écran quand un perso est éjecté (à sa couleur).
+- Un perso éjecté fort laisse une traînée de fumée derrière lui (elle ne s'affichait jamais avant).
+
 Version 12.3 : **vrai RTX**.
 
 - Nouveau réglage **Paramètres > Affichage > RTX**. *Non* (par défaut) garde l'éclairage dessiné des versions
