@@ -315,7 +315,8 @@ float fxSize(const char* name, const CharacterDef& d, float size) {
   // A few bigger than the fighters' pixels (the owner, 11/11: a dynamic, aggressive game).
   static const std::pair<const char*, float> kGrow[] = {{"pfx_jump", 1.05f}, {"pfx_airjump", 1.05f},
                                                         {"pfx_land", 1.05f}, {"pfx_dash", 1.05f},
-                                                        {"pfx_trail", 1.6f}, {"pfx_ko", 1.7f}};
+                                                        {"pfx_trail", 1.6f}, {"pfx_ko", 1.7f},
+                                                        {"pfx_h01_ult", 1.05f / 0.8f}};  // the model 5 % wider (made at 80 %)
   for (const auto& [n, g] : kGrow)
     if (std::strcmp(n, name) == 0) return pixelScale(d) * g;
   return pixelScale(d);
@@ -486,19 +487,26 @@ struct Fx {
   Texture2D glow{};  // a ParticleFX effect's halo: its frames blurred, premultiplied, kGlowDown times smaller
   Color light{};     // its mean colour, brightened: the light it throws on the fighters
   std::vector<Vector4> beams;  // per frame, that light: from (x, y, frame pixels), spreading z, strength w
+  bool ownGlow = false;  // a ParticleFX sprite sheet, not a GIF: its own soft bloom is kept, no halo over it
   bool ok = false;
 };
 // The halo of a ParticleFX effect (pfx_*): their GIF export has on/off transparency, so the light their site draws
 // live (additive particles, bloom) is lost. Each frame is padded by kGlowPad source pixels, shrunk and blurred, and
 // drawn additively over the sprite.
 constexpr int kGlowPad = 32, kGlowDown = 4;
+// Where frame k starts in an effect's sheet: one row, or several when one row would pass 8192 px (import_fx.py).
+Vector2 cellOf(const art::FxInfo& I, int k, int sheetWidth) {
+  const int cols = std::max(1, sheetWidth / int(I.fw));
+  return {float(k % cols) * I.fw, float(k / cols) * I.fh};
+}
 Texture2D glowOf(const Image& strip, const art::FxInfo& I) {
   const int fw = int(I.fw), fh = int(I.fh);
   const int gw = (fw + 2 * kGlowPad) / kGlowDown, gh = (fh + 2 * kGlowPad) / kGlowDown;
   Image out = GenImageColor(gw * I.frames, gh, BLANK);
   for (int k = 0; k < I.frames; ++k) {
     Image cell = GenImageColor(fw + 2 * kGlowPad, fh + 2 * kGlowPad, BLANK);
-    ImageDraw(&cell, strip, {float(k * fw), 0, float(fw), float(fh)}, {float(kGlowPad), float(kGlowPad), float(fw), float(fh)},
+    const Vector2 at = cellOf(I, k, strip.width);
+    ImageDraw(&cell, strip, {at.x, at.y, float(fw), float(fh)}, {float(kGlowPad), float(kGlowPad), float(fw), float(fh)},
               WHITE);
     Image cover = ImageCopy(cell);
     Color* px = (Color*)cell.data;  // premultiplied, opaque: black adds no light
@@ -560,6 +568,7 @@ const Fx* fxOf(const char* name) {
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
     F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
+    F.ownGlow = std::strcmp(name, "pfx_h01_ult") == 0;  // (the owner's model, 11/11: the halo turned it white)
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
       if (!smoke(name)) F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)
@@ -581,11 +590,12 @@ const Fx* fxOf(const char* name) {
       float most = 0.0f;
       for (int f = 0; f < frames; ++f) {
         double w = 0, x = 0, y = 0, x2 = 0;
-        for (int v = 0; v < int(fh) && v < img.height; ++v)
+        const Vector2 cell = cellOf(F.info, f, img.width);
+        for (int v = 0; v < int(fh) && int(cell.y) + v < img.height; ++v)
           for (int u = 0; u < int(fw); ++u) {
-            const int at = f * int(fw) + u;
+            const int at = int(cell.x) + u;
             if (at >= img.width) break;
-            const Color& c = px[size_t(v) * img.width + at];
+            const Color& c = px[size_t(int(cell.y) + v) * img.width + at];
             if (c.a == 0) continue;
             const double e = (c.r + c.g + c.b) / 765.0;
             w += e, x += e * u, y += e * v, x2 += e * (double(u) * u + double(v) * v);
@@ -635,8 +645,9 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
   };
   const Vector2 q[4] = {P(0, 0), P(I.fw, 0), P(I.fw, I.fh), P(0, I.fh)};
   const float tw = float(F->tex.width), th = float(F->tex.height);
-  const float u0 = i * I.fw / tw, u1 = (i + 1) * I.fw / tw;
-  const float uv[4][2] = {{u0, 0.0f}, {u1, 0.0f}, {u1, I.fh / th}, {u0, I.fh / th}};
+  const Vector2 cell = cellOf(I, i, F->tex.width);
+  const float u0 = cell.x / tw, u1 = (cell.x + I.fw) / tw, v0 = cell.y / th, v1 = (cell.y + I.fh) / th;
+  const float uv[4][2] = {{u0, v0}, {u1, v0}, {u1, v1}, {u0, v1}};
   const unsigned char a = (unsigned char)(tint.a * std::clamp(alpha, 0.0f, 1.0f));
   auto sprite = [&] {
     rlSetTexture(F->tex.id);
@@ -675,7 +686,7 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot, bo
           halo(1);
         },
         sprite);
-  if (F->glow.id != 0 && (settings().highQuality || rtx::on())) {  // the halo, over the sprite: its core glows too
+  if (F->glow.id != 0 && !F->ownGlow && (settings().highQuality || rtx::on())) {  // the halo: its core glows too
     BeginBlendMode(BLEND_ADDITIVE);
     halo(2);  // twice: the light reads over the bright arenas too
     ui::frameBlend();
@@ -715,7 +726,8 @@ bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, floa
     rlSetTexture(F->tex.id);
     rlBegin(RL_QUADS);
     for (float x = 0.0f; x < len; x += tile) {
-      const float w = std::min(tile, len - x), u0 = frame * I.fw / tw;
+      const Vector2 cell = cellOf(I, frame, F->tex.width);
+      const float w = std::min(tile, len - x), u0 = cell.x / tw, v0 = cell.y / th, v1 = (cell.y + I.fh) / th;
       // The tile is cut where the fade ends so the ramp stays straight.
       const float cuts[3] = {x, fadeIn > x && fadeIn < x + w ? fadeIn : x + w, x + w};
       for (int c = 0; c < 2; ++c) {
@@ -724,7 +736,7 @@ bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, floa
         const float ua = u0 + (xa - x) / tile * I.fw / tw, ub = u0 + (xb - x) / tile * I.fw / tw;
         const Vec2 p0 = from + d * xa, p1 = from + d * xb;
         const Vec2 q[4] = {p0 - n * top, p1 - n * top, p1 + n * bottom, p0 + n * bottom};
-        const float uv[4][2] = {{ua, 0.0f}, {ub, 0.0f}, {ub, I.fh / th}, {ua, I.fh / th}};
+        const float uv[4][2] = {{ua, v0}, {ub, v0}, {ub, v1}, {ua, v1}};
         const unsigned char qa[4] = {alphaAt(xa), alphaAt(xb), alphaAt(xb), alphaAt(xa)};
         for (int k = 0; k < 4; ++k) {
           rlColor4ub(255, 255, 255, qa[k]);

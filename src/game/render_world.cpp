@@ -150,7 +150,7 @@ void drawProjectiles(const Match& m, float time) {
     if (chosenFx(p.fx)) {  // its own warning: it fades in until it strikes
       if (!p.armed()) s.k *= 0.3f + 0.7f * s.age / float(std::max(1, p.armDelay));
       const bool own = p.owner >= 0 && p.owner < int(m.fighters.size());
-      if (shotSprite(p, s, time, own ? art::pixelScale(*m.fighters[p.owner].def) : 1.0f)) continue;
+      if (shotSprite(p, s, time, own ? art::fxSize(p.fx, *m.fighters[p.owner].def) : 1.0f)) continue;
     }
     if (!kVfx) {  // a plain white ring on the hitbox (fainter: the warning before the strike)
       DrawRing(V(s.c), std::max(1.0f, s.r - 2.5f), s.r, 0, 360, 32, withAlpha(WHITE, (p.armed() ? 0.75f : 0.3f) * s.k));
@@ -160,7 +160,8 @@ void drawProjectiles(const Match& m, float time) {
       shotWarning(p, s, time, p.visual == ProjVisual::Pillar && p.vel.y > 0.5f);
       continue;
     }
-    if (shotSprite(p, s, time, p.owner >= 0 && p.owner < int(m.fighters.size()) ? art::pixelScale(*m.fighters[p.owner].def) : 1.0f))
+    const bool own = p.fx && p.owner >= 0 && p.owner < int(m.fighters.size());
+    if (shotSprite(p, s, time, own ? art::fxSize(p.fx, *m.fighters[p.owner].def) : 1.0f))
       continue;
     shotPlaceholder(p, s, time);
   }

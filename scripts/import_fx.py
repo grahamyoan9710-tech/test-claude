@@ -10,14 +10,15 @@ SOURCE is either
 Options: --anchor X Y (the effect's origin in the source frame: where the game puts it; default: the JSON pivot,
 else the frame centre), --fps N (default: from the JSON or the GIF, else 15), --loop, --only A-B (frames to keep),
 --keep-first, --step N (keep one frame in N: a 30 fps GIF at the game's 15 fps), --scale S (resize the frames:
-each effect is one texture, keep its strip under 8192 px), --flip (mirror the frames: the game expects effects
+each effect is one texture: past 8192 px its frames go on several rows), --flip (mirror the frames: the game expects effects
 travelling to the right), --track (keep the effect's centre still, its anchor x: for one that travels across its
 frames, drawn on a moving projectile), --hit R (the radius, in frame pixels after --scale, the hitbox should have to
 match the drawing: the game then sizes the effect on the hitbox), --pixel (pixel art made at its final size, one source
 pixel block per fighter pixel: --scale keeps its pixels (nearest) and the game draws it with the fighters' pixel size,
 never stretched), --soft (keeps the see-through pixels: otherwise the alpha is all or nothing).
 
-Writes assets/sprites/fx_NAME.png (the frames side by side, cropped to their common box, paletted when it fits)
+Writes assets/sprites/fx_NAME.png (the frames side by side, in rows when one row would pass 8192 px, cropped to their
+common box, paletted when it fits)
 and its line in assets/sprites/sheets.txt: fx NAME frames frame_w frame_h anchor_x anchor_y fps loop [hit [pixel]].
 """
 import argparse
@@ -144,9 +145,12 @@ def main():
     x1 = min(w, max(b[2] for b in boxes) + 1)
     y1 = min(h, max(b[3] for b in boxes) + 1)
     fw, fh = x1 - x0, y1 - y0
-    strip = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
+    cols = min(len(frames), 8191 // fw)  # one texture: rows of frames when one row would reach 8192 px
+    rows = -(-len(frames) // cols)
+    assert fh * rows < 8192, f"{len(frames)} frames of {fw}x{fh} do not fit in one texture: use --step or --scale"
+    strip = Image.new("RGBA", (fw * cols, fh * rows), (0, 0, 0, 0))
     for k, f in enumerate(frames):
-        strip.alpha_composite(f.crop((x0, y0, x1, y1)), (k * fw, 0))
+        strip.alpha_composite(f.crop((x0, y0, x1, y1)), (k % cols * fw, k // cols * fh))
     root = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
     out = os.path.join(root, "assets", "sprites", f"fx_{a.name}.png")
     p = paletted(strip)

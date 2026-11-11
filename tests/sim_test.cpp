@@ -1314,7 +1314,7 @@ static void testHakuen() {
     if (m.projectiles.empty()) return;
     const float spot = m.projectiles[0].pos.x, before = v.percent;
     v.pos.x = spot - 300.0f;  // steps away before it strikes
-    for (int i = 0; i < 40; ++i) m.step(in);
+    for (int i = 0; i < 32; ++i) m.step(in);  // (it strikes after 28 frames, the next one 10 frames later)
     CHECK(m.projectiles[0].pos.x == spot && v.percent == before, "the bolt stays on its spot and misses (%.0f%%)",
           v.percent - before);
     for (int i = 0; i < 30; ++i) m.step(in);
