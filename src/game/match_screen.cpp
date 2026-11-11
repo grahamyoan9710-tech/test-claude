@@ -548,6 +548,7 @@ void MatchScreen::draw() {
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);
+    for (const auto& p : m_.platforms) DrawRectangleLinesEx({p.rect.x, p.rect.y, p.rect.w, p.rect.h}, 2, SKYBLUE);
     for (int l = 0; l < m_.ledgeCount(); ++l)
       if (m_.ledgeValid(l)) DrawCircleV(V(m_.ledgePoint(l)), 6, ORANGE);
   }
