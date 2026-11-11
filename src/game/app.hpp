@@ -135,8 +135,7 @@ struct SlotSetup {
 // A cursor on the character select, one per input device: each player moves their own.
 struct CssCursor {
   bool on = false;
-  int col = 0, row = 1;  // card and field (-1: the rules on top, 0 type, 1 fighter, 2 device / level)
-  int rule = 0;          // which rule, on row -1
+  int col = 0, row = 1;  // card and field (-1: the « Règles & mode » button, 0 its player chip, 1 its fighter)
 };
 
 class App {
@@ -221,7 +220,8 @@ class App {
   std::array<SlotSetup, 4> slots_;
   int stage_ = 0;
   int cssCol_ = 0, cssRow_ = 1;  // the card and field under the mouse
-  int rulesCol_ = 0;
+  bool rulesOpen_ = false;  // the « Règles & mode » sheet is open over the character select
+  int rulesSel_ = 0;        // its field under the keyboard / gamepad
   std::array<CssCursor, kDeviceCount> cssCur_{};
   bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random
   int vsTip_ = 0;             // the VS screen's tip (drawn when it opens)

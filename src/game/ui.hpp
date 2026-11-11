@@ -44,7 +44,7 @@ void quad(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color ca, Color cb, Color 
 void slanted(Rectangle r, float slant, Color top, Color bottom);
 void slantedOutline(Rectangle r, float slant, float thick, Color c);
 // A box with its top-left and bottom-right corners cut (the charte's shape), vertical gradient; and its outline.
-void bevel(Rectangle r, float cut, Color top, Color bottom);
+void bevel(Rectangle r, float cut, Color top, Color bottom, bool across = false);  // across: top = left
 void bevelLines(Rectangle r, float cut, float thick, Color c);
 // The horizon line: azure -> white -> gold, fading at both ends.
 void horizonLine(float x0, float x1, float y, float thick, float alpha = 1.0f);

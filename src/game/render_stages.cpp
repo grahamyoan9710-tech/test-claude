@@ -31,6 +31,7 @@ struct Arena {
   float floorRough;
   Top thin, small;
   Key sky;
+  float edge;  // from each end of the solid picture to its floor, on the walk row (pixels): rails and eaves hang past
 };
 const Arena* arena(StageTheme theme) {
   // Polished stone; icy roof tiles, snow logs; dry sandstone, dry planks; wet stone and wet planks in the rain, at
@@ -38,15 +39,15 @@ const Arena* arena(StageTheme theme) {
   // Their key lights: the big pale moon; the low dusk sun on the left; the sun setting behind the right cliff; the
   // small red moon behind the rain; the high day sun, up on the right.
   static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f, 0.0f, 0.8f, {}, {},
-                            {935, 150, 600, {0.8f, 0.76f, 0.9f}}},
+                            {935, 150, 600, {0.8f, 0.76f, 0.9f}}, 9},
       kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f, 0.0f, 1.6f, {3, 13, 0.1f, 4.0f}, {},
-             {-250, 330, 2000, {0.76f, 0.66f, 0.6f}}},
+             {-250, 330, 2000, {0.76f, 0.66f, 0.6f}}, 72},
       kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f, 0.0f, 1.0f, {2, 27, 0.12f, 3.0f}, {},
-               {1180, 230, 1600, {0.82f, 0.74f, 0.62f}}},
+               {1180, 230, 1600, {0.82f, 0.74f, 0.62f}}, 12},
       kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f, 0.6f, 0.6f, {2, 12, 0.45f, 1.6f}, {},
-               {874, 87, 700, {0.38f, 0.28f, 0.27f}}},
+               {874, 87, 700, {0.38f, 0.28f, 0.27f}}, 125},
       kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f, 0.0f, 1.0f, {4, 31, 0.3f, 0.8f},
-              {2, 16, 0.22f, 1.0f}, {1250, -200, 2500, {0.86f, 0.84f, 0.78f}}};
+              {2, 16, 0.22f, 1.0f}, {1250, -200, 2500, {0.86f, 0.84f, 0.78f}}, 10};
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
@@ -57,6 +58,27 @@ const Arena* arena(StageTheme theme) {
   }
 }
 std::string pictureName(const Arena& a, const char* part) { return std::string("arena_") + a.key + "_" + part; }
+// Where a platform's picture goes, in world units: its left end, its scale and the row the platform's top sits on. A
+// solid platform is its floor's width, the picture's ends hanging past it; a thin one or a small island overhangs by 10.
+struct Placed {
+  std::string name;
+  float top, l, k, w, h;
+  bool small;
+};
+bool place(const Platform& p, const Arena& a, Placed& out) {
+  out.small = p.solid && p.rect.w < 300.0f && art::pictureSize(pictureName(a, "small").c_str(), out.w, out.h);
+  out.name = pictureName(a, out.small ? "small" : p.solid ? "solid" : "thin");
+  out.top = out.small ? a.smallTop : p.solid ? a.solidTop : a.thinTop;
+  if (!art::pictureSize(out.name.c_str(), out.w, out.h)) return false;
+  if (p.solid && !out.small) {
+    out.k = p.rect.w / (out.w - 2.0f * a.edge);
+    out.l = p.rect.x - a.edge * out.k;
+  } else {
+    out.k = (p.rect.w + 20.0f) / out.w;
+    out.l = p.rect.x - 10.0f;
+  }
+  return true;
+}
 struct {
   float x, y, k;
 } g_sky{0, 0, 1};  // where the backdrop was last drawn on the screen, and its scale
@@ -73,22 +95,24 @@ void drawBackground(StageTheme theme, Vec2, float skyX, float skyY, float) {
   art::drawPicture(pictureName(*a, "bg").c_str(), {0, 0, w, h}, {g_sky.x, g_sky.y, w * k, h * k});
 }
 
-void drawPlatform(const Platform& p, StageTheme theme, float) {
+// part 0: the whole picture; 1: the top of a thin platform or a small island (its Top rows, down to its front edge);
+// 2: the rest, its body (all of it without a top).
+static void drawRows(const Platform& p, StageTheme theme, int part) {
   const Arena* a = arena(theme);
-  if (!a) return;
-  std::string name = pictureName(*a, p.solid ? "solid" : "thin");
-  float top = p.solid ? a->solidTop : a->thinTop, w, h;
-  if (p.solid && p.rect.w < 300.0f && art::pictureSize(pictureName(*a, "small").c_str(), w, h)) {  // a small island
-    name = pictureName(*a, "small");
-    top = a->smallTop;
-  }
-  if (!art::pictureSize(name.c_str(), w, h)) return;
-  // Scaled to the platform's width, its proportions kept (stretched pixel art smears); the ends hang a little past
-  // the platform's edges.
-  const float pad = 10.0f, dw = p.rect.w + 2.0f * pad, k = dw / w;
-  art::drawPicture(name.c_str(), {0, 0, w, h},
-                   {p.rect.x - pad, p.rect.y - top * k, dw, h * k});
+  Placed pl;
+  if (!a || !place(p, *a, pl)) return;
+  const Top* t = p.solid && !pl.small ? nullptr : pl.small ? &a->small : &a->thin;
+  const float cut = part != 0 && t && t->front > t->back ? t->front : 0.0f;
+  const float r0 = part == 2 ? cut : 0.0f, r1 = part == 1 ? cut : pl.h;
+  if (r1 <= r0) return;
+  // Scaled as a whole, its proportions kept (stretched pixel art smears).
+  art::drawPicture(pl.name.c_str(), {0, r0, pl.w, r1 - r0},
+                   {pl.l, p.rect.y + (r0 - pl.top) * pl.k, pl.w * pl.k, (r1 - r0) * pl.k});
 }
+
+void drawPlatform(const Platform& p, StageTheme theme, float) { drawRows(p, theme, 0); }
+
+void drawPlatformPart(const Platform& p, StageTheme theme, bool top) { drawRows(p, theme, top ? 1 : 2); }
 
 void drawForeground(StageTheme, Vec2, float) {}
 
@@ -112,31 +136,30 @@ bool keyLight(StageTheme theme, KeyLight& out) {
 
 bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
   const Arena* a = arena(theme);
-  float w, h;
-  if (!a || !p.solid || p.rect.w < 300.0f || !art::pictureSize(pictureName(*a, "solid").c_str(), w, h)) return false;
-  const float k = (p.rect.w + 20.0f) / w;  // as drawPlatform scales it
-  const float l = p.rect.x - 10.0f, r = l + w * k;
+  Placed pl;
+  if (!a || !p.solid || p.rect.w < 300.0f || !place(p, *a, pl) || pl.small) return false;
+  const float k = pl.k, l = pl.l, r = l + pl.w * k;
   out = {p.rect.y - (a->solidTop - a->floorBack) * k, p.rect.y, p.rect.y + (a->floorFront - a->solidTop) * k, a->gloss,
          a->rain, l + a->insetBack * k, r - a->insetBack * k, l + a->insetFront * k, r - a->insetFront * k};
   return true;
 }
 
-bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) {
+bool topOf(const Platform& p, StageTheme theme, Floor& out) {
   const Arena* a = arena(theme);
   if (!a) return false;
   if (floorOf(p, theme, out)) {
     out.rough = a->floorRough;
-    return out.gloss > 0.0f;
+    return true;
   }
-  // As drawPlatform places the picture: a thin platform, or a small island.
-  float w, h;
-  const bool small = p.solid && p.rect.w < 300.0f && art::pictureSize(pictureName(*a, "small").c_str(), w, h);
-  if (p.solid && !small) return false;
-  const Top& t = small ? a->small : a->thin;
-  const float top = small ? a->smallTop : a->thinTop;
-  if (t.gloss <= 0.0f || !art::pictureSize(pictureName(*a, small ? "small" : "thin").c_str(), w, h)) return false;
-  const float k = (p.rect.w + 20.0f) / w, l = p.rect.x - 10.0f, r = l + w * k;
-  out = {p.rect.y - (top - t.back) * k, p.rect.y, p.rect.y + (t.front - top) * k, t.gloss, a->rain, l, r, l, r, t.rough};
+  // A thin platform, or a small island.
+  Placed pl;
+  if (!place(p, *a, pl) || (p.solid && !pl.small)) return false;
+  const Top& t = pl.small ? a->small : a->thin;
+  if (t.front <= t.back) return false;
+  const float k = pl.k, l = pl.l, r = l + pl.w * k;
+  out = {p.rect.y - (pl.top - t.back) * k, p.rect.y, p.rect.y + (t.front - pl.top) * k, t.gloss, a->rain, l, r, l, r, t.rough};
   return true;
 }
+
+bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) { return topOf(p, theme, out) && out.gloss > 0.0f; }
 }  // namespace stageart

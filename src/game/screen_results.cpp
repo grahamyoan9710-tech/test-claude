@@ -1,4 +1,4 @@
-// Results screen (« Ligne d'horizon »): the winner in its light on the left, the ranking on the right (with an award
+// Results screen (« Ligne d'horizon », « Encre d'horizon » portraits): the winner in its light on the left, the ranking on the right (with an award
 // each for the most K.O., the Clash Orb breaker and the biggest blow), then the rematch: each player says it is ready
 // (a CPU always is) and it starts by itself; or a button goes elsewhere.
 #include <algorithm>
@@ -237,7 +237,8 @@ void App::drawResults() {
     const Rectangle face{px, cy - pic * 0.5f, pic, pic};
     const Color tint = mixColor(auraColor(d.hero), ui::kInk, 0.45f);
     ui::bevel(face, 8, withAlpha(tint, a), withAlpha(mixColor(tint, ui::kInk, 0.4f), a));
-    drawPortraitIn(d, r.palette, {face.x + pic * 0.5f, face.y + pic * 0.6f}, pic * 1.28f, face, 0.0f, t + i);
+    if (!drawArtBox(d, face))
+      drawPortraitIn(d, r.palette, {face.x + pic * 0.5f, face.y + pic * 0.6f}, pic * 1.28f, face, 0.0f, t + i);
     if (a < 1.0f) DrawRectangleRec(face, withAlpha(ui::kInk, 1.0f - a));  // fading in with its row
     DrawRectangleRec({face.x, face.y + pic - 3, pic, 3}, withAlpha(pc, a));
     // Tag, name, award

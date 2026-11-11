@@ -63,13 +63,17 @@ inline const char* teamName(int team) { return team == 1 ? "BLEUE" : "ROUGE"; }
 inline Color slotColor(const Fighter& f) { return f.inTeam ? teamColor(f.team) : portColor(f.port); }
 
 // ---- Text ------------------------------------------------------------------
-inline float textSpacing(float size, FontKind k) { return k == FontKind::Title ? size * 0.02f : size * 0.01f; }
+inline float textSpacing(float size, FontKind k) {
+  return k == FontKind::Title ? size * 0.02f : k == FontKind::Damage ? 0.0f : size * 0.01f;
+}
 // Saira's capitals are smaller and lower in their line box than those of the fonts every layout was made for
 // (Luckiest Guy, Poppins): the text is drawn larger and raised so that its capitals keep their place.
-inline float fontScale(FontKind k) { return k == FontKind::Title ? 1.45f : 1.15f; }
-inline float fontRaise(FontKind k) { return k == FontKind::Title ? 0.373f : 0.08f; }  // in asked sizes
-// The y to draw a line of text at so that its capitals are centred on cy.
-inline float capsY(float cy, float size, FontKind k) { return cy - size * (k == FontKind::Title ? 0.356f : 0.498f); }
+inline float fontScale(FontKind k) { return k == FontKind::Title ? 1.45f : k == FontKind::Damage ? 1.1f : 1.15f; }
+inline float fontRaise(FontKind k) { return k == FontKind::Title ? 0.373f : k == FontKind::Damage ? 0.0f : 0.08f; }  // in asked sizes
+// The y to draw a line of text at so that its capitals are centred on cy (Exo 2: caps from 0.26 to 0.83 of its line).
+inline float capsY(float cy, float size, FontKind k) {
+  return cy - size * (k == FontKind::Title ? 0.356f : k == FontKind::Damage ? 0.6f : 0.498f);
+}
 inline float textWidth(const char* text, float size, FontKind k = FontKind::Ui) {
   const float s = size * fontScale(k);
   return MeasureTextEx(gameFont(k), text, s, textSpacing(s, k)).x;

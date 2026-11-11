@@ -115,10 +115,39 @@ void drawUltCutIn(const Match& m, float time) {
   DrawRectangleRec({L, bot + 16.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
   rlPopMatrix();
 
-  // The portrait breaks out of the band
+  // The portrait breaks out of the band. An illustrated one is a big bust, its eyes in a strip above the band,
+  // sliding the other way.
   const float rad = deg2rad(kAngle);
   const Vec2 pc = Vec2{kScreenW * 0.5f, kScreenH * 0.5f} + rotate({-380.0f + slide, 0.0f}, rad);
-  drawPortrait(*f.def, f.palette, pc + Vec2{0.0f, 20.0f}, 360.0f, time);
+  float aw, ah;
+  Vec2 eye;
+  if (artGeometry(*f.def, aw, ah, eye, true)) {
+    constexpr float kEyeH = 96.0f, kZoom = 3.2f;
+    rlPushMatrix();
+    rlTranslatef(kScreenW * 0.5f, 140.0f, 0.0f);
+    rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
+    const Vec2 at{60.0f - slide, 0.0f};
+    const float x0 = std::max(-1100.0f, at.x - eye.x * kZoom), x1 = std::min(1100.0f, at.x + (aw - eye.x) * kZoom);
+    const float y0 = -kEyeH * 0.5f, y1 = kEyeH * 0.5f;
+    DrawRectangleRec({-1100.0f - slide, y0 - 4.0f, 2200.0f, kEyeH + 8.0f}, withAlpha(WHITE, env));
+    DrawRectangleRec({-1100.0f - slide, y0, 2200.0f, kEyeH}, withAlpha({10, 3, 6, 255}, env));
+    const Vector2 strip[4] = {{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}};
+    drawArtPoly(*f.def, strip, 4, at, kZoom, true, withAlpha(WHITE, env));
+    const Color ink{10, 3, 6, 255}, none{10, 3, 6, 0};  // its ends fade into the night
+    vfx::quad({x0, y0}, {x0 + 160, y0}, {x0 + 160, y1}, {x0, y1}, withAlpha(ink, env), none, none, withAlpha(ink, env));
+    vfx::quad({x1 - 160, y0}, {x1, y0}, {x1, y1}, {x1 - 160, y1}, none, withAlpha(ink, env), withAlpha(ink, env), none);
+    vfx::additive(true);
+    for (int i = 0; i < 6; ++i) {  // light racing over it
+      const float y = y0 + 8.0f + vfx::hash01(i * 17 + 3) * (kEyeH - 16.0f);
+      const float x = -900.0f + std::fmod(time * 3.0f + vfx::hash01(i * 17 + 4), 1.0f) * 1800.0f;
+      vfx::streak({x - 260.0f, y}, {x, y}, 1.0f, 3.0f, withAlpha(g, 0.0f), withAlpha(g, 0.45f * env));
+    }
+    vfx::additive(false);
+    rlPopMatrix();
+    drawArtBust(*f.def, pc.x, pc.y + 290.0f, 540.0f, withAlpha(WHITE, env));
+  } else {
+    drawPortrait(*f.def, f.palette, pc + Vec2{0.0f, 20.0f}, 360.0f, time);
+  }
 
   // The move's name, slammed in
   if (t >= 2) {
@@ -548,6 +577,7 @@ void MatchScreen::draw() {
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);
+    for (const auto& p : m_.platforms) DrawRectangleLinesEx({p.rect.x, p.rect.y, p.rect.w, p.rect.h}, 2, SKYBLUE);
     for (int l = 0; l < m_.ledgeCount(); ++l)
       if (m_.ledgeValid(l)) DrawCircleV(V(m_.ledgePoint(l)), 6, ORANGE);
   }

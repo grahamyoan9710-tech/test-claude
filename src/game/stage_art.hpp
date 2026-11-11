@@ -7,6 +7,9 @@ namespace stageart {
 void drawBackground(StageTheme theme, Vec2 cam, float skyX, float skyY, float time);
 // One platform of an arena, in world space.
 void drawPlatform(const Platform& p, StageTheme theme, float time);
+// RTX: a thin platform or a small island in two parts: its top seen in depth (nothing without one), or its body below
+// (all of it without a top).
+void drawPlatformPart(const Platform& p, StageTheme theme, bool top);
 // Over the whole scene, in screen space: nothing for now.
 void drawForeground(StageTheme theme, Vec2 cam, float time);
 // The top floor of a platform's picture, seen in depth, in world units: its back edge, the walk line (the platform's
@@ -20,8 +23,10 @@ struct Floor {
   float rough = 1.0f;  // how blurred it mirrors (1: polished)
 };
 bool floorOf(const Platform& p, StageTheme theme, Floor& out);
-// RTX: what mirrors on a platform, as a Floor: its floor (blurred as its matter) or else the top of a thin platform or
-// of a small island, from end to end of its picture (only its own pixels mirror). False if it does not mirror.
+// RTX: the top of a platform seen in depth, as a Floor: its floor (blurred as its matter) or else the top of a thin
+// platform or of a small island, from end to end of its picture. False without one.
+bool topOf(const Platform& p, StageTheme theme, Floor& out);
+// RTX: what mirrors on a platform: its top, if it mirrors (only its own pixels mirror).
 bool mirrorOf(const Platform& p, StageTheme theme, Floor& out);
 // How much the effects' light shows on the arena (1: as is): more at night than in daylight.
 float lightGain(StageTheme theme);
