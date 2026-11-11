@@ -6,10 +6,20 @@
 namespace {
 using IS = InputState;
 constexpr float kAttackStep = 0.5f;  // jabs and tilts: how fast the stick moves the fighter (share of its walk)
-constexpr int kAttackBuffer = 8;     // frames an attack pressed while busy is kept (an M1 right after a jump)
+constexpr int kAttackBuffer = 10;    // frames an attack pressed while busy is kept (an M1 right after a jump)
 
 bool isAerial(int m) { return m >= NAir && m <= DAir; }
 bool isSpecialMove(int m) { return (m >= NSpecial && m <= DSpecial) || m >= Extra1; }
+
+// Rivals-like flow (the owner, 11/11: an aggressive, fluid game): a normal that hit a fighter can be cut into any
+// action once its last hitbox is over; a missed one, its last quarter. Combos, grabs and specials keep their timing.
+bool canCancel(const Fighter& f, const MoveDef& m) {
+  if (f.move > DAir || m.nextMove >= 0 || m.hitboxes.empty() || f.charging) return false;
+  int last = 0;
+  for (const auto& h : m.hitboxes) last = std::max(last, h.end);
+  if (f.moveFrame < last) return false;
+  return f.landedHit || f.moveFrame >= last + (m.duration - last) * 3 / 4;
+}
 
 int smashFor(Fighter& f, Vec2 d) {
   if (std::fabs(d.y) > std::fabs(d.x)) return d.y < 0 ? USmash : DSmash;
@@ -92,7 +102,7 @@ void Match::startMove(Fighter& f, int id) {
       id = NAir;
   }
   const MoveDef& m = f.moveDef(id);
-  if (!m.exists()) return;
+  if (!m.exists() || id == f.cancelling) return;
   if (m.cooldown > 0) {  // still recharging: nothing happens
     if (f.moveCooldown[id] > 0) return;
     f.moveCooldown[id] = m.cooldown;
@@ -108,6 +118,7 @@ void Match::startMove(Fighter& f, int id) {
   f.counterTriggered = false;
   f.parried = 0;
   f.willGiven = false;
+  f.landedHit = false;
   f.moveLeftGround = false;
   f.moveStartedAir = !f.grounded;
   f.hitList.clear();
@@ -447,7 +458,7 @@ void Match::updateFighter(Fighter& f) {
         break;
       }
       if (f.flickY() && in.stick.y > 0) { setState(f, FState::SpotDodge, 24); break; }
-      if (!in.shield) setState(f, FState::Landing, 7);
+      if (!in.shield) setState(f, FState::Landing, 5);
       break;
     case FState::ShieldStun:
       groundFriction(f, 0.5f);
@@ -705,6 +716,14 @@ void Match::updateMove(Fighter& f) {
     }
   }
   if (m.loopFrame == t && !f.grounded) f.moveFrame--;
+  if (canCancel(f, m)) {
+    const int was = f.move;
+    f.cancelling = was;
+    if (f.grounded) tryGroundActions(f);
+    else tryAirActions(f);
+    f.cancelling = -1;
+    if (f.state != FState::Attack || f.move != was) return;
+  }
 
   if (f.grounded) {
     groundFriction(f, m.frictionMul);

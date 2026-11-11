@@ -8,6 +8,21 @@
 
 ## Nouveautés
 
+Version 14.1 : **un combat plus rapide, plus agressif et plus fluide**.
+
+- Annulations : un coup normal qui touche peut être enchaîné tout de suite après son dernier coup actif (saut,
+  autre coup, compétence, bouclier, esquive). Un coup raté se libère aussi un peu plus tôt. Le même coup ne
+  s'annule pas en lui-même : pas de matraquage d'une seule attaque.
+- Recharge des compétences : 2,25 s au lieu de 3 s (-25 %).
+- Déplacements plus vifs : course +12 %, marche et vitesse en l'air +8 %, chute plus rapide (même hauteur de saut,
+  donc les retours sur le terrain portent aussi loin), prise d'élan du saut plus courte.
+- Atterrissages plus légers : -40 % de lag après une attaque aérienne, et moins d'attente après un saut, une
+  esquive aérienne, une chute impuissante ou un bouclier lâché.
+- Étourdissement (hitstun) un peu plus long : les enchaînements passent mieux, sans combos infinis (le recul
+  grandit avec les dégâts).
+- Les touches pressées un peu en avance sont gardées plus longtemps ; les CPU attaquent plus vite et hésitent moins.
+- Contient la 14.0.
+
 Version 14.0 : **la compétence vers le haut est corrigée, et le jeu est plus léger**.
 
 - Compétence vers le haut (tous les persos) : le perso ne devient plus sombre ni bleuté pendant sa chute, et ne

@@ -67,6 +67,38 @@ static void testJabHits() {
   CHECK(m.fighters[0].percent == 0.0f, "attacker untouched");
 }
 
+// A normal that hits can be cut into a jump once its last hitbox is over; a missed one only near its end.
+static void testCancels() {
+  std::printf("[cancels]\n");
+  auto cutAt = [](float victimX) {
+    Match m(duel(0, 0, 0, false, false));
+    skipCountdown(m);
+    Fighter& f = m.fighters[0];
+    f.pos = {0, 0};
+    f.facing = 1;
+    m.fighters[1].pos = {victimX, 0};
+    std::array<InputState, 4> in{};
+    for (int i = 0; i < 20; ++i) m.step(in);
+    m.startMove(f, FTilt);
+    const MoveDef& mv = f.moveDef(FTilt);
+    int last = 0;
+    for (const auto& h : mv.hitboxes) last = std::max(last, h.end);
+    int frame = 0;
+    for (; frame < 200 && f.state == FState::Attack; ++frame) {
+      in[0].jump = f.moveFrame >= last && frame % 2 == 0;  // pressed again and again
+      m.step(in);
+    }
+    return std::make_pair(f.state == FState::JumpSquat ? f.moveFrame : -1, std::make_pair(last, mv.duration));
+  };
+  auto [hitAt, hitMove] = cutAt(45.0f);
+  CHECK(hitAt >= 0 && hitAt <= hitMove.first + 3, "a forward tilt that hits jumps right after its last hitbox (%d, "
+        "last hitbox %d)", hitAt, hitMove.first);
+  auto [missAt, missMove] = cutAt(600.0f);
+  std::printf("  hit cut at %d, miss cut at %d (last hitbox %d, end %d)\n", hitAt, missAt, hitMove.first, missMove.second);
+  CHECK(missAt > hitAt && missAt < missMove.second, "a missed one jumps later, before its end (%d of %d)", missAt,
+        missMove.second);
+}
+
 static void testSmashKills() {
   std::printf("[smash kill]\n");
   Match m(duel(0, 2, 0, false, false));
@@ -141,7 +173,10 @@ static void testKeyboardControls() {
       p.idle(1);
       minShort = std::min(minShort, m->fighters[0].pos.y);
     }
-    p.run(40, key(0, 0, false, true));
+    for (int i = 0; i < 40; ++i) {
+      p.run(1, key(0, 0, false, true));
+      minFull = std::min(minFull, m->fighters[0].pos.y);
+    }
     for (int i = 0; i < 40; ++i) {
       p.idle(1);
       minFull = std::min(minFull, m->fighters[0].pos.y);
@@ -582,7 +617,7 @@ static void testWeapons() {
     for (const auto& e : m.events) n += e.type == EvType::WeaponSummon && e.a == f.id;
     return n;
   };
-  if (!m.items.empty()) f.pos.x = m.items.back().pos.x;  // back on it
+  if (!m.items.empty()) f.pos.x = m.items.back().pos.x, f.vel.x = 0.0f;  // back on it, standing still
   p.idle(3);
   p.run(kPickupFrames / 2, press);
   p.idle(1);
@@ -1327,6 +1362,7 @@ int main(int argc, char** argv) {
   std::string only = argc > 1 ? argv[1] : "";
   if (only.empty() || only == "kb") testKnockback();
   if (only.empty() || only == "jab") testJabHits();
+  if (only.empty() || only == "cancels") testCancels();
   if (only.empty() || only == "smash") testSmashKills();
   if (only.empty() || only == "keys") testKeyboardControls();
   if (only.empty() || only == "combos") testCombos();

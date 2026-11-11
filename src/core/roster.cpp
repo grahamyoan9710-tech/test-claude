@@ -70,7 +70,7 @@ Fighter start(int number, const char* element, Build b, F e, Palette main, Palet
 }
 
 // The four skills of the bare hands (slot < 0) or of a weapon, scaled to the fighter.
-constexpr int kSkillCooldown = 180;  // 3 s: no skill can be spammed (the up special, a recovery, keeps its helpless fall)
+constexpr int kSkillCooldown = 135;  // 2.25 s: no skill can be spammed (the up special, a recovery, keeps its helpless fall)
 
 void skills(Fighter& k, int slot, MoveDef n, MoveDef s, MoveDef u, MoveDef d) {
   for (MoveDef* m : {&n, &s, &u, &d}) sc(*m, k.S, k.P);
@@ -606,12 +606,33 @@ void applyHitFit(std::vector<CharacterDef>& v) {
     }
   }
 }
+
+// The owner's pace (11/11, Rivals of Aether as a model): faster runs and falls, the same jump heights (the jump
+// speeds follow the gravity, so recoveries reach as far), quicker take-offs and lighter landings.
+void applyTempo(std::vector<CharacterDef>& v) {
+  constexpr float kGravity = 1.15f;
+  const float jump = std::sqrt(kGravity);
+  for (auto& c : v) {
+    c.walkSpeed *= 1.08f, c.runSpeed *= 1.12f, c.groundAccel *= 1.25f;
+    c.airSpeed *= 1.08f, c.airAccel *= 1.15f;
+    c.gravity *= kGravity, c.maxFall *= 1.08f, c.fastFall *= 1.1f;
+    c.jumpVel *= jump, c.shortHopVel *= jump, c.airJumpVel *= jump;
+    c.jumpSquat = std::max(3, c.jumpSquat - 1);
+    auto land = [](MoveDef& m) { m.landingLag = std::max(3, int(std::lround(m.landingLag * 0.6f))); };
+    for (auto& m : c.moves) land(m);
+    for (auto& w : c.weapons)
+      for (auto& [id, m] : w.moves) land(m);
+    for (auto& f : c.forms)
+      for (auto& [id, m] : f.moves) land(m);
+  }
+}
 }  // namespace
 
 const std::vector<CharacterDef>& roster() {
   static const std::vector<CharacterDef> r = [] {
     std::vector<CharacterDef> v = {make01(), make02(), make03(), make07(), make08(), makeH01()};
     if (!g_rawHitboxes) applyHitFit(v);
+    applyTempo(v);
     return v;
   }();
   return r;
