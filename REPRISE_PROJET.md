@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 01 h 50 UTC, session claude/project-thread-ab9ctl : version 13.5 (après la 13.4 de Hakuen, fusionnée).
+  yoyo (13.1) : plateformes sombres alors que la lumière tombe dessus ; « presque plus d'ombre » : la demande était
+  de retirer les rayons d'ombre, pas les ombres des persos, de l'orbe et des objets sur le sol. Le dessus des
+  plateformes fines et des petites îles (lignes `Top` de `render_stages.cpp`) est un sol dans le masque RTX (canal
+  vert, `drawPlatformPart`), leur corps reste solide ; `stageart::topOf` donne ce dessus. `light::groundShadows`
+  (`render_light.cpp`, RTX seulement) : un ovale doux sous chaque perso, l'orbe et les armes posées, cœur sombre et
+  bord flou, étiré à l'opposé de la lune ou du soleil, plus pâle et plus large en l'air, le même à chaque image.
+  Ombre minimale de la lune 0,2 (0,45 en 13.0). Verrou « Version et paquets » pris et libéré dans ce commit.
 - 11/11 00 h 30 UTC, session claude/project-thread-ab9ctl : version 13.1. yoyo veut un jeu « bien dynamique et
   agressif » : traînée d'éjection et explosion de KO plus grosses, effets de mouvement +5 %. Tableau `kGrow` de
   `art::fxSize` (`fighter_art.cpp`) : pfx_jump / pfx_airjump / pfx_land / pfx_dash ×1,05, pfx_trail ×1,6, pfx_ko ×1,7

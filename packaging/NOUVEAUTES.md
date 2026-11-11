@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 13.5 : **RTX : plateformes éclairées, ombres au sol**.
+
+- Le dessus des plateformes fines et des petites îles prend la lumière de la lune ou du soleil comme le sol
+  principal (elles restaient sombres).
+- Chaque perso, l'orbe et les armes posées ont une ombre douce sur le sol ou la plateforme juste sous eux, un peu
+  étirée à l'opposé de la lune ou du soleil, plus pâle et plus floue quand ils sautent. Elle est lisse et immobile :
+  ni grain, ni rayon noir.
+- Les ombres des plateformes sur le sol sont de nouveau plus marquées, toujours lisses.
+
 Version 13.1 : **des éjections plus violentes**.
 
 - La traînée d'un perso éjecté est bien plus grosse (bouffées 1,6 fois plus grandes, une à chaque image) : elle

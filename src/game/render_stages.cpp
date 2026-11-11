@@ -73,22 +73,32 @@ void drawBackground(StageTheme theme, Vec2, float skyX, float skyY, float) {
   art::drawPicture(pictureName(*a, "bg").c_str(), {0, 0, w, h}, {g_sky.x, g_sky.y, w * k, h * k});
 }
 
-void drawPlatform(const Platform& p, StageTheme theme, float) {
+// part 0: the whole picture; 1: the top of a thin platform or a small island (its Top rows, down to its front edge);
+// 2: the rest, its body (all of it without a top).
+static void drawRows(const Platform& p, StageTheme theme, int part) {
   const Arena* a = arena(theme);
   if (!a) return;
   std::string name = pictureName(*a, p.solid ? "solid" : "thin");
   float top = p.solid ? a->solidTop : a->thinTop, w, h;
+  const Top* t = p.solid ? nullptr : &a->thin;
   if (p.solid && p.rect.w < 300.0f && art::pictureSize(pictureName(*a, "small").c_str(), w, h)) {  // a small island
     name = pictureName(*a, "small");
     top = a->smallTop;
+    t = &a->small;
   }
   if (!art::pictureSize(name.c_str(), w, h)) return;
+  const float cut = part != 0 && t && t->front > t->back ? t->front : 0.0f;
+  const float r0 = part == 2 ? cut : 0.0f, r1 = part == 1 ? cut : h;
+  if (r1 <= r0) return;
   // Scaled to the platform's width, its proportions kept (stretched pixel art smears); the ends hang a little past
   // the platform's edges.
   const float pad = 10.0f, dw = p.rect.w + 2.0f * pad, k = dw / w;
-  art::drawPicture(name.c_str(), {0, 0, w, h},
-                   {p.rect.x - pad, p.rect.y - top * k, dw, h * k});
+  art::drawPicture(name.c_str(), {0, r0, w, r1 - r0}, {p.rect.x - pad, p.rect.y + (r0 - top) * k, dw, (r1 - r0) * k});
 }
+
+void drawPlatform(const Platform& p, StageTheme theme, float) { drawRows(p, theme, 0); }
+
+void drawPlatformPart(const Platform& p, StageTheme theme, bool top) { drawRows(p, theme, top ? 1 : 2); }
 
 void drawForeground(StageTheme, Vec2, float) {}
 
@@ -121,12 +131,12 @@ bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
   return true;
 }
 
-bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) {
+bool topOf(const Platform& p, StageTheme theme, Floor& out) {
   const Arena* a = arena(theme);
   if (!a) return false;
   if (floorOf(p, theme, out)) {
     out.rough = a->floorRough;
-    return out.gloss > 0.0f;
+    return true;
   }
   // As drawPlatform places the picture: a thin platform, or a small island.
   float w, h;
@@ -134,9 +144,11 @@ bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) {
   if (p.solid && !small) return false;
   const Top& t = small ? a->small : a->thin;
   const float top = small ? a->smallTop : a->thinTop;
-  if (t.gloss <= 0.0f || !art::pictureSize(pictureName(*a, small ? "small" : "thin").c_str(), w, h)) return false;
+  if (t.front <= t.back || !art::pictureSize(pictureName(*a, small ? "small" : "thin").c_str(), w, h)) return false;
   const float k = (p.rect.w + 20.0f) / w, l = p.rect.x - 10.0f, r = l + w * k;
   out = {p.rect.y - (top - t.back) * k, p.rect.y, p.rect.y + (t.front - top) * k, t.gloss, a->rain, l, r, l, r, t.rough};
   return true;
 }
+
+bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) { return topOf(p, theme, out) && out.gloss > 0.0f; }
 }  // namespace stageart

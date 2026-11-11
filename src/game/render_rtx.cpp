@@ -99,10 +99,10 @@ vec3 emission(vec2 uv) { return texture(emitT, uv).rgb + lamp(uv) * (1.0 - textu
 float solid(vec2 q) { return texture(maskT, q / size).a; }
 float sdf(vec2 q) { vec4 s = texture(texture0, q / size); return s.z > 0.5 ? distance(s.xy, q) : 1e4; }
 // The moon or the sun, dimmer far from it. The floors and the solids are in the shadow of the arena's solids that
-// stand between (the nearer, the darker; never below half), its edge softened by how close the ray passes (the distance
-// field): the same every frame, no grain. Not the air: the sky is far behind, no shadow falls on it. Not the fighters'
-// shadows, nor a floor's own slant: a floor is seen in depth, each of its columns takes the light at its back edge
-// (else a shadow crossed it on a slant, a beam).
+// stand between (the nearer, the darker), its edge softened by how close the ray passes (the distance field): the
+// same every frame, no grain. Not the air: the sky is far behind, no shadow falls on it. Not the fighters' (theirs lie
+// on the ground: light::groundShadows), nor a floor's own slant: a floor is seen in depth, each of its columns takes
+// the light at its back edge (else a shadow crossed it on a slant, a beam).
 float keyLight(vec2 p, bool inside) {
   if (key.z <= 0.0) return 0.0;
   float f = distance(key.xy, p) / key.z, lit = 1.0 / (1.0 + f * f);
@@ -121,7 +121,7 @@ float keyLight(vec2 p, bool inside) {
     vec4 s = texture(texture0, q / size), o = texture(maskT, s.xy / size);
     float dist = s.z > 0.5 ? distance(s.xy, q) : 1e4;
     if (s.z > 0.5 && o.a > 0.5 && o.r < 0.5)  // (the nearest is an effect's light or a fighter: no shadow)
-      sh = min(sh, max(dist / (soft * t), mix(0.45, 1.0, smoothstep(0.0, SHADOW, t))));
+      sh = min(sh, max(dist / (soft * t), mix(0.2, 1.0, smoothstep(0.0, SHADOW, t))));
     t += max(dist, o.r > 0.5 ? 3.0 : 1.0);  // (across a fighter in strides)
   }
   return lit * sh;
@@ -417,13 +417,18 @@ void platforms(const Match& m) {
   if (!g_on) return;
   const StageTheme theme = m.stage().theme;
   // Those with a floor first: what stands above its front edge is that floor seen in depth (it catches the light,
-  // blocks none); below, the platform's body. The others (thin ones, small islands) are solid all over.
+  // blocks none); below, the platform's body. The others (thin ones, small islands) the same, from their top's rows
+  // (they stayed dark under the moon: the owner, 11/11); solid all over without a top.
   for (int floored = 1; floored >= 0; --floored)
     for (const auto& p : m.platforms) {
       stageart::Floor fl{};
       if (stageart::floorOf(p, theme, fl) != bool(floored)) continue;
-      maskDraw(floored ? kFloor | kSolid : kSolid, false, [&] { stageart::drawPlatform(p, theme, 0.0f); });
-      if (!floored) continue;
+      if (!floored) {
+        maskDraw(kFloor, false, [&] { stageart::drawPlatformPart(p, theme, true); });
+        maskDraw(kSolid, false, [&] { stageart::drawPlatformPart(p, theme, false); });
+        continue;
+      }
+      maskDraw(kFloor | kSolid, false, [&] { stageart::drawPlatform(p, theme, 0.0f); });
       const float l = p.rect.left() - 40.0f, w = p.rect.w + 80.0f;
       maskDraw(kSolid, true, [&] { DrawRectangleRec({l, fl.front - 4000.0f, w, 4000.0f}, WHITE); });
       maskDraw(kFloor, true, [&] {
