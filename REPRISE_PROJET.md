@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 06 h 20 UTC, fil « nouvelle DA avec les portraits » (claude/project-thread-owhcqo) : version 13.7, DA
+  « Encre d'horizon » validée par yoyo (maquette Claude Design https://claude.ai/artifact/Ss21FmbFf2vpLPgrw1nWaX, %
+  en Exo 2 Black Italic, OFL). Portraits manga : `scripts/cut_portraits.py` découpe la planche de yoyo
+  (`art/portraits/`) ; `assets/sprites/<id>_art.png` + `kArtFaces` (`render_body.cpp`, centre du visage et des yeux)
+  pour chaque perso illustré (seul h01 pour l'instant). Cartes de combat façon Smash (`render_hud.cpp`), cut-in
+  (`match_screen.cpp`), victoire (`screen_results.cpp`), sélection réécrite (`menus.cpp` : tuiles penchées, fiches
+  avec stats, feuille « Règles & mode » ouverte par R / Y, `--screen rules` pour la capturer). Fusion de
+  claude/project-thread-xcscba (13.6). Verrou « Version et paquets » pris et libéré dans ce commit.
 - 11/11 01 h 50 UTC, session claude/project-thread-ab9ctl : version 13.5 (après la 13.4 de Hakuen, fusionnée ;
   le numéro 13.2 prévu est abandonné).
   yoyo (13.1) : plateformes sombres alors que la lumière tombe dessus ; « presque plus d'ombre » : la demande était

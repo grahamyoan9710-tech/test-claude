@@ -8,6 +8,20 @@
 
 ## Nouveautés
 
+Version 13.7 : **nouvelle DA « Encre d'horizon » avec les portraits manga**.
+
+- Sélection des persos : grandes tuiles penchées avec le visage de chacun, une fiche par joueur avec son portrait,
+  ses stats (puissance, vitesse, poids, saut, aérien) et ses deux armes. Deux joueurs : deux grandes fiches ;
+  trois ou quatre : quatre fiches côte à côte.
+- Le bouton « Règles & mode » (en haut à droite, touche R ou Y sur la manette) ouvre le mode de jeu (chacun pour
+  soi ou en équipes), les vies, l'orbe, les armes, et pour chaque joueur : humain ou IA, sa manette ou son niveau,
+  son équipe.
+- En combat, les cartes des joueurs sont transparentes façon Smash : le visage du perso, ses vies en petits
+  visages, et le pourcentage dans une nouvelle police (Exo 2, libre de droits).
+- L'ultime montre le portrait qui sort de la bande, avec une bande des yeux au-dessus.
+- L'écran de victoire montre le grand portrait du gagnant dans sa couleur, et les visages dans le classement.
+- Seul Hakuen a déjà son portrait ; les autres persos gardent leur image pixel en attendant leur arrivée.
+
 Version 13.6 : **les sols suivent le dessin**.
 
 - Toits Kurenai et Citadelle de Givre : le sol s'arrête au bord du dessin. Les persos ne marchent plus dans le vide
