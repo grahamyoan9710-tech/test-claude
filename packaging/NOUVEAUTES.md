@@ -8,6 +8,11 @@
 
 ## Nouveautés
 
+Version 14.5 : **cartes de combat transparentes, comme dans Smash**.
+
+- Plus de fond plein : le portrait sort d'un carré penché à la couleur du joueur (gris pour un CPU), le % est en
+  grand avec un contour noir, et le nom est posé sur une fine bande sombre soulignée de la couleur du joueur.
+
 Version 14.4 : **les dernières touches de la DA « Épure »**.
 
 - Règles & mode : un volet qui glisse depuis la droite, comme sur la maquette (mode, règles, joueurs et VALIDER).

@@ -52,27 +52,32 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
   const bool out = f.eliminated;
   constexpr FontKind kB = FontKind::Body, kDsp = FontKind::Display, kD = FontKind::Damage;
 
-  // The plate (Smash-like): the player's colour, deep, under the tag, the damage and the name; the face overlaps it
-  {
-    const Color pl = out ? ui::kDisabled : ring;
-    const Rectangle p{x + 30, bottom - 120, r.width - 30, 108};
-    ui::roundRect({p.x, p.y + 4, p.width, p.height}, 16, withAlpha(BLACK, 0.3f), withAlpha(BLACK, 0.3f));
-    ui::roundRect(p, 16, withAlpha(mixColor(pl, ui::kDeep, 0.5f), 0.94f), withAlpha(mixColor(pl, ui::kDeep, 0.72f), 0.94f));
-    ui::roundLines(p, 16, 1.0f, withAlpha(mixColor(pl, ui::kCream, 0.5f), 0.35f));
-    DrawRectangleRec({p.x + 48, p.y + p.height - 5, p.width - 64, 3}, withAlpha(pl, 0.9f));
+  // The portrait (Smash-like, no plate): a tilted square in the player's colour, the bust rising out of it
+  const Color sq = out ? ui::kDisabled : ring;
+  const Vector2 sc{x + 44, bottom - 52};
+  constexpr float kSq = 72, kTilt = -8;
+  DrawRectanglePro({sc.x + 4, sc.y + 5, kSq, kSq}, {kSq * 0.5f, kSq * 0.5f}, kTilt, withAlpha(BLACK, 0.35f));
+  DrawRectanglePro({sc.x, sc.y, kSq + 6, kSq + 6}, {kSq * 0.5f + 3, kSq * 0.5f + 3}, kTilt, mixColor(sq, WHITE, 0.35f));
+  DrawRectanglePro({sc.x, sc.y, kSq, kSq}, {kSq * 0.5f, kSq * 0.5f}, kTilt, sq);
+  DrawRectanglePro({sc.x, sc.y + kSq * 0.25f, kSq, kSq * 0.5f}, {kSq * 0.5f, kSq * 0.25f}, kTilt, withAlpha(BLACK, 0.18f));
+  const Color tint = out ? Color{120, 124, 140, 255} : WHITE;
+  if (!drawArtBust(*f.def, sc.x + 2, sc.y + kSq * 0.5f + 2, 100, tint)) {
+    // No bust: the face fills the tilted square
+    float aw, ah;
+    Vec2 af;
+    Vector2 pts[4];
+    const float c = std::cos(kTilt * DEG2RAD), sn = std::sin(kTilt * DEG2RAD), hs = kSq * 0.5f - 3;
+    const Vector2 corners[4] = {{-hs, -hs}, {hs, -hs}, {hs, hs}, {-hs, hs}};
+    for (int k = 0; k < 4; ++k)
+      pts[k] = {sc.x + corners[k].x * c - corners[k].y * sn, sc.y + corners[k].x * sn + corners[k].y * c};
+    if (!artGeometry(*f.def, aw, ah, af) ||
+        !drawArtPoly(*f.def, pts, 4, W(sc) + Vec2{0, 6}, 2 * hs / (0.7f * aw), false, tint))
+      drawArtDisc(*f.def, f.palette, W(sc), 30, time + f.id, 1.1f, tint);
   }
-
-  // The face: a disc ringed with the player's colour
-  const Vec2 ic{x + 38, bottom - 20 - 46};
-  constexpr float ir = 34;
-  DrawCircleV({ic.x, ic.y + 3}, ir + 4, withAlpha(BLACK, 0.3f));
-  DrawCircleV(V(ic), ir + 2, out ? ui::kDisabled : ring);
-  DrawCircleV(V(ic), ir, {42, 39, 88, 255});
-  DrawCircleGradient(int(ic.x), int(ic.y), ir, out ? Color{40, 46, 66, 255} : mixColor(face, {42, 39, 88, 255}, 0.55f), {42, 39, 88, 255});
-  drawArtDisc(*f.def, f.palette, ic, ir, time + f.id, 1.1f, out ? Color{120, 124, 140, 255} : WHITE);
+  (void)face;
 
   // Who: the player's tag, the stocks as dots (a lost one hollow)
-  const float tx = x + 86, rowY = bottom - 20 - 92 + 9;
+  const float tx = x + 92, rowY = bottom - 20 - 92 + 9;
   char tag[8];
   std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
   const float tw = ui::labelWidth(tag, 10, 0.06f) + 12;
@@ -89,7 +94,7 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
   }
 
   // The damage, big and leaning; "K.O." once out
-  constexpr float kNum = 52.0f, kPct = 24.0f;
+  constexpr float kNum = 58.0f, kPct = 26.0f;
   const float numCy = bottom - 20 - 92 + 18 + 4 + 26;
   if (out) {
     drawTextOutlined("K.O.", tx, capsY(numCy, 40, kD), 40, ui::kDisabled, withAlpha(ui::kDeep, 0.6f), 2.0f, kD);
@@ -104,11 +109,16 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
     const float nw = textWidth(pct, ns, kD);
     drawText(pct, tx + jx, ny + 2, ns, drop, kD);
     drawText("%", tx + nw + 2 + jx, py + 2, kPct, drop, kD);
-    drawTextOutlined(pct, tx + jx, ny, ns, col, withAlpha(ui::kDeep, 0.5f), 1.5f, kD);
-    drawTextOutlined("%", tx + nw + 2 + jx, py, kPct, col, withAlpha(ui::kDeep, 0.5f), 1.0f, kD);
+    drawTextOutlined(pct, tx + jx, ny, ns, col, ui::kInk, 3.0f, kD);
+    drawTextOutlined("%", tx + nw + 2 + jx, py, kPct, col, ui::kInk, 2.0f, kD);
   }
 
-  // Its name under the damage
+  // Its name under the damage, on a dark strip topped with the player's colour (Smash)
+  {
+    const float sx = tx - 14, sw = r.width - (sx - x) - 10, sy = bottom - 20 - 16;
+    DrawRectangleGradientH(int(sx), int(sy), int(sw), 20, withAlpha(ui::kInk, 0.75f), withAlpha(ui::kInk, 0.1f));
+    DrawRectangleGradientH(int(sx), int(sy - 3), int(sw), 3, sq, withAlpha(sq, 0.2f));
+  }
   std::string nick = upperFr(fiche(*f.def).nick);
   float nsz = 12.0f;
   while (nsz > 8.0f && textWidth(nick.c_str(), nsz, kDsp) > r.width - 96) nsz -= 0.5f;
