@@ -46,26 +46,20 @@ Rectangle fieldRect(int col, int row) {
   return row == 0 && g_chip[col].width > 0.0f ? g_chip[col] : g_panel[col];
 }
 
-// The « Règles & mode » sheet: the mode and the rules on the left, who plays on the right.
-constexpr Rectangle kSheet{190, 64, 900, 592};
-constexpr float kLeftX = 224, kLeftW = 320, kRightX = 576, kRightW = 480, kColY = 196;
-Rectangle modeRect() { return {kLeftX, kColY + 30, kLeftW, 92}; }
-Rectangle ruleRowRect(int i) { return {kLeftX, kColY + 154 + i * 62.0f, kLeftW, 48}; }  // lives, orb, weapons
-Rectangle playerRowRect(int col) { return {kRightX, kColY + 28 + col * 74.0f, kRightW, 64}; }
-Rectangle closeRect() {
-  const float w = 22 + ui::promptWidth("ÉCHAP", ui::Btn::B, 24) + textWidth("Fermer", 14);
-  return {kSheet.x + kSheet.width - 26 - w, kSheet.y + 30, w, 36};
-}
-Rectangle validateRect() {
-  const float w = 40 + ui::promptWidth("ENTRÉE", ui::Btn::Start, 24) + textWidth("VALIDER", 15, FontKind::Display);
-  return {kSheet.x + kSheet.width - 34 - w, kSheet.y + kSheet.height - 70, w, 44};
-}
+// The « Règles & mode » sheet, a drawer on the right: the mode, the rules, then who plays.
+constexpr Rectangle kSheet{810, 0, 470, 720};
+constexpr float kLeftX = 844, kLeftW = 402, kRightX = kLeftX, kRightW = kLeftW, kColY = 110;
+Rectangle modeRect() { return {kLeftX, kColY + 18, kLeftW, 52}; }
+Rectangle ruleRowRect(int i) { return {kLeftX, kColY + 112 + i * 56.0f, kLeftW, 50}; }  // lives, orb, weapons
+Rectangle playerRowRect(int col) { return {kRightX, 432 + col * 52.0f, kRightW, 48}; }
+Rectangle closeRect() { return {kSheet.x + kSheet.width - 34 - 40, 36, 40, 40}; }
+Rectangle validateRect() { return {kLeftX, 664, kLeftW, 42}; }
 // Field (col, row) of the sheet: the mode (col 3) and the rules (lives, orb, weapons) on row -1; a player's type (0),
 // device or level (2) and team (3).
 Rectangle sheetField(int col, int row, bool teams) {
   if (row < 0) return col == 3 ? modeRect() : ruleRowRect(col);
   const Rectangle r = playerRowRect(col);
-  const float tx = r.x + 104 + (teams ? 0.0f : 96.0f), dx = tx + 140, y = r.y + r.height * 0.5f - 18;
+  const float tx = r.x + 56, dx = tx + 140, y = r.y + r.height * 0.5f - 18;
   if (row == 0) return {tx, y, 132, 36};
   if (row == 3) return {r.x + r.width - 72, y, 62, 36};
   return {dx, y, r.x + r.width - 10 - (teams ? 80.0f : 0.0f) - dx, 36};
@@ -902,26 +896,28 @@ void App::drawCss() {
   auto sheetFocus = [&](int col, int row) {
     return (sel.col == col && sel.row == row) || ui::hovered(sheetField(col, row, teamsOn));
   };
-  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.78f * sheetIn));
-  rlPushMatrix();  // it slides in from the right
-  rlTranslatef(80.0f * (1.0f - sheetIn), 0.0f, 0.0f);
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(Color{20, 20, 52, 255}, 0.72f * sheetIn));
+  rlPushMatrix();  // the drawer slides in from the right
+  rlTranslatef(kSheet.width * (1.0f - sheetIn), 0.0f, 0.0f);
   const Rectangle S = kSheet;
   constexpr FontKind kDsp = FontKind::Display, kB = FontKind::Body;
-  ui::roundRect(S, 24, kPanel, kPanelDeep);
-  ui::roundLines(S, 24, 1.0f, withAlpha(ui::kCream, 0.14f));
-  const Rectangle ib{S.x + 34, S.y + 34, 58, 58};  // the button's icon, bigger
-  ui::roundRect(ib, 14, ui::kCream, ui::kCream);
-  ui::icon(ui::Icon::Sliders, {ib.x + 29, ib.y + 29}, 28, ui::kInk, 2.0f);
-  drawText("RÈGLES & MODE", S.x + 112, capsY(S.y + 52, 30, kDsp), 30, ui::kCream, kDsp);
-  drawText(training_ ? "Votre clavier ou votre manette pour l'entraînement." : "Ce combat, et qui joue : un humain ou l'ordinateur.",
-           S.x + 112, capsY(S.y + 82, 14, kB), 14, ui::kMuted, kB);
+  DrawRectangleRec(S, {28, 27, 68, 255});
+  DrawRectangleRec({S.x, S.y, 1, S.height}, withAlpha(ui::kCream, 0.12f));
+  const Rectangle ib{S.x + 34, 34, 44, 44};
+  ui::roundRect(ib, 13, ui::kCream, ui::kCream);
+  ui::icon(ui::Icon::Sliders, {ib.x + 22, ib.y + 22}, 22, ui::kInk, 2.0f);
+  drawText("RÈGLES & MODE", S.x + 92, capsY(48, 20, kDsp), 20, ui::kCream, kDsp);
+  drawText(training_ ? "Ton clavier ou ta manette pour l'entraînement." : "Ce combat, et qui joue : un humain ou l'ordinateur.",
+           S.x + 92, capsY(68, 12, kB), 12, ui::kMuted, kB);
   {
     const Rectangle cl = closeRect();
-    ui::roundRect(cl, 10, withAlpha(ui::kInk, ui::hovered(cl) ? 0.85f : 0.5f), withAlpha(ui::kInk, ui::hovered(cl) ? 0.85f : 0.5f));
-    ui::roundLines(cl, 10, 1.0f, withAlpha(ui::kCream, 0.16f));
-    const float kw = ui::prompt("ÉCHAP", ui::Btn::B, cl.x + 10, cl.y + 6, 24);
-    drawText("Fermer", cl.x + 18 + kw, capsY(cl.y + 18, 14, kU), 14, ui::kSoft, kU);
+    ui::roundRect(cl, 12, withAlpha(ui::kCream, ui::hovered(cl) ? 0.12f : 0.0f), withAlpha(ui::kCream, ui::hovered(cl) ? 0.12f : 0.0f));
+    ui::roundLines(cl, 12, 1.0f, withAlpha(ui::kCream, 0.16f));
+    ui::icon(ui::Icon::Close, {cl.x + 20, cl.y + 20}, 18, ui::kCream, 1.9f);
   }
+  auto rowIn = [&](int k) {  // the rows follow the drawer, one after the other
+    return 24.0f * std::pow(1.0f - clampf((rulesAnim_ - 6 - k * 2.0f) / 18.0f, 0.0f, 1.0f), 3.0f);
+  };
   // An inert field: a dark plate, a word on it
   auto inert = [&](Rectangle f, const char* text) {
     ui::roundRect(f, 10, withAlpha(ui::kInk, 0.7f), withAlpha(ui::kInk, 0.7f));
@@ -939,7 +935,9 @@ void App::drawCss() {
       ui::roundRect(c, 14, on ? ui::kCream : face, on ? ui::kCream : face);
       if (!on) ui::roundLines(c, 14, 1.0f, withAlpha(ui::kCream, 0.16f));
       const Color ink = on ? ui::kInk : ui::kSoft;
-      const Vector2 ic{c.x + c.width * 0.5f, c.y + 32};
+      const char* lab = k == 0 ? "CHACUN POUR SOI" : "EN ÉQUIPES";
+      const float lw = textWidth(lab, 11, kDsp), gx = c.x + (c.width - lw - 40) * 0.5f;
+      const Vector2 ic{gx + 14, c.y + c.height * 0.5f + 1};
       if (k == 0) {  // each for themselves: three marks; teams: a red shield and a blue one
         for (int j = -1; j <= 1; ++j) ui::diamond({ic.x + j * 10.0f, ic.y}, 6, ink);
       } else {
@@ -950,15 +948,15 @@ void App::drawCss() {
           DrawTriangle({sc.x - 6.5f, sc.y}, {sc.x, sc.y + 9}, {sc.x + 6.5f, sc.y}, tc);
         }
       }
-      const char* lab = k == 0 ? "CHACUN POUR SOI" : "EN ÉQUIPES";
-      drawText(lab, ic.x - textWidth(lab, 11, kDsp) * 0.5f, capsY(c.y + 66, 11, kDsp), 11, ink, kDsp);
+      drawText(lab, gx + 40, capsY(c.y + c.height * 0.5f, 11, kDsp), 11, ink, kDsp);
     }
     if (sheetFocus(3, -1)) ui::rim(mr, 14, t);
-    DrawRectangleRec({kLeftX, kColY + 138, kLeftW, 1}, withAlpha(ui::kSky, 0.12f));
+    ui::label("RÈGLES", kLeftX, kColY + 98, 11, 0.16f, ui::kMuted);
     const char* labels[3] = {"VIES", "CLASH ORB", "ARMES"};
     const char* helps[3] = {"Par combattant", "La seule source des ultimes", "Elles tombent sur l'arène"};
     for (int i = 0; i < 3; ++i) {
-      const Rectangle rr = ruleRowRect(i);
+      Rectangle rr = ruleRowRect(i);
+      rr.x += rowIn(i);
       const Color rc = withAlpha(ui::kInk, ui::hovered(rr) ? 0.65f : 0.45f);
       ui::roundRect(rr, 12, rc, rc);
       drawText(labels[i], rr.x + 14, capsY(rr.y + 17, 13, kDsp), 13, ui::kCream, kDsp);
@@ -999,37 +997,25 @@ void App::drawCss() {
     }
     if (foc) ui::rim(f, 10, t);
   };
-  ui::label("JOUEURS", kRightX, kColY + 8, 11, 0.16f, ui::kMuted);
+  ui::label("JOUEURS", kRightX, 418, 11, 0.16f, ui::kMuted);
   for (int c = 0; c < cols; ++c) {
-    const Rectangle rw = playerRowRect(c);
+    Rectangle rw = playerRowRect(c);
+    rw.x += rowIn(3 + c);
     const SlotSetup& sl = slots_[c];
     const int type = training_ ? (c == 0 ? 1 : 2) : sl.type;
     const Color pc = tint(c);
     const float cy = rw.y + rw.height * 0.5f;
     ui::roundRect(rw, 12, withAlpha(ui::kInk, 0.45f), withAlpha(ui::kInk, 0.45f));
-    DrawRectangleRec({rw.x, rw.y + 16, 3, rw.height - 32}, pc);
-    const char* who = training_ && c == 1 ? "CIBLE" : TextFormat("J%d", c + 1);
-    float ws = 16.0f;
-    while (ws > 9.0f && textWidth(who, ws, kDsp) > 36) ws -= 0.5f;
-    drawText(who, rw.x + 12, capsY(cy, ws, kDsp), ws, pc, kDsp);
-    const Rectangle f0 = sheetField(c, 0, teamsOn), f2 = sheetField(c, 2, teamsOn);
+    const char* who = training_ && c == 1 ? "CIBLE" : TextFormat("J%d", c + 1);  // its tag, in the player's colour
+    const float tw = ui::labelWidth(who, 11, 0.04f) + 16;
+    ui::roundRect({rw.x + 10, cy - 11, tw, 22}, 6, pc, pc);
+    ui::label(who, rw.x + 18, cy, 11, 0.04f, {10, 11, 14, 255});
+    Rectangle f0 = sheetField(c, 0, teamsOn), f2 = sheetField(c, 2, teamsOn);
+    f0.x += rowIn(3 + c), f2.x += rowIn(3 + c);
     if (type == 0) {  // a free card
-      if (!teamsOn) drawText("Place libre", rw.x + 64, capsY(cy, 15, kU), 15, ui::kMuted, kU);
       toggle(f0, 0, sheetFocus(c, 0));
-      drawText(teamsOn ? "Place libre  ·  A sur une manette" : "ou A sur une manette", f2.x, capsY(cy, 13, kU), 13, ui::kMuted, kU);
+      drawText("ou A sur une manette", f2.x, capsY(cy, 12, kB), 12, ui::kMuted, kB);
       continue;
-    }
-    const CharacterDef* d = sl.random ? nullptr : &r[sl.character];
-    const Vector2 fc{rw.x + 74, cy};
-    DrawCircleV(fc, 24, pc);
-    DrawCircleV(fc, 22, d ? auraColor(d->hero) : kNoFighter);
-    if (d) drawArtDisc(*d, paletteOf(c), {fc.x, fc.y}, 22, t);
-    else drawText("?", fc.x - textWidth("?", 26, kT) * 0.5f, capsY(fc.y, 26, kT), 26, ui::kSky, kT);
-    if (!teamsOn) {
-      const std::string nick = d ? fiche(*d).nick : std::string("ALÉATOIRE");
-      float ns = 14.0f;
-      while (ns > 9.0f && textWidth(nick.c_str(), ns, kB) > 90) ns -= 0.5f;
-      drawText(nick.c_str(), rw.x + 104, capsY(cy, ns, kB), ns, ui::kCream, kB);
     }
     if (training_) inert(f0, c == 0 ? "VOUS" : "CIBLE");
     else toggle(f0, type, sheetFocus(c, 0));
@@ -1037,7 +1023,8 @@ void App::drawCss() {
     else if (!training_) ui::selector(f2, sl.level >= kMaxCpuLevel ? "NIV. 10 x2" : TextFormat("NIVEAU %d", sl.level), sheetFocus(c, 2), t);
     else inert(f2, "réglable en pause");
     if (teamsOn) {
-      const Rectangle f3 = sheetField(c, 3, teamsOn);
+      Rectangle f3 = sheetField(c, 3, teamsOn);
+      f3.x += rowIn(3 + c);
       const bool foc = sheetFocus(c, 3);
       const char* tn = teamName(slotTeam(c));
       const Color tc = foc ? mixColor(pc, WHITE, 0.3f) : pc;
@@ -1046,17 +1033,23 @@ void App::drawCss() {
       if (foc) ui::rim(f3, 10, t);
     }
   }
-  if (!training_)
-    drawText("IA : 9 niveaux, puis « 10 x2 » qui frappe deux fois plus fort.", kRightX,
-             capsY(playerRowRect(cols - 1).y + 80, 13, kU), 13, ui::kMuted, kU);
+  if (!training_) {
+    // Beside the JOUEURS label: below the rows it would hit the tip with 4 players
+    const char* ia = "IA : niveaux 1 à 9, puis « 10 x2 »";
+    drawText(ia, kRightX + kRightW - textWidth(ia, 11, kB), capsY(418, 11, kB), 11, ui::kMuted, kB);
+  }
 
   // The foot: what the rules mean (or what is missing), and done
-  drawText(tip, S.x + 34, capsY(S.y + S.height - 48, 14, kB), 14, ready ? kGoldLight : ui::kRed, kB);
+  float ts = 13;
+  while (ts > 9 && textWidth(tip, ts, kB) > kLeftW) ts -= 0.5f;
+  drawText(tip, kLeftX, capsY(648, ts, kB), ts, ready ? kGoldLight : ui::kRed, kB);
   const Rectangle vr = validateRect();
   const Color vc = ui::hovered(vr) ? WHITE : ui::kCream;
   ui::roundRect(vr, 14, vc, vc);
-  const float kw = ui::prompt("ENTRÉE", ui::Btn::Start, vr.x + 10, vr.y + 10, 24);
-  drawText("VALIDER", vr.x + 20 + kw, capsY(vr.y + 22, 15, kDsp), 15, ui::kInk, kDsp);
+  const float kw = ui::promptWidth("ENTRÉE", ui::Btn::Start, 24), vw = textWidth("VALIDER", 14, kDsp);
+  const float vx = vr.x + (vr.width - kw - 10 - vw) * 0.5f;
+  ui::prompt("ENTRÉE", ui::Btn::Start, vx, vr.y + 9, 24);
+  drawText("VALIDER", vx + kw + 10, capsY(vr.y + 21, 14, kDsp), 14, ui::kInk, kDsp);
   rlPopMatrix();
 }
 

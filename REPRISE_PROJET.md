@@ -55,6 +55,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 22 h 15 UTC, session claude/project-thread-gzf1un : version 14.4 = Règles & mode en volet à droite, panneau d'entraînement Épure, rotation des moitiés dans la Coupe (ui::snapQuad prend un angle).
 - 11/11 22 h UTC, session claude/project-thread-gzf1un : version 14.3 = fin de la DA « Épure ». Cartes de combat
   façon Smash (plaque à la couleur du joueur, `render_hud.cpp`), cartes qui montent au début du combat, arrêt sur image
   noir et blanc du GAME (`pix::desaturate`, `pixel.cpp`), Horizon recalé (54 images), animations d'entrée (tuiles de

@@ -1167,15 +1167,18 @@ void bladeLine(Vector2 a, Vector2 b, float alpha) {
   DrawLineEx(a, b, 3.0f, withAlpha(kCream, alpha));
 }
 // Part of a snapshot (y flipped, like a render texture) as a textured quad, its corners p moved by off.
-void snapQuad(const Texture2D& tex, const Vector2* p, Vector2 off, float alpha) {
+// Draws part of the old screen moved by off and turned by deg around the screen centre (like a CSS rotate).
+void snapQuad(const Texture2D& tex, const Vector2* p, Vector2 off, float alpha, float deg) {
   const float W = float(kScreenW), H = float(kScreenH);
+  const float c = std::cos(deg * DEG2RAD), s = std::sin(deg * DEG2RAD);
   rlSetTexture(tex.id);
   rlBegin(RL_QUADS);
   const unsigned char a = (unsigned char)(255 * clampf(alpha, 0.0f, 1.0f));
   rlColor4ub(255, 255, 255, a);
   for (int k : {0, 3, 2, 1}) {  // counter-clockwise on screen
     rlTexCoord2f(p[k].x / W, 1.0f - p[k].y / H);
-    rlVertex2f(p[k].x + off.x, p[k].y + off.y);
+    const float dx = p[k].x - W * 0.5f, dy = p[k].y - H * 0.5f;
+    rlVertex2f(W * 0.5f + dx * c - dy * s + off.x, H * 0.5f + dx * s + dy * c + off.y);
   }
   rlEnd();
   rlSetTexture(0);
@@ -1211,8 +1214,8 @@ void wipe(Wipe w, float t, const Texture2D* old) {
       const float slash = easeInOut(seg(t, 0.0f, 0.24f)), fly = seg(t, 0.26f, 1.0f), k = fly * fly * (3.0f - 2.0f * fly);
       if (old) {
         const Vector2 top[4] = {{0, 0}, {W, 0}, b, a}, bottom[4] = {a, b, {W, H}, {0, H}};
-        snapQuad(*old, top, {-110.0f * k, -340.0f * k}, 1.0f - k);
-        snapQuad(*old, bottom, {110.0f * k, 340.0f * k}, 1.0f - k);
+        snapQuad(*old, top, {-110.0f * k, -340.0f * k}, 1.0f - k, -2.0f * k);
+        snapQuad(*old, bottom, {110.0f * k, 340.0f * k}, 1.0f - k, 2.0f * k);
       }
       const Vector2 d{b.x - a.x, b.y - a.y}, ext{-d.x * 0.05f, -d.y * 0.05f};
       bladeLine({a.x + ext.x, a.y + ext.y}, {a.x + ext.x + d.x * 1.1f * slash, a.y + ext.y + d.y * 1.1f * slash},

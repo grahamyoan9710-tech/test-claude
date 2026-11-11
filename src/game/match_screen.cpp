@@ -454,39 +454,53 @@ Camera2D MatchScreen::camera() {
 }
 
 void MatchScreen::drawTrainingPanel() {
+  constexpr FontKind kB = FontKind::Body, kDsp = FontKind::Display;
   int dummy = -1;
   for (const auto& f : m_.fighters)
     if (f.cpu) dummy = f.id;
-  Rectangle p{18, 18, 330, 172};
-  ui::card(p, 0.92f);
-  ui::bold("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, ui::kGold);
-  int live = dummy >= 0 ? combo_[dummy] : 0;
-  int shown = live >= 2 ? live : lastCombo_;
-  Color cc = live >= 2 ? ui::kGold : ui::kCream;
-  ui::bold(TextFormat("%d", shown), p.x + 16, p.y + 40, 54, cc);
-  drawText("COUPS", p.x + 22 + textWidth(TextFormat("%d", shown), 54, FontKind::Title), p.y + 52, 18, ui::kMuted);
-  float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
-  drawText(TextFormat("Dégâts du combo : %d %%", int(dmg)), p.x + 16, p.y + 98, 16, ui::kCream);
-  drawText(TextFormat("Meilleur combo : %d", bestCombo_), p.x + 16, p.y + 120, 14, ui::kMuted);
-  const bool pad = padPrompts();  // options hint, right-aligned
-  const char* opt = pad ? ": options" : "ÉCHAP : options";
-  const float gw = pad ? ui::padGlyphWidth(ui::Btn::Start, 20, promptFamily()) + 4 : 0.0f;
-  float ox = p.x + p.width - 16 - textWidth(opt, 14) - gw;
-  if (pad) ox += ui::padGlyph(ui::Btn::Start, ox, p.y + 117, 20, promptFamily()) + 4;
-  drawText(opt, ox, p.y + 120, 14, ui::kMuted);
-  if (dummy >= 0) {
-    std::string mode = std::string("Mannequin : ") + dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel);
-    drawText(mode.c_str(), p.x + 16, p.y + 142, 15, withAlpha(ui::kCream, 0.85f));
+  const Rectangle p{18, 18, 330, 172};
+  ui::roundRect({p.x + 4, p.y + 8, p.width, p.height}, 18, withAlpha(BLACK, 0.25f), withAlpha(BLACK, 0.25f));
+  ui::roundRect(p, 18, withAlpha(ui::kNavy, 0.92f), withAlpha(ui::kNavyDeep, 0.92f));
+  ui::roundLines(p, 18, 1.0f, withAlpha(ui::kCream, 0.12f));
+  // Header: cyan dot, label, and the options hint right-aligned
+  DrawCircleV({p.x + 22, p.y + 24}, 4, ui::kBlue);
+  ui::label("ENTRAÎNEMENT", p.x + 34, p.y + 24, 11, 0.16f, ui::kSoft);
+  const bool pad = padPrompts();
+  const char* opt = pad ? "options" : "ÉCHAP : options";
+  const float gw = pad ? ui::padGlyphWidth(ui::Btn::Start, 18, promptFamily()) + 4 : 0.0f;
+  float ox = p.x + p.width - 18 - textWidth(opt, 11, kB) - gw;
+  if (pad) ox += ui::padGlyph(ui::Btn::Start, ox, p.y + 15, 18, promptFamily()) + 4;
+  drawText(opt, ox, capsY(p.y + 24, 11, kB), 11, ui::kMuted, kB);
+  DrawRectangleRec({p.x + 18, p.y + 42, p.width - 36, 1}, withAlpha(ui::kCream, 0.08f));
+  // The live combo, big
+  const int live = dummy >= 0 ? combo_[dummy] : 0, shown = live >= 2 ? live : lastCombo_;
+  const char* num = TextFormat("%d", shown);
+  drawText(num, p.x + 18, capsY(p.y + 76, 40, kDsp), 40, live >= 2 ? ui::kBlue : ui::kCream, kDsp);
+  ui::label("COUPS", p.x + 26 + textWidth(num, 40, kDsp), p.y + 84, 11, 0.16f, ui::kMuted);
+  // Stats rows: name left, value right
+  const float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
+  auto row = [&](float cy, const char* k, const char* v) {
+    ui::label(k, p.x + 18, cy, 10, 0.14f, ui::kMuted);
+    drawText(v, p.x + p.width - 18 - textWidth(v, 13, kB), capsY(cy, 13, kB), 13, ui::kCream, kB);
+  };
+  row(p.y + 112, "DÉGÂTS DU COMBO", TextFormat("%d %%", int(dmg)));
+  row(p.y + 134, "MEILLEUR COMBO", TextFormat("%d", bestCombo_));
+  if (dummy >= 0) row(p.y + 156, "MANNEQUIN", dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel));
+  // The options on: cyan chips under the panel
+  float cx = p.x;
+  for (const auto& [on, name] : {std::pair{m_.trainFight, "Combat 3 vies"}, std::pair{m_.trainInfiniteUlt, "Ulti infinie"},
+                                 std::pair{m_.trainZeroPercent, "0 %"}}) {
+    if (!on) continue;
+    const float w = textWidth(name, 12, kB) + 24;
+    ui::roundRect({cx, p.y + p.height + 10, w, 26}, 13, ui::kBlue, ui::kBlue);
+    drawText(name, cx + 12, capsY(p.y + p.height + 23, 12, kB), 12, ui::kInk, kB);
+    cx += w + 8;
   }
-  // The options on, under the panel
-  std::string on;
-  if (m_.trainFight) on += "Combat 3 vies";
-  if (m_.trainInfiniteUlt) on += std::string(on.empty() ? "" : "  •  ") + "Ulti infinie";
-  if (m_.trainZeroPercent) on += std::string(on.empty() ? "" : "  •  ") + "0 %";
-  if (!on.empty()) drawTextOutlined(on.c_str(), p.x + 4, p.y + p.height + 10, 16, ui::kGreen, ui::kInk, 2.0f);
   if (m_.trainRestart > 0) {  // the fight is over: it starts over
     const float a = clampf(m_.trainRestart / 30.0f, 0.0f, 1.0f);
-    ui::boldCentered("Le combat recommence...", kScreenW * 0.5f, kScreenH * 0.5f + 70, 34, WHITE, a);
+    const char* msg = "LE COMBAT RECOMMENCE";
+    const float w = textWidth(msg, 26, kDsp);
+    drawText(msg, (kScreenW - w) * 0.5f, capsY(kScreenH * 0.5f + 70, 26, kDsp), 26, withAlpha(ui::kCream, a), kDsp);
   }
 }
 

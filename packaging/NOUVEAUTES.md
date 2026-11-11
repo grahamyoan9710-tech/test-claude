@@ -8,6 +8,13 @@
 
 ## Nouveautés
 
+Version 14.4 : **les dernières touches de la DA « Épure »**.
+
+- Règles & mode : un volet qui glisse depuis la droite, comme sur la maquette (mode, règles, joueurs et VALIDER).
+- Panneau d'entraînement refait dans le style Épure (combo en grand, dégâts, meilleur combo, mannequin, options
+  actives en pastilles).
+- Transition « Coupe » avant le VS : les deux moitiés de l'écran pivotent légèrement en s'envolant.
+
 Version 14.3 : **la DA « Épure » finie, avec ses animations**.
 
 - Cartes de combat : comme dans Smash, un fond à la couleur du joueur sous le portrait, le % et les vies (gris pour
