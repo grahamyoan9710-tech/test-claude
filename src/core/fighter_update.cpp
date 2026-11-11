@@ -792,6 +792,7 @@ void Match::updateLedge(Fighter& f) {
     f.facing = toStage;
     if (f.ledgeAction == 1) {
       startMove(f, LedgeAttack);
+      if (f.state != FState::Attack) setState(f, FState::Idle);  // no ledge attack (or recharging): not stuck climbing
     } else if (f.ledgeAction == 2) {
       setState(f, FState::Roll, 28);
       f.actionDir = toStage;

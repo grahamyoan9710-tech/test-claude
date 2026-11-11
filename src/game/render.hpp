@@ -53,6 +53,7 @@ struct Pose {
   int sheet = -1;          // a generated animation shows this pose instead (see SheetAnim in fighter_art.hpp)
   float sheetT = 0.0f;     // looping animations: seconds; the others: 0..1 through the move
   bool sheetFlip = false;  // the clip is drawn mirrored (a roll backwards)
+  bool sheetAir = false;   // airborne: an up special's clip stops on its last frame in the air
   float sheetPhase = -1.0f;  // looping clips driven by the distance covered (walk, run): 0..1 through the cycle
   Vec2 sheetOffset;          // the clip is drawn from here instead of the feet (climbing a ledge: from the top)
   // When the move's blows are out (0..1 through the move: windows [sheetHitA, sheetHitB)), to show each drawn blow
@@ -102,6 +103,22 @@ void drawShowcase(const CharacterDef& def, int palette, const Pose& pose, Vec2 f
                   float time);
 // The same in a disc of `radius` (HUD medallions, weapon tags).
 void drawPortraitDisc(const CharacterDef& def, int palette, Vec2 center, float radius, float time);
+// The illustrated portrait (art/portraits, assets/sprites/<id>_art.png): a bust cut out of the owner's sheet of
+// manga portraits. Only the fighters of the new roster have one; the others fall back on their pixel portrait.
+bool hasArt(const CharacterDef& def);
+// Its size in pixels and where its face (or its eyes) is on it; false without one.
+bool artGeometry(const CharacterDef& def, float& w, float& h, Vec2& face, bool eyes = false);
+// The whole bust, `height` tall, its straight bottom edge on `bottom`, centred on cx; false without one.
+bool drawArtBust(const CharacterDef& def, float cx, float bottom, float height, Color tint = WHITE);
+// Its face in a disc: `span` is the part of the picture's width the disc shows (1.1: the whole head).
+void drawArtDisc(const CharacterDef& def, int palette, Vec2 center, float radius, float time, float span = 1.1f,
+                 Color tint = WHITE);
+// Its face filling the box (`span`: the part of the picture's width across the box); false without art.
+bool drawArtBox(const CharacterDef& def, Rectangle box, float span = 1.1f, Color tint = WHITE);
+// The picture through the polygon `pts` (n screen points): its face (or `eyes`: its eyes) at `at`, `scale` screen
+// pixels per picture pixel. Without art: false, nothing drawn.
+bool drawArtPoly(const CharacterDef& def, const Vector2* pts, int n, Vec2 at, float scale, bool eyes = false,
+                 Color tint = WHITE);
 
 // ---- Weapons (render_weapons.cpp) ---------------------------------------------
 // A weapon held at `grip`, pointing along `dir` (unit), at `scale` (1 = a 100 px fighter).

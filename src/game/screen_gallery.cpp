@@ -13,6 +13,7 @@ Fiche fiche(const CharacterDef& d) {
   if (d.id == "p03") return {"BRASIER ROUGE", "Muay Thaï", "Puissant", 4};
   if (d.id == "p07") return {"FOUDRE ROUGE", "Karaté", "Très rapide", 2};
   if (d.id == "p08") return {"LUMIÈRE BLANCHE", "Kung-fu", "Équilibré", 3};
+  if (d.id == "h01") return {"HAKUEN", "Karaté", "Lame blanche", 3};
   return {upperFr(d.series), "Combat libre", "", 3};
 }
 

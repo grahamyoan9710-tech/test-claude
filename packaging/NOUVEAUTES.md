@@ -8,6 +8,65 @@
 
 ## Nouveautés
 
+Version 14.0 : **la compétence vers le haut est corrigée, et le jeu est plus léger**.
+
+- Compétence vers le haut (tous les persos) : le perso ne devient plus sombre ni bleuté pendant sa chute, et ne
+  « fait plus de squats » en l'air. Il garde la pose de la fin de sa spirale jusqu'au sol, et ne se tient plus
+  debout dans le vide à la fin de la montée.
+- Lumière des effets sur les persos : les zones les plus sombres gardent leur couleur (plus de teinte olive sous
+  une lumière jaune).
+- L'écran titre démarre plus vite : il ne charge plus les animations de tous les persos d'un coup.
+- RTX : plus de fuite de mémoire de la carte graphique sur les PC qui ne gèrent pas certains formats ; le porteur de
+  la Clash Orb coûte beaucoup moins cher à dessiner.
+- Corrigé : un perso pouvait rester bloqué en remontant d'un rebord ; l'ultime n'est plus perdu s'il ne peut pas
+  partir.
+- Contient la 13.9.
+
+Version 13.9 : **en RTX, les effets ne virent plus au blanc**.
+
+- Les gros effets (l'ultime de Hakuen surtout) blanchissaient tout l'écran en RTX, avec un grain de poussière
+  lumineuse dans le ciel : leur lumière est maintenant plafonnée, dans sa propre couleur.
+- Le décor éclairé par un effet garde ses couleurs au lieu de passer au blanc.
+- Les petites particules des effets restent telles qu'elles sont dessinées : plus de points blancs.
+- Contient la 13.8 (pixel art à la sélection et à la victoire, visages dézoomés).
+
+Version 13.8 : **le pixel art revient, les visages sont dézoomés**.
+
+- Sélection des persos : la fiche de chaque joueur montre de nouveau le perso en pixel art à côté de ses stats.
+- Écran de victoire : le gagnant est de nouveau en pixel art.
+- Tous les visages ronds (carte de combat à côté du %, petites vies, classement, « Règles & mode ») et la tuile de
+  Hakuen sont dézoomés : on voit toute la tête, cheveux compris.
+- Le portrait manga reste sur la tuile de la sélection et dans l'ultime.
+
+Version 13.7 : **nouvelle DA « Encre d'horizon » avec les portraits manga**.
+
+- Sélection des persos : grandes tuiles penchées avec le visage de chacun, une fiche par joueur avec son portrait,
+  ses stats (puissance, vitesse, poids, saut, aérien) et ses deux armes. Deux joueurs : deux grandes fiches ;
+  trois ou quatre : quatre fiches côte à côte.
+- Le bouton « Règles & mode » (en haut à droite, touche R ou Y sur la manette) ouvre le mode de jeu (chacun pour
+  soi ou en équipes), les vies, l'orbe, les armes, et pour chaque joueur : humain ou IA, sa manette ou son niveau,
+  son équipe.
+- En combat, les cartes des joueurs sont transparentes façon Smash : le visage du perso, ses vies en petits
+  visages, et le pourcentage dans une nouvelle police (Exo 2, libre de droits).
+- L'ultime montre le portrait qui sort de la bande, avec une bande des yeux au-dessus.
+- L'écran de victoire montre le grand portrait du gagnant dans sa couleur, et les visages dans le classement.
+- Seul Hakuen a déjà son portrait ; les autres persos gardent leur image pixel en attendant leur arrivée.
+
+Version 13.6 : **les sols suivent le dessin**.
+
+- Toits Kurenai et Citadelle de Givre : le sol s'arrête au bord du dessin. Les persos ne marchent plus dans le vide
+  et ne s'accrochent plus au bord en l'air pour remonter. Le décor ne bouge pas.
+- En jeu, F1 montre aussi les zones de sol des plateformes (en bleu).
+
+Version 13.5 : **RTX : plateformes éclairées, ombres au sol**.
+
+- Le dessus des plateformes fines et des petites îles prend la lumière de la lune ou du soleil comme le sol
+  principal (elles restaient sombres).
+- Chaque perso, l'orbe et les armes posées ont une ombre douce sur le sol ou la plateforme juste sous eux, un peu
+  étirée à l'opposé de la lune ou du soleil, plus pâle et plus floue quand ils sautent. Elle est lisse et immobile :
+  ni grain, ni rayon noir.
+- Les ombres des plateformes sur le sol sont de nouveau plus marquées, toujours lisses.
+
 Version 13.4 : **un nouvel orage pour l'ultime de Hakuen**.
 
 - L'ultime « Forge de l'aube » est un vrai orage : nuages au-dessus (le haut sort de l'écran quand la caméra est

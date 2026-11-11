@@ -176,19 +176,19 @@ void bevelPoints(Rectangle r, float cut, Vector2* p) {
 float cutFor(Rectangle r, float rad) { return rad < 0.0f ? std::min(14.0f, r.height * 0.26f) : std::min(rad, 14.0f); }
 }  // namespace
 
-void bevel(Rectangle r, float cut, Color top, Color bottom) {
+void bevel(Rectangle r, float cut, Color top, Color bottom, bool across) {
   if (r.width <= 0.0f || r.height <= 0.0f) return;
   Vector2 p[6];
   bevelPoints(r, cut, p);
-  auto at = [&](float y) { return mixColor(top, bottom, (y - r.y) / r.height); };
+  auto at = [&](Vector2 v) { return mixColor(top, bottom, across ? (v.x - r.x) / r.width : (v.y - r.y) / r.height); };
   const Vector2 m{r.x + r.width * 0.5f, r.y + r.height * 0.5f};
-  const Color mc = at(m.y);
+  const Color mc = at(m);
   rlBegin(RL_TRIANGLES);
   for (int i = 0; i < 6; ++i) {  // a fan from the centre: the gradient stays exact
     const Vector2 a = p[i], b = p[(i + 1) % 6];
     vtx(m, mc);
-    vtx(b, at(b.y));
-    vtx(a, at(a.y));
+    vtx(b, at(b));
+    vtx(a, at(a));
   }
   rlEnd();
 }

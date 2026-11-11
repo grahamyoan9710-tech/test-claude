@@ -45,6 +45,7 @@ struct SheetMask {
 bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out);
 bool sheetMaskAt(const CharacterDef& d, int sheet, int frame, SheetMask& out);
 int sheetFrames(const CharacterDef& d, int sheet);
+int sheetLastAir(const CharacterDef& d, int sheet);  // -1: none (see Pose::sheetAir)
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 
 // A still picture of assets/sprites (portraits "<id>_portrait", placeholder bodies "<id>_still", weapon icons
@@ -53,6 +54,9 @@ bool pictureSize(const char* name, float& w, float& h);
 // Draws `src` (pixels of the picture) into `dst`; flipX mirrors it.
 bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha = 1.0f, bool flipX = false,
                  Color tint = WHITE);
+// Draws the convex polygon `dst` (n screen points) textured with the picture's points `src` (pixels): slanted tiles,
+// discs, rotated strips.
+bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint = WHITE);
 
 struct FxInfo {
   int frames = 0;

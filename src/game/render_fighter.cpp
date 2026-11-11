@@ -823,6 +823,10 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     p.sheetT = tt;
     return true;
   };
+  auto moveClip = [&](int move) {  // the move's clip with the weapon held, else bare-handed
+    const int withWeapon = slot == 0 ? art::kSheetWeapon0 : slot == 1 ? art::kSheetWeapon1 : -1;
+    return withWeapon >= 0 && art::hasSheet(h, withWeapon + move) ? withWeapon + move : art::kSheetMove0 + move;
+  };
   auto once = [&](int a, float t) {
     a = own(a);
     if (!art::hasSheet(h, a)) return false;
@@ -867,7 +871,17 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
       break;
     case FState::Knockdown: once(art::kSheetKnockdown, 0.5f + sf / 20.0f); break;  // already falling: its second half
     case FState::GetUp: once(art::kSheetGetUp, sf / std::max(1, f.timer)); break;
-    case FState::Helpless: loop(art::kSheetHelpless) || loop(art::kSheetFall); break;
+    case FState::Helpless: {  // the up special's last airborne frame held (the helpless loop looked like squats)
+      const int clip = moveClip(USpecial);
+      if (art::sheetLastAir(*f.def, clip) >= 0) {
+        p.sheet = clip;
+        p.sheetT = 1.0f;
+        p.sheetAir = true;
+        break;
+      }
+      loop(art::kSheetHelpless) || loop(art::kSheetFall);
+      break;
+    }
     case FState::LedgeHang: loop(art::kSheetLedge); break;
     case FState::LedgeClimb:  // the fighter rises from the ledge to the stage; the clip's first frame hangs lower
       if (once(art::kSheetClimb, sf / 18.0f)) {
@@ -881,12 +895,11 @@ void pickClip(Pose& p, const Fighter& f, const Match& m, float tt) {
     case FState::Attack: {
       const MoveDef* md = f.currentMove();
       if (!md || f.move < 0 || f.move >= MOVE_COUNT) break;
-      const int withWeapon = slot == 0 ? art::kSheetWeapon0 : slot == 1 ? art::kSheetWeapon1 : -1;
-      int clip = withWeapon >= 0 && art::hasSheet(h, withWeapon + f.move) ? withWeapon + f.move
-                                                                            : art::kSheetMove0 + f.move;
+      const int clip = moveClip(f.move);
       if (!art::hasSheet(h, clip)) break;
       const float dur = float(std::max(1, md->duration));
       p.sheet = clip;
+      p.sheetAir = md->helplessAfter && !f.grounded;
       p.sheetT = clampf(float(f.moveFrame) / dur, 0.0f, 1.0f);
       clipImpact(*md, dur, p);
       break;
@@ -1526,10 +1539,6 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
       flashCol = {255, 150, 60, 255};
       flash = std::max(flash, 0.2f);
     }
-  }
-  if (f.state == FState::Helpless) {
-    flashCol = {30, 30, 50, 255};
-    flash = 0.35f;
   }
   if (usingFs) {  // power pulsing in the hero's element
     flashCol = mixColor(hitFxGlow(heroElement(f.def->hero)), WHITE, 0.3f);

@@ -43,7 +43,7 @@ StageDef abimeLunaire() {
 StageDef citadelleDeGivre() {
   StageDef s = world("Citadelle de Givre", "Givre", StageTheme::Frost);
   s.blurb = "Les remparts enneigés d'une forteresse, sous l'aurore : trois corniches au-dessus du sol.";
-  s.platforms = {solid(-380, 380, 0, 60), thin(-300, -120, -150), thin(120, 300, -150), thin(-90, 90, -290)};
+  s.platforms = {solid(-313, 313, 0, 60), thin(-300, -120, -150), thin(120, 300, -150), thin(-90, 90, -290)};
   s.blast = {-1100, -950, 2200, 1600};
   s.spawns = {{-260, 0}, {260, 0}, {-210, -150}, {210, -150}};
   s.respawn = {0, -420};
@@ -60,7 +60,7 @@ StageDef canyonEcarlate() {
 StageDef toitsKurenai() {
   StageDef s = world("Toits Kurenai", "Foudre rouge", StageTheme::Kurenai);
   s.blurb = "Les toits d'une vieille ville sous la pluie : un long faîte et deux poutres.";
-  s.platforms = {solid(-480, 480, 0, 60), thin(-370, -205, -175), thin(205, 370, -175)};
+  s.platforms = {solid(-374, 374, 0, 60), thin(-370, -205, -175), thin(205, 370, -175)};
   s.spawns = {{-300, 0}, {300, 0}, {-120, 0}, {120, 0}};
   s.blast = {-1200, -950, 2400, 1600};
   return s;

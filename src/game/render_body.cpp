@@ -106,6 +106,74 @@ void drawPortraitDisc(const CharacterDef& d, int palette, Vec2 center, float rad
   endClip();
 }
 
+namespace {
+// Where the face and the eyes are on each illustrated portrait, in fractions of its width and height.
+struct ArtFace {
+  const char* id;
+  float fx, fy, eyeY;
+};
+constexpr ArtFace kArtFaces[] = {{"h01", 0.72f, 0.51f, 0.435f}};
+
+const ArtFace* artFace(const CharacterDef& d, float& w, float& h) {
+  for (const ArtFace& a : kArtFaces)
+    if (d.id == a.id && art::pictureSize((d.id + "_art").c_str(), w, h)) return &a;
+  return nullptr;
+}
+}  // namespace
+
+bool hasArt(const CharacterDef& d) {
+  float w, h;
+  return artFace(d, w, h) != nullptr;
+}
+
+bool artGeometry(const CharacterDef& d, float& w, float& h, Vec2& face, bool eyes) {
+  const ArtFace* a = artFace(d, w, h);
+  if (a) face = {a->fx * w, (eyes ? a->eyeY : a->fy) * h};
+  return a != nullptr;
+}
+
+bool drawArtBust(const CharacterDef& d, float cx, float bottom, float height, Color tint) {
+  float w, h;
+  if (!artFace(d, w, h)) return false;
+  const float k = height / h;
+  return art::drawPicture((d.id + "_art").c_str(), {0, 0, w, h}, {cx - w * k * 0.5f, bottom - height, w * k, height},
+                          1.0f, false, tint);
+}
+
+bool drawArtPoly(const CharacterDef& d, const Vector2* pts, int n, Vec2 at, float scale, bool eyes, Color tint) {
+  float w, h;
+  Vec2 face;
+  if (n > 48 || !artGeometry(d, w, h, face, eyes)) return false;
+  Vector2 src[48];
+  for (int i = 0; i < n; ++i) src[i] = V(face + (W(pts[i]) - at) / scale);
+  return art::drawPicturePoly((d.id + "_art").c_str(), src, pts, n, tint);
+}
+
+bool drawArtBox(const CharacterDef& d, Rectangle b, float span, Color tint) {
+  float w, h;
+  Vec2 face;
+  if (!artGeometry(d, w, h, face)) return false;
+  const float k = b.width / (span * w);
+  const Vector2 pts[4] = {{b.x, b.y}, {b.x + b.width, b.y}, {b.x + b.width, b.y + b.height}, {b.x, b.y + b.height}};
+  return drawArtPoly(d, pts, 4, {b.x + b.width * 0.5f, b.y + b.height * 0.5f + 0.08f * span * w * k}, k, false, tint);
+}
+
+void drawArtDisc(const CharacterDef& d, int palette, Vec2 center, float radius, float time, float span, Color tint) {
+  float w, h;
+  if (!artFace(d, w, h)) {
+    drawPortraitDisc(d, palette, center, radius, time);
+    return;
+  }
+  constexpr int kSides = 40;
+  Vector2 pts[kSides];
+  for (int i = 0; i < kSides; ++i) {
+    const float a = i * 2.0f * kPi / kSides;
+    pts[i] = {center.x + std::cos(a) * radius, center.y + std::sin(a) * radius};
+  }
+  const float k = 2.0f * radius / (span * w);  // the face a little low in the disc: its hair shows above it
+  drawArtPoly(d, pts, kSides, center + Vec2{0.0f, 0.08f * span * w * k}, k, false, tint);
+}
+
 // Where a limb is, from the pose's targets (the clips draw the body; effects only need an approximate hand).
 Vec2 limbWorld(const CharacterDef& d, const Pose& pose, Vec2 feet, int facing, float scale, Limb limb, bool weaponTip) {
   const Xf X = xform(d, pose, feet, facing, scale);
