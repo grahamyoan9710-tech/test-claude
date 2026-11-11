@@ -55,6 +55,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 13 h UTC, fil « nouvelle DA avec les portraits » (claude/project-thread-owhcqo) : version 13.8, à la demande de
+  yoyo : pixel art (drawShowcase) de nouveau dans les fiches de la sélection et à la victoire ; visages ronds et cases
+  dézoomés (drawArtDisc / drawArtBox : span 1.1 par défaut, toute la tête) ; tuile du portrait cadrée sur toute la
+  tête. Verrou « Version et paquets » pris et libéré dans ce commit.
 - 11/11 06 h 20 UTC, fil « nouvelle DA avec les portraits » (claude/project-thread-owhcqo) : version 13.7, DA
   « Encre d'horizon » validée par yoyo (maquette Claude Design https://claude.ai/artifact/Ss21FmbFf2vpLPgrw1nWaX, %
   en Exo 2 Black Italic, OFL). Portraits manga : `scripts/cut_portraits.py` découpe la planche de yoyo

@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 13.8 : **le pixel art revient, les visages sont dézoomés**.
+
+- Sélection des persos : la fiche de chaque joueur montre de nouveau le perso en pixel art à côté de ses stats.
+- Écran de victoire : le gagnant est de nouveau en pixel art.
+- Tous les visages ronds (carte de combat à côté du %, petites vies, classement, « Règles & mode ») et la tuile de
+  Hakuen sont dézoomés : on voit toute la tête, cheveux compris.
+- Le portrait manga reste sur la tuile de la sélection et dans l'ultime.
+
 Version 13.7 : **nouvelle DA « Encre d'horizon » avec les portraits manga**.
 
 - Sélection des persos : grandes tuiles penchées avec le visage de chacun, une fiche par joueur avec son portrait,

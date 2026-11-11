@@ -72,7 +72,7 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
   DrawCircleV(V(ic), ir + 5, ink);
   DrawCircleV(V(ic), ir + 3, out ? ui::kDisabled : pc);
   DrawCircleGradient(int(ic.x), int(ic.y), ir, out ? Color{40, 46, 66, 255} : mixColor(face, WHITE, 0.1f), {11, 18, 48, 255});
-  drawArtDisc(*f.def, f.palette, ic, ir, time + f.id, 0.58f, out ? Color{120, 124, 140, 255} : WHITE);
+  drawArtDisc(*f.def, f.palette, ic, ir, time + f.id, 1.1f, out ? Color{120, 124, 140, 255} : WHITE);
 
   // Who: "J1" (or CPU) on the icon's corner
   char tag[8];
@@ -95,7 +95,7 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
       if (art) {
         DrawCircleV(V(c), 12, withAlpha(ink, lost ? 0.5f : 1.0f));
         DrawCircleV(V(c), 10, withAlpha(face, lost ? 0.2f : 1.0f));
-        drawArtDisc(*f.def, f.palette, c, 10, time, 0.5f, lost ? Color{160, 166, 186, 80} : WHITE);
+        drawArtDisc(*f.def, f.palette, c, 10, time, 1.1f, lost ? Color{160, 166, 186, 80} : WHITE);
       } else {
         ui::diamond(V(c), 8.0f, ink);
         ui::diamond(V(c), 6.5f, pc);

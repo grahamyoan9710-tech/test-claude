@@ -157,17 +157,8 @@ void App::drawResults() {
       p.sheet = art::kSheetVictory;
       p.sheetT = clampf(std::fmod(screenFrames_ / 60.0f, 3.0f) / 0.9f, 0.0f, 1.0f);
     }
-    if (hasArt(*wd)) {  // its illustrated bust, rising into the light, its number huge and faint behind it
-      const float rise = 1.0f - std::pow(1.0f - clampf(screenFrames_ / 30.0f, 0.0f, 1.0f), 3.0f);
-      const std::string num = wd->id.substr(1);
-      drawText(num.c_str(), 300 - textWidth(num.c_str(), 330, kT) * 0.5f, capsY(470, 330, kT), 330,
-               withAlpha(auraColor(wd->hero), 0.16f), kT);
-      vfx::glow({300, 520}, 260, withAlpha(auraColor(wd->hero), 0.35f), withAlpha(auraColor(wd->hero), 0.0f));
-      drawArtBust(*wd, 300, 720 + (1.0f - rise) * 60.0f, 480, withAlpha(WHITE, rise));
-    } else {
-      for (int i = 0; i < 3; ++i) DrawEllipse(305, 691, 150.0f - i * 48.0f, 15.0f - i * 4.5f, withAlpha(WHITE, 0.09f + i * 0.05f));
-      drawShowcase(*wd, winnerPalette_, p, {305, 700}, 1, 330.0f, t);
-    }
+    for (int i = 0; i < 3; ++i) DrawEllipse(305, 691, 150.0f - i * 48.0f, 15.0f - i * 4.5f, withAlpha(WHITE, 0.09f + i * 0.05f));
+    drawShowcase(*wd, winnerPalette_, p, {305, 700}, 1, 330.0f, t);
   }
   vfx::glow({53, 50}, 16, withAlpha(WHITE, 0.6f), withAlpha(WHITE, 0.0f));
   ui::diamond({53, 50}, 7.0f, WHITE);
