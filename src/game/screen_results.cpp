@@ -1,6 +1,7 @@
-// Results screen (« Ligne d'horizon », « Encre d'horizon » portraits): the winner in its light on the left, the ranking on the right (with an award
-// each for the most K.O., the Clash Orb breaker and the biggest blow), then the rematch: each player says it is ready
-// (a CPU always is) and it starts by itself; or a button goes elsewhere.
+// Results screen (« Épure »): the winner on the left, in its colour (rays, its name huge and faint, two slabs, the
+// manga portrait behind its victory pose); the ranking on the right (with an award each for the most K.O., the Clash
+// Orb breaker and the biggest blow), then the rematch: each player says it is ready (a CPU always is) and it starts by
+// itself; or one of four buttons goes elsewhere.
 #include <algorithm>
 #include <cmath>
 
@@ -11,32 +12,20 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui;
+constexpr FontKind kD = FontKind::Display, kB = FontKind::Body;
 const char* kButtons[4] = {"REVANCHE", "CHANGER DE PERSO", "CHANGER D'ARÈNE", "MENU PRINCIPAL"};
-constexpr Color kDim{154, 168, 199, 255};    // #9AA8C7
-constexpr Color kSoft{212, 222, 245, 255};   // #D4DEF5
-constexpr Color kLight{255, 200, 112, 255};  // #FFC870
+const ui::Icon kButtonIcons[4] = {ui::Icon::Rematch, ui::Icon::Fighters, ui::Icon::Arenas, ui::Icon::Home};
+constexpr Color kCpuGrey{163, 167, 175, 255}, kInk{10, 11, 14, 255};
+constexpr float kRowsTop = 134, kRowStep = 72;  // rows of 68, 4 apart
 
-Rectangle buttonRect(int i) { return {664.0f + (i % 2) * 292.0f, 556.0f + (i / 2) * 60.0f, 284.0f, 52.0f}; }
-Rectangle chipRect(int i, int n) {
-  const float w = (576.0f - (n - 1) * 6.0f) / n;
-  return {664.0f + i * (w + 6.0f), 500.0f, w, 40.0f};
+// The rematch line sits under the ranking; the buttons under it, in two columns.
+float rematchY(int n) { return kRowsTop + n * kRowStep + 34; }
+Rectangle buttonRect(int i, int n) { return {620.0f + (i % 2) * 303.0f, rematchY(n) + 30 + (i / 2) * 66.0f, 293.0f, 56.0f}; }
+Rectangle chipRect(int i, int n) {  // the ready chips, right-aligned on the rematch line
+  constexpr float w = 118, gap = 8;
+  return {1216.0f - (n - i) * (w + gap) + gap, rematchY(n) - 14, w, 28};
 }
-Color rowColor(int port, int team) { return team >= 0 ? teamColor(team) : portColor(port); }
-
-// Text coloured from `top` (its upper third) to `bottom`, drawn once per thin horizontal strip; caps centred on cy.
-void vgradText(const char* text, float x, float cy, float size, Color top, Color bottom) {
-  constexpr int kStrips = 14;
-  const float w = textWidth(text, size, kT), y = capsY(cy, size, kT), cap = 0.64f * size;
-  for (int i = 0; i < kStrips; ++i) {
-    const float u = (i + 0.5f) / kStrips;
-    const float y0 = i == 0 ? cy - size : cy - cap * 0.5f + cap * i / kStrips;
-    const float y1 = i == kStrips - 1 ? cy + size : cy - cap * 0.5f + cap * (i + 1) / kStrips + 1.0f;
-    beginClip({x - 8, y0, w + 16, y1 - y0});
-    drawText(text, x, y, size, u < 0.3f ? top : mixColor(top, bottom, (u - 0.3f) / 0.7f), kT);
-    endClip();
-  }
-}
+Color rowColor(bool cpu, int port, int team) { return cpu ? kCpuGrey : team >= 0 ? teamColor(team) : portColor(port); }
 
 // The key or button that says "ready" on that device (the menus' confirm).
 float confirmWidth(int device, float h) {
@@ -48,40 +37,39 @@ void confirmGlyph(int device, float x, float y, float h) {
   else ui::keycap(device == kKeyboard2 ? "." : "ESPACE", x, y, h);
 }
 
-// The left half's light: a blue radial behind the winner, slow rays, its aura, diamonds rising.
-void drawVictoryLight(Color aura, float t) {
-  DrawRectangle(0, 0, kScreenW, kScreenH, {5, 12, 38, 255});
-  const Vec2 c{300, 460};
-  vfx::glow(c, 288, {36, 87, 184, 255}, {14, 42, 110, 255}, 64);
-  vfx::ring(c, 288, 600, {14, 42, 110, 255}, {5, 12, 38, 255}, 64);
-  const float rot = t * 2.0f * kPi / 40.0f;
-  const Color ray{191, 217, 255, 33}, none{191, 217, 255, 0};
-  for (int k = 0; k < 18; ++k) {  // 5° rays every 20°, faded out from a fifth of their length
-    const float a0 = rot + k * kPi / 9.0f, a1 = a0 + kPi / 36.0f;
+// A slab rotated -12° about its left middle, grown to `g` of its length.
+void slab(Vector2 origin, float len, float h, float g, Color col) {
+  const float a = -12.0f * kPi / 180.0f, ca = std::cos(a), sa = std::sin(a), l = len * g;
+  auto at = [&](float x, float y) { return Vector2{origin.x + x * ca - y * sa, origin.y + x * sa + y * ca}; };
+  ui::quad(at(0, -h * 0.5f), at(l, -h * 0.5f), at(l, h * 0.5f), at(0, h * 0.5f), col, col, col, col);
+}
+
+// The left side's light: a glow of the winner's colour low down, slow rays, its name faint, two slabs.
+void drawVictoryLight(Color cc, const char* name, float t, float f) {
+  ui::dusk();
+  auto ease = [&](float delay, float len) {
+    const float u = clampf((f - delay) / len, 0.0f, 1.0f);
+    return 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+  };
+  beginClip({0, 0, 580, kScreenH});
+  ui::glow({232, 650}, 460, withAlpha(cc, 0.3f));
+  const Vec2 c{220, 520};
+  const float rot = t * 2.0f * kPi / 60.0f, len = 380;
+  const Color ray = withAlpha(cc, 0.2f), none = withAlpha(cc, 0.0f);
+  for (int k = 0; k < 24; ++k) {  // 5° rays every 15°, fading out
+    const float a0 = rot + k * kPi / 12.0f, a1 = a0 + kPi / 36.0f;
     const Vec2 d0{std::cos(a0), std::sin(a0)}, d1{std::cos(a1), std::sin(a1)};
-    vfx::tri(c, c + d0 * 60.0f, c + d1 * 60.0f, ray, ray, ray);
-    vfx::quad(c + d0 * 60.0f, c + d0 * 300.0f, c + d1 * 300.0f, c + d1 * 60.0f, ray, none, none, ray);
+    vfx::quad(c, c + d0 * len, c + d1 * len, c, ray, none, none, ray);
   }
-  vfx::glow({300, 510}, 126, withAlpha(aura, 0.5f), withAlpha(aura, 0.12f));
-  vfx::ring({300, 510}, 126, 210, withAlpha(aura, 0.12f), withAlpha(aura, 0.0f));
-  static const float kX[12] = {40, 95, 150, 210, 260, 320, 370, 430, 480, 530, 120, 400};
-  for (int i = 0; i < 12; ++i) {
-    const float dur = 3.6f + (i % 3) * 0.7f, u = std::fmod(t - i * 0.37f + dur * 10.0f, dur) / dur;
-    const float a = u < 0.15f ? u / 0.15f : 1.0f - (u - 0.15f) / 0.85f;
-    const float s = 6.0f + (i % 3) * 3.0f;
-    const Vec2 p{kX[i] + s * 0.5f, 600.0f + (i % 4) * 30.0f + s * 0.5f - 440.0f * (1.0f - (1.0f - u) * (1.0f - u))};
-    const Color col = i % 2 ? kLight : WHITE;
-    vfx::glow(p, s * 1.4f, withAlpha(col, 0.5f * a), withAlpha(col, 0.0f));
-    ui::diamond(V(p), s * 0.71f, withAlpha(col, a));
+  if (name) {
+    float gs = 150;
+    while (gs > 90 && textWidth(name, gs, kD) > 540) gs -= 2;
+    drawText(name, 24, capsY(275, gs, kD), gs, withAlpha(cc, 0.12f), kD);
   }
-  // The right half, night; between them the horizon standing up (azure, white, gold)
-  ui::quad({640, 0}, {kScreenW, 0}, {kScreenW, kScreenH}, {560, kScreenH}, ui::kInk, ui::kInk, ui::kInk, ui::kInk);
-  const float ys[5] = {0, 144, 374, 576, 720};
-  const Color cs[5] = {withAlpha(ui::kBlue, 0.0f), ui::kBlue, WHITE, ui::kGold, withAlpha(ui::kGold, 0.0f)};
-  for (int i = 0; i < 4; ++i) {
-    const float x0 = 637.0f - 80.0f * ys[i] / 720.0f, x1 = 637.0f - 80.0f * ys[i + 1] / 720.0f;
-    ui::quad({x0, ys[i]}, {x0 + 6, ys[i]}, {x1 + 6, ys[i + 1]}, {x1, ys[i + 1]}, cs[i], cs[i], cs[i + 1], cs[i + 1]);
-  }
+  const float g = ease(9, 42);
+  slab({-120, 615}, 820, 110, g, cc);
+  slab({-120, 695}, 820, 10, g, withAlpha(ui::kCream, 0.8f));
+  endClip();
 }
 }  // namespace
 
@@ -96,12 +84,12 @@ void App::updateResults(const MenuNav& nav) {
     if (b == 0) startMatch();
     else goTo(b == 1 ? Screen::CharSelect : b == 2 ? Screen::StageSelect : Screen::MainMenu);
   };
-  const int before = resSel_;
+  const int before = resSel_, rows = int(results_.size());
   if (nav.left || nav.right) resSel_ ^= 1;
   if (nav.up || nav.down) resSel_ ^= 2;
   for (int b = 0; b < 4; ++b) {
-    if (ui::hovered(buttonRect(b)) && ui::mouseMoved()) resSel_ = b;
-    if (ui::clicked(buttonRect(b))) return go(b);
+    if (ui::hovered(buttonRect(b, rows)) && ui::mouseMoved()) resSel_ = b;
+    if (ui::clicked(buttonRect(b, rows))) return go(b);
   }
   if (resSel_ != before) audio_.play(Sfx::MenuMove, 0.6f);
 
@@ -135,69 +123,91 @@ void App::updateResults(const MenuNav& nav) {
 }
 
 void App::drawResults() {
-  const float t = time_;
+  const float t = time_, f = float(screenFrames_);
   const auto& R = roster();
   const int n = int(results_.size());
+  auto ease = [&](float delay, float len) {
+    const float u = clampf((f - delay) / len, 0.0f, 1.0f);
+    return 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+  };
   const ResultRow* win = nullptr;
   for (const auto& r : results_)
     if (r.charIndex == winnerChar_ && r.port == winnerPort_) win = &r;
   const CharacterDef* wd = winnerChar_ >= 0 ? &R[winnerChar_] : nullptr;
-  drawVictoryLight(wd ? auraColor(wd->hero) : ui::kBlue, t);
+  const Color cc = wd ? auraColor(wd->hero) : ui::kStone;
+  const std::string wname = wd ? upperFr(fiche(*wd).nick) : std::string();
+  drawVictoryLight(cc, wd ? wname.c_str() : nullptr, t, f);
 
-  // The winner: who, big, then its name and how it won
-  const Color wc = winnerTeam_ >= 0 ? teamColor(winnerTeam_) : portColor(winnerPort_);
+  // The winner: its manga portrait faint behind, then its victory pose (played again every 3 s) on the horizon
   if (wd) {
+    float aw, ah;
+    const std::string art = wd->id + "_art";
+    if (art::pictureSize(art.c_str(), aw, ah)) {
+      const float in = ease(0, 72), h = 640, w = h * aw / ah;
+      beginClip({0, 0, 600, kScreenH});  // the ranking stays clean
+      art::drawPictureFaded(art.c_str(), {210 - 40 * (1 - in), 720 - h, w, h}, -0.35f, 0.4f, 0.22f * in);
+      endClip();
+    }
+    const float lw = 500 * ease(0, 48);
+    ui::quad({40, 654}, {40 + lw * 0.3f, 654}, {40 + lw * 0.3f, 655}, {40, 655}, withAlpha(ui::kCream, 0), withAlpha(ui::kCream, 0.5f),
+             withAlpha(ui::kCream, 0.5f), withAlpha(ui::kCream, 0));
+    ui::quad({40 + lw * 0.3f, 654}, {40 + lw, 654}, {40 + lw, 655}, {40 + lw * 0.3f, 655}, withAlpha(ui::kCream, 0.5f),
+             withAlpha(ui::kCream, 0), withAlpha(ui::kCream, 0), withAlpha(ui::kCream, 0.5f));
     Pose p = restPose(*wd, t);
     const float H = wd->height;
     p.handF = {0.42f * H, -0.46f * H};  // arms wide open, away from the face
     p.handB = {-0.32f * H, -0.44f * H};
     p.weaponDir = Vec2{0.35f, -1.0f}.norm();
     if (wd->style == BodyStyle::Puff) p.handF = {0.32f * H, -0.2f * H}, p.handB = {-0.32f * H, -0.2f * H};
-    if (art::hasSheet(wd->hero, art::kSheetVictory)) {  // its victory pose, played again every 3 s
+    if (art::hasSheet(wd->hero, art::kSheetVictory)) {
       p.sheet = art::kSheetVictory;
-      p.sheetT = clampf(std::fmod(screenFrames_ / 60.0f, 3.0f) / 0.9f, 0.0f, 1.0f);
+      p.sheetT = clampf(std::fmod(f / 60.0f, 3.0f) / 0.9f, 0.0f, 1.0f);
     }
-    for (int i = 0; i < 3; ++i) DrawEllipse(305, 691, 150.0f - i * 48.0f, 15.0f - i * 4.5f, withAlpha(WHITE, 0.09f + i * 0.05f));
-    drawShowcase(*wd, winnerPalette_, p, {305, 700}, 1, 330.0f, t);
+    DrawEllipse(214, 694, 110, 12, withAlpha(BLACK, 0.3f));
+    drawShowcase(*wd, winnerPalette_, p, {214, 700}, 1, 330.0f, t);
   }
-  vfx::glow({53, 50}, 16, withAlpha(WHITE, 0.6f), withAlpha(WHITE, 0.0f));
-  ui::diamond({53, 50}, 7.0f, WHITE);
-  ui::tracked(winnerTeam_ >= 0 ? "VICTOIRE DE L'ÉQUIPE" : wd ? "VICTOIRE" : "FIN DU COMBAT", 68, capsY(50, 19.5f, kT), 19.5f,
-              0.32f, kLight);
-  const char* big = winnerTeam_ >= 0 ? teamName(winnerTeam_)
-                    : !wd           ? "ÉGALITÉ"
-                    : winnerCpu_    ? "CPU"
-                                    : TextFormat("J%d", winnerPort_ + 1);
-  float bs = 139.0f;
-  while (bs > 60.0f && textWidth(big, bs, kT) > 500.0f) bs -= 2.0f;
-  vgradText(big, 46, 121, bs, WHITE, mixColor(wc, WHITE, 0.55f));
+
+  // Who won: the label, its name, then how
+  {
+    const float in = ease(6, 42), dy = 26 * (1 - in);
+    ui::icon(ui::Icon::Trophy, {73, 63 + dy}, 18, withAlpha(cc, in), 1.9f);
+    ui::label(winnerTeam_ >= 0 ? "VICTOIRE DE L'ÉQUIPE" : wd ? "VICTOIRE" : "FIN DU COMBAT", 92, 63 + dy, 12, 0.32f, withAlpha(cc, in));
+  }
+  {
+    const float in = ease(12, 42), dy = 26 * (1 - in);
+    const std::string big = winnerTeam_ >= 0 ? upperFr(teamName(winnerTeam_)) : wd ? wname : std::string("ÉGALITÉ");
+    float bs = 84;
+    while (bs > 40 && textWidth(big.c_str(), bs, kD) > 500) bs -= 2;
+    drawText(big.c_str(), 64, capsY(126 + dy, bs, kD), bs, withAlpha(ui::kCream, in), kD);
+  }
   if (wd) {
-    const std::string nick = fiche(*wd).nick;
-    float ns = 43.4f;
-    while (ns > 24.0f && textWidth(nick.c_str(), ns, kT) > 520.0f) ns -= 1.0f;
-    drawText(nick.c_str(), 48, capsY(198, ns, kT), ns, ui::kCream, kT);
-    std::string info = "N° " + wd->id.substr(1);
+    const float in = ease(18, 42), dy = 26 * (1 - in);
+    std::string info = (winnerCpu_ ? std::string("CPU") : std::string(TextFormat("J%d", winnerPort_ + 1))) + " · N° " + wd->id.substr(1);
+    if (winnerTeam_ >= 0) info = upperFr(fiche(*wd).nick) + " · " + info;
     if (win) {
       info += " · " + (win->weapon >= 0 && win->weapon < int(wd->weapons.size()) ? wd->weapons[win->weapon].name
                                                                                 : std::string("Mains nues"));
       if (win->stocks > 0) info += TextFormat(" · %d vie%s restante%s", win->stocks, win->stocks > 1 ? "s" : "", win->stocks > 1 ? "s" : "");
     }
-    drawText(info.c_str(), 48, capsY(231, 19.2f, kU), 19.2f, ui::kSky, kU);
+    drawText(info.c_str(), 64, capsY(186 + dy, 14, kB), 14, withAlpha(ui::kSoft, in), kB);
   }
 
-  // The ranking: place, face, name and award, then K.O., falls, damage dealt and Clash Orbs broken
-  ui::tracked("RÉSULTATS", 664, capsY(64.5f, 39, kT), 39, 0.04f, ui::kCream);
-  const char* rules = TextFormat("%s · %d vie%s · %d:%02d", resultStage_.c_str(), resultStocks_, resultStocks_ > 1 ? "s" : "",
-                                 resultSeconds_ / 60, resultSeconds_ % 60);
-  drawText(rules, 1240 - textWidth(rules, 17.8f, kU), capsY(72.4f, 17.8f, kU), 17.8f, kDim, kU);
-  const float colRight[4] = {1028, 1094, 1166, 1228};
-  const char* heads[4] = {"KO", "CHUTES", "DÉGÂTS", "ORBES"};
-  ui::tracked("PLACE", 664, capsY(110.5f, 13, kT), 13, 0.14f, kDim);
-  ui::tracked("JOUEUR", 726, capsY(110.5f, 13, kT), 13, 0.14f, kDim);
-  for (int c = 0; c < 4; ++c) {
-    const float w = ui::trackedWidth(heads[c], 13, 0.14f);
-    ui::tracked(heads[c], colRight[c] - w, capsY(110.5f, 13, kT), 13, 0.14f, kDim);
-    if (c == 3) drawClashOrb({colRight[c] - w - 11, 110.5f}, 6.0f, t, 0);
+  // The ranking: place, face, tag, name and award, then K.O., falls, damage dealt and Clash Orbs broken
+  {
+    const float in = ease(12, 42), dy = 26 * (1 - in);
+    drawText("RÉSULTATS", 620, capsY(68 + dy, 24, kD), 24, withAlpha(ui::kCream, in), kD);
+    const char* rules = TextFormat("%s · %d vie%s · %d:%02d", resultStage_.c_str(), resultStocks_, resultStocks_ > 1 ? "s" : "",
+                                   resultSeconds_ / 60, resultSeconds_ % 60);
+    drawText(rules, 1216 - textWidth(rules, 12, kB), capsY(70 + dy, 12, kB), 12, withAlpha(ui::kMuted, in), kB);
+  }
+  const float colRight[4] = {1004, 1068, 1140, 1200};
+  {
+    const float in = ease(18, 42), cy = 117 + 26 * (1 - in);
+    const Color lc = withAlpha(ui::kMuted, in);
+    ui::label("PLACE", 636, cy, 11, 0.16f, lc);
+    ui::label("JOUEUR", 700, cy, 11, 0.16f, lc);
+    const char* heads[4] = {"KO", "CHUTES", "DÉGÂTS", "ORBES"};
+    for (int c = 0; c < 4; ++c) ui::label(heads[c], colRight[c] - ui::labelWidth(heads[c], 11, 0.16f), cy, 11, 0.16f, lc);
   }
   int maxKo = 0, maxOrb = 0, bestHit = -1;
   for (int i = 0; i < n; ++i) {
@@ -206,77 +216,51 @@ void App::drawResults() {
     maxOrb = std::max(maxOrb, r.orbs);
     if (r.bestHit >= 1.0f && (bestHit < 0 || r.bestHit > results_[bestHit].bestHit)) bestHit = i;
   }
-  float y = 126;
   for (int i = 0; i < n; ++i) {
     const ResultRow& r = results_[i];
     const CharacterDef& d = R[r.charIndex];
-    const bool first = i == 0;
-    const float h = first ? 92.0f : 64.0f, cy = y + h * 0.5f;
-    const float e = clampf((screenFrames_ - 12 - i * 5.4f) / 25.0f, 0.0f, 1.0f), ease = 1.0f - std::pow(1.0f - e, 3.0f);
-    const float x = 640 + (1.0f - ease) * 40.0f, a = ease;
-    const Color pc = rowColor(r.port, r.team);
-    if (first) {
-      const Color c0 = withAlpha({255, 181, 71, 255}, 0.2f * a), c1 = withAlpha(ui::kNavy, 0.9f * a);
-      ui::quad({x, y}, {x + 330, y}, {x + 330, y + h}, {x, y + h}, c0, c1, c1, c0);
-      DrawRectangleRec({x + 330, y, 270, h}, c1);
-      DrawRectangleLinesEx({x, y, 600, h}, 1.0f, withAlpha(ui::kGold, 0.35f * a));
-      DrawRectangleRec({x, y, 3, h}, withAlpha(ui::kGold, a));
-    } else {
-      DrawRectangleRec({x, y, 600, h}, withAlpha(ui::kNavy, 0.82f * a));
-      DrawRectangleRec({x, y, 3, h}, withAlpha(pc, a));
-    }
-    // Place
-    const float ps = first ? 56.4f : 41.2f, os = first ? 22.6f : 16.5f;
+    const float a = ease(24 + i * 6, 42), y = kRowsTop + i * kRowStep + 26 * (1 - a), cy = y + 34;
+    const Color pc = rowColor(r.cpu, r.port, r.team);
+    if (i == 0) ui::roundRect({620, y, 596, 68}, 14, withAlpha(ui::kCream, 0.06f * a), withAlpha(ui::kCream, 0.06f * a));
+    // Place, its suffix raised
     const char* place = TextFormat("%d", i + 1);
-    const Color placeCol = withAlpha(first ? kLight : kSoft, a);
-    drawText(place, x + 24, capsY(cy, ps, kT), ps, placeCol, kT);
-    drawText(first ? "er" : "e", x + 25 + textWidth(place, ps, kT), capsY(cy - (first ? 8.0f : 5.8f) - ps * 0.12f, os, kT), os,
-             placeCol, kT);
-    // Face
-    const float pic = first ? 64.0f : 48.0f, px = x + 86;
-    const Rectangle face{px, cy - pic * 0.5f, pic, pic};
-    const Color tint = mixColor(auraColor(d.hero), ui::kInk, 0.45f);
-    ui::bevel(face, 8, withAlpha(tint, a), withAlpha(mixColor(tint, ui::kInk, 0.4f), a));
-    if (!drawArtBox(d, face))
-      drawPortraitIn(d, r.palette, {face.x + pic * 0.5f, face.y + pic * 0.6f}, pic * 1.28f, face, 0.0f, t + i);
-    if (a < 1.0f) DrawRectangleRec(face, withAlpha(ui::kInk, 1.0f - a));  // fading in with its row
-    DrawRectangleRec({face.x, face.y + pic - 3, pic, 3}, withAlpha(pc, a));
-    // Tag, name, award
-    const float nx = px + pic + 10, right = colRight[0] - 44 - 10;
-    // its first award (tied: everyone gets it)
+    const Color plc = withAlpha(i == 0 ? ui::kCream : ui::kMuted, a);
+    drawText(place, 636, capsY(cy, 30, kD), 30, plc, kD);
+    drawText(i == 0 ? "er" : "e", 638 + textWidth(place, 30, kD), capsY(cy - 7, 13, kD), 13, plc, kD);
+    // Face in a ringed disc
+    const Vec2 fc{722, cy};
+    DrawCircleV(V(fc), 24, withAlpha(pc, a));
+    DrawCircleV(V(fc), 22, withAlpha(ui::kNavy, a));
+    DrawCircleGradient(int(fc.x), int(fc.y), 22, withAlpha(mixColor(auraColor(d.hero), ui::kNavy, 0.55f), a), withAlpha(ui::kNavy, a));
+    drawArtDisc(d, r.palette, fc, 22, t + i, 1.1f, withAlpha(WHITE, a));
+    // Tag, name; its first award under them (tied: everyone gets it)
     const char* award = maxKo > 0 && r.kos == maxKo     ? "Le plus de KO"
                         : maxOrb > 0 && r.orbs == maxOrb ? "Casseur d'orbe"
                         : i == bestHit                   ? TextFormat("Plus gros coup : %d %%", int(std::lround(r.bestHit)))
                                                          : nullptr;
-    const float ly = award ? cy - 10.5f : cy;
+    const float ly = award ? cy - 9 : cy, nx = 758;
     const char* tag = r.cpu ? "CPU" : TextFormat("J%d", r.port + 1);
-    const float tw = textWidth(tag, 15.2f, kT) + 12;
-    DrawRectangleRec({nx, ly - 11, tw, 22}, withAlpha(pc, a));
-    drawText(tag, nx + 6, capsY(ly, 15.2f, kT), 15.2f, withAlpha(ui::kInk, a), kT);
-    std::string nick = fiche(d).nick;
+    const float tw = ui::labelWidth(tag, 10, 0.04f) + 12;
+    ui::roundRect({nx, ly - 10, tw, 20}, 5, withAlpha(pc, a), withAlpha(pc, a));
+    ui::label(tag, nx + 6, ly, 10, 0.04f, withAlpha(kInk, a));
+    std::string nick = upperFr(fiche(d).nick);
     if (r.cpu) nick += TextFormat(" · NIV. %d", r.level);
-    float ns = first ? 28.2f : 21.7f;
-    while (ns > 14.0f && textWidth(nick.c_str(), ns, kT) > right - nx - tw - 8) ns -= 0.5f;
-    drawText(nick.c_str(), nx + tw + 8, capsY(ly, ns, kT), ns, withAlpha(ui::kCream, a), kT);
-    if (award) {
-      const float ay = cy + (first ? 14.5f : 12.5f), aw = textWidth(award, 15.8f, kU) + 27;
-      DrawRectangleLinesEx({nx, ay - 9, aw, 18}, 1.0f, withAlpha(kLight, 0.55f * a));
-      ui::diamond({nx + 10, ay}, 4.2f, withAlpha(kLight, a));
-      drawText(award, nx + 19, capsY(ay, 15.8f, kU), 15.8f, withAlpha({255, 226, 181, 255}, a), kU);
-    }
-    // The numbers (gold: the best)
+    const float room = colRight[0] - 40 - (nx + tw + 12);
+    float ns = 14;
+    while (ns > 9 && textWidth(nick.c_str(), ns, kD) > room) ns -= 0.5f;
+    drawText(nick.c_str(), nx + tw + 12, capsY(ly, ns, kD), ns, withAlpha(ui::kCream, a), kD);
+    if (award) drawText(award, nx, capsY(cy + 12, 12, kB), 12, withAlpha(ui::kBlue, a), kB);
+    // The numbers (cyan: the best)
     const int vals[4] = {r.kos, r.falls, int(r.damage), r.orbs};
     for (int c = 0; c < 4; ++c) {
       const char* v = TextFormat("%d", vals[c]);
       const bool best = (c == 0 && r.kos == maxKo && maxKo > 0) || (c == 3 && r.orbs == maxOrb && maxOrb > 0);
-      drawText(v, colRight[c] - textWidth(v, 26, kT), capsY(cy, 26, kT), 26, withAlpha(best ? kLight : kSoft, a), kT);
+      drawText(v, colRight[c] - textWidth(v, 18, kB), capsY(cy, 18, kB), 18, withAlpha(best ? ui::kBlue : ui::kCream, a), kB);
     }
-    y += h + 6;
   }
 
   // The rematch: who is ready, then the four ways out
   int humans = 0, ready = 0;
-  std::string waiting;
   for (const auto& r : results_) {
     if (r.cpu) {
       ++ready;
@@ -284,50 +268,62 @@ void App::drawResults() {
     }
     ++humans;
     if (resReady_[r.port & 3]) ++ready;
-    else waiting += (waiting.empty() ? "" : ", ") + std::string(TextFormat("J%d", r.port + 1));
   }
-  ui::tracked("REVANCHE ?", 664, capsY(480.3f, 14.1f, kT), 14.1f, 0.22f, kDim);
   const bool all = humans > 0 && ready == n;
-  const char* status = all ? TextFormat("Tout le monde est prêt, la revanche part dans %d s", std::max(1, (resGo_ + 59) / 60))
-                       : humans == 0 ? "Les ordinateurs sont prêts"
-                                     : TextFormat("En attente de %s", waiting.c_str());
-  drawText(status, 1240 - textWidth(status, 17.8f, kU), capsY(480.3f, 17.8f, kU), 17.8f, all ? kLight : kDim, kU);
-  for (int i = 0; i < n; ++i) {
-    const ResultRow& r = results_[i];
-    const Rectangle c = chipRect(i, n);
-    const bool on = r.cpu || resReady_[r.port & 3];
-    DrawRectangleRec(c, on ? Color{255, 181, 71, 31} : Color{10, 16, 36, 255});
-    DrawRectangleLinesEx(c, 1.0f, on ? Color{255, 181, 71, 128} : Color{191, 217, 255, 36});
-    const Color pc = rowColor(r.port, r.team);
-    const char* tag = r.cpu ? "CPU" : TextFormat("J%d", r.port + 1);
-    const float tw = textWidth(tag, 14.1f, kT) + 12, cy = c.y + c.height * 0.5f;
-    DrawRectangleRec({c.x + 10, cy - 10, tw, 20}, pc);
-    drawText(tag, c.x + 16, capsY(cy, 14.1f, kT), 14.1f, ui::kInk, kT);
-    float lx = c.x + 10 + tw + 8;
-    if (on) {
-      ui::tracked(r.cpu ? "AUTO" : "PRÊT", lx, capsY(cy, 15.2f, kT), 15.2f, 0.06f, kLight);
-    } else {  // blinking: the key that makes it ready
-      const int dev = slots_[r.port & 3].device;
-      const float blink = 0.7f + 0.3f * std::cos(t * 2.0f * kPi / 1.2f);
-      const bool words = lx + ui::trackedWidth("APPUIE SUR", 15.2f, 0.06f) + 6 + confirmWidth(dev, 22) < c.x + c.width - 8;
-      if (words) lx += ui::tracked("APPUIE SUR", lx, capsY(cy, 15.2f, kT), 15.2f, 0.06f, withAlpha(kSoft, blink)) + 6;
-      confirmGlyph(dev, lx, cy - 11, 22);
+  {
+    const float a = ease(36, 42), ry = rematchY(n) + 26 * (1 - a);
+    ui::label("REVANCHE ?", 620, ry, 11, 0.16f, withAlpha(ui::kMuted, a));
+    for (int i = 0; i < n; ++i) {
+      const ResultRow& r = results_[i];
+      Rectangle c = chipRect(i, n);
+      c.y += 26 * (1 - a);
+      const bool on = r.cpu || resReady_[r.port & 3];
+      const Color pc = rowColor(r.cpu, r.port, r.team);
+      ui::roundLines(c, 8, 1.0f, on && !r.cpu ? withAlpha(pc, 0.6f * a) : withAlpha(ui::kCream, 0.16f * a));
+      const char* tag = r.cpu ? "CPU" : TextFormat("J%d", r.port + 1);
+      const float cy = c.y + 14;
+      float lx = c.x + 10 + ui::label(tag, c.x + 10, cy, 11, 0.04f, withAlpha(r.cpu ? ui::kCream : pc, a)) + 6;
+      if (r.cpu) {
+        ui::label("Auto", lx, cy, 11, 0.02f, withAlpha(ui::kSoft, a));
+      } else if (on) {
+        lx += ui::label("Prêt", lx, cy, 11, 0.02f, withAlpha(ui::kCream, a)) + 6;
+        const Color ck = withAlpha(ui::kCream, a);
+        DrawLineEx({lx, cy + 0.5f}, {lx + 3.5f, cy + 4}, 2.0f, ck);
+        DrawLineEx({lx + 3.5f, cy + 4}, {lx + 10, cy - 4}, 2.0f, ck);
+      } else {  // blinking: the key that makes it ready
+        const float blink = 0.7f + 0.3f * std::cos(t * 2.0f * kPi / 1.2f);
+        const int dev = slots_[r.port & 3].device;
+        if (lx + confirmWidth(dev, 18) <= c.x + c.width - 6) {
+          confirmGlyph(dev, lx, cy - 9, 18);
+        } else {
+          ui::label("…", lx, cy, 11, 0.02f, withAlpha(ui::kSoft, blink * a));
+        }
+      }
     }
   }
+  const float ba = ease(42, 42);
   for (int b = 0; b < 4; ++b) {
-    const Rectangle r = buttonRect(b);
-    const bool gold = b == 0, hot = ui::hovered(r);
-    if (gold && all) {  // ready to go: it beats
+    Rectangle r = buttonRect(b, n);
+    r.y += 26 * (1 - ba);
+    const bool main = b == 0, hot = ui::hovered(r);
+    if (main && all) {  // ready to go: it beats
       const float k = 0.5f - 0.5f * std::cos(t * 2.0f * kPi / 1.4f);
-      ui::bevel(ui::grow(r, 2.0f + 5.0f * k), 16, withAlpha(ui::kGold, 0.4f * k), withAlpha(ui::kGold, 0.4f * k));
+      ui::roundRect(ui::grow(r, 2.0f + 5.0f * k), 18, withAlpha(ui::kCream, 0.3f * k * ba), withAlpha(ui::kCream, 0.3f * k * ba));
     }
-    const Color face = gold ? (hot ? mixColor(ui::kGold, WHITE, 0.15f) : ui::kGold) : hot ? mixColor(ui::kNavy, WHITE, 0.08f) : ui::kNavy;
-    ui::bevel(r, 14, face, face);
-    if (gold) ui::shimmer(r, t, 0.8f);
-    ui::tracked(kButtons[b], r.x + 18, capsY(r.y + 26, 26, kT), 26, 0.06f, gold ? ui::kInk : ui::kCream);
-    if (gold) {
-      const char* cnt = TextFormat("%d / %d prêts", ready, n);
-      drawText(cnt, r.x + r.width - 18 - textWidth(cnt, 17.8f, kU), capsY(r.y + 26, 17.8f, kU), 17.8f, ui::kInk, kU);
+    if (main) ui::roundRect(r, 14, withAlpha(ui::kCream, ba), withAlpha(ui::kCream, ba));
+    else {
+      if (hot || b == resSel_) ui::roundRect(r, 14, withAlpha(ui::kCream, 0.06f * ba), withAlpha(ui::kCream, 0.06f * ba));
+      ui::roundLines(r, 14, 1.0f, withAlpha(ui::kCream, 0.16f * ba));
+    }
+    const Rectangle box{r.x + 8, r.y + 9, 38, 38};
+    if (main) ui::roundRect(box, 10, withAlpha(ui::kInk, ba), withAlpha(ui::kInk, ba));
+    else ui::roundLines(box, 10, 1.0f, withAlpha(ui::kCream, 0.16f * ba));
+    ui::icon(kButtonIcons[b], {box.x + 19, box.y + 19}, 20, withAlpha(main ? ui::kCream : ui::kSoft, ba), 1.8f);
+    const Color tc = withAlpha(main ? ui::kInk : ui::kCream, ba);
+    drawText(kButtons[b], r.x + 60, capsY(r.y + 28, 13, kD), 13, tc, kD);
+    if (main) {
+      const char* cnt = all ? TextFormat("Départ dans %d s", std::max(1, (resGo_ + 59) / 60)) : TextFormat("%d / %d prêts", ready, n);
+      drawText(cnt, r.x + r.width - 16 - textWidth(cnt, 12, kB), capsY(r.y + 28, 12, kB), 12, tc, kB);
     }
     if (b == resSel_ && screenFrames_ > 40) ui::rim(r, 14, t);
   }

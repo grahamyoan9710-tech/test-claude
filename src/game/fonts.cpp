@@ -9,11 +9,14 @@ extern const unsigned char font_ui_ttf[];
 extern const unsigned int font_ui_ttf_size;
 extern const unsigned char font_damage_ttf[];
 extern const unsigned int font_damage_ttf_size;
+extern const unsigned char font_display_ttf[];
+extern const unsigned int font_display_ttf_size;
 }
 
 namespace {
-Font g_fonts[3];
-bool g_loaded[3] = {false, false, false};
+constexpr int kFonts = 5;
+Font g_fonts[kFonts];
+bool g_loaded[kFonts] = {};
 
 std::vector<int> frenchCodepoints() {
   std::vector<int> cps;
@@ -37,13 +40,15 @@ Font loadEmbedded(const unsigned char* data, unsigned int size, int baseSize) {
 
 void loadFonts() {
   g_fonts[0] = loadEmbedded(font_ui_ttf, font_ui_ttf_size, 72);
-  g_fonts[1] = loadEmbedded(font_title_ttf, font_title_ttf_size, 224);
+  g_fonts[1] = loadEmbedded(font_title_ttf, font_title_ttf_size, 160);
   g_fonts[2] = loadEmbedded(font_damage_ttf, font_damage_ttf_size, 160);
-  for (int i = 0; i < 3; ++i) g_loaded[i] = g_fonts[i].texture.id != GetFontDefault().texture.id;
+  g_fonts[3] = loadEmbedded(font_display_ttf, font_display_ttf_size, 160);
+  g_fonts[4] = loadEmbedded(font_ui_ttf, font_ui_ttf_size, 96);  // Inter, larger: the « Épure » texts
+  for (int i = 0; i < kFonts; ++i) g_loaded[i] = g_fonts[i].texture.id != GetFontDefault().texture.id;
 }
 
 void unloadFonts() {
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < kFonts; ++i) {
     if (g_loaded[i]) UnloadFont(g_fonts[i]);
     g_loaded[i] = false;
   }

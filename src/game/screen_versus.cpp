@@ -1,50 +1,16 @@
-// The VS screen, between the arena and the fight: who fights whom, where, a tip (« Ligne d'horizon »: the sky's blue
-// against the earth's gold, split by the horizon, slanted).
+// The VS screen, between the arena and the fight (« Épure », one of its bold moments): the screen split by a slanted
+// line, each side in its fighter's colour with a screentone, its name huge and hollow drifting behind, two slabs, the
+// manga portrait (or the pixel art); "VS" in a disc; who fights at the bottom; where, and a bar till the fight.
 #include <vector>
 
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
 namespace {
 constexpr int kVsFrames = 165;  // then the fight; ENTRÉE skips it
-constexpr FontKind kT = FontKind::Title;
-constexpr Color kSand{255, 226, 181, 255};  // light text on the gold side
-// The slanted horizon: from (0, 470) up to (1280, 290).
-float lineY(float x) { return 470.0f - 180.0f * x / kScreenW; }
-Vector2 lerp2(Vector2 a, Vector2 b, float f) { return {a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f}; }
-
-// A convex polygon around c filled with a radial gradient: inner at c, mid at 45 % of (rx, ry), outer at 100 %.
-void radialPoly(Vector2 c, float rx, float ry, Color inner, Color mid, Color outer, const std::vector<Vector2>& p) {
-  auto at = [&](Vector2 q) {
-    const float d = std::hypot((q.x - c.x) / rx, (q.y - c.y) / ry);
-    return d < 0.45f ? mixColor(inner, mid, d / 0.45f) : mixColor(mid, outer, std::min(1.0f, (d - 0.45f) / 0.55f));
-  };
-  constexpr int kRings = 6;
-  for (size_t i = 0; i < p.size(); ++i) {
-    const Vector2 a = p[i], b = p[(i + 1) % p.size()];
-    const int steps = std::max(1, int(std::hypot(b.x - a.x, b.y - a.y) / 40.0f));
-    for (int k = 0; k < steps; ++k) {
-      const Vector2 u = lerp2(a, b, float(k) / steps), v = lerp2(a, b, float(k + 1) / steps);
-      for (int ring = 0; ring < kRings; ++ring) {
-        const float f0 = float(ring) / kRings, f1 = float(ring + 1) / kRings;
-        const Vector2 u0 = lerp2(c, u, f0), v0 = lerp2(c, v, f0), u1 = lerp2(c, u, f1), v1 = lerp2(c, v, f1);
-        ui::quad(u0, v0, v1, u1, at(u0), at(v0), at(v1), at(u1));
-      }
-    }
-  }
-}
-
-// A band along the slanted horizon, `off` px under it, `thick` px thick, from x0 to x1, colours at fractions `stops`.
-void band(float x0, float x1, float off, float thick, const float* stops, const Color* cols, int n) {
-  for (int i = 0; i + 1 < n; ++i) {
-    const float l = x0 + (x1 - x0) * stops[i], r = x0 + (x1 - x0) * stops[i + 1];
-    const float y0 = off - thick * 0.5f, y1 = off + thick * 0.5f;
-    ui::quad({l, lineY(l) + y0}, {r, lineY(r) + y0}, {r, lineY(r) + y1}, {l, lineY(l) + y1}, cols[i], cols[i + 1],
-             cols[i + 1], cols[i]);
-  }
-}
 }  // namespace
 
 void App::updateVersus(const MenuNav& nav) {
@@ -53,113 +19,159 @@ void App::updateVersus(const MenuNav& nav) {
 
 void App::drawVersus() {
   if (!match_) return;
-  const float t = time_;
+  const float t = time_, f = float(screenFrames_);
   const Match& m = match_->match();
   const Settings& st = settings();
-
-  // The sky's half, the earth's half, faint stripes drifting towards the line from both sides
-  radialPoly({300, 300}, 700, 500, {36, 87, 184, 255}, {14, 42, 110, 255}, {5, 12, 38, 255},
-             {{0, 0}, {float(kScreenW), 0}, {float(kScreenW), lineY(kScreenW)}, {0, lineY(0)}});
-  radialPoly({1000, 520}, 700, 520, {201, 106, 30, 255}, {106, 50, 8, 255}, {30, 14, 6, 255},
-             {{0, lineY(0)}, {float(kScreenW), lineY(kScreenW)}, {float(kScreenW), float(kScreenH)}, {0, float(kScreenH)}});
-  const float drift = std::fmod(t * 5.2f, 26.0f);
-  for (int k = 1; k < 30; ++k) {
-    const float off = k * 26.0f - drift;
-    DrawLineEx({0, lineY(0) - off}, {float(kScreenW), lineY(kScreenW) - off}, 2.0f, withAlpha(ui::kSky, 0.07f));
-    DrawLineEx({0, lineY(0) + off}, {float(kScreenW), lineY(kScreenW) + off}, 2.0f, withAlpha(kSand, 0.07f));
-  }
+  constexpr FontKind D = FontKind::Display, B = FontKind::Body;
+  auto ease = [&](float delay, float len) {
+    const float u = clampf((f - delay) / len, 0.0f, 1.0f);
+    return 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+  };
 
   // The sides: in a team battle, red against blue; otherwise one on the left, the next on the right...
   std::vector<const Fighter*> side[2];
   int shown = 0;
-  for (const Fighter& f : m.fighters) side[m.cfg.teams ? (f.team & 1) : shown++ % 2].push_back(&f);
-  auto ease = [&](int delay) {  // they slide in once the screen is uncovered
-    const float u = std::clamp((screenFrames_ - delay) / 30.0f, 0.0f, 1.0f);
-    return 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+  for (const Fighter& fi : m.fighters) side[m.cfg.teams ? (fi.team & 1) : shown++ % 2].push_back(&fi);
+
+  // The split: from (742, 0) down to (538, 720)
+  const Vector2 top{742, 0}, bot{538, 720};
+  auto leftOf = [&](Vector2 p) { return (bot.x - top.x) * (p.y - top.y) - (bot.y - top.y) * (p.x - top.x) > 0.0f; };
+  auto clipDraw = [&](std::vector<Vector2> poly, bool left, Color col) {  // a convex polygon, cut by the split line
+    std::vector<Vector2> out;
+    for (size_t i = 0; i < poly.size(); ++i) {
+      const Vector2 a = poly[i], b = poly[(i + 1) % poly.size()];
+      const bool ia = leftOf(a) == left, ib = leftOf(b) == left;
+      if (ia) out.push_back(a);
+      if (ia != ib) {  // where a-b crosses the line
+        const float d1 = (bot.x - top.x) * (a.y - top.y) - (bot.y - top.y) * (a.x - top.x);
+        const float d2 = (bot.x - top.x) * (b.y - top.y) - (bot.y - top.y) * (b.x - top.x);
+        const float u = d1 / (d1 - d2);
+        out.push_back({a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u});
+      }
+    }
+    for (size_t i = 1; i + 1 < out.size(); ++i) ui::quad(out[0], out[i], out[i + 1], out[i + 1], col, col, col, col);
   };
   for (int k = 0; k < 2; ++k) {
-    const float e = ease(k == 0 ? 8 : 15);
-    for (int i = int(side[k].size()) - 1; i >= 0; --i) {  // the second one of a side behind the first
-      const Fighter& f = *side[k][i];
-      const float h = i == 0 ? 470.0f : 330.0f;
-      Vector2 feet = k == 0 ? Vector2{288, 541} : Vector2{1025, 712};
-      if (side[k].size() > 1) feet = i > 0 ? (k == 0 ? Vector2{95, 480} : Vector2{1195, 640}) : Vector2{feet.x + (k == 0 ? 50.0f : -50.0f), feet.y};
-      feet.x += (1.0f - e) * (k == 0 ? -60.0f : 60.0f);
-      ui::glow({feet.x, feet.y - h * 0.5f}, h * 0.55f, withAlpha(slotColor(f), 0.4f));
-      drawShowcase(*f.def, f.palette, restPose(*f.def, t + i), {feet.x, feet.y}, k == 0 ? 1 : -1, h, t + i);
+    const bool L = k == 0;
+    const Fighter* lead = side[k].empty() ? nullptr : side[k][0];
+    const Color cc = lead ? auraColor(lead->def->hero) : ui::kStone;
+    const float in = ease(0, 45), ox = (L ? -90.0f : 90.0f) * (1.0f - in);
+    // Its ground: the fighter's colour, deep, darkening to the dusk
+    const Color c0 = mixColor({18, 10, 16, 255}, cc, 0.24f), c1 = mixColor({16, 10, 16, 255}, cc, 0.07f), c2 = ui::kDeep;
+    if (L) ui::quad({0 + ox, 0}, {top.x + ox, 0}, {bot.x + ox, 720}, {0 + ox, 720}, c0, c1, c2, c1);
+    else ui::quad({top.x + ox, 0}, {1280 + ox, 0}, {1280 + ox, 720}, {bot.x + ox, 720}, c1, c0, c1, c2);
+    if (ox != 0.0f) DrawRectangleRec({L ? 0.0f : 1280.0f + ox, 0, std::fabs(ox), 720}, c0);
+    // The screentone, fading away from its corner
+    for (float y = 6; y < 420; y += 12)
+      for (float x = 6; x < 1280; x += 12) {
+        const float proj = (L ? x : 1280 - x) * 0.342f + y * 0.94f, a = 1.0f - proj / (0.55f * 1114.0f);
+        if (a <= 0.0f || leftOf({x, y}) != L) continue;
+        DrawRectangleRec({x - 1.3f + ox, y - 1.3f, 2.6f, 2.6f}, withAlpha(ui::kCream, 0.18f * a * in));
+      }
+    if (!lead) continue;
+    // Its name, huge and faint, drifting
+    const std::string name = upperFr(fiche(*lead->def).nick);
+    const float gw = textWidth(name.c_str(), 200, D), drift = 60.0f - 120.0f * clampf(f / 480.0f, 0.0f, 1.0f);
+    const float gx = (L ? -20.0f : 1300.0f - gw) + drift + ox;
+    beginClip(L ? Rectangle{0, 0, top.x, 720} : Rectangle{bot.x, 0, 1280 - bot.x, 720});
+    drawText(name.c_str(), gx, 24, 200, withAlpha(cc, 0.13f * in), D);
+    endClip();
+    // Two slabs growing from their outer end: the fighter's colour, a thin cream one
+    const float g = ease(6, 36), ang = -15.8f * kPi / 180.0f, ca = std::cos(ang), sa = std::sin(ang);
+    auto slab = [&](Vector2 origin, float len, float y0, float h, Color col, bool fromRight) {
+      const float l = len * g;
+      Vector2 p[4];
+      const float xs[2] = {fromRight ? -l : 0.0f, fromRight ? 0.0f : l};
+      const float ys[2] = {y0, y0 + h};
+      for (int j = 0; j < 4; ++j) {
+        const float lx = xs[j == 1 || j == 2], ly = ys[j >= 2];
+        p[j] = {origin.x + ox + lx * ca - ly * sa, origin.y + lx * sa + ly * ca};
+      }
+      clipDraw({p[0], p[1], p[2], p[3]}, L, col);
+    };
+    if (L) {
+      slab({-160, 465}, 1000, -65, 130, cc, false);
+      slab({-160, 567}, 1000, -7, 14, withAlpha(ui::kCream, 0.85f), false);
+    } else {
+      slab({1440, 235}, 1000, -65, 130, cc, true);
+      slab({1440, 147}, 1000, -7, 14, withAlpha(ui::kCream, 0.85f), true);
+    }
+    // The fighters: the second of a side small behind, the first big; the manga portrait when there is one
+    for (int i = int(side[k].size()) - 1; i >= 0; --i) {
+      const Fighter& fr = *side[k][i];
+      const float dr = (L ? -24.0f : 24.0f) * (1.0f - ease(0, 360));
+      float aw, ah;
+      if (i == 0 && art::pictureSize((fr.def->id + "_art").c_str(), aw, ah)) {
+        const float h = 700, w = h * aw / ah, x = L ? 70.0f : 1260.0f - w;
+        art::drawPictureFaded((fr.def->id + "_art").c_str(), {x + dr + ox, 720 - h, w, h}, L ? 0.1f : -0.1f, 0.4f, in, !L, 0.06f);
+      } else {
+        const float h = i == 0 ? 540.0f : 320.0f;
+        const float fx = (L ? (i == 0 ? 300.0f : 110.0f) : (i == 0 ? 1000.0f : 1180.0f)) + dr + ox;
+        ui::glow({fx, 720 - h * 0.45f}, h * 0.5f, withAlpha(cc, 0.3f * in));
+        drawShowcase(*fr.def, fr.palette, restPose(*fr.def, t + i), {fx, 712.0f}, L ? 1 : -1, h, t + i);
+      }
     }
   }
 
-  // The line between them, glowing; under it, the time left before the fight
-  for (int s = -1; s <= 1; s += 2) {  // a soft halo on both sides of the line
-    const Color in = withAlpha(WHITE, 0.22f), out = withAlpha(WHITE, 0.0f);
-    for (int i = 0; i < 2; ++i) {
-      const float l = -10.0f + 650.0f * i, r = l + 650.0f, y0 = 0.0f, y1 = 18.0f * s;
-      ui::quad({l, lineY(l) + y0}, {r, lineY(r) + y0}, {r, lineY(r) + y1}, {l, lineY(l) + y1}, in, in, out, out);
+  // A shade along the bottom, under the names
+  DrawRectangleGradientV(0, 430, kScreenW, 290, withAlpha(ui::kDeep, 0.0f), withAlpha(ui::kDeep, 0.85f));
+
+  // The split line, drawing from its middle; "VS" in its disc, popping in
+  {
+    const float g = ease(12, 36), mx = (top.x + bot.x) * 0.5f, my = 360.0f;
+    const Vector2 a{mx + (top.x - mx) * 1.03f * g, my + (top.y - 16 - my) * g}, b{mx + (bot.x - mx) * 1.03f * g, my + (bot.y + 16 - my) * g};
+    DrawLineEx(a, b, 14.0f, withAlpha(ui::kCream, 0.12f));
+    DrawLineEx(a, b, 6.0f, withAlpha(ui::kCream, 0.25f));
+    DrawLineEx(a, b, 2.0f, ui::kCream);
+    const float u = clampf((f - 21) / 33.0f, 0.0f, 1.0f);
+    if (u > 0.0f) {  // a back-out ease: it lands a little small, then settles
+      const float c1 = 1.70158f * 1.3f, c3 = c1 + 1.0f, e = 1.0f + c3 * std::pow(u - 1.0f, 3.0f) + c1 * std::pow(u - 1.0f, 2.0f);
+      const float sc = 1.8f - 0.8f * e, al = clampf(u * 2.0f, 0.0f, 1.0f);
+      DrawCircleV({640, 360}, 66 * sc + 1, withAlpha(ui::kCream, 0.4f * al));
+      DrawCircleV({640, 360}, 66 * sc, withAlpha(ui::kDeep, al));
+      const float vs = 44 * sc;
+      drawText("VS", 640 - textWidth("VS", vs, D) * 0.5f, capsY(360, vs, D), vs, withAlpha(ui::kCream, al), D);
     }
   }
-  const float lineStops[5] = {0.0f, 0.15f, 0.5f, 0.85f, 1.0f};
-  const Color lineCols[5] = {withAlpha(ui::kBlue, 0.0f), ui::kBlue, WHITE, ui::kGold, withAlpha(ui::kGold, 0.0f)};
-  band(-10, kScreenW + 10, 0, 4, lineStops, lineCols, 5);
-  const float p = std::clamp(screenFrames_ / (kVsFrames * 0.85f), 0.0f, 1.0f);
-  if (p > 0.0f) {
-    const Color barCols[3] = {withAlpha(WHITE, 0.0f), withAlpha(WHITE, 0.85f), withAlpha(WHITE, 0.0f)};
-    const float barStops[3] = {0.0f, 0.92f, 1.0f};
-    band(-10, -10 + (kScreenW + 20) * p, 11, 6, barStops, barCols, 3);
-  }
 
-  // "VS", its spark pulsing behind it
-  const float pulse = 0.5f + 0.5f * std::sin(t * 2.0f * kPi / 1.6f);
-  ui::eclat({640, 380}, 20.0f * (0.9f + 0.3f * pulse), 0.6f + 0.4f * pulse);
-  const float in = ease(4), vs = 184.0f * (1.0f + 0.5f * (1.0f - in)), vw = textWidth("VS", vs, kT);
-  const float vy = capsY(380, vs, kT);
-  drawText("VS", 640 - vw * 0.5f, vy + 6, vs, withAlpha(ui::kInk, 0.85f * in), kT);
-  if (in > 0.0f) ui::gradientText("VS", 640 - vw * 0.5f, vy, vs, {156, 203, 255, 255}, WHITE, {255, 200, 112, 255});
-
-  // Who: the first fighter of each side, its player, number, title and style
-  auto info = [&](const Fighter& f, float edge, float top, bool right) {
-    const Fiche fi = fiche(*f.def);
-    const Color c = slotColor(f), light = mixColor(c, WHITE, 0.45f), soft = right ? kSand : ui::kSoft;
-    const char* who = f.cpu ? "CPU" : TextFormat("J%d", f.port + 1);
-    const std::string sub = f.cpu ? (f.cpuLevel >= kMaxCpuLevel ? std::string("Niveau 10 x2") : TextFormat("Niveau %d", f.cpuLevel))
-                                  : std::string(deviceName(slots_[f.port].device));
-    auto at = [&](float w) { return right ? edge - w : edge; };  // left edge of something w wide
-    const float cw = textWidth(who, 19, kT) + 20, sw = textWidth(sub.c_str(), 17);
-    const float chipX = right ? edge - cw : edge, subX = right ? chipX - 10 - sw : edge + cw + 10;
-    DrawRectangleRec({chipX, top, cw, 26}, c);
-    drawText(who, chipX + 10, capsY(top + 13, 19, kT), 19, ui::kInk, kT);
-    drawText(sub.c_str(), subX, capsY(top + 13, 17, FontKind::Ui), 17, right ? Color{255, 217, 160, 255} : ui::kSky);
-    drawText(f.def->name.c_str(), at(textWidth(f.def->name.c_str(), 19, kT)), capsY(top + 46, 19, kT), 19, light, kT);
-    // the title on two lines, at its first space
-    const size_t sp = fi.nick.find(' ');
-    const std::string l1 = fi.nick.substr(0, sp), l2 = sp == std::string::npos ? std::string() : fi.nick.substr(sp + 1);
-    float ns = 63.0f;
-    while (ns > 30.0f && std::max(textWidth(l1.c_str(), ns, kT), textWidth(l2.c_str(), ns, kT)) > 380.0f) ns -= 1.0f;
-    float y = top + 62 + ns * 0.33f;
-    for (const std::string& l : {l1, l2}) {
-      if (l.empty()) continue;
-      drawText(l.c_str(), at(textWidth(l.c_str(), ns, kT)), capsY(y, ns, kT), ns, ui::kCream, kT);
-      y += ns * 0.9f;
-    }
-    const std::string meta = fi.style.empty() ? fi.art : fi.art + "  ·  " + fi.style;
-    drawText(meta.c_str(), at(textWidth(meta.c_str(), 19)), capsY(y - ns * 0.25f + 2, 19, FontKind::Ui), 19, soft);
+  // Who fights: their player, number and martial art, name and style; the second of a side on a line above
+  const float nIn = ease(27, 36);
+  auto who = [&](const Fighter& fr, bool right, float base, bool small) {
+    const Fiche fi = fiche(*fr.def);
+    const float x = right ? 1216.0f : 64.0f, dy = 24.0f * (1.0f - nIn);
+    const char* tag = fr.cpu ? TextFormat("CPU %d", fr.cpuLevel) : TextFormat("J%d", fr.port + 1);
+    const std::string tagS = tag;
+    const std::string lab = "N° " + fr.def->id.substr(1) + (fi.art.empty() ? std::string() : " · " + upperFr(fi.art));
+    const float tw = ui::labelWidth(tagS.c_str(), 11, 0.04f) + 16, lw = ui::labelWidth(lab.c_str(), 11, 0.16f);
+    const float ty = base + dy;
+    const float tx = right ? x - tw : x, lx = right ? tx - 10 - lw : x + tw + 10;
+    const Color pc = fr.cpu ? Color{163, 167, 175, 255} : slotColor(fr);
+    ui::roundRect({tx, ty, tw, 22}, 6, withAlpha(pc, nIn), withAlpha(pc, nIn));
+    ui::label(tagS.c_str(), tx + 8, ty + 11, 11, 0.04f, withAlpha(Color{10, 11, 14, 255}, nIn));
+    ui::label(lab.c_str(), lx, ty + 11, 11, 0.16f, withAlpha(ui::kSoft, nIn));
+    if (small) return;
+    const std::string name = upperFr(fi.nick);
+    float ns = 72.0f;
+    while (ns > 30.0f && textWidth(name.c_str(), ns, D) > 520.0f) ns -= 1.0f;
+    const float nw = textWidth(name.c_str(), ns, D);
+    drawText(name.c_str(), right ? x - nw : x, capsY(ty + 62, ns, D), ns, withAlpha(ui::kCream, nIn), D);
+    const float sw = textWidth(fi.style.c_str(), 15, B);
+    drawText(fi.style.c_str(), right ? x - sw : x, capsY(ty + 108, 15, B), 15, withAlpha(ui::kSoft, nIn), B);
   };
-  if (!side[0].empty()) info(*side[0][0], 520 - (1.0f - ease(8)) * 60.0f, 54, false);
-  if (!side[1].empty()) info(*side[1][0], 830 + (1.0f - ease(15)) * 60.0f, 480, true);
-  // The second fighter of a side, in a line: under the first one's (left), above it (right)
   for (int k = 0; k < 2; ++k) {
-    if (side[k].size() < 2) continue;
-    const Fighter& f = *side[k][1];
-    const std::string who = f.cpu ? std::string("CPU") : TextFormat("J%d", f.port + 1);
-    const std::string what = f.def->name + "  " + fiche(*f.def).nick;
-    const float cw = textWidth(who.c_str(), 15, kT) + 14, ww = textWidth(what.c_str(), 17, kT);
-    const float y = k == 0 ? 280.0f : 448.0f, x = k == 0 ? 520.0f : 830.0f - cw - 10 - ww;
-    DrawRectangleRec({x, y - 10, cw, 20}, slotColor(f));
-    drawText(who.c_str(), x + 7, capsY(y, 15, kT), 15, ui::kInk, kT);
-    drawText(what.c_str(), x + cw + 10, capsY(y, 17, kT), 17, k == 0 ? ui::kSoft : kSand, kT);
+    if (side[k].empty()) continue;
+    who(*side[k][0], k == 1, 506, false);
+    if (side[k].size() > 1) who(*side[k][1], k == 1, 470, true);
   }
 
-  // A tip, top right
+  // Where and how, the bar till the fight; a tip at the top; how to skip
+  const int si = std::clamp(m.cfg.stage, 0, int(stageList().size()) - 1);
+  const std::string rules = upperFr(stageList()[si].name) + TextFormat(" · %d VIE%s · ", st.stocks, st.stocks > 1 ? "S" : "") +
+                            (m.cfg.teams ? "EN ÉQUIPES" : "CHACUN POUR SOI");
+  ui::label(rules.c_str(), (kScreenW - ui::labelWidth(rules.c_str(), 11, 0.24f)) * 0.5f, 652, 11, 0.24f, ui::kSoft);
+  DrawRectangleRec({530, 676, 220, 2}, withAlpha(ui::kCream, 0.15f));
+  const float load = clampf((f - 18) / (kVsFrames - 30.0f), 0.0f, 1.0f), le = load < 0.5f ? 2 * load * load : 1 - std::pow(-2 * load + 2, 2) / 2;
+  DrawRectangleRec({530, 676, 220 * le, 2}, ui::kCream);
   std::vector<const char*> tips;
   if (m.cfg.items) tips.push_back("Casse la Clash Orb quand elle passe : c'est la seule façon d'obtenir ton ultime.");
   if (m.cfg.weapons) {
@@ -167,29 +179,10 @@ void App::drawVersus() {
     tips.push_back("Avec tes deux armes, la touche Arme passe de l'une à l'autre, sans délai.");
   }
   tips.push_back("Une compétence se recharge en 2,25 s ; un coup qui touche s'enchaîne tout de suite.");
-  const std::string tip = tips[size_t(vsTip_) % tips.size()];
-  const float tipW = 268, tipH = ui::drawWrapped(tip, 0, 0, tipW, 19, WHITE, false) + 58;
-  const Rectangle tb{948, 32, 300, tipH};
-  ui::card(tb, 1.0f, withAlpha({5, 12, 38, 255}, 0.7f), withAlpha({5, 12, 38, 255}, 0.7f));
-  const float aw = textWidth("ASTUCE", 13, kT) + 16;
-  DrawRectangleRec({tb.x + 16, tb.y + 14, aw, 20}, ui::kGold);
-  drawText("ASTUCE", tb.x + 24, capsY(tb.y + 24, 13, kT), 13, ui::kInk, kT);
-  ui::drawWrapped(tip, tb.x + 16, tb.y + 44, tipW, 19, ui::kCream);
-
-  // Where: the arena, the rules; how to skip
-  const int si = std::clamp(m.cfg.stage, 0, int(stageList().size()) - 1);
-  const StageDef& stage = stageList()[si];
-  const float bw = 360, blurbH = ui::drawWrapped(stage.blurb, 0, 0, bw, 17, WHITE, false);
-  const float by = 700 - (58 + blurbH), tx = 186;
-  const Rectangle thumb{40, std::min(by, 700.0f - 74.0f), 132, 74};
-  DrawRectangleRec(ui::grow(thumb, 2), kSand);
-  drawStageThumb(si, stage, thumb);
-  const std::string rules = TextFormat("ARÈNE  ·  %d VIE%s%s%s", st.stocks, st.stocks > 1 ? "S" : "", m.cfg.items ? "  ·  ORBE" : "",
-                                       m.cfg.weapons ? "  ·  ARMES" : "");
-  drawText(rules.c_str(), tx, capsY(by + 8, 15, FontKind::Ui), 15, kSand);
-  drawText(upperFr(stage.name).c_str(), tx, capsY(by + 32, 33, kT), 33, ui::kCream, kT);
-  ui::drawWrapped(stage.blurb, tx, by + 50, bw, 17, kSand);
-  const float hy = thumb.y - 34;
-  const float kw = ui::prompt("ENTRÉE", ui::Btn::A, 40, hy - 11, 22);
-  drawText("PASSER", 40 + kw + 10, capsY(hy, 14, kT), 14, withAlpha(kSand, 0.85f), kT);
+  const std::string tip = std::string("ASTUCE  ·  ") + tips[size_t(vsTip_) % tips.size()];
+  const float tipA = ease(40, 30);
+  drawText(tip.c_str(), (kScreenW - textWidth(tip.c_str(), 13, B)) * 0.5f, capsY(26, 13, B), 13, withAlpha(ui::kSoft, tipA), B);
+  const float kw = ui::promptWidth("ENTRÉE", ui::Btn::A, 22), pw = textWidth("Passer", 12, B);
+  ui::prompt("ENTRÉE", ui::Btn::A, kScreenW - 40 - pw - 8 - kw, 676, 22);
+  drawText("Passer", kScreenW - 40 - pw, capsY(687, 12, B), 12, withAlpha(ui::kMuted, tipA), B);
 }

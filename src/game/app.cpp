@@ -13,7 +13,6 @@ extern const unsigned int icon_png_size;
 }
 
 namespace {
-constexpr int kHalfTransition = 14;  // frames to cover the screen, same to reveal it
 
 void setWindowIcon() {
   Image icon = LoadImageFromMemory(".png", icon_png, int(icon_png_size));
@@ -58,6 +57,25 @@ void App::goTo(Screen s, bool instant) {
   if (transition_ >= 0) return;
   next_ = s;
   transition_ = 0;
+  // « Épure »: a blade cuts into the VS, a white flash opens the fight, a white sweep closes it; the menus close and open
+  // on the horizon line.
+  wipe_ = s == Screen::Versus ? ui::Wipe::Cut
+          : s == Screen::Match && screen_ != Screen::Settings ? ui::Wipe::Flash
+          : screen_ == Screen::Match && s == Screen::Results ? ui::Wipe::Game
+                                                              : ui::Wipe::Horizon;
+  if (wipe_ == ui::Wipe::Cut) {  // freeze the screen being left: its halves fly apart over the next one
+    if (snap_.id == 0 || snap_.texture.width != target_.texture.width) {
+      if (snap_.id != 0) UnloadRenderTexture(snap_);
+      snap_ = LoadRenderTexture(target_.texture.width, target_.texture.height);
+      SetTextureFilter(snap_.texture, TEXTURE_FILTER_BILINEAR);
+    }
+    BeginTextureMode(snap_);
+    ClearBackground(BLACK);
+    const Rectangle src{0, 0, float(target_.texture.width), -float(target_.texture.height)};
+    DrawTexturePro(target_.texture, src, {0, 0, float(snap_.texture.width), float(snap_.texture.height)}, {0, 0}, 0.0f, WHITE);
+    EndTextureMode();
+    enterScreen(s);
+  }
 }
 
 void App::enterScreen(Screen s) {
@@ -75,7 +93,7 @@ void App::enterScreen(Screen s) {
   }
   screen_ = s;
   screenFrames_ = 0;
-  if (s != Screen::MainMenu) demo_.reset();
+  if (s != Screen::Title) demo_.reset();
   // The VS screen shows the match about to start; the settings opened from the pause go back to it.
   if (s != Screen::Match && s != Screen::Versus && !(s == Screen::Settings && settingsReturn_ == Screen::Match)) {
     match_.reset();
@@ -192,6 +210,8 @@ void App::run() {
     enterScreen(Screen::Match);
   } else if (opt_.screen == "menu") {
     enterScreen(Screen::MainMenu);
+  } else if (opt_.screen == "title") {
+    enterScreen(Screen::Title);
   } else if (opt_.screen == "css" || opt_.screen == "rules") {  // rules: the « Règles & mode » sheet open
     training_ = opt_.training;
     const int n = int(roster().size());
@@ -237,7 +257,7 @@ void App::run() {
     transition_ = -1;
     enterScreen(Screen::Results);
   } else {
-    enterScreen(Screen::MainMenu);
+    enterScreen(Screen::Title);
   }
 
   while (!quit_ && !WindowShouldClose()) {
@@ -272,14 +292,16 @@ void App::run() {
     const bool blocked = transition_ >= 0;
     if (transition_ >= 0) {
       ++transition_;
-      if (transition_ == kHalfTransition) enterScreen(next_);
-      if (transition_ >= kHalfTransition * 2) transition_ = -1;
+      const int len = ui::wipeFrames(wipe_), swap = int(ui::wipeSwap(wipe_) * len);
+      if (transition_ == swap && swap > 0) enterScreen(next_);
+      if (transition_ >= len) transition_ = -1;
     }
     ui::newFrame();
-    if (screen_ == Screen::MainMenu) updateDemo();  // the demo fight runs on, even under a transition
+    if (screen_ == Screen::Title) updateDemo();  // the demo fight runs on, even under a transition
     MenuNav nav = (screen_ != Screen::Match && !blocked) ? readMenuNav() : MenuNav{};
     if (!blocked) {
       switch (screen_) {
+        case Screen::Title: updateTitle(nav); break;
         case Screen::MainMenu: updateMainMenu(nav); break;
         case Screen::CharSelect: updateCss(nav); break;
         case Screen::StageSelect: updateStage(nav); break;
@@ -312,6 +334,7 @@ void App::run() {
     // anti-aliased edges must not punch translucent holes into the off-screen image.
     ui::frameBlend();
     switch (screen_) {
+      case Screen::Title: drawTitle(); break;
       case Screen::MainMenu: drawMainMenu(); break;
       case Screen::CharSelect: drawCss(); break;
       case Screen::StageSelect: drawStage(); break;
@@ -331,7 +354,7 @@ void App::run() {
       drawTextOutlined(toast_.c_str(), r.x + 24, r.y + 9, 20, withAlpha(ui::kCream, a), withAlpha(ui::kInk, a), 2.0f);
     }
     if (settings().showFps) drawTextOutlined(TextFormat("%d FPS", GetFPS()), 10, 8, 16, {150, 255, 150, 255});
-    if (transition_ >= 0) ui::wipe(transition_ / float(kHalfTransition * 2));
+    if (transition_ >= 0) ui::wipe(wipe_, transition_ / float(ui::wipeFrames(wipe_)), &snap_.texture);
     EndBlendMode();
     EndTextureMode();
     pix::setFrameTarget(nullptr);
@@ -366,6 +389,7 @@ void App::run() {
   match_.reset();
   pix::unload();
   UnloadRenderTexture(target_);
+  if (snap_.id != 0) UnloadRenderTexture(snap_);
   ui::unloadSprites();
   unloadFonts();
   audio_.shutdown();

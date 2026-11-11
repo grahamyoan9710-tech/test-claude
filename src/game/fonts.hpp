@@ -2,10 +2,12 @@
 #include "raylib.h"
 
 // The typefaces of the game, embedded in the executable:
-//   Title  - Saira Condensed Black (titles, buttons, labels)
-//   Ui     - Saira SemiBold (everything else)
+//   Title  - Archivo ExtraCondensed ExtraBold (titles, buttons, labels; as wide as the Saira Condensed it replaced)
+//   Ui     - Inter Medium (everything else; sized like the Saira it replaced)
 //   Damage - Exo 2 Black Italic (the damage percents, Smash-like)
-enum class FontKind { Ui, Title, Damage };
+//   Display - Archivo Expanded ExtraBold (« Épure » titles and buttons)
+//   Body    - Inter Medium at its CSS size (« Épure » texts)
+enum class FontKind { Ui, Title, Damage, Display, Body };
 
 void loadFonts();   // after InitWindow
 void unloadFonts();

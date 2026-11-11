@@ -513,6 +513,33 @@ bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha, bo
   return true;
 }
 
+bool drawPictureFaded(const char* name, Rectangle dst, float fadeL, float fadeB, float alpha, bool flipX, float fadeT) {
+  const Picture* P = pictureOf(name);
+  if (!P || alpha <= 0.0f) return P != nullptr;
+  const bool right = fadeL < 0.0f;
+  fadeL = std::fabs(fadeL);
+  const float us[3] = {0.0f, right ? 1.0f - fadeL : fadeL, 1.0f}, vs[4] = {0.0f, fadeT, 1.0f - fadeB, 1.0f};
+  auto vertex = [&](int i, int j) {  // a 2x3 grid of quads, each corner its own alpha
+    const float ax = fadeL <= 0.0f ? 1.0f : right ? (i == 2 ? 0.0f : 1.0f) : (i == 0 ? 0.0f : 1.0f);
+    const float ay = (fadeB > 0.0f && j == 3) || (fadeT > 0.0f && j == 0) ? 0.0f : 1.0f;
+    rlColor4ub(255, 255, 255, (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f) * std::min(ax, ay)));
+    rlTexCoord2f(flipX ? 1.0f - us[i] : us[i], vs[j]);
+    rlVertex2f(dst.x + dst.width * us[i], dst.y + dst.height * vs[j]);
+  };
+  rlSetTexture(P->tex.id);
+  rlBegin(RL_QUADS);
+  for (int j = 0; j < 3; ++j)
+    for (int i = 0; i < 2; ++i) {  // counter-clockwise on screen
+      vertex(i, j);
+      vertex(i, j + 1);
+      vertex(i + 1, j + 1);
+      vertex(i + 1, j);
+    }
+  rlEnd();
+  rlSetTexture(0);
+  return true;
+}
+
 bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint) {
   const Picture* P = pictureOf(name);
   if (!P || n < 3 || tint.a == 0) return P != nullptr;

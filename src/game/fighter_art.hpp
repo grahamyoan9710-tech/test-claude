@@ -54,6 +54,10 @@ bool pictureSize(const char* name, float& w, float& h);
 // Draws `src` (pixels of the picture) into `dst`; flipX mirrors it.
 bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha = 1.0f, bool flipX = false,
                  Color tint = WHITE);
+// Draws the whole picture into dst, fading out over its left `fadeL` and bottom `fadeB` (fractions of dst; a negative
+// fadeL fades its right side instead; fadeT its top): pictures melting into the screen.
+bool drawPictureFaded(const char* name, Rectangle dst, float fadeL, float fadeB, float alpha = 1.0f, bool flipX = false,
+                      float fadeT = 0.0f);
 // Draws the convex polygon `dst` (n screen points) textured with the picture's points `src` (pixels): slanted tiles,
 // discs, rotated strips.
 bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint = WHITE);

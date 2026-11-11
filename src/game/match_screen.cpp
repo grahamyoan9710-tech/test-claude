@@ -68,108 +68,79 @@ void drawImpactFrame(const Match& m, const Fx::Impact& im, const Camera2D& cam, 
 // Ultimate cut-in (during the final smash freeze): the screen darkens, a diagonal band slashes
 // across with the fighter's portrait and the move's name, speed lines in the fighter's colours.
 void drawUltCutIn(const Match& m, float time) {
+  // « Épure », a bold moment: the fight dimmed, a burst of rays and hollow words of the fighter's colour, a band leaning
+  // 5° opening from its middle between two glowing edges, the fighter's eyes in it, "ULTIME" and the move's name.
   if (m.freezeTimer <= 0 || m.freezeOwner < 0 || m.freezeOwner >= int(m.fighters.size())) return;
   const Fighter& f = m.fighters[m.freezeOwner];
   const int t = 30 - m.freezeTimer;  // 0 .. 29
-  const HitFx el = heroElement(f.def->hero);
-  const bool black = el == HitFx::Dark;
-  const Color c = black ? Color{60, 58, 70, 255} : hitFxColor(el);
-  const Color g = black ? Color{235, 235, 245, 255} : hitFxGlow(el);
-  const Color deep = black ? Color{6, 6, 10, 255} : shade(hitFxColor(el), 0.3f);
-  const float tin = std::min(1.0f, (t + 1) / 6.0f), tout = clampf((t - 23) / 6.0f, 0.0f, 1.0f);
+  const Color c = auraColor(f.def->hero), night{10, 11, 14, 255};
+  const float tin = std::min(1.0f, (t + 1) / 6.0f), tout = clampf((t - 24) / 5.0f, 0.0f, 1.0f);
   const float ein = 1.0f - (1.0f - tin) * (1.0f - tin) * (1.0f - tin), eout = tout * tout;
-  const float env = ein * (1.0f - eout);
-  const float slide = (1.0f - ein) * -1800.0f + eout * 1800.0f;
-  constexpr float kAngle = -9.0f, kBand = 240.0f;
+  const float env = ein * (1.0f - eout), u = t / 30.0f;
+  constexpr float kAngle = -5.0f, kHalf = 112.0f, kW = 760.0f;
+  constexpr FontKind D = FontKind::Display, B = FontKind::Body;
 
-  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.55f * env));
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({5, 5, 7, 255}, 0.74f * env));
+  ui::sunburst({640, 360}, 760 * (0.6f + 0.5f * u), 40, u * 0.35f, withAlpha(c, 0.15f * env));
+  const std::string& move = f.moveDef(FinalSmash).name;
+  const std::string up = upperFr(move);
   rlPushMatrix();
-  rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
+  rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f - 20.0f, 0.0f);
   rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
-  vfx::additive(!black);
-  for (int i = 0; i < 48; ++i) {  // speed lines racing along the band
-    const float y = (vfx::hash01(i * 7 + 1) - 0.5f) * 980.0f;
-    const float ph = std::fmod(time * (2.2f + 2.4f * vfx::hash01(i * 7 + 2)) + vfx::hash01(i * 7 + 3), 1.0f);
-    const float x = -1200.0f + ph * 2400.0f, len = 200.0f + 380.0f * vfx::hash01(i * 7 + 4);
-    const float w = 2.0f + 6.0f * vfx::hash01(i * 7 + 5);
-    const Color col = i % 3 == 0 ? WHITE : i % 3 == 1 ? c : g;
-    vfx::streak({x - len, y}, {x, y}, w * 0.2f, w, withAlpha(col, 0.0f), withAlpha(col, 0.75f * env));
+  // Hollow words drifting behind (faint fills: the font has no stroke)
+  const float drift = -420.0f * u;
+  drawText("ULTIME · ULTIME · ULTIME · ULTIME", -840 + drift, 110, 150, withAlpha(c, 0.1f * env), D);
+  drawText((up + " · " + up).c_str(), -840 + drift, -330, 150, withAlpha(c, 0.1f * env), D);
+  // The band, opening from its middle; its edges
+  const float hh = kHalf * env, edge = std::min(1.0f, (t + 1) / 8.0f);
+  DrawRectangleRec({-kW, -hh, 2 * kW, 2 * hh}, withAlpha(night, env));
+  for (int s = -1; s <= 1; s += 2) {
+    const float y = s * (hh + 1.0f), w = kW * edge;
+    DrawRectangleRec({-w, y - 9, 2 * w, 18}, withAlpha(c, 0.12f * env));
+    DrawRectangleRec({-w, y - 4, 2 * w, 8}, withAlpha(c, 0.3f * env));
+    DrawRectangleRec({-w, y - 1, 2 * w, 2}, withAlpha(c, env));
   }
-  vfx::additive(false);
-  const float L = -1100.0f + slide, R = 1100.0f + slide, top = -kBand * 0.5f, bot = kBand * 0.5f;
-  vfx::quad({L, top}, {R, top}, {R, bot}, {L, bot}, withAlpha(c, 0.97f), withAlpha(deep, 0.97f), withAlpha(deep, 0.97f),
-            withAlpha(c, 0.97f));
-  vfx::additive(true);
-  for (int i = 0; i < 10; ++i) {  // light streaming inside the band
-    const float y = top + 12.0f + vfx::hash01(i * 13 + 5) * (kBand - 24.0f);
-    const float ph = std::fmod(time * 4.0f + vfx::hash01(i * 13 + 6), 1.0f);
-    const float x = L + ph * (R - L);
-    vfx::streak({x - 420.0f, y}, {x, y}, 1.0f, 5.0f, withAlpha(g, 0.0f), withAlpha(g, 0.5f));
-  }
-  vfx::glow({-380.0f + slide, 0.0f}, 300.0f, withAlpha(g, 0.7f), withAlpha(g, 0.0f), 32);  // light behind the portrait
-  vfx::burst({-380.0f + slide, 0.0f}, 16, 40.0f, 420.0f, 0.16f, time * 1.5f, withAlpha(g, 0.45f), withAlpha(g, 0.0f));
-  vfx::additive(false);
-  DrawRectangleRec({L, top - 10.0f, R - L, 7.0f}, WHITE);  // hard white edges
-  DrawRectangleRec({L, bot + 3.0f, R - L, 7.0f}, WHITE);
-  DrawRectangleRec({L, top - 19.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
-  DrawRectangleRec({L, bot + 16.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
-  rlPopMatrix();
-
-  // The portrait breaks out of the band. An illustrated one is a big bust, its eyes in a strip above the band,
-  // sliding the other way.
-  const float rad = deg2rad(kAngle);
-  const Vec2 pc = Vec2{kScreenW * 0.5f, kScreenH * 0.5f} + rotate({-380.0f + slide, 0.0f}, rad);
-  float aw, ah;
-  Vec2 eye;
-  if (artGeometry(*f.def, aw, ah, eye, true)) {
-    constexpr float kEyeH = 96.0f, kZoom = 3.2f;
-    rlPushMatrix();
-    rlTranslatef(kScreenW * 0.5f, 140.0f, 0.0f);
-    rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
-    const Vec2 at{60.0f - slide, 0.0f};
-    const float x0 = std::max(-1100.0f, at.x - eye.x * kZoom), x1 = std::min(1100.0f, at.x + (aw - eye.x) * kZoom);
-    const float y0 = -kEyeH * 0.5f, y1 = kEyeH * 0.5f;
-    DrawRectangleRec({-1100.0f - slide, y0 - 4.0f, 2200.0f, kEyeH + 8.0f}, withAlpha(WHITE, env));
-    DrawRectangleRec({-1100.0f - slide, y0, 2200.0f, kEyeH}, withAlpha({10, 3, 6, 255}, env));
-    const Vector2 strip[4] = {{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}};
-    drawArtPoly(*f.def, strip, 4, at, kZoom, true, withAlpha(WHITE, env));
-    const Color ink{10, 3, 6, 255}, none{10, 3, 6, 0};  // its ends fade into the night
-    vfx::quad({x0, y0}, {x0 + 160, y0}, {x0 + 160, y1}, {x0, y1}, withAlpha(ink, env), none, none, withAlpha(ink, env));
-    vfx::quad({x1 - 160, y0}, {x1, y0}, {x1, y1}, {x1 - 160, y1}, none, withAlpha(ink, env), withAlpha(ink, env), none);
-    vfx::additive(true);
-    for (int i = 0; i < 6; ++i) {  // light racing over it
-      const float y = y0 + 8.0f + vfx::hash01(i * 17 + 3) * (kEyeH - 16.0f);
-      const float x = -900.0f + std::fmod(time * 3.0f + vfx::hash01(i * 17 + 4), 1.0f) * 1800.0f;
-      vfx::streak({x - 260.0f, y}, {x, y}, 1.0f, 3.0f, withAlpha(g, 0.0f), withAlpha(g, 0.45f * env));
+  if (hh > 2.0f) {
+    // The eyes: the manga portrait zoomed on them, fading in from the left; else the pixel portrait
+    float aw, ah;
+    Vec2 eye;
+    const float drift2 = 70.0f * (1.0f - std::min(1.0f, u * 1.6f));
+    if (artGeometry(*f.def, aw, ah, eye, true)) {
+      constexpr float kZoom = 3.2f;
+      const Vec2 at{250.0f + drift2, 0.0f};
+      const float x0 = std::max(-160.0f, at.x - eye.x * kZoom), x1 = std::min(kW, at.x + (aw - eye.x) * kZoom);
+      const Vector2 strip[4] = {{x0, -hh}, {x1, -hh}, {x1, hh}, {x0, hh}};
+      drawArtPoly(*f.def, strip, 4, at, kZoom, true, withAlpha(WHITE, env));
+      const Color none = withAlpha(night, 0.0f);
+      ui::quad({x0, -hh}, {x0 + 220, -hh}, {x0 + 220, hh}, {x0, hh}, withAlpha(night, env), none, none, withAlpha(night, env));
+    } else {
+      drawPortrait(*f.def, f.palette, {300.0f + drift2, hh + 30.0f}, 300.0f, time);
     }
-    vfx::additive(false);
-    rlPopMatrix();
-    drawArtBust(*f.def, pc.x, pc.y + 290.0f, 540.0f, withAlpha(WHITE, env));
-  } else {
-    drawPortrait(*f.def, f.palette, pc + Vec2{0.0f, 20.0f}, 360.0f, time);
+    for (int i = 0; i < 10; ++i) {  // speed lines racing along it
+      const float y = -hh + 10 + vfx::hash01(i * 13 + 5) * (2 * hh - 20);
+      const float x = -kW + std::fmod(time * 3.5f + vfx::hash01(i * 13 + 6), 1.0f) * 2 * kW;
+      DrawRectangleRec({x - 300, y, 300, 1}, withAlpha(ui::kCream, 0.18f * env));
+      if (i % 3 == 0) DrawRectangleRec({x - 40, y - 8, 40, 16}, withAlpha(c, 0.25f * env));
+    }
+    // ULTIME, the move's name on two lines, who
+    const float k = 1.0f - std::pow(1.0f - clampf((t - 4) / 10.0f, 0.0f, 1.0f), 3.0f), tx = -530 - 40 * (1.0f - k);
+    const float a = k * env;
+    if (a > 0.0f) {
+      ui::label("ULTIME", tx, -hh + 0.36f * 2 * hh - 26, 12, 0.32f, withAlpha(c, a));
+      const size_t mid = up.size() / 2, sp1 = up.rfind(' ', mid), sp2 = up.find(' ', mid);
+      const size_t sp = sp1 == std::string::npos ? sp2 : sp2 == std::string::npos ? sp1 : (mid - sp1 <= sp2 - mid ? sp1 : sp2);
+      const std::string l1 = sp == std::string::npos ? up : up.substr(0, sp), l2 = sp == std::string::npos ? std::string() : up.substr(sp + 1);
+      float ns = 56.0f;
+      while (ns > 24.0f && std::max(textWidth(l1.c_str(), ns, D), textWidth(l2.c_str(), ns, D)) > 520.0f) ns -= 1.0f;
+      const float y0 = l2.empty() ? -ns * 0.55f : -ns * 1.05f;
+      drawText(l1.c_str(), tx, y0 + 4, ns, withAlpha(ui::kCream, a), D);
+      if (!l2.empty()) drawText(l2.c_str(), tx, y0 + 4 + ns * 1.05f, ns, withAlpha(ui::kCream, a), D);
+      const std::string who = upperFr(fiche(*f.def).nick) + (f.cpu ? " · CPU" : TextFormat(" · J%d", f.port + 1));
+      ui::label(who.c_str(), tx, (l2.empty() ? ns * 0.55f : ns * 1.1f) + 22, 13, 0.14f, withAlpha(ui::kSoft, a));
+    }
   }
-
-  // The move's name, slammed in
-  if (t >= 2) {
-    const std::string& name = f.moveDef(FinalSmash).name;
-    const float slam = 1.0f + 0.6f * std::max(0.0f, 1.0f - (t - 2) / 4.0f);
-    float size = 96.0f;
-    const float w0 = textWidth(name.c_str(), size, FontKind::Title);
-    if (w0 > 640.0f) size *= 640.0f / w0;
-    size *= slam;
-    const float w = textWidth(name.c_str(), size, FontKind::Title);
-    rlPushMatrix();
-    rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
-    rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
-    const float cx = 250.0f + slide;
-    drawTextOutlined(f.def->name.c_str(), cx - w * 0.5f + 6.0f, top + 14.0f, 30, withAlpha(g, env), withAlpha(BLACK, env), 3.0f,
-                     FontKind::Title);
-    drawText(name.c_str(), cx - w * 0.5f + 7.0f, -size * 0.42f + 8.0f, size, withAlpha(BLACK, 0.6f * env), FontKind::Title);
-    drawTextOutlined(name.c_str(), cx - w * 0.5f, -size * 0.42f, size, withAlpha(WHITE, env), withAlpha(deep, env),
-                     std::max(3.5f, size * 0.06f), FontKind::Title);
-    rlPopMatrix();
-  }
-  if (t < 3) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(WHITE, 0.55f * (3 - t) / 3.0f));  // opening flash
+  rlPopMatrix();
+  if (t < 4) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kCream, 0.9f * (4 - t) / 4.0f));  // the opening flash
 }
 }  // namespace
 
@@ -592,11 +563,15 @@ void MatchScreen::draw() {
   if (training()) drawTrainingPanel();
   drawUltCutIn(m_, time_);
 
-  if (m_.finished) {
-    float k = std::min(1.0f, endTimer_ / 14.0f);
-    float size = lerpf(260.0f, 170.0f, k);
-    float w = ui::spriteWidth(ui::Sprite::Game, size);
-    ui::drawSprite(ui::Sprite::Game, kScreenW * 0.5f - w * 0.5f, kScreenH * 0.32f - size * 0.5f, size);
+  if (m_.finished) {  // « GAME »: the fight frozen under the dusk, a burst of rays, the word slamming in, a line under it
+    const float u = endTimer_ / 60.0f, in = std::min(1.0f, endTimer_ / 10.0f);
+    const float e = 1.0f - std::pow(1.0f - std::min(1.0f, u / 0.3f), 3.0f);
+    ui::dusk(0.62f * in);
+    ui::sunburst({640, 360}, 700 * (0.4f + 0.75f * std::min(1.0f, u / 2.8f)), 45, u * 0.11f, withAlpha(ui::kCream, 0.14f * in));
+    const float size = lerpf(260.0f * 1.35f, 260.0f, e), w = ui::spriteWidth(ui::Sprite::Game, size);
+    ui::drawSprite(ui::Sprite::Game, kScreenW * 0.5f - w * 0.5f, 343 - size * 0.5f, size, in);
+    const float l = 1.0f - std::pow(1.0f - clampf((u - 0.25f) / 0.4f, 0.0f, 1.0f), 3.0f);
+    DrawRectangleRec({640 - 260 * l, 448, 520 * l, 2}, ui::kCream);
   }
   if (debug_) drawTextOutlined("F1 : zones de coup", 10, kScreenH - 150, 16, WHITE);
   if (paused_) drawPause();

@@ -50,29 +50,46 @@ inline void endClip() { EndScissorMode(); }
 // ---- Palette ----------------------------------------------------------------
 // Ancient-tech glow (TotK Zonai teal-green): runes on outfits, ultimate aura, menu selection.
 constexpr Color kZonaiGlow = {72, 228, 190, 255};
-constexpr Color kOutline = {10, 14, 36, 255};  // default text outline (navy ink)
+constexpr Color kOutline = {23, 23, 58, 255};  // default text outline (indigo ink)
 
-// The colour of each card, a CPU's too (« Ligne d'horizon »): J1 azure, J2 gold, J3 green, J4 pink.
+// The colour of each card, a CPU's too (« Épure »): J1 red, J2 blue, J3 yellow, J4 green.
 inline Color portColor(int port) {
-  static const Color cols[4] = {{61, 139, 255, 255}, {255, 181, 71, 255}, {61, 220, 151, 255}, {255, 111, 156, 255}};
+  static const Color cols[4] = {{255, 79, 79, 255}, {79, 155, 255, 255}, {255, 200, 61, 255}, {62, 214, 138, 255}};
   return cols[port & 3];
 }
 // Team battles: red, blue.
-inline Color teamColor(int team) { return team == 1 ? Color{61, 139, 255, 255} : Color{255, 96, 82, 255}; }
+inline Color teamColor(int team) { return team == 1 ? Color{79, 155, 255, 255} : Color{255, 79, 79, 255}; }
 inline const char* teamName(int team) { return team == 1 ? "BLEUE" : "ROUGE"; }
 inline Color slotColor(const Fighter& f) { return f.inTeam ? teamColor(f.team) : portColor(f.port); }
 
 // ---- Text ------------------------------------------------------------------
 inline float textSpacing(float size, FontKind k) {
-  return k == FontKind::Title ? size * 0.02f : k == FontKind::Damage ? 0.0f : size * 0.01f;
+  return k == FontKind::Title ? size * 0.03f : k == FontKind::Display ? size * 0.035f
+         : k == FontKind::Damage || k == FontKind::Body ? 0.0f : size * 0.01f;
 }
-// Saira's capitals are smaller and lower in their line box than those of the fonts every layout was made for
-// (Luckiest Guy, Poppins): the text is drawn larger and raised so that its capitals keep their place.
-inline float fontScale(FontKind k) { return k == FontKind::Title ? 1.45f : k == FontKind::Damage ? 1.1f : 1.15f; }
-inline float fontRaise(FontKind k) { return k == FontKind::Title ? 0.373f : k == FontKind::Damage ? 0.0f : 0.08f; }  // in asked sizes
+// Title and Ui are scaled and raised so that their capitals keep the size, width and place every layout was made for.
+// « Épure » (Display, Body): the asked size is the em, like a CSS font-size (raylib sizes the ascent-descent box).
+inline float fontScale(FontKind k) {
+  switch (k) {
+    case FontKind::Title: return 0.99f;  // Archivo ExtraCondensed: the caps and widths of the old Saira Condensed
+    case FontKind::Damage: return 1.1f;
+    case FontKind::Display: return 1.088f;
+    case FontKind::Body: return 1.21f;
+    default: return 0.836f;  // Ui: Inter, the caps and widths of the old Saira
+  }
+}
+inline float fontRaise(FontKind k) {  // in asked sizes: Title and Ui keep the caps where the Saira fonts had them
+  return k == FontKind::Title ? 0.136f : k == FontKind::Ui ? -0.08f : 0.0f;
+}
 // The y to draw a line of text at so that its capitals are centred on cy (Exo 2: caps from 0.26 to 0.83 of its line).
 inline float capsY(float cy, float size, FontKind k) {
-  return cy - size * (k == FontKind::Title ? 0.356f : k == FontKind::Damage ? 0.6f : 0.498f);
+  switch (k) {
+    case FontKind::Title: return cy - size * 0.351f;
+    case FontKind::Damage: return cy - size * 0.6f;
+    case FontKind::Display: return cy - size * 0.535f;
+    case FontKind::Body: return cy - size * 0.605f;
+    default: return cy - size * 0.498f;
+  }
 }
 inline float textWidth(const char* text, float size, FontKind k = FontKind::Ui) {
   const float s = size * fontScale(k);
@@ -157,7 +174,7 @@ inline Color hitFxGlow(HitFx fx) {
 }
 
 inline Color percentColor(float p) {  // « Ligne d'horizon »: Éclat, gold from 60 %, coral from 110 %, then red
-  if (p < 60) return mixColor({238, 243, 255, 255}, {255, 200, 112, 255}, p / 60.0f);
+  if (p < 60) return mixColor({255, 243, 230, 255}, {255, 200, 112, 255}, p / 60.0f);
   if (p < 110) return mixColor({255, 200, 112, 255}, {255, 122, 82, 255}, (p - 60) / 50.0f);
   if (p < 170) return mixColor({255, 122, 82, 255}, {232, 52, 44, 255}, (p - 110) / 60.0f);
   return mixColor({232, 52, 44, 255}, {150, 20, 28, 255}, std::min(1.0f, (p - 170) / 80.0f));

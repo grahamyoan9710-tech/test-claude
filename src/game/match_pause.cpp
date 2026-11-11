@@ -12,7 +12,7 @@
 
 namespace {
 constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui;
-constexpr Color kGoldLight{255, 200, 112, 255};
+constexpr Color kGoldLight{111, 227, 255, 255};  // « Épure »: the accent is cyan
 constexpr Color kDanger{255, 154, 122, 255};
 
 // What the move list says of each move (docs/refonte/FICHES.md; the bare hands' combo: its martial art, §1.7).

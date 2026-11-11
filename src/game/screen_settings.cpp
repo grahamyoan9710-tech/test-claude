@@ -14,7 +14,7 @@ constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui;
 const char* kTabNames[4] = {"AUDIO", "AFFICHAGE", "JEU", "COMMANDES"};
 constexpr Color kSoft{212, 222, 245, 255};   // #D4DEF5
 constexpr Color kDim{154, 168, 199, 255};    // #9AA8C7
-constexpr Color kLight{255, 200, 112, 255};  // #FFC870
+constexpr Color kLight{111, 227, 255, 255};  // « Épure »: the cyan accent
 constexpr Color kTrack{26, 37, 80, 255};     // #1A2550
 constexpr Color kWell{10, 16, 36, 255};      // #0A1024
 constexpr Color kDanger{255, 154, 122, 255};
@@ -853,7 +853,7 @@ void App::drawSettings() {
       const bool rowFoc = r == setRow_, ult = r == kActUltimate;
       const Rectangle band{82, y, 1116, kRowH};
       if (ult) {
-        const Color g0 = Color{255, 181, 71, 41}, g1 = Color{255, 181, 71, 0};
+        const Color g0 = Color{111, 227, 255, 41}, g1 = Color{111, 227, 255, 0};
         ui::quad({band.x, band.y}, {band.x + band.width * 0.7f, band.y}, {band.x + band.width * 0.7f, band.y + band.height},
                  {band.x, band.y + band.height}, g0, g1, g1, g0);
         DrawRectangleRec({band.x, band.y, 3, band.height}, ui::kGold);

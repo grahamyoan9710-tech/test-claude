@@ -400,7 +400,7 @@ Une version se publie toute seule quand son numéro (le « vX.Y » de `src/game/
 branche de travail : GitHub Actions (`.github/workflows/release.yml`) lance les tests, fabrique les deux archives
 avec `scripts/package_release.sh` et les met dans la release vX.Y, avec les notes de `packaging/NOUVEAUTES.md`. Une
 version déjà publiée n'est pas refaite ; un tag `vX.Y` poussé, ou le workflow lancé à la main, la refait. Le même script fabrique les archives en local,
-dans `dist/` (`ClashHorizon-14.1-linux-x64.tar.gz` et `ClashHorizon-14.1-windows-x64.zip`).
+dans `dist/` (`ClashHorizon-14.2-linux-x64.tar.gz` et `ClashHorizon-14.2-windows-x64.zip`).
 
 Chaque archive contient un seul exécutable autonome (polices, sons et icône intégrés), une notice
 `LISEZ-MOI.txt` et les licences des polices. La version Windows est compilée depuis Linux avec MinGW-w64
@@ -541,8 +541,8 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 
 ## Crédits
 
-- Polices **Saira Condensed** et **Saira** par Omnibus-Type — licence SIL Open Font License 1.1
-  (`assets/fonts/SairaCondensed-OFL.txt`, `assets/fonts/Saira-OFL.txt`).
+- Polices **Archivo** (ExtraCondensed et Expanded ExtraBold) par Omnibus-Type et **Inter** par Rasmus Andersson —
+  licence SIL Open Font License 1.1 (`assets/fonts/Archivo-OFL.txt`, `assets/fonts/Inter-OFL.txt`).
 - Police **Exo 2** (Black Italic, les pourcentages de dégâts) par The Exo 2 Project Authors — licence SIL Open Font
   License 1.1 (`assets/fonts/Exo2-OFL.txt`).
 - Base de manettes **SDL_GameControllerDB** — licence zlib (`assets/gamecontrollerdb-LICENSE.txt`).

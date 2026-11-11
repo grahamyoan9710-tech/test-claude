@@ -8,6 +8,7 @@
 #include "game/audio.hpp"
 #include "game/controls.hpp"
 #include "game/fx.hpp"
+#include "game/ui.hpp"
 
 struct Options {
   bool demo = false;             // start straight into a CPU match
@@ -121,7 +122,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
+enum class Screen { Title, MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -152,6 +153,8 @@ class App {
   void finishMatch();
   void toast(const char* text);
   // screens (screen_title.cpp)
+  void updateTitle(const MenuNav& nav);  // « Appuie sur ENTRÉE », the demo fight behind
+  void drawTitle();
   void updateMainMenu(const MenuNav& nav);
   void drawMainMenu();
   void activateMenu(int item, int device = -1);
@@ -163,6 +166,8 @@ class App {
   // screens (menus.cpp)
   void updateCss(const MenuNav& nav);
   void drawCss();
+  void drawWideSheet(int col, const CharacterDef* d, bool left, Color pc, Color cc, int palette, bool chipFocus,
+                     bool fighterFocus);  // one of the two wide sheets of the character select
   void updateStage(const MenuNav& nav);
   void drawStage();
   // the VS screen, between the arena and the fight (screen_versus.cpp)
@@ -197,8 +202,10 @@ class App {
   Screen screen_ = Screen::MainMenu;
   Screen next_ = Screen::MainMenu;
   int transition_ = -1;  // frames into a screen transition, -1 = none
+  ui::Wipe wipe_ = ui::Wipe::Horizon;
   Audio audio_;
   RenderTexture2D target_{};
+  RenderTexture2D snap_{};  // the last screen, frozen, for the « Coupe » transition
   float targetScale_ = 0.0f;
   float time_ = 0.0f;
   int frames_ = 0;
@@ -211,7 +218,8 @@ class App {
 
   // main menu
   int menuSel_ = 0;
-  float markY_ = -1.0f;  // the spark beside the chosen big button, gliding to it
+  float markY_ = -1.0f;  // the main menu's choice when menuChanged_ was set
+  int menuChanged_ = 0;  // screenFrames_ when the main menu's choice last changed
   bool introDone_ = false;
   int gallerySel_ = 0;
   bool stageBrowse_ = false;  // the arenas opened from the main menu: ENTRÉE trains there, ÉCHAP goes back

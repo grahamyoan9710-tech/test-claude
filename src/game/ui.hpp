@@ -1,7 +1,7 @@
 #pragma once
-// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon, « Ligne d'horizon »: flat night
-// blue panels with bevelled corners, azure for the idle lines and player 1, gold for what is chosen and player 2, the
-// horizon line azure -> white -> gold, Saira Condensed type).
+// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon, « Épure », palette « Crépuscule »:
+// a night-to-dusk gradient, flat indigo panels with round corners, cream for text and for what is chosen, one cyan
+// accent; Archivo Expanded titles, Inter text).
 #include <initializer_list>
 #include <string>
 #include <utility>
@@ -11,25 +11,29 @@
 
 namespace ui {
 
-constexpr Color kInk = {6, 10, 24, 255};         // « Nuit »: the deepest blue, outlines, text on gold
-constexpr Color kNavy = {20, 29, 64, 255};       // « Panneau »: cards (top)
-constexpr Color kNavyDeep = {13, 20, 48, 255};   // « Abysse »: cards (bottom)
+constexpr Color kInk = {23, 23, 58, 255};        // the deepest indigo: outlines, text on cream
+constexpr Color kNavy = {42, 39, 88, 255};       // panels (top)
+constexpr Color kNavyDeep = {33, 31, 72, 255};   // panels (bottom)
 constexpr Color kSlate = kNavy;
-constexpr Color kBlue = {61, 139, 255, 255};     // « Azur »: idle lines, player 1
-constexpr Color kSky = {191, 217, 255, 255};     // light trims and small labels
-constexpr Color kStone = {58, 76, 128, 255};     // idle marks
-constexpr Color kGold = {255, 181, 71, 255};     // « Or »: what is chosen, player 2
-constexpr Color kGoldDeep = {222, 132, 30, 255};
-constexpr Color kCream = {238, 243, 255, 255};   // « Éclat »: text
-constexpr Color kSoft = {212, 222, 245, 255};    // body text
-constexpr Color kMuted = {154, 168, 199, 255};   // « Brume »: secondary text
-constexpr Color kDisabled = {130, 144, 179, 255};  // what is not open yet
-constexpr Color kTrack = {26, 37, 80, 255};      // slider tracks, idle segments
+constexpr Color kBlue = {111, 227, 255, 255};    // the cyan accent: lines, sparks
+constexpr Color kSky = {218, 211, 234, 255};     // light trims and small labels
+constexpr Color kStone = {91, 86, 128, 255};     // idle marks
+constexpr Color kGold = {255, 243, 230, 255};    // what is chosen: cream
+constexpr Color kGoldDeep = {218, 211, 234, 255};
+constexpr Color kCream = {255, 243, 230, 255};   // text
+constexpr Color kSoft = {218, 211, 234, 255};    // body text
+constexpr Color kMuted = {171, 166, 204, 255};   // secondary text
+constexpr Color kDisabled = {138, 134, 174, 255};  // what is not open yet
+constexpr Color kTrack = {52, 49, 98, 255};      // slider tracks, idle segments
 constexpr Color kUmber = kInk;                   // outline of the big titles
-constexpr Color kTeal = kSky;                    // light accents
+constexpr Color kTeal = kBlue;                   // light accents
 constexpr Color kRed = {255, 96, 82, 255};       // cancel, danger
 constexpr Color kRedDark = {168, 34, 44, 255};
 constexpr Color kGreen = {61, 220, 151, 255};    // go
+// The « Crépuscule » gradient (top, middle at 55 %, bottom) and its flat deep tone.
+constexpr Color kDuskTop = {20, 20, 58, 255}, kDuskMid = {35, 30, 77, 255}, kDuskLow = {59, 37, 86, 255};
+constexpr Color kDeep = {23, 23, 58, 255};
+constexpr Color kHair = {255, 243, 230, 36};     // hairlines (cream at 14 %)
 
 // The tones of the chunky buttons.
 enum class Tone : int { Gold, Blue, Navy, Red, Green, Grey };
@@ -92,7 +96,9 @@ void rule(float x0, float x1, float y, Color col);
 void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
 
 // ---- Backgrounds ----------------------------------------------------------------
-// Painterly sky: gradient, soft cloud banks, drifting motes (tinted by `motes`).
+// The « Crépuscule » gradient over the whole screen (a: its opacity).
+void dusk(float a = 1.0f);
+// The menus' ground: the « Crépuscule » gradient (the colours are ignored now).
 void backdrop(float time, Color top, Color bottom, Color motes);
 // A real stage background, slowly panning, under a navy veil (dim 0..1).
 void stageBackdrop(int stage, float time, float dim);
@@ -150,6 +156,14 @@ struct Hint {
 void footer(std::initializer_list<Hint> hints, const char* info = nullptr, const Hint* go = nullptr, bool goOn = true);
 Rectangle goRect(const Hint& go);  // where the footer puts it (mouse clicks)
 
+// « Épure » labels: Inter capitals spaced out (em: CSS letter-spacing), their caps centred on cy; returns the width.
+float label(const char* text, float x, float cy, float size, float em, Color col);
+float labelWidth(const char* text, float size, float em);
+// Line icons of the charte (24-unit grid, round caps), centred on c, `size` px wide.
+enum class Icon : int { Play, Versus, Training, Online, Fighters, Arenas, Options, Quit, Sliders, Dice, Sword, Trophy,
+                        Rematch, Home, Close, ChevronL, ChevronR, Arrow };
+void icon(Icon i, Vector2 c, float size, Color col, float stroke = 1.75f);
+
 // Small capitals spaced out like the charte's labels (CSS letter-spacing, in em), title font; returns the width.
 float tracked(const char* text, float x, float y, float size, float em, Color col);
 float trackedWidth(const char* text, float size, float em);
@@ -172,7 +186,14 @@ bool clicked(Rectangle r);
 bool mouseMoved();  // the pointer really moved this frame (not the initial jump)
 void newFrame();    // call once per frame, before the screen updates
 
-// ---- Screen transition (t in [0,1], fully covered at 0.5) -----------------------
-void wipe(float t);
+// ---- Screen transitions (t in [0,1]) -------------------------------------------
+// Horizon (menus): a line draws across the middle, the screen closes on it and opens again; covered at 0.5.
+// Flash (into a fight): the line opens into a white screen that fades; covered at 0.4.
+// Cut (into the VS): a blade slashes the old screen `old` (a snapshot), its halves fly apart over the new one.
+// Game (out of a fight): the frozen fight `old` in grey, "GAME", a white wipe; covered at 0.84.
+enum class Wipe : int { Horizon, Flash, Cut, Game };
+float wipeSwap(Wipe w);   // the t at which the next screen comes in
+int wipeFrames(Wipe w);   // its length
+void wipe(Wipe w, float t, const Texture2D* old = nullptr);
 
 }  // namespace ui

@@ -55,6 +55,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 21 h 30 UTC, session claude/project-thread-gzf1un (partie de 14.1, h4e20u da84e804) : version 14.2 = DA
+  « Épure », palette Crépuscule validée par yoyo (maquettes Claude Design dans le fil « Refaire la DA en version
+  épurée »). Polices : Archivo ExtraCondensed (Title), Archivo Expanded (Display, nouveau), Inter (Ui et Body) ; Saira
+  retirée. Palette dans `ui.hpp` (kDusk*, accent cyan kBlue, kGold = crème). Nouveaux : écran titre séparé du menu
+  principal (`Screen::Title`, `--screen title`), `ui::icon`, `ui::label`, `ui::dusk`, transitions `ui::Wipe`
+  (Horizon, Flash avant le combat, Cut avant le VS avec une capture de l'écran, Game vers les résultats),
+  `art::drawPictureFaded`. Refaits : sélection (cartes + fiches larges ; 3-4 joueurs encore à l'ancienne mise en
+  page), Règles & mode, VS, cartes de combat, GAME, cut-in d'ultime, victoire, choix de l'arène. Illustrations
+  ChatGPT abandonnées (« ça fait trop IA ») : portraits manga `<id>_art` + pixel art.
 - 11/11 13 h 45 UTC, session claude/project-thread-ab9ctl : version 13.9 (fusion de claude/project-thread-owhcqo,
   13.8). yoyo : en RTX, des effets « trop blancs et lumineux », « poussière lumineuse ». Cause : la lumière tracée
   des effets dépassait 1 (ultime de Hakuen : plus de 2 sur tout l'écran), multipliée dans le décor jusqu'au blanc,

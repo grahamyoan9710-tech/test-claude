@@ -8,6 +8,23 @@
 
 ## Nouveautés
 
+Version 14.2 : **nouvelle direction artistique « Épure », palette Crépuscule**.
+
+- Tout le jeu passe aux polices Archivo (titres larges) et Inter (textes), sur un fond crépuscule (violet nuit) avec
+  un seul accent cyan ; les boutons sont arrondis et ont une icône.
+- Nouvel écran titre (le combat de démo derrière, le logo « Soleil » CLASH / HORIZON), puis un menu principal à part,
+  avec le portrait du perso et la description de chaque mode.
+- Sélection des persos : cartes arrondies avec les portraits, grandes fiches avec les stats ; fenêtre « Règles &
+  mode » refaite.
+- Écran VS : écran coupé en biais aux couleurs des deux persos, grands noms, disque « VS ».
+- En combat : nouvelles cartes des joueurs (portrait rond, % en grand), nouveau « GAME » de fin et nouveau cut-in
+  d'ultime (bande inclinée avec le regard du perso).
+- Écran de victoire refait : le gagnant dans sa couleur (rayons, son nom, son portrait et sa pose), le classement et
+  quatre boutons à icône.
+- Transitions entre les écrans : la ligne d'horizon qui se referme, un éclair avant le combat, une coupe nette avant
+  le VS et un balayage « GAME » vers les résultats.
+- Contient la 14.1.
+
 Version 14.1 : **un combat plus rapide, plus agressif et plus fluide**.
 
 - Annulations : un coup normal qui touche peut être enchaîné tout de suite après son dernier coup actif (saut,
