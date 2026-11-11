@@ -53,6 +53,9 @@ bool pictureSize(const char* name, float& w, float& h);
 // Draws `src` (pixels of the picture) into `dst`; flipX mirrors it.
 bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha = 1.0f, bool flipX = false,
                  Color tint = WHITE);
+// Draws the convex polygon `dst` (n screen points) textured with the picture's points `src` (pixels): slanted tiles,
+// discs, rotated strips.
+bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint = WHITE);
 
 struct FxInfo {
   int frames = 0;

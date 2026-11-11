@@ -46,7 +46,7 @@ stage() {  # platform, executable, its name in the archive, readme
   mkdir -p "$out/licences"
   cp "$2" "$out/$3"
   cp "$4" "$out/LISEZ-MOI.txt"
-  cp "$ROOT/assets/fonts/SairaCondensed-OFL.txt" "$ROOT/assets/fonts/Saira-OFL.txt" \
+  cp "$ROOT/assets/fonts/SairaCondensed-OFL.txt" "$ROOT/assets/fonts/Saira-OFL.txt" "$ROOT/assets/fonts/Exo2-OFL.txt" \
     "$ROOT/assets/gamecontrollerdb-LICENSE.txt" "$out/licences/"
 }
 

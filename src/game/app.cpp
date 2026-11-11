@@ -63,7 +63,8 @@ void App::goTo(Screen s, bool instant) {
 void App::enterScreen(Screen s) {
   if (s == Screen::CharSelect && screen_ != Screen::StageSelect) {  // a fresh visit
     padLeft_ = {};
-    for (int d = 0; d < kDeviceCount; ++d) cssCur_[d] = {ownedCard(d) >= 0, std::max(0, ownedCard(d)), 1, 0};
+    rulesOpen_ = false;
+    for (int d = 0; d < kDeviceCount; ++d) cssCur_[d] = {ownedCard(d) >= 0, std::max(0, ownedCard(d)), 1};
     audio_.voice(training_ ? "training" : "choose");
   }
   if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
@@ -191,12 +192,13 @@ void App::run() {
     enterScreen(Screen::Match);
   } else if (opt_.screen == "menu") {
     enterScreen(Screen::MainMenu);
-  } else if (opt_.screen == "css") {
+  } else if (opt_.screen == "css" || opt_.screen == "rules") {  // rules: the « Règles & mode » sheet open
     training_ = opt_.training;
     const int n = int(roster().size());
     for (int i = 0; i < int(std::min<size_t>(4, opt_.fighters.size())); ++i)  // --fighters: who is picked
       slots_[i] = {i == 0 ? 1 : 2, kKeyboard1, std::clamp(opt_.fighters[i], 0, n - 1), 9};
     enterScreen(Screen::CharSelect);
+    rulesOpen_ = opt_.screen == "rules";
   } else if (opt_.screen == "stage") {
     enterScreen(Screen::StageSelect);
   } else if (opt_.screen == "versus") {

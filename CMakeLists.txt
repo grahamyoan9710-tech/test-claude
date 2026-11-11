@@ -61,6 +61,7 @@ if(CLASH_BUILD_GAME)
   set(CLASH_EMBED
     font_title_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/SairaCondensed-Black.ttf"
     font_ui_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Saira-SemiBold.ttf"
+    font_damage_ttf "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/Exo2-BlackItalic.ttf"
     icon_png "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.png"
     gamecontrollerdb_txt "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt")
   # Animations generated for the fighters (scripts/import_sheet.py): every assets/sprites/*.png, its index, and a

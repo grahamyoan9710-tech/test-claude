@@ -543,6 +543,8 @@ La simulation tourne à 60 images/seconde à pas fixe et est entièrement déter
 
 - Polices **Saira Condensed** et **Saira** par Omnibus-Type — licence SIL Open Font License 1.1
   (`assets/fonts/SairaCondensed-OFL.txt`, `assets/fonts/Saira-OFL.txt`).
+- Police **Exo 2** (Black Italic, les pourcentages de dégâts) par The Exo 2 Project Authors — licence SIL Open Font
+  License 1.1 (`assets/fonts/Exo2-OFL.txt`).
 - Base de manettes **SDL_GameControllerDB** — licence zlib (`assets/gamecontrollerdb-LICENSE.txt`).
 - Direction artistique « Ligne d'horizon », créée pour le jeu : sa palette vient du logo (bleu nuit, ambre).
 - Illustrations des **17 combattants** (`art/fighters/`) : générées par l'auteur du projet avec ChatGPT,
