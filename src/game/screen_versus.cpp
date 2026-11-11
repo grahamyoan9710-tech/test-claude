@@ -166,7 +166,7 @@ void App::drawVersus() {
     tips.push_back("Tes deux armes tombent sur l'arène : reste dessus, touche Arme maintenue 1 s, pour la prendre.");
     tips.push_back("Avec tes deux armes, la touche Arme passe de l'une à l'autre, sans délai.");
   }
-  tips.push_back("Chaque compétence se recharge en 3 secondes : place-les bien.");
+  tips.push_back("Une compétence se recharge en 2,25 s ; un coup qui touche s'enchaîne tout de suite.");
   const std::string tip = tips[size_t(vsTip_) % tips.size()];
   const float tipW = 268, tipH = ui::drawWrapped(tip, 0, 0, tipW, 19, WHITE, false) + 58;
   const Rectangle tb{948, 32, 300, tipH};

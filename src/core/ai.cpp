@@ -504,8 +504,8 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
   }
 
   if (--decisionTimer_ > 0) return;
-  decisionTimer_ = std::max(2, 22 - level_ * 2) + rng_.irange(0, 6);
-  if (rng_.chance(0.25f * (1.0f - skill_))) return;  // low levels hesitate
+  decisionTimer_ = std::max(2, 18 - level_ * 2) + rng_.irange(0, 5);  // quick to strike (an aggressive game)
+  if (rng_.chance(0.15f * (1.0f - skill_))) return;  // low levels hesitate
 
   bool killRange = t.percent > 110.0f - level_ * 3.0f;
   // Spacing depends on the fighter's reach (swords hit from further away).

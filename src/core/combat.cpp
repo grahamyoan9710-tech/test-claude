@@ -333,7 +333,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
   setState(v, FState::Hitstun);
   v.kbVel = dir * (kb * kLaunchScale);
   v.vel = {0, 0};
-  v.hitstun = std::max(4, int(kb * 0.4f));
+  v.hitstun = std::max(5, int(kb * 0.45f));  // a little longer than Smash: room to chain (the owner, 11/11)
   v.lastKnockback = kb;
   v.tumble = kb > 80.0f;
   v.ledge = -1;
@@ -346,7 +346,7 @@ void Match::applyHit(Fighter* attacker, Fighter& v, const HitboxDef& h, Vec2 hit
   v.facing = dirSign > 0 ? -1 : 1;
   int lag = hitlagFor(dmg, kb);
   v.hitlag = lag;
-  if (attacker && !throwHit) attacker->hitlag = lag;
+  if (attacker && !throwHit) attacker->hitlag = lag, attacker->landedHit = true;
   v.flash = 10;
   v.flashFx = h.fx;
   emit(EvType::Hit, hitPos, attacker ? attacker->id : -1, v.id, kb, dir, h.fx);

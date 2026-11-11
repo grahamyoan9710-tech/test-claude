@@ -111,15 +111,15 @@ void Match::onLand(Fighter& f, float impact) {
   f.sideSpecialUsed = false;
   switch (f.state) {
     case FState::Air:
-      setState(f, FState::Landing, 4);
+      setState(f, FState::Landing, 3);
       emit(EvType::Land, f.pos, f.id, -1, impact);
       break;
     case FState::Helpless:
-      setState(f, FState::Landing, 18);
+      setState(f, FState::Landing, 12);
       emit(EvType::Land, f.pos, f.id, -1, impact);
       break;
     case FState::AirDodge:
-      setState(f, FState::Landing, 10);
+      setState(f, FState::Landing, 7);
       emit(EvType::Land, f.pos, f.id, -1, impact);
       break;
     case FState::Attack: {

@@ -124,7 +124,8 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - Compétences et ultime de chaque perso : inspirés de jeux existants (Punishing: Gray Raven, Honkai: Star Rail,
   Wuthering Waves). Le propriétaire donne le modèle pour certains persos ; pour les autres, Claude en propose un.
   Seuls le ressenti et la mécanique s'en inspirent : noms, visuels et effets restent originaux (jeu vendu).
-- Compétences (neutre, côté, bas) : au moins 3 s de recharge, pour tous les persos, futurs compris. L'ultime ne
+- Compétences (neutre, côté, bas) : au moins 2,25 s de recharge (`kSkillCooldown`, réduite de 3 s le 11/11 à la
+  demande du propriétaire), pour tous les persos, futurs compris. L'ultime ne
   vient que de la Clash Orb.
 - Sans arme, chaque perso se bat dans un art martial (`docs/refonte/FICHES.md`, §1.7). Les ondes 1 à 5 de la planche
   servent aussi d'ondes d'impact des coups puissants ; elles partent du sol et montent.

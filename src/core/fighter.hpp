@@ -69,6 +69,8 @@ struct Fighter {
   bool moveStartedAir = false;
   int parried = 0;           // blows parried by the current held counter (MoveDef::parries)
   bool willGiven = false;    // the current move already gave its charge of will
+  bool landedHit = false;    // the current move hit a fighter (not a shield): it can be cancelled (see canCancel)
+  int cancelling = -1;       // the move being cancelled: it cannot start itself again (no spamming one blow)
   std::vector<int> hitList;  // victim * 64 + group
 
   // Combat
