@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 13.9 : **en RTX, les effets ne virent plus au blanc**.
+
+- Les gros effets (l'ultime de Hakuen surtout) blanchissaient tout l'écran en RTX, avec un grain de poussière
+  lumineuse dans le ciel : leur lumière est maintenant plafonnée, dans sa propre couleur.
+- Le décor éclairé par un effet garde ses couleurs au lieu de passer au blanc.
+- Les petites particules des effets restent telles qu'elles sont dessinées : plus de points blancs.
+- Contient la 13.8 (pixel art à la sélection et à la victoire, visages dézoomés).
+
 Version 13.8 : **le pixel art revient, les visages sont dézoomés**.
 
 - Sélection des persos : la fiche de chaque joueur montre de nouveau le perso en pixel art à côté de ses stats.

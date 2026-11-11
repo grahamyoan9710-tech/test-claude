@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 13 h 45 UTC, session claude/project-thread-ab9ctl : version 13.9 (fusion de claude/project-thread-owhcqo,
+  13.8). yoyo : en RTX, des effets « trop blancs et lumineux », « poussière lumineuse ». Cause : la lumière tracée
+  des effets dépassait 1 (ultime de Hakuen : plus de 2 sur tout l'écran), multipliée dans le décor jusqu'au blanc,
+  son grain visible dans le ciel. Composite (`render_rtx.cpp`) : `tame` plie la lumière des effets vers un plafond
+  (KNEE 0,6) dans sa couleur, gain du décor plafonné à 1,2 dans sa couleur, épaule douce (0,8) sur la couleur finale,
+  pixels pâles des effets gardés tels que dessinés. Verrou « Version et paquets » pris et libéré dans ce commit.
 - 11/11 13 h UTC, fil « nouvelle DA avec les portraits » (claude/project-thread-owhcqo) : version 13.8, à la demande de
   yoyo : pixel art (drawShowcase) de nouveau dans les fiches de la sélection et à la victoire ; visages ronds et cases
   dézoomés (drawArtDisc / drawArtBox : span 1.1 par défaut, toute la tête) ; tuile du portrait cadrée sur toute la
