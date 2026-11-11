@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 13.0 : **RTX : ombres plus douces, couleurs moins chaudes**.
+
+- Plus de faisceaux d'ombre ni de lumière dans l'air : la lune ou le soleil n'y trace plus de rayons.
+- Les ombres de la lune ou du soleil sont lisses et immobiles (plus de « poussière » pixelisée), et jamais noires.
+- Les persos ne projettent plus de longue ombre en biais sur les sols, et l'ombre d'une plateforme ne traverse plus le
+  sol en diagonale.
+- Lunes et soleils presque blancs : les arènes chaudes ne virent plus à l'orange, et les zones sans lumière sont un
+  peu moins sombres.
+
 Version 12.9 : **Hakuen marche plus calmement**.
 
 - Ses pas sont deux fois moins rapides quand elle marche : ils ne s'agitent plus pour la distance parcourue.

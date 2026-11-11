@@ -28,10 +28,10 @@ float lightGain(StageTheme theme);
 // RTX: how much the arena's own lights (its lanterns...) light the scene.
 float lampGain(StageTheme theme);
 // RTX: the arena's key light, its moon or its sun, as the backdrop was last drawn (screen pixels; off the screen when it
-// is beyond the picture): its centre, its radius (soft shadows), how far it lights, its colour times its strength.
+// is beyond the picture): where it is, how far it lights, its colour times its strength.
 struct KeyLight {
   Vec2 at;
-  float radius, reach, light[3];
+  float reach, light[3];
 };
 bool keyLight(StageTheme theme, KeyLight& out);
 }  // namespace stageart

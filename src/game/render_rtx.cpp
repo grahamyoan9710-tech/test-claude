@@ -88,38 +88,43 @@ uniform sampler2D texture0;  // the distance field
 uniform sampler2D emitT, maskT, prevT;
 uniform vec2 size;
 uniform vec3 gains;   // the light, the bounce, the noise's frame
-uniform vec4 key;     // the moon or the sun: where, how wide, how far it lights (0: none)
+uniform vec3 key;     // the moon or the sun: where, how far it lights (0: none)
 uniform vec3 keyCol;  // its colour times its strength
 out vec4 finalColor;
 const int RAYS = 32, STEPS = 64;
 const float SKIN = 2.0, FAR = 640.0, DENSITY = 0.04;  // the glows' light per pixel crossed
-const float SHADOW = 260.0;  // a shadow of the moon or the sun fades over this length behind what casts it
+// A shadow of the moon or the sun fades over this length behind what casts it; how soft its edge is.
+const float SHADOW = 260.0, SOFT = 0.06;
 vec3 emission(vec2 uv) { return texture(emitT, uv).rgb + lamp(uv) * (1.0 - texture(maskT, uv).a); }
 float solid(vec2 q) { return texture(maskT, q / size).a; }
 float sdf(vec2 q) { vec4 s = texture(texture0, q / size); return s.z > 0.5 ? distance(s.xy, q) : 1e4; }
-// The moon or the sun: one ray toward a point of its disk (another each frame: soft shadows). Lit unless a solid is in
-// the way (the nearer, the darker its shadow), dimmer far from it.
-float keyLight(vec2 p, bool inside, float n) {
-  if (key.w <= 0.0) return 0.0;
-  float a = 6.2831853 * fract(n * 7.0 + 0.3), r = key.z * sqrt(n);
-  vec2 v = key.xy + r * vec2(cos(a), sin(a)) - p, d = v / max(length(v), 1e-3);
-  float t = 0.0, lit = 1.0;
+// The moon or the sun, dimmer far from it. The floors and the solids are in the shadow of the arena's solids that
+// stand between (the nearer, the darker; never below half), its edge softened by how close the ray passes (the distance
+// field): the same every frame, no grain. Not the air: the sky is far behind, no shadow falls on it. Not the fighters'
+// shadows, nor a floor's own slant: a floor is seen in depth, each of its columns takes the light at its back edge
+// (else a shadow crossed it on a slant, a beam).
+float keyLight(vec2 p, bool inside) {
+  if (key.z <= 0.0) return 0.0;
+  float f = distance(key.xy, p) / key.z, lit = 1.0 / (1.0 + f * f);
+  if (!inside && texture(maskT, p / size).g < 0.5) return lit;
+  for (int k = 0; k < 64 && !inside && texture(maskT, p / size).g > 0.5; ++k) p.y += 2.0;
+  vec2 v = key.xy - p, d = v / max(length(v), 1e-3);
+  float t = 0.0, sh = 1.0, soft = inside ? SOFT : 5.0 * SOFT;  // (a floor's shadow edge: a wide gradient, no line)
   if (inside) {
     while (t <= SKIN && solid(p + d * t) > 0.5) t += 1.0;
     if (t > SKIN) return 0.0;
   }
-  for (int k = 0; k < STEPS && t < min(length(v), SHADOW); ++k) {
+  for (int k = 0; k < STEPS && t < min(length(v), SHADOW) && sh > 0.01; ++k) {
+    t = max(t, 1.0);
     vec2 q = p + d * t;
     if (q.x < 0.0 || q.y < 0.0 || q.x > size.x || q.y > size.y) break;
-    float dist = sdf(q);
-    if (dist < 0.75 && solid(q + d * 0.5) > 0.5) {
-      lit = smoothstep(0.0, SHADOW, t);
-      break;
-    }
-    t += max(dist, 1.0);
+    vec4 s = texture(texture0, q / size), o = texture(maskT, s.xy / size);
+    float dist = s.z > 0.5 ? distance(s.xy, q) : 1e4;
+    if (s.z > 0.5 && o.a > 0.5 && o.r < 0.5)  // (the nearest is an effect's light or a fighter: no shadow)
+      sh = min(sh, max(dist / (soft * t), mix(0.45, 1.0, smoothstep(0.0, SHADOW, t))));
+    t += max(dist, o.r > 0.5 ? 3.0 : 1.0);  // (across a fighter in strides)
   }
-  float f = distance(key.xy, p) / key.w;
-  return lit / (1.0 + f * f);
+  return lit * sh;
 }
 void main() {
   vec2 p = gl_FragCoord.xy;
@@ -159,7 +164,7 @@ void main() {
       t += max(dist, 1.0);
     }
   }
-  finalColor = vec4(sum / float(RAYS), keyLight(p, inside, n));
+  finalColor = vec4(sum / float(RAYS), keyLight(p, inside));
 }
 )";
 
@@ -217,11 +222,11 @@ void main() {
   float lum = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
   vec2 d = uv - 0.5;
   vec3 base = mix(shade.rgb, vec3(0.92, 0.9, 0.86), smoothstep(0.72, 1.0, lum)) * (1.0 - 0.3 * dot(d, d));
-  vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s) + K * mix(mix(0.3, 0.7, m.g), 1.2, s), vec3(1.6));
+  vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s) + K * mix(mix(0.25, 0.6, m.g), 0.9, s), vec3(1.6));
   k = mix(k, floor(k * 5.0 + 0.5) / 5.0, s);
-  vec3 arena = c.rgb * (base + k) + (L * extra.x + K * 0.06) * (1.0 - s);
+  vec3 arena = c.rgb * (base + k) + L * extra.x * (1.0 - s);
   arena = mix(vec3(dot(arena, vec3(0.2126, 0.7152, 0.0722))), arena, 1.15);  // richer colours, not greyed
-  vec3 F = L * gain.z + K * 0.7;  // the light on a fighter, half its colour (whites stay white)
+  vec3 F = L * gain.z + K * 0.6;  // the light on a fighter, half its colour (whites stay white)
   vec3 R = floor(min(mix(vec3(max(F.r, max(F.g, F.b))), F, 0.5), vec3(0.8)) * 5.0 + 0.4) / 5.0;
   vec3 fighter = c.rgb * (0.9 + R);
   float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
@@ -452,11 +457,11 @@ void resolve(const Match& m, const Camera2D& cam) {
   // The rays, then cleaned. Where each traced pixel was the frame before: through the world, from this camera to the
   // last one. The moon or the sun: from the screen to the traced pixels (y up, as in the targets).
   const float S = W / kW, gains[3] = {3.0f, 0.6f, float(art::frameId() % 64)};
-  float key[4] = {}, keyCol[3] = {};
+  float key[3] = {}, keyCol[3] = {};
   if (stageart::KeyLight kl; stageart::keyLight(m.stage().theme, kl)) {
     const float u = g_renderScale / S;
-    const float k[4] = {kl.at.x * u, (H - kl.at.y * g_renderScale) / S, kl.radius * u, kl.reach * u};
-    std::copy(k, k + 4, key);
+    const float k[3] = {kl.at.x * u, (H - kl.at.y * g_renderScale) / S, kl.reach * u};
+    std::copy(k, k + 3, key);
     std::copy(kl.light, kl.light + 3, keyCol);
   }
   const RenderTexture2D &now = g_gi[g_cur ^ 1], &before = g_gi[g_cur];
@@ -467,7 +472,7 @@ void resolve(const Match& m, const Camera2D& cam) {
     SetShaderValueTexture(g_trace.sh, g_trace.d, before.texture);
     SetShaderValue(g_trace.sh, g_trace.e, gains, SHADER_UNIFORM_VEC3);
     SetShaderValue(g_trace.sh, g_trace.f, &lamps, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(g_trace.sh, g_trace.g, key, SHADER_UNIFORM_VEC4);
+    SetShaderValue(g_trace.sh, g_trace.g, key, SHADER_UNIFORM_VEC3);
     SetShaderValue(g_trace.sh, g_trace.h, keyCol, SHADER_UNIFORM_VEC3);
   });
   const View v = viewOf(cam, *fr), p = g_prev.z > 0.0f ? g_prev : v;
@@ -491,7 +496,7 @@ void resolve(const Match& m, const Camera2D& cam) {
   for (const RenderTexture2D* t : {fr, light::beforeFighters()}) {
     if (!t || t->texture.width != fr->texture.width || t->texture.height != fr->texture.height) continue;
     blit(*t, g_copy);
-    const float amb = key[3] > 0.0f ? 0.8f : 1.0f;  // under a moon or a sun, its shadows darker
+    const float amb = key[2] > 0.0f ? 0.9f : 1.0f;  // under a moon or a sun, its shadows a little darker
     const float shade[4] = {0.7f * amb, 0.65f * amb, 0.6f * amb, t == fr ? 1.0f : 0.0f};
     into(*t, [&] {
       rlSetMatrixModelview(MatrixIdentity());

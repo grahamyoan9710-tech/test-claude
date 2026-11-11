@@ -12,8 +12,8 @@ struct Top {
   float back, front, gloss, rough;
 };
 struct Key {  // RTX: the moon or the sun, in its backdrop's pixels (beyond the picture: off the screen)
-  float x, y, r, reach;  // where, how wide, how far it lights
-  float light[3];        // its colour times its strength
+  float x, y, reach;  // where, how far it lights
+  float light[3];     // its colour times its strength (near white: a warm one overheated the warm arenas)
 };
 struct Arena {
   const char* key;
@@ -38,15 +38,15 @@ const Arena* arena(StageTheme theme) {
   // Their key lights: the big pale moon; the low dusk sun on the left; the sun setting behind the right cliff; the
   // small red moon behind the rain; the high day sun, up on the right.
   static const Arena kLunar{"lunaire", 26, 0, 0, 3, 48, 0.40f, false, 30, 4, 0.9f, 0.0f, 0.8f, {}, {},
-                            {935, 150, 130, 600, {0.8f, 0.76f, 0.9f}}},
+                            {935, 150, 600, {0.8f, 0.76f, 0.9f}}},
       kFrost{"givre", 18, 12, 0, 10, 31, 0.35f, false, 76, 62, 0.6f, 0.0f, 1.6f, {3, 13, 0.1f, 4.0f}, {},
-             {-250, 330, 150, 2000, {0.8f, 0.56f, 0.44f}}},
+             {-250, 330, 2000, {0.76f, 0.66f, 0.6f}}},
       kCrimson{"ecarlate", 22, 14, 0, 4, 26, 0.0f, false, 0, 0, 1.0f, 0.0f, 1.0f, {2, 27, 0.12f, 3.0f}, {},
-               {1180, 230, 120, 1600, {0.9f, 0.69f, 0.45f}}},
+               {1180, 230, 1600, {0.82f, 0.74f, 0.62f}}},
       kKurenai{"kurenai", 54, 10, 0, 30, 77, 1.0f, true, 142, 108, 1.6f, 0.6f, 0.6f, {2, 12, 0.45f, 1.6f}, {},
-               {874, 87, 38, 700, {0.45f, 0.2f, 0.17f}}},
+               {874, 87, 700, {0.38f, 0.28f, 0.27f}}},
       kClouds{"nuees", 72, 18, 10, 58, 115, 0.22f, false, 72, 4, 0.5f, 0.0f, 1.0f, {4, 31, 0.3f, 0.8f},
-              {2, 16, 0.22f, 1.0f}, {1250, -200, 200, 2500, {0.9f, 0.85f, 0.74f}}};
+              {2, 16, 0.22f, 1.0f}, {1250, -200, 2500, {0.86f, 0.84f, 0.78f}}};
   switch (theme) {
     case StageTheme::Lunar: return &kLunar;
     case StageTheme::Frost: return &kFrost;
@@ -106,8 +106,7 @@ bool keyLight(StageTheme theme, KeyLight& out) {
   const Arena* a = arena(theme);
   if (!a || a->sky.reach <= 0.0f) return false;
   const Key& s = a->sky;
-  out = {{g_sky.x + s.x * g_sky.k, g_sky.y + s.y * g_sky.k}, s.r * g_sky.k, s.reach * g_sky.k,
-         {s.light[0], s.light[1], s.light[2]}};
+  out = {{g_sky.x + s.x * g_sky.k, g_sky.y + s.y * g_sky.k}, s.reach * g_sky.k, {s.light[0], s.light[1], s.light[2]}};
   return true;
 }
 

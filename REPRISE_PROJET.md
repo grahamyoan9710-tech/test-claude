@@ -55,6 +55,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 00 h UTC, session claude/project-thread-ab9ctl : version 13.0, **ombres RTX adoucies**. yoyo (12.8) : arènes
+  trop chaudes, faisceaux de lumière trop gros, ombrage « comme de la poussière pixelisée », ombres si marquées qu'on
+  voit des faisceaux d'ombre. `keyLight` (`render_rtx.cpp`) : ni ombre ni voile de la lune dans l'air ; ombres douces
+  par le champ de distance, les mêmes à chaque image (le point tiré au hasard sur le disque faisait la poussière :
+  ne plus jamais tirer les ombres au hasard), jamais sous 0,3 ; les persos (canal rouge du masque) ne projettent plus
+  l'ombre de la lune ; un sol vu en profondeur prend la lumière de son bord arrière, colonne par colonne (sinon une
+  ombre le traverse en biais : un faisceau). Lunes et soleils presque blancs (`Key sky`, `render_stages.cpp`), teinte
+  non éclairée ×0,9, gains air 0,25 / sol 0,6 / solide 0,9 / perso 0,6. Verrou « Version et paquets » pris et libéré
+  dans ce commit.
 - 10/11 21 h 50 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 12.9 (après la 12.8 RTX,
   fusionnée). yoyo : la marche de Hakuen trop rapide → `CharacterDef::walkStride` (0.8 par défaut, 1.6 pour h01 : ses
   pas en 3/4 sont courts). Son coup de pied vers le haut (usmash, « rising crescent kick ») n'a pas l'air naturel : un
