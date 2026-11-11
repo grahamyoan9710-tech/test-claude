@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "game/fighter_art.hpp"
+#include "game/paint.hpp"
 #include "game/pixel.hpp"
 #include "game/render.hpp"
 #include "game/rtx.hpp"
@@ -250,6 +251,52 @@ void shadows(const Match& m, const Camera2D& cam) {
   }
 }
 
+// RTX: what stands over a floor or a platform's top (a fighter, the orb, a weapon) shades it with a soft oval, the same
+// every frame, a little long away from the arena's moon or sun, paler and wider the higher it is (the owner, 11/11:
+// shadows on the ground, never the dust nor the black beams of 12.8). Straight under it without a moon or a sun.
+void groundShadows(const Match& m, const Camera2D& cam) {
+  const StageTheme theme = m.stage().theme;
+  stageart::KeyLight kl{};
+  const bool key = stageart::keyLight(theme, kl);
+  auto cast = [&](Vec2 foot, float w, float h) {  // its bottom centre and its size (world)
+    const Platform* on = nullptr;
+    for (const auto& p : m.platforms)
+      if (foot.x >= p.rect.left() - 4.0f && foot.x <= p.rect.right() + 4.0f && p.rect.top() >= foot.y - 4.0f &&
+          (!on || p.rect.top() < on->rect.top()))
+        on = &p;
+    stageart::Floor fl{};
+    if (!on || !stageart::topOf(*on, theme, fl)) return;
+    const float lift = std::max(fl.walk - foot.y, 0.0f), near = 1.0f - clampf(lift / 320.0f, 0.0f, 1.0f);
+    if (near <= 0.0f) return;
+    float dir = 0.0f, len = 0.0f;  // away from the light, longer the lower it is (where the backdrop draws it)
+    if (key) {
+      const Vector2 s = GetWorldToScreen2D({foot.x, foot.y - 0.5f * h}, cam);
+      const float dx = s.x - kl.at.x, dy = std::max(s.y - kl.at.y, 0.5f * h * cam.zoom);
+      dir = dx >= 0.0f ? 1.0f : -1.0f;
+      len = 0.6f * h * clampf(std::fabs(dx) / dy, 0.0f, 1.5f);
+    }
+    // Only on this top: clipped to its band, between its ends (not on its rails, ridges...).
+    const float k = (fl.walk - fl.back) / std::max(fl.front - fl.back, 1.0f);
+    const float l = std::max(on->rect.left(), lerpf(fl.leftBack, fl.leftFront, k));
+    const float r = std::min(on->rect.right(), lerpf(fl.rightBack, fl.rightFront, k));
+    const Vector2 a = GetWorldToScreen2D({l, fl.back}, cam), b = GetWorldToScreen2D({r, fl.front}, cam);
+    // A dark core and a wide feathered rim (a plain gradient hid under the feet: it did not read as a shadow).
+    const float grow = 1.0f + 0.5f * (1.0f - near);
+    const float rx = (0.5f * len + 0.65f * w) * grow, ry = std::max(0.3f * (fl.front - fl.back), 7.0f) * grow;
+    const Color c{14, 10, 22, (unsigned char)(255.0f * 0.6f * near * near)};
+    rlDrawRenderBatchActive();
+    beginClip({a.x, a.y, b.x - a.x, b.y - a.y});
+    paint::softEllipse({foot.x + dir * 0.5f * len, fl.walk + 0.1f * (fl.front - fl.walk)}, rx, ry, c,
+                       0.6f * std::min(rx, ry));
+    rlDrawRenderBatchActive();
+    endClip();
+  };
+  for (const auto& f : m.fighters)
+    if (f.active() && f.state != FState::LedgeHang && f.state != FState::Respawn) cast(f.pos, f.width(), f.height());
+  if (m.orb.active) cast({m.orb.pos.x, m.orb.pos.y + m.orb.radius}, 2.0f * m.orb.radius, 2.0f * m.orb.radius);
+  for (const auto& it : m.items) cast(it.pos, 40.0f, 40.0f);
+}
+
 // What mirrors on a platform: with RTX, every platform top (as its matter), else the glossy floors.
 bool mirrors(const Platform& p, StageTheme theme, stageart::Floor& fl) {
   return g_rtx ? stageart::mirrorOf(p, theme, fl) : stageart::floorOf(p, theme, fl) && fl.gloss > 0.0f;
@@ -306,8 +353,9 @@ void arena(const Match& m, const Camera2D& cam, float time) {
     endLit();
   }
 
-  // 2. The fighters' shadows, away from the effects (RTX: traced).
+  // 2. The fighters' shadows, away from the effects (RTX: under all that stands over a top, from the moon or the sun).
   if (!rtx::on()) shadows(m, cam);
+  else groundShadows(m, cam);
 
   // 3. What the floors mirror behind the fighters, and what tells them from the floor.
   for (const auto& p : m.platforms) {

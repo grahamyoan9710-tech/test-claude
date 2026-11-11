@@ -8,6 +8,21 @@
 
 ## Nouveautés
 
+Version 13.6 : **les sols suivent le dessin**.
+
+- Toits Kurenai et Citadelle de Givre : le sol s'arrête au bord du dessin. Les persos ne marchent plus dans le vide
+  et ne s'accrochent plus au bord en l'air pour remonter. Le décor ne bouge pas.
+- En jeu, F1 montre aussi les zones de sol des plateformes (en bleu).
+
+Version 13.5 : **RTX : plateformes éclairées, ombres au sol**.
+
+- Le dessus des plateformes fines et des petites îles prend la lumière de la lune ou du soleil comme le sol
+  principal (elles restaient sombres).
+- Chaque perso, l'orbe et les armes posées ont une ombre douce sur le sol ou la plateforme juste sous eux, un peu
+  étirée à l'opposé de la lune ou du soleil, plus pâle et plus floue quand ils sautent. Elle est lisse et immobile :
+  ni grain, ni rayon noir.
+- Les ombres des plateformes sur le sol sont de nouveau plus marquées, toujours lisses.
+
 Version 13.4 : **un nouvel orage pour l'ultime de Hakuen**.
 
 - L'ultime « Forge de l'aube » est un vrai orage : nuages au-dessus (le haut sort de l'écran quand la caméra est
