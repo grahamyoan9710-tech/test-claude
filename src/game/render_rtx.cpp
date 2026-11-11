@@ -205,6 +205,7 @@ void main() {
 // fighters keep their colours (never dirtied): a slight neutral shade and a rim of light, one per art pixel in flat
 // bands, as on the platforms' bodies. The effects and the lanterns stay as drawn.
 const char* kCompositeFrag = R"(#version 330
+const float KNEE = 0.6;      // how strong the effects' light gets at most
 uniform sampler2D texture0;  // the light
 uniform sampler2D maskT, frameT;
 uniform vec2 size;   // the frame
@@ -213,19 +214,31 @@ uniform vec4 shade;  // the unlit arena's colour; whether this target holds the 
 uniform vec2 extra;  // the haze, the lanterns
 uniform vec3 keyCol;  // the moon's or the sun's colour times its strength
 out vec4 finalColor;
+// The effects' light, tamed: as it comes while faint, never past KNEE however strong, in its own colour (an
+// ultimate lit the whole screen white, its grain a luminous dust over the sky's stars: the owner, 11/11).
+vec3 tame(vec3 L) {
+  float l = max(L.r, max(L.g, L.b)) / KNEE;
+  return L / sqrt(1.0 + l * l);
+}
+// What would pass the screen's white bends toward it, its colour kept (else it all went white).
+vec3 shoulder(vec3 c) {
+  float m = max(c.r, max(c.g, c.b));
+  return m > 0.8 ? c * (0.8 + 0.2 * (1.0 - exp((0.8 - m) / 0.2))) / m : c;
+}
 void main() {
   vec2 g = gl_FragCoord.xy, uv = g / size;
   vec4 m = texture(maskT, uv), c = texture(frameT, uv);
   float s = step(0.5, m.a), f = step(0.5, m.r) * shade.a;
   vec4 T = texture(texture0, mix(g, (floor(g / gain.w) + 0.5) * gain.w, s) / size);
-  vec3 L = T.rgb, K = keyCol * T.a;
+  vec3 L = tame(T.rgb), K = keyCol * T.a;
   float lum = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
   vec2 d = uv - 0.5;
   vec3 base = mix(shade.rgb, vec3(0.92, 0.9, 0.86), smoothstep(0.72, 1.0, lum)) * (1.0 - 0.3 * dot(d, d));
-  vec3 k = min(L * mix(mix(gain.x, gain.y, m.g), gain.z, s) + K * mix(mix(0.25, 0.6, m.g), 0.9, s), vec3(1.6));
+  vec3 k = L * mix(mix(gain.x, gain.y, m.g), gain.z, s) + K * mix(mix(0.25, 0.6, m.g), 0.9, s);
+  k *= min(1.0, 1.2 / max(max(k.r, k.g), max(k.b, 1e-3)));  // (in its colour: clamped apart, red light went pink)
   k = mix(k, floor(k * 5.0 + 0.5) / 5.0, s);
   vec3 arena = c.rgb * (base + k) + L * extra.x * (1.0 - s);
-  arena = mix(vec3(dot(arena, vec3(0.2126, 0.7152, 0.0722))), arena, 1.15);  // richer colours, not greyed
+  arena = shoulder(mix(vec3(dot(arena, vec3(0.2126, 0.7152, 0.0722))), arena, 1.15));  // richer colours, not greyed
   vec3 F = L * gain.z + K * 0.6;  // the light on a fighter, half its colour (whites stay white)
   vec3 R = floor(min(mix(vec3(max(F.r, max(F.g, F.b))), F, 0.5), vec3(0.8)) * 5.0 + 0.4) / 5.0;
   vec3 fighter = c.rgb * (0.9 + R);
@@ -233,7 +246,8 @@ void main() {
   // A lantern's pale hot centre counts too (graded alone it turned into a brown blot); never a fighter's skin.
   float hot = max(smoothstep(0.35, 0.6, (mx - mn) / max(mx, 1e-3)), smoothstep(0.2, 0.3, c.r - c.b));
   float lamp = step(0.001, extra.y) * (1.0 - step(0.5, m.r)) * smoothstep(0.72, 0.95, mx) * hot;
-  finalColor = vec4(mix(mix(arena, fighter, f), c.rgb, max(m.b * shade.a, lamp)), c.a);
+  // An effect's own pixels, its faint ones too (lit, its sparks turned into dust), stay as drawn.
+  finalColor = vec4(mix(mix(arena, fighter, f), c.rgb, max(smoothstep(0.0, 0.25, m.b) * shade.a, lamp)), c.a);
 }
 )";
 
