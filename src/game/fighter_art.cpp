@@ -454,6 +454,7 @@ const Picture* pictureOf(const char* name) {
       if (P.tex.id != 0) {
         GenTextureMipmaps(&P.tex);
         SetTextureFilter(P.tex, TEXTURE_FILTER_TRILINEAR);
+        SetTextureWrap(P.tex, TEXTURE_WRAP_CLAMP);  // a crop running off the picture repeats no other side
         P.ok = true;
       }
     }
@@ -475,6 +476,26 @@ bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha, bo
   if (!P || alpha <= 0.0f) return P != nullptr;
   if (flipX) src.width = -src.width;
   DrawTexturePro(P->tex, src, dst, {0, 0}, 0.0f, withAlpha(tint, alpha * tint.a / 255.0f));
+  return true;
+}
+
+bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint) {
+  const Picture* P = pictureOf(name);
+  if (!P || n < 3 || tint.a == 0) return P != nullptr;
+  const float iw = 1.0f / P->tex.width, ih = 1.0f / P->tex.height;
+  float area = 0.0f;  // raylib culls the triangles turning clockwise on screen: wind them the other way
+  for (int i = 0; i < n; ++i) area += dst[i].x * dst[(i + 1) % n].y - dst[(i + 1) % n].x * dst[i].y;
+  const int f = area > 0.0f ? 1 : 0;
+  rlSetTexture(P->tex.id);
+  rlBegin(RL_QUADS);  // like DrawTexturePro: a change of mode would drop the texture; a triangle is a quad with its last corner twice
+  rlColor4ub(tint.r, tint.g, tint.b, tint.a);
+  for (int i = 1; i + 1 < n; ++i)
+    for (int k : {0, i + f, i + 1 - f, i + 1 - f}) {
+      rlTexCoord2f(src[k].x * iw, src[k].y * ih);
+      rlVertex2f(dst[k].x, dst[k].y);
+    }
+  rlEnd();
+  rlSetTexture(0);
   return true;
 }
 

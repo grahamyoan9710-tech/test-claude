@@ -8,6 +8,43 @@
 
 ## Nouveautés
 
+Version 13.8 : **le pixel art revient, les visages sont dézoomés**.
+
+- Sélection des persos : la fiche de chaque joueur montre de nouveau le perso en pixel art à côté de ses stats.
+- Écran de victoire : le gagnant est de nouveau en pixel art.
+- Tous les visages ronds (carte de combat à côté du %, petites vies, classement, « Règles & mode ») et la tuile de
+  Hakuen sont dézoomés : on voit toute la tête, cheveux compris.
+- Le portrait manga reste sur la tuile de la sélection et dans l'ultime.
+
+Version 13.7 : **nouvelle DA « Encre d'horizon » avec les portraits manga**.
+
+- Sélection des persos : grandes tuiles penchées avec le visage de chacun, une fiche par joueur avec son portrait,
+  ses stats (puissance, vitesse, poids, saut, aérien) et ses deux armes. Deux joueurs : deux grandes fiches ;
+  trois ou quatre : quatre fiches côte à côte.
+- Le bouton « Règles & mode » (en haut à droite, touche R ou Y sur la manette) ouvre le mode de jeu (chacun pour
+  soi ou en équipes), les vies, l'orbe, les armes, et pour chaque joueur : humain ou IA, sa manette ou son niveau,
+  son équipe.
+- En combat, les cartes des joueurs sont transparentes façon Smash : le visage du perso, ses vies en petits
+  visages, et le pourcentage dans une nouvelle police (Exo 2, libre de droits).
+- L'ultime montre le portrait qui sort de la bande, avec une bande des yeux au-dessus.
+- L'écran de victoire montre le grand portrait du gagnant dans sa couleur, et les visages dans le classement.
+- Seul Hakuen a déjà son portrait ; les autres persos gardent leur image pixel en attendant leur arrivée.
+
+Version 13.6 : **les sols suivent le dessin**.
+
+- Toits Kurenai et Citadelle de Givre : le sol s'arrête au bord du dessin. Les persos ne marchent plus dans le vide
+  et ne s'accrochent plus au bord en l'air pour remonter. Le décor ne bouge pas.
+- En jeu, F1 montre aussi les zones de sol des plateformes (en bleu).
+
+Version 13.5 : **RTX : plateformes éclairées, ombres au sol**.
+
+- Le dessus des plateformes fines et des petites îles prend la lumière de la lune ou du soleil comme le sol
+  principal (elles restaient sombres).
+- Chaque perso, l'orbe et les armes posées ont une ombre douce sur le sol ou la plateforme juste sous eux, un peu
+  étirée à l'opposé de la lune ou du soleil, plus pâle et plus floue quand ils sautent. Elle est lisse et immobile :
+  ni grain, ni rayon noir.
+- Les ombres des plateformes sur le sol sont de nouveau plus marquées, toujours lisses.
+
 Version 13.4 : **un nouvel orage pour l'ultime de Hakuen**.
 
 - L'ultime « Forge de l'aube » est un vrai orage : nuages au-dessus (le haut sort de l'écran quand la caméra est

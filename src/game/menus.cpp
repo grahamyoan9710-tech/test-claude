@@ -1,4 +1,7 @@
-// Character select and stage select screens (« Ligne d'horizon »).
+// Character select (« Encre d'horizon ») and stage select screens.
+#include <array>
+#include <string>
+
 #include "game/app.hpp"
 #include "game/fighter_art.hpp"
 #include "game/fx.hpp"
@@ -8,62 +11,148 @@
 
 namespace {
 int cardCount(bool training) { return training ? 2 : 4; }
-constexpr FontKind kT = FontKind::Title;
+constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui;
+constexpr Color kPanel{18, 26, 62, 255}, kPanelDeep{12, 19, 48, 255}, kGoldLight{255, 200, 112, 255};
+constexpr Color kNoFighter{42, 53, 88, 255};  // "?": a fighter drawn at random
 
-// The fighters stand big on the horizon on both sides of a "VS" (in a team battle, red on the left against blue on
-// the right), the first of each side closest to the middle, each with its sheet under the line; the roster above
-// the "VS", the rules under it. A free card waits as a small "join" chip at the bottom left.
-float g_slotX[4] = {210, 1070, 210, 1070};  // set each frame by App::layoutCss
-float g_slotW[4] = {380, 380, 380, 380};
-int g_slotSide[4] = {0, 1, 0, 1};
-bool g_slotShown[4] = {true, true, false, false};  // on the horizon (false: a join chip)
-float g_chipX[4] = {};
-constexpr float kHorizonY = 469, kSheetY = 484, kSheetH = 170, kChipW = 170;
+// The roster on top, tall tiles slanted like the hits, each fighter's face; under it a sheet per player, its portrait
+// standing out of it, its stats: two wide sheets, or four narrow ones past two players. The mode, the rules and who
+// plays (a human or the computer) are on the « Règles & mode » sheet, behind the button top right.
+Rectangle g_panel[4];     // each card's sheet, set each frame by App::layoutCss (width 0: not on screen)
+Rectangle g_chip[4];      // its player chip (width 0: a free card, its whole sheet joins it)
+Rectangle g_rulesBtn;     // the « Règles & mode » button
+bool g_wide = true;       // two wide sheets
+std::string g_rulesLine;  // what the button says of the rules
+constexpr float kTileW = 104, kTileH = 152, kTileGap = 6, kTileY = 92, kTileSlant = kTileH * 0.1405f;  // tan 8°
 
-Rectangle sheetRect(int col) {
-  const float w = g_slotW[col] - 12.0f;
-  return {g_slotX[col] - w * 0.5f, kSheetY, w, kSheetH};
-}
-bool wideSheet(int col) { return g_slotW[col] >= 300.0f; }  // alone on its side
-// The rules under the "VS": lives, orb, weapons, mode.
-Rectangle ruleRect(int i) { return {430.0f + (i % 2) * 213.0f, 496.0f + (i / 2) * 48.0f, 207, 40}; }
-// Fields: the rules (row -1), then for each player the type (0), the fighter (1: the big picture), the device or
-// level (2) and, in a team battle, the team chip (3). A free card has only its chip (row 0).
-Rectangle fieldRect(int col, int row) {
-  if (row < 0) return ruleRect(std::clamp(col, 0, 3));
-  if (!g_slotShown[col]) return row == 0 ? Rectangle{g_chipX[col], kScreenH - 44.0f, kChipW, 30} : Rectangle{};
-  const float w = g_slotW[col];
-  const Rectangle sh = sheetRect(col);
-  if (row == 1) return {g_slotX[col] - w * 0.5f + 6, 150, w - 12, kHorizonY - 150};
-  if (row == 3) return {g_slotX[col] + w * 0.5f - 98, 156, 86, 26};
-  if (wideSheet(col)) {  // the type and the device side by side, at the bottom of the sheet
-    const float hw = sh.width * 0.5f - 3;
-    return {row == 0 ? sh.x : sh.x + hw + 6, sh.y + sh.height - 30, hw, 30};
-  }
-  return {sh.x, sh.y + sh.height - (row == 0 ? 64.0f : 30.0f), sh.width, 30};  // one above the other
-}
-// The roster above the "VS": rows of 6, "?" (a fighter drawn at random) last.
+// Roster tile i, as the box of its slanted shape (ui::slanted with kTileSlant); "?" (a fighter at random) last.
 Rectangle rosterRect(int i) {
   const int n = int(roster().size()) + 1;
-  constexpr int perRow = 6;
-  constexpr float s = 70, gap = 6;
-  const int row = i / perRow, col = i % perRow, inRow = std::min(perRow, n - row * perRow);
-  return {kScreenW * 0.5f - (inRow * s + (inRow - 1) * gap) * 0.5f + col * (s + gap), 76.0f + row * (s + gap), s, s};
+  const float w = std::min(kTileW, (kScreenW - 76.0f - kTileSlant - (n - 1) * kTileGap) / n);
+  const float x0 = (kScreenW - (n * w + (n - 1) * kTileGap + kTileSlant)) * 0.5f;
+  return {x0 + i * (w + kTileGap), kTileY, w + kTileSlant, kTileH};
 }
-// The character select's sky at p (drawn by drawCss): what shows through the cut corners of a tile.
-constexpr Color kSkyTop{5, 10, 30, 255}, kSkyLow{10, 22, 56, 255};
-constexpr Color kAzureLight{46, 104, 214, 255}, kAmberLight{224, 122, 31, 255};
-constexpr Vector2 kLightL{200, 420}, kLightR{1080, 420};
-constexpr float kLightR0 = 470;
-Color cssSky(Vector2 p) {
-  Color c = mixColor(kSkyTop, kSkyLow, std::clamp(p.y / 461.0f, 0.0f, 1.0f));
-  auto light = [&](Vector2 at, Color col, float a) {  // ui::glow: two radial gradients
-    const float d = std::hypot(p.x - at.x, p.y - at.y);
-    c = mixColor(c, col, a * (0.55f * std::max(0.0f, 1.0f - d / kLightR0) + 0.45f * std::max(0.0f, 1.0f - d * 2.0f / kLightR0)));
+// The strip of a roster tile between the fractions f0 and f1 of its height.
+void tileBand(Rectangle r, float f0, float f1, Color c0, Color c1) {
+  const float w = r.width - kTileSlant, y0 = r.y + r.height * f0, y1 = r.y + r.height * f1;
+  const float l0 = r.x + kTileSlant * (1.0f - f0), l1 = r.x + kTileSlant * (1.0f - f1);
+  ui::quad({l0, y0}, {l0 + w, y0}, {l1 + w, y1}, {l1, y1}, c0, c0, c1, c1);
+}
+// Fields on the screen: the button (row -1); each card's sheet (1: its fighter) and its chip (0: who plays it; a free
+// card's whole sheet).
+Rectangle fieldRect(int col, int row) {
+  if (row < 0) return g_rulesBtn;
+  return row == 0 && g_chip[col].width > 0.0f ? g_chip[col] : g_panel[col];
+}
+
+// The « Règles & mode » sheet: the mode and the rules on the left, who plays on the right.
+constexpr Rectangle kSheet{190, 64, 900, 592};
+constexpr float kLeftX = 224, kLeftW = 320, kRightX = 576, kRightW = 480, kColY = 196;
+Rectangle modeRect() { return {kLeftX, kColY + 30, kLeftW, 92}; }
+Rectangle ruleRowRect(int i) { return {kLeftX, kColY + 154 + i * 62.0f, kLeftW, 48}; }  // lives, orb, weapons
+Rectangle playerRowRect(int col) { return {kRightX, kColY + 28 + col * 74.0f, kRightW, 64}; }
+Rectangle closeRect() {
+  const float w = 22 + ui::promptWidth("ÉCHAP", ui::Btn::B, 24) + textWidth("Fermer", 14);
+  return {kSheet.x + kSheet.width - 26 - w, kSheet.y + 30, w, 36};
+}
+Rectangle validateRect() {
+  const float w = 40 + ui::promptWidth("ENTRÉE", ui::Btn::Start, 24) + textWidth("VALIDER", 21, kT);
+  return {kSheet.x + kSheet.width - 34 - w, kSheet.y + kSheet.height - 70, w, 44};
+}
+// Field (col, row) of the sheet: the mode (col 3) and the rules (lives, orb, weapons) on row -1; a player's type (0),
+// device or level (2) and team (3).
+Rectangle sheetField(int col, int row, bool teams) {
+  if (row < 0) return col == 3 ? modeRect() : ruleRowRect(col);
+  const Rectangle r = playerRowRect(col);
+  const float tx = r.x + 104 + (teams ? 0.0f : 96.0f), dx = tx + 140, y = r.y + r.height * 0.5f - 18;
+  if (row == 0) return {tx, y, 132, 36};
+  if (row == 3) return {r.x + r.width - 72, y, 62, 36};
+  return {dx, y, r.x + r.width - 10 - (teams ? 80.0f : 0.0f) - dx, 36};
+}
+// The type toggle's parts: HUMAIN, IA, nobody (a cross), and the type each one sets.
+Rectangle toggleSeg(Rectangle f, int k) {
+  const float x[3] = {0, 66, 102}, w[3] = {66, 36, 30};
+  return {f.x + x[k], f.y, w[k], f.height};
+}
+constexpr int kSegType[3] = {1, 2, 0};
+struct SheetItem {
+  int col, row;
+};
+// The sheet's fields in keyboard / gamepad order. Training: player 1's device only (the dummy is set in the pause).
+int sheetItems(bool training, const std::array<SlotSetup, 4>& s, bool teams, SheetItem* out) {
+  int n = 0;
+  if (training) {
+    out[n++] = {0, 2};
+    return n;
+  }
+  for (int c : {3, 0, 1, 2}) out[n++] = {c, -1};
+  for (int c = 0; c < 4; ++c) {
+    out[n++] = {c, 0};
+    if (s[c].type != 0) out[n++] = {c, 2};
+    if (s[c].type != 0 && teams) out[n++] = {c, 3};
+  }
+  return n;
+}
+
+// A fighter's five bars, 1 to 10, on fixed ranges around the roster's own: power (each move's hardest hit, on
+// average), speed (running), weight, jump (height of a full jump), air (drift).
+constexpr const char* kStatName[5][2] = {
+    {"PUISSANCE", "PUI"}, {"VITESSE", "VIT"}, {"POIDS", "POI"}, {"SAUT", "SAU"}, {"AÉRIEN", "AIR"}};
+std::array<int, 5> statBars(const CharacterDef& d) {
+  float sum = 0.0f;
+  int n = 0;
+  for (int m = Jab; m <= DSpecial; ++m) {
+    float best = 0.0f;
+    for (const HitboxDef& h : d.moves[m].hitboxes) best = std::max(best, h.damage);
+    if (best > 0.0f) sum += best, ++n;
+  }
+  auto bar = [](float v, float lo, float hi) {
+    return std::clamp(int(std::lround(1.0f + 9.0f * (v - lo) / (hi - lo))), 1, 10);
   };
-  light(kLightL, kAzureLight, 0.55f);
-  light(kLightR, kAmberLight, 0.45f);
-  return c;
+  return {bar(n > 0 ? sum / n : 0.0f, 8.5f, 12.0f), bar(d.runSpeed, 7.5f, 10.5f), bar(d.weight, 75.0f, 125.0f),
+          bar(d.jumpVel * d.jumpVel / (2.0f * d.gravity), 170.0f, 215.0f), bar(d.airSpeed, 4.5f, 6.0f)};
+}
+
+const char* whoOf(bool training, const SlotSetup& s, int col) {
+  return training ? (col == 0 ? "J1" : "CIBLE") : s.type == 2 ? "CPU" : TextFormat("J%d", col + 1);
+}
+std::string howOf(bool training, const SlotSetup& s, int col) {
+  if (training) return col == 0 ? std::string("VOUS · ") + deviceName(s.device) : "MANNEQUIN · RÉGLABLE EN PAUSE";
+  if (s.type == 2)
+    return s.level >= kMaxCpuLevel ? "ORDINATEUR · NIV. 10 x2" : "ORDINATEUR · NIVEAU " + std::to_string(s.level);
+  return std::string("HUMAIN · ") + deviceName(s.device);
+}
+
+// The manga screentone: a dot every 6 px.
+void screentone(Rectangle r, Color c) {
+  for (float y = r.y + 3; y < r.y + r.height; y += 6)
+    for (float x = r.x + 3; x < r.x + r.width; x += 6) DrawRectangleRec({x - 0.8f, y - 0.8f, 1.6f, 1.6f}, c);
+}
+// The « Règles & mode » emblem: a gold gear around the night, the logo's spark in it.
+void emblem(Vector2 c, float r, float t) {
+  const float k = r / 32.0f;
+  const Color light{255, 224, 163, 255}, deep = ui::kGoldDeep;
+  for (int i = 0; i < 8; ++i)  // the teeth, lit from the top left
+    DrawRectanglePro({c.x, c.y, 7 * k, 10 * k}, {3.5f * k, 30 * k}, i * 45.0f,
+                     mixColor(light, deep, 0.5f - 0.5f * std::cos((i * 45.0f - 315.0f) * kPi / 180.0f)));
+  DrawCircleV(c, 22 * k, deep);
+  DrawCircleV({c.x - k, c.y - k}, 21 * k, mixColor(light, ui::kGold, 0.5f));
+  DrawCircleV(c, 18 * k, {11, 18, 48, 255});
+  DrawRing(c, 17.2f * k, 18.7f * k, 0, 360, 48, withAlpha(ui::kBlue, 0.55f));
+  ui::glow(c, 14 * k, withAlpha(WHITE, 0.35f));
+  ui::spark(c, 17 * k * (0.96f + 0.04f * std::sin(t * 3.0f)), 0.0f, WHITE);
+}
+void dashed(Rectangle r, Color c) {
+  for (float x = r.x; x < r.x + r.width; x += 12) {
+    const float w = std::min(7.0f, r.x + r.width - x);
+    DrawRectangleRec({x, r.y, w, 2}, c);
+    DrawRectangleRec({x, r.y + r.height - 2, w, 2}, c);
+  }
+  for (float y = r.y; y < r.y + r.height; y += 12) {
+    const float h = std::min(7.0f, r.y + r.height - y);
+    DrawRectangleRec({r.x, y, 2, h}, c);
+    DrawRectangleRec({r.x + r.width - 2, y, 2, h}, c);
+  }
 }
 ui::Hint cssGo(bool training) { return {"ENTRÉE", ui::Btn::Start, training ? "S'ENTRAÎNER !" : "COMBATTRE !"}; }
 
@@ -178,7 +267,7 @@ bool App::padJoins() {
     if (assigned || col < 0) continue;
     assignDevice(col, dev);
     joinedAt_[col] = frames_;
-    cssCur_[dev] = {true, col, 1, 0};  // the newcomer picks a fighter right away
+    cssCur_[dev] = {true, col, 1};  // the newcomer picks a fighter right away
     audio_.play(Sfx::MenuSelect);
     return true;
   }
@@ -187,26 +276,36 @@ bool App::padJoins() {
 
 void App::layoutCss() const {
   const int cols = cardCount(training_);
-  const bool teams = teamBattle();
-  int count[2] = {0, 0}, rank[4] = {}, shown = 0;
-  float chipX = 28;
-  for (int i = 0; i < 4; ++i) {
-    g_slotShown[i] = i < cols && (training_ || slots_[i].type != 0);
-    if (!g_slotShown[i]) {
-      g_chipX[i] = chipX;
-      if (i < cols) chipX += kChipW + 8;
-      continue;
-    }
-    g_slotSide[i] = teams ? slotTeam(i) : shown % 2;  // one on the left, the next on the right...
-    ++shown;
-    rank[i] = count[g_slotSide[i]]++;
+  int joined[4], nj = 0;
+  for (int i = 0; i < cols; ++i)
+    if (training_ || slots_[i].type != 0) joined[nj++] = i;
+  g_wide = nj <= 2;
+  for (Rectangle& p : g_panel) p = {};
+  if (g_wide) {  // the players, then free cards, up to two sheets
+    int order[2], k = 0;
+    for (int j = 0; j < nj; ++j) order[k++] = joined[j];
+    for (int i = 0; i < cols && k < 2; ++i)
+      if (!training_ && slots_[i].type == 0) order[k++] = i;
+    for (int j = 0; j < k; ++j) g_panel[order[j]] = {j == 0 ? 40.0f : 680.0f, 318, 560, 336};
+  } else {
+    for (int i = 0; i < cols; ++i) g_panel[i] = {40.0f + i * 300.0f, 300, 290, 360};
   }
   for (int i = 0; i < 4; ++i) {
-    if (!g_slotShown[i]) continue;
-    const float w = 380.0f / std::max(1, count[g_slotSide[i]]);
-    g_slotW[i] = w;
-    g_slotX[i] = g_slotSide[i] == 0 ? 400.0f - (rank[i] + 0.5f) * w : 880.0f + (rank[i] + 0.5f) * w;
+    const Rectangle p = g_panel[i];
+    g_chip[i] = {};
+    if (p.width <= 0.0f || !(training_ || slots_[i].type != 0)) continue;
+    const char* who = whoOf(training_, slots_[i], i);
+    if (g_wide) g_chip[i] = {p.x + (p.x < kScreenW * 0.5f ? 282.0f : 26.0f), 340, textWidth(who, 18, kT) + 22, 24};
+    else g_chip[i] = {p.x + 16, 518, textWidth(who, 15, kT) + 16, 20};
   }
+  const Settings& st = settings();
+  g_rulesLine = training_ ? std::string("Entraînement · ") + deviceName(slots_[0].device)
+                          : std::string(teamBattle() ? "En équipes" : "Chacun pour soi") + " · " +
+                                std::to_string(st.stocks) + (st.stocks > 1 ? " vies" : " vie") +
+                                (st.items ? " · Orbe" : " · Sans orbe") + (st.weapons ? " · Armes" : " · Sans armes");
+  const float w = 68 + std::max(textWidth("RÈGLES & MODE", 20, kT), textWidth(g_rulesLine.c_str(), 13)) + 14 +
+                  ui::promptWidth("R", ui::Btn::Y, 24) + 16;
+  g_rulesBtn = {kScreenW - 40 - w, 14, w, 60};
 }
 
 int App::ownedCard(int device) const {
@@ -232,9 +331,73 @@ void App::stepFighter(int col, int delta) {
 
 void App::updateCss(const MenuNav& nav) {
   layoutCss();
+  bool sheetKey = IsKeyPressed(KEY_R);  // the « Règles & mode » sheet: R, Y on any gamepad, or its button
+  for (int p = 0; p < kMaxPads; ++p) sheetKey = sheetKey || padPressed(p, kPadY);
+
+  if (rulesOpen_) {  // the sheet takes every device: up / down a field, left / right (or A, X) its value
+    SheetItem items[16];
+    const bool teams = teamBattle();
+    const int n = sheetItems(training_, slots_, teams, items);
+    rulesSel_ = std::clamp(rulesSel_, 0, n - 1);
+    const bool outside = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !ui::hovered(kSheet);
+    if (sheetKey || nav.start || (nav.back && !nav.prev) || ui::clicked(closeRect()) || ui::clicked(validateRect()) ||
+        outside) {
+      rulesOpen_ = false;
+      audio_.play(Sfx::MenuBack);
+      return;
+    }
+    if (nav.up || nav.down) {
+      rulesSel_ = (rulesSel_ + (nav.down ? 1 : n - 1)) % n;
+      audio_.play(Sfx::MenuMove, 0.6f);
+    }
+    const SheetItem f = items[rulesSel_];
+    const int dx = (nav.right ? 1 : 0) - (nav.left ? 1 : 0);
+    if (f.row < 0 && f.col == 3) {  // the mode: left, each for themselves; right, teams
+      if ((dx < 0 && teams) || (dx > 0 && !teams) || nav.confirm) changeField(3, -1, 1, nav.device);
+    } else {
+      if (dx != 0) changeField(f.col, f.row, dx, nav.device);
+      if (nav.confirm) changeField(f.col, f.row, 1, nav.device);
+      if (nav.prev) changeField(f.col, f.row, -1, nav.device);
+    }
+    // The mouse: the field under it is focused; a click on its left half goes back (the toggle: the part clicked)
+    const bool lc = IsMouseButtonPressed(MOUSE_BUTTON_LEFT), rc = IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
+    for (int i = 0; i < n; ++i) {
+      const SheetItem& it = items[i];
+      const Rectangle r = sheetField(it.col, it.row, teams);
+      if (!ui::hovered(r)) continue;
+      if (ui::mouseMoved() || lc || rc) rulesSel_ = i;
+      if (!lc && !rc) break;
+      const bool leftHalf = GetMousePosition().x < r.x + r.width * 0.5f;
+      const int type = slots_[it.col].type;
+      if (it.row < 0 && it.col == 3) {
+        if (leftHalf == teams) changeField(3, -1, 1);
+      } else if (it.row == 0 && lc) {
+        for (int k = 0; k < 3; ++k)
+          if (ui::hovered(toggleSeg(r, k)) && kSegType[k] != type)
+            changeField(it.col, 0, (kSegType[k] - type + 3) % 3 == 1 ? 1 : -1);
+      } else {
+        changeField(it.col, it.row, rc || (leftHalf && it.row != 3) ? -1 : 1);
+      }
+      break;
+    }
+    return;
+  }
+  if (sheetKey || ui::clicked(g_rulesBtn)) {
+    rulesOpen_ = true;
+    rulesSel_ = 0;
+    audio_.play(Sfx::MenuSelect);
+    return;
+  }
   if (padJoins()) return;  // that press is used up
   const int cols = cardCount(training_);
-  const int minRow = training_ ? 0 : -1;
+  auto shown = [&](int col) { return g_panel[col].width > 0.0f; };
+  auto nextCard = [&](int col, int dir) {  // the next card on screen that way
+    for (int k = 1; k <= cols; ++k) {
+      const int c = ((col + dir * k) % cols + cols) % cols;
+      if (shown(c)) return c;
+    }
+    return col;
+  };
 
   // Each device moves its own cursor. A keyboard that plays nobody while the other keyboard plays (one player
   // using either set of keys) drives that player's cursor; a gamepad that plays nobody joins with A (padJoins).
@@ -249,7 +412,7 @@ void App::updateCss(const MenuNav& nav) {
       if (col >= 0) {
         assignDevice(col, d);
         joinedAt_[col] = frames_;
-        cssCur_[d] = {true, col, 1, 0};
+        cssCur_[d] = {true, col, 1};
         audio_.play(Sfx::MenuSelect);
         continue;
       }
@@ -262,69 +425,62 @@ void App::updateCss(const MenuNav& nav) {
     if (e >= kPad1 && ownedCard(e) < 0) continue;
     CssCursor& c = cssCur_[e];
     if (!c.on) {  // the first press shows the cursor, on the device's own card
-      c = {true, std::max(0, ownedCard(e)), 1, 0};
+      c = {true, std::max(0, ownedCard(e)), 1};
       audio_.play(Sfx::MenuMove, 0.6f);
       continue;
     }
     c.col = std::clamp(c.col, 0, cols - 1);
-    // Rows from the top: the team chip (team battles), the fighter, the type, the device / level, the rules.
-    const bool teamRow = teamBattle();
-    const int order[5] = {3, 1, 0, 2, -1};
-    auto valid = [&](int i) {  // a free card has only its chip (the type)
-      return order[i] >= minRow && (teamRow || order[i] != 3) && (g_slotShown[c.col] || order[i] <= 0);
-    };
-    int at = 0;
-    while (at < 5 && order[at] != c.row) ++at;
-    if (at == 5 || !valid(at)) at = valid(1) ? 1 : 2;  // back on the fighter (a free card: its chip)
+    if (!shown(c.col)) c.col = nextCard(c.col, 1);
+    // Rows from the top: the « Règles & mode » button, the fighter (its sheet), the player chip; a free card's
+    // sheet is its chip.
+    const bool joined = g_chip[c.col].width > 0.0f;
+    if (c.row == 1 && !joined) c.row = 0;
     bool moved = false;
-    if (n.up) {
-      int i = at - 1;
-      while (i >= 0 && !valid(i)) --i;
-      if (i >= 0) at = i, moved = true;
-    }
-    if (n.down) {
-      int i = at + 1;
-      while (i < 5 && !valid(i)) ++i;
-      if (i < 5) at = i, moved = true;
-    }
-    c.row = order[at];
+    if (n.up && c.row != -1) c.row = c.row == 0 && joined ? 1 : -1, moved = true;
+    else if (n.down && c.row != 0) c.row = c.row == -1 && joined ? 1 : 0, moved = true;
     const int dx = (n.right ? 1 : 0) - (n.left ? 1 : 0);
-    // On your own card (or a CPU's), left / right change the fighter and the device / level; the top row (the
-    // type) moves to another card.
-    const bool pick = (c.row == 1 || c.row == 2) && canPick(c.col, e) && (c.row == 1 || !training_ || c.col == 0);
-    if (dx != 0) {
-      if (c.row < 0) c.rule = (c.rule + dx + 4) % 4, moved = true;
-      else if (pick) changeField(c.col, c.row, dx, e);
-      else c.col = (c.col + dx + cols) % cols, moved = true;
+    // On your own fighter (or a CPU's), left / right change it; on a chip they move to another card.
+    const bool pick = c.row == 1 && canPick(c.col, e);
+    if (dx != 0 && c.row >= 0) {
+      if (pick) changeField(c.col, 1, dx, e);
+      else c.col = nextCard(c.col, dx), moved = true;
     }
     if (moved) audio_.play(Sfx::MenuMove, 0.6f);
-    const int fieldCol = c.row < 0 ? c.rule : c.col;
     if (n.confirm) {
-      if (pick && c.row == 1) {  // the fighter is chosen: the announcer calls the name
+      if (c.row < 0) {
+        rulesOpen_ = true;
+        rulesSel_ = 0;
+        audio_.play(Sfx::MenuSelect);
+        return;
+      }
+      if (pick) {  // the fighter is chosen: the announcer calls the name
         audio_.play(Sfx::MenuSelect, 0.7f);
         const SlotSetup& sl = slots_[c.col];
         audio_.voice(sl.random ? "random" : voiceKey(roster()[sl.character].name).c_str());
+      } else if (c.row == 0) {
+        changeField(c.col, 0, 1, e);
       }
-      else if (c.row != 1 || (!training_ && slots_[c.col].type == 0)) changeField(fieldCol, c.row, 1, e);
     }
-    if (n.prev && (c.row != 1 || pick)) changeField(fieldCol, c.row, -1, e);
+    if (n.prev && (c.row == 0 || pick)) changeField(c.col, c.row, -1, e);
   }
 
-  // Mouse: fields (the arrows of a fighter go back or forth), roster tiles, ready banner
-  const int lastRow = teamBattle() ? 3 : 2;
-  for (int row = minRow; row <= lastRow; ++row)
-    for (int col = 0; col < (row < 0 ? 4 : cols); ++col) {
-      const Rectangle f = fieldRect(col, row);
-      if (!ui::hovered(f)) continue;
-      cssRow_ = row;
-      if (row < 0) rulesCol_ = col;
-      else cssCol_ = col;
-      int delta = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ? 1 : IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) ? -1 : 0;
-      // The left arrow goes back: the left part of a fighter, the left half of a selector (type, level, rules).
-      if (delta != 0 && row == 1 && GetMousePosition().x < f.x + 48) delta = -1;
-      if (delta != 0 && row != 1 && row != 3 && GetMousePosition().x < f.x + f.width * 0.5f) delta = -1;
-      if (delta != 0) changeField(col, row, delta);
+  // Mouse: a sheet picks the card the roster tiles go to (its edges: the fighter before / after); a chip changes who
+  // plays it; a free sheet joins it (a right click: a CPU).
+  const bool lc = IsMouseButtonPressed(MOUSE_BUTTON_LEFT), rc = IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
+  for (int col = 0; col < cols; ++col) {
+    const Rectangle p = g_panel[col], chip = g_chip[col];
+    if (!shown(col) || !ui::hovered(p)) continue;
+    cssCol_ = col;
+    cssRow_ = 1;
+    if (!lc && !rc) continue;
+    if (chip.width <= 0.0f || ui::hovered(chip)) {
+      changeField(col, 0, lc ? 1 : -1);
+    } else {
+      const float mx = GetMousePosition().x;
+      const int step = mx < p.x + 48 ? -1 : mx > p.x + p.width - 48 ? 1 : 0;
+      if (step != 0) changeField(col, 1, step);
     }
+  }
   const int nTiles = int(roster().size()) + 1;
   for (int i = 0; i < nTiles; ++i)
     if (ui::clicked(rosterRect(i))) {
@@ -362,261 +518,426 @@ void App::drawCss() {
   const bool teamsOn = teamBattle(), ready = readyToFight();
   const Settings& st = settings();
   auto tint = [&](int col) { return teamsOn ? teamColor(slotTeam(col)) : portColor(col); };
-  auto whoOf = [&](int col) {
-    return training_ ? (col == 0 ? "J1" : "CIBLE") : slots_[col].type == 2 ? "CPU" : TextFormat("J%d", col + 1);
+  auto paletteOf = [&](int col) {  // the second colours when an earlier card plays the same fighter
+    int pal = 0;
+    for (int j = 0; j < col; ++j)
+      if (g_chip[j].width > 0.0f && !slots_[j].random && slots_[j].character == slots_[col].character) pal = 1 - pal;
+    return pal;
   };
 
-  // The night over the horizon, azure light on the left, amber on the right; the line, a glow under it.
-  DrawRectangleGradientV(0, 0, kScreenW, 461, kSkyTop, kSkyLow);
-  DrawRectangleGradientV(0, 461, kScreenW, 14, kSkyLow, ui::kInk);
-  DrawRectangleGradientV(0, 475, kScreenW, kScreenH - 475, ui::kInk, {4, 7, 15, 255});
-  ui::glow(kLightL, kLightR0, withAlpha(kAzureLight, 0.55f));
-  ui::glow(kLightR, kLightR0, withAlpha(kAmberLight, 0.45f));
-  ui::horizonLine(0, kScreenW, kHorizonY, 3.0f);
-  DrawRectangleGradientV(0, int(kHorizonY) + 2, kScreenW, 80, withAlpha(WHITE, 0.06f), withAlpha(WHITE, 0.0f));
-  // The number of each side's first fighter, huge and faint behind it
-  for (int k = 0; k < 2; ++k)
-    for (int col = 0; col < cols; ++col) {
-      if (!g_slotShown[col] || g_slotSide[col] != k) continue;
-      const SlotSetup& s = slots_[col];
-      const std::string num = s.random ? std::string("?") : r[s.character].id.substr(1);
-      const float size = 325.0f, w = textWidth(num.c_str(), size, kT);
-      drawText(num.c_str(), k == 0 ? 30.0f : kScreenW - 30.0f - w, capsY(250, size, kT), size,
-               withAlpha(tint(col), k == 0 ? 0.13f : 0.12f), kT);
-      break;
-    }
-  const char* title = training_ ? "ENTRAÎNEMENT" : teamsOn ? "COMBAT EN ÉQUIPES" : "CHOIX DES COMBATTANTS";
-  drawText(title, (kScreenW - textWidth(title, 35, kT)) * 0.5f, capsY(36, 35, kT), 35, ui::kCream, kT);
+  // The night, azure light on the left and amber on the right, speed lines slanted like the hits, a screentone band
+  constexpr Color kSkyTop{17, 27, 69, 255}, kSkyMid{10, 17, 49, 255};
+  DrawRectangleGradientV(0, 0, kScreenW, 331, kSkyTop, kSkyMid);
+  DrawRectangleGradientV(0, 331, kScreenW, kScreenH - 331, kSkyMid, ui::kInk);
+  ui::glow({150, 470}, 410, withAlpha(ui::kBlue, 0.3f));
+  ui::glow({1130, 470}, 410, withAlpha(ui::kGold, 0.24f));
+  for (float x = 0; x < kScreenW + 130; x += 23) DrawLineEx({x, 0}, {x - 127, float(kScreenH)}, 2, withAlpha(WHITE, 0.035f));
+  screentone({0, 80, float(kScreenW), 186}, withAlpha(ui::kSky, 0.09f));
 
-  // The bottom bar first: its shade must not darken the sheets above it
+  // The bottom bar first: its shade must not darken the sheets above it. Its left: what is missing, or a tip.
+  bool cpu10 = false;
+  for (int col = 0; col < cols; ++col) cpu10 = cpu10 || (slots_[col].type == 2 && slots_[col].level >= kMaxCpuLevel);
+  const char* tip = training_ ? "Vies infinies  ·  mannequin réglable en pause"
+                    : !ready ? (activeSlots() >= 2 ? "Il faut un combattant dans chaque équipe." : "Il faut au moins 2 combattants.")
+                    : !st.items ? "Sans orbe, personne ne pourra lancer son ultime."
+                    : cpu10 ? "Niveau 10 : l'ordinateur frappe deux fois plus fort."
+                    : st.weapons ? "Tout le monde commence à mains nues." : "Sans armes : tout le combat à mains nues.";
   const ui::Hint go = cssGo(training_);
-  ui::footer({{"FLÈCHES", ui::Btn::Move, "Naviguer"}, {"ESPACE", ui::Btn::A, "Modifier"}, {"K", ui::Btn::X, "Précédent"},
+  ui::footer({{"FLÈCHES", ui::Btn::Move, "Naviguer"}, {"ESPACE", ui::Btn::A, "Choisir"}, {"R", ui::Btn::Y, "Règles & mode"},
               {"ÉCHAP", ui::Btn::B, "Retour"}},
-             training_ ? "Vies infinies  ·  mannequin réglable en pause" : nullptr, &go, ready);
+             nullptr, &go, ready);
+  drawText(tip, 28, kScreenH - 33, 16, ready ? ui::kMuted : kGoldLight);
 
   // A field is focused when a player's cursor is on it, or under the mouse.
   auto cursorOn = [&](int col, int row) {
-    for (int d = 0; d < kDeviceCount; ++d) {
-      const CssCursor& c = cssCur_[d];
-      if (c.on && c.row == row && (row < 0 ? c.rule : std::min(c.col, cols - 1)) == col) return true;
-    }
+    for (const CssCursor& c : cssCur_)
+      if (c.on && c.row == row && (row < 0 || c.col == col)) return true;
     return false;
   };
   auto focusOn = [&](int col, int row) { return cursorOn(col, row) || ui::hovered(fieldRect(col, row)); };
 
-  // The roster: each face on the night, its colour along the bottom, its number; who picked it in the corner.
-  constexpr float cut = 8.0f;
+  // The title; the « Règles & mode » button, its emblem and what the rules are now
+  const char* title = training_ ? "ENTRAÎNEMENT" : teamsOn ? "COMBAT EN ÉQUIPES" : "CHOIX DES COMBATTANTS";
+  ui::tracked(title, 40, capsY(36, 30, kT), 30, 0.05f, ui::kCream);
+  ui::horizonLine(40, 340, 60, 3.0f);
+  {
+    const Rectangle b = g_rulesBtn;
+    const bool hot = focusOn(0, -1);
+    for (int k = 2; k >= 1; --k)  // a soft gold halo
+      ui::roundRect(ui::grow(b, 3.0f * k), 30 + 3.0f * k, withAlpha(ui::kGold, hot ? 0.09f : 0.05f), withAlpha(ui::kGold, hot ? 0.09f : 0.05f));
+    ui::roundRect(b, 30, {20, 29, 64, 242}, {10, 16, 38, 242});
+    ui::roundLines(b, 30, 1.0f, withAlpha(ui::kGold, hot ? 0.95f : 0.55f));
+    emblem({b.x + 31, b.y + 30}, 25, t);
+    drawText("RÈGLES & MODE", b.x + 68, capsY(b.y + 22, 20, kT), 20, ui::kCream, kT);
+    drawText(g_rulesLine.c_str(), b.x + 68, capsY(b.y + 41, 13, kU), 13, ui::kMuted, kU);
+    ui::prompt("R", ui::Btn::Y, b.x + b.width - 16 - ui::promptWidth("R", ui::Btn::Y, 24), b.y + 18, 24);
+    if (cursorOn(0, -1)) ui::rim(b, 14, t);
+  }
+
+  // The roster: each face in a tall slanted tile, its colour along the bottom, its number and name; who picked it in
+  // the corner.
   for (int i = 0; i <= int(r.size()); ++i) {
     const Rectangle rr = rosterRect(i);
-    const bool rnd = i == int(r.size()), hov = ui::hovered(rr);
+    const bool rnd = i == int(r.size());
     int pickers[4], np = 0;
-    for (int s = 0; s < cols; ++s) {
-      const SlotSetup& sl = slots_[s];
-      if (g_slotShown[s] && (rnd ? sl.random : !sl.random && sl.character == i)) pickers[np++] = s;
+    for (int c = 0; c < cols; ++c) {
+      const SlotSetup& sl = slots_[c];
+      if (g_chip[c].width > 0.0f && (rnd ? sl.random : !sl.random && sl.character == i)) pickers[np++] = c;
     }
-    const Color bar = rnd ? Color{42, 53, 88, 255} : auraColor(r[i].hero);
+    const Color cc = rnd ? kNoFighter : auraColor(r[i].hero);
+    const float s = kTileSlant, w = rr.width - s, cx = rr.x + s * 0.5f + w * 0.5f;
     if (rnd) {
-      ui::bevel(rr, cut, ui::kNavyDeep, ui::kNavyDeep);
-      ui::bevelLines(ui::grow(rr, -0.5f), cut, 1.0f, withAlpha(ui::kSky, 0.3f));
-      drawText("?", rr.x + (rr.width - textWidth("?", 37, kT)) * 0.5f, capsY(rr.y + 33, 37, kT), 37, ui::kSky, kT);
+      tileBand(rr, 0, 1, ui::kNavyDeep, ui::kNavyDeep);
+      ui::slantedOutline(rr, s, 1.0f, withAlpha(ui::kSky, 0.22f));
+      drawText("?", cx - textWidth("?", 64, kT) * 0.5f, capsY(rr.y + 62, 64, kT), 64, ui::kSky, kT);
+      ui::tracked("AU HASARD", cx - ui::trackedWidth("AU HASARD", 13, 0.12f) * 0.5f, capsY(rr.y + 104, 13, kT), 13, 0.12f,
+                  ui::kMuted);
     } else {
-      ui::bevel(rr, cut, ui::kNavy, mixColor(ui::kNavy, bar, 0.45f));
-      drawPortraitIn(r[i], 0, {rr.x + 35, rr.y + 40}, 86.0f, rr, 0, t + i);
+      const CharacterDef& d = r[i];
+      tileBand(rr, 0, 0.7f, mixColor(ui::kNavy, cc, 0.25f), ui::kNavy);
+      tileBand(rr, 0.7f, 1, ui::kNavy, ui::kNavy);
+      const Vector2 pts[4] = {{rr.x + s, rr.y}, {rr.x + rr.width, rr.y}, {rr.x + rr.width - s, rr.y + rr.height},
+                              {rr.x, rr.y + rr.height}};
+      float aw, ah;
+      Vec2 face;
+      if (artGeometry(d, aw, ah, face)) {
+        const float k = rr.height / (0.82f * ah);  // the whole head and its shoulders, the picture centred
+        drawArtPoly(d, pts, 4, {rr.x + rr.width * 0.5f + (face.x - aw * 0.5f) * k, rr.y + (face.y - 0.03f * ah) * k}, k);
+      } else if (art::pictureSize((d.id + "_portrait").c_str(), aw, ah)) {  // the pixel portrait, as tall as the tile
+        const float k = rr.height / std::max(aw, ah);
+        Vector2 src[4];
+        for (int j = 0; j < 4; ++j)
+          src[j] = {aw * 0.5f + (pts[j].x - rr.x - rr.width * 0.5f) / k, ah * 0.5f + (pts[j].y - rr.y - rr.height * 0.5f) / k};
+        art::drawPicturePoly((d.id + "_portrait").c_str(), src, pts, 4);
+      }
+      tileBand(rr, 1.0f - 46.0f / kTileH, 1, withAlpha(ui::kInk, 0.0f), withAlpha(ui::kInk, 0.92f));
+      const std::string nick = fiche(d).nick;
+      float fs = 15.0f;
+      while (fs > 10.0f && ui::trackedWidth(nick.c_str(), fs, 0.06f) > w - 8) fs -= 0.5f;
+      const float nx = rr.x + s * 0.1f + w * 0.5f;
+      ui::tracked(nick.c_str(), nx - ui::trackedWidth(nick.c_str(), fs, 0.06f) * 0.5f, capsY(rr.y + rr.height - 17, fs, kT), fs,
+                  0.06f, ui::kCream);
+      ui::bold(d.id.substr(1).c_str(), rr.x + s + 6, capsY(rr.y + 14, 17, kT), 17);
     }
-    if (hov) DrawRectangleRec(rr, withAlpha(WHITE, 0.12f));
-    DrawRectangleRec({rr.x, rr.y + rr.height - 4, rr.width, 4}, bar);
-    const Vector2 tl{rr.x, rr.y}, br{rr.x + rr.width, rr.y + rr.height};  // the cut corners: the sky shows through
-    DrawTriangle(tl, {tl.x, tl.y + cut}, {tl.x + cut, tl.y}, cssSky({tl.x + 2, tl.y + 2}));
-    DrawTriangle(br, {br.x, br.y - cut}, {br.x - cut, br.y}, cssSky({br.x - 2, br.y - 2}));
-    if (!rnd) ui::bold(r[i].id.substr(1).c_str(), rr.x + 6, capsY(rr.y + 11, 14, kT), 14);
-    float tx = rr.x + rr.width;
+    tileBand(rr, 1.0f - 4.0f / kTileH, 1, cc, cc);
+    if (ui::hovered(rr)) tileBand(rr, 0, 1, withAlpha(WHITE, 0.1f), withAlpha(WHITE, 0.1f));
+    float tx = rr.x + rr.width - 4;
     for (int k = 0; k < np; ++k) {
-      const char* who = whoOf(pickers[k]);
-      const float w = textWidth(who, 13, kT) + 10;
-      tx -= w;
-      DrawRectangleRec({tx, rr.y, w, 17}, tint(pickers[k]));
-      drawText(who, tx + 5, capsY(rr.y + 8.5f, 13, kT), 13, ui::kInk, kT);
-      tx -= 2;
+      const char* who = whoOf(training_, slots_[pickers[k]], pickers[k]);
+      const float tw = textWidth(who, 13, kT) + 12;
+      tx -= tw;
+      DrawRectangleRec({tx, rr.y + 4, tw, 18}, tint(pickers[k]));
+      drawText(who, tx + 6, capsY(rr.y + 13, 13, kT), 13, ui::kInk, kT);
+      tx -= 3;
     }
-    if (np > 0) ui::bevelLines(ui::grow(rr, -1.5f), cut - 0.6f, 3.0f, tint(pickers[0]));
+    if (np > 0) ui::slantedOutline({rr.x + 1.5f, rr.y + 1.5f, rr.width - 3, rr.height - 3}, s, 3.0f, tint(pickers[0]));
   }
-  const Rectangle last = rosterRect(int(r.size()));
-  drawTextCentered("← → ou un clic pour choisir  ·  « ? » : au hasard", kScreenW * 0.5f, last.y + last.height + 9, 16,
-                   ui::kMuted, false);
+  drawTextCentered("← → ou un clic pour choisir  ·  « ? » : un combattant au hasard", kScreenW * 0.5f, 252, 14, ui::kMuted,
+                   false);
 
-  // "VS" on the horizon, its spark pulsing on the line
-  const float pulse = 0.5f + 0.5f * std::sin(t * 2.0f * kPi / 2.2f);
-  ui::eclat({kScreenW * 0.5f, kHorizonY}, 13.0f * (0.9f + 0.25f * pulse), 0.55f + 0.45f * pulse);
-  const float vw = textWidth("VS", 69, kT);
-  ui::gradientText("VS", kScreenW * 0.5f - vw * 0.5f, capsY(kHorizonY - 49, 69, kT), 69, {143, 193, 255, 255}, WHITE,
-                   {255, 200, 112, 255});
-
-  // An inert field: a dark plate, a word on it
-  auto inert = [&](Rectangle f, const char* text, bool foc) {
-    ui::bevel(f, 8, withAlpha(ui::kInk, 0.7f), withAlpha(ui::kInk, 0.7f));
-    drawText(text, f.x + (f.width - textWidth(text, 15)) * 0.5f, capsY(f.y + f.height * 0.5f, 15, FontKind::Ui), 15, ui::kMuted);
-    if (foc) ui::rim(f, 8, t);
-  };
-  // The players, big on the horizon, facing the other side; under the line, their sheets
+  // The sheets: the fighter's colour and number, its portrait standing out of it, who plays it, its stats, its weapons
   for (int col = 0; col < cols; ++col) {
-    if (!g_slotShown[col]) continue;
-    const SlotSetup& s = slots_[col];
-    const int type = training_ ? (col == 0 ? 1 : 2) : s.type;
-    const Color pc = tint(col), light = mixColor(pc, WHITE, 0.45f);
-    const int facing = g_slotSide[col] == 0 ? 1 : -1;
-    const Rectangle f1 = fieldRect(col, 1);
-    const bool foc1 = focusOn(col, 1);
-    const float cx = g_slotX[col], h = std::min(300.0f, g_slotW[col] * 1.05f);
-    const float joined = std::max(0.0f, 1.0f - (frames_ - joinedAt_[col]) / 45.0f);  // a gamepad just joined
-    ui::glow({cx, kHorizonY - h * 0.5f}, h * 0.7f, withAlpha(pc, 0.3f + 0.35f * joined));
-    DrawEllipse(int(cx), int(kHorizonY + 1), h * 0.3f, 7.0f, withAlpha(BLACK, 0.5f));
-    const CharacterDef* d = s.random ? nullptr : &r[s.character];
-    if (!d) {  // "?": drawn at random when the match starts
-      const float qp = 0.5f + 0.5f * std::sin(t * 3.0f + col), qs = h * 0.7f;
-      drawText("?", cx - textWidth("?", qs, kT) * 0.5f, capsY(kHorizonY - h * 0.45f, qs, kT), qs, mixColor(pc, WHITE, qp), kT);
+    const Rectangle p = g_panel[col];
+    if (p.width <= 0.0f) continue;
+    const SlotSetup& sl = slots_[col];
+    const Color pc = tint(col);
+    const float pcx = p.x + p.width * 0.5f, pcy = p.y + p.height * 0.5f;
+    if (g_chip[col].width <= 0.0f) {  // a free card: join it
+      const bool foc = focusOn(col, 0);
+      DrawRectangleRec(p, withAlpha(ui::kNavyDeep, foc ? 0.75f : 0.55f));
+      dashed(p, withAlpha(pc, 0.53f));
+      const char* who = TextFormat("J%d", col + 1);
+      drawText(who, pcx - textWidth(who, 72, kT) * 0.5f, capsY(pcy - 40, 72, kT), 72, withAlpha(pc, 0.55f), kT);
+      const float kw = ui::promptWidth("ESPACE", ui::Btn::A, 24), px = pcx - (kw + 8 + textWidth("Rejoindre", 15)) * 0.5f;
+      ui::prompt("ESPACE", ui::Btn::A, px, pcy + 8, 24);
+      drawText("Rejoindre", px + kw + 8, capsY(pcy + 20, 15, kU), 15, ui::kSky, kU);
+      drawTextCentered("ou A sur une manette", pcx, pcy + 42, 12, ui::kMuted, false);
+      if (foc) ui::rim(p, 0, t);
+      continue;
+    }
+    const CharacterDef* d = sl.random ? nullptr : &r[sl.character];
+    const Color cc = d ? auraColor(d->hero) : kNoFighter, lit = mixColor(kPanel, cc, 0.33f);
+    const bool left = p.x < kScreenW * 0.5f;
+    const float cut = g_wide ? 22.0f : 16.0f;
+    if (g_wide) ui::bevel(p, cut, left ? lit : kPanelDeep, left ? kPanelDeep : lit, true);
+    else ui::bevel(p, cut, lit, kPanelDeep);
+    DrawRectangleRec({p.x + cut, p.y, p.width - cut, 3}, pc);
+    const std::string num = d ? d->id.substr(1) : std::string("?");
+    const Fiche fi = d ? fiche(*d) : Fiche{"ALÉATOIRE", "", "Tiré au sort au début du combat", 0};
+
+    // The fighter: wide, beside the sheet's text; narrow, on top, cut where the text starts.
+    const float bx = g_wide ? (left ? p.x + 137.5f : p.x + p.width - 137.5f) : pcx;
+    const float bustH = g_wide ? 400.0f : 355.0f, bottom = g_wide ? p.y + p.height : 621.0f;
+    if (g_wide) {
+      beginClip(p);
+      const float nw = textWidth(num.c_str(), 230, kT);
+      drawText(num.c_str(), left ? p.x + 10 : p.x + p.width - 10 - nw, capsY(p.y + 66, 230, kT), 230, withAlpha(cc, 0.16f), kT);
+      endClip();
     } else {
-      int pal = 0;
-      for (int j = 0; j < col; ++j)
-        if (g_slotShown[j] && !slots_[j].random && slots_[j].character == s.character) pal = 1 - pal;
-      const float hop = foc1 ? std::max(0.0f, std::sin(t * 5.0f)) * 6.0f : 0.0f;
-      drawShowcase(*d, pal, restPose(*d, t + col), {cx, kHorizonY - hop}, facing, h, t + col);
+      beginClip({p.x - 40, 0, p.width + 80, 550});
     }
-    if (foc1) {  // the arrows: previous / next fighter
-      ui::arrowTri({f1.x + 14, kHorizonY - h * 0.5f}, 22, -1, ui::kGold);
-      ui::arrowTri({f1.x + f1.width - 14, kHorizonY - h * 0.5f}, 22, 1, ui::kGold);
+    ui::glow({bx, bottom - bustH * 0.45f}, bustH * 0.55f, withAlpha(cc, 0.3f));
+    if (!d) {
+      const float qs = g_wide ? 220.0f : 160.0f, qp = 0.5f + 0.5f * std::sin(t * 3.0f + col);
+      drawText("?", bx - textWidth("?", qs, kT) * 0.5f, capsY(bottom - bustH * 0.42f, qs, kT), qs, mixColor(pc, WHITE, qp), kT);
+    } else {  // the fighter itself, in pixel art (its portrait is on its roster tile)
+      drawShowcase(*d, paletteOf(col), restPose(*d, t + col), {bx, g_wide ? p.y + p.height - 16 : 545.0f}, left || !g_wide ? 1 : -1,
+                   g_wide ? 290.0f : 220.0f, t + col);
     }
-    if (teamsOn) {  // the team chip: press it to change sides
-      const Rectangle chip = fieldRect(col, 3);
-      const bool fc = focusOn(col, 3);
-      const char* tn = teamName(slotTeam(col));
-      ui::chunky(chip, fc ? mixColor(pc, WHITE, 0.3f) : pc, shade(pc, 0.7f), 1.0f, 8.0f);
-      drawText(tn, chip.x + (chip.width - textWidth(tn, 15, kT)) * 0.5f, capsY(chip.y + chip.height * 0.5f, 15, kT), 15,
-               ui::kInk, kT);
-      if (fc) ui::rim(chip, 8.0f, t);
+    if (!g_wide) endClip();
+    if (focusOn(col, 1)) {  // the arrows on both sides of the portrait: the fighter before / after
+      const float ay = g_wide ? pcy : p.y + 110, ax = g_wide ? 122.0f : p.width * 0.5f - 16;
+      ui::arrowTri({bx - ax, ay}, 22, -1, ui::kGold);
+      ui::arrowTri({bx + ax, ay}, 22, 1, ui::kGold);
     }
 
-    // The sheet: whose it is, the fighter's number, style, name and build, its two weapons, then the type and the
-    // device or level
-    const Rectangle sh = sheetRect(col);
-    const bool wide = wideSheet(col);
-    const char* who = whoOf(col);
-    const float chipW = textWidth(who, 18, kT) + 18;
-    DrawRectangleRec({sh.x, sh.y, chipW, 24}, pc);
-    drawText(who, sh.x + 9, capsY(sh.y + 12, 18, kT), 18, ui::kInk, kT);
-    const Fiche fi = d ? fiche(*d) : Fiche{"ALÉATOIRE", "", "", 0};
-    const char* num = d ? d->name.c_str() : "N° ?";
-    float x = sh.x + chipW + 10;
-    drawText(num, x, capsY(sh.y + 12, 18, kT), 18, light, kT);
-    x += textWidth(num, 18, kT) + 12;
-    if (wide) {
-      const std::string meta = !d ? std::string("Tiré au sort au début du combat")
-                               : fi.style.empty() ? fi.art : fi.art + "  ·  " + fi.style;
-      float ms = 16.0f;
-      while (ms > 11.0f && textWidth(meta.c_str(), ms) > sh.x + sh.width - x) ms -= 0.5f;
-      drawText(meta.c_str(), x, capsY(sh.y + 12, ms, FontKind::Ui), ms, ui::kMuted);
+    // Who plays it, then the fighter: number, martial art, name, its stats and its two weapons
+    const Rectangle chip = g_chip[col];
+    const float ix = chip.x, iw = g_wide ? 270.0f : p.width - 32.0f;
+    if (!g_wide) {  // the text on a dark fade over the bottom of the portrait (the cut corner stays cut)
+      const Color ink = withAlpha(ui::kInk, 0.92f);
+      DrawRectangleGradientV(int(p.x), 470, int(p.width), 84, withAlpha(ui::kInk, 0.0f), ink);
+      DrawRectangleRec({p.x, 554, p.width, 106 - cut}, ink);
+      DrawRectangleRec({p.x, 660 - cut, p.width - cut, cut}, ink);
+      DrawTriangle({p.x + p.width - cut, 660 - cut}, {p.x + p.width - cut, 660}, {p.x + p.width, 660 - cut}, ink);
     }
-    float ns = wide ? 42.0f : 30.0f;
-    while (ns > 14.0f && textWidth(fi.nick.c_str(), ns, kT) > sh.width) ns -= 1.0f;
-    drawText(fi.nick.c_str(), sh.x, capsY(sh.y + 46, ns, kT), ns, ui::kCream, kT);
-    if (wide && d) {  // the build (five marks) and the transformation, if it has one
-      const float gy = sh.y + 79;
-      drawText("GABARIT", sh.x, capsY(gy, 14, FontKind::Ui), 14, ui::kMuted);
-      float gx = sh.x + textWidth("GABARIT", 14) + 8;
-      for (int g = 1; g <= 5; ++g, gx += 17) {
-        const Color gc = g <= fi.build ? pc : ui::kTrack;
-        ui::slanted({gx, gy - 4, 14, 8}, 3, gc, gc);
+    ui::slanted(chip, 6, pc, pc);
+    const char* who = whoOf(training_, sl, col);
+    const float cs = g_wide ? 18.0f : 15.0f;
+    drawText(who, chip.x + (chip.width - textWidth(who, cs, kT)) * 0.5f, capsY(chip.y + chip.height * 0.5f, cs, kT), cs, ui::kInk, kT);
+    if (focusOn(col, 0)) ui::rim(chip, 0, t);
+    const std::string how = howOf(training_, sl, col);
+    float hs = g_wide ? 13.0f : 12.0f;
+    while (hs > 9.0f && textWidth(how.c_str(), hs) > iw - chip.width - 10) hs -= 0.5f;
+    drawText(how.c_str(), chip.x + chip.width + 10, capsY(chip.y + chip.height * 0.5f, hs, kU), hs, ui::kMuted, kU);
+    const std::array<int, 5> bars = d ? statBars(*d) : std::array<int, 5>{};
+    if (g_wide) {
+      const std::string line = "N° " + num + (fi.art.empty() ? std::string() : "  ·  " + upperFr(fi.art));
+      ui::tracked(line.c_str(), ix, capsY(383, 15, kT), 15, 0.1f, ui::kSky);
+      float ns = 54.0f;
+      while (ns > 24.0f && textWidth(fi.nick.c_str(), ns, kT) > iw) ns -= 1.0f;
+      drawText(fi.nick.c_str(), ix, capsY(418, ns, kT), ns, ui::kCream, kT);
+      drawText(fi.style.c_str(), ix, capsY(453, 14, kU), 14, ui::kSoft, kU);
+      for (int k = 0; d && k < 5; ++k) {
+        const float y = 478 + k * 16.0f;
+        ui::tracked(kStatName[k][0], ix, capsY(y, 13, kT), 13, 0.12f, ui::kMuted);
+        for (int g = 0; g < 10; ++g) {
+          const Color sc = g < bars[k] ? pc : ui::kTrack;
+          ui::slanted({ix + 86 + g * 16.0f, y - 4.5f, 16.3f, 9}, 3.3f, sc, sc);
+        }
+        const std::string val = std::to_string(bars[k]);
+        drawText(val.c_str(), ix + iw - 2 - textWidth(val.c_str(), 15, kT), capsY(y, 15, kT), 15, ui::kCream, kT);
       }
-      if (!d->forms.empty()) {
-        const std::string tr = "TRANSFORMATION T" + d->id.substr(1);
-        const float tw = textWidth(tr.c_str(), 13, kT) + 16, tx0 = gx + 12;
-        DrawRectangleLinesEx({tx0, gy - 10, tw, 20}, 1.0f, light);
-        drawText(tr.c_str(), tx0 + 8, capsY(gy, 13, kT), 13, ui::kCream, kT);
+      float wx = ix, wy = 566;
+      for (int ws = 0; d && ws < 2; ++ws) {  // the two weapons that will fall on the arena
+        const std::string wn = std::string(ws == 0 ? "A  ·  " : "B  ·  ") + d->weapons[ws].name;
+        const float tw = textWidth(wn.c_str(), 12) + 38;
+        if (wx > ix && wx + tw > ix + iw) wx = ix, wy += 30;
+        const Rectangle wr{wx, wy, tw, 24};
+        DrawRectangleRec(wr, withAlpha(ui::kInk, 0.6f));
+        DrawRectangleRec({wr.x, wr.y + wr.height - 2, wr.width, 2}, pc);
+        drawWeaponIcon(*d, ws, {wr.x + 13, wr.y + 11}, 18);
+        drawText(wn.c_str(), wr.x + 26, capsY(wr.y + 11, 12, kU), 12, ui::kSoft, kU);
+        wx += tw + 8;
       }
-    }
-    if (d) {  // the two weapons that will fall on the arena
-      const float wy = wide ? sh.y + 94 : sh.y + 60, wh = wide ? 42.0f : 36.0f, ww = (sh.width - 8) * 0.5f;
-      for (int ws = 0; ws < 2; ++ws) {
-        const Rectangle wr{sh.x + ws * (ww + 8), wy, ww, wh};
-        ui::bevel(wr, 8, withAlpha(ui::kNavyDeep, 0.92f), withAlpha(ui::kNavyDeep, 0.92f));
-        DrawRectangleRec({wr.x, wr.y + wr.height - 2, wr.width - 8, 2}, pc);
-        drawWeaponIcon(*d, ws, {wr.x + 20, wr.y + wh * 0.5f}, wh - 8);
-        if (wide) {
-          drawText(ws == 0 ? "ARME A" : "ARME B", wr.x + 40, capsY(wr.y + 12, 13, FontKind::Ui), 13, ui::kMuted);
-          const char* wn = d->weapons[ws].name.c_str();
-          float fs = 16.0f;
-          while (fs > 11.0f && textWidth(wn, fs) > wr.width - 46) fs -= 0.5f;
-          drawText(wn, wr.x + 40, capsY(wr.y + 29, fs, FontKind::Ui), fs, ui::kCream);
-        } else {
-          drawText(ws == 0 ? "A" : "B", wr.x + 42, capsY(wr.y + wh * 0.5f, 16, kT), 16, ui::kMuted, kT);
+    } else {
+      float ns = 32.0f;
+      while (ns > 16.0f && textWidth(fi.nick.c_str(), ns, kT) > iw) ns -= 1.0f;
+      drawText(fi.nick.c_str(), ix, capsY(556, ns, kT), ns, ui::kCream, kT);
+      if (!d) drawText(fi.style.c_str(), ix, capsY(586, 13, kU), 13, ui::kSoft, kU);
+      for (int k = 0; d && k < 5; ++k) {
+        const float y = 585 + k * 10.0f;
+        ui::tracked(kStatName[k][1], ix, capsY(y, 12, kT), 12, 0.08f, ui::kMuted);
+        for (int g = 0; g < 10; ++g) {
+          const Color sc = g < bars[k] ? pc : ui::kTrack;
+          ui::slanted({ix + 36 + g * 20.0f, y - 3, 20.2f, 6}, 2.2f, sc, sc);
         }
       }
     }
-    const Rectangle f0 = fieldRect(col, 0), f2 = fieldRect(col, 2);
-    const bool foc0 = focusOn(col, 0), foc2 = focusOn(col, 2);
-    if (training_) inert(f0, col == 0 ? "VOUS" : "CIBLE", foc0);
-    else ui::selector(f0, type == 1 ? "HUMAIN" : "ORDINATEUR", foc0, t);
-    if (type == 1) deviceSelector(f2, s.device, foc2, t);
-    else if (!training_) ui::selector(f2, s.level >= kMaxCpuLevel ? "NIV. 10 x2" : TextFormat("NIVEAU %d", s.level), foc2, t);
-    else inert(f2, "réglable en pause", foc2);
   }
-
-  // The free cards: a chip each, to join (or press it: a human, then a CPU)
-  for (int col = 0; col < cols; ++col) {
-    if (g_slotShown[col]) continue;
-    const Rectangle f = fieldRect(col, 0);
-    const Color pc = tint(col);
-    ui::bevel(f, 6, withAlpha(ui::kNavyDeep, 0.85f), withAlpha(ui::kNavyDeep, 0.85f));
-    DrawRectangleRec({f.x, f.y, 3, f.height}, pc);
-    const char* who = TextFormat("J%d", col + 1);
-    drawText(who, f.x + 12, capsY(f.y + f.height * 0.5f, 17, kT), 17, pc, kT);
-    float px = f.x + 20 + textWidth(who, 17, kT);
-    px += ui::prompt("ESPACE", ui::Btn::A, px, f.y + 5, f.height - 10) + 8;
-    drawText("Rejoindre", px, capsY(f.y + f.height * 0.5f, 16, FontKind::Ui), 16, ui::kSky);
-    if (focusOn(col, 0)) ui::rim(f, 6, t);
-  }
-
-  // The rules, under the "VS"; a line about them (or what is missing to fight)
-  if (!training_) {
-    auto rule = [&](int i, const char* label, bool on, bool line) {
-      const Rectangle rr = ruleRect(i);
-      const Color face = on ? ui::kNavy : Color{10, 16, 36, 255};
-      ui::bevel(rr, 10, ui::hovered(rr) ? mixColor(face, WHITE, 0.08f) : face, face);
-      if (line) DrawRectangleRec({rr.x, rr.y + rr.height - 2, rr.width - 10, 2}, ui::kGold);
-      drawText(label, rr.x + (rr.width - textWidth(label, 19, kT)) * 0.5f, capsY(rr.y + rr.height * 0.5f, 19, kT), 19,
-               on ? ui::kCream : ui::kDisabled, kT);
-      if (focusOn(i, -1)) ui::rim(rr, 10, t);
-    };
-    rule(0, TextFormat("VIES : %d", st.stocks), true, false);
-    rule(1, st.items ? "ORBE : OUI" : "ORBE : NON", st.items, st.items);
-    rule(2, st.weapons ? "ARMES : OUI" : "ARMES : NON", st.weapons, st.weapons);
-    rule(3, teamsOn ? "EN ÉQUIPES" : "CHACUN POUR SOI", true, false);
-    bool cpu10 = false;
-    for (int col = 0; col < cols; ++col) cpu10 = cpu10 || (g_slotShown[col] && slots_[col].type == 2 && slots_[col].level >= kMaxCpuLevel);
-    const char* hint = !ready ? (activeSlots() >= 2 ? "Il faut un combattant dans chaque équipe." : "Il faut au moins 2 combattants.")
-                       : !st.items ? "Sans orbe, personne ne pourra lancer son ultime."
-                       : cpu10 ? "Niveau 10 : l'ordinateur frappe deux fois plus fort."
-                       : st.weapons ? "Tout le monde commence à mains nues." : "Sans armes : tout le combat à mains nues.";
-    drawTextCentered(hint, kScreenW * 0.5f, 597, 16, ready ? ui::kMuted : Color{255, 200, 112, 255}, false);
+  if (g_wide && g_chip[0].width + g_chip[1].width + g_chip[2].width + g_chip[3].width > 0.0f) {  // "VS" between the two
+    ui::eclat({kScreenW * 0.5f, 472}, 12, 0.7f);
+    const float vw = textWidth("VS", 64, kT);
+    ui::gradientText("VS", kScreenW * 0.5f - vw * 0.5f, capsY(474, 64, kT), 64, {143, 193, 255, 255}, WHITE, kGoldLight);
   }
 
   // Whose cursor is where: a tag in the player's colour on the corner of the field.
-  std::array<int, 24> stacked{};
+  std::array<int, 12> stacked{};
   for (int dev = 0; dev < kDeviceCount; ++dev) {
     const CssCursor& c = cssCur_[dev];
     if (!c.on) continue;
-    const int own = ownedCard(dev);
-    const int col = c.row < 0 ? c.rule : std::min(c.col, cols - 1);
-    const int row = c.row < 0 || g_slotShown[col] ? c.row : 0;  // a free card: its chip
-    const int slot = (row + 1) * 4 + col;
+    const int col = std::clamp(c.col, 0, cols - 1);
+    if (c.row >= 0 && g_panel[col].width <= 0.0f) continue;
+    const int row = c.row == 1 && g_chip[col].width <= 0.0f ? 0 : c.row;
+    const int slot = row < 0 ? 0 : 1 + row * 4 + col;
     const Rectangle f = fieldRect(col, row);
+    const int own = ownedCard(dev);
     const char* label = own >= 0 ? TextFormat("J%d", own + 1) : dev == kKeyboard1 ? "C1" : dev == kKeyboard2 ? "C2" : "M";
     const float w = textWidth(label, 14, kT) + 12;
-    const Rectangle tag{f.x - 6 + stacked[slot] * (w + 4), f.y - 12, w, 20};
+    const Rectangle tag{f.x + (row == 1 ? 24.0f : -6.0f) + stacked[slot] * (w + 4), f.y - 12, w, 20};
     ++stacked[slot];
     DrawRectangleRec(ui::grow(tag, 1.5f), ui::kInk);
     DrawRectangleRec(tag, own >= 0 ? tint(own) : ui::kSky);
     drawText(label, tag.x + 6, capsY(tag.y + 10, 14, kT), 14, ui::kInk, kT);
   }
+  if (!rulesOpen_) return;
+
+  // ---- The « Règles & mode » sheet, over the dimmed screen -------------------------------------------------------
+  SheetItem items[16];
+  const int nItems = sheetItems(training_, slots_, teamsOn, items);
+  const SheetItem sel = items[std::clamp(rulesSel_, 0, nItems - 1)];
+  auto sheetFocus = [&](int col, int row) {
+    return (sel.col == col && sel.row == row) || ui::hovered(sheetField(col, row, teamsOn));
+  };
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.78f));
+  const Rectangle S = kSheet;
+  ui::bevel(S, 26, {22, 32, 74, 255}, kPanelDeep);
+  screentone({S.x + 26, S.y, S.width - 26, 120}, withAlpha(ui::kSky, 0.07f));
+  ui::bevelLines(ui::grow(S, -0.5f), 26, 1.0f, withAlpha(ui::kSky, 0.18f));
+  ui::horizonLine(S.x + 26, S.x + S.width, S.y + 1.5f, 3.0f);
+  emblem({S.x + 72, S.y + 64}, 38, t);
+  ui::tracked("RÈGLES & MODE", S.x + 126, capsY(S.y + 52, 38, kT), 38, 0.05f, ui::kCream);
+  drawText(training_ ? "Votre clavier ou votre manette pour l'entraînement." : "Ce combat, et qui joue : un humain ou l'ordinateur.",
+           S.x + 126, capsY(S.y + 84, 15, kU), 15, ui::kMuted, kU);
+  {
+    const Rectangle cl = closeRect();
+    DrawRectangleRec(cl, withAlpha(ui::kInk, ui::hovered(cl) ? 0.85f : 0.5f));
+    DrawRectangleLinesEx(cl, 1.0f, withAlpha(ui::kSky, 0.25f));
+    const float kw = ui::prompt("ÉCHAP", ui::Btn::B, cl.x + 10, cl.y + 6, 24);
+    drawText("Fermer", cl.x + 18 + kw, capsY(cl.y + 18, 14, kU), 14, ui::kSoft, kU);
+  }
+  // An inert field: a dark plate, a word on it
+  auto inert = [&](Rectangle f, const char* text) {
+    ui::bevel(f, 8, withAlpha(ui::kInk, 0.7f), withAlpha(ui::kInk, 0.7f));
+    drawText(text, f.x + (f.width - textWidth(text, 14)) * 0.5f, capsY(f.y + f.height * 0.5f, 14, kU), 14, ui::kMuted, kU);
+  };
+
+  // Left: the mode, then the rules
+  if (!training_) {
+    ui::tracked("MODE DE JEU", kLeftX, capsY(kColY + 8, 14, kT), 14, 0.16f, ui::kMuted);
+    const Rectangle mr = modeRect();
+    for (int k = 0; k < 2; ++k) {
+      const Rectangle c{mr.x + k * (mr.width * 0.5f + 5), mr.y, mr.width * 0.5f - 5, mr.height};
+      const bool on = (k == 1) == teamsOn;
+      const Color face = ui::hovered(c) ? mixColor(ui::kNavy, WHITE, 0.06f) : ui::kNavy;
+      ui::bevel(c, 12, on ? kGoldLight : face, on ? ui::kGold : face);
+      if (!on) ui::bevelLines(ui::grow(c, -0.5f), 12, 1.0f, withAlpha(ui::kSky, 0.2f));
+      const Color ink = on ? ui::kInk : ui::kSoft;
+      const Vector2 ic{c.x + c.width * 0.5f, c.y + 32};
+      if (k == 0) {  // each for themselves: three marks; teams: a red shield and a blue one
+        for (int j = -1; j <= 1; ++j) ui::diamond({ic.x + j * 10.0f, ic.y}, 6, ink);
+      } else {
+        for (int j = 0; j < 2; ++j) {
+          const Vector2 sc{ic.x + (j == 0 ? -9.5f : 9.5f), ic.y - 2};
+          const Color tc = teamColor(j);
+          DrawRectangleRec({sc.x - 6.5f, sc.y - 7, 13, 7}, tc);
+          DrawTriangle({sc.x - 6.5f, sc.y}, {sc.x, sc.y + 9}, {sc.x + 6.5f, sc.y}, tc);
+        }
+      }
+      const char* lab = k == 0 ? "CHACUN POUR SOI" : "EN ÉQUIPES";
+      drawText(lab, ic.x - textWidth(lab, 18, kT) * 0.5f, capsY(c.y + 66, 18, kT), 18, ink, kT);
+    }
+    if (sheetFocus(3, -1)) ui::rim(mr, 12, t);
+    DrawRectangleRec({kLeftX, kColY + 138, kLeftW, 1}, withAlpha(ui::kSky, 0.12f));
+    const char* labels[3] = {"VIES", "CLASH ORB", "ARMES"};
+    const char* helps[3] = {"Par combattant", "La seule source des ultimes", "Elles tombent sur l'arène"};
+    for (int i = 0; i < 3; ++i) {
+      const Rectangle rr = ruleRowRect(i);
+      DrawRectangleRec(rr, withAlpha(ui::kInk, ui::hovered(rr) ? 0.65f : 0.45f));
+      drawText(labels[i], rr.x + 14, capsY(rr.y + 17, 19, kT), 19, ui::kCream, kT);
+      drawText(helps[i], rr.x + 14, capsY(rr.y + 35, 12, kU), 12, ui::kMuted, kU);
+      const bool on = i == 0 || (i == 1 ? st.items : st.weapons);
+      const std::string val = i == 0 ? std::to_string(st.stocks) : on ? "OUI" : "NON";
+      const float vx = rr.x + rr.width - 54, vy = rr.y + rr.height * 0.5f;
+      ui::arrowTri({vx - 36, vy}, 13, -1, ui::kGold);
+      ui::arrowTri({vx + 36, vy}, 13, 1, ui::kGold);
+      drawText(val.c_str(), vx - textWidth(val.c_str(), 20, kT) * 0.5f, capsY(vy, 20, kT), 20,
+               i == 0 ? ui::kCream : on ? kGoldLight : ui::kMuted, kT);
+      if (sheetFocus(i, -1)) ui::rim(rr, 0, t);
+    }
+  } else {
+    ui::tracked("ENTRAÎNEMENT", kLeftX, capsY(kColY + 8, 14, kT), 14, 0.16f, ui::kMuted);
+    ui::drawWrapped("Vies infinies, pas de minuteur. Le mannequin se règle dans le menu pause.", kLeftX, kColY + 30, kLeftW,
+                    16, ui::kSoft);
+  }
+
+  // Right: who plays, a human (on which device) or the computer (at which level), in which team
+  auto toggle = [&](Rectangle f, int type, bool foc) {
+    DrawRectangleRec(f, {10, 16, 40, 255});
+    DrawRectangleLinesEx(f, 1.0f, withAlpha(ui::kSky, 0.18f));
+    for (int k = 0; k < 3; ++k) {
+      const Rectangle g = toggleSeg(f, k);
+      const bool on = type != 0 && type == kSegType[k];
+      if (on) DrawRectangleRec(ui::grow(g, -2.0f), ui::kGold);
+      else if (ui::hovered(g)) DrawRectangleRec(ui::grow(g, -2.0f), withAlpha(WHITE, 0.08f));
+      const Color ink = on ? ui::kInk : ui::kMuted;
+      if (k < 2) {
+        const char* lab = k == 0 ? "HUMAIN" : "IA";
+        drawText(lab, g.x + (g.width - textWidth(lab, 14, kT)) * 0.5f, capsY(g.y + g.height * 0.5f, 14, kT), 14, ink, kT);
+      } else {  // nobody: the card is free again
+        const Vector2 m{g.x + g.width * 0.5f, g.y + g.height * 0.5f};
+        DrawLineEx({m.x - 5, m.y - 5}, {m.x + 5, m.y + 5}, 2.0f, ink);
+        DrawLineEx({m.x - 5, m.y + 5}, {m.x + 5, m.y - 5}, 2.0f, ink);
+      }
+    }
+    if (foc) ui::rim(f, 0, t);
+  };
+  ui::tracked("JOUEURS", kRightX, capsY(kColY + 8, 14, kT), 14, 0.16f, ui::kMuted);
+  for (int c = 0; c < cols; ++c) {
+    const Rectangle rw = playerRowRect(c);
+    const SlotSetup& sl = slots_[c];
+    const int type = training_ ? (c == 0 ? 1 : 2) : sl.type;
+    const Color pc = tint(c);
+    const float cy = rw.y + rw.height * 0.5f;
+    DrawRectangleRec(rw, withAlpha(ui::kInk, 0.45f));
+    DrawRectangleRec({rw.x, rw.y, 3, rw.height}, pc);
+    const char* who = training_ && c == 1 ? "CIBLE" : TextFormat("J%d", c + 1);
+    float ws = 22.0f;
+    while (ws > 12.0f && textWidth(who, ws, kT) > 34) ws -= 1.0f;
+    drawText(who, rw.x + 12, capsY(cy, ws, kT), ws, pc, kT);
+    const Rectangle f0 = sheetField(c, 0, teamsOn), f2 = sheetField(c, 2, teamsOn);
+    if (type == 0) {  // a free card
+      if (!teamsOn) drawText("Place libre", rw.x + 64, capsY(cy, 15, kU), 15, ui::kMuted, kU);
+      toggle(f0, 0, sheetFocus(c, 0));
+      drawText(teamsOn ? "Place libre  ·  A sur une manette" : "ou A sur une manette", f2.x, capsY(cy, 13, kU), 13, ui::kMuted, kU);
+      continue;
+    }
+    const CharacterDef* d = sl.random ? nullptr : &r[sl.character];
+    const Vector2 fc{rw.x + 74, cy};
+    DrawCircleV(fc, 24, pc);
+    DrawCircleV(fc, 22, d ? auraColor(d->hero) : kNoFighter);
+    if (d) drawArtDisc(*d, paletteOf(c), {fc.x, fc.y}, 22, t);
+    else drawText("?", fc.x - textWidth("?", 26, kT) * 0.5f, capsY(fc.y, 26, kT), 26, ui::kSky, kT);
+    if (!teamsOn) {
+      const std::string nick = d ? fiche(*d).nick : std::string("ALÉATOIRE");
+      float ns = 16.0f;
+      while (ns > 10.0f && textWidth(nick.c_str(), ns, kT) > 88) ns -= 0.5f;
+      drawText(nick.c_str(), rw.x + 104, capsY(cy, ns, kT), ns, ui::kCream, kT);
+    }
+    if (training_) inert(f0, c == 0 ? "VOUS" : "CIBLE");
+    else toggle(f0, type, sheetFocus(c, 0));
+    if (type == 1) deviceSelector(f2, sl.device, sheetFocus(c, 2), t);
+    else if (!training_) ui::selector(f2, sl.level >= kMaxCpuLevel ? "NIV. 10 x2" : TextFormat("NIVEAU %d", sl.level), sheetFocus(c, 2), t);
+    else inert(f2, "réglable en pause");
+    if (teamsOn) {
+      const Rectangle f3 = sheetField(c, 3, teamsOn);
+      const bool foc = sheetFocus(c, 3);
+      const char* tn = teamName(slotTeam(c));
+      ui::chunky(f3, foc ? mixColor(pc, WHITE, 0.3f) : pc, shade(pc, 0.7f), 1.0f, 8.0f);
+      drawText(tn, f3.x + (f3.width - textWidth(tn, 15, kT)) * 0.5f, capsY(f3.y + f3.height * 0.5f, 15, kT), 15, ui::kInk, kT);
+      if (foc) ui::rim(f3, 8, t);
+    }
+  }
+  if (!training_)
+    drawText("IA : 9 niveaux, puis « 10 x2 » qui frappe deux fois plus fort.", kRightX,
+             capsY(playerRowRect(cols - 1).y + 80, 13, kU), 13, ui::kMuted, kU);
+
+  // The foot: what the rules mean (or what is missing), and done
+  drawText(tip, S.x + 34, capsY(S.y + S.height - 48, 14, kU), 14, ready ? kGoldLight : ui::kRed, kU);
+  const Rectangle vr = validateRect();
+  ui::chunky(vr, ui::hovered(vr) ? mixColor(ui::kGold, WHITE, 0.25f) : kGoldLight, ui::kGold, 1.0f, 10.0f);
+  const float kw = ui::prompt("ENTRÉE", ui::Btn::Start, vr.x + 10, vr.y + 10, 24);
+  drawText("VALIDER", vr.x + 20 + kw, capsY(vr.y + 22, 21, kT), 21, ui::kInk, kT);
 }
 
 // ---------------------------------------------------------------------------
