@@ -109,11 +109,11 @@ bool hasArt(const CharacterDef& def);
 bool artGeometry(const CharacterDef& def, float& w, float& h, Vec2& face, bool eyes = false);
 // The whole bust, `height` tall, its straight bottom edge on `bottom`, centred on cx; false without one.
 bool drawArtBust(const CharacterDef& def, float cx, float bottom, float height, Color tint = WHITE);
-// Its face in a disc: `span` is the part of the picture's width the disc shows (0.46: the face and its hair).
-void drawArtDisc(const CharacterDef& def, int palette, Vec2 center, float radius, float time, float span = 0.46f,
+// Its face in a disc: `span` is the part of the picture's width the disc shows (1.1: the whole head).
+void drawArtDisc(const CharacterDef& def, int palette, Vec2 center, float radius, float time, float span = 1.1f,
                  Color tint = WHITE);
 // Its face filling the box (`span`: the part of the picture's width across the box); false without art.
-bool drawArtBox(const CharacterDef& def, Rectangle box, float span = 0.55f, Color tint = WHITE);
+bool drawArtBox(const CharacterDef& def, Rectangle box, float span = 1.1f, Color tint = WHITE);
 // The picture through the polygon `pts` (n screen points): its face (or `eyes`: its eyes) at `at`, `scale` screen
 // pixels per picture pixel. Without art: false, nothing drawn.
 bool drawArtPoly(const CharacterDef& def, const Vector2* pts, int n, Vec2 at, float scale, bool eyes = false,

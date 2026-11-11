@@ -601,7 +601,8 @@ void App::drawCss() {
       float aw, ah;
       Vec2 face;
       if (artGeometry(d, aw, ah, face)) {
-        drawArtPoly(d, pts, 4, {rr.x + rr.width * 0.5f, rr.y + rr.height * 0.4f}, w * 1.92f / aw);
+        const float k = rr.height / (0.82f * ah);  // the whole head and its shoulders, the picture centred
+        drawArtPoly(d, pts, 4, {rr.x + rr.width * 0.5f + (face.x - aw * 0.5f) * k, rr.y + (face.y - 0.03f * ah) * k}, k);
       } else if (art::pictureSize((d.id + "_portrait").c_str(), aw, ah)) {  // the pixel portrait, as tall as the tile
         const float k = rr.height / std::max(aw, ah);
         Vector2 src[4];
@@ -664,7 +665,7 @@ void App::drawCss() {
     const std::string num = d ? d->id.substr(1) : std::string("?");
     const Fiche fi = d ? fiche(*d) : Fiche{"ALÉATOIRE", "", "Tiré au sort au début du combat", 0};
 
-    // The portrait: wide, beside the sheet's text and over its top; narrow, on top, cut where the text starts.
+    // The fighter: wide, beside the sheet's text; narrow, on top, cut where the text starts.
     const float bx = g_wide ? (left ? p.x + 137.5f : p.x + p.width - 137.5f) : pcx;
     const float bustH = g_wide ? 400.0f : 355.0f, bottom = g_wide ? p.y + p.height : 621.0f;
     if (g_wide) {
@@ -679,7 +680,7 @@ void App::drawCss() {
     if (!d) {
       const float qs = g_wide ? 220.0f : 160.0f, qp = 0.5f + 0.5f * std::sin(t * 3.0f + col);
       drawText("?", bx - textWidth("?", qs, kT) * 0.5f, capsY(bottom - bustH * 0.42f, qs, kT), qs, mixColor(pc, WHITE, qp), kT);
-    } else if (!drawArtBust(*d, bx, bottom, bustH)) {  // no illustrated portrait yet: the fighter itself
+    } else {  // the fighter itself, in pixel art (its portrait is on its roster tile)
       drawShowcase(*d, paletteOf(col), restPose(*d, t + col), {bx, g_wide ? p.y + p.height - 16 : 545.0f}, left || !g_wide ? 1 : -1,
                    g_wide ? 290.0f : 220.0f, t + col);
     }
@@ -905,7 +906,7 @@ void App::drawCss() {
     const Vector2 fc{rw.x + 74, cy};
     DrawCircleV(fc, 24, pc);
     DrawCircleV(fc, 22, d ? auraColor(d->hero) : kNoFighter);
-    if (d) drawArtDisc(*d, paletteOf(c), {fc.x, fc.y}, 22, t, 0.5f);
+    if (d) drawArtDisc(*d, paletteOf(c), {fc.x, fc.y}, 22, t);
     else drawText("?", fc.x - textWidth("?", 26, kT) * 0.5f, capsY(fc.y, 26, kT), 26, ui::kSky, kT);
     if (!teamsOn) {
       const std::string nick = d ? fiche(*d).nick : std::string("ALÉATOIRE");
