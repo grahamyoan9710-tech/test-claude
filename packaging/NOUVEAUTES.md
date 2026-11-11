@@ -8,6 +8,13 @@
 
 ## Nouveautés
 
+Version 13.1 : **des éjections plus violentes**.
+
+- La traînée d'un perso éjecté est bien plus grosse (bouffées 1,6 fois plus grandes, une à chaque image) : elle
+  forme une colonne de fumée continue derrière lui.
+- L'explosion au bord de l'écran quand un perso est éjecté (KO) est 1,7 fois plus grande.
+- Les effets de mouvement (saut, double saut, atterrissage, dash) sont 5 % plus grands.
+
 Version 13.0 : **RTX : ombres plus douces, couleurs moins chaudes**.
 
 - Plus de faisceaux d'ombre ni de lumière dans l'air : la lune ou le soleil n'y trace plus de rayons.

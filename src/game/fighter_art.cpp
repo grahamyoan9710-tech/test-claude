@@ -311,7 +311,14 @@ float pixelScale(const CharacterDef& d) {
 
 float fxSize(const char* name, const CharacterDef& d, float size) {
   const FxInfo* I = fxInfo(name);
-  return I && I->pixel ? pixelScale(d) : size * d.height / 170.0f;
+  if (!I || !I->pixel) return size * d.height / 170.0f;
+  // A few bigger than the fighters' pixels (the owner, 11/11: a dynamic, aggressive game).
+  static const std::pair<const char*, float> kGrow[] = {{"pfx_jump", 1.05f}, {"pfx_airjump", 1.05f},
+                                                        {"pfx_land", 1.05f}, {"pfx_dash", 1.05f},
+                                                        {"pfx_trail", 1.6f}, {"pfx_ko", 1.7f}};
+  for (const auto& [n, g] : kGrow)
+    if (std::strcmp(n, name) == 0) return pixelScale(d) * g;
+  return pixelScale(d);
 }
 
 float sheetDrop(const CharacterDef& d, int a) {

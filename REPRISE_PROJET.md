@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 00 h 30 UTC, session claude/project-thread-ab9ctl : version 13.1. yoyo veut un jeu « bien dynamique et
+  agressif » : traînée d'éjection et explosion de KO plus grosses, effets de mouvement +5 %. Tableau `kGrow` de
+  `art::fxSize` (`fighter_art.cpp`) : pfx_jump / pfx_airjump / pfx_land / pfx_dash ×1,05, pfx_trail ×1,6, pfx_ko ×1,7
+  (au-dessus des pixels des persos) ; une bouffée de traînée à chaque image au lieu d'une sur deux (`Fx::update`).
+  Verrou « Version et paquets » pris et libéré dans ce commit.
 - 11/11 00 h UTC, session claude/project-thread-ab9ctl : version 13.0, **ombres RTX adoucies**. yoyo (12.8) : arènes
   trop chaudes, faisceaux de lumière trop gros, ombrage « comme de la poussière pixelisée », ombres si marquées qu'on
   voit des faisceaux d'ombre. `keyLight` (`render_rtx.cpp`) : ni ombre ni voile de la lune dans l'air ; ombres douces

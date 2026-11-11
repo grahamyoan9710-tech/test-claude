@@ -65,8 +65,8 @@ struct FxInfo {
 const FxInfo* fxInfo(const char* name);
 // World units per pixel of the fighter's clips: a pixel-art effect drawn at this size has the same pixels.
 float pixelScale(const CharacterDef& d);
-// The size to draw effect `name` at on fighter d: a pixel-art one at d's pixel size (never stretched), the others
-// `size` times d's height over 170.
+// The size to draw effect `name` at on fighter d: a pixel-art one at d's pixel size (the movement puffs, the launch
+// trail and the KO blast a little bigger), the others `size` times d's height over 170.
 float fxSize(const char* name, const CharacterDef& d, float size = 1.0f);
 // Time of an effect shown for as long as something lasts (projectile, beam, aura): its frames cycle.
 float fxLoopTime(const char* name, float t);

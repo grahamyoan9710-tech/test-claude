@@ -801,9 +801,9 @@ void Fx::update(const Match& m) {
   for (const auto& f : m.fighters) {
     const Vec2 v = f.vel + f.kbVel;  // (the launch itself is in kbVel)
     if (f.active() && f.state == FState::Hitstun && !f.grounded && f.hitlag == 0 && v.len2() > 144.0f &&
-        m.frame % 2 == 0 && art::fxInfo("pfx_trail")) {  // (behind it: not on the body)
+        art::fxInfo("pfx_trail")) {  // (behind it: not on the body; a puff each frame, a thick unbroken trail)
       SpriteFx s{"pfx_trail", f.center() - v.norm() * (0.45f * f.height()), art::fxSize("pfx_trail", *f.def), 0.0f,
-                 (m.frame / 2) % 2 == 0, 0};
+                 m.frame % 2 == 0, 0};
       s.move = true;
       // Darker the more hurt it is and the farther it flies (the owner, 10/11): white puffs, then charcoal smoke.
       s.tint = mixColor(WHITE, {58, 54, 62, 255}, clampf(f.percent / 240.0f + f.stateFrame / 60.0f, 0.0f, 0.85f));
