@@ -8,6 +8,23 @@
 
 ## Nouveautés
 
+Version 13.5 : **RTX : plateformes éclairées, ombres au sol**.
+
+- Le dessus des plateformes fines et des petites îles prend la lumière de la lune ou du soleil comme le sol
+  principal (elles restaient sombres).
+- Chaque perso, l'orbe et les armes posées ont une ombre douce sur le sol ou la plateforme juste sous eux, un peu
+  étirée à l'opposé de la lune ou du soleil, plus pâle et plus floue quand ils sautent. Elle est lisse et immobile :
+  ni grain, ni rayon noir.
+- Les ombres des plateformes sur le sol sont de nouveau plus marquées, toujours lisses.
+
+Version 13.4 : **un nouvel orage pour l'ultime de Hakuen**.
+
+- L'ultime « Forge de l'aube » est un vrai orage : nuages au-dessus (le haut sort de l'écran quand la caméra est
+  proche), cercle au sol, gros éclair, onde au sol. Il a le rouge de ses compétences (moins rouge sang qu'avant).
+- Les éclairs frappent deux fois plus vite et tombent toutes les 10 images au lieu de 14 ; chacun tombe toujours là
+  où est l'adversaire quand il apparaît.
+- La zone touchée suit le dessin, un peu plus large (rayon 60 au lieu de 50).
+
 Version 13.1 : **des éjections plus violentes**.
 
 - La traînée d'un perso éjecté est bien plus grosse (bouffées 1,6 fois plus grandes, une à chaque image) : elle

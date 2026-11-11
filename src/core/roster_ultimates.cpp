@@ -123,12 +123,12 @@ MoveDef downpour(const char* name, HitFx e, const char* fx, float radius, int hi
 // frames, then strikes the whole column there, down to the floor). They do not follow: a quick fighter can dodge.
 // The last one launches.
 MoveDef thunder(const char* name, HitFx e, const char* fx, int warn, int bolts) {
-  const int every = 14, life = warn + 20;
+  const int every = 10, life = warn + 20;
   MoveDef m = cine(name, 36 + (bolts - 1) * every + life, {}, PoseHint::Raise, UltFx::Cinematic);
   for (int k = 0; k < bolts; ++k) {
     const bool last = k == bolts - 1;
-    ProjectileDef p = last ? strikeOnAll(50, warn, life, 16, 92, 104, e, PV::Spear, fx)  // Spear: drawn on its spot
-                           : strikeOnAll(50, warn, life, 5, 25, 8, e, PV::Spear, fx);
+    ProjectileDef p = last ? strikeOnAll(60, warn, life, 16, 92, 104, e, PV::Spear, fx)  // Spear: drawn on its spot
+                           : strikeOnAll(60, warn, life, 5, 25, 8, e, PV::Spear, fx);
     p.column = true;
     p.hit.impact = last;
     m.shots.push_back({36 + k * every, p});

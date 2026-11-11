@@ -55,6 +55,25 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 01 h 50 UTC, session claude/project-thread-ab9ctl : version 13.5 (après la 13.4 de Hakuen, fusionnée ;
+  le numéro 13.2 prévu est abandonné).
+  yoyo (13.1) : plateformes sombres alors que la lumière tombe dessus ; « presque plus d'ombre » : la demande était
+  de retirer les rayons d'ombre, pas les ombres des persos, de l'orbe et des objets sur le sol. Le dessus des
+  plateformes fines et des petites îles (lignes `Top` de `render_stages.cpp`) est un sol dans le masque RTX (canal
+  vert, `drawPlatformPart`), leur corps reste solide ; `stageart::topOf` donne ce dessus. `light::groundShadows`
+  (`render_light.cpp`, RTX seulement) : un ovale doux sous chaque perso, l'orbe et les armes posées, cœur sombre et
+  bord flou, étiré à l'opposé de la lune ou du soleil, plus pâle et plus large en l'air, le même à chaque image.
+  Ombre minimale de la lune 0,2 (0,45 en 13.0). Verrou « Version et paquets » pris et libéré dans ce commit.
+- 11/11 01 h 50 UTC, session cloud « Hakuen (01) » (claude/project-thread-58u7pf) : version 13.4. Ultime de Hakuen =
+  le modèle Thunder God Strike envoyé par yoyo (export ParticleFX, 84 images 640x768, gardé hors git), repeint au
+  rouge de ses compétences (teinte -15° → -5°, saturation ×(1 + 0,6 × valeur), voile < 8/255 et bords du cadre
+  effacés) et réduit à 80 % : `art/particlefx/pfx_h01_ult.png` + `.json` (images 14 à 62 sur 2). Joué à 30 i/s
+  (double vitesse), frappe à sa 15e image = `warn` 28 ; 5 éclairs toutes les 10 images, rayon 60 (`ult::thunder`).
+  Taille : `kGrow` 1,05 / 0,8 (yoyo : « que 5 % plus large » que le modèle) ; `shotSprite` passe maintenant par
+  `art::fxSize`. `import_fx.py` met les images sur plusieurs rangées quand une bande passerait 8192 px (le jeu le lit
+  via `cellOf`). Ce modèle garde son propre bloom (`Fx::ownGlow`) : le halo du jeu par-dessus le rendait blanc.
+  13.2 et 13.3 sont réservées aux fils RTX et hitbox (pas encore sorties). Verrou « Version et paquets » pris et
+  libéré dans ce commit.
 - 11/11 00 h 30 UTC, session claude/project-thread-ab9ctl : version 13.1. yoyo veut un jeu « bien dynamique et
   agressif » : traînée d'éjection et explosion de KO plus grosses, effets de mouvement +5 %. Tableau `kGrow` de
   `art::fxSize` (`fighter_art.cpp`) : pfx_jump / pfx_airjump / pfx_land / pfx_dash ×1,05, pfx_trail ×1,6, pfx_ko ×1,7

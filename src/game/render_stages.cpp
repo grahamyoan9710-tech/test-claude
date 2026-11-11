@@ -95,13 +95,24 @@ void drawBackground(StageTheme theme, Vec2, float skyX, float skyY, float) {
   art::drawPicture(pictureName(*a, "bg").c_str(), {0, 0, w, h}, {g_sky.x, g_sky.y, w * k, h * k});
 }
 
-void drawPlatform(const Platform& p, StageTheme theme, float) {
+// part 0: the whole picture; 1: the top of a thin platform or a small island (its Top rows, down to its front edge);
+// 2: the rest, its body (all of it without a top).
+static void drawRows(const Platform& p, StageTheme theme, int part) {
   const Arena* a = arena(theme);
   Placed pl;
   if (!a || !place(p, *a, pl)) return;
+  const Top* t = p.solid && !pl.small ? nullptr : pl.small ? &a->small : &a->thin;
+  const float cut = part != 0 && t && t->front > t->back ? t->front : 0.0f;
+  const float r0 = part == 2 ? cut : 0.0f, r1 = part == 1 ? cut : pl.h;
+  if (r1 <= r0) return;
   // Scaled as a whole, its proportions kept (stretched pixel art smears).
-  art::drawPicture(pl.name.c_str(), {0, 0, pl.w, pl.h}, {pl.l, p.rect.y - pl.top * pl.k, pl.w * pl.k, pl.h * pl.k});
+  art::drawPicture(pl.name.c_str(), {0, r0, pl.w, r1 - r0},
+                   {pl.l, p.rect.y + (r0 - pl.top) * pl.k, pl.w * pl.k, (r1 - r0) * pl.k});
 }
+
+void drawPlatform(const Platform& p, StageTheme theme, float) { drawRows(p, theme, 0); }
+
+void drawPlatformPart(const Platform& p, StageTheme theme, bool top) { drawRows(p, theme, top ? 1 : 2); }
 
 void drawForeground(StageTheme, Vec2, float) {}
 
@@ -133,20 +144,22 @@ bool floorOf(const Platform& p, StageTheme theme, Floor& out) {
   return true;
 }
 
-bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) {
+bool topOf(const Platform& p, StageTheme theme, Floor& out) {
   const Arena* a = arena(theme);
   if (!a) return false;
   if (floorOf(p, theme, out)) {
     out.rough = a->floorRough;
-    return out.gloss > 0.0f;
+    return true;
   }
   // A thin platform, or a small island.
   Placed pl;
   if (!place(p, *a, pl) || (p.solid && !pl.small)) return false;
   const Top& t = pl.small ? a->small : a->thin;
-  if (t.gloss <= 0.0f) return false;
+  if (t.front <= t.back) return false;
   const float k = pl.k, l = pl.l, r = l + pl.w * k;
   out = {p.rect.y - (pl.top - t.back) * k, p.rect.y, p.rect.y + (t.front - pl.top) * k, t.gloss, a->rain, l, r, l, r, t.rough};
   return true;
 }
+
+bool mirrorOf(const Platform& p, StageTheme theme, Floor& out) { return topOf(p, theme, out) && out.gloss > 0.0f; }
 }  // namespace stageart
