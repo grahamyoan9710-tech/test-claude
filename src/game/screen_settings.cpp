@@ -10,7 +10,8 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui;
+constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui, kDsp = FontKind::Display, kB = FontKind::Body;
+constexpr Color kCard{33, 31, 72, 235};  // « Épure »: the cards, dusk
 const char* kTabNames[4] = {"AUDIO", "AFFICHAGE", "JEU", "COMMANDES"};
 constexpr Color kSoft{212, 222, 245, 255};   // #D4DEF5
 constexpr Color kDim{154, 168, 199, 255};    // #9AA8C7
@@ -54,7 +55,7 @@ const int kRowCounts[4] = {4, 8, 6, kActionCount + 1};  // controls: the actions
 // ---- Where things are -------------------------------------------------------------------
 Rectangle tabRect(int i) { return {64.0f + i * 206.0f, 120, 200, 48}; }
 Rectangle backRect() {
-  const float w = 10 + ui::promptWidth("ÉCHAP", ui::Btn::B, 24) + 10 + ui::trackedWidth("RETOUR", 19.5f, 0.08f) + 16;
+  const float w = 10 + ui::promptWidth("ÉCHAP", ui::Btn::B, 24) + 10 + textWidth("RETOUR", 13, FontKind::Display) + 16;
   return {1216 - w, 46, w, 40};
 }
 Rectangle rowRect(int row) { return {kPanel.x, kPanel.y + 14 + row * 54.0f, kPanel.width, 54}; }  // 8 rows fit
@@ -112,12 +113,13 @@ void cutTL(Rectangle r, float cut, Color c) {
 }
 // The panels: night at 92 %, a faint line, two corners cut.
 void panelBox(Rectangle r) {
-  ui::bevel(r, 18, Color{13, 20, 48, 235}, Color{13, 20, 48, 235});
-  ui::bevelLines(r, 18, 1.0f, Color{191, 217, 255, 36});
+  ui::roundRect(r, 20, kCard, kCard);
+  ui::roundLines(r, 20, 1.0f, withAlpha(ui::kCream, 0.1f));
 }
 // A small square button (−, +, the selector's arrows).
 void smallBox(Rectangle r, const char* label, int arrow = 0) {
-  DrawRectangleRec(r, ui::hovered(r) ? mixColor(ui::kNavy, WHITE, 0.12f) : ui::kNavy);
+  const Color f = ui::hovered(r) ? mixColor(ui::kNavy, WHITE, 0.12f) : ui::kNavy;
+  ui::roundRect(r, 8, f, f);
   const Vector2 c{r.x + r.width * 0.5f, r.y + r.height * 0.5f};
   if (arrow) ui::arrowTri(c, 11, arrow, ui::kCream);
   else drawText(label, c.x - textWidth(label, 21.7f, kT) * 0.5f, capsY(c.y, 21.7f, kT), 21.7f, ui::kCream, kT);
@@ -320,13 +322,13 @@ void drawController(PadFamily f, Vector2 at0, float scale, int hl, float t) {
 
 // ---- The live cards beside the rows -----------------------------------------------------------
 // A card's small title ("VOLUME RÉEL"...), tracked capitals.
-void cardTitle(const char* text, float x, float cy, Color c = kDim) { ui::tracked(text, x, capsY(cy, 13, kT), 13, 0.22f, c); }
+void cardTitle(const char* text, float x, float cy, Color c = kDim) { ui::label(text, x, cy, 11, 0.16f, c); }
 
 // Audio: what each volume really gives (the music and the effects go through the general volume).
 float audioCard(float y, bool testing, float t) {
   const Settings& s = settings();
   const Rectangle r{856, y, 360, 287};
-  DrawRectangleRec(r, Color{13, 20, 48, 235});
+  ui::roundRect(r, 16, kCard, kCard);
   cardTitle("VOLUME RÉEL", r.x + 18, y + 26);
   const int eff[3] = {s.masterVolume, s.musicVolume * s.masterVolume / 100, s.sfxVolume * s.masterVolume / 100};
   const char* labels[3] = {"Général", "Musique", "Effets"};
@@ -357,7 +359,7 @@ float previewCard(float y, int stage, float t) {
   const Settings& s = settings();
   const float bar = s.fullscreen ? 0.0f : 18.0f;
   const Rectangle r{856, y, 360, 28 + 8 + bar + 187 + 8 + 34 + 14};
-  DrawRectangleRec(r, Color{13, 20, 48, 235});
+  ui::roundRect(r, 16, kCard, kCard);
   cardTitle("APERÇU EN DIRECT", r.x + 14, y + 24);
   const Rectangle frame{r.x + 14, y + 36, 332, bar + 187};
   DrawRectangleRec(frame, kWell);
@@ -446,7 +448,7 @@ float rulesCard(float y, float t) {
   const Settings& s = settings();
   const float h = 16 + 19 + 10 + 5 * 34 + 4 * 10 + (s.items ? 0 : 28) + 16;
   const Rectangle r{856, y, 360, h};
-  DrawRectangleRec(r, Color{13, 20, 48, 235});
+  ui::roundRect(r, 16, kCard, kCard);
   cardTitle("RÈGLES DES PROCHAINS COMBATS", r.x + 18, y + 26);
   float ly = y + 45;
   auto line = [&](const char* label, float indent) {
@@ -732,31 +734,33 @@ void App::drawSettings() {
   const float t = time_;
   const Settings& s = settings();
   ui::stageBackdrop(stage_, t, 0.75f);
-  ui::quad({0, 0}, {float(kScreenW), 0}, {float(kScreenW), float(kScreenH)}, {0, float(kScreenH)}, withAlpha(ui::kInk, 0.35f),
-           withAlpha(ui::kInk, 0.35f), withAlpha(ui::kInk, 0.6f), withAlpha(ui::kInk, 0.6f));
+  ui::dusk(0.72f);
+  const float in = 1.0f - std::pow(1.0f - clampf(screenFrames_ / 30.0f, 0.0f, 1.0f), 3.0f);  // the page rises in
 
   // The title, "saved automatically", the way back
-  ui::tracked("PARAMÈTRES", 64, capsY(61, 65.1f, kT), 65.1f, 0.02f, ui::kCream);
-  polyline({{4, 12}, {10, 18}, {20, 6}}, {64, 95}, 14.0f / 24.0f, 2.0f, ui::kGold);
-  drawText("Les réglages sont enregistrés automatiquement.", 86, capsY(102, 17.8f, kU), 17.8f, ui::kSky, kU);
+  drawText("PARAMÈTRES", 64, capsY(60 + 14 * (1 - in), 32, kDsp), 32, withAlpha(ui::kCream, in), kDsp);
+  polyline({{4, 12}, {10, 18}, {20, 6}}, {64, 95}, 14.0f / 24.0f, 2.0f, ui::kBlue);
+  drawText("Les réglages sont enregistrés automatiquement.", 86, capsY(102, 14, kB), 14, ui::kSoft, kB);
   const Rectangle br = backRect();
-  cutTL(br, 10, ui::hovered(br) ? mixColor(ui::kNavy, WHITE, 0.12f) : ui::kNavy);
+  ui::roundRect(br, 12, withAlpha(ui::kCream, ui::hovered(br) ? 0.1f : 0.0f), withAlpha(ui::kCream, ui::hovered(br) ? 0.1f : 0.0f));
+  ui::roundLines(br, 12, 1.0f, withAlpha(ui::kCream, 0.16f));
   const float pw = ui::prompt("ÉCHAP", ui::Btn::B, br.x + 10, br.y + 8, 24);
-  ui::tracked("RETOUR", br.x + 20 + pw, capsY(br.y + 20, 19.5f, kT), 19.5f, 0.08f, ui::kCream);
+  drawText("RETOUR", br.x + 20 + pw, capsY(br.y + 20, 13, kDsp), 13, ui::kCream, kDsp);
 
   // The tabs: the open one gold and taller, the others night with an azure underline
   for (int i = 0; i < 4; ++i) {
     const bool sel = i == setTab_;
     Rectangle r = tabRect(i);
     if (!sel) r = {r.x, r.y + 6, r.width, 42};
-    cutTL(r, 12, sel ? ui::kGold : ui::hovered(r) ? mixColor(ui::kNavy, WHITE, 0.1f) : ui::kNavy);
-    if (!sel) DrawRectangleRec({r.x, r.y + r.height - 3, r.width, 3}, withAlpha(ui::kBlue, 0.5f));
+    const Color tf = sel ? ui::kCream : ui::hovered(r) ? mixColor(ui::kNavy, WHITE, 0.1f) : ui::kNavy;
+    ui::roundRect(r, 14, tf, tf);
+    if (!sel) ui::roundLines(r, 14, 1.0f, withAlpha(ui::kCream, 0.12f));
     const Color ink = sel ? ui::kInk : ui::kCream;
     tabIcon(i, {r.x + 16, r.y + r.height * 0.5f - 11}, 22, ink);
-    ui::tracked(kTabNames[i], r.x + 48, capsY(r.y + r.height * 0.5f, 21.7f, kT), 21.7f, 0.08f, ink);
-    if (sel && setRow_ < 0) ui::rim(r, 12, t);
+    drawText(upperFr(kTabNames[i]).c_str(), r.x + 48, capsY(r.y + r.height * 0.5f, 13, kDsp), 13, ink, kDsp);
+    if (sel && setRow_ < 0) ui::rim(r, 14, t);
   }
-  ui::horizonLine(64, 1216, 173, 2.0f);
+  DrawRectangleRec({64, 176, 1152, 1}, withAlpha(ui::kCream, 0.12f));
 
   if (setTab_ < 3) {
     panelBox(kPanel);
@@ -765,13 +769,13 @@ void App::drawSettings() {
       const float cy = rowCy(r);
       const bool foc = r == setRow_;
       if (foc) {
-        const Color a0 = withAlpha(ui::kBlue, 0.22f), a1 = withAlpha(ui::kBlue, 0.06f);
-        ui::quad({rr.x, rr.y}, {rr.x + rr.width, rr.y}, {rr.x + rr.width, rr.y + rr.height}, {rr.x, rr.y + rr.height}, a0, a1, a1, a0);
-        DrawRectangleRec({rr.x, rr.y, 3, rr.height}, ui::kGold);
+        const Rectangle hl{rr.x + 8, rr.y + 3, rr.width - 16, rr.height - 6};
+        ui::roundRect(hl, 12, withAlpha(ui::kCream, 0.08f), withAlpha(ui::kCream, 0.08f));
+        DrawRectangleRec({hl.x + 6, hl.y + 14, 3, hl.height - 28}, ui::kBlue);
       } else {
         DrawRectangleRec({rr.x, rr.y + rr.height - 1, rr.width, 1}, Color{191, 217, 255, 15});
       }
-      drawText(kRows[setTab_][r].label, rr.x + 28, capsY(cy, 24.7f, kU), 24.7f, foc ? ui::kCream : Color{195, 205, 230, 255}, kU);
+      drawText(kRows[setTab_][r].label, rr.x + 28, capsY(cy, 17, kB), 17, foc ? ui::kCream : ui::kSoft, kB);
       switch (widgetFor(setTab_, r)) {
         case Widget::Slider: {
           const int v = *volumeFor(r);
@@ -796,13 +800,13 @@ void App::drawSettings() {
         case Widget::Button: {
           const Rectangle b = buttonRect(r);
           const bool danger = setTab_ == 2;
-          cutTL(b, 8, ui::hovered(b) ? mixColor(ui::kNavy, WHITE, 0.12f) : ui::kNavy);
-          if (danger) DrawRectangleLinesEx(b, 1.0f, withAlpha(kDanger, 0.5f));
-          else DrawRectangleRec({b.x, b.y + b.height - 3, b.width, 3}, ui::kBlue);
+          const Color bf = ui::hovered(b) ? mixColor(ui::kNavy, WHITE, 0.12f) : ui::kNavy;
+          ui::roundRect(b, 10, bf, bf);
+          ui::roundLines(b, 10, 1.0f, danger ? withAlpha(kDanger, 0.5f) : withAlpha(ui::kCream, 0.16f));
           const bool playing = setTab_ == 0 && frames_ - soundTestAt_ < 96;
           const char* label = danger ? "RÉINITIALISER" : playing ? "LECTURE…" : "ÉCOUTER";
-          const float lw = ui::trackedWidth(label, 17.4f, 0.08f);
-          ui::tracked(label, b.x + (b.width - lw) * 0.5f, capsY(cy, 17.4f, kT), 17.4f, 0.08f, danger ? kDanger : ui::kCream);
+          const float lw = textWidth(label, 11, kDsp);
+          drawText(label, b.x + (b.width - lw) * 0.5f, capsY(cy, 11, kDsp), 11, danger ? kDanger : ui::kCream, kDsp);
           break;
         }
       }
@@ -813,10 +817,9 @@ void App::drawSettings() {
     const auto lines = wrapLines(info.help, 324, 19.2f);
     const float hh = 16 + 19 + 6 + 23 + 6 + lines.size() * 20.3f + 14;
     const Rectangle help{856, 188, 360, hh};
-    DrawRectangleRec(help, Color{13, 20, 48, 235});
-    DrawRectangleRec({help.x, help.y, 3, help.height}, ui::kGold);
-    cardTitle("AIDE", help.x + 18, help.y + 26, ui::kGold);
-    drawText(info.label, help.x + 18, capsY(help.y + 52.5f, 23.9f, kT), 23.9f, ui::kCream, kT);
+    ui::roundRect(help, 16, kCard, kCard);
+    cardTitle("AIDE", help.x + 18, help.y + 26, ui::kBlue);
+    drawText(upperFr(info.label).c_str(), help.x + 18, capsY(help.y + 52.5f, 15, kDsp), 15, ui::kCream, kDsp);
     for (size_t i = 0; i < lines.size(); ++i)
       drawText(lines[i].c_str(), help.x + 18, capsY(help.y + 80 + i * 20.3f, 19.2f, kU), 19.2f, kSoft, kU);
     const float cy = help.y + hh + 12;
@@ -959,13 +962,13 @@ void App::drawSettings() {
     DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.72f));
     const bool padWait = waitingPad_;
     const Rectangle m{360, padWait ? 160.0f : 270.0f, 560, padWait ? 400.0f : 180.0f};
-    ui::bevel(m, 18, ui::kNavyDeep, ui::kNavyDeep);
-    ui::bevelLines(ui::grow(m, -1), 17, 2.0f, ui::kGold);
+    ui::roundRect(m, 20, ui::kNavyDeep, ui::kNavyDeep);
+    ui::roundLines(m, 20, 1.0f, withAlpha(ui::kCream, 0.3f));
     const int row = std::clamp(setRow_, 0, kActionCount - 1);
     const std::string title = upperFr(std::string(padWait ? "Nouveau bouton : " : "Nouvelle touche : ") + actionName(row));
-    float ts = 36.9f;
-    while (ts > 22.0f && textWidth(title.c_str(), ts, kT) > m.width - 40) ts -= 1.0f;
-    drawText(title.c_str(), 640 - textWidth(title.c_str(), ts, kT) * 0.5f, capsY(m.y + 44, ts, kT), ts, ui::kCream, kT);
+    float ts = 22.0f;
+    while (ts > 12.0f && textWidth(title.c_str(), ts, kDsp) > m.width - 40) ts -= 0.5f;
+    drawText(title.c_str(), 640 - textWidth(title.c_str(), ts, kDsp) * 0.5f, capsY(m.y + 44, ts, kDsp), ts, ui::kCream, kDsp);
     const char* port = padWait ? (setCol_ == 2 ? "Manette · bouton 1" : "Manette · bouton 2") : setCol_ == 0 ? "Clavier 1" : "Clavier 2";
     const Color pc = padWait ? ui::kCream : portColor(setCol_);
     drawText(port, 640 - textWidth(port, 21.7f, kT) * 0.5f, capsY(m.y + 78, 21.7f, kT), 21.7f, pc, kT);

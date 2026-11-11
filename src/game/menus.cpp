@@ -8,6 +8,7 @@
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
+#include "rlgl.h"
 
 namespace {
 int cardCount(bool training) { return training ? 2 : 4; }
@@ -661,7 +662,9 @@ void App::drawCss() {
   // their colour.
   constexpr float kTileR = 14;
   for (int i = 0; i <= int(r.size()); ++i) {
-    const Rectangle rr = rosterRect(i);
+    Rectangle rr = rosterRect(i);
+    const float drop = 1.0f - std::pow(1.0f - clampf((screenFrames_ - 3 - i * 2.4f) / 27.0f, 0.0f, 1.0f), 3.0f);  // dropping in
+    rr.y -= 18.0f * (1.0f - drop);
     const bool rnd = i == int(r.size());
     int pickers[4], np = 0;
     for (int c = 0; c < cols; ++c) {
@@ -714,6 +717,7 @@ void App::drawCss() {
       tx -= 3;
     }
     if (np > 0) ui::roundLines(ui::grow(rr, -1.0f), kTileR - 1, 2.0f, tint(pickers[0]));
+    if (drop < 1.0f) ui::roundRect(ui::grow(rr, 3.0f), kTileR + 3, withAlpha(ui::kDuskTop, 1.0f - drop), withAlpha(ui::kDuskTop, 1.0f - drop));
   }
   {
     const char* help = "← → ou un clic pour choisir  ·  le dé : un combattant au hasard";
@@ -729,15 +733,16 @@ void App::drawCss() {
     const float pcx = p.x + p.width * 0.5f, pcy = p.y + p.height * 0.5f;
     if (g_chip[col].width <= 0.0f) {  // a free card: join it
       const bool foc = focusOn(col, 0);
-      DrawRectangleRec(p, withAlpha(ui::kNavyDeep, foc ? 0.75f : 0.55f));
-      dashed(p, withAlpha(pc, 0.53f));
+      ui::roundRect(p, 18, withAlpha(ui::kNavyDeep, foc ? 0.75f : 0.55f), withAlpha(ui::kNavyDeep, foc ? 0.75f : 0.55f));
+      ui::roundLines(p, 18, 1.0f, withAlpha(pc, 0.45f));
       const char* who = TextFormat("J%d", col + 1);
-      drawText(who, pcx - textWidth(who, 72, kT) * 0.5f, capsY(pcy - 40, 72, kT), 72, withAlpha(pc, 0.55f), kT);
+      drawText(who, pcx - textWidth(who, 44, FontKind::Display) * 0.5f, capsY(pcy - 40, 44, FontKind::Display), 44,
+               withAlpha(pc, 0.55f), FontKind::Display);
       const float kw = ui::promptWidth("ESPACE", ui::Btn::A, 24), px = pcx - (kw + 8 + textWidth("Rejoindre", 15)) * 0.5f;
       ui::prompt("ESPACE", ui::Btn::A, px, pcy + 8, 24);
       drawText("Rejoindre", px + kw + 8, capsY(pcy + 20, 15, kU), 15, ui::kSky, kU);
       drawTextCentered("ou A sur une manette", pcx, pcy + 42, 12, ui::kMuted, false);
-      if (foc) ui::rim(p, 0, t);
+      if (foc) ui::rim(p, 18, t);
       continue;
     }
     const CharacterDef* d = sl.random ? nullptr : &r[sl.character];
@@ -747,10 +752,13 @@ void App::drawCss() {
       drawWideSheet(col, d, left, pc, cc, paletteOf(col), focusOn(col, 0), focusOn(col, 1));
       continue;
     }
-    const float cut = g_wide ? 22.0f : 16.0f;
-    if (g_wide) ui::bevel(p, cut, left ? lit : kPanelDeep, left ? kPanelDeep : lit, true);
-    else ui::bevel(p, cut, lit, kPanelDeep);
-    DrawRectangleRec({p.x + cut, p.y, p.width - cut, 3}, pc);
+    // Narrow (3-4 players): a rounded card rising in, one after the other
+    const float rise = 1.0f - std::pow(1.0f - clampf((screenFrames_ - 10 - col * 4.0f) / 33.0f, 0.0f, 1.0f), 3.0f);
+    rlPushMatrix();
+    rlTranslatef(0.0f, 40.0f * (1.0f - rise), 0.0f);
+    constexpr float cut = 18.0f;
+    ui::roundRect(p, cut, lit, kPanelDeep);
+    DrawRectangleRec({p.x + cut, p.y, p.width - 2 * cut, 3}, pc);
     const std::string num = d ? d->id.substr(1) : std::string("?");
     const Fiche fi = d ? fiche(*d) : Fiche{"ALÉATOIRE", "", "Tiré au sort au début du combat", 0};
 
@@ -776,25 +784,28 @@ void App::drawCss() {
     if (!g_wide) endClip();
     if (focusOn(col, 1)) {  // the arrows on both sides of the portrait: the fighter before / after
       const float ay = g_wide ? pcy : p.y + 110, ax = g_wide ? 122.0f : p.width * 0.5f - 16;
-      ui::arrowTri({bx - ax, ay}, 22, -1, ui::kGold);
-      ui::arrowTri({bx + ax, ay}, 22, 1, ui::kGold);
+      for (int k = -1; k <= 1; k += 2) {  // chevrons in discs
+        const Vector2 c{bx + k * ax, ay};
+        DrawCircleV(c, 17, withAlpha(ui::kDeep, 0.75f));
+        DrawRing(c, 16, 17, 0, 360, 36, withAlpha(ui::kCream, 0.3f));
+        ui::icon(k < 0 ? ui::Icon::ChevronL : ui::Icon::ChevronR, c, 18, ui::kCream, 2.0f);
+      }
     }
 
     // Who plays it, then the fighter: number, martial art, name, its stats and its two weapons
     const Rectangle chip = g_chip[col];
     const float ix = chip.x, iw = g_wide ? 270.0f : p.width - 32.0f;
     if (!g_wide) {  // the text on a dark fade over the bottom of the portrait (the cut corner stays cut)
-      const Color ink = withAlpha(ui::kInk, 0.92f);
-      DrawRectangleGradientV(int(p.x), 470, int(p.width), 84, withAlpha(ui::kInk, 0.0f), ink);
-      DrawRectangleRec({p.x, 554, p.width, 106 - cut}, ink);
-      DrawRectangleRec({p.x, 660 - cut, p.width - cut, cut}, ink);
-      DrawTriangle({p.x + p.width - cut, 660 - cut}, {p.x + p.width - cut, 660}, {p.x + p.width, 660 - cut}, ink);
+      const Color ink = withAlpha(ui::kDeep, 0.94f);
+      DrawRectangleGradientV(int(p.x), 470, int(p.width), 84, withAlpha(ui::kDeep, 0.0f), ink);
+      DrawRectangleRec({p.x, 554, p.width, 40}, ink);
+      ui::roundRect({p.x, 574, p.width, 86}, cut, ink, ink);
     }
-    ui::slanted(chip, 6, pc, pc);
+    ui::roundRect(chip, 6, pc, pc);
     const char* who = whoOf(training_, sl, col);
-    const float cs = g_wide ? 18.0f : 15.0f;
-    drawText(who, chip.x + (chip.width - textWidth(who, cs, kT)) * 0.5f, capsY(chip.y + chip.height * 0.5f, cs, kT), cs, ui::kInk, kT);
-    if (focusOn(col, 0)) ui::rim(chip, 0, t);
+    ui::label(who, chip.x + (chip.width - ui::labelWidth(who, 11, 0.04f)) * 0.5f, chip.y + chip.height * 0.5f, 11, 0.04f,
+              {10, 11, 14, 255});
+    if (focusOn(col, 0)) ui::rim(chip, 6, t);
     const std::string how = howOf(training_, sl, col);
     float hs = g_wide ? 13.0f : 12.0f;
     while (hs > 9.0f && textWidth(how.c_str(), hs) > iw - chip.width - 10) hs -= 0.5f;
@@ -830,18 +841,21 @@ void App::drawCss() {
         wx += tw + 8;
       }
     } else {
-      float ns = 32.0f;
-      while (ns > 16.0f && textWidth(fi.nick.c_str(), ns, kT) > iw) ns -= 1.0f;
-      drawText(fi.nick.c_str(), ix, capsY(556, ns, kT), ns, ui::kCream, kT);
+      const std::string nick = upperFr(fi.nick);
+      float ns = 20.0f;
+      while (ns > 11.0f && textWidth(nick.c_str(), ns, FontKind::Display) > iw) ns -= 0.5f;
+      drawText(nick.c_str(), ix, capsY(556, ns, FontKind::Display), ns, ui::kCream, FontKind::Display);
       if (!d) drawText(fi.style.c_str(), ix, capsY(586, 13, kU), 13, ui::kSoft, kU);
+      const float sw = (iw - 40) / 10.0f;
       for (int k = 0; d && k < 5; ++k) {
         const float y = 585 + k * 10.0f;
-        ui::tracked(kStatName[k][1], ix, capsY(y, 12, kT), 12, 0.08f, ui::kMuted);
+        ui::label(kStatName[k][1], ix, y, 8, 0.08f, ui::kMuted);
         for (int g = 0; g < 10; ++g) {
           const Color sc = g < bars[k] ? pc : ui::kTrack;
-          ui::slanted({ix + 36 + g * 20.0f, y - 3, 20.2f, 6}, 2.2f, sc, sc);
+          ui::roundRect({ix + 36 + g * sw, y - 3, sw - 3, 6}, 2.0f, sc, sc);
         }
       }
+      rlPopMatrix();
     }
   }
   if (g_wide && g_chip[0].width + g_chip[1].width + g_chip[2].width + g_chip[3].width > 0.0f) {  // "VS" between the two
@@ -868,14 +882,18 @@ void App::drawCss() {
     const Rectangle f = fieldRect(col, row);
     const int own = ownedCard(dev);
     const char* label = own >= 0 ? TextFormat("J%d", own + 1) : dev == kKeyboard1 ? "C1" : dev == kKeyboard2 ? "C2" : "M";
-    const float w = textWidth(label, 14, kT) + 12;
+    const float w = ui::labelWidth(label, 10, 0.06f) + 12;
     const Rectangle tag{f.x + (row == 1 ? 24.0f : -6.0f) + stacked[slot] * (w + 4), f.y - 12, w, 20};
     ++stacked[slot];
     ui::roundRect(ui::grow(tag, 1.5f), 6.5f, ui::kDeep, ui::kDeep);
     ui::roundRect(tag, 5, own >= 0 ? tint(own) : ui::kSky, own >= 0 ? tint(own) : ui::kSky);
-    drawText(label, tag.x + 6, capsY(tag.y + 10, 14, kT), 14, {10, 11, 14, 255}, kT);
+    ui::label(label, tag.x + 6, tag.y + 10, 10, 0.06f, {10, 11, 14, 255});
   }
-  if (!rulesOpen_) return;
+  if (!rulesOpen_) {
+    rulesAnim_ = 0;
+    return;
+  }
+  const float sheetIn = 1.0f - std::pow(1.0f - clampf(++rulesAnim_ / 21.0f, 0.0f, 1.0f), 3.0f);
 
   // ---- The « Règles & mode » sheet, over the dimmed screen -------------------------------------------------------
   SheetItem items[16];
@@ -884,7 +902,9 @@ void App::drawCss() {
   auto sheetFocus = [&](int col, int row) {
     return (sel.col == col && sel.row == row) || ui::hovered(sheetField(col, row, teamsOn));
   };
-  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.78f));
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.78f * sheetIn));
+  rlPushMatrix();  // it slides in from the right
+  rlTranslatef(80.0f * (1.0f - sheetIn), 0.0f, 0.0f);
   const Rectangle S = kSheet;
   constexpr FontKind kDsp = FontKind::Display, kB = FontKind::Body;
   ui::roundRect(S, 24, kPanel, kPanelDeep);
@@ -1037,6 +1057,7 @@ void App::drawCss() {
   ui::roundRect(vr, 14, vc, vc);
   const float kw = ui::prompt("ENTRÉE", ui::Btn::Start, vr.x + 10, vr.y + 10, 24);
   drawText("VALIDER", vr.x + 20 + kw, capsY(vr.y + 22, 15, kDsp), 15, ui::kInk, kDsp);
+  rlPopMatrix();
 }
 
 // ---------------------------------------------------------------------------
@@ -1157,6 +1178,7 @@ void App::drawStage() {
   auto frame = [&](int i, const char* label, bool sel) {
     Rectangle rr = stageCardRect(i);
     if (sel) rr.y -= 6;
+    rr.y += 60.0f * std::pow(1.0f - clampf((screenFrames_ - 4 - i * 3.0f) / 27.0f, 0.0f, 1.0f), 3.0f);  // rising in
     constexpr float cut = 12.0f;
     if (i < n) {
       drawStageThumb(i, stages[i], rr, cut);

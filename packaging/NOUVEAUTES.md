@@ -8,6 +8,18 @@
 
 ## Nouveautés
 
+Version 14.3 : **la DA « Épure » finie, avec ses animations**.
+
+- Cartes de combat : comme dans Smash, un fond à la couleur du joueur sous le portrait, le % et les vies (gris pour
+  un CPU). Au début du combat, les cartes montent du bas de l'écran l'une après l'autre.
+- « GAME » : le combat se fige en noir et blanc sous le mot GAME, puis le balayage vers la victoire.
+- Transition Horizon au rythme de la maquette (les volets se ferment sur la ligne, tiennent, puis se rouvrent).
+- Animations d'entrée : les persos tombent un par un à la sélection, les fiches à 3 ou 4 joueurs montent, la fenêtre
+  Règles & mode glisse, les arènes montent, la pause glisse, la galerie et les options apparaissent en douceur.
+- Refaits dans le style Épure : la sélection à 3 ou 4 joueurs, la pause et la liste des coups, les options, la
+  galerie des personnages.
+- Contient la 14.2.
+
 Version 14.2 : **nouvelle direction artistique « Épure », palette Crépuscule**.
 
 - Tout le jeu passe aux polices Archivo (titres larges) et Inter (textes), sur un fond crépuscule (violet nuit) avec

@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 11/11 22 h UTC, session claude/project-thread-gzf1un : version 14.3 = fin de la DA « Épure ». Cartes de combat
+  façon Smash (plaque à la couleur du joueur, `render_hud.cpp`), cartes qui montent au début du combat, arrêt sur image
+  noir et blanc du GAME (`pix::desaturate`, `pixel.cpp`), Horizon recalé (54 images), animations d'entrée (tuiles de
+  la sélection, fiches 3-4 joueurs, Règles & mode via `rulesAnim_`, arènes, pause via `pauseAnim_`, galerie,
+  options) ; sélection 3-4 joueurs, pause, options et galerie restylées. Reste à l'ancienne : panneau d'entraînement.
 - 11/11 21 h 30 UTC, session claude/project-thread-gzf1un (partie de 14.1, h4e20u da84e804) : version 14.2 = DA
   « Épure », palette Crépuscule validée par yoyo (maquettes Claude Design dans le fil « Refaire la DA en version
   épurée »). Polices : Archivo ExtraCondensed (Title), Archivo Expanded (Display, nouveau), Inter (Ui et Body) ; Saira

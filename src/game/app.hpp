@@ -94,6 +94,7 @@ class MatchScreen {
   int listTab_ = 0;       // the move list's tab: 0 bare hands, 1 weapon A, 2 weapon B
   int keysDevice_ = -1;   // whose keys the move list shows
   bool quitAsk_ = false;  // QUITTER pressed once: once more quits
+  int pauseAnim_ = 0;     // frames since the pause opened (the menu slides in)
   int dropSlot_ = 0;  // training: which of the player's two weapons the pause menu drops
   std::array<bool, 4> padLost_{};      // the player's gamepad got unplugged (auto pause)
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
@@ -229,6 +230,7 @@ class App {
   int stage_ = 0;
   int cssCol_ = 0, cssRow_ = 1;  // the card and field under the mouse
   bool rulesOpen_ = false;  // the « Règles & mode » sheet is open over the character select
+  int rulesAnim_ = 0;       // frames since it opened (its slide in)
   int rulesSel_ = 0;        // its field under the keyboard / gamepad
   std::array<CssCursor, kDeviceCount> cssCur_{};
   bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random

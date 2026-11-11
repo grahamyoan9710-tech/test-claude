@@ -1155,7 +1155,7 @@ bool mouseMoved() { return g_mouseMoved; }
 
 // ---- Transition ---------------------------------------------------------------------
 float wipeSwap(Wipe w) { return w == Wipe::Cut ? 0.0f : w == Wipe::Flash ? 0.4f : 0.5f; }
-int wipeFrames(Wipe w) { return w == Wipe::Horizon ? 44 : w == Wipe::Flash ? 54 : w == Wipe::Cut ? 57 : 40; }
+int wipeFrames(Wipe w) { return w == Wipe::Horizon ? 54 : w == Wipe::Flash ? 54 : w == Wipe::Cut ? 57 : 40; }
 
 namespace {
 float seg(float t, float a, float b) { return clampf((t - a) / (b - a), 0.0f, 1.0f); }
@@ -1186,8 +1186,8 @@ void wipe(Wipe w, float t, const Texture2D* old) {
   if (t < 0.0f || t >= 1.0f) return;
   const float W = float(kScreenW), H = float(kScreenH), mid = H * 0.5f;
   switch (w) {
-    case Wipe::Horizon: {  // the line draws (0-0.4), the halves close on it (0.2-0.46), open again (0.54-1)
-      const float close = t < 0.5f ? easeInOut(seg(t, 0.12f, 0.46f)) : 1.0f - easeInOut(seg(t, 0.54f, 1.0f));
+    case Wipe::Horizon: {  // the line draws (0-0.4), the halves close on it (0-0.42), hold, open again (0.58-1)
+      const float close = t < 0.5f ? easeInOut(seg(t, 0.0f, 0.42f)) : 1.0f - easeInOut(seg(t, 0.58f, 1.0f));
       const float hh = (mid + 2.0f) * close;
       DrawRectangleRec({0, 0, W, hh}, kDeep);
       DrawRectangleRec({0, H - hh, W, hh}, kDeep);

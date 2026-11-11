@@ -52,6 +52,16 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
   const bool out = f.eliminated;
   constexpr FontKind kB = FontKind::Body, kDsp = FontKind::Display, kD = FontKind::Damage;
 
+  // The plate (Smash-like): the player's colour, deep, under the tag, the damage and the name; the face overlaps it
+  {
+    const Color pl = out ? ui::kDisabled : ring;
+    const Rectangle p{x + 30, bottom - 120, r.width - 30, 108};
+    ui::roundRect({p.x, p.y + 4, p.width, p.height}, 16, withAlpha(BLACK, 0.3f), withAlpha(BLACK, 0.3f));
+    ui::roundRect(p, 16, withAlpha(mixColor(pl, ui::kDeep, 0.5f), 0.94f), withAlpha(mixColor(pl, ui::kDeep, 0.72f), 0.94f));
+    ui::roundLines(p, 16, 1.0f, withAlpha(mixColor(pl, ui::kCream, 0.5f), 0.35f));
+    DrawRectangleRec({p.x + 48, p.y + p.height - 5, p.width - 64, 3}, withAlpha(pl, 0.9f));
+  }
+
   // The face: a disc ringed with the player's colour
   const Vec2 ic{x + 38, bottom - 20 - 46};
   constexpr float ir = 34;
@@ -142,8 +152,12 @@ void drawHud(const Match& m, const std::array<float, 4>& shake, float time, cons
   const int n = int(m.fighters.size());
   const float cw = 280.0f, ch = 110.0f, gap = n <= 2 ? 80.0f : 18.0f;
   float x = (kScreenW - (n * cw + (n - 1) * gap)) * 0.5f;
+  int i = 0;
   for (const auto& f : m.fighters) {
-    fighterCard(m, f, {x, kScreenH - 8.0f - ch, cw, ch}, shake[f.id & 3], time, devices);
+    // At the start the cards rise from under the screen, one after the other
+    const float u = m.countdown > 0 ? clampf((200.0f - m.countdown - 6.0f - i++ * 5.0f) / 30.0f, 0.0f, 1.0f) : 1.0f;
+    const float rise = 140.0f * std::pow(1.0f - u, 3.0f);
+    fighterCard(m, f, {x, kScreenH - 8.0f - ch + rise, cw, ch}, shake[f.id & 3], time, devices);
     x += cw + gap;
   }
 }

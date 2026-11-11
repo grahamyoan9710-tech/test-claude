@@ -1,6 +1,7 @@
 // The fight itself: inputs -> simulation -> effects -> camera -> drawing.
 #include "game/app.hpp"
 #include "game/fighter_art.hpp"
+#include "game/pixel.hpp"
 #include "game/render.hpp"
 #include "game/rtx.hpp"
 #include "game/settings.hpp"
@@ -563,10 +564,11 @@ void MatchScreen::draw() {
   if (training()) drawTrainingPanel();
   drawUltCutIn(m_, time_);
 
-  if (m_.finished) {  // « GAME »: the fight frozen under the dusk, a burst of rays, the word slamming in, a line under it
+  if (m_.finished) {  // « GAME »: the fight frozen in black and white, a burst of rays, the word slamming in, a line under it
     const float u = endTimer_ / 60.0f, in = std::min(1.0f, endTimer_ / 10.0f);
     const float e = 1.0f - std::pow(1.0f - std::min(1.0f, u / 0.3f), 3.0f);
-    ui::dusk(0.62f * in);
+    pix::desaturate(in);  // the fight frozen in black and white
+    ui::dusk(0.25f * in);
     ui::sunburst({640, 360}, 700 * (0.4f + 0.75f * std::min(1.0f, u / 2.8f)), 45, u * 0.11f, withAlpha(ui::kCream, 0.14f * in));
     const float size = lerpf(260.0f * 1.35f, 260.0f, e), w = ui::spriteWidth(ui::Sprite::Game, size);
     ui::drawSprite(ui::Sprite::Game, kScreenW * 0.5f - w * 0.5f, 343 - size * 0.5f, size, in);
