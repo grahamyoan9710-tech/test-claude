@@ -8,6 +8,20 @@
 
 ## Nouveautés
 
+Version 14.0 : **la compétence vers le haut est corrigée, et le jeu est plus léger**.
+
+- Compétence vers le haut (tous les persos) : le perso ne devient plus sombre ni bleuté pendant sa chute, et ne
+  « fait plus de squats » en l'air. Il garde la pose de la fin de sa spirale jusqu'au sol, et ne se tient plus
+  debout dans le vide à la fin de la montée.
+- Lumière des effets sur les persos : les zones les plus sombres gardent leur couleur (plus de teinte olive sous
+  une lumière jaune).
+- L'écran titre démarre plus vite : il ne charge plus les animations de tous les persos d'un coup.
+- RTX : plus de fuite de mémoire de la carte graphique sur les PC qui ne gèrent pas certains formats ; le porteur de
+  la Clash Orb coûte beaucoup moins cher à dessiner.
+- Corrigé : un perso pouvait rester bloqué en remontant d'un rebord ; l'ultime n'est plus perdu s'il ne peut pas
+  partir.
+- Contient la 13.9.
+
 Version 13.9 : **en RTX, les effets ne virent plus au blanc**.
 
 - Les gros effets (l'ultime de Hakuen surtout) blanchissaient tout l'écran en RTX, avec un grain de poussière

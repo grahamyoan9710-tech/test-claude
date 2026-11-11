@@ -45,6 +45,7 @@ struct SheetMask {
 bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out);
 bool sheetMaskAt(const CharacterDef& d, int sheet, int frame, SheetMask& out);
 int sheetFrames(const CharacterDef& d, int sheet);
+int sheetLastAir(const CharacterDef& d, int sheet);  // -1: none (see Pose::sheetAir)
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 
 // A still picture of assets/sprites (portraits "<id>_portrait", placeholder bodies "<id>_still", weapon icons

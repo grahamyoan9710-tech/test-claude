@@ -60,6 +60,7 @@ struct Art {
     float fw = 0, fh = 0, ax = 0, ay = 0, pxPerH = 1;  // frame size, the feet (hips' x on the ground), scale
     float fps = 15.0f;                                 // looping clips
     float drop = 0;  // px: the first frame sits this much lower than the anchor says, easing to 0 by the last
+    int lastAir = -1;  // up specials: the last frame drawn in the air (their clips end standing on the ground)
   };
   Sheet sheets[kSheetCount];
   bool clips = false, clipsTried = false;  // at least one sheet; sheets loaded
@@ -93,7 +94,7 @@ void main() {
     float m = smoothstep(lim - 0.012, lim + 0.012, dot(p, ldir.xy));
     float a = min(0.95, 1.6 * lit.a);
     float l = dot(c, vec3(0.299, 0.587, 0.114));
-    vec3 lc = l < 0.2 ? mix(lit.rgb * 0.22, lit.rgb * 0.8, l / 0.2)
+    vec3 lc = l < 0.2 ? mix(c, lit.rgb * 0.8, l / 0.2)  // (darks to a deep tone of a yellow light went olive)
                       : mix(lit.rgb * 0.8, mix(lit.rgb, vec3(1.0), 0.85), smoothstep(0.2, 0.85, l));
     vec2 q = clamp(fragTexCoord + ldir.xy * texel * 2.5, cell.xy, cell.zw);
     float edge = (1.0 - texture(texture0, q).a) * ldir.z;
@@ -175,6 +176,22 @@ void beginTint(Color tc, float amount, const Lit& L = {}) {
   if (g_texelLoc >= 0) SetShaderValue(g_tint, g_texelLoc, L.texel, SHADER_UNIFORM_VEC2);
 }
 
+// The last frame whose feet are well off the ground (lifted more than 15 % of the height), -1 if none.
+int lastAirFrame(const Image& img, int frames, int fw, float ay, float pxh) {
+  int last = -1;
+  for (int k = 0; k < frames; ++k) {
+    int bottom = -1;
+    for (int y = img.height - 1; y >= 0 && bottom < 0; --y)
+      for (int x = k * fw; x < (k + 1) * fw && x < img.width; ++x)
+        if (GetImageColor(img, x, y).a > 0) {
+          bottom = y;
+          break;
+        }
+    if (bottom >= 0 && ay - float(bottom) > 0.15f * pxh) last = k;
+  }
+  return last;
+}
+
 void loadSheets(Art& A, const char* fighter) {
   const std::string text(reinterpret_cast<const char*>(sheets_txt), sheets_txt_size);
   size_t pos = 0;
@@ -200,6 +217,7 @@ void loadSheets(Art& A, const char* fighter) {
       Image img = LoadImageFromMemory(".png", cs->data, int(*cs->size));
       if (!img.data) break;
       Art::Sheet& S = A.sheets[id];
+      S.lastAir = std::strstr(anim, "uspecial") ? lastAirFrame(img, frames, int(fw), ay, pxh) : -1;
       S.tex = LoadTextureFromImage(img);
       UnloadImage(img);
       if (S.tex.id == 0) break;
@@ -243,7 +261,7 @@ const Art* clipsOf(Hero h) {
 
 // The frame of a generated animation the pose shows. A blow is timed on the move: the frames before the impact
 // play while it winds up, the impact holds while the hitbox is out, the rest is the recovery.
-int sheetFrame(const Art::Sheet& S, const Pose& pose) {
+int clipFrame(const Art::Sheet& S, const Pose& pose) {
   if (S.loop && pose.sheetPhase >= 0.0f) return int(std::floor(pose.sheetPhase * S.frames)) % S.frames;
   if (S.loop) return int(std::floor(std::max(0.0f, pose.sheetT) * S.fps)) % S.frames;
   const float t = clampf(pose.sheetT, 0.0f, 1.0f);
@@ -268,6 +286,12 @@ int sheetFrame(const Art::Sheet& S, const Pose& pose) {
   const int rest = S.frames - from;
   if (rest <= 0) return S.frames - 1;
   return std::min(S.frames - 1, from + int((t - since) / std::max(1e-3f, 1.0f - since) * rest));
+}
+
+// In the air, an up special stops on its last airborne frame: its clip ends standing (it stood in mid-air).
+int sheetFrame(const Art::Sheet& S, const Pose& pose) {
+  const int k = clipFrame(S, pose);
+  return pose.sheetAir && S.lastAir >= 0 ? std::min(k, S.lastAir) : k;
 }
 }  // namespace
 
@@ -335,6 +359,11 @@ bool sheetMask(const CharacterDef& d, const Pose& pose, SheetMask& out) {
   return sheetMaskAt(d, pose.sheet, sheetFrame(A->sheets[pose.sheet], pose), out);
 }
 
+int sheetLastAir(const CharacterDef& d, int sheet) {
+  const Art* A = clipsOf(d.hero);
+  return A && sheet >= 0 && sheet < kSheetCount && A->sheets[sheet].ok ? A->sheets[sheet].lastAir : -1;
+}
+
 int sheetFrames(const CharacterDef& d, int sheet) {
   const Art* A = clipsOf(d.hero);
   return A && sheet >= 0 && sheet < kSheetCount && A->sheets[sheet].ok ? A->sheets[sheet].frames : 0;
@@ -375,8 +404,11 @@ bool sheetMaskAt(const CharacterDef& d, int sheet, int frame, SheetMask& out) {
 }
 
 bool hasClips(Hero h) {
-  const Art* A = clipsOf(h);
-  return A && A->clips;
+  if (size_t(h) >= g_art.size()) return false;
+  const Art& A = g_art[size_t(h)];
+  if (A.clipsTried) return A.clips;
+  // Not loaded yet: listed is enough (the title's demo pool asked every fighter and loaded all their clips).
+  return spriteIndex().find("sheet " + heroKey(h) + " ") != std::string::npos;
 }
 
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash) {
@@ -430,7 +462,9 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   };
   quad();
   if (shaded) EndShaderMode();
-  rtx::solid(quad);  // the fighter blocks the ray traced light
+  // The fighter blocks the ray traced light; its full-flash copies (the orb holder's 16-copy outline) do not:
+  // shortcut: each solid() switches targets, 17 a frame for the holder; a flash of 1 never hides the body itself.
+  if (flash < 1.0f) rtx::solid(quad);
   return true;
 }
 
@@ -440,7 +474,7 @@ struct Picture {
   bool ok = false;
 };
 const Picture* pictureOf(const char* name) {
-  static std::map<std::string, Picture> cache;
+  static std::map<std::string, Picture, std::less<>> cache;  // (found by const char*: no string per lookup)
   auto it = cache.find(name);
   if (it != cache.end()) return it->second.ok ? &it->second : nullptr;
   Picture& P = cache[name];
@@ -564,7 +598,7 @@ bool smoke(const char* name) {
   return false;
 }
 const Fx* fxOf(const char* name) {
-  static std::map<std::string, Fx> cache;
+  static std::map<std::string, Fx, std::less<>> cache;  // (found by const char*: no string per lookup)
   auto it = cache.find(name);
   if (it != cache.end()) return it->second.ok ? &it->second : nullptr;
   Fx& F = cache[name];

@@ -53,6 +53,7 @@ struct Pose {
   int sheet = -1;          // a generated animation shows this pose instead (see SheetAnim in fighter_art.hpp)
   float sheetT = 0.0f;     // looping animations: seconds; the others: 0..1 through the move
   bool sheetFlip = false;  // the clip is drawn mirrored (a roll backwards)
+  bool sheetAir = false;   // airborne: an up special's clip stops on its last frame in the air
   float sheetPhase = -1.0f;  // looping clips driven by the distance covered (walk, run): 0..1 through the cycle
   Vec2 sheetOffset;          // the clip is drawn from here instead of the feet (climbing a ledge: from the top)
   // When the move's blows are out (0..1 through the move: windows [sheetHitA, sheetHitB)), to show each drawn blow

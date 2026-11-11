@@ -285,9 +285,10 @@ void Match::gainUlt(Fighter& f, float amount) {
 }
 
 void Match::startFinalSmash(Fighter& f) {
+  startMove(f, FinalSmash);
+  if (f.state != FState::Attack || f.move != FinalSmash) return;  // it did not start: the ultimate is kept
   f.finalSmash = false;
   f.ult = 0.0f;
-  startMove(f, FinalSmash);
   freezeTimer = 30;
   freezeOwner = f.id;
   const MoveDef& fs = f.moveDef(FinalSmash);

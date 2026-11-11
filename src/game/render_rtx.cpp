@@ -297,6 +297,7 @@ RenderTexture2D floatTarget(int w, int h, bool smooth) {
   rlFramebufferAttach(t.id, t.texture.id, RL_ATTACHMENT_COLOR_CHANNEL0, RL_ATTACHMENT_TEXTURE2D, 0);
   if (!rlFramebufferComplete(t.id) || t.texture.id == 0) {
     rlUnloadFramebuffer(t.id);
+    if (t.texture.id) rlUnloadTexture(t.texture.id);
     return RenderTexture2D{};
   }
   SetTextureFilter(t.texture, smooth ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
@@ -396,7 +397,9 @@ void beginFrame() {
     }
     rlEnableFramebuffer(fr->id);
   }
-  if (g_emit.id == 0) {
+  static bool made = false;  // once: without half-float targets it failed, and was remade (leaked) every frame
+  if (!made) {
+    made = true;
     g_emit = floatTarget(kW, kH, true);
     g_albedo = LoadRenderTexture(kW, kH);
     for (auto* t : {&g_jfa[0], &g_jfa[1], &g_raw}) *t = floatTarget(kW, kH, false);
