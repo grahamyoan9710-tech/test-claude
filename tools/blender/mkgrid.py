@@ -6,7 +6,7 @@ src, out, n = sys.argv[1], sys.argv[2], int(sys.argv[3])
 frames = [Image.open('%s/f%02d.png' % (src, i)).convert('RGBA') for i in range(n)]
 fw, fh = frames[0].size
 assert all(f.size == (fw, fh) for f in frames)
-cols = 8192 // fw
+cols = min(n, 8192 // fw)  # (no empty columns: the game counts them from the width)
 sheet = Image.new('RGBA', (cols * fw, -(-n // cols) * fh), (0, 0, 0, 0))
 for i, fr in enumerate(frames):
     sheet.paste(fr, ((i % cols) * fw, (i // cols) * fh))

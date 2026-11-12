@@ -284,6 +284,11 @@ void MatchScreen::drawCallouts() {
   }
 }
 
+void MatchScreen::showSkill(char dir) {
+  skillShow_ = dir;
+  if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
+}
+
 void MatchScreen::showUltimate(int slot) {
   ultShow_ = std::clamp(slot, -1, 1);
   if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
@@ -363,6 +368,17 @@ void MatchScreen::stepFight() {
       ultFired_ = true;
     } else if (f.cpu) {
       inputs[f.port] = InputState{};
+    }
+  }
+  if (skillShow_ && m_.started() && m_.fighters.size() >= 2) {  // the demo's special, once its cooldown is over
+    Fighter& f = m_.fighters[0];
+    inputs[f.port] = InputState{};
+    if (m_.frame > 260 && m_.frame % 150 == 0 && f.grounded && f.state != FState::Attack) {
+      f.pos = {-170.0f, 0.0f};
+      f.facing = 1;
+      m_.fighters[1].pos = {130.0f, 0.0f};
+      inputs[f.port].special = true;
+      inputs[f.port].stick = skillShow_ == 's' ? Vec2{1, 0} : skillShow_ == 'u' ? Vec2{0, -1} : skillShow_ == 'd' ? Vec2{0, 1} : Vec2{};
     }
   }
   m_.step(inputs);

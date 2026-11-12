@@ -595,7 +595,7 @@ struct Fx {
   Texture2D glow{};  // a ParticleFX effect's halo: its frames blurred, premultiplied, kGlowDown times smaller
   Color light{};     // its mean colour, brightened: the light it throws on the fighters
   std::vector<Vector4> beams;  // per frame, that light: from (x, y, frame pixels), spreading z, strength w
-  bool ownGlow = false;  // a ParticleFX sprite sheet, not a GIF: its own soft bloom is kept, no halo over it
+  bool ownGlow = false;  // its own bloom is kept (the 11th field of its line), no halo over it
   bool ok = false;
 };
 // The halo of a ParticleFX effect (pfx_*): their GIF export has on/off transparency, so the light their site draws
@@ -663,10 +663,10 @@ const Fx* fxOf(const char* name) {
     const std::string line = index.substr(pos, end - pos);
     pos = end + 1;
     char key[64] = {};
-    int frames = 0, loop = 0, pixel = 0;
+    int frames = 0, loop = 0, pixel = 0, own = 0;
     float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f, hit = 0.0f;
-    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop, &hit,
-                    &pixel) < 6 ||
+    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f %d %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop,
+                    &hit, &pixel, &own) < 6 ||
         std::strcmp(key, name) != 0 || frames <= 0)
       continue;
     const unsigned char* data = nullptr;
@@ -676,8 +676,7 @@ const Fx* fxOf(const char* name) {
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
     F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
-    // (the owner's model, 11/11: the halo turned it white; the KO tear has its glow baked in, a halo blurs it)
-    F.ownGlow = std::strcmp(name, "pfx_h01_ult") == 0 || std::strcmp(name, "pfx_ko") == 0;
+    F.ownGlow = own != 0;  // made in Blender: its bloom is baked in, the game's halo would blur it and wash it white
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
       if (!smoke(name)) F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)

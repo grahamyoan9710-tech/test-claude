@@ -27,6 +27,7 @@ struct Options {
   bool teams = false;  // --teams: team battle (red against blue) for this run
   bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
+  char skillShow = 0;            // --skill n|s|u|d: the demo's first fighter uses that special again and again
   int weaponShow = -1;           // --weapon SLOT: the demo's first fighter keeps that weapon in hand (its kit)
 };
 
@@ -57,6 +58,7 @@ class MatchScreen {
   // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
   void showUltimate(int slot);
   void showWeapon(int slot) { weaponShow_ = slot; }
+  void showSkill(char dir);
   // For the results: Clash Orbs broken and biggest blow (in %) of each fighter, the fight's length since "GO !"
   int orbsBroken(int id) const { return id >= 0 && id < 4 ? orbs_[id] : 0; }
   float bestHit(int id) const { return id >= 0 && id < 4 ? bestHit_[id] : 0.0f; }
@@ -107,6 +109,7 @@ class MatchScreen {
   bool attract_ = false;
   int ultShow_ = -2;
   int weaponShow_ = -1;
+  char skillShow_ = 0;
   bool ultFired_ = false;
   float time_ = 0.0f;
   // Training: combo counter per fighter

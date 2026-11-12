@@ -37,7 +37,7 @@ struct Fighter {
   float S = 1.0f, P = 1.0f;
   F e = F::Normal;
   const char* fx(const char* slot, const char* what) const { return intern(c.id + "_" + slot + "_" + what); }
-  const char* pfx(const char* what) const { return intern("pfx_" + c.id + "_" + what); }  // its ParticleFX effect
+  const char* pfx(const char* what) const { return intern("pfx_" + c.id + "_" + what); }  // its Blender effect
 };
 
 Fighter start(int number, const char* element, Build b, F e, Palette main, Palette alt) {
@@ -322,7 +322,7 @@ CharacterDef make01() {
 
   arm(k, 0, "Odachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 95, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Grande coupe descendante"});
-  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, "pfx_crescent", 9, 24, 9)),
+  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, k.pfx("lame"), 9, 24, 9)),
          rush("Iaï", e, k.fx("a", "s"), 17, 0, 11), rise("Lune montante", e, k.fx("a", "u"), 15.5f, 4),
          counter("Garde-lame", e, k.fx("a", "d"), false));
   ultimateOf(k, 0, ult::ambush("MILLE LUNES", e, k.fx("a", "ult"), L::Weapon, 7));
@@ -388,7 +388,7 @@ CharacterDef make03() {
 
   arm(k, 0, "Grande épée noire", "Lame lourde aux veines rouges", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Taille lourde", "Revers", "Frappe au sol"}, 1.15f);
-  skills(k, 0, along(shot("Onde tranchante", e, PV::Wave, k.fx("a", "n"), 8, 26, 10)),
+  skills(k, 0, along(shot("Onde tranchante", e, PV::Wave, k.pfx("lame"), 8, 26, 10)),
          rush("Brise-garde", e, k.fx("a", "s"), 13, 0, 13), rise("Lame ascendante", e, k.fx("a", "u"), 15, 3),
          burst("Séisme", e, k.fx("a", "d"), 80, 13));
   ultimateOf(k, 0, ult::rain("EXÉCUTION ÉCARLATE", e, k.fx("a", "ult"), PV::Pillar, 2));
@@ -420,7 +420,7 @@ CharacterDef make07() {
 
   arm(k, 0, "Épée large", "Lame à rubans rouges", WeaponVisual::Held, Kit::Blade, 85, 1.0f,
       {"Coupe", "Seconde coupe", "Estoc"}, 0.9f);
-  skills(k, 0, piercing(shot("Lame-éclair", e, PV::Crescent, k.fx("a", "n"), 12, 18, 8)),
+  skills(k, 0, piercing(shot("Lame-éclair", e, PV::Crescent, k.pfx("lame"), 12, 18, 8)),
          rush("Iaï foudroyant", e, k.fx("a", "s"), 19, 0, 11), rise("Saut-foudre", e, k.fx("a", "u"), 16, 3),
          counter("Riposte", e, k.fx("a", "d"), false));
   ultimateOf(k, 0, ult::ambush("CENT ÉCLAIRS", e, k.fx("a", "ult"), L::Weapon, 9));
@@ -453,7 +453,7 @@ CharacterDef make08() {
 
   arm(k, 0, "Épée blanche et or", "Lame blanche à rubans", WeaponVisual::Held, Kit::Blade, 85, 1.0f,
       {"Coupe", "Seconde coupe", "Coupe en croix"});
-  skills(k, 0, piercing(shot("Lame de lumière", e, PV::Crescent, k.fx("a", "n"), 11, 20, 9)),
+  skills(k, 0, piercing(shot("Lame de lumière", e, PV::Crescent, k.pfx("lame"), 11, 20, 9)),
          rush("Éclair blanc", e, k.fx("a", "s"), 18, 0, 11), rise("Ascension sacrée", e, k.fx("a", "u"), 16, 4),
          counter("Contre sacré", e, k.fx("a", "d"), false));
   ultimateOf(k, 0, ult::downpour("JUGEMENT CÉLESTE", e, "pfx_sword_rain", 80, 5));

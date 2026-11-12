@@ -63,6 +63,9 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - Démo d'ultime :
   `./build/super_clash --demo --fighters A,B --ult SLOT --record 270 500 10 DIR --quit-after 505`.
   SLOT vaut -1 (mains nues), 0 ou 1 (arme).
+- Démo de compétence (le 1er perso la refait dès qu'elle est rechargée, à partir de l'image 300) :
+  `./build/super_clash --demo --fighters A,B --weapon SLOT --skill n|s|u|d --record 312 372 6 DIR --quit-after 375`
+  (DIR doit exister).
 
 ## Architecture
 - `src/core/` : la simulation, déterministe et sans rendu.
@@ -96,7 +99,7 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   du propriétaire (Desktop Commander, dossier `Art/Blender`) ou dans la session (`pip install bpy==5.3.0`). Scripts
   dans `tools/blender/` : rendu EXR sur film transparent, puis post en Python (bloom, alpha droit, bande en grille
   de moins de 8192 px). Les bandes gardent le nom `pfx_*` (`assets/sprites/fx_pfx_*.png`), ce qui les fait passer
-  avec `kVfx = false`. Les effets ParticleFX encore en jeu sont remplacés un par un ; plus aucun build ParticleFX.
+  avec `kVfx = false` ; leur ligne `fx` finit par un 11e champ à 1 (le bloom est dans la bande : pas de halo du jeu). Les effets ParticleFX encore en jeu sont remplacés un par un ; plus aucun build ParticleFX.
   Projections de lame : le ressenti des tranchants d'énergie de Vergil (DMC) et des grands croissants d'énergie,
   avec un visuel et des noms originaux. Tous sont joués par le jeu (effets `fx`), menus compris. Aucun effet dessiné
   par le code : les anciens effets codés sont supprimés une fois remplacés.

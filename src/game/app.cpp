@@ -213,6 +213,7 @@ void App::run() {
     startMatch();
     if (opt_.ultShow >= -1) match_->showUltimate(opt_.ultShow);
     if (opt_.weaponShow >= 0) match_->showWeapon(opt_.weaponShow);
+    if (opt_.skillShow) match_->showSkill(opt_.skillShow);
     transition_ = -1;
     enterScreen(Screen::Match);
   } else if (opt_.screen == "menu") {
