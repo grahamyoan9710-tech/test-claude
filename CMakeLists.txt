@@ -122,6 +122,7 @@ if(CLASH_BUILD_GAME)
     src/game/settings.cpp
     src/game/fonts.cpp
     src/game/ui.cpp
+    src/game/ui_prestige.cpp
     src/game/audio.cpp
     src/game/render_fighter.cpp
     src/game/render_body.cpp

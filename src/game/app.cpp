@@ -57,12 +57,20 @@ void App::goTo(Screen s, bool instant) {
   if (transition_ >= 0) return;
   next_ = s;
   transition_ = 0;
-  // « Épure »: a blade cuts into the VS, a white flash opens the fight, a white sweep closes it; the menus close and open
-  // on the horizon line.
+  // « Prestige »: the blade cuts into the VS, the choc opens the fight, a brush closes it and wipes between the menus.
   wipe_ = s == Screen::Versus ? ui::Wipe::Cut
           : s == Screen::Match && screen_ != Screen::Settings ? ui::Wipe::Flash
           : screen_ == Screen::Match && s == Screen::Results ? ui::Wipe::Game
                                                               : ui::Wipe::Horizon;
+  // « Prestige »: the brush in Hakuen's colour between the menus, in the winner's out of a fight; the choc in the colours
+  // of the first two fighters
+  ui::Flood a = ui::flood(Hero::H01), b = ui::flood(Hero::P01);
+  if (match_ && match_->match().fighters.size() >= 2) {
+    const Match& m = match_->match();
+    if (wipe_ == ui::Wipe::Flash) a = ui::flood(m.fighters[0].def->hero), b = ui::flood(m.fighters[1].def->hero);
+    if (wipe_ == ui::Wipe::Game && m.winner >= 0) a = ui::flood(m.fighters[m.cfg.teams ? m.ranking()[0] : m.winner].def->hero);
+  }
+  ui::wipeColors(a, b);
   if (wipe_ == ui::Wipe::Cut) {  // freeze the screen being left: its halves fly apart over the next one
     if (snap_.id == 0 || snap_.texture.width != target_.texture.width) {
       if (snap_.id != 0) UnloadRenderTexture(snap_);
@@ -93,7 +101,6 @@ void App::enterScreen(Screen s) {
   }
   screen_ = s;
   screenFrames_ = 0;
-  if (s != Screen::Title) demo_.reset();
   // The VS screen shows the match about to start; the settings opened from the pause go back to it.
   if (s != Screen::Match && s != Screen::Versus && !(s == Screen::Settings && settingsReturn_ == Screen::Match)) {
     match_.reset();
@@ -297,7 +304,6 @@ void App::run() {
       if (transition_ >= len) transition_ = -1;
     }
     ui::newFrame();
-    if (screen_ == Screen::Title) updateDemo();  // the demo fight runs on, even under a transition
     MenuNav nav = (screen_ != Screen::Match && !blocked) ? readMenuNav() : MenuNav{};
     if (!blocked) {
       switch (screen_) {

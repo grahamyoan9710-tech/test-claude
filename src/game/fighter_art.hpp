@@ -48,6 +48,12 @@ int sheetFrames(const CharacterDef& d, int sheet);
 int sheetLastAir(const CharacterDef& d, int sheet);  // -1: none (see Pose::sheetAir)
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 
+// « Prestige »: the menus show the fighters in their own pixel art, crisp. A clip's frame count, frame size, rate and
+// whether it loops (false: the fighter has no such clip); frame `frame` of it drawn with every pixel `scale` px
+// square, the frame's top-left at (x, y), flip mirroring it in its box.
+bool clipInfo(const CharacterDef& d, int anim, int& frames, float& fw, float& fh, float& fps);
+bool drawClipPx(const CharacterDef& d, int anim, int frame, float x, float y, float scale, bool flip = false,
+                float alpha = 1.0f, Color tint = WHITE);
 // A still picture of assets/sprites (portraits "<id>_portrait", placeholder bodies "<id>_still", weapon icons
 // "<id>_icon_a"...): its size in pixels, false if there is none.
 bool pictureSize(const char* name, float& w, float& h);

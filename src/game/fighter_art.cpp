@@ -468,6 +468,32 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   return true;
 }
 
+bool clipInfo(const CharacterDef& d, int anim, int& frames, float& fw, float& fh, float& fps) {
+  const Art* A = anim >= 0 && anim < kSheetCount ? clipsOf(d.hero) : nullptr;
+  if (!A || !A->sheets[anim].ok) return false;
+  const Art::Sheet& S = A->sheets[anim];
+  frames = S.frames, fw = S.fw, fh = S.fh, fps = S.fps;
+  return true;
+}
+
+bool drawClipPx(const CharacterDef& d, int anim, int frame, float x, float y, float scale, bool flip, float alpha, Color tint) {
+  const Art* A = anim >= 0 && anim < kSheetCount ? clipsOf(d.hero) : nullptr;
+  if (!A || !A->sheets[anim].ok) return false;
+  if (alpha <= 0.0f) return true;
+  const Art::Sheet& S = A->sheets[anim];
+  const int i = ((frame % S.frames) + S.frames) % S.frames;
+  // On the frame's own pixel grid, sampled without smoothing (the batch is drawn before the filter changes back)
+  const float k = g_renderScale;
+  x = std::round(x * k) / k, y = std::round(y * k) / k;
+  rlDrawRenderBatchActive();
+  SetTextureFilter(S.tex, TEXTURE_FILTER_POINT);
+  DrawTexturePro(S.tex, {i * S.fw, 0, flip ? -S.fw : S.fw, S.fh}, {x, y, S.fw * scale, S.fh * scale}, {0, 0}, 0.0f,
+                 withAlpha(tint, alpha * tint.a / 255.0f));
+  rlDrawRenderBatchActive();
+  SetTextureFilter(S.tex, TEXTURE_FILTER_TRILINEAR);
+  return true;
+}
+
 namespace {
 struct Picture {
   Texture2D tex{};

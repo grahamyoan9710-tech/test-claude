@@ -1144,79 +1144,62 @@ void newFrame() {
 bool mouseMoved() { return g_mouseMoved; }
 
 // ---- Transition ---------------------------------------------------------------------
-float wipeSwap(Wipe w) { return w == Wipe::Cut ? 0.0f : w == Wipe::Flash ? 0.4f : 0.5f; }
-int wipeFrames(Wipe w) { return w == Wipe::Horizon ? 54 : w == Wipe::Flash ? 54 : w == Wipe::Cut ? 57 : 40; }
+// The brush: 20 frames at 24 a second, its deep tone one frame ahead: 53 frames, covered at frame 25 (0.42 s). The
+// choc: 0.8 s, covered at 0.39 s. The cut: 1 s.
+float wipeSwap(Wipe w) { return w == Wipe::Cut ? 0.0f : w == Wipe::Flash ? 23.0f / 48.0f : 25.0f / 53.0f; }
+int wipeFrames(Wipe w) { return w == Wipe::Flash ? 48 : w == Wipe::Cut ? 60 : 53; }
 
 namespace {
-float seg(float t, float a, float b) { return clampf((t - a) / (b - a), 0.0f, 1.0f); }
-// A glowing cream line from a to b.
-void bladeLine(Vector2 a, Vector2 b, float alpha) {
-  if (alpha <= 0.0f) return;
-  DrawLineEx(a, b, 16.0f, withAlpha(kBlue, 0.12f * alpha));
-  DrawLineEx(a, b, 7.0f, withAlpha(WHITE, 0.3f * alpha));
-  DrawLineEx(a, b, 3.0f, withAlpha(kCream, alpha));
-}
-// Part of a snapshot (y flipped, like a render texture) as a textured quad, its corners p moved by off.
-// Draws part of the old screen moved by off and turned by deg around the screen centre (like a CSS rotate).
-void snapQuad(const Texture2D& tex, const Vector2* p, Vector2 off, float alpha, float deg) {
+Flood g_wipeA{{229, 64, 79, 255}, {158, 31, 49, 255}}, g_wipeB{{139, 92, 246, 255}, {76, 42, 158, 255}};
+// Draws the old screen's polygon p (screen points) moved by off (a snapshot: y flipped, like a render texture).
+void snapQuad(const Texture2D& tex, const Vector2* p, Vector2 off, float alpha) {
   const float W = float(kScreenW), H = float(kScreenH);
-  const float c = std::cos(deg * DEG2RAD), s = std::sin(deg * DEG2RAD);
   rlSetTexture(tex.id);
   rlBegin(RL_QUADS);
   const unsigned char a = (unsigned char)(255 * clampf(alpha, 0.0f, 1.0f));
   rlColor4ub(255, 255, 255, a);
   for (int k : {0, 3, 2, 1}) {  // counter-clockwise on screen
     rlTexCoord2f(p[k].x / W, 1.0f - p[k].y / H);
-    const float dx = p[k].x - W * 0.5f, dy = p[k].y - H * 0.5f;
-    rlVertex2f(W * 0.5f + dx * c - dy * s + off.x, H * 0.5f + dx * s + dy * c + off.y);
+    rlVertex2f(p[k].x + off.x, p[k].y + off.y);
   }
   rlEnd();
   rlSetTexture(0);
 }
 }  // namespace
 
+void wipeColors(Flood a, Flood b) {
+  g_wipeA = a;
+  g_wipeB = b;
+}
+
 void wipe(Wipe w, float t, const Texture2D* old) {
   if (t < 0.0f || t >= 1.0f) return;
-  const float W = float(kScreenW), H = float(kScreenH), mid = H * 0.5f;
+  const float sec = t * wipeFrames(w) / 60.0f;
   switch (w) {
-    case Wipe::Horizon: {  // the line draws (0-0.4), the halves close on it (0-0.42), hold, open again (0.58-1)
-      const float close = t < 0.5f ? easeInOut(seg(t, 0.0f, 0.42f)) : 1.0f - easeInOut(seg(t, 0.58f, 1.0f));
-      const float hh = (mid + 2.0f) * close;
-      DrawRectangleRec({0, 0, W, hh}, kDeep);
-      DrawRectangleRec({0, H - hh, W, hh}, kDeep);
-      const float draw = easeInOut(seg(t, 0.0f, 0.4f)), fade = 1.0f - seg(t, 0.62f, 1.0f);
-      const float lineY = t < 0.5f ? mid : hh;  // opening: the line rides the top half's edge
-      bladeLine({0, lineY}, {W * draw, lineY}, fade);
-      const float dx = -20.0f + 1310.0f * easeInOut(seg(t, 0.0f, 1.0f));
-      glow({dx, lineY}, 26, withAlpha(kBlue, 0.8f * fade));
-      DrawCircleV({dx, lineY}, 6, withAlpha(kBlue, fade));
+    case Wipe::Horizon: case Wipe::Game: {
+      brushFrame(int(std::floor(sec * 24.0f)), g_wipeA.deep);
+      brushFrame(int(std::floor(sec * 24.0f)) - 1, g_wipeA.fill);
       break;
     }
-    case Wipe::Flash: {  // the line opens into a white screen (0-0.36), it holds, then fades (0.46-1)
-      const float open = easeInOut(seg(t, 0.0f, 0.36f)), fade = 1.0f - seg(t, 0.46f, 1.0f);
-      const float hh = std::max(1.5f, mid * open);
-      DrawRectangleRec({0, mid - hh, W, hh * 2.0f}, withAlpha(kCream, fade));
-      if (open < 1.0f) bladeLine({0, mid}, {W, mid}, 1.0f);
+    case Wipe::Flash: {  // in (0-42 %), they hold, out again (56-100 %)
+      const float u = sec / 0.8f;
+      const float off = u < 0.42f ? 780.0f * (1.0f - bezier(u / 0.42f, 0.7f, 0.0f, 0.3f, 1.0f))
+                        : u < 0.56f ? 0.0f : 780.0f * bezier((u - 0.56f) / 0.44f, 0.7f, 0.0f, 0.3f, 1.0f);
+      lean(-400.0f - off, 719.0f - off, g_wipeA.fill);
+      lean(713.0f + off, 1700.0f + off, g_wipeB.fill);
       break;
     }
-    case Wipe::Cut: {  // the blade crosses (0-0.24), the old screen's halves fly apart (0.26-1)
-      const Vector2 a{0, H * 0.75f}, b{W, H * 0.25f};
-      const float slash = easeInOut(seg(t, 0.0f, 0.24f)), fly = seg(t, 0.26f, 1.0f), k = fly * fly * (3.0f - 2.0f * fly);
+    case Wipe::Cut: {  // the blade grows down (0-20 %), the halves fly apart (22-100 %), the blade fades (45-100 %)
+      const float k = seg(sec, 0.22f, 1.0f, 0.6f, 0.0f, 0.2f, 1.0f);
       if (old) {
-        const Vector2 top[4] = {{0, 0}, {W, 0}, b, a}, bottom[4] = {a, b, {W, H}, {0, H}};
-        snapQuad(*old, top, {-110.0f * k, -340.0f * k}, 1.0f - k, -2.0f * k);
-        snapQuad(*old, bottom, {110.0f * k, 340.0f * k}, 1.0f - k, 2.0f * k);
+        const Vector2 a[4] = {{0, 0}, {716, 0}, {563, 720}, {0, 720}}, b[4] = {{716, 0}, {1280, 0}, {1280, 720}, {563, 720}};
+        snapQuad(*old, a, {-560.0f * k, -50.0f * k}, 1.0f - k);
+        snapQuad(*old, b, {560.0f * k, 50.0f * k}, 1.0f - k);
       }
-      const Vector2 d{b.x - a.x, b.y - a.y}, ext{-d.x * 0.05f, -d.y * 0.05f};
-      bladeLine({a.x + ext.x, a.y + ext.y}, {a.x + ext.x + d.x * 1.1f * slash, a.y + ext.y + d.y * 1.1f * slash},
-                1.0f - seg(t, 0.55f, 1.0f));
-      break;
-    }
-    case Wipe::Game: {  // a cream panel sweeps in from the left (0-0.5), then on out to the right (0.5-1)
-      const float x = t < 0.5f ? -W + W * easeInOut(seg(t, 0.0f, 0.5f)) : W * easeInOut(seg(t, 0.5f, 1.0f));
-      DrawRectangleRec({x, 0, W, H}, kCream);
-      DrawRectangleRec({x + W - 6, 0, 6, H}, withAlpha(Color{255, 79, 79, 255}, 0.7f));
-      DrawRectangleRec({x, 0, 6, H}, withAlpha(Color{79, 155, 255, 255}, 0.7f));
+      const float grow = seg(sec, 0.0f, 0.2f, 0.7f, 0.0f, 0.2f, 1.0f), fade = sec < 0.45f ? 1.0f : 1.0f - (sec - 0.45f) / 0.55f;
+      const float y1 = 720.0f * grow;
+      quad({712, 0}, {720, 0}, {720 - kLean * y1, y1}, {712 - kLean * y1, y1}, withAlpha(kSilver, fade),
+           withAlpha(kSilver, fade), withAlpha(kSilver, fade), withAlpha(kSilver, fade));
       break;
     }
   }

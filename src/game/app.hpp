@@ -239,9 +239,6 @@ class App {
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
-  std::unique_ptr<MatchScreen> demo_;  // the title screen's demo fight
-  Audio silent_;                       // never initialised: the demo fight makes no sound
-  void updateDemo();                   // steps it; a new random pair after each K.O.
   // settings
   int setTab_ = 0;
   int setRow_ = -1;   // -1 = tab bar

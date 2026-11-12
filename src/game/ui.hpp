@@ -2,6 +2,7 @@
 // Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon, « Épure », palette « Crépuscule »:
 // a night-to-dusk gradient, flat indigo panels with round corners, cream for text and for what is chosen, one cyan
 // accent; Archivo Expanded titles, Inter text).
+#include <functional>
 #include <initializer_list>
 #include <string>
 #include <utility>
@@ -185,12 +186,70 @@ bool clicked(Rectangle r);
 bool mouseMoved();  // the pointer really moved this frame (not the initial jump)
 void newFrame();    // call once per frame, before the screen updates
 
+// ---- « Prestige » (12/11): each screen a match poster ----------------------------------
+// The fighter's colour in a flat flood cut by one blade leaning 12°, his name huge, white, on a night plate; his own
+// pixel art, crisp; the red / blue split only on 3-2-1-GO, GAME and the % hit; strokes drawn in Blender 2D.
+constexpr Color kNight = {3, 5, 15, 255};       // the ground
+constexpr Color kNightUp = {7, 11, 34, 255};    // a raised night (bars)
+constexpr Color kSilver = {238, 242, 250, 255}; // text, the blade
+constexpr Color kMist = {163, 174, 203, 255};   // secondary text
+constexpr Color kDim = {93, 106, 142, 255};     // what is not open yet
+constexpr Color kSplitR = {255, 79, 79, 255}, kSplitB = {79, 155, 255, 255};  // J1 red, J2 blue
+constexpr Color kCpuTag = {201, 205, 212, 255};
+constexpr float kLean = 153.0f / 720.0f;  // the blade: 12° from upright, 0.2125 px across per px down
+struct Flood {
+  Color fill, deep;
+};
+Flood flood(Hero h);  // the fighter's colour and its deep tone
+// A band between two edges leaning like the blade ("/", lean < 0: "\"), through (x0, 0) and (x1, 0).
+void lean(float x0, float x1, Color c, float k = kLean, float y0 = 0.0f, float y1 = float(kScreenH));
+// CSS easings: cubic-bezier(x1, y1, x2, y2) at t (0..1), and the progress of t through [a, b] eased by it.
+float bezier(float t, float x1, float y1, float x2, float y2);
+float seg(float t, float a, float b, float x1 = 0.2f, float y1 = 0.9f, float x2 = 0.1f, float y2 = 1.0f);
+// Draws `draw` scaled by s around (ox, oy) (CSS scale with its transform-origin).
+void scaled(float s, float ox, float oy, const std::function<void()>& draw);
+// Big capitals (CSS sizes: em = font-size; top = the top of its line box, lh its line-height in em; ls the
+// letter-spacing in em), from distance fields: crisp at any size. stroke: a CSS text-stroke width in px.
+enum class Face : int { Cond, Wide, Exo };  // Archivo 62 %, Archivo 125 %, Exo 2 Black Italic
+float bigWidth(const char* s, float em, Face f, float ls = 0.0f);
+void big(const char* s, float x, float top, float em, Face f, Color fill, float lh = 0.84f, float ls = 0.0f,
+         float stroke = 0.0f, Color strokeCol = kNight);
+void bigHollow(const char* s, float x, float top, float em, Face f, float stroke, Color col, float lh = 0.84f,
+               float ls = 0.0f);
+// The big type is kept on one side of a line leaning like the blade, through (x0, 0): left (keepLeft) or right of it.
+void bigClip(float x0, bool keepLeft, float lean = kLean);
+void bigClipOff();
+// The choc: white capitals with a night outline, their red and blue copies split by `split` px either way.
+void choc(const char* s, float cx, float top, float em, float split, float alpha = 1.0f, float stroke = 5.0f,
+          Face f = Face::Wide, float lh = 1.0f, float ls = 0.0f);
+// Small capitals (Archivo 125 %), caps centred on cy; returns the width.
+float caps(const char* s, float x, float cy, float size, float ls, Color col);
+float capsWidth(const char* s, float size, float ls);
+// A key cap of the charte (night, a silver rim; filled: silver, night text), or the gamepad's button; its width.
+float pkey(const char* key, Btn pad, float x, float y, float h, bool filled = false, float alpha = 1.0f);
+float pkeyWidth(const char* key, Btn pad, float h);
+// The masks drawn in Blender 2D, tinted: the brush that wipes the screen (frame 0..19, 24 a second, frames 8-10
+// cover it all), the ultimate's speed lines (frame 0..11, looping) in a band, the brush stroke under a word (0..9).
+void brushFrame(int frame, Color col, float alpha = 1.0f);
+void speedFrame(int frame, Rectangle band, Color col);
+void swooshFrame(int frame, Rectangle dst, Color col);
+// The logo: CLASH cut on the blade, H◎RIZON between two thin lines, the cyan star in the O (it pops in, turns and
+// breathes); drawn in its 1200 x 500 box at (x, y) scaled by s. in: the parts landing (title), 1 = all there.
+struct LogoIn {
+  float cut = 1.0f;  // CLASH's halves sliding in along the cut (< 0: not there yet)
+  float word = 1.0f, lines = 1.0f;  // H◎RIZON rising in, the lines growing
+  float starScale = 1.0f, starRot = 0.0f;  // the star's pop (it overshoots), in degrees
+};
+void prestigeLogo(float x, float y, float s, float time, const LogoIn& in = {});
+
 // ---- Screen transitions (t in [0,1]) -------------------------------------------
-// Horizon (menus): a line draws across the middle, the screen closes on it and opens again; covered at 0.5.
-// Flash (into a fight): the line opens into a white screen that fades; covered at 0.4.
-// Cut (into the VS): a blade slashes the old screen `old` (a snapshot), its halves fly apart over the new one.
-// Game (out of a fight): the frozen fight `old` in grey, "GAME", a white wipe; covered at 0.84.
+// « Prestige »: Horizon (menus) and Game (out of a fight): the brush drawn in Blender 2D wipes the screen in a
+// fighter's colour, its deep tone a frame ahead (covered from frame 8 to 10). Flash (into a fight): the choc, each
+// fighter's colour coming in from its side to hit the other's on the blade, then opening on the fight. Cut (into the
+// VS): the old screen `old` (a snapshot) splits on the blade, its halves flying apart over the new one.
 enum class Wipe : int { Horizon, Flash, Cut, Game };
+// The colours of the next transition: the brush's (a), the choc's left (a) and right (b).
+void wipeColors(Flood a, Flood b);
 float wipeSwap(Wipe w);   // the t at which the next screen comes in
 int wipeFrames(Wipe w);   // its length
 void wipe(Wipe w, float t, const Texture2D* old = nullptr);
