@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-gzf1un (15.1) | 12/11 18 h 30 UTC |
 
 ### Journal (le plus récent en haut)
 - 12/11 17 h 30 UTC, session claude/project-thread-gzf1un : version 15.0 = premiers effets Blender. Ultime de Hakuen : éclair fin et net en diagonale, du côté de Hakuen jusqu'au sol sous la cible (`combat.cpp` : une colonne part du sol ; `render_world.cpp` : elle penche loin de son lanceur), une frappe par éclair ; KO : l'écran se fissure et se déchire au bord quitté (`fx.cpp`, taille fixe à l'écran, sans halo du jeu + 2e passe additive blanche). Scripts dans `tools/blender/`, CLAUDE.md : les effets se font dans Blender. Verrou « Version et paquets » libéré ; « Effets » gardé (suite : tous les effets de tous les persos en Blender).
