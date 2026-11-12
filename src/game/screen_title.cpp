@@ -10,7 +10,7 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr const char* kVersion = "v14.6";
+constexpr const char* kVersion = "v14.8";
 
 struct Item {
   const char* label;

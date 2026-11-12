@@ -16,9 +16,8 @@ struct Settings {
   int sfxVolume = 90;
   // Display
   bool fullscreen = false;
-  bool highQuality = true;  // 2x supersampling (smooth edges)
-  bool pixelArt = true;     // the characters are drawn as pixel-art sprites
-  bool rtx = false;         // the effects' light ray traced (rtx.hpp), else drawn (render_light.cpp)
+  bool highQuality = true;  // "Haute": 2x supersampling, pixel-art sprite look, halos; "Moyenne": none of them
+  int rtx = 0;              // 0 drawn light (render_light.cpp), 1 medium, 2 high ray tracing (rtx.hpp)
   int screenShake = 2;      // 0 none, 1 light, 2 normal
   bool showFps = false;
   bool showHitboxes = false;
