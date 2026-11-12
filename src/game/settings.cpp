@@ -105,6 +105,7 @@ void loadSettings() {
       else if (k == "music_volume") s.musicVolume = clampi(value, 0, 100);
       else if (k == "sfx_volume") s.sfxVolume = clampi(value, 0, 100);
       else if (k == "fullscreen") s.fullscreen = value != 0;
+      else if (k == "resolution") s.resolution = clampi(value, 0, kResolutionCount - 1);
       else if (k == "high_quality") s.highQuality = value != 0;
       else if (k == "rtx") s.rtx = clampi(value, 0, 2);
       else if (k == "screen_shake") s.screenShake = clampi(value, 0, 2);
@@ -173,6 +174,7 @@ bool saveSettings() {
   put("music_volume", s.musicVolume);
   put("sfx_volume", s.sfxVolume);
   put("fullscreen", s.fullscreen);
+  put("resolution", s.resolution);
   put("high_quality", s.highQuality);
   put("rtx", s.rtx);
   put("screen_shake", s.screenShake);

@@ -15,7 +15,8 @@ struct Settings {
   int musicVolume = 60;
   int sfxVolume = 90;
   // Display
-  bool fullscreen = false;
+  bool fullscreen = false;  // true fullscreen: the screen switches to `resolution`
+  int resolution = 1;       // index in kResolutions (0 = the screen's own size)
   bool highQuality = true;  // "Haute": 2x supersampling, pixel-art sprite look, halos; "Moyenne": none of them
   int rtx = 0;              // 0 drawn light (render_light.cpp), 1 medium, 2 high ray tracing (rtx.hpp)
   int screenShake = 2;      // 0 none, 1 light, 2 normal
@@ -41,6 +42,11 @@ struct Settings {
   void resetPad();
   bool padIsDefault() const;
 };
+
+// Window / fullscreen sizes; {0, 0} = the screen's own size.
+struct Resolution { int w, h; };
+constexpr Resolution kResolutions[] = {{0, 0}, {1280, 720}, {1600, 900}, {1920, 1080}, {2560, 1440}, {3840, 2160}};
+constexpr int kResolutionCount = int(sizeof(kResolutions) / sizeof(kResolutions[0]));
 
 Settings& settings();
 void loadSettings();

@@ -31,13 +31,14 @@ const RowInfo kRows[3][8] = {
      {"Musique", "Volume des musiques des menus et des combats."},
      {"Effets sonores", "Coups, sauts, K.O., cris de la foule..."},
      {"Tester le son", "Joue un coup puissant et les cris de la foule."}},
-    {{"Plein écran", "Bascule aussi avec la touche F11."},
+    {{"Plein écran", "Vrai plein écran : l'écran passe à la résolution choisie et l'image le remplit. Bascule aussi avec la touche F11."},
      {"Qualité graphique", "Haute : rendu en double résolution (contours lissés), persos en pixel art, halo des effets et persos éclairés par eux. Moyenne : rendu simple, bien plus léger."},
      {"Secousses de l'écran", "Tremblements de la caméra lors des gros coups et des K.O."},
      {"Noms au-dessus des joueurs", "Affiche J1, J2... ou CPU au-dessus de chaque combattant."},
      {"Compteur d'images (FPS)", "Affiche le nombre d'images par seconde en haut à gauche."},
      {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."},
-     {"RTX", "Haut : vrai lancer de rayons complet (lune ou soleil, vraies ombres, lumière qui rebondit), très gourmand. Moyen : le même en 4 fois moins de pixels et 2 fois moins de rayons, pour les cartes moyennes (RTX 4060...). Non : l'éclairage dessiné, le plus léger."}},
+     {"RTX", "Haut : vrai lancer de rayons complet (lune ou soleil, vraies ombres, lumière qui rebondit), très gourmand. Moyen : le même en 4 fois moins de pixels et 2 fois moins de rayons, pour les cartes moyennes (RTX 4060...). Non : l'éclairage dessiné, le plus léger."},
+     {"Résolution", "Taille de la fenêtre, ou de l'écran en plein écran. « Écran » garde celle de ton écran."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Clash Orb", "L'orbe qui traverse l'arène. La casser donne l'ultime : c'est la seule façon de l'obtenir."},
      {"Armes", "Les deux armes de chaque combattant tombent sur l'arène : il prend la sienne en restant dessus, touche Arme maintenue 1 s. Avec A et B, la touche alterne."},
@@ -49,7 +50,7 @@ const RowInfo kTabHelp[4] = {{"Audio", "Le volume de tout le jeu, de la musique 
                              {"Affichage", "L'écran, la qualité de l'image et ce qui s'affiche pendant les combats."},
                              {"Jeu", "Les règles par défaut des prochains combats."},
                              {"Commandes", ""}};
-const int kRowCounts[4] = {4, 7, 6, kActionCount + 1};  // controls: the actions + the reset row
+const int kRowCounts[4] = {4, 8, 6, kActionCount + 1};  // controls: the actions + the reset row
 
 // ---- Where things are -------------------------------------------------------------------
 Rectangle tabRect(int i) { return {64.0f + i * 206.0f, 120, 200, 48}; }
@@ -82,7 +83,7 @@ Rectangle resetRect(int col) {
 enum class Widget { Slider, Toggle, Selector, Button };
 Widget widgetFor(int tab, int row) {
   if (tab == 0) return row < 3 ? Widget::Slider : Widget::Button;
-  if (tab == 1) return (row == 1 || row == 2 || row == 6) ? Widget::Selector : Widget::Toggle;
+  if (tab == 1) return (row == 1 || row == 2 || row >= 6) ? Widget::Selector : Widget::Toggle;
   if (row == 1 || row == 2 || row == 4) return Widget::Toggle;
   return row == 5 ? Widget::Button : Widget::Selector;
 }
@@ -99,6 +100,10 @@ std::string selectorText(int tab, int row) {
   const Settings& s = settings();
   static const char* shakes[3] = {"Aucune", "Légères", "Normales"};
   static const char* rtxs[3] = {"Non", "Moyen", "Haut"};
+  if (tab == 1 && row == 7) {
+    const Resolution r = kResolutions[std::clamp(s.resolution, 0, kResolutionCount - 1)];
+    return r.w ? TextFormat("%d × %d", r.w, r.h) : "Écran";
+  }
   if (tab == 1) return row == 1 ? (s.highQuality ? "Haute" : "Moyenne") : row == 6 ? rtxs[std::clamp(s.rtx, 0, 2)] : shakes[std::clamp(s.screenShake, 0, 2)];
   if (row == 0) return TextFormat("%d vie%s", s.stocks, s.stocks > 1 ? "s" : "");
   return TextFormat("Niveau %d", s.cpuLevel);
@@ -532,6 +537,7 @@ void App::changeSetting(int row, int delta) {
       if (row == 4) s.showFps = !s.showFps;
       if (row == 5) s.showHitboxes = !s.showHitboxes;
       if (row == 6) s.rtx = (s.rtx + delta + 3) % 3;
+      if (row == 7) s.resolution = (s.resolution + delta + kResolutionCount) % kResolutionCount;
       break;
     case 2:
       if (row == 0) s.stocks = 1 + (s.stocks - 1 + delta + 5) % 5;

@@ -123,8 +123,20 @@ void App::applyDisplaySettings() {
     targetScale_ = want;
   }
   g_renderScale = targetScale_;
-  bool fs = IsWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
-  if (s.fullscreen != fs) ToggleBorderlessWindowed();
+  // The window: only when the size or the mode changed, so a window the player resized by hand stays as it is.
+  if (s.resolution != shownRes_ || s.fullscreen != shownFs_) {
+    shownRes_ = s.resolution;
+    shownFs_ = s.fullscreen;
+    if (IsWindowFullscreen()) ToggleFullscreen();  // back to the desktop first: the screen's own size is read there
+    const int m = GetCurrentMonitor(), mw = GetMonitorWidth(m), mh = GetMonitorHeight(m);
+    const Resolution r = kResolutions[std::clamp(s.resolution, 0, kResolutionCount - 1)];
+    int w = r.w ? r.w : mw, h = r.h ? r.h : mh;
+    if (!s.fullscreen && mw > 0 && (w > mw || h > mh)) w = mw, h = mh;  // a window bigger than the screen: the screen
+    SetWindowSize(w, h);
+    // True fullscreen at that size: the screen itself switches to it, so the picture fills it (no black bands)
+    if (s.fullscreen) ToggleFullscreen();
+    else SetWindowPosition(GetMonitorPosition(m).x + (mw - w) / 2, GetMonitorPosition(m).y + std::max(0, (mh - h) / 2));
+  }
   audio_.setVolumes(s.masterVolume, s.musicVolume, s.sfxVolume);
 }
 
@@ -277,23 +289,6 @@ void App::run() {
     audio_.update();
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
-    // Weak machine: if the frame cannot keep up, step down once: RTX Haut to Moyen in a match (it froze a RTX 4060:
-    // the owner, 12/11), else the quality Haute to Moyenne. A lower RTX the player chose is kept.
-    const bool testRun = !opt_.shots.empty() || !opt_.recordDir.empty() || opt_.quitAfter > 0;
-    const bool rtxOn = settings().rtx && screen_ == Screen::Match;
-    const bool canDrop = rtxOn ? settings().rtx == 2 : settings().highQuality;
-    if (!testRun && canDrop && !autoQualityDone_ && frames_ > 120) {
-      const float dt = GetFrameTime();
-      slowTime_ = dt > 1.0f / 45.0f ? slowTime_ + dt : std::max(0.0f, slowTime_ - dt * 0.5f);
-      if (slowTime_ > 3.0f) {
-        if (rtxOn) settings().rtx = 1;
-        else settings().highQuality = false;
-        applyDisplaySettings();
-        saveSettings();
-        autoQualityDone_ = true;
-        toast(rtxOn ? "RTX réglée sur « Moyen » pour plus de fluidité" : "Qualité graphique réglée sur « Moyenne » pour plus de fluidité");
-      }
-    }
     if (IsKeyPressed(KEY_F11)) {
       settings().fullscreen = !settings().fullscreen;
       applyDisplaySettings();

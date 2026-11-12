@@ -219,8 +219,8 @@ class App {
   bool quit_ = false;
   std::string toast_;
   int toastTimer_ = 0;
-  float slowTime_ = 0.0f;       // seconds spent below 45 FPS (automatic quality fallback)
-  bool autoQualityDone_ = false;
+  int shownRes_ = -1;           // the resolution and mode the window has (applyDisplaySettings)
+  bool shownFs_ = false;
 
   // main menu
   int menuSel_ = 0;

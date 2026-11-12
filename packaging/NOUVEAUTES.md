@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 15.4 : **choix de la résolution et vrai plein écran**.
+
+- Paramètres > Affichage > Résolution : Écran (la taille de ton écran), 1280 × 720, 1600 × 900, 1920 × 1080,
+  2560 × 1440 ou 3840 × 2160.
+- Le plein écran est maintenant un vrai plein écran : l'écran passe à la résolution choisie et l'image le remplit,
+  sans bandes noires sur les côtés (F11 bascule toujours).
+- Le jeu ne baisse plus tout seul la RTX ou la qualité graphique quand il ralentit : tes réglages restent les tiens.
+
 Version 15.2 : **tous les projectiles refaits dans Blender**.
 
 - 01 : orbe d'ombre violette (mains nues), dagues spectrales qui tournent avec leurs images fantômes, marque d'ombre
