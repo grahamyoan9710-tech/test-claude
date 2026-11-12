@@ -25,6 +25,7 @@ int g_side[4];            // two players: the side of each card (0 left, 1 right
 Rectangle g_rulesBtn;     // the « Règles & mode » button
 bool g_wide = true;       // two sides (else four cards)
 float g_tagW = 40.0f;     // the drawer's player tags
+float g_rowsY = 424.0f;   // its first player row (training: no rules above them)
 std::string g_rulesLine;  // what the button says of the rules
 constexpr float kTile = 80, kTileH = 96, kTileGap = 8;
 
@@ -72,7 +73,7 @@ Rectangle closeRect() { return {1204, 36, 40, 40}; }
 Rectangle modeRect() { return {kSX, 150, kSW, 48}; }
 Rectangle modeSeg(int k) { return {kSX + k * (kSW + 8) * 0.5f, 150, (kSW - 8) * 0.5f, 48}; }
 Rectangle ruleRowRect(int i) { return {kSX, 238 + i * 50.0f, kSW, 48}; }  // lives, orb, weapons
-Rectangle playerRowRect(int col) { return {kSX, 424 + col * 48.0f, kSW, 44}; }
+Rectangle playerRowRect(int col) { return {kSX, g_rowsY + col * 48.0f, kSW, 44}; }
 Rectangle validateRect() { return {kSX, 650, kSW, 52}; }
 // A player's type toggle: HUMAIN, IA, nobody (a dash), and the type each part sets.
 constexpr const char* kSegLabel[2] = {"HUMAIN", "IA"};
@@ -168,9 +169,14 @@ Rectangle stageCardRect(int i) {
   const int n = int(stageList().size()) + 1, row = i / kStageCols, col = i % kStageCols;
   const int inRow = std::min(kStageCols, n - row * kStageCols);
   constexpr float w = 189, h = 112, gap = 10;
-  return {(kScreenW - (inRow * w + (inRow - 1) * gap)) * 0.5f + col * (w + gap), 548.0f + row * (h + 12), w, h};
+  return {(kScreenW - (inRow * w + (inRow - 1) * gap)) * 0.5f + col * (w + gap), 516.0f + row * (h + 12), w, h};
 }
-ui::Hint stageGo(bool browse) { return {"ENTRÉE", ui::Btn::A, browse ? "S'ENTRAÎNER ICI" : "COMBATTRE ICI"}; }
+const char* stageGoLabel(bool browse) { return browse ? "S'ENTRAÎNER ICI" : "COMBATTRE ICI"; }
+// Go: the white plate leaning like the blade, bottom right
+Rectangle stageGoRect(bool browse) {
+  const float w = std::max(300.0f, 54.0f + ui::pkeyWidth("ENTRÉE", ui::Btn::A, 22) + ui::capsWidth(stageGoLabel(browse), 17, 0.14f));
+  return {kScreenW - 36 - w, 648, w, 56};
+}
 }  // namespace
 
 int App::freeDevice(int col) const {
@@ -274,6 +280,7 @@ void App::layoutCss() const {
     if (training_ || slots_[i].type != 0) joined[nj++] = i;
   g_wide = nj <= 2;
   g_tagW = 18.0f + ui::capsWidth(training_ ? "CIBLE" : "J4", 12, 0.08f);
+  g_rowsY = training_ ? 264.0f : 424.0f;
   for (int i = 0; i < 4; ++i) g_panel[i] = {}, g_chip[i] = {}, g_side[i] = -1;
   if (g_wide) {  // the players, then free cards: two sides
     int order[2], k = 0;
@@ -586,12 +593,12 @@ void App::drawCss() {
       ui::bigClipOff();
       ui::lean((L ? 518.0f : 910.0f) + ox, (L ? 522.0f : 914.0f) + ox, ui::kSilver);
 
-      // the fighter in his own pixel art (x4), facing the other; drawn at random: a "?" tone on tone
+      // the fighter in his own pixel art (x4), facing the other, centred in his side; drawn at random: a "?" tone on tone
       const float fa = std::min(in(sec, 0.14f, 0.6f), in(since[col], 0.0f, 0.3f));
       const float fdx = (L ? -1.0f : 1.0f) * (90.0f * (1.0f - in(sec, 0.14f, 0.6f)) + 40.0f * (1.0f - in(since[col], 0.0f, 0.3f)));
       if (d && art::clipInfo(*d, art::kSheetIdle, n, fw, fh, fps)) {
         art::drawClipPx(*d, art::kSheetIdle, int(std::floor((t + col * 0.37f) * fps)) % std::max(1, n),
-                        (L ? 4.0f : kScreenW - fw * 4.0f) + fdx, kScreenH - fh * 4.0f, 4.0f, !L, fa);
+                        (L ? 192.0f : 1032.0f) - fw * 2.0f + fdx, kScreenH - fh * 4.0f, 4.0f, !L, fa);
       } else if (!free) {
         const float qw = ui::bigWidth("?", 420, ui::Face::Cond);
         ui::big("?", (L ? 214.0f : 1066.0f) - qw * 0.5f + fdx, 150, 420, ui::Face::Cond, withAlpha(ui::kNight, 0.3f * fa));
@@ -892,10 +899,12 @@ void App::drawCss() {
     const Color gc = withAlpha(!ready ? ui::kDim : ui::hovered(g) ? WHITE : ui::kSilver, a);
     ui::quad({g.x + 12, g.y}, {g.x + g.width, g.y}, {g.x + g.width - 12, g.y + g.height}, {g.x, g.y + g.height}, gc, gc, gc, gc);
     const char* go = training_ ? "S'ENTRAÎNER !" : "COMBATTRE !";
-    const float kw = ui::pkeyWidth("ENTRÉE", ui::Btn::Start, 22), gw = ui::capsWidth(go, 19, 0.14f) + 2.66f;
-    const float x = g.x + (g.width - kw - 14 - gw) * 0.5f;
+    const float kw = ui::pkeyWidth("ENTRÉE", ui::Btn::Start, 22);
+    float gs = 19.0f;  // S'ENTRAÎNER ! is longer
+    while (gs > 14.0f && kw + 14 + ui::capsWidth(go, gs, 0.14f) > g.width - 40) gs -= 0.5f;
+    const float x = g.x + (g.width - kw - 14 - ui::capsWidth(go, gs, 0.14f)) * 0.5f;
     inkKey("ENTRÉE", ui::Btn::Start, x, g.y + 17, a);
-    ui::caps(go, x + kw + 14, g.y + 28, 19, 0.14f, withAlpha(ui::kNight, a));
+    ui::caps(go, x + kw + 14, g.y + 28, gs, 0.14f, withAlpha(ui::kNight, a));
     if (ready && sec >= 1.1f) {  // an Éclat sweep along its foot
       const float p = std::fmod(sec - 1.1f, 1.4f) / 1.4f;
       const float w = 282.0f * (p < 0.55f ? ui::seg(p, 0.0f, 0.55f, 0.6f, 0.0f, 0.2f) : 1.0f - ui::seg(p, 0.56f, 1.0f, 0.6f, 0.0f, 0.2f));
@@ -1007,15 +1016,15 @@ void App::drawCss() {
     label("ENTRAÎNEMENT", 132, rin(0.22f));
     const float a = rin(0.24f);
     ui::drawWrapped("Vies infinies, pas de minuteur. Le mannequin se règle dans le menu pause.", kSX + 40.0f * (1.0f - a), 152, kSW,
-                    15, withAlpha(ui::kSilver, a));
+                    18, withAlpha(ui::kSilver, a));
   }
 
   // Who plays: a human (on which device) or the computer (at which level), in which team
-  label("JOUEURS", 404, rin(0.37f));
+  label("JOUEURS", g_rowsY - 20, rin(0.37f));
   if (!training_) {
     const float a = rin(0.37f);
     const char* ia = "IA : niveaux 1 à 9, puis « 10 x2 »";
-    drawText(ia, kSX + kSW - textWidth(ia, 11, kB) + 40.0f * (1.0f - a), 402, 11, withAlpha(ui::kMist, a), kB);
+    drawText(ia, kSX + kSW - textWidth(ia, 11, kB) + 40.0f * (1.0f - a), g_rowsY - 22, 11, withAlpha(ui::kMist, a), kB);
   }
   for (int c = 0; c < cols; ++c) {
     const float a = rin(0.4f + 0.03f * c), dx = 40.0f * (1.0f - a);
@@ -1114,7 +1123,7 @@ void App::updateStage(const MenuNav& nav) {
     const int row = (sel / kStageCols + (nav.down ? 1 : rows - 1)) % rows;
     sel = std::min(n - 1, row * kStageCols + sel % kStageCols);
   }
-  bool go = nav.confirm || nav.start || ui::clicked(ui::goRect(stageGo(stageBrowse_)));
+  bool go = nav.confirm || nav.start || ui::clicked(stageGoRect(stageBrowse_));
   for (int i = 0; i < n; ++i) {
     if (!ui::hovered(stageCardRect(i))) continue;
     if (ui::mouseMoved()) sel = i;
@@ -1138,110 +1147,134 @@ void App::updateStage(const MenuNav& nav) {
 }
 
 void App::drawStage() {
-  const float t = time_;
-  constexpr FontKind kT = FontKind::Display, kB = FontKind::Body;  // « Épure »
+  const float t = time_, sec = screenFrames_ / 60.0f;
+  auto up = [&](float delay) { return ui::seg(sec, delay, delay + 0.4f, 0.2f, 0.8f, 0.2f); };  // rising 12 px as it fades in
   const auto& stages = stageList();
   const int n = int(stages.size());
   // "?": the arena behind flips through them all, one of them is drawn when the match starts
   const int shown = stageRandom_ ? int(t * 1.5f) % n : stage_;
   const StageDef& cur = stages[shown];
-  // The arena itself fills the screen; night on the left under its sheet, and along the bottom under the cards.
+  // « Prestige »: the arena fills the screen; its sheet on a night band cut by the blade, every arena on a night strip.
   ui::stageBackdrop(shown, t, 0.0f);
-  const Color night = ui::kDeep;
-  DrawRectangleGradientH(0, 0, 410, kScreenH, withAlpha(night, 0.94f), withAlpha(night, 0.8f));
-  DrawRectangleGradientH(410, 0, 384, kScreenH, withAlpha(night, 0.8f), withAlpha(night, 0.15f));
-  DrawRectangleGradientH(794, 0, kScreenW - 794, kScreenH, withAlpha(night, 0.15f), withAlpha(night, 0.25f));
-  DrawRectangleGradientV(0, 460, kScreenW, 182, withAlpha(night, 0.0f), withAlpha(night, 0.95f));
-  DrawRectangle(0, 642, kScreenW, kScreenH - 642, withAlpha(night, 0.95f));
+  const float ox = -640.0f * (1.0f - ui::seg(sec, 0.0f, 0.45f));
+  ui::lean(-400 + ox, 600 + ox, ui::kNight, ui::kLean, 0, 497);
+  ui::lean(600 + ox, 604 + ox, ui::kSilver, ui::kLean, 0, 497);
+  DrawRectangle(0, 496, kScreenW, kScreenH - 496, ui::kNight);
+  DrawRectangle(0, 496, kScreenW, 1, withAlpha(ui::kSilver, 0.16f));
 
-  const char* title = stageBrowse_ ? "ARÈNES" : "CHOIX DE L'ARÈNE";
-  drawText(title, 48, capsY(48, 28, kT), 28, ui::kCream, kT);
-  drawText(stageRandom_ ? TextFormat("? / %d", n) : TextFormat("%d / %d", stage_ + 1, n), 48 + textWidth(title, 28, kT) + 14,
-           capsY(48, 13, kB), 13, ui::kMuted, kB);
-  DrawRectangleRec({48, 74, 40, 2}, ui::kCream);
-  DrawCircleV({92, 75}, 3, ui::kBlue);
-
+  {
+    const float a = up(0.15f), dy = 12.0f * (1.0f - a);
+    const char* title = stageBrowse_ ? "ARÈNES" : "CHOIX DE L'ARÈNE";
+    const float tw = ui::caps(title, 36, 30 + dy + 0.534f * 12, 12, 0.3f, withAlpha(ui::kSilver, a));
+    ui::caps(stageRandom_ ? TextFormat("? / %d", n) : TextFormat("%d / %d", stage_ + 1, n), 36 + tw + 18, 30 + dy + 0.534f * 12, 11,
+             0.16f, withAlpha(ui::kMist, a));
+  }
   // Its sheet: where it comes from, its name, a line about it, the plan of its platforms.
-  const float x = 48, w = 470;
+  const float x = 36, w = 440;
+  const float a = up(0.25f), dy = 12.0f * (1.0f - a);
   const std::string series = stageRandom_ ? std::string("TOUTES LES ARÈNES") : upperFr(cur.series);
-  const char* name = stageRandom_ ? "Au hasard" : cur.name.c_str();
-  ui::label(series.c_str(), x, 113, 11, 0.16f, ui::kBlue);
-  float ns = 40.0f;
-  while (ns > 24.0f && textWidth(name, ns, kT) > w) ns -= 1.0f;
-  drawText(name, x, capsY(156, ns, kT), ns, ui::kCream, kT);
-  float y = ui::drawWrapped(stageRandom_ ? std::string("Une des arènes, tirée au sort au début du combat.") : cur.blurb, x,
-                            190, w, 21, ui::kSoft);
-  ui::label("PLATEFORMES", x, y + 12, 11, 0.16f, ui::kMuted);
-  const Rectangle map{x, y + 26, 420, 170};
-  ui::roundRect(map, 14, withAlpha(ui::kNavyDeep, 0.72f), withAlpha(ui::kNavyDeep, 0.72f));
+  ui::caps(series.c_str(), x, 92 + dy + 0.534f * 11, 11, 0.22f, withAlpha(ui::kBlue, a));
+  const std::vector<std::string> lines = ui::nameLines(stageRandom_ ? std::string("AU HASARD") : upperFr(cur.name), 72, 470);
+  float y = 112 + dy;
+  for (const std::string& l : lines) {
+    ui::big(l.c_str(), x, y, 72, ui::Face::Cond, withAlpha(WHITE, a));
+    y += 0.84f * 72;
+  }
+  y = ui::drawWrapped(stageRandom_ ? std::string("Une des arènes, tirée au sort au début du combat.") : cur.blurb, x, y + 12, w,
+                      18, withAlpha(ui::kSilver, a));
+  ui::caps("PLATEFORMES", x, y + 14 + 0.534f * 10, 10, 0.24f, withAlpha(ui::kMist, a));
+  const Rectangle map{x, y + 30, 420, 150};
+  DrawRectangleRec(map, withAlpha(ui::kNightUp, a));
+  DrawRectangleLinesEx(map, 1.0f, withAlpha(ui::kSilver, 0.12f * a));
   // The arena seen from far: x -700..700, y -320..140 (feet on the ground at 0)
   auto sx = [&](float wx) { return map.x + 10 + (wx + 700.0f) * 400.0f / 1400.0f; };
-  auto sy = [&](float wy) { return map.y + 10 + (wy + 320.0f) * 150.0f / 460.0f; };
+  auto sy = [&](float wy) { return map.y + 10 + (wy + 320.0f) * 130.0f / 460.0f; };
   if (stageRandom_) {
-    drawText("?", map.x + (map.width - textWidth("?", 80, kT)) * 0.5f, capsY(map.y + map.height * 0.5f, 80, kT), 80,
-             withAlpha(ui::kSky, 0.6f), kT);
+    const float qw = ui::bigWidth("?", 100, ui::Face::Cond);
+    ui::big("?", map.x + (map.width - qw) * 0.5f, map.y + 33, 100, ui::Face::Cond, withAlpha(ui::kDim, a));
   } else {
-    DrawRectangleRec({map.x, sy(0), map.width, 1}, withAlpha(ui::kSky, 0.12f));
+    DrawRectangleRec({map.x, sy(0), map.width, 1}, withAlpha(ui::kSilver, 0.1f * a));
     for (const Platform& p : cur.platforms) {
       const Rect& b = p.base;
-      if (p.solid) {  // a ground: azure, lit on top
-        const Rectangle g{sx(b.x), sy(b.y), sx(b.x + b.w) - sx(b.x), b.h * 150.0f / 460.0f};
-        DrawRectangleGradientV(int(g.x), int(g.y), int(g.width), int(g.height), withAlpha(ui::kBlue, 0.55f), withAlpha(ui::kBlue, 0.12f));
-        DrawRectangleRec({g.x, g.y, g.width, 3}, ui::kCream);
+      if (p.solid) {  // a ground: cyan, a white edge on top
+        const Rectangle g{sx(b.x), sy(b.y), sx(b.x + b.w) - sx(b.x), b.h * 130.0f / 460.0f};
+        DrawRectangleRec(g, withAlpha(ui::kBlue, 0.3f * a));
+        DrawRectangleRec({g.x, g.y, g.width, 2}, withAlpha(ui::kSilver, a));
         continue;
       }
-      Vector2 off{0, 0};  // a thin platform: a gold line; a moving one swings over its dashed course
+      Vector2 off{0, 0};  // a thin platform: a white line; a moving one swings over its dashed course
       if (p.period > 0) {
         const float ph = std::sin(t * 60.0f * 2.0f * kPi / p.period);
         off = {p.amplitude.x * ph, p.amplitude.y * ph};
         const float x0 = sx(b.x - std::fabs(p.amplitude.x)), x1 = sx(b.x + b.w + std::fabs(p.amplitude.x));
-        for (float dx = x0; dx < x1; dx += 6) DrawRectangleRec({dx, sy(b.y) + 1, std::min(3.0f, x1 - dx), 1}, withAlpha(ui::kGold, 0.6f));
-        ui::glow({sx(b.x + b.w * 0.5f + off.x), sy(b.y + off.y)}, 22, withAlpha(ui::kGold, 0.5f));
+        for (float dx = x0; dx < x1; dx += 6) DrawRectangleRec({dx, sy(b.y) + 1, std::min(3.0f, x1 - dx), 1}, withAlpha(ui::kMist, 0.7f * a));
       }
-      DrawRectangleRec({sx(b.x + off.x), sy(b.y + off.y), sx(b.x + b.w) - sx(b.x), 3}, ui::kGold);
+      DrawRectangleRec({sx(b.x + off.x), sy(b.y + off.y), sx(b.x + b.w) - sx(b.x), 3}, withAlpha(ui::kSilver, a));
     }
   }
   // The legend
-  float lx = x;
-  const float ly = map.y + map.height + 16;
-  DrawRectangleGradientV(int(lx), int(ly - 4), 14, 8, withAlpha(ui::kBlue, 0.55f), withAlpha(ui::kBlue, 0.12f));
-  DrawRectangleRec({lx, ly - 4, 14, 2}, ui::kCream);
-  drawText("Sol", lx + 20, capsY(ly, 13, kB), 13, ui::kSoft, kB);
-  lx += 20 + textWidth("Sol", 13, kB) + 18;
-  DrawRectangleRec({lx, ly - 1, 14, 3}, ui::kGold);
-  drawText("Plateforme fine", lx + 20, capsY(ly, 13, kB), 13, ui::kSoft, kB);
-  lx += 20 + textWidth("Plateforme fine", 13, kB) + 18;
-  for (int i = 0; i < 3; ++i) DrawRectangleRec({lx + i * 5.0f, ly, 3, 1}, ui::kGold);
-  drawText("Mobile", lx + 20, capsY(ly, 13, kB), 13, ui::kSoft, kB);
+  {
+    float lx = x;
+    const float ly = map.y + map.height + 16;
+    DrawRectangleRec({lx, ly - 4, 14, 8}, withAlpha(ui::kBlue, 0.3f * a));
+    DrawRectangleRec({lx, ly - 4, 14, 2}, withAlpha(ui::kSilver, a));
+    drawText("Sol", lx + 20, ly - 1.21f * 6.5f, 13, withAlpha(ui::kMist, a), kB);
+    lx += 20 + textWidth("Sol", 13, kB) + 18;
+    DrawRectangleRec({lx, ly - 1, 14, 3}, withAlpha(ui::kSilver, a));
+    drawText("Plateforme fine", lx + 20, ly - 1.21f * 6.5f, 13, withAlpha(ui::kMist, a), kB);
+    lx += 20 + textWidth("Plateforme fine", 13, kB) + 18;
+    for (int i = 0; i < 3; ++i) DrawRectangleRec({lx + i * 5.0f, ly, 3, 1}, withAlpha(ui::kMist, a));
+    drawText("Mobile", lx + 20, ly - 1.21f * 6.5f, 13, withAlpha(ui::kMist, a), kB);
+  }
 
-  // Every arena: its still, its name at the bottom; the chosen one lifted, in gold.
-  auto frame = [&](int i, const char* label, bool sel) {
+  // Every arena: its still, its name on a night strip; the chosen one lifted, ringed in white.
+  auto card = [&](int i, const char* label, bool sel) {
     Rectangle rr = stageCardRect(i);
     if (sel) rr.y -= 6;
-    rr.y += 60.0f * std::pow(1.0f - clampf((screenFrames_ - 4 - i * 3.0f) / 27.0f, 0.0f, 1.0f), 3.0f);  // rising in
-    constexpr float cut = 12.0f;
+    const float k = ui::seg(sec, 0.1f + 0.04f * i, 0.5f + 0.04f * i);
+    rr.y += 40.0f * (1.0f - k);
+    const bool hov = ui::hovered(rr);
     if (i < n) {
-      drawStageThumb(i, stages[i], rr, cut);
-      if (!sel) ui::bevel(rr, cut, withAlpha(ui::kInk, 0.3f), withAlpha(ui::kInk, 0.3f));
+      drawStageThumb(i, stages[i], rr, 0.0f);
     } else {
-      ui::bevel(rr, cut, ui::kNavyDeep, ui::kNavyDeep);
-      ui::bevelLines(ui::grow(rr, -0.5f), cut, 1.0f, withAlpha(ui::kSky, 0.3f));
-      drawText("?", rr.x + (rr.width - textWidth("?", 48, kT)) * 0.5f, capsY(rr.y + rr.height * 0.42f, 48, kT), 48, ui::kSky, kT);
+      DrawRectangleRec(rr, ui::kNightUp);
+      ui::icon(ui::Icon::Dice, {rr.x + rr.width * 0.5f, rr.y + 42}, 30, ui::kMist, 1.5f);
     }
-    if (ui::hovered(rr)) ui::bevel(rr, cut, withAlpha(WHITE, 0.1f), withAlpha(WHITE, 0.1f));
-    ui::quad({rr.x, rr.y + rr.height - 44}, {rr.x + rr.width, rr.y + rr.height - 44}, {rr.x + rr.width, rr.y + rr.height - cut},
-             {rr.x, rr.y + rr.height - cut}, withAlpha(night, 0.0f), withAlpha(night, 0.0f), withAlpha(night, 0.85f),
-             withAlpha(night, 0.85f));
-    ui::quad({rr.x, rr.y + rr.height - cut}, {rr.x + rr.width, rr.y + rr.height - cut}, {rr.x + rr.width - cut, rr.y + rr.height},
-             {rr.x, rr.y + rr.height}, withAlpha(night, 0.85f), withAlpha(night, 0.85f), withAlpha(night, 0.92f),
-             withAlpha(night, 0.92f));  // along the cut corner
-    float fs = 13.0f;
-    while (fs > 10.0f && textWidth(label, fs, kB) > rr.width - 20) fs -= 0.5f;
-    drawText(label, rr.x + 10, capsY(rr.y + rr.height - 15, fs, kB), fs, ui::kCream, kB);
-    if (sel) ui::bevelLines(ui::grow(rr, -1.5f), cut - 0.6f, 3.0f, ui::kGold);
+    DrawRectangleRec({rr.x, rr.y + rr.height - 24, rr.width, 24}, withAlpha(ui::kNight, 0.86f));
+    const std::string up = upperFr(label);
+    float fs = 16.0f;
+    while (fs > 11.0f && ui::bigWidth(up.c_str(), fs, ui::Face::Cond, 0.04f) > rr.width - 16) fs -= 0.5f;
+    ui::big(up.c_str(), rr.x + 8, rr.y + rr.height - 12 - 0.42f * fs, fs, ui::Face::Cond, ui::kSilver, 0.84f, 0.04f);
+    if (sel) DrawRectangleLinesEx(rr, 3.0f, ui::kSilver);
+    else if (hov) DrawRectangleLinesEx(rr, 2.0f, withAlpha(ui::kSilver, 0.7f));
+    else DrawRectangleLinesEx(rr, 1.0f, withAlpha(ui::kSilver, 0.16f));
+    if (k < 1.0f) DrawRectangleRec(ui::grow(rr, 3.0f), withAlpha(ui::kNight, 1.0f - k));  // fading in
   };
-  for (int i = 0; i < n; ++i) frame(i, stages[i].name.c_str(), !stageRandom_ && i == stage_);
-  frame(n, "Au hasard", stageRandom_);
-  const ui::Hint go = stageGo(stageBrowse_);
-  ui::footer({{"FLÈCHES", ui::Btn::Move, "Choisir"}, {"ÉCHAP", ui::Btn::B, "Retour"}}, nullptr, &go);
+  for (int i = 0; i < n; ++i) card(i, stages[i].name.c_str(), !stageRandom_ && i == stage_);
+  card(n, "Au hasard", stageRandom_);
+
+  // The keys; go
+  {
+    const float b = up(0.5f);
+    float hx = 36;
+    hx += ui::pkey("FLÈCHES", ui::Btn::Move, hx, 665, 22, false, b) + 8;
+    drawText("Choisir", hx, 665 + (22 - 14.52f) * 0.5f, 12, withAlpha(ui::kMist, b), kB);
+    hx += textWidth("Choisir", 12, kB) + 28;
+    hx += ui::pkey("ÉCHAP", ui::Btn::B, hx, 665, 22, false, b) + 8;
+    drawText("Retour", hx, 665 + (22 - 14.52f) * 0.5f, 12, withAlpha(ui::kMist, b), kB);
+    Rectangle g = stageGoRect(stageBrowse_);
+    g.y += 12.0f * (1.0f - b);
+    const Color gc = withAlpha(ui::hovered(g) ? WHITE : ui::kSilver, b);
+    ui::quad({g.x + 12, g.y}, {g.x + g.width, g.y}, {g.x + g.width - 12, g.y + g.height}, {g.x, g.y + g.height}, gc, gc, gc, gc);
+    const char* go = stageGoLabel(stageBrowse_);
+    const float kw = ui::pkeyWidth("ENTRÉE", ui::Btn::A, 22), gw = ui::capsWidth(go, 17, 0.14f);
+    const float gx = g.x + (g.width - kw - 14 - gw) * 0.5f;
+    if (padPrompts()) {
+      ui::pkey("ENTRÉE", ui::Btn::A, gx, g.y + 17, 22, false, b);
+    } else {
+      DrawRectangleLinesEx({gx, g.y + 17, kw, 22}, 1.0f, withAlpha(ui::kNight, 0.4f * b));
+      ui::caps("ENTRÉE", gx + (kw - ui::capsWidth("ENTRÉE", 8.8f, 0.1f)) * 0.5f, g.y + 28, 8.8f, 0.1f, withAlpha(ui::kNight, b));
+    }
+    ui::caps(go, gx + kw + 14, g.y + 28, 17, 0.14f, withAlpha(ui::kNight, b));
+  }
 }
