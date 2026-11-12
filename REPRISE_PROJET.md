@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-gzf1un (15.2) | 12/11 19 h 05 UTC |
 
 ### Journal (le plus récent en haut)
 - 12/11 18 h 35 UTC, session claude/project-thread-gzf1un : version 15.1. Projections de lame dans Blender (`tools/blender/lame.py`, boucles de 12 images, un style par perso) pour 01 (odachi), 03, 07, 08 et tous les croissants de Hakuen (`k.pfx("lame")`, `pfx_h01_crescent`) ; MILLE LUNES (`tools/blender/mille_lunes.py`) en deux calques : `pfx_p01_a_ult` derrière les persos, `pfx_p01_a_ult_front` devant (`art::fxFront` : tout effet de technique `X` joue aussi `X_front` s'il existe). Ligne `fx` : 11e champ = bloom déjà dans la bande. Option de démo `--skill n|s|u|d`. Verrou « Version et paquets » libéré ; « Effets » gardé (suite : compétences, auras et ultimes de chaque perso).
