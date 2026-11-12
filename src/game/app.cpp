@@ -269,19 +269,21 @@ void App::run() {
     audio_.update();
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
-    // Weak machine: if the smooth (supersampled) rendering cannot keep up, fall back once. Not in a match with the RTX
-    // on: the player chose it knowing it is heavy.
+    // Weak machine: if the frame cannot keep up, step down once: RTX Haut to Moyen in a match (it froze a RTX 4060:
+    // the owner, 12/11), else the quality Haute to Moyenne. A lower RTX the player chose is kept.
     const bool testRun = !opt_.shots.empty() || !opt_.recordDir.empty() || opt_.quitAfter > 0;
     const bool rtxOn = settings().rtx && screen_ == Screen::Match;
-    if (!testRun && settings().highQuality && !rtxOn && !autoQualityDone_ && frames_ > 120) {
+    const bool canDrop = rtxOn ? settings().rtx == 2 : settings().highQuality;
+    if (!testRun && canDrop && !autoQualityDone_ && frames_ > 120) {
       const float dt = GetFrameTime();
       slowTime_ = dt > 1.0f / 45.0f ? slowTime_ + dt : std::max(0.0f, slowTime_ - dt * 0.5f);
       if (slowTime_ > 3.0f) {
-        settings().highQuality = false;
+        if (rtxOn) settings().rtx = 1;
+        else settings().highQuality = false;
         applyDisplaySettings();
         saveSettings();
         autoQualityDone_ = true;
-        toast("Qualité graphique réglée sur « Normale » pour plus de fluidité");
+        toast(rtxOn ? "RTX réglée sur « Moyen » pour plus de fluidité" : "Qualité graphique réglée sur « Moyenne » pour plus de fluidité");
       }
     }
     if (IsKeyPressed(KEY_F11)) {

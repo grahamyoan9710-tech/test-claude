@@ -8,6 +8,14 @@
 
 ## Nouveautés
 
+Version 14.8 : **réglages graphiques comme dans un vrai jeu**.
+
+- Qualité graphique : **Haute** (rendu ×2, persos en pixel art, halos) ou **Moyenne** (rendu simple, bien plus
+  léger). Le réglage « Personnages en pixel art » est retiré : il fait partie de la qualité.
+- RTX : **Non**, **Moyen** ou **Haut**. Haut = la RTX d'avant. Moyen = le même éclairage en 4 fois moins de pixels
+  et 2 fois moins de rayons : environ 4 fois plus rapide, pour les cartes comme la RTX 4060.
+- Si le jeu rame trop en RTX Haut, il passe une fois tout seul en RTX Moyen (et la qualité Haute en Moyenne hors RTX).
+
 Version 14.6 : **combats plus serrés et % qui réagit**.
 
 - Le % d'un perso fait une secousse « glitch » quand il prend des dégâts (couleurs décalées, bandes qui sautent).

@@ -84,7 +84,7 @@ void premultipliedBlend() {
 Rectangle layerSrc(int x, int y, int w, int h, int lh) { return {float(x), float(lh - y - h), float(w), -float(h)}; }
 }  // namespace
 
-bool enabled() { return settings().pixelArt; }
+bool enabled() { return settings().highQuality; }  // (part of "Qualité graphique : Haute")
 
 float artPixel() { return g_renderScale >= 1.5f ? 1.5f : 2.0f; }
 

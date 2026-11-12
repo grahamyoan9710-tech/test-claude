@@ -12,7 +12,7 @@ namespace pix {
 // pixel is exactly 3x3 pixels of the frame; 2 otherwise. The illustrated fighters use kFinePixel.
 float artPixel();
 
-bool enabled();  // settings: "Personnages en pixel art"
+bool enabled();  // settings: "Qualité graphique : Haute"
 // The frame's render texture (set by the app before drawing a frame): sprites draw back into it.
 void setFrameTarget(const RenderTexture2D* target);
 const RenderTexture2D* frameTarget();  // null outside a frame
