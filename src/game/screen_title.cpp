@@ -9,7 +9,7 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr const char* kVersion = "v14.5";
+constexpr const char* kVersion = "v14.6";
 
 float easeOut(float t) {
   t = clampf(t, 0.0f, 1.0f);
@@ -304,8 +304,7 @@ void App::drawTitle() {
   if (demo_) demo_->drawAttract();
   ui::dusk(demo_ ? 0.72f : 1.0f);
   ui::vignette(0.75f);
-  // Slow rays, the ghost words drifting, the striped sun rising behind the line
-  ui::sunburst({640, 360}, 640, 36, t * 2.0f * kPi / 90.0f, withAlpha(ui::kCream, 0.05f));
+  // The ghost words drifting, the striped sun rising behind the line
   {
     const char* ghost = "CLASH HORIZON · CLASH HORIZON · CLASH HORIZON · CLASH HORIZON";
     const float gx = -std::fmod(t * 35.0f, 1400.0f);

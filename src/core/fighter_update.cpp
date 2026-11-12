@@ -692,19 +692,20 @@ void Match::updateMove(Fighter& f) {
     Fighter& v = fighters[f.grabPartner];
     const HitboxDef& h = m.hitboxes[0];
     if (m.pummel) {
-      v.percent += h.damage;
+      const float dmg = h.damage * kDamageScale;
+      v.percent += dmg;
       v.flash = 6;
-      f.damageDealt += h.damage;
-      gainUlt(f, h.damage * kUltPerDamageDealt);
-      gainUlt(v, h.damage * kUltPerDamageTaken);
+      f.damageDealt += dmg;
+      gainUlt(f, dmg * kUltPerDamageDealt);
+      gainUlt(v, dmg * kUltPerDamageTaken);
       f.hitlag = v.hitlag = 3;
-      emit(EvType::Hit, v.center(), f.id, v.id, h.damage, {float(f.facing), 0});
+      emit(EvType::Hit, v.center(), f.id, v.id, dmg, {float(f.facing), 0});
     } else {
       f.grabPartner = -1;
       v.grabPartner = -1;
       setState(v, FState::Air);
       emit(EvType::Throw, v.center(), f.id, v.id, h.damage);
-      applyHit(&f, v, h, v.center(), f.facing, 1.0f, true);
+      applyHit(&f, v, h, v.center(), f.facing, kDamageScale, true);
     }
   }
   if (m.nextMove >= 0) {

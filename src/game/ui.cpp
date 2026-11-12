@@ -335,16 +335,6 @@ void glow(Vector2 c, float radius, Color col, int layers) {
   radial(c, radius * 0.5f, withAlpha(col, a * 0.45f), clear);
 }
 
-void sunburst(Vector2 c, float radius, int rays, float rot, Color col) {
-  Color clear = withAlpha(col, 0.0f);
-  for (int i = 0; i < rays; ++i) {
-    float a0 = rot + i * 2.0f * kPi / rays;
-    float a1 = a0 + kPi / rays;
-    triGrad(c, {c.x + std::cos(a0) * radius, c.y + std::sin(a0) * radius},
-            {c.x + std::cos(a1) * radius, c.y + std::sin(a1) * radius}, col, clear, clear);
-  }
-}
-
 void vignette(float s) {
   const Color k = kDuskTop;
   Color dark = withAlpha(k, s), clear = withAlpha(k, 0.0f);

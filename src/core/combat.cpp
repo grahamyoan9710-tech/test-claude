@@ -100,7 +100,7 @@ void Match::resolveHits() {
     if (!m || !a.active() || a.hitlag > 0 || a.charging || m->throwFrame >= 0) continue;
     if (m->counterStart >= 0 && !a.counterTriggered) continue;
     float mul = a.damageMul();
-    if (a.move == FinalSmash) mul *= kUltDamageMul;
+    if (a.move == FinalSmash) mul *= kUltDamageMul / kDamageScale;  // ultimates keep their full power
     if (m->chargeFrame >= 0 && m->parries == 0) mul *= 1.0f + m->chargeDamageMul * float(a.charge) / float(m->maxCharge);
     if (m->parries > 0) mul *= 1.0f + 0.35f * float(std::max(0, a.parried - 1));  // harder for each parry
     // A held weapon: harder hits; the base moves also reach further and take its element (a
@@ -396,7 +396,7 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
     targets.push_back(-2);  // self
   }
   const bool ult = f.state == FState::Attack && f.move == FinalSmash;
-  const float dmgMul = f.damageMul() * (ult ? kUltDamageMul : 1.0f);
+  const float dmgMul = f.damageMul() * (ult ? kUltDamageMul / kDamageScale : 1.0f);  // ultimates keep their full power
   for (int t : targets) {
     Vec2 origin;
     int side = f.facing;

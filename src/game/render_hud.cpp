@@ -62,17 +62,10 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
   DrawRectanglePro({sc.x, sc.y + kSq * 0.25f, kSq, kSq * 0.5f}, {kSq * 0.5f, kSq * 0.25f}, kTilt, withAlpha(BLACK, 0.18f));
   const Color tint = out ? Color{120, 124, 140, 255} : WHITE;
   if (!drawArtBust(*f.def, sc.x + 2, sc.y + kSq * 0.5f + 2, 100, tint)) {
-    // No bust: the face fills the tilted square
-    float aw, ah;
-    Vec2 af;
-    Vector2 pts[4];
-    const float c = std::cos(kTilt * DEG2RAD), sn = std::sin(kTilt * DEG2RAD), hs = kSq * 0.5f - 3;
-    const Vector2 corners[4] = {{-hs, -hs}, {hs, -hs}, {hs, hs}, {-hs, hs}};
-    for (int k = 0; k < 4; ++k)
-      pts[k] = {sc.x + corners[k].x * c - corners[k].y * sn, sc.y + corners[k].x * sn + corners[k].y * c};
-    if (!artGeometry(*f.def, aw, ah, af) ||
-        !drawArtPoly(*f.def, pts, 4, W(sc) + Vec2{0, 6}, 2 * hs / (0.7f * aw), false, tint))
-      drawArtDisc(*f.def, f.palette, W(sc), 30, time + f.id, 1.1f, tint);
+    // No illustration: the pixel portrait, as big as a bust, rising out of the square (cut at its bottom)
+    beginClip({sc.x - 60, sc.y - kSq * 0.5f - 50, 120, kSq + 50});
+    drawPortrait(*f.def, f.palette, {sc.x + 2, sc.y - 6}, 118, time + f.id);
+    endClip();
   }
   (void)face;
 
@@ -109,8 +102,29 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
     const float nw = textWidth(pct, ns, kD);
     drawText(pct, tx + jx, ny + 2, ns, drop, kD);
     drawText("%", tx + nw + 2 + jx, py + 2, kPct, drop, kD);
-    drawTextOutlined(pct, tx + jx, ny, ns, col, ui::kInk, 3.0f, kD);
-    drawTextOutlined("%", tx + nw + 2 + jx, py, kPct, col, ui::kInk, 2.0f, kD);
+    auto number = [&](float dx, Color c) {
+      drawTextOutlined(pct, tx + jx + dx, ny, ns, c, ui::kInk, 3.0f, kD);
+      drawTextOutlined("%", tx + nw + 2 + jx + dx, py, kPct, c, ui::kInk, 2.0f, kD);
+    };
+    const float g = clampf(shake / 7.0f, 0.0f, 1.0f);  // the hit just landed: up to 1, fading over ~15 frames
+    if (g < 0.08f) {
+      number(0, col);
+    } else {
+      // Glitch: red and cyan ghosts split apart, and the number cut in bands that jump sideways
+      const float sp = 3.0f + 6.0f * g;
+      drawText(pct, tx + jx - sp, ny, ns, withAlpha({255, 48, 96, 255}, 0.8f * g), kD);
+      drawText(pct, tx + jx + sp, ny, ns, withAlpha(ui::kBlue, 0.8f * g), kD);
+      constexpr int kBands = 5;
+      const float top = ny - 6, h = (base + 8 - top) / kBands;
+      const int seed = int(time * 45.0f) * 7 + f.id * 31;
+      for (int i = 0; i < kBands; ++i) {
+        const int k = (seed + i * 13) % 6;
+        const float off = k == 0 ? 14.0f * g : k == 1 ? -10.0f * g : 0.0f;
+        beginClip({x, top + i * h, r.width, h + (i == kBands - 1 ? 6.0f : 0.0f)});
+        number(off, k <= 1 ? mixColor(col, WHITE, 0.4f * g) : col);
+        endClip();
+      }
+    }
   }
 
   // Its name under the damage, on a dark strip topped with the player's colour (Smash)

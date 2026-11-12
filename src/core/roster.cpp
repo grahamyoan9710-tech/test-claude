@@ -521,8 +521,12 @@ CharacterDef makeH01() {
   k.c.armed = false;  // shortcut: bare-handed until his nodachi clips pass QA (13/11), then remove this line
   k.c.walkStride = 1.6f;  // her short 3/4 steps at the usual stride looked hurried (owner, 10/11)
   const F e = k.e;
+  const auto far = [](MoveDef m) {  // his electric dash goes 25 % further (owner, 12/11)
+    m.teleportDist *= 1.25f;
+    return m;
+  };
   skills(k, -1, piercing(shot("Tranchant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
-         through("Pas-iaï", e, k.pfx("draw"), 9), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
+         far(through("Pas-iaï", e, k.pfx("draw"), 9)), rise("Spirale montante", e, k.pfx("spiral"), 15.5f, 4, L::ArmFront),
          prescience(counter("Prescience", e, nullptr, false, L::ArmFront), k.pfx("parry")));
   ultimateOf(k, -1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));  // 28: the effect strikes on its 15th frame, at 30 fps
   drawCut(k, -1, L::ArmFront, 11);
@@ -530,7 +534,7 @@ CharacterDef makeH01() {
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
   skills(k, 0, piercing(shot("Croissant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
-         through("Ruée-iaï", e, k.pfx("draw"), 11), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
+         far(through("Ruée-iaï", e, k.pfx("draw"), 11)), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
          prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 0, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));  // shortcut: the katana's own slashing ultimate comes with its clips
   drawCut(k, 0, L::Weapon, 14);
@@ -538,7 +542,7 @@ CharacterDef makeH01() {
   arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
   skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
-         through("Ruée ardente", e, k.pfx("draw"), 12), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
+         far(through("Ruée ardente", e, k.pfx("draw"), 12)), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
          prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));
   drawCut(k, 1, L::Weapon, 15);

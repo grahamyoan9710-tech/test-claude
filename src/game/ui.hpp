@@ -80,7 +80,6 @@ void boldCentered(const char* text, float cx, float y, float size, Color fill = 
 void menuPlate(Rectangle r, float slant, bool chosen, float alpha = 1.0f);
 Rectangle grow(Rectangle r, float px);
 void glow(Vector2 c, float radius, Color col, int layers = 10);
-void sunburst(Vector2 c, float radius, int rays, float rot, Color col);
 void vignette(float strength);
 void star(Vector2 c, float rOut, float rIn, float rot, Color col);
 void diamond(Vector2 c, float r, Color col);

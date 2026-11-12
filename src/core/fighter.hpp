@@ -23,6 +23,8 @@ constexpr float kUltPerShieldHit = 0.0f;  // attacker, per damage blocked by a s
 // CPU levels go from 1 to 10; level 10 plays like a perfect level 9 and hits twice as hard.
 constexpr int kMaxCpuLevel = 10;
 constexpr float kLevel10Power = 2.0f;
+// Every fighter's damage, lowered with the closer blast zones (owner, 12/11): KOs come at about the same percent.
+constexpr float kDamageScale = 0.8f;
 constexpr int kWillMax = 3;  // charges of will (CharacterDef::willForm)
 
 struct Fighter {
@@ -157,7 +159,7 @@ struct Fighter {
     return def->weaponLength * (w ? w->reachMul : 1.0f);
   }
   float damageMul() const {
-    float m = 1.0f;
+    float m = kDamageScale;
     if (const WeaponDef* w = weaponDef()) m *= w->damageMul;
     if (const FormDef* fd = formDef()) m *= fd->damageMul;
     if (cpu && cpuLevel >= kMaxCpuLevel) m *= kLevel10Power;

@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 14.6 : **combats plus serrés et % qui réagit**.
+
+- Le % d'un perso fait une secousse « glitch » quand il prend des dégâts (couleurs décalées, bandes qui sautent).
+- La caméra est plus près du combat, et les sorties de terrain sont 20 % plus proches (côtés et haut).
+- Tous les dégâts des persos baissés de 20 % pour compenser (les ultimes gardent toute leur puissance).
+- Hakuen : son dash électrique (Pas-iaï) va 25 % plus loin.
+- Cartes de combat : tous les persos ont un portrait aussi grand que celui de Hakuen.
+- Plus de rayons de soleil dans la DA (titre, cut-in, GAME, victoire).
+
 Version 14.5 : **cartes de combat transparentes, comme dans Smash**.
 
 - Plus de fond plein : le portrait sort d'un carré penché à la couleur du joueur (gris pour un CPU), le % est en

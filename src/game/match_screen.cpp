@@ -69,7 +69,7 @@ void drawImpactFrame(const Match& m, const Fx::Impact& im, const Camera2D& cam, 
 // Ultimate cut-in (during the final smash freeze): the screen darkens, a diagonal band slashes
 // across with the fighter's portrait and the move's name, speed lines in the fighter's colours.
 void drawUltCutIn(const Match& m, float time) {
-  // « Épure », a bold moment: the fight dimmed, a burst of rays and hollow words of the fighter's colour, a band leaning
+  // « Épure », a bold moment: the fight dimmed, hollow words of the fighter's colour, a band leaning
   // 5° opening from its middle between two glowing edges, the fighter's eyes in it, "ULTIME" and the move's name.
   if (m.freezeTimer <= 0 || m.freezeOwner < 0 || m.freezeOwner >= int(m.fighters.size())) return;
   const Fighter& f = m.fighters[m.freezeOwner];
@@ -82,7 +82,6 @@ void drawUltCutIn(const Match& m, float time) {
   constexpr FontKind D = FontKind::Display, B = FontKind::Body;
 
   DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha({5, 5, 7, 255}, 0.74f * env));
-  ui::sunburst({640, 360}, 760 * (0.6f + 0.5f * u), 40, u * 0.35f, withAlpha(c, 0.15f * env));
   const std::string& move = f.moveDef(FinalSmash).name;
   const std::string up = upperFr(move);
   rlPushMatrix();
@@ -383,8 +382,8 @@ void MatchScreen::updateCamera(bool snap) {
     maxY = std::max(maxY, c.y + 130.0f);
   }
   float w = maxX - minX, h = maxY - minY;
-  // 0.87: the camera stands a little further back (the owner's wish), on its own and at its closest.
-  float zoom = clampf(0.87f * std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
+  // 1.0: the camera close on the fight again (owner, 12/11: it stood too far back).
+  float zoom = clampf(1.0f * std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.35f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
   // An ultimate: the camera tightens on its user and on the fighters it is dealing with.
   int ultUser = -1;
@@ -578,12 +577,11 @@ void MatchScreen::draw() {
   if (training()) drawTrainingPanel();
   drawUltCutIn(m_, time_);
 
-  if (m_.finished) {  // « GAME »: the fight frozen in black and white, a burst of rays, the word slamming in, a line under it
+  if (m_.finished) {  // « GAME »: the fight frozen in black and white, the word slamming in, a line under it
     const float u = endTimer_ / 60.0f, in = std::min(1.0f, endTimer_ / 10.0f);
     const float e = 1.0f - std::pow(1.0f - std::min(1.0f, u / 0.3f), 3.0f);
     pix::desaturate(in);  // the fight frozen in black and white
     ui::dusk(0.25f * in);
-    ui::sunburst({640, 360}, 700 * (0.4f + 0.75f * std::min(1.0f, u / 2.8f)), 45, u * 0.11f, withAlpha(ui::kCream, 0.14f * in));
     const float size = lerpf(260.0f * 1.35f, 260.0f, e), w = ui::spriteWidth(ui::Sprite::Game, size);
     ui::drawSprite(ui::Sprite::Game, kScreenW * 0.5f - w * 0.5f, 343 - size * 0.5f, size, in);
     const float l = 1.0f - std::pow(1.0f - clampf((u - 0.25f) / 0.4f, 0.0f, 1.0f), 3.0f);

@@ -55,6 +55,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 12/11 01 h UTC, session claude/project-thread-gzf1un : version 14.6 = glitch du % (render_hud.cpp), caméra plus près (zoom max 1,35), sorties de terrain ×0,8 (stageList), dégâts ×0,8 (kDamageScale, ultimes exclus), dash de Hakuen +25 %, rayons retirés (ui::sunburst supprimé).
 - 11/11 22 h 35 UTC, session claude/project-thread-gzf1un : version 14.5 = cartes de combat transparentes façon Smash (render_hud.cpp fighterCard : carré penché, buste ou visage, bande du nom), demande de yoyo.
 - 11/11 22 h 15 UTC, session claude/project-thread-gzf1un : version 14.4 = Règles & mode en volet à droite, panneau d'entraînement Épure, rotation des moitiés dans la Coupe (ui::snapQuad prend un angle).
 - 11/11 22 h UTC, session claude/project-thread-gzf1un : version 14.3 = fin de la DA « Épure ». Cartes de combat

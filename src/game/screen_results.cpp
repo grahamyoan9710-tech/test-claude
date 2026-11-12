@@ -1,4 +1,4 @@
-// Results screen (« Épure »): the winner on the left, in its colour (rays, its name huge and faint, two slabs, the
+// Results screen (« Épure »): the winner on the left, in its colour (its name huge and faint, two slabs, the
 // manga portrait behind its victory pose); the ranking on the right (with an award each for the most K.O., the Clash
 // Orb breaker and the biggest blow), then the rematch: each player says it is ready (a CPU always is) and it starts by
 // itself; or one of four buttons goes elsewhere.
@@ -44,7 +44,7 @@ void slab(Vector2 origin, float len, float h, float g, Color col) {
   ui::quad(at(0, -h * 0.5f), at(l, -h * 0.5f), at(l, h * 0.5f), at(0, h * 0.5f), col, col, col, col);
 }
 
-// The left side's light: a glow of the winner's colour low down, slow rays, its name faint, two slabs.
+// The left side's light: a glow of the winner's colour low down, its name faint, two slabs.
 void drawVictoryLight(Color cc, const char* name, float t, float f) {
   ui::dusk();
   auto ease = [&](float delay, float len) {
@@ -53,14 +53,6 @@ void drawVictoryLight(Color cc, const char* name, float t, float f) {
   };
   beginClip({0, 0, 580, kScreenH});
   ui::glow({232, 650}, 460, withAlpha(cc, 0.3f));
-  const Vec2 c{220, 520};
-  const float rot = t * 2.0f * kPi / 60.0f, len = 380;
-  const Color ray = withAlpha(cc, 0.2f), none = withAlpha(cc, 0.0f);
-  for (int k = 0; k < 24; ++k) {  // 5° rays every 15°, fading out
-    const float a0 = rot + k * kPi / 12.0f, a1 = a0 + kPi / 36.0f;
-    const Vec2 d0{std::cos(a0), std::sin(a0)}, d1{std::cos(a1), std::sin(a1)};
-    vfx::quad(c, c + d0 * len, c + d1 * len, c, ray, none, none, ray);
-  }
   if (name) {
     float gs = 150;
     while (gs > 90 && textWidth(name, gs, kD) > 540) gs -= 2;
