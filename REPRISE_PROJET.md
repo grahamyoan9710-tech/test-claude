@@ -52,9 +52,18 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-gzf1un (15.5) | 12/11 22 h 20 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 12/11 23 h 10 UTC, session claude/project-thread-gzf1un : version 15.5 = effets de lancement des 40 techniques
+  côté/haut/bas dans Blender (`tools/blender/effets.py -- p01-a_s`, bandes `fx_pfx_<perso>_<slot>_<s|u|d>.png`,
+  `k.pfx("slot_s")` dans `roster.cpp` ; `staying()` = castFxStays pour Pilier de glace, Uppercut volcanique et Rayon
+  montant). Relus image par image en 5 passes : plus de boules, d'anneaux ni de cônes (chocs au sol = gravillons
+  `kick()`, dôme = bulle de verre `m_bubble`, traînées de coupe effilées `arc(prof=...)`), foudre épaissie pour
+  rester lisible en jeu. Lames de 01 et 03 : `along()` retiré, elles volent à hauteur du corps comme Hakuen.
+  `mkgrid.py` : bandes sous 8192 px. CLAUDE.md : méthode de yoyo pour les effets des vrais persos (références
+  d'animes et de jeux, maquette Claude Design avant Blender). 15.3 sautée (la 15.4 était déjà sortie). Verrou
+  « Version et paquets » libéré ; « Effets » gardé (suite : auras, éclats d'éveil, ultimes).
 - 12/11 22 h 20 UTC, session claude/project-thread-gzf1un : début de la version 15.5 (effets de lancement des 40
   techniques côté/haut/bas dans Blender, lames de 01 et 03 à hauteur du corps) ; 15.3 sautée (15.4 déjà sortie).
   Verrou « Version et paquets » pris.

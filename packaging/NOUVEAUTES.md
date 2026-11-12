@@ -8,6 +8,27 @@
 
 ## Nouveautés
 
+Version 15.5 : **les effets des techniques refaits dans Blender**.
+
+- Les 40 techniques de côté, du haut et du bas des 5 persos (à mains nues et avec chaque arme) ont leur effet
+  Blender, aux couleurs du perso. Aucun anneau ni boule : des coupes, des traînées effilées, des flammes, du givre,
+  de la foudre et de la lumière.
+- Ruées (Iaï, Glissade gelée, Charge brûlante, Rafale…) : lignes de vitesse, traînée de l'élément derrière le perso,
+  et ce qu'il laisse sur son chemin (flammes, cristaux de glace, foudre au sol, éclats de lumière).
+- Pas de l'ombre et Pas-éclair : une longue coupe nette en travers du chemin, qui se brise et s'efface.
+- Montées : traînée de coupe (Lune montante, Lame ascendante, Saut-foudre, Ascension sacrée), tourbillon de vent
+  (Vrille, Spirale céleste, Spirale rouge), ailes de lumière (Ailes de vent) ou de feu (Phénix), éclairs qui
+  montent (Coup de pied foudre).
+- Piliers qui restent au sol : glace qui se brise en éclats (Pilier de glace), flammes (Uppercut volcanique),
+  rayon de lumière (Rayon montant).
+- Contres : garde en croissant (Riposte d'ombre, Garde-lame, Riposte, Contre sacré), mur de glace qui vole en éclats
+  (Miroir de glace), bulle de verre (Dôme astral, Barrière de lumière).
+- Explosions : gerbe de feu (Éruption), flammes qui jaillissent le long d'une faille (Séisme), tourbillon de feu
+  qui explose (Cercle de brasier), décharge de foudre (Décharge).
+- Téléportations (Ascension spectrale, Saut stellaire) : une flaque de lumière au sol, puis un trait vers le haut.
+- Les projections de lame du 01 et du 03 volent maintenant à hauteur du corps, comme celle de Hakuen (elles
+  partaient vers le bas).
+
 Version 15.4 : **choix de la résolution et vrai plein écran**.
 
 - Paramètres > Affichage > Résolution : Écran (la taille de ton écran), 1280 × 720, 1600 × 900, 1920 × 1080,
