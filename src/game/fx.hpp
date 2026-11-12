@@ -76,7 +76,6 @@ class Fx {
     Vec2 pos, dir;
     Color color;
     int t = 0;
-    float size = 1.0f;  // pixel size of the fighter knocked out (its pfx_ko blast is drawn in its pixels)
   };
   struct Pillar {  // light from the sky guiding a weapon down
     int character = 0, slot = 0;

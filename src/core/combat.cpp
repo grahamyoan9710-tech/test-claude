@@ -406,12 +406,12 @@ void Match::spawnProjectiles(Fighter& f, const ProjectileDef& p) {
       const Fighter& o = fighters[t];
       origin = o.center() + p.spawnOffset;
       side = o.pos.x >= f.pos.x ? 1 : -1;  // strikes come from the user's side
-      if (p.column) {  // down to the first floor under them (kept at their height when nothing is under them)
+      if (p.column) {  // lands on the first floor under them (kept at their height when nothing is under them)
         float floor = 1e9f;
         for (const auto& pl : platforms)
           if (o.pos.x >= pl.rect.left() && o.pos.x <= pl.rect.right() && pl.rect.top() >= o.pos.y - 1.0f)
             floor = std::min(floor, pl.rect.top());
-        if (floor < 1e8f) origin.y += floor - o.pos.y;
+        if (floor < 1e8f) origin.y = floor + p.spawnOffset.y;
       }
     } else {  // nobody to target: a few steps ahead
       origin = f.center() + Vec2{f.facing * 220.0f, 0.0f} + p.spawnOffset;

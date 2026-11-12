@@ -339,7 +339,7 @@ float fxSize(const char* name, const CharacterDef& d, float size) {
   // A few bigger than the fighters' pixels (the owner, 11/11: a dynamic, aggressive game).
   static const std::pair<const char*, float> kGrow[] = {{"pfx_jump", 1.05f}, {"pfx_airjump", 1.05f},
                                                         {"pfx_land", 1.05f}, {"pfx_dash", 1.05f},
-                                                        {"pfx_trail", 1.6f}, {"pfx_ko", 1.7f},
+                                                        {"pfx_trail", 1.6f},
                                                         {"pfx_h01_ult", 1.05f / 0.8f}};  // the model 5 % wider (made at 80 %)
   for (const auto& [n, g] : kGrow)
     if (std::strcmp(n, name) == 0) return pixelScale(d) * g;
@@ -676,7 +676,8 @@ const Fx* fxOf(const char* name) {
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
     F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
-    F.ownGlow = std::strcmp(name, "pfx_h01_ult") == 0;  // (the owner's model, 11/11: the halo turned it white)
+    // (the owner's model, 11/11: the halo turned it white; the KO tear has its glow baked in, a halo blurs it)
+    F.ownGlow = std::strcmp(name, "pfx_h01_ult") == 0 || std::strcmp(name, "pfx_ko") == 0;
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
       if (!smoke(name)) F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)

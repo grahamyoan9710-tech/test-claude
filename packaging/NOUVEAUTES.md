@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 15.0 : **les effets passent dans Blender**, en commençant par l'ultime de Hakuen et le KO.
+
+- Ultime de Hakuen : chaque éclair est fin, aux craquelures nettes, traverse l'écran en diagonale depuis le côté
+  de Hakuen et frappe le sol sous l'adversaire. Il descend, frappe une fois et s'éteint avant le suivant : on voit
+  les cinq coups un par un.
+- KO : là où le perso sort, l'écran se fissure en toile d'araignée et se déchire, sur environ la moitié de
+  l'écran quelle que soit la caméra, aux couleurs du joueur éliminé.
+- Les autres effets suivent, refaits un par un dans Blender.
+
 Version 14.9 : **nouvelle DA « Prestige »**, sobre et pro, comme une grande compétition.
 
 - Tous les écrans refaits : titre (un vrai bouton COMMENCER), menu, choix des persos, règles, choix de l'arène,

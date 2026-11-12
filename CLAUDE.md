@@ -91,21 +91,22 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - C++17, style du code voisin : commentaires courts en anglais, noms explicites, pas de dépendance nouvelle.
 - Un clip regardé vers la droite ; le jeu le retourne. Dans un clip d'attaque, l'image « impact » est celle que le jeu
   tient tant que la hitbox est active.
-- Effets : **tous viennent de ParticleFX Studio** (décision du propriétaire, 05/11) ; PixelLab reste pour les
-  persos. Depuis le 10/11, même les effets de déplacement (saut, dash, atterrissage, traînée d'éjection), le KO et la
-  bulle du bouclier sont en ParticleFX (`pfx_jump`, `pfx_land`, `pfx_dash`, `pfx_airjump`, `pfx_trail`, `pfx_ko`,
-  `pfx_shield`).
-  Le compte ParticleFX du propriétaire se pilote par MCP : `tools/pixellab/tools/pfxmcp.py`, clé dans
-  `tools/pixellab/pfx/.key` (ignorée par git). Créer, construire ou exporter un effet coûte des builds : pas sans
-  son accord. Tous sont joués par le jeu (effets `fx`), menus
-  compris. Aucun effet dessiné par le code : les anciens effets codés sont supprimés une fois remplacés.
+- Effets : **tous se font dans Blender** (décision du propriétaire, 12/11 : « abandonne ParticleFX, t'es trop chaud
+  avec Blender » ; avant, ParticleFX depuis le 05/11) ; PixelLab reste pour les persos. Blender 5.3 tourne sur le PC
+  du propriétaire (Desktop Commander, dossier `Art/Blender`) ou dans la session (`pip install bpy==5.3.0`). Scripts
+  dans `tools/blender/` : rendu EXR sur film transparent, puis post en Python (bloom, alpha droit, bande en grille
+  de moins de 8192 px). Les bandes gardent le nom `pfx_*` (`assets/sprites/fx_pfx_*.png`), ce qui les fait passer
+  avec `kVfx = false`. Les effets ParticleFX encore en jeu sont remplacés un par un ; plus aucun build ParticleFX.
+  Projections de lame : le ressenti des tranchants d'énergie de Vergil (DMC) et des grands croissants d'énergie,
+  avec un visuel et des noms originaux. Tous sont joués par le jeu (effets `fx`), menus compris. Aucun effet dessiné
+  par le code : les anciens effets codés sont supprimés une fois remplacés.
   - Coupés (`kVfx = false`, `src/game/render.hpp`) sauf ce que le propriétaire aime (28/10 : « les vfx de mouvement
     sont parfaits mais le reste… ») : fumées de saut, de dash et d'atterrissage (`moveFx`), sa bulle de bouclier,
     et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seul effet codé gardé).
     Depuis le 10/11, aucun effet PixelLab ne s'affiche plus (le propriétaire : « retire-les ») : seuls les `pfx_*`
     passent avec `kVfx = false` (apparition au respawn, fin de transformation, orbe brisée : retirés).
   - Les remettre un par un, seulement quand ils sont au niveau de ceux-là.
-  - ParticleFX : le propriétaire envoie les GIF (export gratuit), gardés dans `art/particlefx/` et importés par
+  - ParticleFX (ancien, jusqu'au remplacement) : GIF gardés dans `art/particlefx/` et importés par
     `scripts/import_fx.py` sous le nom `pfx_*`. Ils s'affichent même avec `kVfx = false` (`chosenFx`,
     `render_world.cpp`). Une bande d'effet tient en une texture : moins de 8192 px de large (`--step`, `--scale`).
     Licence (page des prix, 05/11) : permis dans un jeu vendu, même en compte gratuit, sans crédit ; interdit de
