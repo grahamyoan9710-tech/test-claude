@@ -1495,14 +1495,13 @@ void drawFighterTags(const Match& m) {
   if (!settings().playerTags || m.freezeTimer > 0) return;  // no tags during an ultimate cinematic
   for (const auto& f : m.fighters) {
     if (!f.active() || f.state == FState::Grabbed) continue;
-    const Color pc = slotColor(f);
+    // « Prestige »: the tag in the player's colour (a CPU's grey), a short stem under it pointing at the head
+    const Color pc = f.cpu && !f.inTeam ? ui::kCpuTag : slotColor(f);
     char tag[8];
     std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-    const float w = textWidth(tag, 19, FontKind::Title) + 16.0f, top = tagTop(m, f.id);
-    const Rectangle r{f.pos.x - w * 0.5f, top, w, 22.0f};
-    DrawRectangleRec(r, pc);  // a chip of its colour (« Ligne d'horizon »)
-    if (!f.finalSmash) DrawTriangle({f.pos.x - 6, r.y + r.height}, {f.pos.x, r.y + r.height + 6}, {f.pos.x + 6, r.y + r.height}, pc);
-    drawText(tag, r.x + 8.0f, capsY(r.y + r.height * 0.5f, 19, FontKind::Title), 19, ui::kInk, FontKind::Title);
+    const float top = tagTop(m, f.id), w = ui::capsWidth(tag, 15, 0.08f);
+    ui::caps(tag, f.pos.x - w * 0.5f, top + 8, 15, 0.08f, pc);
+    if (!f.finalSmash) DrawRectangleRec({f.pos.x - 1.5f, top + 16, 3, 12}, pc);
   }
 }
 

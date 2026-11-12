@@ -201,6 +201,9 @@ const RenderTexture2D* beforeFighters();  // the frame before the fighters, kept
 
 // ---- HUD (render_hud.cpp) ---------------------------------------------------
 // devices (indexed by port, optional): shows each human's ultimate button once the meter is full.
-void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices = nullptr);
+// hitAge: frames since each fighter's card took a hit (its % is torn red / blue for a moment).
+void drawHud(const Match& m, const std::array<int, 4>& hitAge, float time, const std::array<int, 4>* devices = nullptr);
 void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time);
-void drawCountdown(const Match& m);
+// shown: seconds since the fight came on screen (« PRÊTS ? » starts under the choc that opens it).
+void drawCountdown(const Match& m, float shown);
+Vector2 goShake(const Match& m);  // the jolt as GO lands (the camera and the countdown)

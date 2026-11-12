@@ -1072,6 +1072,10 @@ void icon(Icon i, Vector2 c, float size, Color col, float stroke) {
     case Icon::ChevronL: strokes({{14.5f, 6}, {8.5f, 12}, {14.5f, 18}}, c, k, t, col); break;
     case Icon::ChevronR: strokes({{9.5f, 6}, {15.5f, 12}, {9.5f, 18}}, c, k, t, col); break;
     case Icon::Arrow: strokes({{5, 12}, {19, 12}, {B, 0}, {13, 6}, {19, 12}, {13, 18}}, c, k, t, col); break;
+    case Icon::Person:  // one bust
+      circleStroke(c, k, 12, 8, 3.5f, t, col);
+      strokes({{5, 20}, {6.5f, 16.5f}, {12, 14.5f}, {17.5f, 16.5f}, {19, 20}}, c, k, t, col);
+      break;
   }
 }
 

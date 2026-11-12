@@ -454,7 +454,7 @@ void Fx::onEvents(const Match& m) {
           flashCol_ = WHITE;
         }
         shake_ = std::max(shake_, std::min(12.0f, kb / 12.0f));
-        if (e.b >= 0) hudShake[e.b & 3] = std::min(9.0f, 2.0f + kb / 14.0f);
+        if (e.b >= 0) hudHit[e.b & 3] = 0;
         hitSound(e.fx, kb, big);
         if (kb >= 100.0f && !lethal) au.play(Sfx::ImpactBoom, clampf(kb / 400.0f, 0.25f, 0.45f), 1.3f);  // a thump
         if (lethal) {
@@ -929,7 +929,7 @@ void Fx::update(const Match& m) {
   projectileTrails(m);
   shake_ *= 0.8f;  // brief
   flash_ *= 0.85f;
-  for (auto& s : hudShake) s *= 0.88f;
+  for (auto& a : hudHit) a = std::min(a + 1, 99);
 }
 
 // ---- Drawing ---------------------------------------------------------------------------

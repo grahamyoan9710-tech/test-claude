@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "game/common.hpp"
 #include "game/controls.hpp"
@@ -161,7 +162,7 @@ float label(const char* text, float x, float cy, float size, float em, Color col
 float labelWidth(const char* text, float size, float em);
 // Line icons of the charte (24-unit grid, round caps), centred on c, `size` px wide.
 enum class Icon : int { Play, Versus, Training, Online, Fighters, Arenas, Options, Quit, Sliders, Dice, Sword, Trophy,
-                        Rematch, Home, Close, ChevronL, ChevronR, Arrow };
+                        Rematch, Home, Close, ChevronL, ChevronR, Arrow, Person };
 void icon(Icon i, Vector2 c, float size, Color col, float stroke = 1.75f);
 
 // Small capitals spaced out like the charte's labels (CSS letter-spacing, in em), title font; returns the width.
@@ -208,6 +209,8 @@ float bezier(float t, float x1, float y1, float x2, float y2);
 float seg(float t, float a, float b, float x1 = 0.2f, float y1 = 0.9f, float x2 = 0.1f, float y2 = 1.0f);
 // Draws `draw` scaled by s around (ox, oy) (CSS scale with its transform-origin).
 void scaled(float s, float ox, float oy, const std::function<void()>& draw);
+// The jolt as something heavy lands (GO, an ultimate's name, VICTOIRE), s seconds after: 0.45 s, then still.
+Vector2 slam(float s);
 // Big capitals (CSS sizes: em = font-size; top = the top of its line box, lh its line-height in em; ls the
 // letter-spacing in em), from distance fields: crisp at any size. stroke: a CSS text-stroke width in px.
 enum class Face : int { Cond, Wide, Exo };  // Archivo 62 %, Archivo 125 %, Exo 2 Black Italic
@@ -222,9 +225,14 @@ void bigClipOff();
 // The choc: white capitals with a night outline, their red and blue copies split by `split` px either way.
 void choc(const char* s, float cx, float top, float em, float split, float alpha = 1.0f, float stroke = 5.0f,
           Face f = Face::Wide, float lh = 1.0f, float ls = 0.0f);
+// Exo 2 Black Italic at a CSS font-size `em`, its baseline at `base` (the damage, the places, the results' numbers).
+float exoWidth(const char* s, float em);
+void exo(const char* s, float x, float base, float em, Color c);
 // Small capitals (Archivo 125 %), caps centred on cy; returns the width.
 float caps(const char* s, float x, float cy, float size, float ls, Color col);
 float capsWidth(const char* s, float size, float ls);
+// A fighter's name in big condensed capitals (em), broken at its spaces when wider than maxW on one line.
+std::vector<std::string> nameLines(const std::string& name, float em, float maxW);
 // A key cap of the charte (night, a silver rim; filled: silver, night text), or the gamepad's button; its width.
 float pkey(const char* key, Btn pad, float x, float y, float h, bool filled = false, float alpha = 1.0f);
 float pkeyWidth(const char* key, Btn pad, float h);

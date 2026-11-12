@@ -64,6 +64,7 @@ class MatchScreen {
 
  private:
   void updateCamera(bool snap);
+  void stepFight();  // one frame of the fight: inputs, simulation, effects
   Camera2D camera();
   // The pause (match_pause.cpp): opened by `port` (-1: the game); its menu, and the move list of whoever paused.
   void openPause(int port);
@@ -99,6 +100,9 @@ class MatchScreen {
   std::array<bool, 4> padLost_{};      // the player's gamepad got unplugged (auto pause)
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;
+  float finishZoom_ = 1.0f;  // the camera's zoom as the fight ended (GAME pushes in from it)
+  int cutT_ = -1;            // frames since an ultimate's cut-in began (-1: none)
+  int shown_ = 0;            // frames this fight has been drawn
   bool debug_ = false;
   bool attract_ = false;
   int ultShow_ = -2;
@@ -167,8 +171,6 @@ class App {
   // screens (menus.cpp)
   void updateCss(const MenuNav& nav);
   void drawCss();
-  void drawWideSheet(int col, const CharacterDef* d, bool left, Color pc, Color cc, int palette, bool chipFocus,
-                     bool fighterFocus);  // one of the two wide sheets of the character select
   void updateStage(const MenuNav& nav);
   void drawStage();
   // the VS screen, between the arena and the fight (screen_versus.cpp)
@@ -237,6 +239,7 @@ class App {
   int vsTip_ = 0;             // the VS screen's tip (drawn when it opens)
   bool teamsForced_ = false;  // --teams
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
+  std::array<int, 4> pickSeen_{-3, -3, -3, -3}, pickAt_{};  // each card's fighter as last drawn, the frame it changed
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
   // settings

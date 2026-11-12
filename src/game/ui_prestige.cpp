@@ -46,6 +46,17 @@ float seg(float t, float a, float b, float x1, float y1, float x2, float y2) {
   return bezier((t - a) / std::max(1e-6f, b - a), x1, y1, x2, y2);
 }
 
+Vector2 slam(float s) {
+  static const float kt[] = {0.0f, 0.15f, 0.30f, 0.50f, 0.70f, 1.0f};
+  static const Vector2 kv[] = {{-10, 5}, {9, -6}, {-6, 4}, {4, -2}, {-2, 1}, {0, 0}};
+  if (s < 0.0f || s >= 0.45f) return {0, 0};
+  const float u = s / 0.45f;
+  int k = 0;
+  while (k < 4 && u >= kt[k + 1]) ++k;
+  const float v = (u - kt[k]) / (kt[k + 1] - kt[k]);
+  return {kv[k].x + (kv[k + 1].x - kv[k].x) * v, kv[k].y + (kv[k + 1].y - kv[k].y) * v};
+}
+
 void scaled(float s, float ox, float oy, const std::function<void()>& draw) {
   if (std::fabs(s - 1.0f) < 1e-4f) {
     draw();
@@ -103,6 +114,12 @@ void choc(const char* s, float cx, float top, float em, float split, float alpha
   big(s, x, top, em, f, withAlpha(WHITE, alpha), lh, ls, stroke, withAlpha(kNight, alpha));
 }
 
+float exoWidth(const char* s, float em) { return MeasureTextEx(gameFont(FontKind::Damage), s, 1.2f * em, 0.0f).x; }
+
+void exo(const char* s, float x, float base, float em, Color c) {
+  DrawTextEx(gameFont(FontKind::Damage), s, {x, base - 0.999f * em}, 1.2f * em, 0.0f, c);  // Exo 2: ascent .999, box 1.2
+}
+
 float capsWidth(const char* s, float size, float ls) {
   return MeasureTextEx(gameFont(FontKind::Display), s, size * 1.088f, ls * size).x;
 }
@@ -110,6 +127,17 @@ float capsWidth(const char* s, float size, float ls) {
 float caps(const char* s, float x, float cy, float size, float ls, Color col) {
   DrawTextEx(gameFont(FontKind::Display), s, {x, cy - 0.535f * size}, size * 1.088f, ls * size, col);
   return capsWidth(s, size, ls);
+}
+
+std::vector<std::string> nameLines(const std::string& name, float em, float maxW) {
+  if (bigWidth(name.c_str(), em, Face::Cond) <= maxW || name.find(' ') == std::string::npos) return {name};
+  std::vector<std::string> out;
+  for (size_t a = 0;;) {
+    const size_t b = name.find(' ', a);
+    out.push_back(name.substr(a, b == std::string::npos ? std::string::npos : b - a));
+    if (b == std::string::npos) return out;
+    a = b + 1;
+  }
 }
 
 float pkeyWidth(const char* key, Btn pad, float h) {

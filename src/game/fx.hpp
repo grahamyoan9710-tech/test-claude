@@ -20,7 +20,7 @@ class Fx {
   void drawImpacts() const;  // what shows while kVfx is off: the movement smoke and the light pixel impacts
   void drawScreen(const Camera2D& cam) const;        // screen space: KO beams, weapon names, flashes
   Vec2 shakeOffset();
-  std::array<float, 4> hudShake{};
+  std::array<int, 4> hudHit{99, 99, 99, 99};  // frames since each fighter's card took a hit
 
   // Anime "impact frames": a few stark black / white frames when a signature hit (or a KO) lands.
   struct Impact {

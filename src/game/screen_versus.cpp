@@ -2,8 +2,6 @@
 // scrolling tone on tone in it, the two meeting on one white blade; the fighters face to face in their own pixel art
 // (x4), their names on plates of their deep colour like a broadcast lower third, VS slammed on a night plate; where
 // and how along the bottom.
-#include <vector>
-
 #include "game/app.hpp"
 #include "game/fighter_art.hpp"
 #include "game/render.hpp"
@@ -13,19 +11,6 @@
 namespace {
 constexpr int kVsFrames = 165;  // then the fight; ENTRÉE skips it
 
-// The name's lines: broken at its spaces when it would be wider than `maxW` on one.
-std::vector<std::string> nameLines(const std::string& name, float em, float maxW) {
-  if (ui::bigWidth(name.c_str(), em, ui::Face::Cond) <= maxW || name.find(' ') == std::string::npos) return {name};
-  std::vector<std::string> out;
-  size_t a = 0;
-  while (a <= name.size()) {
-    const size_t b = name.find(' ', a);
-    out.push_back(name.substr(a, b == std::string::npos ? std::string::npos : b - a));
-    if (b == std::string::npos) break;
-    a = b + 1;
-  }
-  return out;
-}
 }  // namespace
 
 void App::updateVersus(const MenuNav& nav) {
@@ -117,7 +102,7 @@ void App::drawVersus() {
     const bool R = k == 1;
     const Fighter& fr = *side[k][0];
     const ui::Flood fl = ui::flood(fr.def->hero);
-    const std::vector<std::string> lines = nameLines(upperFr(fiche(*fr.def).nick), 96, 360);
+    const std::vector<std::string> lines = ui::nameLines(upperFr(fiche(*fr.def).nick), 96, 360);
     const float nh = 12.0f + 0.84f * 96 * lines.size() + 6.0f, bottom = 646.6f, top = bottom - nh;
     float nw = 0.0f;
     for (const auto& l : lines) nw = std::max(nw, ui::bigWidth(l.c_str(), 96, ui::Face::Cond));
