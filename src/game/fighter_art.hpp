@@ -82,6 +82,8 @@ float pixelScale(const CharacterDef& d);
 // The size to draw effect `name` at on fighter d: a pixel-art one at d's pixel size (the movement puffs, the launch
 // trail, the KO blast and Hakuen's ultimate bigger), the others `size` times d's height over 170.
 float fxSize(const char* name, const CharacterDef& d, float size = 1.0f);
+// "<name>_front", the part of a technique's effect drawn over the fighters (the cuts of an ultimate), if it has one.
+const char* fxFront(const char* name);
 // Time of an effect shown for as long as something lasts (projectile, beam, aura): its frames cycle.
 float fxLoopTime(const char* name, float t);
 // castLight false: a decoration on a fighter (its ultimate's sparkles, the stars of a daze) does not light him.

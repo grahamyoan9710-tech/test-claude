@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 15.1 : **projections de lame et MILLE LUNES refaites dans Blender**.
+
+- Projections de lame : un grand croissant d'énergie au tranchant blanc, dont le corps se déchire en flammes vers
+  l'arrière, une traînée à chaque pointe, aux couleurs de chaque perso : violet et fumée sombre pour le 01, feu et
+  braises pour le 03, foudre rouge et arcs pour le 07, lumière dorée et éclats pour le 08, rouge sang et arcs pour
+  Hakuen (tous ses croissants). Elles sont maintenant à la taille d'un perso.
+- MILLE LUNES (ultime du 01 à l'odachi) : l'espace autour de l'adversaire devient une lune violette, des coupes en
+  croissant la traversent à chaque coup, puis le coup final la fait voler en éclats.
+
 Version 15.0 : **les effets passent dans Blender**, en commençant par l'ultime de Hakuen et le KO.
 
 - Ultime de Hakuen : chaque éclair est fin, aux craquelures nettes, traverse l'écran en diagonale depuis le côté

@@ -735,6 +735,13 @@ const FxInfo* fxInfo(const char* name) {
   return F ? &F->info : nullptr;
 }
 
+const char* fxFront(const char* name) {
+  static std::map<std::string, std::string, std::less<>> names;  // (node-based: the names stay put)
+  auto it = names.find(name);
+  if (it == names.end()) it = names.emplace(name, std::string(name) + "_front").first;
+  return fxOf(it->second.c_str()) ? it->second.c_str() : nullptr;
+}
+
 float fxLoopTime(const char* name, float t) {
   const Fx* F = fxOf(name);
   return F ? std::fmod(std::max(0.0f, t), F->info.duration()) : t;

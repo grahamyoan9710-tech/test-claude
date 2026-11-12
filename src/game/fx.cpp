@@ -823,6 +823,11 @@ void Fx::update(const Match& m) {
       if (md->castFxStays) s.follow = -2;  // behind, but left where it began
       s.move = std::strncmp(md->castFx, "pfx_", 4) == 0;  // ParticleFX: shown even with kVfx off
       sprites_.push_back(s);
+      if (const char* front = art::fxFront(md->castFx)) {  // its part over the fighters, left where it began
+        s.name = front;
+        s.follow = -1;
+        sprites_.push_back(s);
+      }
     }
     castSeen_[i] = now;
   }

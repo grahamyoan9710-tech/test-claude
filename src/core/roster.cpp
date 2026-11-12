@@ -325,7 +325,7 @@ CharacterDef make01() {
   skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, k.pfx("lame"), 9, 24, 9)),
          rush("Iaï", e, k.fx("a", "s"), 17, 0, 11), rise("Lune montante", e, k.fx("a", "u"), 15.5f, 4),
          counter("Garde-lame", e, k.fx("a", "d"), false));
-  ultimateOf(k, 0, ult::ambush("MILLE LUNES", e, k.fx("a", "ult"), L::Weapon, 7));
+  ultimateOf(k, 0, ult::ambush("MILLE LUNES", e, k.pfx("a_ult"), L::Weapon, 7));
 
   arm(k, 1, "Dagues jumelles", "Deux dagues spectrales", WeaponVisual::Held, Kit::Blade, 42, 0.95f,
       {"Entaille gauche", "Entaille droite", "Double estoc en X"}, 0.85f);
