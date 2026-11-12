@@ -52,9 +52,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | claude/project-thread-gzf1un | 12/11 11 h 45 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 12/11 11 h 55 UTC, session claude/project-thread-gzf1un : version 14.9 = DA « Prestige » dans tout le jeu (validée par yoyo le 12/11 : maquette https://claude.ai/artifact/4m5h9zcVRzzmjeLvByeV5h). Titre (bouton COMMENCER, variante A choisie), menu, sélection (`menus.cpp` : deux côtés ou quatre cartes penchées, face-à-face des stats, tiroir Règles & mode), arène, VS, HUD (`render_hud.cpp`), 3-2-1-GO, cut-in d'ultime tenu 66 images (`match_screen.cpp`), ralenti + zoom avant GAME, résultats. Verrou « Version et paquets » libéré.
 - 12/11 11 h 45 UTC, session claude/project-thread-gzf1un : début de la version 14.9 (DA « Prestige » dans tout le jeu), verrou « Version et paquets » pris.
 - 12/11 01 h UTC, session claude/project-thread-gzf1un : version 14.6 = glitch du % (render_hud.cpp), caméra plus près (zoom max 1,35), sorties de terrain ×0,8 (stageList), dégâts ×0,8 (kDamageScale, ultimes exclus), dash de Hakuen +25 %, rayons retirés (ui::sunburst supprimé).
 - 11/11 22 h 35 UTC, session claude/project-thread-gzf1un : version 14.5 = cartes de combat transparentes façon Smash (render_hud.cpp fighterCard : carré penché, buste ou visage, bande du nom), demande de yoyo.

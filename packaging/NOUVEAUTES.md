@@ -8,6 +8,17 @@
 
 ## Nouveautés
 
+Version 14.9 : **nouvelle DA « Prestige »**, sobre et pro, comme une grande compétition.
+
+- Tous les écrans refaits : titre (un vrai bouton COMMENCER), menu, choix des persos, règles, choix de l'arène,
+  VS, combat et victoire. Chaque perso s'affiche dans son propre pixel art, net, sur sa couleur coupée par une lame
+  penchée, son nom en grand sur une plaque de nuit.
+- Choix des persos : face-à-face des stats des deux combattants, et 4 cartes penchées à 3 ou 4 joueurs.
+- Combat : nouveau 3-2-1-GO, cartes des joueurs redessinées, cut-in de l'ultime qui tient une seconde, ralenti et
+  zoom sur le dernier coup avant GAME.
+- Résultats : grand VICTOIRE, tableau des KO, chutes, dégâts et orbes, revanche en un geste.
+- Le combat de démo derrière l'écran titre est retiré.
+
 Version 14.8 : **réglages graphiques comme dans un vrai jeu**.
 
 - Qualité graphique : **Haute** (rendu ×2, persos en pixel art, halos) ou **Moyenne** (rendu simple, bien plus
