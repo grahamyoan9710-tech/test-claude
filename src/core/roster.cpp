@@ -139,12 +139,6 @@ MoveDef lob(MoveDef m, float vy, float gravity) {
   m.pose = PoseHint::Throw;
   return m;
 }
-MoveDef along(MoveDef m) {  // runs along the ground
-  m.projectile.spawnOffset = {44, 34};
-  m.projectile.piercing = true;
-  m.pose = PoseHint::Stomp;
-  return m;
-}
 MoveDef spread(MoveDef m, int count, float deg) {
   m.projectile.count = count;
   m.projectile.spreadDeg = deg;
@@ -211,6 +205,12 @@ MoveDef rise(const char* name, F e, const char* fx, float vy, int hits, Limb lim
   m.pose = PoseHint::Spin;
   m.castFx = fx;
   m.castFxFrame = 4;
+  return m;
+}
+
+// Its cast effect stays where it began (a column left on the ground) instead of following the fighter.
+MoveDef staying(MoveDef m) {
+  m.castFxStays = true;
   return m;
 }
 
@@ -315,22 +315,22 @@ CharacterDef make01() {
   k.P = 1.06f;  // balance (sim_test balance)
   k.c.weight -= 6;  // balance
   skills(k, -1, shot("Orbe d'ombre", e, PV::Orb, k.pfx("orbe"), 5.5f, 22, 9),
-         through("Pas de l'ombre", e, k.fx("x", "s"), 9), blink("Ascension spectrale", e, k.fx("x", "u")),
-         counter("Riposte d'ombre", e, k.fx("x", "d"), false, L::ArmFront));
+         through("Pas de l'ombre", e, k.pfx("x_s"), 9), blink("Ascension spectrale", e, k.pfx("x_u")),
+         counter("Riposte d'ombre", e, k.pfx("x_d"), false, L::ArmFront));
   ultimateOf(k, -1, ult::awaken("ÉVEIL DU NÉANT", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
                                 k.fx("t", "burst")));
 
   arm(k, 0, "Odachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 95, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Grande coupe descendante"});
-  skills(k, 0, along(shot("Croissant du néant", e, PV::Wave, k.pfx("lame"), 9, 24, 9)),
-         rush("Iaï", e, k.fx("a", "s"), 17, 0, 11), rise("Lune montante", e, k.fx("a", "u"), 15.5f, 4),
-         counter("Garde-lame", e, k.fx("a", "d"), false));
+  skills(k, 0, piercing(shot("Croissant du néant", e, PV::Wave, k.pfx("lame"), 9, 24, 9)),
+         rush("Iaï", e, k.pfx("a_s"), 17, 0, 11), rise("Lune montante", e, k.pfx("a_u"), 15.5f, 4),
+         counter("Garde-lame", e, k.pfx("a_d"), false));
   ultimateOf(k, 0, ult::ambush("MILLE LUNES", e, k.pfx("a_ult"), L::Weapon, 7));
 
   arm(k, 1, "Dagues jumelles", "Deux dagues spectrales", WeaponVisual::Held, Kit::Blade, 42, 0.95f,
       {"Entaille gauche", "Entaille droite", "Double estoc en X"}, 0.85f);
   skills(k, 1, boomerang(spread(shot("Dagues spectrales", e, PV::Blade, k.pfx("dague"), 10, 14, 5, 44), 2, 12)),
-         rush("Assaut fantôme", e, k.fx("b", "s"), 14, 4, 7), rise("Vrille", e, k.fx("b", "u"), 15, 5),
+         rush("Assaut fantôme", e, k.pfx("b_s"), 14, 4, 7), rise("Vrille", e, k.pfx("b_u"), 15, 5),
          trap("Marque d'ombre", e, k.pfx("marque"), 10));
   ultimateOf(k, 1, ult::ambush("DANSE DU NÉANT", e, k.fx("b", "ult"), L::Weapon, 9));
   return k.c;
@@ -347,16 +347,16 @@ CharacterDef make02() {
   k.P = 1.16f;  // balance (sim_test balance)
   k.c.weight += 4;  // balance
   skills(k, -1, shot("Sphère de givre", e, PV::Orb, k.pfx("orbe"), 9, 16, 7),
-         rush("Glissade gelée", e, k.fx("x", "s"), 13, 0, 9, L::LegFront),
-         rise("Pilier de glace", e, k.fx("x", "u"), 15.5f, 3, L::Body),
-         counter("Miroir de glace", e, k.fx("x", "d"), true, L::ArmFront));
+         rush("Glissade gelée", e, k.pfx("x_s"), 13, 0, 9, L::LegFront),
+         staying(rise("Pilier de glace", e, k.pfx("x_u"), 15.5f, 3, L::Body)),
+         counter("Miroir de glace", e, k.pfx("x_d"), true, L::ArmFront));
   ultimateOf(k, -1, ult::awaken("GIVRE CÉLESTE", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
                                 k.fx("t", "burst")));
 
   arm(k, 0, "Lance argentée", "Lance à rubans blancs", WeaponVisual::Held, Kit::Lance, 110, 1.0f,
       {"Estoc", "Double estoc", "Balayage circulaire"});
   skills(k, 0, boomerang(shot("Lance de givre", e, PV::Spear, k.pfx("lance"), 11, 18, 8, 50)),
-         rush("Charge polaire", e, k.fx("a", "s"), 15, 2, 9), rise("Spirale céleste", e, k.fx("a", "u"), 15.5f, 4),
+         rush("Charge polaire", e, k.pfx("a_s"), 15, 2, 9), rise("Spirale céleste", e, k.pfx("a_u"), 15.5f, 4),
          pillar("Pieux de glace", e, k.pfx("pilier"), 80, 11));
   ultimateOf(k, 0, ult::storm("ZÉRO ABSOLU", e, k.fx("a", "ult"), 120, 320));
 
@@ -364,7 +364,7 @@ CharacterDef make02() {
       {"Coup de sceptre", "Revers", "Éclat d'étoile"});
   skills(k, 1, lob(shot("Étoile filante", e, PV::Star, k.pfx("etoile"), 8, 18, 9, 60), -6, 0.3f),
          spread(shot("Constellation", e, PV::Star, k.pfx("etoile"), 8, 14, 5, 50), 3, 20),
-         blink("Saut stellaire", e, k.fx("b", "u")), counter("Dôme astral", e, k.fx("b", "d"), true, L::Body));
+         blink("Saut stellaire", e, k.pfx("b_u")), counter("Dôme astral", e, k.pfx("b_d"), true, L::Body));
   ultimateOf(k, 1, ult::rain("PLUIE D'ÉTOILES", e, k.fx("b", "ult"), PV::Star, 8));
   return k.c;
 }
@@ -380,24 +380,24 @@ CharacterDef make03() {
   k.P = 1.08f;  // balance (sim_test balance)
   k.c.weight += 8;  // balance
   skills(k, -1, shot("Poing ardent", e, PV::Orb, k.pfx("orbe"), 8, 20, 9, 30),
-         rush("Charge brûlante", e, k.fx("x", "s"), 14, 0, 11, L::Body),
-         rise("Uppercut volcanique", e, k.fx("x", "u"), 15, 4, L::ArmFront),
-         burst("Éruption", e, k.fx("x", "d"), 70, 12));
+         rush("Charge brûlante", e, k.pfx("x_s"), 14, 0, 11, L::Body),
+         staying(rise("Uppercut volcanique", e, k.pfx("x_u"), 15, 4, L::ArmFront)),
+         burst("Éruption", e, k.pfx("x_d"), 70, 12));
   ultimateOf(k, -1, ult::awaken("BRASIER DÉMONIAQUE", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
                                 k.fx("t", "burst")));
 
   arm(k, 0, "Grande épée noire", "Lame lourde aux veines rouges", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Taille lourde", "Revers", "Frappe au sol"}, 1.15f);
-  skills(k, 0, along(shot("Onde tranchante", e, PV::Wave, k.pfx("lame"), 8, 26, 10)),
-         rush("Brise-garde", e, k.fx("a", "s"), 13, 0, 13), rise("Lame ascendante", e, k.fx("a", "u"), 15, 3),
-         burst("Séisme", e, k.fx("a", "d"), 80, 13));
+  skills(k, 0, piercing(shot("Onde tranchante", e, PV::Wave, k.pfx("lame"), 8, 26, 10)),
+         rush("Brise-garde", e, k.pfx("a_s"), 13, 0, 13), rise("Lame ascendante", e, k.pfx("a_u"), 15, 3),
+         burst("Séisme", e, k.pfx("a_d"), 80, 13));
   ultimateOf(k, 0, ult::rain("EXÉCUTION ÉCARLATE", e, k.pfx("pilier"), PV::Pillar, 2));
 
   arm(k, 1, "Grande épée éveillée", "La même lame, embrasée", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Coupe enflammée", "Coupe en croix", "Frappe explosive"}, 1.15f);
   skills(k, 1, exploding(shot("Météore", e, PV::Bomb, k.pfx("meteore"), 9, 22, 7, 45), 60, 8),
-         rush("Traînée de feu", e, k.fx("b", "s"), 15, 3, 9), rise("Phénix", e, k.fx("b", "u"), 16, 4),
-         burst("Cercle de brasier", e, k.fx("b", "d"), 80, 6, 4));
+         rush("Traînée de feu", e, k.pfx("b_s"), 15, 3, 9), rise("Phénix", e, k.pfx("b_u"), 16, 4),
+         burst("Cercle de brasier", e, k.pfx("b_d"), 80, 6, 4));
   ultimateOf(k, 1, ult::blast("APOCALYPSE", e, "pfx_giant_sphere", PV::Orb, 8, 70, 300));
   return k.c;
 }
@@ -413,22 +413,22 @@ CharacterDef make07() {
   k.P = 0.71f;  // balance (sim_test balance)
   k.c.weight -= 6;  // balance
   skills(k, -1, piercing(shot("Éclair rouge", e, PV::Bolt, k.pfx("eclair"), 15, 12, 6, 30)),
-         through("Pas-éclair", e, k.fx("x", "s"), 8),
-         rise("Coup de pied foudre", e, k.fx("x", "u"), 16.5f, 3, L::LegFront),
-         burst("Décharge", e, k.fx("x", "d"), 70, 4, 4));
+         through("Pas-éclair", e, k.pfx("x_s"), 8),
+         rise("Coup de pied foudre", e, k.pfx("x_u"), 16.5f, 3, L::LegFront),
+         burst("Décharge", e, k.pfx("x_d"), 70, 4, 4));
   ultimateOf(k, -1, ult::rain("TEMPÊTE ÉCARLATE", e, k.pfx("pilier"), PV::Pillar, 7));
 
   arm(k, 0, "Épée large", "Lame à rubans rouges", WeaponVisual::Held, Kit::Blade, 85, 1.0f,
       {"Coupe", "Seconde coupe", "Estoc"}, 0.9f);
   skills(k, 0, piercing(shot("Lame-éclair", e, PV::Crescent, k.pfx("lame"), 12, 18, 8)),
-         rush("Iaï foudroyant", e, k.fx("a", "s"), 19, 0, 11), rise("Saut-foudre", e, k.fx("a", "u"), 16, 3),
-         counter("Riposte", e, k.fx("a", "d"), false));
+         rush("Iaï foudroyant", e, k.pfx("a_s"), 19, 0, 11), rise("Saut-foudre", e, k.pfx("a_u"), 16, 3),
+         counter("Riposte", e, k.pfx("a_d"), false));
   ultimateOf(k, 0, ult::ambush("CENT ÉCLAIRS", e, k.fx("a", "ult"), L::Weapon, 9));
 
   arm(k, 1, "Épée éveillée", "La même épée, éclairs rouges", WeaponVisual::Held, Kit::Blade, 85, 1.0f,
       {"Coupe électrique", "Coupe", "Estoc foudroyant"}, 0.9f);
   skills(k, 1, piercing(shot("Lance de foudre", e, PV::Spear, k.pfx("lance"), 14, 16, 9, 35)),
-         rush("Tranchant écarlate", e, k.fx("b", "s"), 16, 2, 9), rise("Spirale rouge", e, k.fx("b", "u"), 16, 5),
+         rush("Tranchant écarlate", e, k.pfx("b_s"), 16, 2, 9), rise("Spirale rouge", e, k.pfx("b_u"), 16, 5),
          pillar("Foudre au sol", e, k.pfx("pilier"), 90, 11));
   ultimateOf(k, 1, ult::rain("JUGEMENT ROUGE", e, k.fx("b", "ult"), PV::Bolt, 4));
   return k.c;
@@ -445,23 +445,23 @@ CharacterDef make08() {
   k.P = 1.31f;  // balance (sim_test balance)
   k.c.weight += 18;  // balance
   skills(k, -1, shot("Plume de lumière", e, PV::Feather, k.pfx("plume"), 11, 14, 7),
-         rush("Rafale", e, k.fx("x", "s"), 15, 0, 10, L::Body),
-         rise("Ailes de vent", e, k.fx("x", "u"), 16.5f, 2, L::Body),
-         counter("Barrière de lumière", e, k.fx("x", "d"), true, L::Body));
+         rush("Rafale", e, k.pfx("x_s"), 15, 0, 10, L::Body),
+         rise("Ailes de vent", e, k.pfx("x_u"), 16.5f, 2, L::Body),
+         counter("Barrière de lumière", e, k.pfx("x_d"), true, L::Body));
   ultimateOf(k, -1, ult::awaken("ANGE BLANC", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
                                 k.fx("t", "burst")));
 
   arm(k, 0, "Épée blanche et or", "Lame blanche à rubans", WeaponVisual::Held, Kit::Blade, 85, 1.0f,
       {"Coupe", "Seconde coupe", "Coupe en croix"});
   skills(k, 0, piercing(shot("Lame de lumière", e, PV::Crescent, k.pfx("lame"), 11, 20, 9)),
-         rush("Éclair blanc", e, k.fx("a", "s"), 18, 0, 11), rise("Ascension sacrée", e, k.fx("a", "u"), 16, 4),
-         counter("Contre sacré", e, k.fx("a", "d"), false));
+         rush("Éclair blanc", e, k.pfx("a_s"), 18, 0, 11), rise("Ascension sacrée", e, k.pfx("a_u"), 16, 4),
+         counter("Contre sacré", e, k.pfx("a_d"), false));
   ultimateOf(k, 0, ult::downpour("JUGEMENT CÉLESTE", e, "pfx_sword_rain", 80, 5));
 
   arm(k, 1, "Lance dorée", "Hallebarde d'or", WeaponVisual::Held, Kit::Lance, 115, 1.0f,
       {"Estoc", "Balayage", "Estoc tournant"});
   skills(k, 1, piercing(shot("Lance de lumière", e, PV::Spear, k.pfx("lance"), 13, 16, 9, 40)),
-         rush("Charge du paladin", e, k.fx("b", "s"), 15, 2, 10), rise("Rayon montant", e, k.fx("b", "u"), 16, 3),
+         rush("Charge du paladin", e, k.pfx("b_s"), 15, 2, 10), staying(rise("Rayon montant", e, k.pfx("b_u"), 16, 3)),
          pillar("Pilier sacré", e, k.pfx("pilier"), 85, 12));
   ultimateOf(k, 1, ult::rain("LANCES DIVINES", e, k.fx("b", "ult"), PV::Spear, 9));
   return k.c;

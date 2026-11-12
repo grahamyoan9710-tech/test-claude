@@ -103,6 +103,11 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   Projections de lame : le ressenti des tranchants d'énergie de Vergil (DMC) et des grands croissants d'énergie,
   avec un visuel et des noms originaux. Tous sont joués par le jeu (effets `fx`), menus compris. Aucun effet dessiné
   par le code : les anciens effets codés sont supprimés une fois remplacés.
+  - Méthode pour les effets des vrais persos (propriétaire, 12/11 : « prends ton temps », « certains VFX sont
+    bizarres ») : pour chaque effet, chercher des références dans des animes et des jeux (ressenti seulement),
+    faire une maquette du concept avec Claude Design avant d'écrire la recette Blender, puis relire le rendu image
+    par image avant de le mettre en jeu. Pas de formes faites de tête : ni boules qui brillent, ni anneaux parfaits
+    (au sol ou autour du perso), ni cônes ; un choc = quelques arcs fins et cassés, une traînée = une goutte effilée.
   - Coupés (`kVfx = false`, `src/game/render.hpp`) sauf ce que le propriétaire aime (28/10 : « les vfx de mouvement
     sont parfaits mais le reste… ») : fumées de saut, de dash et d'atterrissage (`moveFx`), sa bulle de bouclier,
     et les éclats en pixels des coups dessinés par le code (`Fx::pixelImpact`, seul effet codé gardé).
