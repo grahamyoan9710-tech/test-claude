@@ -52,9 +52,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-gzf1un (15.5) | 12/11 22 h 20 UTC |
 
 ### Journal (le plus récent en haut)
+- 12/11 22 h 20 UTC, session claude/project-thread-gzf1un : début de la version 15.5 (effets de lancement des 40
+  techniques côté/haut/bas dans Blender, lames de 01 et 03 à hauteur du corps) ; 15.3 sautée (15.4 déjà sortie).
+  Verrou « Version et paquets » pris.
 - 12/11 22 h UTC, session claude/project-thread-03jksh : version 15.4 (15.3 réservée au fil des effets, gzf1un).
   Réglage « Résolution » (`Settings::resolution`, `kResolutions` dans `settings.hpp`, ligne 8 de l'onglet Affichage) ;
   plein écran = vrai plein écran (`ToggleFullscreen` à la résolution choisie, `App::applyDisplaySettings`) au lieu
