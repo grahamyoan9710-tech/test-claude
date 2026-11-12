@@ -1,76 +1,32 @@
-CLASH HORIZON - version Linux (64 bits)
-======================================
+CLASH HORIZON - Linux (64 bits)
+===============================
 
-POUR JOUER
-----------
+JOUER
+-----
 1. Décompressez l'archive (clic droit > « Extraire ici »).
-2. Ouvrez un terminal dans le dossier ClashHorizon
-   (clic droit dans le dossier > « Ouvrir dans un terminal »), puis tapez :
-
+2. Ouvrez un terminal dans le dossier ClashHorizon et tapez :
        ./clash_horizon
+   (si le terminal répond « Permission non accordée », tapez d'abord
+   chmod +x clash_horizon). Testé sur Ubuntu 24.04.
 
-   Si le terminal répond « Permission non accordée », tapez d'abord :
+COMMANDES (modifiables dans Paramètres > Commandes)
+---------------------------------------------------
+Joueur 1 : Z Q S D se déplacer, Espace sauter, J attaque, K spéciale,
+           L bouclier, I saisie, O smash, U ultime, E arme
+Joueur 2 : flèches se déplacer, ; sauter, : attaque, ! spéciale,
+           Maj droite bouclier, Ctrl droit saisie, M smash, ù ultime, , arme
+(touches d'un clavier AZERTY : le jeu affiche les vraies touches du vôtre)
+Manettes : reconnues toutes seules.
+Échap ou Start : pause.  F11 : plein écran.
 
-       chmod +x clash_horizon
-
-Aucune installation n'est nécessaire : tout (polices, sons, musique) est
-dans le fichier clash_horizon. Testé sur Ubuntu 24.04.
-
-COMMANDES PAR DÉFAUT (modifiables dans Paramètres > Commandes)
---------------------------------------------------------------
-Joueur 1 (clavier) : W A S D pour se déplacer (Z Q S D sur un clavier AZERTY)
-                     Espace = saut, J = attaque, K = spéciale, L = bouclier,
-                     I = saisie, O = attaque smash, U = ultime
-Joueur 2 (clavier) : flèches pour se déplacer
-                     clavier AZERTY : ; = saut, : = attaque, ! = spéciale,
-                                      M = smash, ù = ultime
-                     clavier QWERTY : , = saut, . = attaque, / = spéciale,
-                                      ; = smash, ' = ultime
-                     Maj droite = bouclier, Ctrl droit = saisie
-                     (ou le pavé numérique : 0 saut, 1 attaque, 2 spéciale,
-                     3 bouclier, 4 smash, 5 saisie, 6 ultime)
-Échap ou P         : pause            F11 : plein écran
-
-MANETTES (Xbox, PlayStation, Switch Pro, 8BitDo... reconnues automatiquement,
-boutons modifiables dans Paramètres > Commandes avec la manette en main)
+À SAVOIR
 --------
-Stick gauche ou croix = se déplacer   A = attaque       B = spéciale
-X ou Y = saut                         LB = saisie       RB = ULTIME
-LT ou RT (gâchettes) = bouclier       stick droit = attaque smash
-Start = pause
-(PlayStation : croix = attaque, rond = spéciale, carré/triangle = saut,
- L1 = saisie, R1 = ultime, L2/R2 = bouclier. Switch : les boutons gardent
- leur place, B = attaque, A = spéciale, ZL/ZR = bouclier, R = ultime.
- Manette sans gâchettes, style Super Nintendo : R = bouclier, Select = ultime.)
+- Brisez la Clash Orb pour obtenir votre ultime, puis appuyez sur Ultime.
+- Vos deux armes tombent sur l'arène : restez sur la vôtre et maintenez
+  Arme 1 seconde pour la prendre.
+- Si le jeu rame : Paramètres > Affichage, Qualité graphique Moyenne et
+  RTX Non.
+- Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
 
-- La manette qui ouvre « Combat » devient celle du joueur 1. Une autre
-  manette rejoint la partie en appuyant sur A (ou Start) dans la sélection
-  des combattants.
-- Si une manette se débranche en plein combat, le jeu se met en pause :
-  rebranchez-la, elle retrouve son joueur.
-- Quand une manette est branchée, l'écran affiche ses boutons ; appuyez sur
-  une touche du clavier pour revoir les touches du clavier.
-
-ASTUCES
--------
-- Direction + attaque en même temps = attaque smash (maintenez pour charger).
-- Donnez et recevez des coups (ou brisez l'Orbe Clash qui flotte au-dessus
-  de l'arène) : quand « ULTI PRÊTE ! » s'affiche sur votre carte, appuyez
-  sur ULTIME pour déclencher l'ultime de votre combattant !
-- Tout le monde commence à mains nues. Les deux armes de chaque combattant
-  tombent sur l'arène, l'une après l'autre : tenez-vous sur la vôtre et
-  maintenez la touche ARME (E au clavier, Y à la manette) 1 seconde pour
-  la prendre. Avec les deux, la touche ARME passe de l'une à l'autre.
-  Les armes sont perdues au K.O.
-- 5 combattants originaux et 5 arènes, en pixel art.
-- Ordinateurs du niveau 1 au niveau 10 (le niveau 10 frappe deux fois plus fort).
-- Les combattants sont en pixel art (Paramètres > Affichage pour revenir au
-  dessin lisse).
-- Le mode Entraînement permet de s'exercer contre un mannequin.
-
-Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
-Si le jeu est lent, choisissez Paramètres > Affichage > Qualité graphique :
-Normale (le jeu le fait tout seul si l'ordinateur n'arrive pas à suivre).
-
-Polices : Archivo, Inter et Exo 2 (SIL OFL 1.1). Manettes :
-base SDL_GameControllerDB (zlib). Voir le dossier « licences ».
+Polices Archivo, Inter et Exo 2 (SIL OFL 1.1), base de manettes
+SDL_GameControllerDB (zlib) : voir le dossier « licences ».
