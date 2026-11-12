@@ -8,6 +8,19 @@
 
 ## Nouveautés
 
+Version 15.2 : **tous les projectiles refaits dans Blender**.
+
+- 01 : orbe d'ombre violette (mains nues), dagues spectrales qui tournent avec leurs images fantômes, marque d'ombre
+  posée au sol (anneaux violets et trois lunes).
+- 02 : sphère de givre avec ses cristaux, lance de glace, étoiles filantes (Étoile filante et Constellation),
+  pieux de glace qui jaillissent du sol.
+- 03 : poing de feu, météore (roche fendue de lave et crinière de flammes), et l'ultime EXÉCUTION ÉCARLATE frappe
+  maintenant avec des colonnes de feu.
+- 07 : éclair rouge (boule de plasma et foudre), lance de foudre, foudre au sol, et l'ultime TEMPÊTE ÉCARLATE frappe
+  avec des colonnes de foudre rouge.
+- 08 : plume de lumière, lance de lumière dorée, pilier sacré (un faisceau de lumière).
+- Les grosses frappes en colonne partent du sol sous l'adversaire.
+
 Version 15.1 : **projections de lame et MILLE LUNES refaites dans Blender**.
 
 - Projections de lame : un grand croissant d'énergie au tranchant blanc, dont le corps se déchire en flammes vers

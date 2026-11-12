@@ -128,8 +128,8 @@ static bool shotSprite(const Projectile& p, const Shot& s, float time, float px)
   // a ParticleFX one-shot plays once over the flight.
   float t = art::fxLoopTime(p.fx, time + hash01(s.seed) * fx->duration());
   if (chosenFx(p.fx) && !fx->loop) t = s.age / 60.0f;
-  if (p.visual == ProjVisual::Pillar)
-    return art::drawFx(p.fx, s.age / 60.0f, s.c + Vec2{0.0f, s.r * 1.2f}, size, 0.0f, false, s.k);
+  if (p.visual == ProjVisual::Pillar)  // (a big strike on a fighter stays rooted on the floor under it)
+    return art::drawFx(p.fx, s.age / 60.0f, s.c + Vec2{0.0f, std::min(s.r * 1.2f, 60.0f)}, size, 0.0f, false, s.k);
   if (p.vel.len2() < 1.0f)  // a bolt leans away from its caster; a still orb is flipped at random
     return art::drawFx(p.fx, t, s.c, size, 0.0f, p.column ? s.d.x < 0.0f : (s.seed & 1u) != 0, s.k);
   const bool flip = s.d.x < 0.0f;  // mirrored, not upside down, when it flies to the left
