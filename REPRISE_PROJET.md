@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | pris : session 03jksh (15.7) | 13/11 03 h 50 UTC |
 
 ### Journal (le plus récent en haut)
 - 13/11 00 h 05 UTC, session claude/project-thread-gzf1un : version 15.6 = GitHub nettoyé à la demande de yoyo
