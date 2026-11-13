@@ -35,6 +35,7 @@ struct Settings {
   int cpuLevel = 5;
   bool tapJump = true;  // Up (the stick or the key) jumps too, as in Smash Bros.
   int menuBg = 0;  // the main menu's background (menu_fond_1..3), the next one at each visit
+  int padStyle = 0;  // the gamepad buttons shown: 0 the pad's own, 1 Xbox, 2 PS4, 3 PS5 (Steam Input may hide a pad's kind)
   // Keyboard bindings for "Clavier 1" and "Clavier 2"
   std::array<std::array<int, kActionCount>, 2> keys{};
   // Gamepad bindings, shared by every pad: up to two buttons per action (PadButton values, -1 = none).

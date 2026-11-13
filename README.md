@@ -7,7 +7,7 @@ pourcentage de dégâts de l'adversaire jusqu'à pouvoir l'éjecter de l'arène.
 
 ## Jouer
 
-Version actuelle : **15.7** (bêta). Rien à installer : le jeu tient dans un seul fichier.
+Version actuelle : **15.8** (bêta). Rien à installer : le jeu tient dans un seul fichier.
 
 - **Windows** :
   [ClashHorizon-windows-x64.zip](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/ClashHorizon-windows-x64.zip).
@@ -40,7 +40,8 @@ Les nouveautés de chaque version sont sur la page [Releases](https://github.com
 - **5 arènes** : Abîme Lunaire, Citadelle de Givre, Canyon Écarlate, Toits Kurenai et Monastère des Nuées.
 - **Modes** : contre l'ordinateur (niveaux 1 à 10), Versus de 2 à 4 joueurs (chacun pour soi ou en équipes), et
   Entraînement contre un mannequin.
-- **Affichage** : résolution au choix, vrai plein écran (`F11`), qualité Haute ou Moyenne, éclairage RTX.
+- **Graphismes** : les résolutions de l'écran, vrai plein écran (`F11`), préréglages (Performance à Ultra), lancer
+  de rayons, AMD FSR 1, FXAA ou SSAA ×2 ; les menus et les textes restent toujours nets.
 
 ## Commandes
 
@@ -60,8 +61,8 @@ Touches par défaut, modifiables dans **Paramètres > Commandes** :
 | Pause | `Échap` | `Échap` | `Start` |
 
 Les touches sont celles d'un clavier AZERTY ; le jeu affiche les vraies touches de votre clavier. Les manettes sont
-reconnues toutes seules ; sur une manette PlayStation ou Switch, les boutons sont aux mêmes places que sur la manette
-Xbox ci-dessus.
+reconnues toutes seules (Xbox, PS4, PS5) : Paramètres > Commandes dessine la vôtre, chaque bouton relié à son action.
+Sur une manette PlayStation ou Switch, les boutons sont aux mêmes places que sur la manette Xbox ci-dessus.
 
 ## Compiler
 
@@ -81,7 +82,7 @@ cmake --build build -j
   `build\Release\super_clash.exe`.
 - **Tests** de la simulation, sans écran : `cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF`,
   `cmake --build build-core -j`, puis `./build-core/sim_test`.
-- **Archives** Linux et Windows : `scripts/package_release.sh 15.7` (dans `dist/`).
+- **Archives** Linux et Windows : `scripts/package_release.sh 15.8` (dans `dist/`).
 
 ## Crédits
 

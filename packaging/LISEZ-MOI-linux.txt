@@ -24,8 +24,7 @@ Manettes : reconnues toutes seules.
 - Brisez la Clash Orb pour obtenir votre ultime, puis appuyez sur Ultime.
 - Vos deux armes tombent sur l'arène : restez sur la vôtre et maintenez
   Arme 1 seconde pour la prendre.
-- Si le jeu rame : Paramètres > Affichage, Qualité graphique Moyenne et
-  RTX Non.
+- Si le jeu rame : Paramètres > Graphismes, Préréglage Performance.
 - Les réglages sont enregistrés dans clash_horizon.cfg, à côté du jeu.
 
 Polices Archivo, Inter et Exo 2 (SIL OFL 1.1), base de manettes

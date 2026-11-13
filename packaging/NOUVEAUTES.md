@@ -8,6 +8,25 @@
 
 ## Nouveautés
 
+Version 15.8 : **Paramètres et écran de chargement refaits, vrai FSR 1, plus de ralenti**.
+
+- Vrai AMD FSR 1, avec ses deux passes : EASU agrandit l'image en gardant les bords nets, RCAS la rend nette (avant,
+  le « FSR » n'avait que la netteté).
+- Plus de ralenti : le combat avance toujours à la même vitesse, même quand les FPS baissent (avant, FSR avec le
+  lancer de rayons Moyen pouvait le ralentir).
+- Les menus et les textes restent toujours nets, à la résolution de l'écran, même en résolution basse ou avec FSR 1 :
+  seul le combat est calculé plus petit.
+- L'ancien « RTX » s'appelle maintenant Lancer de rayons : c'est l'éclairage tracé par le jeu, pas celui des cartes
+  NVIDIA RTX. Avec FSR 1, il trace moins de pixels lui aussi : il est plus rapide.
+- Paramètres refaits (DA « Prestige ») : les onglets comme sur le menu principal (A et E, Q et E en QWERTY, ou LB
+  et RB, pour en changer), un Préréglage dans Graphismes (Performance, Équilibré, Qualité, Ultra), la résolution de
+  rendu affichée.
+- Commandes : on choisit d'abord le périphérique (Clavier 1, Clavier 2 ou Manette). La manette est dessinée selon son
+  type, Xbox, PS4 ou PS5 (reconnue toute seule, même sous Windows), chaque bouton relié à son action. Le dessin et les
+  boutons affichés peuvent être forcés, par exemple pour une manette PlayStation que Steam Input fait passer pour une
+  Xbox.
+- Écran de chargement refait : le mot CHARGEMENT se remplit, avec une astuce (Entrée pour la suivante).
+
 Version 15.7 : **résolution comme dans les autres jeux, nouveaux réglages graphiques, paramètres et pause refaits**.
 
 - Résolution : la liste vient de ton écran. En plein écran, l'image remplit toujours tout l'écran ; une résolution

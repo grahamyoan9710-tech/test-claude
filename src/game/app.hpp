@@ -211,6 +211,7 @@ class App {
   int loadNext_ = 0;       // the next item to load (art::preload), the shaders being item 0
   int loadDoneAt_ = -1;    // the frame everything was loaded
   double loadSeconds_ = 0;  // how long it took (printed for the benchmark)
+  int loadTip_ = -1;        // the tip shown (-1: one drawn at random), ENTRÉE shows the next
   void drawPoses();      // development sheet (--screen poses)
   void drawAnimSheet();  // development filmstrips (--screen anim)
   int settingsRowCount() const;
@@ -265,11 +266,15 @@ class App {
   std::unique_ptr<MatchScreen> match_;
   // settings
   int setTab_ = 0;
-  int setRow_ = -1;   // -1 = tab bar
-  int setCol_ = 0;    // controls tab: keyboard 1, keyboard 2, pad button 1, pad button 2
+  int setRow_ = -1;   // the chosen row (-1: the first one)
+  int setCol_ = 0;    // Commandes, a keyboard: the column of its grid
+  int setTabFrom_ = 0, setTabAt_ = -1000;  // the tab before and the frame it changed (the mark slides, the rows come in)
+  int setDevice_ = -1;   // Commandes: 0, 1 the keyboards, 2 the gamepad (-1: the one last used)
+  int padFocus_ = -1;    // Commandes, the gamepad: the chosen label (action * 2 + slot, or 100 + a fixed one)
+  int bindAction_ = -1, bindSlot_ = 0;  // where the key or the button waited for goes
   bool waitingKey_ = false;
   bool waitingPad_ = false;  // rebinding a gamepad button (Commandes tab)
-  int soundTestAt_ = -1000;  // frame of the last sound test (the audio card's meters move)
+  int soundTestAt_ = -1000;  // frame of the last sound test (ÉCOUTER shows LECTURE…)
   bool bindPadButton(int action, int slot, int button);
   int dragSlider_ = -1;
   Screen settingsReturn_ = Screen::MainMenu;

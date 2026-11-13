@@ -159,6 +159,20 @@ float pkey(const char* key, Btn pad, float x, float y, float h, bool filled, flo
   return w;
 }
 
+float keyCapWidth(const char* key, float size) {
+  return std::max(size > 10.0f ? 20.0f : 12.0f, capsWidth(key, size, 0.08f) + size * 0.08f) + 16.0f;
+}
+
+float keyCap(const char* key, float x, float cy, float h, float size, float rim, float alpha) {
+  const float w = keyCapWidth(key, size);
+  const Rectangle r{x, cy - h * 0.5f, w, h};
+  DrawRectangleRounded(r, 8.0f / h, 6, withAlpha(kNight, 0.35f * alpha));
+  // raylib strokes outside the box: inset by the 1 px rim, as a CSS border (radius 4 outside, 3 inside)
+  DrawRectangleRoundedLinesEx({x + 1, r.y + 1, w - 2, h - 2}, 6.0f / (h - 2), 6, 1.0f, withAlpha(kSilver, rim * alpha));
+  caps(key, x + (w - capsWidth(key, size, 0.08f)) * 0.5f, cy, size, 0.08f, withAlpha(kSilver, alpha));
+  return w;
+}
+
 // ---- Blender 2D masks ---------------------------------------------------------------------
 void brushFrame(int frame, Color col, float alpha) {
   if (frame < 0 || frame >= 20 || alpha <= 0.0f) return;  // 20 frames of 640 x 360, 5 a row

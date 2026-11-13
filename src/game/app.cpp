@@ -239,6 +239,11 @@ void App::enterScreen(Screen s) {
   }
   if (s == Screen::StageSelect && screen_ == Screen::CharSelect) audio_.voice("stage");
   if (s == Screen::Versus) vsTip_ = GetRandomValue(0, 99);
+  if (s == Screen::Settings) {  // the tab's mark and rows come in with the screen, not from an old visit
+    setTabFrom_ = setTab_;
+    setTabAt_ = -1000;
+    waitingKey_ = waitingPad_ = false;
+  }
   if (s == Screen::MainMenu) {  // each visit shows the next of the owner's three backgrounds
     settings().menuBg = (settings().menuBg + 1) % 3;
     saveSettings();

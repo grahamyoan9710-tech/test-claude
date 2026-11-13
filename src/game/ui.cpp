@@ -1090,6 +1090,27 @@ float tracked(const char* text, float x, float y, float size, float em, Color co
   return trackedWidth(text, size, em);
 }
 
+std::vector<std::string> wrapText(const std::string& text, float width, float size, FontKind k) {
+  std::vector<std::string> out;
+  std::string line, word;
+  for (size_t i = 0; i <= text.size(); ++i) {
+    if (i < text.size() && text[i] != ' ') {
+      word += text[i];
+      continue;
+    }
+    const std::string next = line.empty() ? word : line + " " + word;
+    if (!line.empty() && textWidth(next.c_str(), size, k) > width) {
+      out.push_back(line);
+      line = word;
+    } else {
+      line = next;
+    }
+    word.clear();
+  }
+  if (!line.empty()) out.push_back(line);
+  return out;
+}
+
 float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw) {
   std::string line, word;
   auto flush = [&] {

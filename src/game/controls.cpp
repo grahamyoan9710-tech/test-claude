@@ -197,6 +197,12 @@ PadFamily familyOf(const Joy& j) {
 }
 
 std::string modelOf(const Joy& j, PadFamily f) {
+  if (j.guid.size() == 32 && j.guid.compare(8, 4, "4c05") == 0) {  // Sony: the product id (Windows names both "Wireless Controller")
+    const std::string product = j.guid.substr(16, 4);
+    if (product == "f20d") return "DualSense Edge";
+    if (product == "e60c") return "DualSense";
+    if (product == "c405" || product == "cc09" || product == "a00b") return "DualShock 4";
+  }
   const std::string n = lower(j.name + " " + j.mapName);
   if (has(n, "dualsense edge")) return "DualSense Edge";
   if (has(n, "dualsense") || has(n, "ps5")) return "DualSense";
@@ -396,7 +402,18 @@ bool padAnyPressed(int b) {
     if (padPressed(p, b)) return true;
   return false;
 }
-PadFamily padFamily(int p) { return padConnected(p) ? g_pads[p].family : PadFamily::Xbox; }
+// Paramètres > Commandes can force the buttons shown (a pad seen through Steam Input looks like an Xbox one).
+static bool forcedFamily(PadFamily& f) {
+  const int style = settings().padStyle;
+  if (style <= 0) return false;
+  f = style == 1 ? PadFamily::Xbox : PadFamily::PlayStation;
+  return true;
+}
+PadFamily padFamily(int p) {
+  PadFamily f;
+  if (forcedFamily(f)) return f;
+  return padConnected(p) ? g_pads[p].family : PadFamily::Xbox;
+}
 int padBinding(int p, int action, int slot) {
   if (action < kActJump || action >= kActionCount || slot < 0 || slot > 1) return -1;
   const Settings& s = settings();
@@ -420,7 +437,10 @@ std::string takePadNotice() {
 }
 
 bool padPrompts() { return g_padMode; }
-PadFamily promptFamily() { return g_family; }
+PadFamily promptFamily() {
+  PadFamily f;
+  return !g_forced && forcedFamily(f) ? f : g_family;
+}
 void forcePadPrompts(PadFamily family) {
   g_forced = g_padMode = true;
   g_family = family;

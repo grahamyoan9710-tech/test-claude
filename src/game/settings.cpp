@@ -131,6 +131,7 @@ void loadSettings() {
       else if (k == "teams") s.teams = value != 0;
       else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, kMaxCpuLevel);
       else if (k == "menu_bg") s.menuBg = clampi(value, 0, 2);
+      else if (k == "pad_style") s.padStyle = clampi(value, 0, 3);
       else if (k.rfind("pad.", 0) == 0) {  // pad.jump=... and pad.jump.2=... (every pad; -1: none)
         for (int sl = 0; sl < 2; ++sl)
           for (int a = kActJump; a < kActionCount; ++a)
@@ -205,6 +206,7 @@ bool saveSettings() {
   put("teams", s.teams);
   put("cpu_level", s.cpuLevel);
   put("menu_bg", s.menuBg);
+  put("pad_style", s.padStyle);
   for (int kb = 0; kb < 2; ++kb)
     for (int a = 0; a < kActionCount; ++a)
       put((std::string("kb") + char('1' + kb) + "." + kActionIds[a]).c_str(), s.keys[kb][a]);

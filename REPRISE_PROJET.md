@@ -52,9 +52,19 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-03jksh (15.8 : Paramètres et chargement de la maquette validée) | 13/11 09 h 25 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 13/11 09 h 55 UTC, session claude/project-thread-03jksh : version 15.8 = la maquette Paramètres + chargement
+  validée par yoyo le 13/11 (« oui vz je valide »), codée. Avant elle : vrai FSR 1 (EASU + RCAS), jeu à pas fixe
+  (60 pas par seconde réelle, plus de ralenti quand les FPS baissent), interface toujours à la résolution native
+  (`ui_`, `MatchScreen::drawWorld()` / `drawOverlay()`), lancer de rayons qui suit la résolution de rendu.
+  `screen_settings.cpp` réécrit : onglets Q/E (A/E en AZERTY) ou LB/RB, lignes comme « Règles & mode », Préréglage
+  dans Graphismes, Commandes par périphérique (Clavier 1, Clavier 2, Manette), manette dessinée
+  (`assets/sprites/ui_pad_{xbox,ps4,ps5}.png`, rendues depuis le SVG de la maquette) avec chaque bouton relié à son
+  action, dessin forcé `pad_style` (Auto/Xbox/PS4/PS5, pour Steam Input), DualSense et DualShock 4 reconnues par leur
+  product id (`modelOf`, `controls.cpp`). `screen_loading.cpp` : le mot CHARGEMENT se remplit, astuces (Entrée).
+  `ui::keyCap` et `ui::wrapText` partagés. Verrou « Version et paquets » libéré.
 - 13/11 03 h 50 UTC, session claude/project-thread-03jksh : version 15.7. Résolution (liste des modes de l'écran
   via GLFW, plein écran = fenêtre à la taille native, la résolution choisie = résolution de rendu), onglet
   Graphismes (FSR 1 RCAS, FXAA, SSAA ×2, netteté, V-Sync ; réglages `upscale`, `anti_alias`, `sharpness`,

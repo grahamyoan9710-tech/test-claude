@@ -168,6 +168,8 @@ void icon(Icon i, Vector2 c, float size, Color col, float stroke = 1.75f);
 // Small capitals spaced out like the charte's labels (CSS letter-spacing, in em), title font; returns the width.
 float tracked(const char* text, float x, float y, float size, float em, Color col);
 float trackedWidth(const char* text, float size, float em);
+// `text` cut at its spaces into lines at most `width` px wide (at `size`, in font k).
+std::vector<std::string> wrapText(const std::string& text, float width, float size, FontKind k);
 // Draws `text` wrapped to `width`, line after line; returns the y under the last line (draw = false: only measures).
 float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw = true);
 // Title text with a horizontal gradient, left -> middle -> right (the "VS").
@@ -236,6 +238,10 @@ std::vector<std::string> nameLines(const std::string& name, float em, float maxW
 // A key cap of the charte (night, a silver rim; filled: silver, night text), or the gamepad's button; its width.
 float pkey(const char* key, Btn pad, float x, float y, float h, bool filled = false, float alpha = 1.0f);
 float pkeyWidth(const char* key, Btn pad, float h);
+// A keyboard key as in the Paramètres mockup: rounded, a night box and a silver rim (alpha `rim`), its name in small
+// capitals of `size` (10: at least 12 wide inside, 11: 20), centred on cy, h high in all; its width.
+float keyCap(const char* key, float x, float cy, float h, float size, float rim, float alpha = 1.0f);
+float keyCapWidth(const char* key, float size);
 // The masks drawn in Blender 2D, tinted: the brush that wipes the screen (frame 0..19, 24 a second, frames 8-10
 // cover it all), the ultimate's speed lines (frame 0..11, looping) in a band, the brush stroke under a word (0..9).
 void brushFrame(int frame, Color col, float alpha = 1.0f);
