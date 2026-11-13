@@ -94,9 +94,13 @@ uniform vec3 gains;   // the light, the bounce, the noise's frame
 uniform vec3 key;     // the moon or the sun: where, how far it lights (0: none)
 uniform vec3 keyCol;  // its colour times its strength
 out vec4 finalColor;
-const float SKIN = 2.0, FAR = 640.0 * SC, DENSITY = 0.04 / SC;  // the glows' light per pixel crossed
+uniform float sc;  // the traced pixel's size against « Haut » at full resolution (SC)
+const float SKIN = 2.0;
+#define FAR (640.0 * SC)
+#define DENSITY (0.04 / SC)  // the glows' light per pixel crossed
 // A shadow of the moon or the sun fades over this length behind what casts it; how soft its edge is.
-const float SHADOW = 260.0 * SC, SOFT = 0.06;
+#define SHADOW (260.0 * SC)
+const float SOFT = 0.06;
 vec3 emission(vec2 uv) { return texture(emitT, uv).rgb + lamp(uv) * (1.0 - texture(maskT, uv).a); }
 float solid(vec2 q) { return texture(maskT, q / size).a; }
 float sdf(vec2 q) { vec4 s = texture(texture0, q / size); return s.z > 0.5 ? distance(s.xy, q) : 1e4; }
@@ -258,6 +262,7 @@ struct Pass {
   int size = -1, a = -1, b = -1, c = -1, d = -1, e = -1, f = -1, g = -1, h = -1;
 };
 Pass g_mask, g_seed, g_jump, g_traces[2], g_resolve, g_comp;
+int g_traceSc[2] = {-1, -1};
 bool g_tried = false, g_on = false;
 // (g_copy: a target as it was before its lighting.)
 RenderTexture2D g_maskT{}, g_copy{}, g_emit{}, g_albedo{}, g_jfa[2]{}, g_raw{}, g_gi[2]{};
@@ -282,10 +287,11 @@ bool ready() {
     g_seed = load(kSeedFrag, {"emitT", "albedoT", "lamps"});
     g_jump = load(kJumpFrag, {"jump"});
     for (int i = 0; i < 2; ++i)  // Moyen, Haut
-      g_traces[i] = load((std::string(i ? "#version 330\n#define RAYS 32\n#define STEPS 64\n#define SC 1.0\n"
-                                        : "#version 330\n#define RAYS 16\n#define STEPS 48\n#define SC 0.5\n") +
+      g_traces[i] = load((std::string(i ? "#version 330\n#define RAYS 32\n#define STEPS 64\n#define SC sc\n"
+                                        : "#version 330\n#define RAYS 16\n#define STEPS 48\n#define SC sc\n") +
                           kTraceFrag).c_str(),
                          {"emitT", "maskT", "albedoT", "prevT", "gains", "lamps", "key", "keyCol"});
+    for (Pass& t : g_traces) g_traceSc[&t - g_traces] = GetShaderLocation(t.sh, "sc");
     g_resolve = load(kResolveFrag, {"maskT", "prevT", "reproj"});
     g_comp = load(kCompositeFrag, {"maskT", "frameT", "gain", "shade", "extra", "keyCol"});
   }
@@ -403,10 +409,14 @@ void beginFrame() {
     }
     rlEnableFramebuffer(fr->id);
   }
-  // Once per level: without half-float targets it failed, and was remade (leaked) every frame.
-  if (g_level != settings().rtx) {
+  // The traced scene: « Haut » a third of a 1080p frame's width, « Moyen » a sixth; a lower render resolution (FSR,
+  // a lower screen resolution) traces fewer pixels too, as games do. Remade only when it changes: without half-float
+  // targets it failed, and was remade (leaked) every frame.
+  const float f = std::clamp(g_renderScale / 1.5f, 0.5f, 1.0f);
+  const int tw = int(kScreenW / (settings().rtx == 2 ? 2 : 4) * f + 0.5f), th = tw * kScreenH / kScreenW;
+  if (g_level != settings().rtx || tw != kW) {
     g_level = settings().rtx;
-    kW = kScreenW / (g_level == 2 ? 2 : 4), kH = kScreenH / (g_level == 2 ? 2 : 4);
+    kW = tw, kH = th;
     for (auto* t : {&g_emit, &g_albedo, &g_jfa[0], &g_jfa[1], &g_raw, &g_gi[0], &g_gi[1]})
       if (t->id) UnloadRenderTexture(*t), *t = RenderTexture2D{};
     g_emit = floatTarget(kW, kH, true);
@@ -506,6 +516,8 @@ void resolve(const Match& m, const Camera2D& cam) {
     SetShaderValue(g_trace.sh, g_trace.f, &lamps, SHADER_UNIFORM_FLOAT);
     SetShaderValue(g_trace.sh, g_trace.g, key, SHADER_UNIFORM_VEC3);
     SetShaderValue(g_trace.sh, g_trace.h, keyCol, SHADER_UNIFORM_VEC3);
+    const float sc = float(kW) / (kScreenW / 2);  // (0.5 at « Moyen », 1 at « Haut », less when the render is smaller)
+    SetShaderValue(g_trace.sh, g_traceSc[g_level == 2], &sc, SHADER_UNIFORM_FLOAT);
   });
   const View v = viewOf(cam, *fr), p = g_prev.z > 0.0f ? g_prev : v;
   const float r = p.z / v.z;

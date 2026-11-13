@@ -1,5 +1,6 @@
 #include "game/settings.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -81,6 +82,12 @@ std::string settingsPath() {
   if (dir.empty()) dir = "./";
   return dir + "clash_horizon.cfg";
 }
+
+int windowW(const Settings& s, int mw) {
+  if (s.resW) return std::min(s.resW, mw);
+  return mw > 1400 ? 1280 : mw * 9 / 10;  // the game's own size, or the screen less a margin
+}
+int windowH(const Settings& s, int mw, int mh) { return s.resW ? std::min(s.resH, mh) : windowW(s, mw) * 9 / 16; }
 
 float shakeScale() {
   static const float k[3] = {0.0f, 0.5f, 1.0f};

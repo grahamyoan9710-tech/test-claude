@@ -36,7 +36,7 @@ const RowInfo kRows[4][8] = {
      {"Musique", "Volume des musiques des menus et des combats."},
      {"Effets sonores", "Coups, sauts, K.O., cris de la foule..."},
      {"Tester le son", "Joue un coup puissant et les cris de la foule."}},
-    {{"Mode d'affichage", "Plein écran : le jeu couvre tout l'écran, à sa taille d'origine, comme le « plein écran sans bordure » des autres jeux (aucune bande noire, Alt+Tab instantané). Fenêtré : une fenêtre de la taille choisie. Touche F11."},
+    {{"Mode d'affichage", "Plein écran : le jeu couvre tout l'écran, sans changer la résolution de l'écran (aucune bande noire). Fenêtré : une fenêtre de la taille choisie. Touche F11."},
      {"Résolution", "Les résolutions de ton écran. En plein écran, c'est la résolution de rendu : plus basse, l'image est un peu moins fine mais le jeu tourne plus vite, et elle remplit toujours tout l'écran. En fenêtré, c'est la taille de la fenêtre."},
      {"Synchronisation verticale", "V-Sync : les images sont calées sur l'écran, sans déchirure. Sans, la latence baisse un peu mais l'image peut se déchirer."},
      {"Secousses de l'écran", "Tremblements de la caméra lors des gros coups et des K.O."},
@@ -45,9 +45,9 @@ const RowInfo kRows[4][8] = {
      {"Zones de coup (hitboxes)", "Montre les zones d'attaque pendant les combats (touche F1)."}},
     {{"Qualité graphique", "Haute : persos en pixel art, halo des effets et persos éclairés par eux. Moyenne : rendu simple, bien plus léger."},
      {"RTX", "Haut : vrai lancer de rayons complet (lune ou soleil, vraies ombres, lumière qui rebondit), très gourmand. Moyen : le même en 4 fois moins de pixels et 2 fois moins de rayons, pour les cartes moyennes (RTX 4060...). Non : l'éclairage dessiné, le plus léger."},
-     {"Mise à l'échelle", "AMD FSR 1 : l'image est calculée plus petite, puis agrandie à la taille de l'écran et rendue nette (filtre RCAS). Qualité : 67 % de la résolution ; Équilibré : 59 % ; Performance : 50 %. Native : aucune mise à l'échelle."},
+     {"Mise à l'échelle", "AMD FSR 1, le vrai (ses deux passes : EASU agrandit l'image en gardant les bords nets, RCAS la rend nette). Le jeu est calculé plus petit puis agrandi à la taille de l'écran : plus de FPS. Qualité : 67 % de la résolution ; Équilibré : 59 % ; Performance : 50 %. Native : aucune mise à l'échelle."},
      {"Anticrénelage", "Lisse les bords en escalier. FXAA : léger, presque gratuit. SSAA ×2 : l'image est calculée deux fois plus grande puis réduite, le plus beau et le plus lourd. Pas de TAA : sur du pixel art, il laisse des traînées floues derrière les persos qui bougent."},
-     {"Netteté", "Force du filtre de netteté (RCAS de FSR 1) quand l'image est agrandie : par la mise à l'échelle ou par une résolution plus basse que l'écran. 0 : aucun filtre."}},
+     {"Netteté", "La netteté de FSR 1 (RCAS), comme dans les jeux qui l'ont : 100 = la plus forte, 0 = la plus douce. Ne sert qu'avec la mise à l'échelle FSR."}},
     {{"Vies par défaut", "Nombre de vies de chaque combattant au début d'un match."},
      {"Clash Orb", "L'orbe qui traverse l'arène. La casser donne l'ultime : c'est la seule façon de l'obtenir."},
      {"Armes", "Les deux armes de chaque combattant tombent sur l'arène : il prend la sienne en restant dessus, touche Arme maintenue 1 s. Avec A et B, la touche alterne."},
@@ -155,8 +155,9 @@ std::string selectorText(int tab, int row) {
     if (row == 0) return s.fullscreen ? "Plein écran" : "Fenêtré";
     if (row == 1) {
       if (s.resW) return TextFormat("%d × %d", s.resW, s.resH);
-      const int m = GetCurrentMonitor();
-      return TextFormat("Écran · %d × %d", GetMonitorWidth(m), GetMonitorHeight(m));
+      const int m = GetCurrentMonitor(), mw = GetMonitorWidth(m), mh = GetMonitorHeight(m);
+      if (!s.fullscreen) return TextFormat("Auto · %d × %d", windowW(s, mw), windowH(s, mw, mh));
+      return TextFormat("Écran · %d × %d", mw, mh);
     }
     return shakes[std::clamp(s.screenShake, 0, 2)];
   }
@@ -754,6 +755,7 @@ void App::updateSettings(const MenuNav& nav) {
     saveSettings();
     audio_.play(Sfx::MenuBack);
     toast("Paramètres enregistrés");
+    if (match_ && settingsReturn_ == Screen::Match) match_->setHitboxes(s.showHitboxes);  // the paused fight too
     goTo(settingsReturn_);
   }
 }

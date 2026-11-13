@@ -55,6 +55,9 @@ void loadSettings();
 bool saveSettings();
 std::string settingsPath();
 float shakeScale();
+// The window in windowed mode (screen mw x mh): the chosen resolution, or by default 1280 x 720 (16:9, under the screen).
+int windowW(const Settings& s, int mw);
+int windowH(const Settings& s, int mw, int mh);
 // Human readable key name, following the keyboard layout when possible (AZERTY shows "Z", not "W").
 std::string keyName(int key);
 bool keyBindable(int key);

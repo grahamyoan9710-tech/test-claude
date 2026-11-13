@@ -294,9 +294,9 @@ void MatchScreen::showUltimate(int slot) {
   if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
 }
 
-MatchScreen::Result MatchScreen::update() {
+MatchScreen::Result MatchScreen::update(bool catchUp) {
   time_ += 1.0f / 60.0f;
-  if (!attract_ && IsKeyPressed(KEY_F1)) debug_ = !debug_;
+  if (!attract_ && !catchUp && IsKeyPressed(KEY_F1)) debug_ = !debug_;
   // A player's gamepad got unplugged: pause until it is back (or until the players resume anyway).
   for (const auto& f : m_.fighters) {
     const int d = devices_[f.port];
@@ -313,13 +313,13 @@ MatchScreen::Result MatchScreen::update() {
   for (const auto& f : m_.fighters) {
     if (f.cpu) continue;
     anyHuman = true;
-    if (m_.started() && !m_.finished && devicePausePressed(devices_[f.port])) {
+    if (!catchUp && m_.started() && !m_.finished && devicePausePressed(devices_[f.port])) {
       openPause(f.port);
       audio_.play(Sfx::MenuSelect);
       return Result::Running;
     }
   }
-  if (!anyHuman && !attract_ && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
+  if (!anyHuman && !attract_ && !catchUp && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
     openPause(-1);
     return Result::Running;
   }
@@ -552,6 +552,11 @@ void MatchScreen::drawAttract() {
 }
 
 void MatchScreen::draw() {
+  drawWorld();
+  drawOverlay();
+}
+
+void MatchScreen::drawWorld() {
   ++shown_;
   Camera2D cam = camera();
   drawBackground(m_.stage(), W(cam.target), cam.zoom, time_);
@@ -585,8 +590,6 @@ void MatchScreen::draw() {
   else fx_.drawImpacts();  // the movement smoke and the pixel impacts stay while the other effects are off
   rtx::resolve(m_, cam);               // RTX: the traced light, before the floors mirror it
   light::reflections(m_, cam, time_);  // the floors mirror the scene (not the name tags)
-  drawFighterTags(m_);
-  drawCallouts();          // over the effects: the orb's spark flies out of its own burst
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);
@@ -598,6 +601,15 @@ void MatchScreen::draw() {
   drawStageForeground(m_.stage(), W(cam.target), time_);
   fx_.drawScreen(cam);
   if (const Fx::Impact* im = fx_.impact(); kVfx && im) drawImpactFrame(m_, *im, cam, time_);
+}
+
+// The name tags, the HUD, the menus: drawn at the screen's own resolution, whatever the fight's render resolution.
+void MatchScreen::drawOverlay() {
+  Camera2D cam = camera();
+  beginWorld(cam);
+  drawFighterTags(m_);
+  drawCallouts();  // over the effects: the orb's spark flies out of its own burst
+  endWorld();
   drawOffscreenBubbles(m_, cam, time_);
   drawItemPrompts(m_, cam, devices_, time_);
   drawHud(m_, fx_.hudHit, time_, &devices_);

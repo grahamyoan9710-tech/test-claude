@@ -25,6 +25,7 @@ struct Options {
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
   bool teams = false;  // --teams: team battle (red against blue) for this run
+  bool uncapped = false;         // --uncapped: no 60 FPS cap, prints the average FPS at the end (benchmarks)
   bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
   char skillShow = 0;            // --skill n|s|u|d: the demo's first fighter uses that special again and again
@@ -49,12 +50,16 @@ class MatchScreen {
   // attract: the title screen's demo fight (CPUs only): silent with an Audio never initialised, never paused, filmed
   // by a fixed camera on the title's terrace, over at its first K.O.
   MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug, bool attract = false);
-  Result update();
-  void draw();
+  Result update(bool catchUp = false);  // catchUp: an extra step this frame (no key edges read again)
+  void draw();         // drawWorld() then drawOverlay()
+  void drawWorld();    // the fight, at the render resolution
+  void drawOverlay();  // tags, HUD, pause: over it, at the screen's resolution
   void drawAttract();  // the title's backdrop, the fighters and their effects: no HUD; they fade in and out
   const Match& match() const { return m_; }
   bool training() const { return m_.cfg.training; }
   void forcePause() { openPause(-1); }
+  bool paused() const { return paused_; }
+  void setHitboxes(bool on) { debug_ = on; }
   // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
   void showUltimate(int slot);
   void showWeapon(int slot) { weaponShow_ = slot; }
@@ -219,7 +224,11 @@ class App {
   Audio audio_;
   RenderTexture2D target_{};
   RenderTexture2D snap_{};  // the last screen, frozen, for the « Coupe » transition
+  RenderTexture2D ui_{};    // the interface, at the screen's resolution (over the fight: transparent)
+  RenderTexture2D shot_{};  // --shot / --record: the frame as seen
+  void composeFrame(RenderTexture2D& out);
   float targetScale_ = 0.0f;
+  float stepClock_ = 0.0f;  // fight steps owed to real time (60 a second)
   float time_ = 0.0f;
   int frames_ = 0;
   int screenFrames_ = 0;
@@ -228,8 +237,8 @@ class App {
   int toastTimer_ = 0;
   int shownW_ = -1, shownH_ = -1;  // the resolution and mode the window has (applyDisplaySettings)
   bool shownFs_ = false;
-  RenderTexture2D aa_{};           // the FXAA pass, at the render's size
-  Shader fxaa_{}, rcas_{};         // anti-aliasing; upscaling with FSR 1's sharpening (RCAS)
+  RenderTexture2D aa_{}, fsr_{};           // the FXAA pass, at the render's size
+  Shader fxaa_{}, rcas_{}, easu_{};         // anti-aliasing; upscaling with FSR 1's sharpening (RCAS)
 
   // main menu
   int menuSel_ = 0;
