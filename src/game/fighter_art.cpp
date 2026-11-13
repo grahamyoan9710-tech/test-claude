@@ -679,7 +679,9 @@ const Fx* fxOf(const char* name) {
     F.ownGlow = own != 0;  // made in Blender: its bloom is baked in, the game's halo would blur it and wash it white
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-      if (!smoke(name)) F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)
+      // the bloom (the owner: the game is « RTX », its effects glow); a Blender strip has its own (never computed:
+      // it cost a hitch the first time each one played)
+      if (!smoke(name) && !F.ownGlow) F.glow = glowOf(img, F.info);
     }
     // Pixel art does not tint the fighters: its yellow turned the dark ones olive.
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0 && !F.info.pixel) {
@@ -877,4 +879,46 @@ bool drawFx(const char* name, float t, Vec2 at, float size, float rot, bool flip
   frame = I.loop ? frame % I.frames : std::min(frame, I.frames - 1);
   return drawFxFrame(name, frame, at, size, rot, flip, alpha, tint, castLight);
 }
+// ---- Loading everything up front (the launch screen): no effect or clip is decoded in the middle of a fight -----
+namespace {
+struct Item {
+  int kind;  // 0 a fighter's clips, 1 an effect, 2 a picture
+  std::string name;
+  Hero hero{};
+};
+const std::vector<Item>& preloadItems() {
+  static std::vector<Item> items;
+  if (!items.empty()) return items;
+  for (const auto& c : roster()) items.push_back({0, c.id, c.hero});
+  const std::string& index = spriteIndex();
+  size_t pos = 0;
+  while (pos < index.size()) {
+    size_t end = index.find('\n', pos);
+    if (end == std::string::npos) end = index.size();
+    char key[64] = {};
+    if (std::sscanf(index.c_str() + pos, "fx %63s", key) == 1 && index.compare(pos, 3, "fx ") == 0) items.push_back({1, key});
+    pos = end + 1;
+  }
+  for (const ClashSheet* cs = clash_sheets; cs->name; ++cs) {  // the rest: menus, arenas, portraits
+    const std::string n = cs->name;
+    if (n.rfind("fx_", 0) == 0) continue;
+    bool clip = false;
+    for (const auto& c : roster())
+      if (n.size() > c.id.size() + 1 && n.compare(0, c.id.size() + 1, c.id + "_") == 0)
+        for (int i = 0; i < kSheetCount && !clip; ++i) clip = n.compare(c.id.size() + 1, std::string::npos, sheetName(i)) == 0;
+    if (!clip) items.push_back({2, n});
+  }
+  return items;
+}
+}  // namespace
+
+int preloadCount() { return int(preloadItems().size()); }
+int preloadKind(int i) { return preloadItems()[size_t(i)].kind; }
+void preload(int i) {
+  const Item& it = preloadItems()[size_t(i)];
+  if (it.kind == 0) clipsOf(it.hero);
+  else if (it.kind == 1) fxOf(it.name.c_str());
+  else pictureOf(it.name.c_str());
+}
+
 }  // namespace art

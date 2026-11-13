@@ -549,4 +549,5 @@ void resolve(const Match& m, const Camera2D& cam) {
   rlSetMatrixModelview(mv);
   ui::frameBlend();
 }
+void warm() { ready(); }
 }  // namespace rtx

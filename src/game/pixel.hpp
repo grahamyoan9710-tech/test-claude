@@ -30,4 +30,5 @@ constexpr Color kInk = {18, 13, 20, 255};  // sprite outline
 // The frame so far turned black and white and darker (the « GAME » freeze), by `amount` (0..1). Screen space only.
 void desaturate(float amount);
 void unload();
+void warm();  // compiles its shaders now (the launch screen)
 }  // namespace pix

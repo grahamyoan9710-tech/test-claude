@@ -108,6 +108,7 @@ if(CLASH_BUILD_GAME)
     src/main.cpp
     src/game/app.cpp
     src/game/screen_title.cpp
+    src/game/screen_loading.cpp
     src/game/screen_gallery.cpp
     src/game/screen_settings.cpp
     src/game/screen_poses.cpp

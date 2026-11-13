@@ -105,4 +105,9 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0
                  float alpha = 1.0f, Color tint = WHITE, bool castLight = true);
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha = 1.0f,
                  float fadeIn = 0.0f);
+// Everything the game draws, loaded one item at a time (the launch screen shows the progress): 0 a fighter's clips,
+// 1 an effect, 2 a picture.
+int preloadCount();
+int preloadKind(int i);
+void preload(int i);
 }  // namespace art

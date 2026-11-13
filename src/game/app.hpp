@@ -130,7 +130,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { Title, MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
+enum class Screen { Loading, Title, MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -199,6 +199,13 @@ class App {
   // screens (screen_settings.cpp)
   void updateSettings(const MenuNav& nav);
   void drawSettings();
+  // The launch screen: every clip, effect and picture loaded and every shader compiled before the title, so that
+  // nothing is decoded during a fight or a transition (screen_loading.cpp).
+  void updateLoading();
+  void drawLoading();
+  int loadNext_ = 0;       // the next item to load (art::preload), the shaders being item 0
+  int loadDoneAt_ = -1;    // the frame everything was loaded
+  double loadSeconds_ = 0;  // how long it took (printed for the benchmark)
   void drawPoses();      // development sheet (--screen poses)
   void drawAnimSheet();  // development filmstrips (--screen anim)
   int settingsRowCount() const;
@@ -219,8 +226,10 @@ class App {
   bool quit_ = false;
   std::string toast_;
   int toastTimer_ = 0;
-  int shownRes_ = -1;           // the resolution and mode the window has (applyDisplaySettings)
+  int shownW_ = -1, shownH_ = -1;  // the resolution and mode the window has (applyDisplaySettings)
   bool shownFs_ = false;
+  RenderTexture2D aa_{};           // the FXAA pass, at the render's size
+  Shader fxaa_{}, rcas_{};         // anti-aliasing; upscaling with FSR 1's sharpening (RCAS)
 
   // main menu
   int menuSel_ = 0;

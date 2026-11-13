@@ -28,6 +28,7 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "p03": ("#B3170E", "#FF5A1F", "#FFC86E", "#FFF7E2", "#1E0F0B"),
     "p07": ("#7E0A18", "#FF2D3D", "#FF7F8C", "#FFF1F2", None),
     "p08": ("#C98F28", "#FFD45A", "#FFF3BF", "#FFFFFF", None),
+    "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
 rng = random.Random(sum(map(ord, RECIPE)))
 
@@ -821,8 +822,8 @@ def r_pilier():
 # Played once (LOOP 0) at 30 fps from the move's castFxFrame: strip frame i is the move's game frame 2i after it.
 # Read like anime and game effects, not diagrams: no glowing balls, whole rings or cones; a blow flashes as uneven
 # spikes for a frame or two, its shock is thin broken arcs, trails are teardrops, flames and wisps.
-ELEMENT = {"p01": "ombre", "p02": "givre", "p03": "feu", "p07": "foudre", "p08": "lumiere"}[STYLE]
-MOTE = {"p01": "kite", "p02": "star", "p03": "dot", "p07": "kite", "p08": "star"}[STYLE]
+ELEMENT = {"p01": "ombre", "p02": "givre", "p03": "feu", "p07": "foudre", "p08": "lumiere", "garde": "verre"}[STYLE]
+MOTE = {"p01": "kite", "p02": "star", "p03": "dot", "p07": "kite", "p08": "star", "garde": "star"}[STYLE]
 MOTE_SIZE = {"star": 0.05, "dot": 0.024, "kite": 0.04}[MOTE]
 DYN = []  # objects rebuilt every frame (lightning, arcs)
 M = {}  # materials shared by the rebuilt objects
@@ -1644,7 +1645,37 @@ MOVES = {
 }
 
 
-RECIPES = dict(orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
+def r_bulle():
+    """The shield (yoyo, 13/11: the counter's glass bubble instead of the old ParticleFX one), held as long as the
+    fighter guards: the « dome » of c_contre, looping. Centred on the anchor, its rim 100 px out (the game scales it)."""
+    meta = cast_scene(280, 280, 140.0, 140.0, 24)
+    meta.update(FPS=20, LOOP=1)
+    rim = disc("dome", 1.0, m_bubble(), 0.01)
+    stars = [(fan("astre%d" % k, star(4, 0.06, 0.015), m_shape(0.8), -0.02), rng.uniform(0, 2 * math.pi),
+              rng.uniform(0.15, 0.6), rng.choice((-1, 1))) for k in range(6)]
+
+    def anim(f, t):
+        fresh()
+        w = 2 * math.pi * t
+        s = 1.0 + 0.012 * math.sin(2 * w)  # it breathes
+        rim.scale = (s, 1.0, s)
+        knob(rim, 0.9 * (1.0 + 0.1 * math.sin(3 * w)), 1.0)
+        knob(dyn(arc("reflet", M["line"], (0.0, 0.0), 0.78 * s, math.radians(165), math.radians(105), 0.045, -0.03)),
+             1.6, 0.75 + 0.1 * math.sin(w), 0.0, 1.0)
+        for k in range(2):  # two gleams running round the rim, thin and broken
+            a = w * (1 if k == 0 else -1) + math.pi * k
+            knob(dyn(arc("lueur%d" % k, M["line"], (0.0, 0.0), 0.99 * s, a - 0.3, a + 0.3, 0.02, -0.03)), 1.4, 0.5,
+                 0.0, 1.0)
+        for j, (ob, a0, d, turn) in enumerate(stars):  # glints drifting inside it, twinkling (whole turns: a loop)
+            a = a0 + turn * w
+            ob.location = (d * s * math.cos(a), -0.02, d * s * math.sin(a))
+            tw = 0.5 + 0.5 * math.sin(2 * w * (1 + j % 2) + 2.0 * j)
+            knob(ob, 0.3 + 1.2 * tw, 0.4 + 0.6 * tw, 1.0, 0.9)
+
+    return meta, anim
+
+
+RECIPES = dict(bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
                plume=r_plume, marque=r_marque, pilier=r_pilier)
 if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]

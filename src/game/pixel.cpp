@@ -228,4 +228,8 @@ void unload() {
   g_shader = Shader{};
   g_ready = false;
 }
+void warm() {
+  ready();
+  if (g_greyShader.id == 0) g_greyShader = LoadShaderFromMemory(nullptr, kGreyFrag);
+}
 }  // namespace pix

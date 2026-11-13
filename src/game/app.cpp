@@ -14,6 +14,58 @@ extern const unsigned int icon_png_size;
 
 namespace {
 
+// FXAA (after Timothy Lottes' FXAA 3.11 « console »): only along the edges it finds; flat pixel art is left as it is.
+const char* kFxaaFrag = R"(#version 330
+in vec2 fragTexCoord;
+in vec4 fragColor;
+uniform sampler2D texture0;
+uniform vec2 texel;
+out vec4 finalColor;
+float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
+void main() {
+  vec2 uv = fragTexCoord;
+  vec3 m = texture(texture0, uv).rgb;
+  vec3 nw = texture(texture0, uv + vec2(-1.0, -1.0) * texel).rgb;
+  vec3 ne = texture(texture0, uv + vec2(1.0, -1.0) * texel).rgb;
+  vec3 sw = texture(texture0, uv + vec2(-1.0, 1.0) * texel).rgb;
+  vec3 se = texture(texture0, uv + vec2(1.0, 1.0) * texel).rgb;
+  float lm = luma(m), lnw = luma(nw), lne = luma(ne), lsw = luma(sw), lse = luma(se);
+  float lo = min(lm, min(min(lnw, lne), min(lsw, lse))), hi = max(lm, max(max(lnw, lne), max(lsw, lse)));
+  if (hi - lo < max(0.0312, hi * 0.125)) { finalColor = vec4(m, 1.0); return; }
+  vec2 dir = vec2(-((lnw + lne) - (lsw + lse)), (lnw + lsw) - (lne + lse));
+  float reduce = max((lnw + lne + lsw + lse) * 0.03125, 1.0 / 128.0);
+  dir = clamp(dir / (min(abs(dir.x), abs(dir.y)) + reduce), -8.0, 8.0) * texel;
+  vec3 a = 0.5 * (texture(texture0, uv - dir / 6.0).rgb + texture(texture0, uv + dir / 6.0).rgb);
+  vec3 b = a * 0.5 + 0.25 * (texture(texture0, uv - dir * 0.5).rgb + texture(texture0, uv + dir * 0.5).rgb);
+  float lb = luma(b);
+  finalColor = vec4((lb < lo || lb > hi) ? a : b, 1.0);
+}
+)";
+// Upscaling as FSR 1 ends it: the frame stretched to the screen, then AMD's RCAS (robust contrast-adaptive
+// sharpening, its lobe limited so that no edge rings) on the screen's pixels.
+const char* kRcasFrag = R"(#version 330
+in vec2 fragTexCoord;
+in vec4 fragColor;
+uniform sampler2D texture0;
+uniform vec2 stepUv;   // one screen pixel, in texture coordinates
+uniform float sharp;   // 0..1 (FSR's con.x)
+out vec4 finalColor;
+void main() {
+  vec2 uv = fragTexCoord;
+  vec3 e = texture(texture0, uv).rgb;
+  vec3 b = texture(texture0, uv - vec2(0.0, stepUv.y)).rgb;
+  vec3 d = texture(texture0, uv - vec2(stepUv.x, 0.0)).rgb;
+  vec3 f = texture(texture0, uv + vec2(stepUv.x, 0.0)).rgb;
+  vec3 h = texture(texture0, uv + vec2(0.0, stepUv.y)).rgb;
+  vec3 mn4 = min(min(b, d), min(f, h)), mx4 = max(max(b, d), max(f, h));
+  vec3 hitMin = mn4 / (4.0 * mx4 + 1e-5);
+  vec3 hitMax = (1.0 - mx4) / (4.0 * mn4 - 4.0 - 1e-5);
+  vec3 l3 = max(-hitMin, hitMax);
+  float lobe = max(-0.1875, min(max(l3.r, max(l3.g, l3.b)), 0.0)) * sharp;
+  finalColor = vec4((lobe * (b + d + f + h) + e) / (4.0 * lobe + 1.0), 1.0);
+}
+)";
+
 void setWindowIcon() {
   Image icon = LoadImageFromMemory(".png", icon_png, int(icon_png_size));
   if (icon.data == nullptr) return;
@@ -115,28 +167,38 @@ void App::toast(const char* text) {
 
 void App::applyDisplaySettings() {
   const Settings& s = settings();
-  float want = s.highQuality ? 2.0f : 1.0f;
-  if (want != targetScale_ || target_.id == 0) {
+  // The window: only when the mode or the size changed, so a window the player resized by hand stays as it is.
+  if (s.fullscreen != shownFs_ || s.resW != shownW_ || s.resH != shownH_) {
+    shownFs_ = s.fullscreen;
+    shownW_ = s.resW;
+    shownH_ = s.resH;
+    if (IsWindowFullscreen()) ToggleFullscreen();  // back to the desktop first: the screen's own size is read there
+    const int m = GetCurrentMonitor(), mw = GetMonitorWidth(m), mh = GetMonitorHeight(m);
+    if (s.fullscreen) {
+      // As games do: the screen stays at its own size (no black bands from a switched screen mode) and a lower
+      // resolution is the render's, scaled up to fill it.
+      SetWindowSize(mw, mh);
+      ToggleFullscreen();
+    } else {
+      const int w = std::min(s.resW ? s.resW : mw, mw), h = std::min(s.resH ? s.resH : mh, mh);
+      SetWindowSize(w, h);
+      SetWindowPosition(GetMonitorPosition(m).x + (mw - w) / 2, GetMonitorPosition(m).y + std::max(0, (mh - h) / 2));
+    }
+  }
+  if (s.vsync) SetWindowState(FLAG_VSYNC_HINT);
+  else ClearWindowState(FLAG_VSYNC_HINT);
+  // The render: the resolution (the screen's by default) fitted to 16:9, times the upscaler's and the SSAA's scale.
+  const int m = GetCurrentMonitor();
+  const float rw = float(s.resW ? s.resW : GetMonitorWidth(m)), rh = float(s.resH ? s.resH : GetMonitorHeight(m));
+  float want = std::min(rw / kScreenW, rh / kScreenH) * kUpscale[std::clamp(s.upscale, 0, 3)] * (s.antiAlias == 2 ? 2.0f : 1.0f);
+  want = std::clamp(want > 0 ? want : 1.0f, 0.5f, 4.0f);
+  if (std::fabs(want - targetScale_) > 0.001f || target_.id == 0) {
     if (target_.id != 0) UnloadRenderTexture(target_);
     target_ = LoadRenderTexture(int(kScreenW * want), int(kScreenH * want));
     SetTextureFilter(target_.texture, TEXTURE_FILTER_BILINEAR);
     targetScale_ = want;
   }
   g_renderScale = targetScale_;
-  // The window: only when the size or the mode changed, so a window the player resized by hand stays as it is.
-  if (s.resolution != shownRes_ || s.fullscreen != shownFs_) {
-    shownRes_ = s.resolution;
-    shownFs_ = s.fullscreen;
-    if (IsWindowFullscreen()) ToggleFullscreen();  // back to the desktop first: the screen's own size is read there
-    const int m = GetCurrentMonitor(), mw = GetMonitorWidth(m), mh = GetMonitorHeight(m);
-    const Resolution r = kResolutions[std::clamp(s.resolution, 0, kResolutionCount - 1)];
-    int w = r.w ? r.w : mw, h = r.h ? r.h : mh;
-    if (!s.fullscreen && mw > 0 && (w > mw || h > mh)) w = mw, h = mh;  // a window bigger than the screen: the screen
-    SetWindowSize(w, h);
-    // True fullscreen at that size: the screen itself switches to it, so the picture fills it (no black bands)
-    if (s.fullscreen) ToggleFullscreen();
-    else SetWindowPosition(GetMonitorPosition(m).x + (mw - w) / 2, GetMonitorPosition(m).y + std::max(0, (mh - h) / 2));
-  }
   audio_.setVolumes(s.masterVolume, s.musicVolume, s.sfxVolume);
 }
 
@@ -202,6 +264,8 @@ void App::run() {
   InitWindow(kScreenW, kScreenH, "Clash Horizon");
   SetExitKey(KEY_NULL);
   SetTargetFPS(60);
+  fxaa_ = LoadShaderFromMemory(nullptr, kFxaaFrag);
+  rcas_ = LoadShaderFromMemory(nullptr, kRcasFrag);
   initPads();
   if (opt_.padGlyphs >= 0) forcePadPrompts(PadFamily(opt_.padGlyphs));
   setWindowIcon();
@@ -252,7 +316,7 @@ void App::run() {
     gallerySel_ = std::max(0, opt_.tab);
     enterScreen(Screen::Gallery);
   } else if (opt_.screen == "settings") {
-    setTab_ = std::clamp(opt_.tab, 0, 3);
+    setTab_ = std::clamp(opt_.tab, 0, 4);
     setRow_ = opt_.tab >= 0 ? 0 : -1;
     enterScreen(Screen::Settings);
   } else if (opt_.screen == "poses") {
@@ -276,6 +340,8 @@ void App::run() {
     finishMatch();
     transition_ = -1;
     enterScreen(Screen::Results);
+  } else if (opt_.screen == "loading" || opt_.screen.empty()) {
+    enterScreen(Screen::Loading);
   } else {
     enterScreen(Screen::Title);
   }
@@ -305,6 +371,7 @@ void App::run() {
     MenuNav nav = (screen_ != Screen::Match && !blocked) ? readMenuNav() : MenuNav{};
     if (!blocked) {
       switch (screen_) {
+        case Screen::Loading: updateLoading(); break;
         case Screen::Title: updateTitle(nav); break;
         case Screen::MainMenu: updateMainMenu(nav); break;
         case Screen::CharSelect: updateCss(nav); break;
@@ -338,6 +405,7 @@ void App::run() {
     // anti-aliased edges must not punch translucent holes into the off-screen image.
     ui::frameBlend();
     switch (screen_) {
+      case Screen::Loading: drawLoading(); break;
       case Screen::Title: drawTitle(); break;
       case Screen::MainMenu: drawMainMenu(); break;
       case Screen::CharSelect: drawCss(); break;
@@ -378,13 +446,41 @@ void App::run() {
     if (opt_.quitAfter > 0 && frames_ >= opt_.quitAfter) quit_ = true;
     if (opt_.pauseAt == frames_ && match_) match_->forcePause();
 
+    // The frame to the screen: FXAA at the render's size, then stretched to fill it (FSR 1: RCAS when it grows)
+    const Settings& gs = settings();
+    Texture2D src = target_.texture;
+    const float tw = float(src.width), th = float(src.height);
+    if (gs.antiAlias == 1 && fxaa_.id != 0) {
+      if (aa_.id == 0 || aa_.texture.width != src.width || aa_.texture.height != src.height) {
+        if (aa_.id != 0) UnloadRenderTexture(aa_);
+        aa_ = LoadRenderTexture(src.width, src.height);
+        SetTextureFilter(aa_.texture, TEXTURE_FILTER_BILINEAR);
+      }
+      static const int texelLoc = GetShaderLocation(fxaa_, "texel");
+      const float texel[2] = {1.0f / tw, 1.0f / th};
+      BeginTextureMode(aa_);
+      BeginShaderMode(fxaa_);
+      SetShaderValue(fxaa_, texelLoc, texel, SHADER_UNIFORM_VEC2);
+      DrawTexturePro(src, {0, 0, tw, -th}, {0, 0, tw, th}, {0, 0}, 0.0f, WHITE);
+      EndShaderMode();
+      EndTextureMode();
+      src = aa_.texture;
+    }
     BeginDrawing();
     ClearBackground(BLACK);
     float sw = float(GetScreenWidth()), sh = float(GetScreenHeight());
     float sc = std::min(sw / kScreenW, sh / kScreenH);
     Rectangle dst{(sw - kScreenW * sc) * 0.5f, (sh - kScreenH * sc) * 0.5f, kScreenW * sc, kScreenH * sc};
-    DrawTexturePro(target_.texture, {0, 0, float(target_.texture.width), -float(target_.texture.height)}, dst,
-                   {0, 0}, 0.0f, WHITE);
+    const bool rcas = rcas_.id != 0 && gs.sharpness > 0 && dst.width > tw * 1.01f;
+    if (rcas) {
+      static const int stepLoc = GetShaderLocation(rcas_, "stepUv"), sharpLoc = GetShaderLocation(rcas_, "sharp");
+      const float step[2] = {1.0f / dst.width, 1.0f / dst.height}, sharp = gs.sharpness / 100.0f;
+      BeginShaderMode(rcas_);
+      SetShaderValue(rcas_, stepLoc, step, SHADER_UNIFORM_VEC2);
+      SetShaderValue(rcas_, sharpLoc, &sharp, SHADER_UNIFORM_FLOAT);
+    }
+    DrawTexturePro(src, {0, 0, tw, -th}, dst, {0, 0}, 0.0f, WHITE);
+    if (rcas) EndShaderMode();
     EndDrawing();
     SetMouseOffset(int(-dst.x), int(-dst.y));
     SetMouseScale(1.0f / sc, 1.0f / sc);
@@ -394,6 +490,9 @@ void App::run() {
   pix::unload();
   UnloadRenderTexture(target_);
   if (snap_.id != 0) UnloadRenderTexture(snap_);
+  if (aa_.id != 0) UnloadRenderTexture(aa_);
+  UnloadShader(fxaa_);
+  UnloadShader(rcas_);
   ui::unloadSprites();
   unloadFonts();
   audio_.shutdown();

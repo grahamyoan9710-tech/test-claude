@@ -204,7 +204,7 @@ fx pfx_hit_wave 50 126 40 63.0 19.0 30 0 0 1
 fx pfx_jump 12 76 43 38.0 39.0 30 0 0 1
 fx pfx_ko 20 700 720 350.0 700.0 30 0 0 1 1
 fx pfx_land 13 124 33 62.0 19.0 30 0 0 1
-fx pfx_shield 24 96 96 48.0 48.0 20 1 0 1
+fx pfx_shield 24 280 280 140.0 140.0 20 1 0 0 1
 fx pfx_shield_break 17 169 176 89.0 80.0 30 0 0 1
 fx pfx_shield_hit 17 58 96 17.0 40.0 30 0 0 1
 fx pfx_sparkle 20 326 342 149.0 173.0 10 1
