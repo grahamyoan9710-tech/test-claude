@@ -55,6 +55,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 13/11 00 h 05 UTC, session claude/project-thread-gzf1un : version 15.6 = GitHub nettoyé à la demande de yoyo
+  (« c'est des images du jeu à la 1.0, quand je télécharge il y a beaucoup trop de truc écrit »). README réécrit
+  court, sans les anciens persos d'animes, captures du jeu actuel dans `docs/captures/` (les anciennes
+  `docs/*.jpg` et `art/fighters/`, illustrations des 17 anciens persos, inutilisées, sont retirées). Notices
+  `LISEZ-MOI` raccourcies et corrigées. `release.yml` : la page d'une version ne montre que ses nouveautés.
+  La branche par défaut du dépôt (`claude/admiring-lamport-jijwx9`, restée en v4.0) avance sur chaque version
+  (CLAUDE.md, règle des versions). Verrou « Version et paquets » libéré.
 - 12/11 23 h 10 UTC, session claude/project-thread-gzf1un : version 15.5 = effets de lancement des 40 techniques
   côté/haut/bas dans Blender (`tools/blender/effets.py -- p01-a_s`, bandes `fx_pfx_<perso>_<slot>_<s|u|d>.png`,
   `k.pfx("slot_s")` dans `roster.cpp` ; `staying()` = castFxStays pour Pilier de glace, Uppercut volcanique et Rayon

@@ -39,8 +39,12 @@ Avant toute chose, lire **REPRISE_PROJET.md** : il donne l'état exact du travai
   `screen_title.cpp` lance GitHub Actions (`.github/workflows/release.yml`), qui teste, fabrique les archives Linux
   et Windows et les met dans la release vX.Y (GitHub crée le tag ; le proxy de session refuse les push de tags).
   Vérifier que le workflow a réussi, puis donner au propriétaire le lien
-  https://github.com/grahamyoan9710-tech/test-claude/releases/latest (liens directs dans le README, « Jouer sans
-  compiler »).
+  https://github.com/grahamyoan9710-tech/test-claude/releases/latest (liens directs dans le README, « Jouer »).
+  Ensuite, avancer la branche par défaut du dépôt (celle que montre la page GitHub, aujourd'hui
+  `claude/admiring-lamport-jijwx9`) sur le commit de la version : `git push origin HEAD:<branche par défaut>`,
+  avance rapide seulement, jamais `--force` (propriétaire, 13/11 : « met à jour le GitHub »). La page des
+  nouveautés d'une version ne montre que cette version (`release.yml` coupe `NOUVEAUTES.md`) ; le README reste
+  court, avec des captures du jeu actuel (`docs/captures/`).
 - Deux sessions travaillent en même temps sur `claude/sleepy-goodall-s399kv` : respecter la répartition de
   REPRISE_PROJET.md (section 0). Faire `git pull` (fusion, jamais de rebase ni de `--force`) avant de commencer et
   avant chaque push, committer et pousser souvent, et noter dans le journal de REPRISE_PROJET.md ce qui commence et

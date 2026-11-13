@@ -8,6 +8,13 @@
 
 ## Nouveautés
 
+Version 15.6 : **la page GitHub et la notice refaites**.
+
+- La page du jeu sur GitHub montre le jeu d'aujourd'hui : nouvelles captures, texte court, plus aucun ancien
+  perso.
+- La page de téléchargement de chaque version ne montre plus que ses nouveautés (à partir de la 15.6).
+- La notice de l'archive (LISEZ-MOI) est plus courte et à jour : touches, Clash Orb, armes, réglages.
+
 Version 15.5 : **les effets des techniques refaits dans Blender**.
 
 - Les 40 techniques de côté, du haut et du bas des 5 persos (à mains nues et avec chaque arme) ont leur effet
