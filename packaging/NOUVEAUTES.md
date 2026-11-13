@@ -8,6 +8,17 @@
 
 ## Nouveautés
 
+Version 15.7 : **résolution comme dans les autres jeux, nouveaux réglages graphiques, paramètres et pause refaits**.
+
+- Résolution : la liste vient de ton écran. En plein écran, l'image remplit toujours tout l'écran ; une résolution
+  plus basse calcule le jeu en plus petit (plus rapide) au lieu de faire une petite fenêtre entourée de noir.
+- Nouvel onglet Graphismes : mise à l'échelle AMD FSR 1 (Qualité, Équilibré, Performance), anticrénelage (FXAA ou
+  SSAA ×2), netteté, synchronisation verticale. Pas de TAA : sur du pixel art, il laisse des traînées floues.
+- Paramètres et menu pause refaits dans la DA « Prestige ».
+- Écran de chargement au lancement : tous les persos, effets et images sont chargés et les shaders compilés une
+  seule fois, avant le titre. Plus de blocage la première fois qu'un effet s'affiche en combat.
+- La bulle de garde est maintenant la bulle de verre du contre, refaite dans Blender.
+
 Version 15.6 : **la page GitHub et la notice refaites**.
 
 - La page du jeu sur GitHub montre le jeu d'aujourd'hui : nouvelles captures, texte court, plus aucun ancien

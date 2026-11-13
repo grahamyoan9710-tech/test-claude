@@ -52,9 +52,15 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | pris : session 03jksh (15.7) | 13/11 03 h 50 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 13/11 03 h 50 UTC, session claude/project-thread-03jksh : version 15.7. Résolution (liste des modes de l'écran
+  via GLFW, plein écran = fenêtre à la taille native, la résolution choisie = résolution de rendu), onglet
+  Graphismes (FSR 1 RCAS, FXAA, SSAA ×2, netteté, V-Sync ; réglages `upscale`, `anti_alias`, `sharpness`,
+  `vsync`, `res_w`, `res_h`), Paramètres (5 onglets) et pause en DA Prestige, écran de chargement au lancement
+  (`screen_loading.cpp`, `art::preload*`, `pix/light/rtx::warm`), bulle de garde = dôme du contre en boucle
+  (`effets.py bulle-garde` → `fx_pfx_shield.png`). Verrou « Version et paquets » libéré.
 - 13/11 00 h 05 UTC, session claude/project-thread-gzf1un : version 15.6 = GitHub nettoyé à la demande de yoyo
   (« c'est des images du jeu à la 1.0, quand je télécharge il y a beaucoup trop de truc écrit »). README réécrit
   court, sans les anciens persos d'animes, captures du jeu actuel dans `docs/captures/` (les anciennes
