@@ -1,146 +1,181 @@
-// In-match HUD (« Encre d'horizon »): a see-through Smash-like card per fighter along the bottom (its face, stocks,
-// name, damage, weapons, "ULTIME PRÊT"), the Clash Orb's banner at the top while it is in play, off-screen bubbles
-// and the countdown.
+// In-match HUD (« Prestige »): transparent cards along the bottom as in Smash (a square of the player's colour leaning
+// like the blade with the fighter's bust over it, the stocks, the damage warming up, the name on a night strip, the
+// weapons taken, "ULTIME PRÊT"), the Clash Orb's banner at the top while it is in play, off-screen bubbles, and the
+// countdown: « PRÊTS ? », then 3, 2, 1 slammed on slabs cut like the blade, then GO torn red / blue.
 #include <cstdio>
 
 #include "game/app.hpp"
+#include "game/fighter_art.hpp"
 #include "game/fx.hpp"
 #include "game/render.hpp"
 #include "game/settings.hpp"
 #include "game/ui.hpp"
 
 namespace {
-constexpr FontKind kT = FontKind::Title;
-constexpr Color kGoldLight{255, 200, 112, 255};
+constexpr FontKind kT = FontKind::Title, kB = FontKind::Body;
+
+using ui::exo;
+using ui::exoWidth;
+// Exo 2 outlined 3 px all round in night (the mock-up's eight text-shadows).
+void exoOut(const char* s, float x, float base, float em, Color c, float a) {
+  for (int i = 0; i < 8; ++i)
+    exo(s, x + 3.0f * std::cos(i * kPi / 4), base + 3.0f * std::sin(i * kPi / 4), em, withAlpha(ui::kNight, a));
+  exo(s, x, base, em, withAlpha(c, a));
+}
+// Small condensed capitals (Archivo 62 %), the top of their line box (line-height .84) at `top`.
+float condWidth(const char* s, float em, float ls) { return MeasureTextEx(gameFont(kT), s, 1.088f * em, ls * em).x; }
+void cond(const char* s, float x, float top, float em, float ls, Color c) {
+  DrawTextEx(gameFont(kT), s, {x, top + (0.84f - 1.088f) * 0.5f * em}, 1.088f * em, ls * em, c);
+}
+
+// The damage warms up as in Smash: white, then yellow, orange, red and a deep red.
+Color heat(float p) {
+  return p < 30 ? WHITE : p < 60 ? Color{255, 233, 168, 255} : p < 100 ? Color{255, 179, 107, 255}
+         : p < 150 ? Color{255, 107, 74, 255} : Color{229, 35, 58, 255};
+}
 
 // The Clash Orb's banner, top centre, while it is in play: the orb, when it leaves, its life in ten bars.
 void orbBanner(const Match& m, float time) {
   const Orb& o = m.orb;
   if (!o.active) return;
-  const float w = 226.0f, h = 46.0f, x = (kScreenW - w) * 0.5f, y = 14.0f;
-  const Color bg = withAlpha(ui::kInk, 0.82f);
-  ui::quad({x + 12, y}, {x + w - 12, y}, {x + w, y + h}, {x, y + h}, bg, bg, bg, bg);
+  const float w = 236.0f, h = 46.0f, x = (kScreenW - w) * 0.5f, y = 14.0f;
+  DrawRectangleRec({x, y, w, h}, withAlpha(ui::kNight, 0.82f));
   drawClashOrb({x + 27, y + h * 0.5f}, 9.5f, time, 1);
-  const float tx = x + 54, cy = y + 17;
-  const float lw = ui::tracked("CLASH ORB", tx, capsY(cy, 15, kT), 15, 0.16f, ui::kCream);
+  const float tx = x + 54;
+  const float lw = ui::caps("CLASH ORB", tx, y + 17, 11, 0.3f, ui::kSilver);
   const int left = std::max(1, (o.life + 59) / 60);
-  drawText(TextFormat("part dans %d s", left), tx + lw + 10, capsY(cy, 14, kT), 14, kGoldLight, kT);
+  drawText(TextFormat("part dans %d s", left), tx + lw + 10, capsY(y + 17, 13, kB), 13, ui::kMist, kB);
   const int lit = int(std::ceil(std::max(0.0f, o.hp) / 4.0f));  // 40 PV: 4 a bar
   for (int i = 0; i < 10; ++i)
-    DrawRectangleRec({tx + i * 15.2f, y + 30, 13.2f, 5}, i < lit ? (o.flash > 0 ? WHITE : ui::kCream) : Color{42, 53, 88, 255});
+    DrawRectangleRec({tx + i * 15.2f, y + 30, 13.2f, 5}, i < lit ? (o.flash > 0 ? WHITE : ui::kBlue) : withAlpha(ui::kSilver, 0.16f));
 }
 
-// "ULTIME PRÊT": the gold badge, the logo's spark in ink, glowing on and off; returns its left edge.
+// "ULTIME PRÊT": Éclat with night capitals, a rim breathing out of it; returns its left edge.
 float ultBadge(float right, float bottom, float time) {
-  const float size = 14.0f, tw = ui::trackedWidth("ULTIME PRÊT", size, 0.08f);
-  const Rectangle b{right - (8 + 11 + 5 + tw + 8), bottom - 24, 8 + 11 + 5 + tw + 8, 24};
+  const float w = ui::capsWidth("ULTIME PRÊT", 11, 0.14f) + 20.0f;
+  const Rectangle b{right - w, bottom - 22, w, 22};
   const float k = 0.5f - 0.5f * std::cos(time * 2.0f * kPi / 1.4f);
-  for (int i = 3; i >= 1; --i) DrawRectangleRec(ui::grow(b, 2.0f + i * 3.0f * k), withAlpha(ui::kGold, 0.16f * k));
-  DrawRectangleRec(b, ui::kGold);
-  ui::spark({b.x + 13.5f, b.y + 12}, 5.5f, 0.0f, ui::kInk);
-  ui::tracked("ULTIME PRÊT", b.x + 24, capsY(b.y + 12, size, kT), size, 0.08f, ui::kInk);
+  DrawRectangleLinesEx(ui::grow(b, 2.0f + 4.0f * k), 2.0f, withAlpha(ui::kBlue, 0.6f * (1.0f - k)));
+  DrawRectangleRec(b, ui::kBlue);
+  ui::caps("ULTIME PRÊT", b.x + 10, b.y + 11, 11, 0.14f, ui::kNight);
   return b.x;
 }
 
-// « Encre d'horizon », Smash-like: no plate, the arena shows through. A band of the player's colour leaning like a
-// slash and fading out, the fighter's face in a disc ringed with that colour, its stocks as small faces, its name,
-// the damage big in Exo 2 Black Italic, the weapons taken.
-void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, float time, const std::array<int, 4>* devices) {
-  const float x = r.x, y = r.y, w = r.width;
-  const Color pc = slotColor(f), ink = ui::kInk, face = auraColor(f.def->hero);
+// One card, 260 x 112 from (L, T), `a` its entrance. The square leans 12° about its middle (46, 60): its lower half
+// deeper, a light rim inside the upper one, night around. The bust is the pixel portrait, cut at the square's foot.
+void fighterCard(const Match& m, const Fighter& f, float L, float T, float a, int hitAge, float time,
+                 const std::array<int, 4>* devices) {
   const bool out = f.eliminated;
-  const float a = out ? 0.35f : 1.0f;
+  const Color pc = f.cpu && !f.inTeam ? Color{163, 167, 175, 255} : slotColor(f);
+  const Color sq = out ? ui::kDim : pc, line = out ? ui::kDim : f.cpu && !f.inTeam ? ui::kCpuTag : pc;
 
-  // The band (skewed by 16°), a shade over it for the text, its bright bottom edge
-  constexpr float bw = 236, bh = 58, sk = 8.3f;  // sk: half of the 16° lean over its height
-  const float bx = x + 30, by = y + r.height - 6 - bh;
-  auto band = [&](float u0, float u1, Color c0, Color c1, float top = 0.0f) {
-    const float x0 = bx + bw * u0, x1 = bx + bw * u1, t = sk * (1.0f - 2.0f * top / bh);
-    ui::quad({x0 + t, by + top}, {x1 + t, by + top}, {x1 - sk, by + bh}, {x0 - sk, by + bh}, c0, c1, c1, c0);
+  auto P = [&](float x, float y) { return Vector2{L + x + ui::kLean * (60.0f - y), T + y}; };
+  auto quadP = [&](float x0, float y0, float x1, float y1, Color c, float k = 1.0f) {
+    c = withAlpha(c, k * a);
+    ui::quad(P(x0, y0), P(x1, y0), P(x1, y1), P(x0, y1), c, c, c, c);
   };
-  band(0.0f, 0.55f, withAlpha(pc, 0.8f * a), withAlpha(pc, 0.4f * a));
-  band(0.55f, 1.0f, withAlpha(pc, 0.4f * a), withAlpha(pc, 0.0f));
-  const float sx0 = bx + 4, sx1 = bx + 204;
-  ui::quad({sx0 + sk, by}, {sx1 + sk, by}, {sx1 - sk, by + bh}, {sx0 - sk, by + bh}, withAlpha(ink, 0.0f),
-           withAlpha(ink, 0.0f), withAlpha(ink, 0.35f), withAlpha(ink, 0.35f));
-  band(0.0f, 1.0f, withAlpha(pc, a), withAlpha(pc, 0.25f * a), bh - 3.0f);
-
-  // The icon: its face in a disc ringed with the player's colour
-  const Vec2 ic{x + 47, y + r.height - 43};
-  constexpr float ir = 41;
-  DrawCircleV({ic.x, ic.y + 4}, ir + 6, withAlpha(BLACK, 0.3f));
-  DrawCircleV(V(ic), ir + 5, ink);
-  DrawCircleV(V(ic), ir + 3, out ? ui::kDisabled : pc);
-  DrawCircleGradient(int(ic.x), int(ic.y), ir, out ? Color{40, 46, 66, 255} : mixColor(face, WHITE, 0.1f), {11, 18, 48, 255});
-  drawArtDisc(*f.def, f.palette, ic, ir, time + f.id, 1.1f, out ? Color{120, 124, 140, 255} : WHITE);
-
-  // Who: "J1" (or CPU) on the icon's corner
-  char tag[8];
-  std::snprintf(tag, sizeof tag, f.cpu ? "CPU" : "J%d", f.port + 1);
-  const float tw = textWidth(tag, 14, kT) + 12;
-  DrawRectangleRec({x + 6, ic.y - ir - 12, tw, 19}, out ? ui::kDisabled : pc);
-  drawText(tag, x + 12, capsY(ic.y - ir - 2.5f, 14, kT), 14, ink, kT);
-
-  // Its name under the damage
-  const std::string nick = fiche(*f.def).nick;
-  drawTextOutlined(nick.c_str(), x + 100, capsY(y + r.height - 17, 16, kT), 16, out ? ui::kDisabled : ui::kCream, ink, 2.0f, kT);
-
-  // Its stocks: its face, small; a lost one dim (no art: diamonds of its colour, hollow once lost)
-  if (!out && (!m.cfg.training || m.trainFight)) {
-    const int total = std::max(m.cfg.stocks, f.stocks), shown = std::min(total, 5);
-    const bool art = hasArt(*f.def);
-    for (int i = 0; i < shown; ++i) {
-      const Vec2 c{x + 110.0f + i * 23.0f, y + 19.0f};
-      const bool lost = i >= f.stocks;
-      if (art) {
-        DrawCircleV(V(c), 12, withAlpha(ink, lost ? 0.5f : 1.0f));
-        DrawCircleV(V(c), 10, withAlpha(face, lost ? 0.2f : 1.0f));
-        drawArtDisc(*f.def, f.palette, c, 10, time, 1.1f, lost ? Color{160, 166, 186, 80} : WHITE);
-      } else {
-        ui::diamond(V(c), 8.0f, ink);
-        ui::diamond(V(c), 6.5f, pc);
-        if (lost) ui::diamond(V(c), 4.5f, withAlpha(ink, 0.95f));
-      }
+  quadP(8, 22, 84, 98, ui::kNight);
+  quadP(10, 24, 82, 96, sq);
+  quadP(10, 24, 82, 25, WHITE, 0.35f);
+  quadP(10, 25, 11, 60, WHITE, 0.35f);
+  quadP(81, 25, 82, 60, WHITE, 0.35f);
+  quadP(10, 60, 82, 96, mixColor(sq, ui::kNight, 0.42f));
+  {
+    const std::string pic = f.def->id + "_portrait";
+    float pw, ph;
+    if (art::pictureSize(pic.c_str(), pw, ph)) {
+      const bool roomy = f.def->id == "h01";  // his portrait leaves room around him: drawn larger
+      const float s = (roomy ? 140.0f : 101.0f) / 240.0f;
+      beginClip({L - 4, T - 26, 100, 122});
+      art::drawPicture(pic.c_str(), {0, 0, pw, ph}, {L + (roomy ? -7.0f : -11.0f), T + (roomy ? -34.0f : -26.0f), pw * s, ph * s},
+                       a, false, out ? Color{120, 124, 140, 255} : WHITE);
+      endClip();
     }
-    if (total > 5) drawTextOutlined(TextFormat("×%d", f.stocks), x + 110 + 5 * 23 - 4, capsY(y + 19, 14, kT), 14, ui::kCream, ink, 2.0f, kT);
   }
 
-  // The damage, right, big and leaning (its caps centred 50 px down); "K.O." once out
-  constexpr FontKind kD = FontKind::Damage;
-  constexpr float kNum = 60.0f, kPct = 29.0f;  // drawn at 66 and 32 px
-  const float right = x + w - 16, numTop = capsY(y + 50, kNum, kD), base = numTop + 0.8325f * kNum * fontScale(kD);
+  // The stocks: silver dots ringed with night, a lost one hollow
+  if (!out && (!m.cfg.training || m.trainFight)) {
+    const int total = std::max(m.cfg.stocks, f.stocks), shown = std::min(total, 5);
+    for (int i = 0; i < shown; ++i) {
+      const Vector2 c{L + 102.5f + i * 14.0f, T + 12.5f};
+      if (i < f.stocks) {
+        DrawCircleV(c, 6.0f, withAlpha(ui::kNight, a));
+        DrawCircleV(c, 4.5f, withAlpha(ui::kSilver, a));
+      } else {
+        DrawRing(c, 3.0f, 4.5f, 0, 360, 24, withAlpha(ui::kSilver, 0.45f * a));
+      }
+    }
+    if (total > 5) cond(TextFormat("×%d", f.stocks), L + 98 + 5 * 14.0f, T + 6, 15, 0.06f, withAlpha(ui::kSilver, a));
+  }
+
+  // The damage (60 px, its line box at 22): hit, it jolts, its red and blue copies split off and two bands of it jump
+  const float base = T + 75.94f, nx = L + 96.0f;
   if (out) {
-    const float kw = textWidth("K.O.", 44, kD);
-    drawTextOutlined("K.O.", right - kw, capsY(y + 50, 44, kD), 44, ui::kDisabled, ink, 3.0f, kD);
+    exoOut("K.O.", nx, base, 44, ui::kDim, a);
   } else {
     char pct[16];
     std::snprintf(pct, sizeof pct, "%d", int(f.percent));
-    const float jx = shake > 0 ? std::sin(time * 90.0f) * shake : 0.0f, jy = shake > 0 ? std::cos(time * 77.0f) * shake : 0.0f;
-    const float grow = 1.0f + std::min(8.0f, shake) / 60.0f;
-    const Color col = percentColor(f.percent), drop = withAlpha(ink, 0.55f);
-    const float nw = textWidth(pct, kNum * grow, kD), sw = textWidth("%", kPct, kD);
-    const float nx = right - sw - 2 - nw + jx, ny = base - 0.8325f * kNum * grow * fontScale(kD) + jy;
-    const float px = right - sw + jx, py = base - 0.8325f * kPct * fontScale(kD) + jy;
-    drawTextOutlined(pct, nx, ny + 3, kNum * grow, drop, drop, 4.0f, kD);  // its drop shadow
-    drawTextOutlined("%", px, py + 3, kPct, drop, drop, 3.0f, kD);
-    drawTextOutlined(pct, nx, ny, kNum * grow, col, ink, 4.0f, kD);
-    drawTextOutlined("%", px, py, kPct, col, ink, 3.0f, kD);
+    const Color col = heat(f.percent);
+    const float s = hitAge / 60.0f, nw = exoWidth(pct, 60);
+    Vector2 j{0, 0};
+    if (s < 0.256f) {
+      static const Vector2 kj[] = {{6, -3}, {-5, 2}, {4, 1}, {-2, -1}, {0, 0}};
+      const int k = std::min(3, int(s / 0.064f));
+      const float v = s / 0.064f - k;
+      j = {kj[k].x + (kj[k + 1].x - kj[k].x) * v, kj[k].y + (kj[k + 1].y - kj[k].y) * v};
+    }
+    auto number = [&](float dx, Color c, bool outlined, float k = 1.0f) {
+      const float x = nx + j.x + dx, b = base + j.y;
+      if (outlined) {
+        exoOut(pct, x, b, 60, c, a);
+        exoOut("%", x + nw + 2, b, 27, c, a);
+      } else {
+        exo(pct, x, b, 60, withAlpha(c, k * a));
+        exo("%", x + nw + 2, b, 27, withAlpha(c, k * a));
+      }
+    };
+    if (s < 0.288f) {
+      const float sp = s < 0.096f ? 9.0f : s < 0.192f ? 6.0f : 3.0f;
+      number(-sp, ui::kSplitR, false, 0.85f);
+      number(sp, ui::kSplitB, false, 0.85f);
+    }
+    number(0, col, true);
+    if (s < 0.224f) {
+      static const float k1[] = {14, -6, 8}, k2[] = {-10, 9, -4};
+      const int st = s < 0.064f ? 0 : s < 0.128f ? 1 : 2;
+      const float top = T + 22 + j.y;
+      beginClip({L + 60, top + 10.8f, 200, 14.4f});
+      number(k1[st], col, true);
+      endClip();
+      beginClip({L + 60, top + 36.0f, 200, 14.4f});
+      number(k2[st], col, true);
+      endClip();
+    }
   }
 
-  // The weapons taken (the one in hand first, lit), bottom right; its special's cooldown over it
+  // The name on a night strip topped with the player's colour
+  DrawRectangleRec({L + 58, T + 88, 190, 20}, withAlpha(ui::kNight, 0.78f * a));
+  DrawRectangleRec({L + 58, T + 88, 190, 2}, withAlpha(line, a));
+  const std::string nick = upperFr(fiche(*f.def).nick);
+  float em = 15.0f;
+  while (em > 10.0f && condWidth(nick.c_str(), em, 0.06f) > 144.0f) em -= 0.5f;
+  cond(nick.c_str(), L + 98, T + 98 - 0.42f * em, em, 0.06f, withAlpha(out ? ui::kDim : ui::kSilver, a));
+
+  // The weapons taken, top right (the one in hand first, rimmed); its special's cooldown over it
+  const float right = L + 248;
   float wx = right;
   if (!out) {
     for (int k = 0; k < 2; ++k) {
       const int slot = k == 0 ? f.weapon : f.weapon ^ 1;
       if (slot < 0 || !((f.weapons >> slot) & 1)) continue;
-      const Rectangle b{wx - 26, y + r.height - 32, 26, 26};
-      DrawRectangleRec(b, withAlpha(ink, k == 0 ? 0.55f : 0.35f));
-      if (k == 0) DrawRectangleRec({b.x, b.y + b.height - 2, b.width, 2}, pc);
-      drawWeaponIcon(*f.def, slot, {b.x + 13, b.y + 13}, 24.0f, k == 0 ? 1.0f : 0.45f);
+      const Rectangle b{wx - 26, T + 1, 26, 26};
+      DrawRectangleRec(b, withAlpha(ui::kNight, (k == 0 ? 0.78f : 0.5f) * a));
+      if (k == 0) DrawRectangleLinesEx(b, 1.5f, withAlpha(line, a));
+      drawWeaponIcon(*f.def, slot, {b.x + 13, b.y + 13}, 20.0f, (k == 0 ? 1.0f : 0.45f) * a);
       if (k == 0 && f.moveDef(NSpecial).cooldown > 0 && f.moveCooldown[NSpecial] > 0) {  // its special recharging
-        DrawRectangleRec(b, withAlpha(ink, 0.6f));
+        DrawRectangleRec(b, withAlpha(ui::kNight, 0.65f * a));
         const char* sec = TextFormat("%d", (f.moveCooldown[NSpecial] + 59) / 60);
-        drawText(sec, b.x + (b.width - textWidth(sec, 16, kT)) * 0.5f, capsY(b.y + 13, 16, kT), 16, ui::kCream, kT);
+        drawText(sec, b.x + (b.width - textWidth(sec, 14, kB)) * 0.5f, capsY(b.y + 13, 14, kB), 14, withAlpha(ui::kSilver, a), kB);
       }
       wx -= 30;
     }
@@ -148,24 +183,29 @@ void fighterCard(const Match& m, const Fighter& f, Rectangle r, float shake, flo
 
   // The Clash Orb's prize, over the card: the badge, and the button that unleashes it
   if (f.finalSmash && !out) {
-    float bl = ultBadge(right, y - 2, time) - 6;
+    const float bl = ultBadge(right, T - 4, time) - 6;
     if (devices && !f.cpu) {
       const int dev = (*devices)[f.port & 3];
       const float pw = ui::actionPromptWidth(dev, kActUltimate, 20);
-      ui::actionPrompt(dev, kActUltimate, bl - pw, y - 24, 20, true);
+      ui::actionPrompt(dev, kActUltimate, bl - pw, T - 25, 20, true);
     }
   }
 }
 }  // namespace
 
-void drawHud(const Match& m, const std::array<float, 4>& shake, float time, const std::array<int, 4>* devices) {
+Vector2 goShake(const Match& m) { return m.countdown > 0 ? Vector2{0, 0} : ui::slam((m.frame - 200) / 60.0f); }
+
+void drawHud(const Match& m, const std::array<int, 4>& hitAge, float time, const std::array<int, 4>* devices) {
   orbBanner(m, time);
   const int n = int(m.fighters.size());
-  const float cw = 300.0f, ch = 110.0f, gap = n <= 2 ? 120.0f : 14.0f;
-  float x = (kScreenW - (n * cw + (n - 1) * gap)) * 0.5f;
+  const float gap = n <= 2 ? 88.0f : n == 3 ? 24.0f : 12.0f;
+  float x = (kScreenW - (n * 260.0f + (n - 1) * gap)) * 0.5f + 20.0f;
+  int i = 0;
   for (const auto& f : m.fighters) {
-    fighterCard(m, f, {x, kScreenH - 8.0f - ch, cw, ch}, shake[f.id & 3], time, devices);
-    x += cw + gap;
+    // They rise as GO lands, one after the other
+    const float e = ui::seg((m.frame - 215.0f - 6.0f * i++) / 60.0f, 0.0f, 0.5f);
+    if (e > 0.0f) fighterCard(m, f, x, 586.0f + 40.0f * (1.0f - e), e, hitAge[f.id & 3], time, devices);
+    x += 260.0f + gap;
   }
 }
 
@@ -181,7 +221,7 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
     const Vec2 dir = (W(sp) - W(b)).norm(), perp{-dir.y, dir.x};
     DrawTriangle(V(W(b) + dir * 35.0f + perp * 9.0f), V(W(b) + dir * 49.0f), V(W(b) + dir * 35.0f - perp * 9.0f), pc);
     DrawCircleV(b, 37, pc);
-    DrawCircleV(b, 33, withAlpha(ui::kCream, 0.92f));
+    DrawCircleV(b, 33, withAlpha(ui::kNight, 0.92f));
     const float scale = 52.0f / f.def->height;
     drawCharacterSprite(*f.def, f.palette, computePose(f, m, time), {b.x, b.y + f.def->height * scale * 0.5f}, f.facing,
                         scale, 1.0f, WHITE, f.flash > 0 ? 0.5f : 0.0f, time);
@@ -190,26 +230,51 @@ void drawOffscreenBubbles(const Match& m, const Camera2D& cam, float time) {
     if (f.cpu) std::snprintf(who, sizeof who, metres > 0 ? "CPU · %d m" : "CPU", metres);
     else std::snprintf(who, sizeof who, metres > 0 ? "J%d · %d m" : "J%d", f.port + 1, metres);
     const float ww = textWidth(who, 14, kT);
-    drawTextOutlined(who, b.x - ww * 0.5f, capsY(b.y + 49, 14, kT), 14, WHITE, ui::kInk, 2.0f, kT);
+    drawTextOutlined(who, b.x - ww * 0.5f, capsY(b.y + 49, 14, kT), 14, WHITE, ui::kNight, 2.0f, kT);
   }
 }
 
-void drawCountdown(const Match& m) {
-  const float cx = kScreenW * 0.5f, cy = kScreenH * 0.38f;
-  auto big = [&](ui::Sprite sp, float size) {
-    ui::drawSprite(sp, cx - ui::spriteWidth(sp, size) * 0.5f, cy - size * 0.55f, size);
-  };
-  if (m.countdown > 0) {
-    int n = (m.countdown + 59) / 60;
-    if (m.countdown > 180) {
-      big(ui::Sprite::Ready, 96);
-      return;
+void drawCountdown(const Match& m, float shown) {
+  const Vector2 sh = goShake(m);
+  rlPushMatrix();
+  rlTranslatef(sh.x, sh.y, 0.0f);
+  // « PRÊTS ? » over its rule, from the moment the fight shows (still under the choc), gone as 3 lands
+  if (m.countdown > 180) {
+    const float in = ui::seg(shown, 0.0f, 0.216f);
+    const float out = std::max(ui::seg(shown, 0.576f, 0.72f), clampf((188.0f - m.countdown) / 8.0f, 0.0f, 1.0f));
+    const float a = in * (1.0f - out);
+    if (a > 0.0f) {
+      const float ls = 0.5f - 0.28f * in, w = ui::bigWidth("PRÊTS ?", 62, ui::Face::Wide, ls);
+      ui::big("PRÊTS ?", 640.0f - w * 0.5f, 300, 62, ui::Face::Wide, withAlpha(WHITE, a), 1.088f, ls, 2.0f, withAlpha(ui::kNight, a));
+      DrawRectangleRec({640.0f - 250.0f * in, 384, 500.0f * in, 3}, withAlpha(ui::kSilver, a));
     }
-    float k = float(m.countdown % 60) / 60.0f;
-    float size = 150.0f + 90.0f * k * k;
-    big(n == 3 ? ui::Sprite::Count3 : n == 2 ? ui::Sprite::Count2 : ui::Sprite::Count1, size);
-  } else if (m.frame < 200 + 50) {
-    float k = (m.frame - 200) / 50.0f;
-    if (k < 0.8f) big(ui::Sprite::Go, 190.0f + 40.0f * k);
   }
+  // 3, 2, 1: J1's red, J2's blue, then silver, each slab sliding in from the left and on to the right. The mock-up's
+  // 0.45 s held for the game's second: the landing and the leaving keep their pace.
+  if (m.countdown > 0 && m.countdown <= 180) {
+    const int n = (m.countdown + 59) / 60;
+    const float s = ((180 - m.countdown) % 60) / 60.0f;
+    const float arrive = ui::seg(s, 0.0f, 0.081f), leave = ui::seg(s, 0.901f, 1.0f);
+    const float dx = s < 0.081f ? -300.0f * (1.0f - arrive) : 140.0f * leave;
+    ui::lean(546 + dx, 886 + dx, withAlpha(n == 3 ? ui::kSplitR : n == 2 ? ui::kSplitB : ui::kSilver, 1.0f - leave));
+    const float sc = s < 0.081f ? 1.6f - 0.6f * arrive : s < 0.901f ? 1.0f - 0.02f * ui::seg(s, 0.081f, 0.901f) : 0.98f - 0.08f * leave;
+    const float al = s < 0.901f ? arrive : 1.0f - leave, split = 34.0f - 26.0f * ui::seg(s, 0.0f, 0.351f);
+    const char* num = n == 3 ? "3" : n == 2 ? "2" : "1";
+    ui::scaled(sc, 640, 356, [&] { ui::choc(num, 640, 206, 300, split, al); });
+  }
+  // GO: the red and the blue halves meet on the blade and part, the word torn between them
+  const float g = (m.frame - 200) / 60.0f;
+  if (m.countdown <= 0 && g >= 0.0f && g < 0.9f) {
+    const float u = g / 0.9f;
+    const float a = 0.92f * (1.0f - ui::seg(u, 0.30f, 0.62f));
+    const float off = u < 0.14f ? 720.0f * (1.0f - ui::seg(u, 0.0f, 0.14f)) : 120.0f * ui::seg(u, 0.30f, 0.62f);
+    ui::lean(-400 - off, 716 - off, withAlpha(ui::kSplitR, a));
+    ui::lean(716 + off, 1700 + off, withAlpha(ui::kSplitB, a));
+    const float sc = u < 0.12f ? 1.9f - 0.93f * ui::seg(u, 0.0f, 0.12f) : u < 0.24f ? 0.97f + 0.05f * ui::seg(u, 0.12f, 0.24f)
+                     : u < 0.72f ? 1.02f + 0.01f * ui::seg(u, 0.24f, 0.72f) : 1.03f + 0.11f * ui::seg(u, 0.72f, 1.0f);
+    const float al = u < 0.12f ? ui::seg(u, 0.0f, 0.12f) : u < 0.72f ? 1.0f : 1.0f - ui::seg(u, 0.72f, 1.0f);
+    const float split = u < 0.12f ? 48.0f - 32.0f * ui::seg(u, 0.0f, 0.12f) : 16.0f - 6.0f * ui::seg(u, 0.12f, 0.72f);
+    ui::scaled(sc, 640, 346, [&] { ui::choc("GO !", 640, 226, 240, split, al); });
+  }
+  rlPopMatrix();
 }

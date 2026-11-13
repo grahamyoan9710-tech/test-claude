@@ -6,6 +6,7 @@
 //                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
 //                    [--shot FRAME FILE.png]... [--record FROM TO EVERY DIR] [--fullres] [--quit-after FRAMES] [--debug]
 //                    [--ult SLOT]   (with --demo: the first fighter unleashes its ultimate, SLOT -1/0/1)
+//                    [--skill n|s|u|d] [--weapon SLOT]   (with --demo: the first fighter repeats that special)
 //                    [--teams]   (team battle: red against blue)
 //                    [--palette N]   (colours of the menus, see menu_theme.hpp; 0 = the game's)
 //                    [--export-audio DIR]
@@ -35,8 +36,10 @@ int main(int argc, char** argv) {
     else if (is("--teams")) opt.teams = true;
     else if (is("--palette") && i + 1 < argc) g_menuTheme = std::atoi(argv[++i]);
     else if (is("--fullres")) opt.fullRes = true;
+    else if (is("--uncapped")) opt.uncapped = true;
     else if (is("--ult") && i + 1 < argc) opt.ultShow = std::atoi(argv[++i]);
     else if (is("--weapon") && i + 1 < argc) opt.weaponShow = std::atoi(argv[++i]);
+    else if (is("--skill") && i + 1 < argc) opt.skillShow = argv[++i][0];
     else if (is("--stage") && i + 1 < argc) opt.stage = std::atoi(argv[++i]);
     else if (is("--screen") && i + 1 < argc) opt.screen = argv[++i];
     else if (is("--tab") && i + 1 < argc) opt.tab = std::atoi(argv[++i]);

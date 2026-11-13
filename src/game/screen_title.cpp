@@ -1,6 +1,7 @@
-// Main menu, the first screen (« Ligne d'horizon »): a real fight between two CPUs on the title's terrace behind it,
-// the logo over four big buttons and four small ones on the left, what the chosen one does under them, a tip at the
-// top right, the demo fight's cards at the bottom right.
+// The title screen and the main menu (« Prestige »). The title: a trailer of hard cuts, one per fighter in his colour,
+// then the logo cut open on the blade, two fighters face to face on the horizon, the call to start. The menu: the four
+// ways to play as big as a scoreboard (the chosen one huge, the others hollow), the other four as small buttons, the
+// newest fighter on his colour on the right.
 #include "game/app.hpp"
 #include "game/fighter_art.hpp"
 #include "game/fx.hpp"
@@ -9,124 +10,71 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr const char* kVersion = "v14.1";
-
-float easeOut(float t) {
-  t = clampf(t, 0.0f, 1.0f);
-  return 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
-}
+constexpr const char* kVersion = "v15.8";
 
 struct Item {
   const char* label;
-  const char* tag;  // the big buttons' note, on their right
-  const char* icon;
+  const char* tag;  // the note on the button's right
+  ui::Icon icon;
   const char* desc;
   const char* tip;
   bool ready;  // false: shown, not open yet
 };
-// Four big buttons, then four small ones in two rows of two.
 const Item kItems[] = {
-    {"JOUER", "1 JOUEUR", "menu_icon_play", "Un combat contre l'ordinateur : choisis ton combattant et ton arène.",
+    {"JOUER", "1 JOUEUR", ui::Icon::Play, "Un combat contre l'ordinateur : choisis ton combattant et ton arène.",
      "Casse la Clash Orb : c'est la seule façon d'obtenir ton ultime.", true},
-    {"VERSUS", "2 À 4", "menu_icon_versus", "De 2 à 4 joueurs sur la même machine, en équipes ou chacun pour soi.",
+    {"VERSUS", "2 À 4", ui::Icon::Versus, "De 2 à 4 joueurs sur la même machine, en équipes ou chacun pour soi.",
      "Clavier 1, clavier 2 et manettes : jusqu'à 4 joueurs.", true},
-    {"ENTRAÎNEMENT", "LIBRE", "menu_icon_training", "Vies infinies, mannequin réglable en pause.",
+    {"ENTRAÎNEMENT", "LIBRE", ui::Icon::Training, "Vies infinies, mannequin réglable en pause.",
      "Zones de coup visibles avec la touche F1.", true},
-    {"EN LIGNE", "BIENTÔT", "menu_icon_online", "Le jeu en ligne arrive dans une prochaine version.",
+    {"EN LIGNE", "BIENTÔT", ui::Icon::Online, "Le jeu en ligne arrive dans une prochaine version.",
      "Le jeu en ligne arrive plus tard.", false},
-    {"PERSONNAGES", "", "menu_icon_fighters", "La galerie des combattants : leur style, leurs armes, leurs compétences.",
+    {"PERSONNAGES", "", ui::Icon::Fighters, "La galerie des combattants : leur style, leurs armes, leurs compétences.",
      "Les deux armes de chacun tombent sur l'arène pendant le combat.", true},
-    {"ARÈNES", "", "menu_icon_arenas", "L'aperçu des arènes et de leurs plateformes ; ENTRÉE pour s'y entraîner.",
+    {"ARÈNES", "", ui::Icon::Arenas, "L'aperçu des arènes et de leurs plateformes ; ENTRÉE pour s'y entraîner.",
      "Chaque arène a ses propres plateformes.", true},
-    {"OPTIONS", "", "menu_icon_options", "Son, affichage, règles du jeu, touches et manettes.",
+    {"OPTIONS", "", ui::Icon::Options, "Son, affichage, règles du jeu, touches et manettes.",
      "Plein écran : touche F11.", true},
-    {"QUITTER", "", "menu_icon_quit", "Quitter Clash Horizon.", "À bientôt sur l'horizon.", true},
+    {"QUITTER", "", ui::Icon::Quit, "Quitter Clash Horizon.", "À bientôt sur l'horizon.", true},
 };
 constexpr int kItemCount = int(sizeof kItems / sizeof kItems[0]);
-constexpr int kBig = 4;  // the big buttons come first
+constexpr int kBig = 4;  // the four ways to play, then a gap
 constexpr int kQuit = kItemCount - 1;
 
-Rectangle itemRect(int i) {
-  if (i < kBig) return {48, 262.0f + i * 60.0f, 384, 54};
-  const int k = i - kBig;
-  return {48.0f + (k % 2) * 195.0f, 510.0f + (k / 2) * 48.0f, 189, 42};
-}
-// Up and down through the column, the small buttons two to a row.
-int itemBelow(int i) { return i < kBig ? i + 1 : i + 2 < kItemCount ? i + 2 : 0; }
-int itemAbove(int i) { return i == 0 ? kItemCount - 2 : i <= kBig ? i - 1 : i - 2 < kBig ? kBig - 1 : i - 2; }
-
-// An icon (white on transparent), h pixels high, centred on c.
-void icon(const char* name, Vector2 c, float h, Color tint) {
-  float w, hh;
-  if (!art::pictureSize(name, w, hh)) return;
-  const float k = h / hh;
-  art::drawPicture(name, {0, 0, w, hh}, {c.x - w * k * 0.5f, c.y - h * 0.5f, w * k, h}, 1.0f, false, tint);
+// « Prestige »: the four ways to play stacked from y 146, the chosen one 200 px tall (its 170 px name and its line),
+// the others 78; the other four in a row of small buttons at y 598.
+Rectangle itemRect(int i, int sel) {
+  if (i >= kBig) {
+    float x = 56.0f;
+    for (int k = kBig; k < i; ++k) x += 54.3f + ui::capsWidth(kItems[k].label, 11, 0.12f) + 8.0f;  // 12 | icon 18 | 9 | label | 14
+    return {x, 598, 54.3f + ui::capsWidth(kItems[i].label, 11, 0.12f), 44};
+  }
+  float y = 146.0f;
+  for (int k = 0; k < i; ++k) y += k == sel ? 200.0f : 78.0f;
+  return {40, y, 620, i == sel ? 190.0f : 78.0f};
 }
 
-// The chosen one is gold (the big ones shimmer); the others night blue, the big ones with an azure line under them.
-void drawItem(int i, bool sel, float t, float slide) {
-  const Item& it = kItems[i];
-  const bool big = i < kBig;
-  Rectangle r = itemRect(i);
-  r.x -= slide;
-  const float cut = big ? 14.0f : 10.0f;
-  if (sel) {
-    ui::bevel(r, cut, ui::kGold, ui::kGold);
-    if (big) ui::shimmer(r, t);
-  } else {
-    const Color fill = it.ready ? withAlpha(ui::kNavyDeep, big ? 0.9f : 0.82f) : Color{10, 16, 36, 225};
-    ui::bevel(r, cut, fill, fill);
-    if (big && it.ready) DrawRectangleRec({r.x, r.y + r.height - 2, r.width - cut, 2}, withAlpha(ui::kBlue, 0.55f));
-  }
-  const Color ink = sel ? ui::kInk : !it.ready ? ui::kDisabled : big ? ui::kCream : ui::kSoft;
-  const float cy = r.y + r.height * 0.5f, ih = big ? 26.0f : 20.0f, x0 = r.x + (big ? 18.0f : 14.0f);
-  icon(it.icon, {x0 + ih * 0.5f, cy}, ih, sel || !it.ready || big ? ink : ui::kSky);
-  const float size = big ? 29.0f : 18.0f;
-  drawText(it.label, x0 + ih + (big ? 14.0f : 10.0f), capsY(cy, size, FontKind::Title), size, ink, FontKind::Title);
-  if (*it.tag) {
-    const float ts = 15.0f;
-    drawText(it.tag, r.x + r.width - 18 - textWidth(it.tag, ts), capsY(cy, ts, FontKind::Ui), ts, withAlpha(ink, 0.85f));
-  }
+const CharacterDef* fighterById(const char* id) {
+  for (const auto& c : roster())
+    if (c.id == id) return &c;
+  return nullptr;
 }
 
-// The demo fight's cards, bottom right: a blinking "DÉMO", then each fighter: portrait, "CPU 9 · N° 01", stock,
-// damage (K.O. once out).
-void drawDemoHud(const Match& m, float t) {
-  constexpr float h = 40.0f, y = 630.0f, cardW = 226.0f, gap = 8.0f;
-  const int n = std::min(2, int(m.fighters.size()));
-  if (n == 0) return;
-  float x = kScreenW - 28.0f - n * cardW - (n - 1) * gap;
-  const float tw = textWidth("DÉMO", 14.0f, FontKind::Title), dw = 34.0f + tw;
-  const Rectangle chip{x - gap - dw, y, dw, h};
-  DrawRectangleRec(chip, withAlpha(ui::kInk, 0.72f));
-  DrawCircleV({chip.x + 14, y + h * 0.5f}, 4.0f, withAlpha({255, 122, 82, 255}, std::fmod(t, 1.2f) < 0.6f ? 1.0f : 0.25f));
-  drawText("DÉMO", chip.x + 24, capsY(y + h * 0.5f, 14.0f, FontKind::Title), 14.0f, ui::kSoft, FontKind::Title);
-  for (int i = 0; i < n; ++i, x += cardW + gap) {
-    const Fighter& f = m.fighters[i];
-    if (!f.def) continue;
-    const Color pc = i == 0 ? ui::kBlue : ui::kGold;
-    DrawRectangleRec({x, y, cardW, h}, withAlpha(ui::kInk, 0.72f));
-    DrawRectangleRec({x, y, 3, h}, pc);
-    const Rectangle pr{x + 3, y, h, h};  // the portrait's top, on the fighter's colour
-    DrawRectangleRec(pr, shade(auraColor(f.def->hero), 0.45f));
-    const std::string pic = f.def->id + "_portrait";
-    float pw, ph;
-    if (art::pictureSize(pic.c_str(), pw, ph)) {
-      const float s = std::min(pw, ph);
-      art::drawPicture(pic.c_str(), {(pw - s) * 0.5f, 0, s, s}, pr);
-    }
-    const float tx = pr.x + h + 8;
-    drawText(TextFormat("CPU %d · %s", f.cpuLevel, f.def->name.c_str()), tx, capsY(y + 13, 14.0f, FontKind::Title), 14.0f,
-             pc, FontKind::Title);
-    for (int s = 0; s < std::max(1, f.stocks); ++s)
-      ui::diamond({tx + 4 + s * 13.0f, y + 29}, 4.5f, withAlpha(pc, f.stocks > s ? 1.0f : 0.3f));
-    const bool ko = f.eliminated || f.stocks <= 0;
-    const char* pct = ko ? "K.O." : TextFormat("%d %%", int(f.percent));
-    const Color heat = ko ? ui::kGold : f.percent < 60 ? ui::kCream : f.percent < 110 ? Color{255, 200, 112, 255} : Color{255, 122, 82, 255};
-    const float ps = 26.0f;
-    drawText(pct, x + cardW - 10 - textWidth(pct, ps, FontKind::Title), capsY(y + h * 0.5f, ps, FontKind::Title), ps,
-             heat, FontKind::Title);
-  }
+// The frame of a looping clip at time t (seconds).
+int loopFrame(const CharacterDef& d, int anim, float t) {
+  int n = 1;
+  float fw, fh, fps = 15.0f;
+  if (!art::clipInfo(d, anim, n, fw, fh, fps)) return 0;
+  return int(std::floor(t * fps)) % std::max(1, n);
+}
+
+// A fighter in his own pixel art, every pixel `scale` square, his frame's bottom on `bottom`, its left on x.
+void figure(const char* id, int anim, float t, float x, float bottom, float scale, bool flip, float alpha = 1.0f) {
+  const CharacterDef* d = fighterById(id);
+  int n;
+  float fw, fh, fps;
+  if (!d || !art::clipInfo(*d, anim, n, fw, fh, fps)) return;
+  art::drawClipPx(*d, anim, loopFrame(*d, anim, t), x, bottom - fh * scale, scale, flip, alpha);
 }
 }  // namespace
 
@@ -186,12 +134,11 @@ void App::activateMenu(int item, int device) {
 
 void App::updateMainMenu(const MenuNav& nav) {
   const int before = menuSel_;
-  if (nav.up) menuSel_ = itemAbove(menuSel_);
-  if (nav.down) menuSel_ = itemBelow(menuSel_);
-  if ((nav.left || nav.right) && menuSel_ >= kBig) menuSel_ = kBig + ((menuSel_ - kBig) ^ 1);
+  if (nav.up) menuSel_ = (menuSel_ + kItemCount - 1) % kItemCount;
+  if (nav.down) menuSel_ = (menuSel_ + 1) % kItemCount;
   if (nav.back) menuSel_ = kQuit;
   for (int i = 0; i < kItemCount; ++i) {
-    if (!ui::hovered(itemRect(i))) continue;
+    if (!ui::hovered(itemRect(i, menuSel_))) continue;
     if (ui::mouseMoved()) menuSel_ = i;
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       menuSel_ = i;
@@ -203,99 +150,304 @@ void App::updateMainMenu(const MenuNav& nav) {
   if (nav.confirm || nav.start) activateMenu(menuSel_, nav.device);
 }
 
-// The demo fight: two CPUs (level 9) drawn among the fighters that have their animations, on the flat arena (the
-// terrace has no platforms), without the Clash Orb (no ultimate over the menu); a new pair after each K.O.
-void App::updateDemo() {
-  if (demo_ && demo_->update() != MatchScreen::Result::Finished) return;
-  demo_.reset();
-  std::vector<int> pool;
-  for (int i = 0; i < int(roster().size()); ++i)
-    if (art::hasClips(roster()[i].hero)) pool.push_back(i);
-  if (pool.size() < 2) return;
-  MatchConfig cfg;
-  for (int i = 0; i < int(stageList().size()); ++i)
-    if (stageList()[i].theme == StageTheme::Lunar) cfg.stage = i;
-  cfg.stocks = 1;
-  cfg.items = false;
-  cfg.seed = uint32_t(GetRandomValue(1, 1 << 30));
-  const int a = GetRandomValue(0, int(pool.size()) - 1);
-  int b = GetRandomValue(0, int(pool.size()) - 2);
-  if (b >= a) ++b;
-  cfg.slots[0] = {true, pool[a], true, 9, 0};
-  cfg.slots[1] = {true, pool[b], true, 9, 1};
-  demo_ = std::make_unique<MatchScreen>(cfg, std::array<int, 4>{}, silent_, false, true);
+// The title screen: any confirm opens the menu.
+void App::updateTitle(const MenuNav& nav) {
+  if (nav.confirm || nav.start || ui::clicked({0, 0, kScreenW, kScreenH})) {
+    audio_.play(Sfx::MenuSelect);
+    goTo(Screen::MainMenu);
+  }
+  if (nav.back) quit_ = true;
+}
+
+namespace {
+// The trailer's cuts, one per fighter (0.45 s each from 0.30 s): its colour on one side of the blade (the lean
+// alternates), its name huge on the other, its number and martial art, the fighter sliding in, x4.
+struct Cut {
+  const char* id;
+  float figX;  // the left of its x4 frame
+};
+const Cut kCuts[] = {{"h01", 814}, {"p01", 60}, {"p02", 724}, {"p03", 80}, {"p07", 740}, {"p08", 100}};
+
+std::string numberLabel(const CharacterDef& d) {
+  const Fiche fi = fiche(d);
+  return "N° " + d.id.substr(1) + (fi.art.empty() ? std::string() : " · " + upperFr(fi.art));
+}
+std::string shortName(const CharacterDef& d) {
+  const std::string n = upperFr(fiche(d).nick);
+  return n.substr(0, n.find(' '));
+}
+
+// A night plate with a label in small spaced capitals (CSS: padding 5 9, font 14, letter-spacing 0.3 em) at top y;
+// right: x is its right end. Returns its width.
+float tag(const char* text, float x, float y, float size, float ls, Color col, bool right = false, float alpha = 1.0f) {
+  const float w = 18.0f + ui::capsWidth(text, size, ls) + ls * size, h = 10.0f + 1.088f * size;
+  const float x0 = right ? x - w : x;
+  DrawRectangleRec({x0, y, w, h}, withAlpha(ui::kNight, alpha));
+  ui::caps(text, x0 + 9, y + 5 + 0.534f * size, size, ls, withAlpha(col, alpha));
+  return w;
+}
+
+void drawCut(int i, float u) {  // u: the % of the 9 s loop since it began (0..5)
+  const Cut& c = kCuts[i];
+  const CharacterDef* d = fighterById(c.id);
+  if (!d) return;
+  const ui::Flood fl = ui::flood(d->hero);
+  const bool nameLeft = i % 2 == 0;  // its colour on the right, its name on the left, the fighter facing left
+  if (nameLeft) {
+    ui::lean(700, 1600, fl.fill);
+    ui::lean(560, 700, fl.deep);
+    ui::lean(557, 561, ui::kSilver);
+  } else {
+    ui::lean(-400, 580, fl.fill, -ui::kLean);
+    ui::lean(580, 720, fl.deep, -ui::kLean);
+    ui::lean(719, 723, ui::kSilver, -ui::kLean);
+  }
+  // The fighter: in from its side, then drifting on
+  const float in = ui::seg(u, 0.0f, 1.6f), on = ui::seg(u, 1.6f, 5.0f);
+  const float dx = u < 1.6f ? 140.0f * (1.0f - in) : -18.0f * on;
+  int n;
+  float fw, fh, fps;
+  if (art::clipInfo(*d, art::kSheetIdle, n, fw, fh, fps))
+    art::drawClipPx(*d, art::kSheetIdle, loopFrame(*d, art::kSheetIdle, u * 0.09f), c.figX + (nameLeft ? dx : -dx),
+                    720.0f - fh * 4.0f, 4.0f, nameLeft);
+  // Its name, landing big then settling
+  const std::string name = shortName(*d);
+  const float sc = u < 1.3f ? 1.18f - 0.18f * ui::seg(u, 0.0f, 1.3f) : 1.0f - 0.015f * ui::seg(u, 1.3f, 5.0f);
+  const float w = ui::bigWidth(name.c_str(), 230, ui::Face::Cond), x = nameLeft ? 56.0f : kScreenW - 56.0f - w;
+  ui::scaled(sc, nameLeft ? x : x + w, 437.0f + 0.7f * 0.84f * 230.0f,
+             [&] { ui::big(name.c_str(), x, 437, 230, ui::Face::Cond, WHITE); });
+  // Its number and art
+  const float la = ui::seg(u, 0.0f, 1.6f);
+  const std::string lab = numberLabel(*d);
+  tag(lab.c_str(), nameLeft ? 62.0f : kScreenW - 62.0f, 410.0f + 10.0f * (1.0f - la), 14, 0.3f, ui::kSilver, !nameLeft, la);
+}
+}  // namespace
+
+// The title (« Prestige »), on a 9 s loop like the mock-up: the blade (0-0.3 s), six cuts (0.3-3.0 s), then the logo
+// cut open (3.2 s) with a jolt, the horizon line, the two fighters, the tagline and the call to start.
+void App::drawTitle() {
+  const float T = screenFrames_ / 60.0f, tau = std::fmod(T, 9.0f), p = tau / 9.0f * 100.0f;  // p: % of the loop
+  constexpr float E = 0.2f, F = 0.8f;  // the hold's easing: cubic-bezier(.2,.8,.2,1)
+  auto up = [&](float a, float b) { return ui::seg(p, a, b, E, F, E, 1.0f); };
+  DrawRectangle(0, 0, kScreenW, kScreenH, ui::kNight);
+
+  // The hold, shaken as the logo is cut open
+  Vector2 sh{0, 0};
+  {
+    static const float kt[] = {35.6f, 36.0f, 36.5f, 37.0f, 37.6f, 38.3f};
+    static const Vector2 kv[] = {{0, 0}, {-8, 5}, {7, -5}, {-5, 3}, {3, -2}, {0, 0}};
+    for (int k = 0; k + 1 < 6; ++k)
+      if (p >= kt[k] && p < kt[k + 1]) {
+        const float u = (p - kt[k]) / (kt[k + 1] - kt[k]);
+        sh = {kv[k].x + (kv[k + 1].x - kv[k].x) * u, kv[k].y + (kv[k + 1].y - kv[k].y) * u};
+      }
+  }
+  rlPushMatrix();
+  rlTranslatef(sh.x, sh.y, 0.0f);
+  if (p >= 36.0f) {  // the horizon line, from its middle
+    const float k = up(36.0f, 41.0f);
+    DrawRectangleRec({640.0f - 640.0f * k, 652, 1280.0f * k, 1}, withAlpha(ui::kSilver, 0.3f));
+  }
+  if (p >= 37.0f) {  // the two fighters face to face, x3
+    const float a = up(37.0f, 42.0f), dy = 30.0f * (1.0f - a);
+    figure("h01", art::kSheetIdle, T, 70, 655 + dy, 3, false, a);
+    figure("p01", art::kSheetIdle, T, 838, 655 + dy, 3, true, a);
+  }
+  if (p >= 35.6f) {
+    ui::LogoIn in;
+    in.cut = ui::seg(p, 35.6f, 38.4f);
+    in.word = up(38.6f, 42.5f);
+    in.lines = up(39.0f, 43.5f);
+    if (p < 42.5f) in.starScale = 0.0f;
+    else if (p < 45.0f) in.starScale = 1.3f * ui::seg(p, 42.5f, 45.0f), in.starRot = -90.0f + 100.0f * ui::seg(p, 42.5f, 45.0f);
+    else in.starScale = 1.3f - 0.3f * ui::seg(p, 45.0f, 47.5f), in.starRot = 10.0f * (1.0f - ui::seg(p, 45.0f, 47.5f));
+    ui::prestigeLogo(280, 86, 0.6f, T, in);
+  }
+  if (p >= 40.0f) {  // the tagline
+    const float a = up(40.0f, 44.5f);
+    const char* tagline = "COMBAT DE PLATEFORME · 1 À 4 JOUEURS";
+    ui::caps(tagline, (kScreenW - ui::capsWidth(tagline, 13, 0.34f)) * 0.5f, 362 + 0.534f * 13 + 14 * (1.0f - a), 13, 0.34f,
+             withAlpha(ui::kMist, a));
+  }
+  if (p >= 42.0f) {
+    const float a = up(42.0f, 46.5f), dy = 14.0f * (1.0f - a);
+    // The call to start: a real button, the blade's lean, its key, an arrow nudging on; a cyan line drawing under it
+    {
+      constexpr float h = 60.0f, cut = 13.0f;
+      const char* word = "COMMENCER";
+      const bool pad = padPrompts();
+      const float kw = pad ? ui::padGlyphWidth(ui::Btn::A, 30, promptFamily()) : 20.0f + ui::capsWidth("ENTRÉE", 11, 0.14f) + 1.54f;
+      const float tw = ui::capsWidth(word, 20, 0.24f) + 4.8f, w = 30.0f + kw + 18.0f + tw + 18.0f + 22.0f + 40.0f;
+      const float x = (kScreenW - w) * 0.5f, y = 532.0f + dy;
+      ui::quad({x + cut, y}, {x + w, y}, {x + w - cut, y + h}, {x, y + h}, withAlpha(ui::kSilver, a), withAlpha(ui::kSilver, a),
+               withAlpha(ui::kSilver, a), withAlpha(ui::kSilver, a));
+      float cx = x + 30.0f;
+      if (pad) {
+        ui::padGlyph(ui::Btn::A, cx, y + (h - 30.0f) * 0.5f, 30, promptFamily());
+      } else {
+        DrawRectangleRec({cx, y + 16, kw, 28}, withAlpha(ui::kNight, a));
+        ui::caps("ENTRÉE", cx + 10, y + 30, 11, 0.14f, withAlpha(ui::kSilver, a));
+      }
+      cx += kw + 18.0f;
+      ui::caps(word, cx, y + 30, 20, 0.24f, withAlpha(ui::kNight, a));
+      cx += tw + 18.0f;
+      const float nudge = 3.0f - 3.0f * std::cos(T * 2.0f * kPi / 1.6f), k = 22.0f / 24.0f, ax = cx + nudge, ay = y + 30 - 12 * k;
+      const Color ink = withAlpha(ui::kNight, a);
+      DrawLineEx({ax + 4 * k, ay + 12 * k}, {ax + 19 * k, ay + 12 * k}, 2.4f * k, ink);
+      DrawLineEx({ax + 13 * k, ay + 5.5f * k}, {ax + 19.5f * k, ay + 12 * k}, 2.4f * k, ink);
+      DrawLineEx({ax + 19.5f * k, ay + 12 * k}, {ax + 13 * k, ay + 18.5f * k}, 2.4f * k, ink);
+      if (p >= 44.0f) DrawRectangleRec({x, y + h + 7, (w - cut) * up(44.0f, 49.0f), 4}, withAlpha(ui::kBlue, a));
+    }
+    constexpr FontKind B = FontKind::Body;
+    const std::string ver = std::string("Version ") + (kVersion + 1) + " · bêta";
+    drawText(ver.c_str(), 24, 682 + dy, 12, withAlpha(ui::kMist, a), B);
+    const float fw = textWidth("Plein écran", 12, B), kw = ui::pkeyWidth("F11", ui::Btn::None, 24);
+    drawText("Plein écran", kScreenW - 24 - kw - 8 - fw, 682 + dy, 12, withAlpha(ui::kMist, a), B);
+    ui::pkey("F11", ui::Btn::None, kScreenW - 24 - kw, 676 + dy, 24, false, a);
+  }
+  rlPopMatrix();
+
+  // The trailer: the blade crossing, then the cuts
+  if (p < 3.3f) {
+    const float k = ui::seg(p, 0.0f, 2.2f, 0.7f, 0.0f, 0.2f, 1.0f);
+    DrawRectanglePro({640, 359.5f, 1400 * k, 3}, {700 * k, 1.5f}, -12.0f, ui::kSilver);
+  }
+  for (int i = 0; i < 6; ++i) {
+    const float u = p - (0.30f + 0.45f * i) / 9.0f * 100.0f;
+    if (u >= 0.0f && u < 5.0f) drawCut(i, u);
+  }
 }
 
 void App::drawMainMenu() {
-  const float t = time_, f = float(screenFrames_);
-  float w, h;
-  if (demo_) demo_->drawAttract();
-  else if (art::pictureSize("menu_horizon", w, h)) art::drawPicture("menu_horizon", {0, 0, w, h}, {0, 0, kScreenW, kScreenH});
-  // Night on the left under the menu, and along the bottom under the hints.
-  const Color night{4, 7, 18, 255};
-  DrawRectangleGradientH(0, 0, 358, kScreenH, withAlpha(night, 0.92f), withAlpha(night, 0.78f));
-  DrawRectangleGradientH(358, 0, 232, kScreenH, withAlpha(night, 0.78f), withAlpha(night, 0.0f));
-  DrawRectangleGradientV(0, kScreenH - 90, kScreenW, 90, withAlpha(night, 0.0f), withAlpha(night, 0.85f));
-  // Two sparks breathing in the sky
-  for (int i = 0; i < 2; ++i) {
-    const float p = 0.5f + 0.5f * std::sin((t - i * 1.1f) * 2.0f * kPi / 2.4f);
-    ui::eclat(i == 0 ? Vector2{212, 69} : Vector2{1010, 50}, (i == 0 ? 6.0f : 5.0f) * (0.85f + 0.3f * p), 0.5f + 0.5f * p,
-              i == 0 ? WHITE : Color{255, 226, 181, 255});
-  }
-
-  // Logo, top left, sliding down into place
-  float lw, lh;
-  if (art::pictureSize("menu_logo", lw, lh)) {
-    const float in = easeOut(f / 18.0f), lwd = 360.0f;
-    art::drawPicture("menu_logo", {0, 0, lw, lh}, {36, 20 - (1.0f - in) * 12.0f, lwd, lwd * lh / lw}, in);
-  }
-
-  // Buttons, sliding in one after the other; the spark beside the chosen big one glides to it
-  for (int i = 0; i < kItemCount; ++i) drawItem(i, i == menuSel_, t, (1.0f - easeOut((f - i * 2.0f) / 14.0f)) * 440.0f);
-  if (menuSel_ < kBig) {
-    const float to = itemRect(menuSel_).y + 27.0f;
-    markY_ = markY_ < 0.0f ? to : markY_ + (to - markY_) * 0.35f;  // ~120 ms
-    ui::eclat({35, markY_}, 7.0f, easeOut(f / 20.0f));
-  } else {
-    markY_ = -1.0f;
-  }
-
-  // What the chosen one does, under the buttons
-  const Item& sel = kItems[menuSel_];
-  drawText(sel.label, 48, 612, 14.0f, ui::kGold, FontKind::Title);
-  ui::drawWrapped(sel.desc, 48, 630, 384, 17.0f, ui::kSoft);
-
-  // Its tip, top right
-  {
-    const float ts = 18.0f, tagS = 13.0f, maxW = 470.0f;
-    const float tagW = textWidth("ASTUCE", tagS, FontKind::Title) + 16.0f, textW = textWidth(sel.tip, ts);
-    const float avail = maxW - 40.0f - tagW;
-    const int lines = textW <= avail ? 1 : 2;  // every tip fits on two lines
-    const float pw = lines == 1 ? textW + tagW + 40.0f : maxW, ph = 20.0f + lines * ts * 1.3f;
-    const Rectangle pill{kScreenW - 28 - pw, 24, pw, ph};
-    ui::bevel(pill, 10.0f, withAlpha(ui::kInk, 0.78f), withAlpha(ui::kInk, 0.78f));
-    ui::bevelLines(ui::grow(pill, -1.0f), 9.6f, 1.0f, withAlpha(ui::kSky, 0.16f));
-    const Rectangle tag{pill.x + 12, pill.y + (ph - 22.0f) * 0.5f, tagW, 22.0f};
-    DrawRectangleRec(tag, ui::kGold);
-    drawText("ASTUCE", tag.x + 8, capsY(tag.y + 11.0f, tagS, FontKind::Title), tagS, ui::kInk, FontKind::Title);
-    ui::drawWrapped(sel.tip, tag.x + tagW + 12, pill.y + 10 + ts * 0.15f, avail, ts, ui::kCream);
-  }
-
-  // The demo fight's cards, bottom right
-  if (demo_) drawDemoHud(demo_->match(), t);
-
-  // Hints, bottom left; the version, bottom right
-  const float kh = 26.0f, hy = kScreenH - 16.0f - kh, hs = 18.0f;
-  float x = 48.0f;
-  auto hint = [&](const char* key, ui::Btn b, const char* label, Color col) {
-    x += ui::prompt(key, b, x, hy, kh) + 8.0f;
-    drawText(label, x, capsY(hy + kh * 0.5f, hs, FontKind::Ui), hs, col);
-    x += textWidth(label, hs) + 22.0f;
+  const float T = screenFrames_ / 60.0f, t = time_;
+  constexpr FontKind B = FontKind::Body;
+  const float sec = T;
+  auto in = [&](float delay, float len, float x1 = 0.2f, float y1 = 0.9f, float x2 = 0.1f) {
+    return ui::seg(sec, delay, delay + len, x1, y1, x2, 1.0f);
   };
-  hint("↑ ↓", ui::Btn::DPadUD, "Choisir", ui::kSoft);
-  hint("ENTRÉE", ui::Btn::A, "Valider", ui::kGold);
-  hint("ÉCHAP", ui::Btn::B, "Quitter", ui::kSoft);
-  const float vs = 15.0f;
-  drawText(kVersion, kScreenW - 28 - textWidth(kVersion, vs, FontKind::Title), capsY(hy + kh * 0.5f, vs, FontKind::Title),
-           vs, ui::kMuted, FontKind::Title);
+  DrawRectangle(0, 0, kScreenW, kScreenH, ui::kNight);
+  if (menuChanged_ > screenFrames_) menuChanged_ = 0;  // (a former visit's)
+  if (markY_ != float(menuSel_)) {  // the chosen one lands again on each change
+    markY_ = float(menuSel_);
+    menuChanged_ = screenFrames_;
+  }
+  const float since = (screenFrames_ - menuChanged_) / 60.0f, re = menuChanged_ > 0 ? since : sec;
+
+  // The newest fighter's colour takes the right side, cut by the blade; his name scrolls in it, tone on tone
+  const CharacterDef* hk = fighterById("h01");
+  const ui::Flood fl = ui::flood(Hero::H01);
+  {
+    const float ox = 560.0f * (1.0f - in(0.0f, 0.45f));
+    ui::lean(960 + ox, 1700 + ox, fl.fill);
+    ui::lean(820 + ox, 960 + ox, fl.deep);
+    ui::bigClip(820 + ox, false);
+    const char* word = "HAKUEN ";
+    const float ww = ui::bigWidth(word, 300, ui::Face::Cond);
+    for (int row = 0; row < 2; ++row) {
+      const float speed = 3.0f * ww / (row == 0 ? 34.0f : 46.0f), off = std::fmod(t * speed, 3.0f * ww);
+      const float x0 = row == 0 ? -off : -3.0f * ww + off;
+      for (int k = 0; k < 6; ++k)
+        ui::bigHollow(word, x0 + k * ww + ox, row == 0 ? 28.0f : 300.0f, 300, ui::Face::Cond, 2.0f, withAlpha(ui::kNight, 0.18f));
+    }
+    ui::bigClipOff();
+    ui::lean(817 + ox, 821 + ox, ui::kSilver);
+  }
+  // Hakuen in his own pixel art, x4, breathing
+  if (hk) {
+    const float a = in(0.12f, 0.6f);
+    figure("h01", art::kSheetIdle, T, 900 + 90.0f * (1.0f - a), 720, 4, true, a);
+  }
+  // « Nouveau combattant »
+  {
+    const float a = in(0.3f, 0.4f, 0.2f, 0.8f, 0.2f), dy = 12.0f * (1.0f - a);
+    const float tw = 18.0f + ui::capsWidth("NOUVEAU COMBATTANT", 12, 0.3f) + 3.6f;
+    DrawRectangleRec({700, 538 + dy, tw, 10.0f + 1.088f * 12}, withAlpha(fl.fill, a));
+    ui::caps("NOUVEAU COMBATTANT", 709, 538 + dy + 5 + 0.534f * 12, 12, 0.3f, withAlpha(ui::kNight, a));
+    const float py = 538 + dy + 23.06f + 6, nw = ui::bigWidth("HAKUEN", 96, ui::Face::Cond);
+    const char* sub = "Karaté · Lame blanche";
+    const float pw = 16 + std::max(nw, textWidth(sub, 15, B)) + 26, ph = 10 + 0.84f * 96 + 6 + 18.15f + 8;
+    ui::quad({700, py}, {700 + pw, py}, {700 + pw - 22, py + ph}, {700, py + ph}, withAlpha(ui::kNight, a), withAlpha(ui::kNight, a),
+             withAlpha(ui::kNight, a), withAlpha(ui::kNight, a));
+    ui::big("HAKUEN", 716, py + 10, 96, ui::Face::Cond, withAlpha(WHITE, a));
+    drawText(sub, 716, py + 10 + 0.84f * 96 + 6, 15, withAlpha(ui::kMist, a), B);
+  }
+  // The logo, small; the tip of the chosen way
+  {
+    const float a = in(0.0f, 0.4f, 0.2f, 0.8f, 0.2f);
+    rlPushMatrix();
+    rlTranslatef(0, 12.0f * (1.0f - a), 0);
+    ui::prestigeLogo(56, 30, 0.2f, t);
+    rlPopMatrix();
+    const float b = in(0.4f, 0.4f, 0.2f, 0.8f, 0.2f), dy = 12.0f * (1.0f - b);
+    ui::caps("ASTUCE", 306, 50 + dy + 0.534f * 11, 11, 0.22f, withAlpha(ui::kBlue, b));
+    drawText(kItems[menuSel_].tip, 306, 50 + dy + 11.97f + 6 + 1.33f, 14, withAlpha(ui::kMist, b), B);
+  }
+
+  // The four ways to play, as big as a scoreboard
+  const int sel = menuSel_;
+  for (int i = 0; i < kBig; ++i) {
+    const Item& it = kItems[i];
+    const Rectangle r = itemRect(i, sel);
+    const float a = in(0.06f + 0.06f * i, 0.34f), ox = -56.0f * (1.0f - a);
+    const char* num = TextFormat("%02d", i + 1);
+    const bool chosen = i == sel, hover = !chosen && ui::hovered(r);
+    const float size = chosen ? 170.0f : 92.0f, box = 0.84f * size, bottom = r.y + box;
+    const float numPad = chosen ? 24.0f : 10.0f, tagPad = chosen ? 24.0f : 12.0f;
+    const Color dim = it.ready ? ui::kMist : ui::kDim;
+    float x = 56.0f + ox;
+    ui::caps(num, x, bottom - numPad - 14.14f + 0.534f * 13, 13, 0.16f, withAlpha(chosen ? ui::kBlue : dim, a));
+    x += ui::capsWidth(num, 13, 0.16f) + 2.08f + 16.0f;
+    const float ww = ui::bigWidth(it.label, size, ui::Face::Cond);
+    if (chosen) {
+      if (re >= 0.1f) {  // it lands a little big, then settles
+        const float u = (re - 0.1f) / 0.5f, k = u < 0.3f ? ui::seg(u, 0.0f, 0.3f) : 1.0f;
+        const float sc = u < 0.3f ? 1.12f - 0.12f * k : 1.0f, al = u < 0.3f ? k : 1.0f;
+        ui::scaled(sc, x, r.y + 0.8f * box, [&] { ui::big(it.label, x, r.y, size, ui::Face::Cond, withAlpha(WHITE, al * a)); });
+      }
+      // the cyan mark at its left, growing up
+      const float m = ui::seg(re, 0.18f, 0.58f), mh = 126.0f * m, my = r.y + 4 + 126.0f;
+      ui::quad({22 + ui::kLean * mh, my - mh}, {32 + ui::kLean * mh, my - mh}, {32, my}, {22, my}, ui::kBlue, ui::kBlue,
+               ui::kBlue, ui::kBlue);
+      drawText(it.desc, 104 + ox, r.y + 160, 16, withAlpha(ui::kSilver, a), B);
+    } else {
+      ui::bigHollow(it.label, x, r.y, size, ui::Face::Cond, 1.5f, withAlpha(hover ? ui::kSilver : dim, a));
+    }
+    x += ww + 16.0f + (chosen ? 6.0f : 0.0f);
+    if (*it.tag)
+      ui::caps(it.tag, x, bottom - tagPad - 11.97f + 0.534f * 11, 11, 0.18f,
+               withAlpha(chosen ? ui::kBlue : it.ready ? ui::kMist : Color{127, 139, 174, 255}, a));
+  }
+  // The other four, small buttons
+  {
+    const float a = in(0.36f, 0.4f, 0.2f, 0.8f, 0.2f), dy = 12.0f * (1.0f - a);
+    for (int i = kBig; i < kItemCount; ++i) {
+      Rectangle r = itemRect(i, sel);
+      r.y += dy;
+      const bool chosen = i == sel, hover = ui::hovered(r);
+      const Color ink = chosen ? ui::kNight : ui::kSilver;
+      if (chosen) DrawRectangleRec(r, withAlpha(ui::kSilver, a));
+      else {
+        if (hover) DrawRectangleRec(r, withAlpha(ui::kSilver, 0.08f * a));
+        DrawRectangleRoundedLinesEx(r, 6.0f / 22.0f, 6, 1.0f, withAlpha(Color{214, 226, 255, 255}, 0.2f * a));
+      }
+      ui::icon(kItems[i].icon, {r.x + 12 + 9, r.y + 22}, 18, withAlpha(ink, a), 1.8f * 18.0f / 24.0f);
+      ui::caps(kItems[i].label, r.x + 39, r.y + 22, 11, 0.12f, withAlpha(ink, a));
+    }
+    if (sel >= kBig) drawText(kItems[sel].desc, 56, 556 + dy, 16, withAlpha(ui::kSilver, a), B);
+  }
+  // The hints and the version
+  {
+    const float a = in(0.44f, 0.4f, 0.2f, 0.8f, 0.2f), y = 654.0f + 12.0f * (1.0f - a);
+    float x = 58.0f;
+    auto hint = [&](const char* key, ui::Btn b, const char* label) {
+      x += ui::pkey(key, b, x, y, 22, false, a) + 8.0f;
+      drawText(label, x, y + 11 - 0.605f * 12, 12, withAlpha(ui::kMist, a), B);
+      x += textWidth(label, 12, B) + 18.0f;
+    };
+    hint("↑ ↓", ui::Btn::DPadUD, "Choisir");
+    hint("ENTRÉE", ui::Btn::A, "Valider");
+    hint("ÉCHAP", ui::Btn::B, "Quitter");
+    const std::string ver = std::string("Version ") + (kVersion + 1);
+    drawText(ver.c_str(), x + 8, y + 11 - 0.605f * 12, 12, withAlpha(ui::kMist, a), B);
+  }
 }

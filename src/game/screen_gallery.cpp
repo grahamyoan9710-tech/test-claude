@@ -40,65 +40,98 @@ void App::drawGallery() {
   const auto& r = roster();
   gallerySel_ = std::clamp(gallerySel_, 0, int(r.size()) - 1);
   const CharacterDef& d = r[gallerySel_];
+  const Fiche fi = fiche(d);
+  constexpr FontKind D = FontKind::Display, B = FontKind::Body;
+  static int shownSel = -1, changedAt = 0;  // the card and the sheet slide in again when the fighter changes
+  if (gallerySel_ != shownSel) shownSel = gallerySel_, changedAt = screenFrames_;
+  auto ease = [&](float from, float delay, float len) {
+    const float u = clampf((screenFrames_ - from - delay) / len, 0.0f, 1.0f);
+    return 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+  };
   ui::stageBackdrop(featuredStage(), t, 0.55f);
+  ui::dusk(0.78f);
   ui::header("PERSONNAGES", nullptr, ui::kGold, t);
 
-  // The fighters, one chunky button each: the chosen one is gold
+  // The fighters: a rounded plate each, the chosen one cream
   for (int i = 0; i < int(r.size()); ++i) {
     const bool sel = i == gallerySel_;
+    const float in = ease(0, 3 + i * 2.4f, 27);
     Rectangle p = plateRect(i);
-    ui::button(p, "", sel ? ui::Tone::Gold : ui::Tone::Blue, sel, t);
-    if (sel) p = ui::grow(p, 3.0f);
-    const float lip = ui::chunkyLip(p);
-    const Vec2 face{p.x + 44, p.y + (p.height - lip) * 0.5f};
-    DrawCircleV(V(face), 30, ui::kInk);
-    DrawCircleV(V(face), 27, shade(ui::toneBottom(sel ? ui::Tone::Gold : ui::Tone::Blue), 0.5f));
-    drawPortraitDisc(r[i], 0, face, 27, t + i);
-    ui::bold(r[i].name.c_str(), p.x + 86, p.y + 8, sel ? 28 : 25);
-    drawTextOutlined(r[i].series.c_str(), p.x + 88, p.y + 40, 15, WHITE, ui::kInk, 2.0f);
+    p.x -= 28 * (1 - in);
+    const Color f = sel ? ui::kCream : ui::hovered(p) ? Color{46, 43, 94, 255} : Color{36, 34, 79, 235};
+    ui::roundRect(p, 16, f, f);
+    if (!sel) ui::roundLines(p, 16, 1.0f, withAlpha(ui::kCream, 0.1f));
+    const Vec2 face{p.x + 38, p.y + p.height * 0.5f};
+    DrawCircleV(V(face), 26, sel ? ui::kInk : withAlpha(ui::kCream, 0.25f));
+    DrawCircleV(V(face), 24, mixColor(auraColor(r[i].hero), ui::kNavy, 0.55f));
+    drawArtDisc(r[i], 0, face, 24, t + i);
+    const Fiche fr = fiche(r[i]);
+    const std::string nick = upperFr(fr.nick);
+    float ns = 14;
+    while (ns > 9 && textWidth(nick.c_str(), ns, D) > p.width - 90) ns -= 0.5f;
+    const Color ink = sel ? ui::kInk : ui::kCream;
+    drawText(nick.c_str(), p.x + 76, capsY(p.y + 26, ns, D), ns, ink, D);
+    const std::string sub = "N° " + r[i].id.substr(1) + " · " + fr.art;
+    drawText(sub.c_str(), p.x + 76, capsY(p.y + 46, 12, B), 12, sel ? withAlpha(ui::kInk, 0.7f) : ui::kMuted, B);
+    if (sel) ui::rim(p, 16, t);
   }
 
-  // The fighter, live, on a card of its colour
+  // The fighter, live, on a card of its colour, its number huge and faint behind
   const Color ac = auraColor(d.hero);
-  const Rectangle stage{384, 104, 392, 548};
-  ui::roundRect(ui::grow(stage, 4), 26, ui::kInk, ui::kInk);
-  ui::roundRect(stage, 22, mixColor(ac, WHITE, 0.2f), shade(ac, 0.3f));
-  ui::roundRect({stage.x + 6, stage.y + 4, stage.width - 12, 60}, 18, withAlpha(WHITE, 0.16f), withAlpha(WHITE, 0.0f));
-  ui::roundLines(ui::grow(stage, -6), 16, 2.0f, withAlpha(WHITE, 0.35f));
-  DrawEllipse(580, 612, 80, 12, withAlpha(BLACK, 0.45f));
-  drawShowcase(d, 0, restPose(d, t), {580, 610}, 1, 330.0f, t);
+  const float cin = ease(float(changedAt), 0, 30);
+  const Rectangle stage{384 + 30 * (1 - cin), 104, 392, 548};
+  ui::roundRect(stage, 22, mixColor(ac, ui::kDeep, 0.45f), ui::kDeep);
+  ui::roundLines(stage, 22, 1.0f, withAlpha(ui::kCream, 0.14f));
+  beginClip(stage);
+  const std::string num = d.id.substr(1);
+  drawText(num.c_str(), stage.x + stage.width - 20 - textWidth(num.c_str(), 220, D), capsY(stage.y + 110, 220, D), 220,
+           withAlpha(ac, 0.14f * cin), D);
+  ui::glow({stage.x + 196, 460}, 230, withAlpha(ac, 0.35f * cin));
+  endClip();
+  DrawEllipse(int(stage.x + 196), 612, 80, 12, withAlpha(BLACK, 0.45f));
+  drawShowcase(d, 0, restPose(d, t), {stage.x + 196, 610}, 1, 330.0f, t);
 
   // Its sheet: style, weapons, transformation, skills
-  const Rectangle sheet{804, 104, 444, 548};
-  ui::card(sheet, 0.96f);
-  const float x = sheet.x + 30;
-  float y = sheet.y + 18;
-  ui::bold(d.name.c_str(), x, y, 44);
-  drawTextOutlined(TextFormat("%s  •  %s", d.series.c_str(), fiche(d).art.c_str()), x + 2, y + 54, 18, kSoft, ui::kInk, 2.0f);
-  DrawRectangleGradientH(int(x), int(y + 86), 300, 3, ui::kGold, withAlpha(ui::kGold, 0.0f));
+  const float sin_ = ease(float(changedAt), 4, 30);
+  const Rectangle sheet{804 + 30 * (1 - sin_), 104, 432, 548};
+  const Color card{33, 31, 72, 235};
+  ui::roundRect(sheet, 20, card, card);
+  ui::roundLines(sheet, 20, 1.0f, withAlpha(ui::kCream, 0.1f));
+  const float x = sheet.x + 28;
+  float y = sheet.y + 26;
+  const std::string name = upperFr(fi.nick);
+  float ns = 30;
+  while (ns > 16 && textWidth(name.c_str(), ns, D) > sheet.width - 56) ns -= 1;
+  drawText(name.c_str(), x, capsY(y + 18, ns, D), ns, ui::kCream, D);
+  const std::string sub = "N° " + num + " · " + fi.art + (fi.style.empty() ? std::string() : " · " + fi.style);
+  drawText(sub.c_str(), x, capsY(y + 52, 14, B), 14, ui::kSoft, B);
+  DrawRectangleRec({x, y + 72, 40, 2}, ui::kCream);
+  DrawCircleV({x + 44, y + 73}, 3, ui::kBlue);
   y += 100;
-  drawTextOutlined("ARMES", x, y, 15, ui::kGold, ui::kInk, 2.0f);
+  ui::label("ARMES", x, y, 11, 0.16f, ui::kBlue);
   for (int s = 0; s < 2; ++s) {
-    const float wy = y + 24 + s * 58;
-    DrawCircleV({x + 22, wy + 22}, 25, ui::kInk);
-    DrawCircleV({x + 22, wy + 22}, 22, mixColor(ac, ui::kNavyDeep, 0.45f));
-    drawWeaponIcon(d, s, {x + 22, wy + 22}, 34.0f);
-    ui::bold(TextFormat("%s  %s", s == 0 ? "A" : "B", d.weapons[s].name.c_str()), x + 56, wy, 21);
-    drawTextOutlined(d.weapons[s].desc.c_str(), x + 58, wy + 28, 15, kSoft, ui::kInk, 2.0f);
+    const float wy = y + 18 + s * 56;
+    DrawCircleV({x + 22, wy + 22}, 23, withAlpha(ui::kCream, 0.16f));
+    DrawCircleV({x + 22, wy + 22}, 22, mixColor(ac, ui::kNavyDeep, 0.6f));
+    drawWeaponIcon(d, s, {x + 22, wy + 22}, 32.0f);
+    drawText(TextFormat("%s · %s", s == 0 ? "A" : "B", upperFr(d.weapons[s].name).c_str()), x + 58, capsY(wy + 14, 13, D), 13,
+             ui::kCream, D);
+    drawText(d.weapons[s].desc.c_str(), x + 58, capsY(wy + 34, 13, B), 13, ui::kMuted, B);
   }
-  y += 148;
-  drawTextOutlined("TRANSFORMATION", x, y, 15, ui::kGold, ui::kInk, 2.0f);
-  drawTextOutlined(d.forms.empty() ? "Aucune" : TextFormat("T%s", d.id.substr(1).c_str()), x + 160, y - 2, 19, WHITE,
-                   ui::kInk, 2.0f);
-  y += 36;
-  drawTextOutlined("COMPÉTENCES", x, y, 15, ui::kGold, ui::kInk, 2.0f);
+  y += 140;
+  ui::label("TRANSFORMATION", x, y, 11, 0.16f, ui::kBlue);
+  drawText(d.forms.empty() ? "Aucune" : TextFormat("T%s", num.c_str()), x + 150, capsY(y, 14, B), 14, ui::kCream, B);
+  y += 34;
+  ui::label("COMPÉTENCES", x, y, 11, 0.16f, ui::kBlue);
   const char* dirs[4] = {"Neutre", "Côté", "Haut", "Bas"};
   for (int k = 0; k < 4; ++k) {
-    drawTextOutlined(dirs[k], x, y + 24 + k * 27, 16, kSoft, ui::kInk, 2.0f);
-    drawTextOutlined(d.moves[NSpecial + k].name.c_str(), x + 80, y + 22 + k * 27, 19, WHITE, ui::kInk, 2.0f);
+    const float ry = y + 26 + k * 27;
+    drawText(dirs[k], x, capsY(ry, 13, B), 13, ui::kMuted, B);
+    drawText(d.moves[NSpecial + k].name.c_str(), x + 80, capsY(ry, 15, B), 15, ui::kCream, B);
   }
-  drawTextOutlined("Ultime", x, y + 24 + 4 * 27, 16, kSoft, ui::kInk, 2.0f);
-  ui::bold(d.moves[FinalSmash].name.c_str(), x + 80, y + 18 + 4 * 27, 22, ui::kGold);
+  const float uy = y + 26 + 4 * 27 + 4;
+  drawText("Ultime", x, capsY(uy, 13, B), 13, ui::kMuted, B);
+  drawText(upperFr(d.moves[FinalSmash].name).c_str(), x + 80, capsY(uy, 14, D), 14, ui::kBlue, D);
 
   ui::footer({{"HAUT/BAS", ui::Btn::DPadUD, "Choisir"}, {"ÉCHAP", ui::Btn::B, "Retour"}});
 }

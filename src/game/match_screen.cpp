@@ -1,6 +1,7 @@
 // The fight itself: inputs -> simulation -> effects -> camera -> drawing.
 #include "game/app.hpp"
 #include "game/fighter_art.hpp"
+#include "game/pixel.hpp"
 #include "game/render.hpp"
 #include "game/rtx.hpp"
 #include "game/settings.hpp"
@@ -65,111 +66,83 @@ void drawImpactFrame(const Match& m, const Fx::Impact& im, const Camera2D& cam, 
   DrawRectangleLinesEx({8, 8, kScreenW - 16.0f, kScreenH - 16.0f}, 7, ink);  // panel border
 }
 
-// Ultimate cut-in (during the final smash freeze): the screen darkens, a diagonal band slashes
-// across with the fighter's portrait and the move's name, speed lines in the fighter's colours.
-void drawUltCutIn(const Match& m, float time) {
-  if (m.freezeTimer <= 0 || m.freezeOwner < 0 || m.freezeOwner >= int(m.fighters.size())) return;
+// The ultimate's cut-in (« Prestige »): the fight holds and sinks into the night; letterbox bars carry the word
+// ULTIME outlined in the fighter's colour; his colour slams across, speed lines drawn in Blender 2D rushing through
+// it; he lunges in, in his own pixel art x4; the move's name lands white on a brush stroke of his deep colour.
+// c: frames since it began. The fight holds for kCutHold of them, then the cut-in leaves over kCutOut.
+constexpr int kCutHold = 66, kCutOut = 14;
+
+void drawUltCutIn(const Match& m, int c, float time) {
+  if (c < 0 || c >= kCutHold + kCutOut || m.freezeOwner < 0 || m.freezeOwner >= int(m.fighters.size())) return;
   const Fighter& f = m.fighters[m.freezeOwner];
-  const int t = 30 - m.freezeTimer;  // 0 .. 29
-  const HitFx el = heroElement(f.def->hero);
-  const bool black = el == HitFx::Dark;
-  const Color c = black ? Color{60, 58, 70, 255} : hitFxColor(el);
-  const Color g = black ? Color{235, 235, 245, 255} : hitFxGlow(el);
-  const Color deep = black ? Color{6, 6, 10, 255} : shade(hitFxColor(el), 0.3f);
-  const float tin = std::min(1.0f, (t + 1) / 6.0f), tout = clampf((t - 23) / 6.0f, 0.0f, 1.0f);
-  const float ein = 1.0f - (1.0f - tin) * (1.0f - tin) * (1.0f - tin), eout = tout * tout;
-  const float env = ein * (1.0f - eout);
-  const float slide = (1.0f - ein) * -1800.0f + eout * 1800.0f;
-  constexpr float kAngle = -9.0f, kBand = 240.0f;
-
-  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(BLACK, 0.55f * env));
+  const ui::Flood fl = ui::flood(f.def->hero);
+  constexpr FontKind kB = FontKind::Body;
+  const float s = c / 60.0f, o = ui::seg((c - kCutHold) / 60.0f, 0.0f, kCutOut / 60.0f, 0.7f, 0.0f, 0.2f, 1.0f), keep = 1.0f - o;
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kNight, 0.74f * ui::seg(s, 0.0f, 0.2f, 0.0f, 0.0f, 0.58f, 1.0f) * keep));
+  const Vector2 sh = ui::slam(s - 0.6f);
   rlPushMatrix();
-  rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
-  rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
-  vfx::additive(!black);
-  for (int i = 0; i < 48; ++i) {  // speed lines racing along the band
-    const float y = (vfx::hash01(i * 7 + 1) - 0.5f) * 980.0f;
-    const float ph = std::fmod(time * (2.2f + 2.4f * vfx::hash01(i * 7 + 2)) + vfx::hash01(i * 7 + 3), 1.0f);
-    const float x = -1200.0f + ph * 2400.0f, len = 200.0f + 380.0f * vfx::hash01(i * 7 + 4);
-    const float w = 2.0f + 6.0f * vfx::hash01(i * 7 + 5);
-    const Color col = i % 3 == 0 ? WHITE : i % 3 == 1 ? c : g;
-    vfx::streak({x - len, y}, {x, y}, w * 0.2f, w, withAlpha(col, 0.0f), withAlpha(col, 0.75f * env));
+  rlTranslatef(sh.x, sh.y, 0.0f);
+  // His colour, from 0.14 s; on the way out it carries on to the right
+  const float in = ui::seg(s, 0.14f, 0.48f, 0.7f, 0.0f, 0.2f, 1.0f);
+  if (in > 0.0f) {
+    const float bx = -1420.0f * (1.0f - in) + 1420.0f * o, y = 196.0f;
+    DrawRectangleRec({bx, y, 1280, 328}, fl.fill);
+    ui::speedFrame(int(s * 24.0f), {bx, y, 1280, 328}, fl.deep);
+    DrawRectangleRec({bx, y, 1280, 14}, fl.deep);
+    DrawRectangleRec({bx, y + 314, 1280, 14}, fl.deep);
+    DrawRectangleRec({bx, y - 4, 1350, 4}, ui::kSilver);
+    DrawRectangleRec({bx, y + 328, 1280, 4}, ui::kSilver);
   }
-  vfx::additive(false);
-  const float L = -1100.0f + slide, R = 1100.0f + slide, top = -kBand * 0.5f, bot = kBand * 0.5f;
-  vfx::quad({L, top}, {R, top}, {R, bot}, {L, bot}, withAlpha(c, 0.97f), withAlpha(deep, 0.97f), withAlpha(deep, 0.97f),
-            withAlpha(c, 0.97f));
-  vfx::additive(true);
-  for (int i = 0; i < 10; ++i) {  // light streaming inside the band
-    const float y = top + 12.0f + vfx::hash01(i * 13 + 5) * (kBand - 24.0f);
-    const float ph = std::fmod(time * 4.0f + vfx::hash01(i * 13 + 6), 1.0f);
-    const float x = L + ph * (R - L);
-    vfx::streak({x - 420.0f, y}, {x, y}, 1.0f, 5.0f, withAlpha(g, 0.0f), withAlpha(g, 0.5f));
+  // The bars, ULTIME running along them hollow (the top one leftwards, the bottom one rightwards)
+  const float by = 120.0f * (1.0f - ui::seg(s, 0.0f, 0.28f, 0.7f, 0.0f, 0.2f, 1.0f) * keep);
+  const float ww = ui::bigWidth("ULTIME ", 92, ui::Face::Wide), run = std::fmod(time / 9.0f, 1.0f) * 3.0f * ww;
+  for (int k = 0; k < 2; ++k) {
+    const float y0 = k == 0 ? -by : 600.0f + by;
+    DrawRectangleRec({0, y0, float(kScreenW), 120}, ui::kNight);
+    beginClip({0, std::max(0.0f, y0), float(kScreenW), 120});
+    for (int r = 0; r < 6; ++r)
+      ui::bigHollow("ULTIME ", (k == 0 ? -run : run - 3.0f * ww) + r * ww, y0 + 14, 92, ui::Face::Wide, 1.5f, withAlpha(fl.fill, 0.6f), 1.0f);
+    endClip();
   }
-  vfx::glow({-380.0f + slide, 0.0f}, 300.0f, withAlpha(g, 0.7f), withAlpha(g, 0.0f), 32);  // light behind the portrait
-  vfx::burst({-380.0f + slide, 0.0f}, 16, 40.0f, 420.0f, 0.16f, time * 1.5f, withAlpha(g, 0.45f), withAlpha(g, 0.0f));
-  vfx::additive(false);
-  DrawRectangleRec({L, top - 10.0f, R - L, 7.0f}, WHITE);  // hard white edges
-  DrawRectangleRec({L, bot + 3.0f, R - L, 7.0f}, WHITE);
-  DrawRectangleRec({L, top - 19.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
-  DrawRectangleRec({L, bot + 16.0f, R - L, 3.0f}, withAlpha(g, 0.9f));
-  rlPopMatrix();
-
-  // The portrait breaks out of the band. An illustrated one is a big bust, its eyes in a strip above the band,
-  // sliding the other way.
-  const float rad = deg2rad(kAngle);
-  const Vec2 pc = Vec2{kScreenW * 0.5f, kScreenH * 0.5f} + rotate({-380.0f + slide, 0.0f}, rad);
-  float aw, ah;
-  Vec2 eye;
-  if (artGeometry(*f.def, aw, ah, eye, true)) {
-    constexpr float kEyeH = 96.0f, kZoom = 3.2f;
-    rlPushMatrix();
-    rlTranslatef(kScreenW * 0.5f, 140.0f, 0.0f);
-    rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
-    const Vec2 at{60.0f - slide, 0.0f};
-    const float x0 = std::max(-1100.0f, at.x - eye.x * kZoom), x1 = std::min(1100.0f, at.x + (aw - eye.x) * kZoom);
-    const float y0 = -kEyeH * 0.5f, y1 = kEyeH * 0.5f;
-    DrawRectangleRec({-1100.0f - slide, y0 - 4.0f, 2200.0f, kEyeH + 8.0f}, withAlpha(WHITE, env));
-    DrawRectangleRec({-1100.0f - slide, y0, 2200.0f, kEyeH}, withAlpha({10, 3, 6, 255}, env));
-    const Vector2 strip[4] = {{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}};
-    drawArtPoly(*f.def, strip, 4, at, kZoom, true, withAlpha(WHITE, env));
-    const Color ink{10, 3, 6, 255}, none{10, 3, 6, 0};  // its ends fade into the night
-    vfx::quad({x0, y0}, {x0 + 160, y0}, {x0 + 160, y1}, {x0, y1}, withAlpha(ink, env), none, none, withAlpha(ink, env));
-    vfx::quad({x1 - 160, y0}, {x1, y0}, {x1, y1}, {x1 - 160, y1}, none, withAlpha(ink, env), withAlpha(ink, env), none);
-    vfx::additive(true);
-    for (int i = 0; i < 6; ++i) {  // light racing over it
-      const float y = y0 + 8.0f + vfx::hash01(i * 17 + 3) * (kEyeH - 16.0f);
-      const float x = -900.0f + std::fmod(time * 3.0f + vfx::hash01(i * 17 + 4), 1.0f) * 1800.0f;
-      vfx::streak({x - 260.0f, y}, {x, y}, 1.0f, 3.0f, withAlpha(g, 0.0f), withAlpha(g, 0.45f * env));
+  // He lunges in from the left (his side special's strike, with the weapon in hand if he has its clip)
+  if (const float u = (s - 0.32f) / 0.5f; u > 0.0f) {
+    int anim = art::kSheetMove0 + SSpecial;
+    if (f.weapon == 0 && art::hasSheet(f.def->hero, art::kSheetWeapon0 + SSpecial)) anim = art::kSheetWeapon0 + SSpecial;
+    if (f.weapon == 1 && art::hasSheet(f.def->hero, art::kSheetWeapon1 + SSpecial)) anim = art::kSheetWeapon1 + SSpecial;
+    if (!art::hasSheet(f.def->hero, anim)) anim = art::kSheetIdle;
+    int n;
+    float fw, fh, fps;
+    if (art::clipInfo(*f.def, anim, n, fw, fh, fps)) {
+      const float k = ui::seg(u, 0.0f, 0.6f), dx = u < 0.6f ? -220.0f + 234.0f * k : 14.0f - 14.0f * ui::seg(u, 0.6f, 1.0f);
+      art::drawClipPx(*f.def, anim, std::min(4, n - 1), 20.0f + dx + 1420.0f * o, 690.0f - fh * 4.0f, 4.0f, false, k * keep);
     }
-    vfx::additive(false);
-    rlPopMatrix();
-    drawArtBust(*f.def, pc.x, pc.y + 290.0f, 540.0f, withAlpha(WHITE, env));
-  } else {
-    drawPortrait(*f.def, f.palette, pc + Vec2{0.0f, 20.0f}, 360.0f, time);
   }
-
-  // The move's name, slammed in
-  if (t >= 2) {
-    const std::string& name = f.moveDef(FinalSmash).name;
-    const float slam = 1.0f + 0.6f * std::max(0.0f, 1.0f - (t - 2) / 4.0f);
-    float size = 96.0f;
-    const float w0 = textWidth(name.c_str(), size, FontKind::Title);
-    if (w0 > 640.0f) size *= 640.0f / w0;
-    size *= slam;
-    const float w = textWidth(name.c_str(), size, FontKind::Title);
-    rlPushMatrix();
-    rlTranslatef(kScreenW * 0.5f, kScreenH * 0.5f, 0.0f);
-    rlRotatef(kAngle, 0.0f, 0.0f, 1.0f);
-    const float cx = 250.0f + slide;
-    drawTextOutlined(f.def->name.c_str(), cx - w * 0.5f + 6.0f, top + 14.0f, 30, withAlpha(g, env), withAlpha(BLACK, env), 3.0f,
-                     FontKind::Title);
-    drawText(name.c_str(), cx - w * 0.5f + 7.0f, -size * 0.42f + 8.0f, size, withAlpha(BLACK, 0.6f * env), FontKind::Title);
-    drawTextOutlined(name.c_str(), cx - w * 0.5f, -size * 0.42f, size, withAlpha(WHITE, env), withAlpha(deep, env),
-                     std::max(3.5f, size * 0.06f), FontKind::Title);
-    rlPopMatrix();
+  // Who: the player's tag and « ULTIME · NAME », on the band
+  if (const float u = ui::seg(s, 0.52f, 0.88f, 0.2f, 0.8f, 0.2f, 1.0f), al = u * keep; al > 0.0f) {
+    const std::string tag = f.cpu ? std::string("CPU") : std::string(TextFormat("J%d", f.port + 1));
+    const std::string txt = "ULTIME · " + upperFr(fiche(*f.def).nick);
+    const float tw = ui::capsWidth(tag.c_str(), 11, 0.08f) + 0.88f + 14.0f, xw = ui::capsWidth(txt.c_str(), 13, 0.34f) + 4.42f;
+    const float x0 = 1218.0f - xw - 12.0f - tw, cy = 299.0f + 12.0f * (1.0f - u);
+    DrawRectangleRec({x0, cy - 11, tw, 22}, withAlpha(ui::kNight, al));
+    ui::caps(tag.c_str(), x0 + 7, cy, 11, 0.08f, withAlpha(f.cpu ? ui::kCpuTag : slotColor(f), al));
+    ui::caps(txt.c_str(), x0 + tw + 12, cy, 13, 0.34f, withAlpha(ui::kNight, al));
   }
-  if (t < 3) DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(WHITE, 0.55f * (3 - t) / 3.0f));  // opening flash
+  // The move's name on its brush stroke
+  if (s >= 0.5f) ui::swooshFrame(int((s - 0.5f) * 24.0f), {370 + 1420.0f * o, 334, 900, 160}, withAlpha(fl.deep, keep));
+  if (const float u = ui::seg(s, 0.6f, 1.05f), al = u * keep; al > 0.0f) {
+    const std::string nm = upperFr(f.moveDef(FinalSmash).name);
+    float em = 96.0f;
+    while (em > 48.0f && ui::bigWidth(nm.c_str(), em, ui::Face::Cond) > 860.0f) em -= 2.0f;
+    const float w = ui::bigWidth(nm.c_str(), em, ui::Face::Cond);
+    ui::big(nm.c_str(), 1224.0f - w + 60.0f * (1.0f - u) + 1420.0f * o, 324.0f + (96.0f - em) * 0.42f, em, ui::Face::Cond,
+            withAlpha(WHITE, al));
+  }
+  if (const float u = ui::seg(s, 0.7f, 1.06f, 0.2f, 0.8f, 0.2f, 1.0f), al = u * keep; al > 0.0f) {
+    const bool armed = f.weapon >= 0 && f.weapon < int(f.def->weapons.size());
+    const std::string sub = (armed ? f.def->weapons[f.weapon].name : std::string("Mains nues")) + " · gagnée en brisant la Clash Orb";
+    drawText(sub.c_str(), 1218.0f - textWidth(sub.c_str(), 15, kB), 420.0f + 12.0f * (1.0f - u), 15, withAlpha(ui::kNight, al), kB);
+  }
+  rlPopMatrix();
 }
 }  // namespace
 
@@ -311,14 +284,19 @@ void MatchScreen::drawCallouts() {
   }
 }
 
+void MatchScreen::showSkill(char dir) {
+  skillShow_ = dir;
+  if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
+}
+
 void MatchScreen::showUltimate(int slot) {
   ultShow_ = std::clamp(slot, -1, 1);
   if (brains_.size() > 1) brains_[1].setDummy(CpuBrain::kDummyStand);
 }
 
-MatchScreen::Result MatchScreen::update() {
+MatchScreen::Result MatchScreen::update(bool catchUp) {
   time_ += 1.0f / 60.0f;
-  if (!attract_ && IsKeyPressed(KEY_F1)) debug_ = !debug_;
+  if (!attract_ && !catchUp && IsKeyPressed(KEY_F1)) debug_ = !debug_;
   // A player's gamepad got unplugged: pause until it is back (or until the players resume anyway).
   for (const auto& f : m_.fighters) {
     const int d = devices_[f.port];
@@ -335,17 +313,32 @@ MatchScreen::Result MatchScreen::update() {
   for (const auto& f : m_.fighters) {
     if (f.cpu) continue;
     anyHuman = true;
-    if (m_.started() && !m_.finished && devicePausePressed(devices_[f.port])) {
+    if (!catchUp && m_.started() && !m_.finished && devicePausePressed(devices_[f.port])) {
       openPause(f.port);
       audio_.play(Sfx::MenuSelect);
       return Result::Running;
     }
   }
-  if (!anyHuman && !attract_ && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
+  if (!anyHuman && !attract_ && !catchUp && (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P) || padAnyPressed(kPadStart))) {
     openPause(-1);
     return Result::Running;
   }
 
+  // The ultimate's cut-in holds the fight; GAME plays the last blow in slow motion (a step every third frame)
+  const bool held = cutT_ >= 0 && cutT_ < kCutHold, slow = m_.finished && endTimer_ < 36 && endTimer_ % 3 != 0;
+  if (!held && !slow) stepFight();
+  cutT_ = m_.freezeTimer > 0 ? cutT_ + 1 : -1;
+  updateCamera(false);
+  shake_ = fx_.shakeOffset() * shakeScale() * (attract_ ? 0.5f : 1.0f);
+
+  if (m_.finished) {  // « GAME », then the winner's brush to the results (1.45 s in)
+    if (endTimer_ == 0 && !attract_) audio_.setMusic(0);
+    if (++endTimer_ > (attract_ ? kAttractEnd : 87)) return Result::Finished;
+  }
+  return Result::Running;
+}
+
+void MatchScreen::stepFight() {
   std::array<InputState, 4> inputs{};
   for (const auto& f : m_.fighters) {
     if (f.cpu) {
@@ -377,19 +370,22 @@ MatchScreen::Result MatchScreen::update() {
       inputs[f.port] = InputState{};
     }
   }
+  if (skillShow_ && m_.started() && m_.fighters.size() >= 2) {  // the demo's special, once its cooldown is over
+    Fighter& f = m_.fighters[0];
+    inputs[f.port] = InputState{};
+    if (m_.frame > 260 && m_.frame % 150 == 0 && f.grounded && f.state != FState::Attack) {
+      f.pos = {-170.0f, 0.0f};
+      f.facing = 1;
+      m_.fighters[1].pos = {130.0f, 0.0f};
+      inputs[f.port].special = true;
+      inputs[f.port].stick = skillShow_ == 's' ? Vec2{1, 0} : skillShow_ == 'u' ? Vec2{0, -1} : skillShow_ == 'd' ? Vec2{0, 1} : Vec2{};
+    }
+  }
   m_.step(inputs);
   fx_.onEvents(m_);
   fx_.update(m_);
   if (!attract_) trackCallouts();
   if (training()) trackCombos();
-  updateCamera(false);
-  shake_ = fx_.shakeOffset() * shakeScale() * (attract_ ? 0.5f : 1.0f);
-
-  if (m_.finished) {
-    if (endTimer_ == 0 && !attract_) audio_.setMusic(0);
-    if (++endTimer_ > (attract_ ? kAttractEnd : 170)) return Result::Finished;
-  }
-  return Result::Running;
 }
 
 void MatchScreen::updateCamera(bool snap) {
@@ -411,8 +407,8 @@ void MatchScreen::updateCamera(bool snap) {
     maxY = std::max(maxY, c.y + 130.0f);
   }
   float w = maxX - minX, h = maxY - minY;
-  // 0.87: the camera stands a little further back (the owner's wish), on its own and at its closest.
-  float zoom = clampf(0.87f * std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.15f);
+  // 1.0: the camera close on the fight again (owner, 12/11: it stood too far back).
+  float zoom = clampf(1.0f * std::min(kScreenW / w, (kScreenH - 120.0f) / h), 0.42f, 1.35f);
   Vec2 target{(minX + maxX) * 0.5f, (minY + maxY) * 0.5f + 50.0f / zoom};
   // An ultimate: the camera tightens on its user and on the fighters it is dealing with.
   int ultUser = -1;
@@ -448,26 +444,28 @@ void MatchScreen::updateCamera(bool snap) {
     target = m_.fighters[m_.freezeOwner].center();
     zoom = 1.45f;
   }
-  if (m_.finished && m_.winner >= 0) {  // zoom on the winner
-    const Fighter& w2 = m_.fighters[m_.winner];
-    if (w2.active()) {
-      target = lerpv(target, w2.center(), std::min(1.0f, endTimer_ / 60.0f));
-      zoom = lerpf(zoom, 1.3f, std::min(1.0f, endTimer_ / 60.0f));
-    }
+  if (m_.finished) {  // « GAME »: the camera pushes in x1.5 in 0.62 s, onto the winner, as in Smash
+    if (endTimer_ == 0) finishZoom_ = camZoom_;
+    const float u = std::min(1.0f, endTimer_ / 37.0f);
+    const float k = u < 0.7f ? 0.84f * ui::seg(u, 0.0f, 0.7f, 0.12f, 0.8f, 0.2f, 1.0f)
+                             : 0.84f + 0.16f * ui::seg(u, 0.7f, 1.0f, 0.12f, 0.8f, 0.2f, 1.0f);
+    if (m_.winner >= 0 && m_.fighters[m_.winner].active()) target = lerpv(target, m_.fighters[m_.winner].center(), k);
+    zoom = finishZoom_ * (1.0f + 0.5f * k);
   }
   if (snap) {
     camPos_ = target;
     camZoom_ = zoom;
   } else {
-    const float speed = m_.freezeTimer > 0 ? 0.2f : ultUser >= 0 ? 0.12f : 0.08f;  // keeps up with an ultimate
+    const float speed = m_.freezeTimer > 0 || m_.finished ? 0.2f : ultUser >= 0 ? 0.12f : 0.08f;  // keeps up with an ultimate
     camPos_ += (target - camPos_) * speed;
-    camZoom_ += (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : ultUser >= 0 ? 0.08f : 0.05f);
+    camZoom_ = m_.finished ? zoom : camZoom_ + (zoom - camZoom_) * (m_.freezeTimer > 0 ? 0.15f : ultUser >= 0 ? 0.08f : 0.05f);
   }
 }
 
 Camera2D MatchScreen::camera() {
   Camera2D cam{};
-  cam.offset = {kScreenW * 0.5f + shake_.x, kScreenH * 0.5f + shake_.y};
+  const Vector2 go = goShake(m_), cut = cutT_ >= 0 ? ui::slam(cutT_ / 60.0f - 0.6f) : Vector2{0, 0};
+  cam.offset = {kScreenW * 0.5f + shake_.x + go.x + cut.x, kScreenH * 0.5f + shake_.y + go.y + cut.y};
   Vec2 target = camPos_;
   float zoom = camZoom_;
   if (const float k = fx_.zoomPunch(); k > 0.0f && !attract_) {  // impact: the camera punches in on the blow
@@ -482,39 +480,53 @@ Camera2D MatchScreen::camera() {
 }
 
 void MatchScreen::drawTrainingPanel() {
+  constexpr FontKind kB = FontKind::Body, kDsp = FontKind::Display;
   int dummy = -1;
   for (const auto& f : m_.fighters)
     if (f.cpu) dummy = f.id;
-  Rectangle p{18, 18, 330, 172};
-  ui::card(p, 0.92f);
-  ui::bold("ENTRAÎNEMENT", p.x + 16, p.y + 10, 22, ui::kGold);
-  int live = dummy >= 0 ? combo_[dummy] : 0;
-  int shown = live >= 2 ? live : lastCombo_;
-  Color cc = live >= 2 ? ui::kGold : ui::kCream;
-  ui::bold(TextFormat("%d", shown), p.x + 16, p.y + 40, 54, cc);
-  drawText("COUPS", p.x + 22 + textWidth(TextFormat("%d", shown), 54, FontKind::Title), p.y + 52, 18, ui::kMuted);
-  float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
-  drawText(TextFormat("Dégâts du combo : %d %%", int(dmg)), p.x + 16, p.y + 98, 16, ui::kCream);
-  drawText(TextFormat("Meilleur combo : %d", bestCombo_), p.x + 16, p.y + 120, 14, ui::kMuted);
-  const bool pad = padPrompts();  // options hint, right-aligned
-  const char* opt = pad ? ": options" : "ÉCHAP : options";
-  const float gw = pad ? ui::padGlyphWidth(ui::Btn::Start, 20, promptFamily()) + 4 : 0.0f;
-  float ox = p.x + p.width - 16 - textWidth(opt, 14) - gw;
-  if (pad) ox += ui::padGlyph(ui::Btn::Start, ox, p.y + 117, 20, promptFamily()) + 4;
-  drawText(opt, ox, p.y + 120, 14, ui::kMuted);
-  if (dummy >= 0) {
-    std::string mode = std::string("Mannequin : ") + dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel);
-    drawText(mode.c_str(), p.x + 16, p.y + 142, 15, withAlpha(ui::kCream, 0.85f));
+  const Rectangle p{18, 18, 330, 172};
+  ui::roundRect({p.x + 4, p.y + 8, p.width, p.height}, 18, withAlpha(BLACK, 0.25f), withAlpha(BLACK, 0.25f));
+  ui::roundRect(p, 18, withAlpha(ui::kNavy, 0.92f), withAlpha(ui::kNavyDeep, 0.92f));
+  ui::roundLines(p, 18, 1.0f, withAlpha(ui::kCream, 0.12f));
+  // Header: cyan dot, label, and the options hint right-aligned
+  DrawCircleV({p.x + 22, p.y + 24}, 4, ui::kBlue);
+  ui::label("ENTRAÎNEMENT", p.x + 34, p.y + 24, 11, 0.16f, ui::kSoft);
+  const bool pad = padPrompts();
+  const char* opt = pad ? "options" : "ÉCHAP : options";
+  const float gw = pad ? ui::padGlyphWidth(ui::Btn::Start, 18, promptFamily()) + 4 : 0.0f;
+  float ox = p.x + p.width - 18 - textWidth(opt, 11, kB) - gw;
+  if (pad) ox += ui::padGlyph(ui::Btn::Start, ox, p.y + 15, 18, promptFamily()) + 4;
+  drawText(opt, ox, capsY(p.y + 24, 11, kB), 11, ui::kMuted, kB);
+  DrawRectangleRec({p.x + 18, p.y + 42, p.width - 36, 1}, withAlpha(ui::kCream, 0.08f));
+  // The live combo, big
+  const int live = dummy >= 0 ? combo_[dummy] : 0, shown = live >= 2 ? live : lastCombo_;
+  const char* num = TextFormat("%d", shown);
+  drawText(num, p.x + 18, capsY(p.y + 76, 40, kDsp), 40, live >= 2 ? ui::kBlue : ui::kCream, kDsp);
+  ui::label("COUPS", p.x + 26 + textWidth(num, 40, kDsp), p.y + 84, 11, 0.16f, ui::kMuted);
+  // Stats rows: name left, value right
+  const float dmg = live >= 2 && dummy >= 0 ? m_.fighters[dummy].percent - comboStart_[dummy] : lastComboDamage_;
+  auto row = [&](float cy, const char* k, const char* v) {
+    ui::label(k, p.x + 18, cy, 10, 0.14f, ui::kMuted);
+    drawText(v, p.x + p.width - 18 - textWidth(v, 13, kB), capsY(cy, 13, kB), 13, ui::kCream, kB);
+  };
+  row(p.y + 112, "DÉGÂTS DU COMBO", TextFormat("%d %%", int(dmg)));
+  row(p.y + 134, "MEILLEUR COMBO", TextFormat("%d", bestCombo_));
+  if (dummy >= 0) row(p.y + 156, "MANNEQUIN", dummyName(brains_[dummy], m_.fighters[dummy].cpuLevel));
+  // The options on: cyan chips under the panel
+  float cx = p.x;
+  for (const auto& [on, name] : {std::pair{m_.trainFight, "Combat 3 vies"}, std::pair{m_.trainInfiniteUlt, "Ulti infinie"},
+                                 std::pair{m_.trainZeroPercent, "0 %"}}) {
+    if (!on) continue;
+    const float w = textWidth(name, 12, kB) + 24;
+    ui::roundRect({cx, p.y + p.height + 10, w, 26}, 13, ui::kBlue, ui::kBlue);
+    drawText(name, cx + 12, capsY(p.y + p.height + 23, 12, kB), 12, ui::kInk, kB);
+    cx += w + 8;
   }
-  // The options on, under the panel
-  std::string on;
-  if (m_.trainFight) on += "Combat 3 vies";
-  if (m_.trainInfiniteUlt) on += std::string(on.empty() ? "" : "  •  ") + "Ulti infinie";
-  if (m_.trainZeroPercent) on += std::string(on.empty() ? "" : "  •  ") + "0 %";
-  if (!on.empty()) drawTextOutlined(on.c_str(), p.x + 4, p.y + p.height + 10, 16, ui::kGreen, ui::kInk, 2.0f);
   if (m_.trainRestart > 0) {  // the fight is over: it starts over
     const float a = clampf(m_.trainRestart / 30.0f, 0.0f, 1.0f);
-    ui::boldCentered("Le combat recommence...", kScreenW * 0.5f, kScreenH * 0.5f + 70, 34, WHITE, a);
+    const char* msg = "LE COMBAT RECOMMENCE";
+    const float w = textWidth(msg, 26, kDsp);
+    drawText(msg, (kScreenW - w) * 0.5f, capsY(kScreenH * 0.5f + 70, 26, kDsp), 26, withAlpha(ui::kCream, a), kDsp);
   }
 }
 
@@ -540,6 +552,12 @@ void MatchScreen::drawAttract() {
 }
 
 void MatchScreen::draw() {
+  drawWorld();
+  drawOverlay();
+}
+
+void MatchScreen::drawWorld() {
+  ++shown_;
   Camera2D cam = camera();
   drawBackground(m_.stage(), W(cam.target), cam.zoom, time_);
   beginWorld(cam);
@@ -572,8 +590,6 @@ void MatchScreen::draw() {
   else fx_.drawImpacts();  // the movement smoke and the pixel impacts stay while the other effects are off
   rtx::resolve(m_, cam);               // RTX: the traced light, before the floors mirror it
   light::reflections(m_, cam, time_);  // the floors mirror the scene (not the name tags)
-  drawFighterTags(m_);
-  drawCallouts();          // over the effects: the orb's spark flies out of its own burst
   if (debug_) {
     const Rect& b = m_.stage().blast;
     DrawRectangleLinesEx({b.x, b.y, b.w, b.h}, 4, RED);
@@ -585,18 +601,36 @@ void MatchScreen::draw() {
   drawStageForeground(m_.stage(), W(cam.target), time_);
   fx_.drawScreen(cam);
   if (const Fx::Impact* im = fx_.impact(); kVfx && im) drawImpactFrame(m_, *im, cam, time_);
+}
+
+// The name tags, the HUD, the menus: drawn at the screen's own resolution, whatever the fight's render resolution.
+void MatchScreen::drawOverlay() {
+  Camera2D cam = camera();
+  beginWorld(cam);
+  drawFighterTags(m_);
+  drawCallouts();  // over the effects: the orb's spark flies out of its own burst
+  endWorld();
   drawOffscreenBubbles(m_, cam, time_);
   drawItemPrompts(m_, cam, devices_, time_);
-  drawHud(m_, fx_.hudShake, time_, &devices_);
-  if (!paused_) drawCountdown(m_);  // (an unplugged gamepad can pause before "GO !")
+  drawHud(m_, fx_.hudHit, time_, &devices_);
+  if (!paused_) drawCountdown(m_, shown_ / 60.0f);  // (an unplugged gamepad can pause before "GO !")
   if (training()) drawTrainingPanel();
-  drawUltCutIn(m_, time_);
+  drawUltCutIn(m_, cutT_, time_);
 
-  if (m_.finished) {
-    float k = std::min(1.0f, endTimer_ / 14.0f);
-    float size = lerpf(260.0f, 170.0f, k);
-    float w = ui::spriteWidth(ui::Sprite::Game, size);
-    ui::drawSprite(ui::Sprite::Game, kScreenW * 0.5f - w * 0.5f, kScreenH * 0.32f - size * 0.5f, size);
+  if (m_.finished && !attract_) {  // « GAME » (2.33 s, cut at 1.45 s by the brush): letterbox bars, the fight sinks into
+    // the night, GAME torn red / blue over a silver line
+    const float u = endTimer_ / 60.0f / 2.33f, bar = 76.0f * ui::seg(u, 0.0f, 0.1f);
+    DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kNight, 0.82f * clampf((u - 0.25f) / 0.02f, 0.0f, 1.0f)));
+    DrawRectangleRec({0, 0, float(kScreenW), bar}, ui::kNight);
+    DrawRectangleRec({0, kScreenH - bar, float(kScreenW), bar}, ui::kNight);
+    if (u >= 0.26f) {
+      const float sc = u < 0.32f ? 1.7f - 0.73f * ui::seg(u, 0.26f, 0.32f) : u < 0.37f ? 0.97f + 0.04f * ui::seg(u, 0.32f, 0.37f)
+                       : 1.01f - 0.01f * ui::seg(u, 0.37f, 0.46f);
+      const float split = u < 0.32f ? 44.0f - 28.0f * ui::seg(u, 0.26f, 0.32f) : 16.0f - 6.0f * ui::seg(u, 0.32f, 0.46f);
+      ui::scaled(sc, 640, 350, [&] { ui::choc("GAME", 640, 250, 200, split, ui::seg(u, 0.26f, 0.32f), 5.0f, ui::Face::Wide, 1.0f, 0.04f); });
+      const float l = 700.0f * ui::seg(u, 0.32f, 0.46f);
+      DrawRectangleRec({640 - l * 0.5f, 470, l, 4}, ui::kSilver);
+    }
   }
   if (debug_) drawTextOutlined("F1 : zones de coup", 10, kScreenH - 150, 16, WHITE);
   if (paused_) drawPause();

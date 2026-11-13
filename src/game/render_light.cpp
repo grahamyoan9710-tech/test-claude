@@ -408,4 +408,5 @@ void reflections(const Match& m, const Camera2D& cam, float time) {
   EndShaderMode();
   ui::frameBlend();
 }
+void warm() { ready(); }
 }  // namespace light

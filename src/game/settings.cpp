@@ -1,5 +1,6 @@
 #include "game/settings.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -82,6 +83,12 @@ std::string settingsPath() {
   return dir + "clash_horizon.cfg";
 }
 
+int windowW(const Settings& s, int mw) {
+  if (s.resW) return std::min(s.resW, mw);
+  return mw > 1400 ? 1280 : mw * 9 / 10;  // the game's own size, or the screen less a margin
+}
+int windowH(const Settings& s, int mw, int mh) { return s.resW ? std::min(s.resH, mh) : windowW(s, mw) * 9 / 16; }
+
 float shakeScale() {
   static const float k[3] = {0.0f, 0.5f, 1.0f};
   return k[clampi(g_settings.screenShake, 0, 2)];
@@ -105,9 +112,14 @@ void loadSettings() {
       else if (k == "music_volume") s.musicVolume = clampi(value, 0, 100);
       else if (k == "sfx_volume") s.sfxVolume = clampi(value, 0, 100);
       else if (k == "fullscreen") s.fullscreen = value != 0;
+      else if (k == "res_w") s.resW = clampi(value, 0, 16384);
+      else if (k == "res_h") s.resH = clampi(value, 0, 16384);
+      else if (k == "upscale") s.upscale = clampi(value, 0, 3);
+      else if (k == "anti_alias") s.antiAlias = clampi(value, 0, 2);
+      else if (k == "vsync") s.vsync = value != 0;
+      else if (k == "sharpness") s.sharpness = clampi(value, 0, 100);
       else if (k == "high_quality") s.highQuality = value != 0;
-      else if (k == "pixel_art") s.pixelArt = value != 0;
-      else if (k == "rtx") s.rtx = value != 0;
+      else if (k == "rtx") s.rtx = clampi(value, 0, 2);
       else if (k == "screen_shake") s.screenShake = clampi(value, 0, 2);
       else if (k == "show_fps") s.showFps = value != 0;
       else if (k == "show_hitboxes") s.showHitboxes = value != 0;
@@ -119,6 +131,7 @@ void loadSettings() {
       else if (k == "teams") s.teams = value != 0;
       else if (k == "cpu_level") s.cpuLevel = clampi(value, 1, kMaxCpuLevel);
       else if (k == "menu_bg") s.menuBg = clampi(value, 0, 2);
+      else if (k == "pad_style") s.padStyle = clampi(value, 0, 3);
       else if (k.rfind("pad.", 0) == 0) {  // pad.jump=... and pad.jump.2=... (every pad; -1: none)
         for (int sl = 0; sl < 2; ++sl)
           for (int a = kActJump; a < kActionCount; ++a)
@@ -174,8 +187,13 @@ bool saveSettings() {
   put("music_volume", s.musicVolume);
   put("sfx_volume", s.sfxVolume);
   put("fullscreen", s.fullscreen);
+  put("res_w", s.resW);
+  put("res_h", s.resH);
+  put("upscale", s.upscale);
+  put("anti_alias", s.antiAlias);
+  put("vsync", s.vsync);
+  put("sharpness", s.sharpness);
   put("high_quality", s.highQuality);
-  put("pixel_art", s.pixelArt);
   put("rtx", s.rtx);
   put("screen_shake", s.screenShake);
   put("show_fps", s.showFps);
@@ -188,6 +206,7 @@ bool saveSettings() {
   put("teams", s.teams);
   put("cpu_level", s.cpuLevel);
   put("menu_bg", s.menuBg);
+  put("pad_style", s.padStyle);
   for (int kb = 0; kb < 2; ++kb)
     for (int a = 0; a < kActionCount; ++a)
       put((std::string("kb") + char('1' + kb) + "." + kActionIds[a]).c_str(), s.keys[kb][a]);

@@ -50,11 +50,74 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | libre | |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 13/11 09 h 55 UTC, session claude/project-thread-03jksh : version 15.8 = la maquette Paramètres + chargement
+  validée par yoyo le 13/11 (« oui vz je valide »), codée. Avant elle : vrai FSR 1 (EASU + RCAS), jeu à pas fixe
+  (60 pas par seconde réelle, plus de ralenti quand les FPS baissent), interface toujours à la résolution native
+  (`ui_`, `MatchScreen::drawWorld()` / `drawOverlay()`), lancer de rayons qui suit la résolution de rendu.
+  `screen_settings.cpp` réécrit : onglets Q/E (A/E en AZERTY) ou LB/RB, lignes comme « Règles & mode », Préréglage
+  dans Graphismes, Commandes par périphérique (Clavier 1, Clavier 2, Manette), manette dessinée
+  (`assets/sprites/ui_pad_{xbox,ps4,ps5}.png`, rendues depuis le SVG de la maquette) avec chaque bouton relié à son
+  action, dessin forcé `pad_style` (Auto/Xbox/PS4/PS5, pour Steam Input), DualSense et DualShock 4 reconnues par leur
+  product id (`modelOf`, `controls.cpp`). `screen_loading.cpp` : le mot CHARGEMENT se remplit, astuces (Entrée).
+  `ui::keyCap` et `ui::wrapText` partagés. Verrou « Version et paquets » libéré.
+- 13/11 03 h 50 UTC, session claude/project-thread-03jksh : version 15.7. Résolution (liste des modes de l'écran
+  via GLFW, plein écran = fenêtre à la taille native, la résolution choisie = résolution de rendu), onglet
+  Graphismes (FSR 1 RCAS, FXAA, SSAA ×2, netteté, V-Sync ; réglages `upscale`, `anti_alias`, `sharpness`,
+  `vsync`, `res_w`, `res_h`), Paramètres (5 onglets) et pause en DA Prestige, écran de chargement au lancement
+  (`screen_loading.cpp`, `art::preload*`, `pix/light/rtx::warm`), bulle de garde = dôme du contre en boucle
+  (`effets.py bulle-garde` → `fx_pfx_shield.png`). Verrou « Version et paquets » libéré.
+- 13/11 00 h 05 UTC, session claude/project-thread-gzf1un : version 15.6 = GitHub nettoyé à la demande de yoyo
+  (« c'est des images du jeu à la 1.0, quand je télécharge il y a beaucoup trop de truc écrit »). README réécrit
+  court, sans les anciens persos d'animes, captures du jeu actuel dans `docs/captures/` (les anciennes
+  `docs/*.jpg` et `art/fighters/`, illustrations des 17 anciens persos, inutilisées, sont retirées). Notices
+  `LISEZ-MOI` raccourcies et corrigées. `release.yml` : la page d'une version ne montre que ses nouveautés.
+  La branche par défaut du dépôt (`claude/admiring-lamport-jijwx9`, restée en v4.0) avance sur chaque version
+  (CLAUDE.md, règle des versions). Verrou « Version et paquets » libéré.
+- 12/11 23 h 10 UTC, session claude/project-thread-gzf1un : version 15.5 = effets de lancement des 40 techniques
+  côté/haut/bas dans Blender (`tools/blender/effets.py -- p01-a_s`, bandes `fx_pfx_<perso>_<slot>_<s|u|d>.png`,
+  `k.pfx("slot_s")` dans `roster.cpp` ; `staying()` = castFxStays pour Pilier de glace, Uppercut volcanique et Rayon
+  montant). Relus image par image en 5 passes : plus de boules, d'anneaux ni de cônes (chocs au sol = gravillons
+  `kick()`, dôme = bulle de verre `m_bubble`, traînées de coupe effilées `arc(prof=...)`), foudre épaissie pour
+  rester lisible en jeu. Lames de 01 et 03 : `along()` retiré, elles volent à hauteur du corps comme Hakuen.
+  `mkgrid.py` : bandes sous 8192 px. CLAUDE.md : méthode de yoyo pour les effets des vrais persos (références
+  d'animes et de jeux, maquette Claude Design avant Blender). 15.3 sautée (la 15.4 était déjà sortie). Verrou
+  « Version et paquets » libéré ; « Effets » gardé (suite : auras, éclats d'éveil, ultimes).
+- 12/11 22 h 20 UTC, session claude/project-thread-gzf1un : début de la version 15.5 (effets de lancement des 40
+  techniques côté/haut/bas dans Blender, lames de 01 et 03 à hauteur du corps) ; 15.3 sautée (15.4 déjà sortie).
+  Verrou « Version et paquets » pris.
+- 12/11 22 h UTC, session claude/project-thread-03jksh : version 15.4 (15.3 réservée au fil des effets, gzf1un).
+  Réglage « Résolution » (`Settings::resolution`, `kResolutions` dans `settings.hpp`, ligne 8 de l'onglet Affichage) ;
+  plein écran = vrai plein écran (`ToggleFullscreen` à la résolution choisie, `App::applyDisplaySettings`) au lieu
+  du fenêtré sans bordure, qui laissait des bandes noires chez yoyo. Repli automatique RTX/qualité retiré (yoyo :
+  « t'as déjà vu un jeu qui te fait ça ? »). Verrou « Version et paquets » pris et libéré dans ce commit.
+- 12/11 19 h 10 UTC, session claude/project-thread-gzf1un : version 15.2 = tous les projectiles dans Blender (`tools/blender/effets.py`, une recette par forme, colorée par perso : orbe, météore, lance, éclair, étoile, dague, plume, marque, pilier). 16 bandes `fx_pfx_<perso>_<forme>.png`, 18 techniques rebranchées sur `k.pfx(...)` dans `roster.cpp` (dont les ultimes EXÉCUTION ÉCARLATE et TEMPÊTE ÉCARLATE en piliers) ; `pfx_spiral_sphere` (ParticleFX) retirée. `render_world.cpp` : le pied d'une grosse colonne reste au sol (décalage plafonné à 60). Verrou « Version et paquets » libéré ; « Effets » gardé (suite : effets de lancement, auras, ultimes).
+- 12/11 18 h 35 UTC, session claude/project-thread-gzf1un : version 15.1. Projections de lame dans Blender (`tools/blender/lame.py`, boucles de 12 images, un style par perso) pour 01 (odachi), 03, 07, 08 et tous les croissants de Hakuen (`k.pfx("lame")`, `pfx_h01_crescent`) ; MILLE LUNES (`tools/blender/mille_lunes.py`) en deux calques : `pfx_p01_a_ult` derrière les persos, `pfx_p01_a_ult_front` devant (`art::fxFront` : tout effet de technique `X` joue aussi `X_front` s'il existe). Ligne `fx` : 11e champ = bloom déjà dans la bande. Option de démo `--skill n|s|u|d`. Verrou « Version et paquets » libéré ; « Effets » gardé (suite : compétences, auras et ultimes de chaque perso).
+- 12/11 17 h 30 UTC, session claude/project-thread-gzf1un : version 15.0 = premiers effets Blender. Ultime de Hakuen : éclair fin et net en diagonale, du côté de Hakuen jusqu'au sol sous la cible (`combat.cpp` : une colonne part du sol ; `render_world.cpp` : elle penche loin de son lanceur), une frappe par éclair ; KO : l'écran se fissure et se déchire au bord quitté (`fx.cpp`, taille fixe à l'écran, sans halo du jeu + 2e passe additive blanche). Scripts dans `tools/blender/`, CLAUDE.md : les effets se font dans Blender. Verrou « Version et paquets » libéré ; « Effets » gardé (suite : tous les effets de tous les persos en Blender).
+- 12/11 17 h 15 UTC, session claude/project-thread-gzf1un : yoyo abandonne ParticleFX pour Blender (« t'es trop chaud avec Blender ») et veut les effets de tout le monde refaits dans Blender, les projections de lame proches des tranchants d'énergie de Vergil ou des grands croissants d'énergie, et le jeu poussé sur GitHub. Début de la version 15.0 (éclair de Hakuen v6 et KO « déchirure » faits dans Blender) ; verrous « Effets » et « Version et paquets » pris.
+- 12/11 11 h 55 UTC, session claude/project-thread-gzf1un : version 14.9 = DA « Prestige » dans tout le jeu (validée par yoyo le 12/11 : maquette https://claude.ai/artifact/4m5h9zcVRzzmjeLvByeV5h). Titre (bouton COMMENCER, variante A choisie), menu, sélection (`menus.cpp` : deux côtés ou quatre cartes penchées, face-à-face des stats, tiroir Règles & mode), arène, VS, HUD (`render_hud.cpp`), 3-2-1-GO, cut-in d'ultime tenu 66 images (`match_screen.cpp`), ralenti + zoom avant GAME, résultats. Verrou « Version et paquets » libéré.
+- 12/11 11 h 45 UTC, session claude/project-thread-gzf1un : début de la version 14.9 (DA « Prestige » dans tout le jeu), verrou « Version et paquets » pris.
+- 12/11 01 h UTC, session claude/project-thread-gzf1un : version 14.6 = glitch du % (render_hud.cpp), caméra plus près (zoom max 1,35), sorties de terrain ×0,8 (stageList), dégâts ×0,8 (kDamageScale, ultimes exclus), dash de Hakuen +25 %, rayons retirés (ui::sunburst supprimé).
+- 11/11 22 h 35 UTC, session claude/project-thread-gzf1un : version 14.5 = cartes de combat transparentes façon Smash (render_hud.cpp fighterCard : carré penché, buste ou visage, bande du nom), demande de yoyo.
+- 11/11 22 h 15 UTC, session claude/project-thread-gzf1un : version 14.4 = Règles & mode en volet à droite, panneau d'entraînement Épure, rotation des moitiés dans la Coupe (ui::snapQuad prend un angle).
+- 11/11 22 h UTC, session claude/project-thread-gzf1un : version 14.3 = fin de la DA « Épure ». Cartes de combat
+  façon Smash (plaque à la couleur du joueur, `render_hud.cpp`), cartes qui montent au début du combat, arrêt sur image
+  noir et blanc du GAME (`pix::desaturate`, `pixel.cpp`), Horizon recalé (54 images), animations d'entrée (tuiles de
+  la sélection, fiches 3-4 joueurs, Règles & mode via `rulesAnim_`, arènes, pause via `pauseAnim_`, galerie,
+  options) ; sélection 3-4 joueurs, pause, options et galerie restylées. Reste à l'ancienne : panneau d'entraînement.
+- 11/11 21 h 30 UTC, session claude/project-thread-gzf1un (partie de 14.1, h4e20u da84e804) : version 14.2 = DA
+  « Épure », palette Crépuscule validée par yoyo (maquettes Claude Design dans le fil « Refaire la DA en version
+  épurée »). Polices : Archivo ExtraCondensed (Title), Archivo Expanded (Display, nouveau), Inter (Ui et Body) ; Saira
+  retirée. Palette dans `ui.hpp` (kDusk*, accent cyan kBlue, kGold = crème). Nouveaux : écran titre séparé du menu
+  principal (`Screen::Title`, `--screen title`), `ui::icon`, `ui::label`, `ui::dusk`, transitions `ui::Wipe`
+  (Horizon, Flash avant le combat, Cut avant le VS avec une capture de l'écran, Game vers les résultats),
+  `art::drawPictureFaded`. Refaits : sélection (cartes + fiches larges ; 3-4 joueurs encore à l'ancienne mise en
+  page), Règles & mode, VS, cartes de combat, GAME, cut-in d'ultime, victoire, choix de l'arène. Illustrations
+  ChatGPT abandonnées (« ça fait trop IA ») : portraits manga `<id>_art` + pixel art.
 - 11/11 13 h 45 UTC, session claude/project-thread-ab9ctl : version 13.9 (fusion de claude/project-thread-owhcqo,
   13.8). yoyo : en RTX, des effets « trop blancs et lumineux », « poussière lumineuse ». Cause : la lumière tracée
   des effets dépassait 1 (ultime de Hakuen : plus de 2 sur tout l'écran), multipliée dans le décor jusqu'au blanc,

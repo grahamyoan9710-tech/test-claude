@@ -22,4 +22,5 @@ void resolve(const Match& m, const Camera2D& cam);  // before the reflections: t
 // This frame's traced scene, frame size (red a sprite, green a floor, blue an effect, alpha a solid): after resolve,
 // the reflections keep to the platforms' own pixels with it.
 Texture2D mask();
+void warm();  // compiles its shaders now (the launch screen), not on the first frame of a fight
 }  // namespace rtx

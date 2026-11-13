@@ -11,8 +11,8 @@
 #include "game/ui.hpp"
 
 namespace {
-constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui;
-constexpr Color kGoldLight{255, 200, 112, 255};
+constexpr FontKind kT = FontKind::Title, kU = FontKind::Ui, kB = FontKind::Body;
+constexpr Color kGoldLight{111, 227, 255, 255};  // « Épure »: the accent is cyan
 constexpr Color kDanger{255, 154, 122, 255};
 
 // What the move list says of each move (docs/refonte/FICHES.md; the bare hands' combo: its martial art, §1.7).
@@ -149,7 +149,7 @@ Rectangle pauseRect(int i, int n) {
 constexpr Rectangle kPanel{440, 48, 580, 616};
 Rectangle tabRect(int i) { return {kPanel.x + 26 + i * 178.0f, kPanel.y + 98, 172, 48}; }
 Rectangle keysRect(int k, const char* label0, const char* label1) {
-  const float x0 = 64 + ui::trackedWidth("TOUCHES", 13, 0.18f) + 10;
+  const float x0 = 64 + ui::capsWidth("TOUCHES", 11, 0.24f) + 12;
   const float w0 = textWidth(label0, 15, kT) + 24, w1 = textWidth(label1, 15, kT) + 24;
   return k == 0 ? Rectangle{x0, 674, w0, 30} : Rectangle{x0 + w0 + 2, 674, w1, 30};
 }
@@ -200,6 +200,7 @@ const Fighter& MatchScreen::listFighter() const {
 
 void MatchScreen::openPause(int port) {
   paused_ = true;
+  pauseAnim_ = 0;
   pauseSel_ = 0;
   quitAsk_ = false;
   pausedBy_ = port;
@@ -321,45 +322,47 @@ void MatchScreen::drawMoveList(const Fighter& f) {
   const CharacterDef& d = *f.def;
   const Rectangle P = kPanel;
   const Color aura = auraColor(d.hero);
-  ui::bevel(P, 22, withAlpha(ui::kNavyDeep, 0.95f), withAlpha(ui::kNavyDeep, 0.95f));
-  ui::bevelLines(ui::grow(P, -0.5f), 22, 1.0f, withAlpha(ui::kSky, 0.16f));
+  DrawRectangleRec(P, withAlpha(ui::kNight, 0.94f));
+  DrawRectangleLinesEx(P, 1.0f, withAlpha(ui::kSilver, 0.12f));
+  DrawRectangleRec({P.x, P.y, P.width, 3}, aura);
 
   // Who: the face, "LISTE DES COUPS", its number and fiche
   const float x = P.x + 26, y = P.y + 22, w = P.width - 52;
   const Rectangle face{x, y, 64, 64};
-  ui::bevel(face, 10, mixColor(aura, ui::kInk, 0.45f), mixColor(aura, ui::kInk, 0.7f));
-  drawPortraitIn(d, f.palette, {face.x + 32, face.y + 38}, 82.0f, face, 0.0f, time_);
-  DrawTriangle({face.x, face.y}, {face.x, face.y + 10}, {face.x + 10, face.y}, withAlpha(ui::kNavyDeep, 0.95f));
-  DrawRectangleRec({face.x, face.y + face.height - 3, face.width, 3}, aura);
+  const Vec2 fc{face.x + 32, face.y + 32};
+  DrawCircleV(V(fc), 32, aura);
+  DrawCircleV(V(fc), 30, mixColor(aura, ui::kNightUp, 0.55f));
+  drawArtDisc(d, f.palette, fc, 30, time_);
   const Fiche fi = fiche(d);
-  ui::tracked("LISTE DES COUPS", x + 80, capsY(y + 9, 13, kT), 13, 0.22f, ui::kGold);
-  const std::string who = "N° " + d.id.substr(1) + " · " + fi.nick;
-  float ns = 33.0f;
-  while (ns > 22.0f && textWidth(who.c_str(), ns, kT) > w - 80) ns -= 1.0f;
-  drawText(who.c_str(), x + 80, capsY(y + 31, ns, kT), ns, ui::kCream, kT);
+  ui::caps("LISTE DES COUPS", x + 80, y + 9, 11, 0.24f, ui::kBlue);
+  const std::string who = "N° " + d.id.substr(1) + " · " + upperFr(fi.nick);
+  float ns = 34.0f;
+  while (ns > 16.0f && ui::bigWidth(who.c_str(), ns, ui::Face::Cond) > w - 80) ns -= 1.0f;
+  ui::big(who.c_str(), x + 80, y + 32 - 0.42f * ns, ns, ui::Face::Cond, WHITE);
   std::string meta = fi.art + (fi.style.empty() ? "" : " · " + fi.style);
   if (!d.forms.empty()) meta += " · Transformation T" + d.id.substr(1);
-  drawText(meta.c_str(), x + 80, capsY(y + 54, 18, kU), 18, ui::kSoft, kU);
+  drawText(meta.c_str(), x + 80, capsY(y + 55, 14, kB), 14, ui::kMist, kB);
 
   // The tabs: bare hands, weapon A, weapon B ("EN MAIN": the kit it fights with now)
   for (int t = 0; t < 3; ++t) {
     const Rectangle r = tabRect(t);
     const bool on = t == listTab_, hot = ui::hovered(r);
-    DrawRectangleRec(r, on ? Color{27, 39, 84, 255} : hot ? Color{18, 26, 56, 255} : Color{10, 16, 36, 255});
-    DrawRectangleRec({r.x, r.y + r.height - 3, r.width, 3}, on ? ui::kGold : withAlpha(ui::kSky, 0.1f));
+    DrawRectangleRec(r, on ? ui::kNightUp : withAlpha(ui::kNightUp, hot ? 0.8f : 0.45f));
+    DrawRectangleLinesEx(r, 1.0f, withAlpha(ui::kSilver, on ? 0.6f : 0.12f));
+    if (on) DrawRectangleRec({r.x, r.y + r.height - 3, r.width, 3}, ui::kBlue);
     const Vector2 ic{r.x + 25, r.y + 23};
     if (t == 0) ui::diamond(ic, 7.0f, WHITE);
     else drawWeaponIcon(d, t - 1, W(ic), 30.0f);
     const char* sub = t == 0 ? "Sans arme" : t == 1 ? "Arme A" : "Arme B";
-    drawText(sub, r.x + 46, capsY(r.y + 15, 15, kU), 15, on ? kGoldLight : ui::kDisabled, kU);
+    drawText(sub, r.x + 46, capsY(r.y + 15, 15, kU), 15, on ? kGoldLight : ui::kDim, kU);
     std::string label = t == 0 ? "MAINS NUES" : upperFr(d.weapons[t - 1].name);
     float ls = 18.5f;
-    while (ls > 13.0f && ui::trackedWidth(label.c_str(), ls, 0.04f) > r.width - 54) ls -= 0.5f;
-    ui::tracked(label.c_str(), r.x + 46, capsY(r.y + 32, ls, kT), ls, 0.04f, on ? ui::kCream : ui::kMuted);
+    while (ls > 11.0f && ui::capsWidth(label.c_str(), ls * 0.8f, 0.06f) > r.width - 54) ls -= 0.5f;
+    ui::caps(label.c_str(), r.x + 46, r.y + 32, ls * 0.8f, 0.06f, on ? WHITE : ui::kMist);
     if (t == f.weapon + 1) {
       const float cw = ui::trackedWidth("EN MAIN", 11, 0.08f) + 10;
       DrawRectangleRec({r.x + r.width - 6 - cw, r.y + 5, cw, 15}, ui::kBlue);
-      ui::tracked("EN MAIN", r.x + r.width - 1 - cw, capsY(r.y + 12.5f, 11, kT), 11, 0.08f, ui::kInk);
+      ui::tracked("EN MAIN", r.x + r.width - 1 - cw, capsY(r.y + 12.5f, 11, kT), 11, 0.08f, ui::kNight);
     }
   }
 
@@ -368,7 +371,7 @@ void MatchScreen::drawMoveList(const Fighter& f) {
   const KitText* tx = kitText(d, kit);
   std::string caption = kit == 0 ? "Sans arme : " + fi.art + "." : d.weapons[kit - 1].desc + ".";
   if (kit == 0 && !d.forms.empty()) caption += " L'ultime déclenche la transformation.";
-  drawText(caption.c_str(), x, capsY(y + 146, 18, kU), 18, ui::kMuted, kU);
+  drawText(caption.c_str(), x, capsY(y + 146, 18, kU), 18, ui::kMist, kU);
 
   const int dev = keysDevice_ >= 0 ? keysDevice_ : kKeyboard1;
   const bool pad = dev >= kPad1;
@@ -385,17 +388,17 @@ void MatchScreen::drawMoveList(const Fighter& f) {
     const Rectangle r{x, ry, w, h};
     if (ult) {
       ui::quad({r.x, r.y}, {r.x + r.width * 0.8f, r.y}, {r.x + r.width * 0.8f, r.y + r.height}, {r.x, r.y + r.height},
-               withAlpha(ui::kGold, 0.18f), withAlpha(ui::kGold, 0.0f), withAlpha(ui::kGold, 0.0f), withAlpha(ui::kGold, 0.18f));
-      DrawRectangleRec({r.x, r.y, 3, r.height}, ui::kGold);
+               withAlpha(ui::kBlue, 0.18f), withAlpha(ui::kBlue, 0.0f), withAlpha(ui::kBlue, 0.0f), withAlpha(ui::kBlue, 0.18f));
+      DrawRectangleRec({r.x, r.y, 3, r.height}, ui::kBlue);
     } else {
-      DrawRectangleRec({r.x, r.y + r.height - 1, r.width, 1}, withAlpha(ui::kSky, 0.08f));
+      DrawRectangleRec({r.x, r.y + r.height - 1, r.width, 1}, withAlpha(ui::kSilver, 0.08f));
     }
     // The keys: a direction, "+", the button (three times for the combo)
     float kx = r.x + 12;
     const float kh = 30, ky = r.y + (r.height - kh) * 0.5f;
     if (row >= 2 && row <= 4) {
       kx += arrowKey(row - 2, kx, ky, kh) + 4;
-      drawText("+", kx + 2, capsY(ky + kh * 0.5f, 18, kT), 18, ui::kDisabled, kT);
+      drawText("+", kx + 2, capsY(ky + kh * 0.5f, 18, kT), 18, ui::kDim, kT);
       kx += textWidth("+", 18, kT) + 8;
     }
     const int action = row == 0 ? kActAttack : ult ? kActUltimate : kActSpecial;
@@ -404,17 +407,17 @@ void MatchScreen::drawMoveList(const Fighter& f) {
     // Its name and what it does
     const float nx = r.x + 12 + 128 + 14;
     float ny = r.y + 6;
-    drawText(name.c_str(), nx, capsY(ny + 13, 23, kU), 23, ult ? kGoldLight : ui::kCream, kU);
+    drawText(name.c_str(), nx, capsY(ny + 13, 23, kU), 23, ult ? kGoldLight : ui::kSilver, kU);
     if (ult) {  // the ultimate comes from the Clash Orb only
       const float cx = nx + textWidth(name.c_str(), 23, kU) + 10, cw = 20 + ui::trackedWidth("APRÈS LA CLASH ORB", 11, 0.1f) + 8;
       const Rectangle chip{cx, ny + 4, cw, 18};
-      DrawRectangleLinesEx(chip, 1.0f, withAlpha(ui::kGold, 0.6f));
+      DrawRectangleLinesEx(chip, 1.0f, withAlpha(ui::kBlue, 0.6f));
       drawClashOrb({chip.x + 10, chip.y + 9}, 5.0f, time_, 0);
       ui::tracked("APRÈS LA CLASH ORB", chip.x + 20, capsY(chip.y + 9, 11, kT), 11, 0.1f, kGoldLight);
     }
     ny += 30;
     for (const auto& l : lines) {
-      drawText(l.c_str(), nx, capsY(ny + 7, 18, kU), 18, ui::kMuted, kU);
+      drawText(l.c_str(), nx, capsY(ny + 7, 18, kU), 18, ui::kMist, kU);
       ny += 18.5f;
     }
     ry += h;
@@ -426,55 +429,52 @@ void MatchScreen::drawMoveList(const Fighter& f) {
                          : TextFormat("Directions : %s %s %s %s · côté = gauche ou droite",
                                       keyName(settings().keys[dev][kActUp]).c_str(), keyName(settings().keys[dev][kActLeft]).c_str(),
                                       keyName(settings().keys[dev][kActDown]).c_str(), keyName(settings().keys[dev][kActRight]).c_str());
-  drawText(dirs, x, capsY(by, 17, kU), 17, ui::kMuted, kU);
+  drawText(dirs, x, capsY(by, 17, kU), 17, ui::kMist, kU);
   const float gw = ui::actionPromptWidth(dev, kActWeapon, 22);
   const char* take = "Prendre son arme :";
   const char* hold = "maintenue 1 s";
   const float hw = textWidth(hold, 17, kU), tw = textWidth(take, 17, kU);
   float hx = x + w - hw;
-  drawText(hold, hx, capsY(by, 17, kU), 17, ui::kMuted, kU);
+  drawText(hold, hx, capsY(by, 17, kU), 17, ui::kMist, kU);
   hx -= gw + 6;
   ui::actionPrompt(dev, kActWeapon, hx, by - 11, 22);
-  drawText(take, hx - 6 - tw, capsY(by, 17, kU), 17, ui::kMuted, kU);
+  drawText(take, hx - 6 - tw, capsY(by, 17, kU), 17, ui::kMist, kU);
 }
 
 void MatchScreen::drawPause() {
-  // The fight, dimmed: darkest on the left, where the menu stands
-  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kInk, 0.55f));
-  const Color a0 = withAlpha(ui::kInk, 0.94f), a1 = withAlpha(ui::kInk, 0.72f), a2 = withAlpha(ui::kInk, 0.38f);
-  const float x1 = kScreenW * 0.34f;
-  ui::quad({0, 0}, {x1, 0}, {x1, kScreenH}, {0, kScreenH}, a0, a1, a1, a0);
-  ui::quad({x1, 0}, {kScreenW, 0}, {kScreenW, kScreenH}, {x1, kScreenH}, a1, a2, a2, a1);
-
+  // « Prestige »: the fight under the night, the menu on a night band cut by the blade; on the right, the fighter of
+  // the move list on his colour's flood
+  const float pin = 1.0f - std::pow(1.0f - clampf(++pauseAnim_ / 24.0f, 0.0f, 1.0f), 3.0f);  // slides in
+  DrawRectangle(0, 0, kScreenW, kScreenH, withAlpha(ui::kNight, 0.6f));
   const Fighter& lf = listFighter();
-  const Color aura = auraColor(lf.def->hero);
-  const float beat = 0.55f + 0.45f * (0.5f - 0.5f * std::cos(time_ * 2.0f * kPi / 3.6f));
-  vfx::glow({1105, 470}, 140, withAlpha(aura, 0.42f * beat), withAlpha(aura, 0.12f * beat));
-  vfx::ring({1105, 470}, 140, 235, withAlpha(aura, 0.12f * beat), withAlpha(aura, 0.0f));
+  const ui::Flood fl = ui::flood(lf.def->hero);
+  const float fx = 220.0f * (1.0f - pin);
+  ui::lean(1110 + fx, 1500, withAlpha(fl.fill, 0.9f));
+  ui::lean(1106 + fx, 1110 + fx, ui::kSilver);
+  const float ox = -480.0f * (1.0f - pin);
+  ui::lean(-400 + ox, 580 + ox, withAlpha(ui::kNight, 0.92f));
+  ui::lean(580 + ox, 582 + ox, withAlpha(ui::kSilver, 0.5f));
 
   // Who paused, "PAUSE", where and with which rules
   const auto items = pauseItems();
   const int n = int(items.size());
-  ui::quad({66, 51}, {72, 51}, {70, 69}, {64, 69}, ui::kBlue, ui::kBlue, ui::kBlue, ui::kBlue);
-  ui::quad({76, 51}, {82, 51}, {80, 69}, {74, 69}, ui::kGold, ui::kGold, ui::kGold, ui::kGold);
-  float hx = 92;
+  float hx = 64;
   const Fighter* by = nullptr;
   for (const auto& f : m_.fighters)
     if (f.port == pausedBy_ && !f.cpu) by = &f;
   if (by) {
     const char* tag = TextFormat("J%d", by->port + 1);
-    const float cw = textWidth(tag, 16, kT) + 16;
+    const float cw = ui::capsWidth(tag, 12, 0.1f) + 16;
     DrawRectangleRec({hx, 49, cw, 22}, slotColor(*by));
-    drawText(tag, hx + 8, capsY(60, 16, kT), 16, ui::kInk, kT);
+    ui::caps(tag, hx + 8, 60, 12, 0.1f, ui::kNight);
     hx += cw + 10;
   }
   drawText(padLost_[std::max(0, pausedBy_) & 3] && by ? "manette débranchée : le combat attend"
            : by ? "a mis le combat en pause" : training() ? "Entraînement" : "Combat en pause",
-           hx, capsY(60, 18, kU), 18, ui::kSky, kU);
-  drawText("PAUSE", 62, capsY(119, 113, kT), 113, ui::kCream, kT);
-  ui::quad({64, 177}, {234, 177}, {234, 180}, {64, 180}, ui::kBlue, WHITE, WHITE, ui::kBlue);
-  ui::quad({234, 177}, {404, 177}, {404, 180}, {234, 180}, WHITE, ui::kGold, ui::kGold, WHITE);
-  ui::eclat({234.5f, 178.5f}, 9.0f);
+           hx, capsY(60, 14, kB), 14, ui::kMist, kB);
+  ui::big("PAUSE", 60 - 30 * (1 - pin), 78, 96, ui::Face::Cond, withAlpha(WHITE, pin));
+  DrawRectangleRec({64, 168, 40 + 300 * pin, 1}, withAlpha(ui::kSilver, 0.3f));
+  DrawRectangleRec({64, 167, 40, 3}, ui::kBlue);
   std::string rules = m_.stage().name;
   if (training()) {
     rules += " · Entraînement";
@@ -482,43 +482,49 @@ void MatchScreen::drawPause() {
     rules += TextFormat(" · %d vie%s", m_.cfg.stocks, m_.cfg.stocks > 1 ? "s" : "");
     rules += m_.cfg.items && m_.cfg.weapons ? " · Orbe et armes" : m_.cfg.items ? " · Orbe" : m_.cfg.weapons ? " · Armes" : " · Sans orbe ni armes";
   }
-  drawText(rules.c_str(), 64, capsY(202, 18, kU), 18, ui::kMuted, kU);
+  drawText(rules.c_str(), 64, capsY(196, 14, kB), 14, ui::kMist, kB);
 
   // The menu: night plates, the chosen one gold with its shimmer; a training setting shows its arrows
   for (int i = 0; i < n; ++i) {
-    const Rectangle r = pauseRect(i, n);
+    Rectangle r = pauseRect(i, n);
+    r.x -= 40 * std::pow(1.0f - clampf((pauseAnim_ - 2 - i * 2.5f) / 21.0f, 0.0f, 1.0f), 3.0f);  // one after the other
     const bool sel = i == pauseSel_;
     const PauseItem kind = items[i].first;
     const bool danger = kind == PauseItem::Quit;
-    const Color fill = sel ? (danger && quitAsk_ ? ui::kRed : ui::kGold) : ui::kNavy;
-    ui::bevel(r, r.height > 40 ? 14.0f : 10.0f, fill, fill);
-    if (sel) ui::shimmer(r, time_, 0.8f);
+    if (sel) {  // the chosen one: a silver plate leaning like the blade
+      const Color fill = danger && quitAsk_ ? ui::kSplitR : ui::kSilver;
+      const float k = r.height * ui::kLean;
+      ui::quad({r.x + k, r.y}, {r.x + r.width, r.y}, {r.x + r.width - k, r.y + r.height}, {r.x, r.y + r.height}, fill, fill, fill, fill);
+    } else {
+      DrawRectangleRec({r.x, r.y + r.height - 1, r.width, 1}, withAlpha(ui::kSilver, 0.1f));
+    }
     const bool arrows = sel && isSetting(kind);
     const char* note = kind == PauseItem::Options ? "Son, image, touches"
                        : kind == PauseItem::Quit ? (quitAsk_ ? "Valider pour quitter" : "Confirmation demandée") : nullptr;
     // A note beside a long label folds onto two lines at its last space
     const char* cut = note ? std::strrchr(note, ' ') : nullptr;
     const std::string n1 = cut ? std::string(note, cut) : "", n2 = cut ? cut + 1 : "";
-    const float noteW = note ? textWidth(note, 16, kU) : 0.0f;
-    const float foldW = cut ? std::max(textWidth(n1.c_str(), 15, kU), textWidth(n2.c_str(), 15, kU)) : noteW;
-    float size = r.height > 40 ? 27.0f : 21.0f;
+    const float noteW = note ? textWidth(note, 16, kB) : 0.0f;
+    const float foldW = cut ? std::max(textWidth(n1.c_str(), 15, kB), textWidth(n2.c_str(), 15, kB)) : noteW;
+    float size = r.height > 40 ? 15.0f : 12.0f;
     const float room = r.width - 36 - (arrows ? 52 : 0) - (note && !arrows ? foldW + 12 : 0);
-    while (size > 14.0f && ui::trackedWidth(items[i].second.c_str(), size, 0.06f) > room) size -= 0.5f;
+    const std::string label = upperFr(items[i].second);
+    while (size > 9.0f && ui::capsWidth(label.c_str(), size, 0.16f) > room) size -= 0.5f;
     const float lx = r.x + 18 + (arrows ? 26 : 0), cy = r.y + r.height * 0.5f;
-    const float lw = ui::tracked(items[i].second.c_str(), lx, capsY(cy, size, kT), size, 0.06f,
-                                 sel ? ui::kInk : danger ? kDanger : ui::kCream);
+    const float lw = ui::capsWidth(label.c_str(), size, 0.16f);
+    ui::caps(label.c_str(), lx, cy, size, 0.16f, sel ? ui::kNight : danger ? kDanger : ui::kSilver);
     if (arrows) {
-      ui::arrowTri({r.x + 22, cy}, 14, -1, ui::kInk);
-      ui::arrowTri({r.x + r.width - 22, cy}, 14, 1, ui::kInk);
+      ui::arrowTri({r.x + 22, cy}, 14, -1, ui::kNight);
+      ui::arrowTri({r.x + r.width - 22, cy}, 14, 1, ui::kNight);
     }
     if (note && !arrows) {
       const float right = r.x + r.width - 18;
-      const Color nc = sel ? Color{58, 38, 8, 255} : ui::kDisabled;
+      const Color nc = sel ? withAlpha(ui::kNight, 0.65f) : ui::kDim;
       if (!cut || lx + lw + 12 + noteW <= right) {
-        drawText(note, right - noteW, capsY(cy, 16, kU), 16, nc, kU);
+        drawText(note, right - noteW, capsY(cy, 16, kB), 16, nc, kB);
       } else {
-        drawText(n1.c_str(), right - textWidth(n1.c_str(), 15, kU), capsY(cy - 8, 15, kU), 15, nc, kU);
-        drawText(n2.c_str(), right - textWidth(n2.c_str(), 15, kU), capsY(cy + 8, 15, kU), 15, nc, kU);
+        drawText(n1.c_str(), right - textWidth(n1.c_str(), 15, kB), capsY(cy - 8, 15, kB), 15, nc, kB);
+        drawText(n2.c_str(), right - textWidth(n2.c_str(), 15, kB), capsY(cy + 8, 15, kB), 15, nc, kB);
       }
     }
   }
@@ -526,45 +532,45 @@ void MatchScreen::drawPause() {
   // The fight's state: each fighter's stocks and damage, the Clash Orb
   if (!training()) {
     float sy = 486;
-    ui::tracked("EN JEU", 64, capsY(sy + 7, 13, kT), 13, 0.22f, ui::kMuted);
+    ui::caps("EN JEU", 64, sy + 7, 11, 0.24f, ui::kMist);
     sy += 20;
     for (const auto& f : m_.fighters) {
       const Color pc = slotColor(f);
-      DrawRectangleRec({64, sy, 340, 28}, withAlpha(ui::kNavyDeep, 0.7f));
-      DrawRectangleRec({64, sy, 3, 28}, pc);
+      DrawRectangleRec({64, sy, 340, 28}, withAlpha(ui::kNightUp, 0.85f));
+      DrawRectangleRec({64, sy + 7, 3, 14}, pc);
       const Rectangle pr{75, sy + 1, 26, 26};
-      DrawRectangleRec(pr, mixColor(auraColor(f.def->hero), ui::kInk, 0.45f));
+      DrawRectangleRec(pr, mixColor(auraColor(f.def->hero), ui::kNight, 0.45f));
       drawPortraitIn(*f.def, f.palette, {pr.x + 13, pr.y + 16}, 34.0f, pr, 0.0f, time_);
       const char* tag = f.cpu ? "CPU" : TextFormat("J%d", f.port + 1);
       drawText(tag, 109, capsY(sy + 14, 16, kT), 16, pc, kT);
       float dx = 159;
       if (f.eliminated) {
-        drawText("K.O.", dx, capsY(sy + 14, 15, kT), 15, ui::kDisabled, kT);
+        drawText("K.O.", dx, capsY(sy + 14, 15, kT), 15, ui::kDim, kT);
       } else {
         for (int s = 0; s < std::min(std::max(m_.cfg.stocks, f.stocks), 5); ++s) {
           ui::diamond({dx + 5, sy + 14}, 5.5f, pc);
-          if (s >= f.stocks) ui::diamond({dx + 5, sy + 14}, 3.8f, ui::kNavyDeep);
+          if (s >= f.stocks) ui::diamond({dx + 5, sy + 14}, 3.8f, ui::kNight);
           dx += 13;
         }
         if (f.finalSmash) {
           const float cw = ui::trackedWidth("ULTIME PRÊT", 12, 0.08f) + 10;
-          DrawRectangleRec({dx + 6, sy + 7, cw, 15}, ui::kGold);
-          ui::tracked("ULTIME PRÊT", dx + 11, capsY(sy + 14.5f, 12, kT), 12, 0.08f, ui::kInk);
+          DrawRectangleRec({dx + 6, sy + 7, cw, 15}, ui::kBlue);
+          ui::tracked("ULTIME PRÊT", dx + 11, capsY(sy + 14.5f, 12, kT), 12, 0.08f, ui::kNight);
         }
       }
       if (!f.eliminated) {
         const char* pct = TextFormat("%d %%", int(f.percent));
-        drawText(pct, 394 - textWidth(pct, 20.5f, kT), capsY(sy + 14, 20.5f, kT), 20.5f, percentColor(f.percent), kT);
+        ui::exo(pct, 394 - ui::exoWidth(pct, 20), sy + 21, 20, percentColor(f.percent));
       }
       sy += 32;
     }
-    DrawRectangleRec({64, sy, 340, 28}, withAlpha(ui::kNavyDeep, 0.7f));
+    DrawRectangleRec({64, sy, 340, 28}, withAlpha(ui::kNightUp, 0.85f));
     drawClashOrb({82, sy + 14}, 7.0f, time_, 0);
     const char* orb = !m_.cfg.items ? "Clash Orb désactivée" : m_.orb.active ? "Clash Orb en jeu" : "Clash Orb : bientôt de retour";
-    drawText(orb, 98, capsY(sy + 14, 18, kU), 18, ui::kSoft, kU);
+    drawText(orb, 98, capsY(sy + 14, 18, kB), 18, ui::kSilver, kB);
     if (m_.cfg.items && m_.orb.active) {
       const char* hp = TextFormat("%d / 40 PV", int(std::ceil(std::max(0.0f, m_.orb.hp))));
-      drawText(hp, 394 - textWidth(hp, 16, kT), capsY(sy + 14, 16, kT), 16, ui::kCream, kT);
+      drawText(hp, 394 - textWidth(hp, 16, kT), capsY(sy + 14, 16, kT), 16, ui::kSilver, kT);
     }
   }
 
@@ -579,31 +585,33 @@ void MatchScreen::drawPause() {
     if (padLost_[f.port]) ++lostCount, lostPort = f.port;
   if (lostCount > 0) {
     const Rectangle b{kPanel.x + 20, 572, kPanel.width - 40, 72};
-    ui::bevel(b, 12, {150, 34, 52, 250}, {84, 14, 30, 250});
+    DrawRectangleRec(b, {84, 14, 30, 250});
+    DrawRectangleRec({b.x, b.y, 3, b.height}, ui::kSplitR);
     const std::string title = lostCount > 1 ? std::string("MANETTES DÉBRANCHÉES")
                                             : std::string(deviceName(devices_[lostPort])) + " DÉBRANCHÉE (JOUEUR " +
                                                   std::to_string(lostPort + 1) + ")";
-    drawText(title.c_str(), b.x + 18, capsY(b.y + 22, 22, kT), 22, ui::kCream, kT);
+    drawText(title.c_str(), b.x + 18, capsY(b.y + 22, 22, kT), 22, ui::kSilver, kT);
     drawText(lostCount > 1 ? "Rebranchez-les : chacune retrouve son joueur. Ou reprenez sans elles."
                            : "Rebranchez-la : elle retrouve son joueur. Ou reprenez le combat sans elle.",
-             b.x + 18, capsY(b.y + 50, 17, kU), 17, {250, 218, 200, 255}, kU);
+             b.x + 18, capsY(b.y + 50, 17, kB), 17, {250, 218, 200, 255}, kB);
   }
 
   // Whose keys the list shows; what the buttons do here
   const std::string k0 = deviceName(keysChoice(0)), k1 = deviceName(keysChoice(1));
-  ui::tracked("TOUCHES", 64, capsY(689, 13, kT), 13, 0.18f, ui::kMuted);
+  ui::caps("TOUCHES", 64, 689, 11, 0.24f, ui::kMist);
   for (int k = 0; k < 2; ++k) {
     const Rectangle r = keysRect(k, k0.c_str(), k1.c_str());
     const bool on = keysDevice_ == keysChoice(k);
-    DrawRectangleRec(r, on ? ui::kCream : ui::hovered(r) ? Color{30, 42, 88, 255} : ui::kNavy);
-    drawText(k == 0 ? k0.c_str() : k1.c_str(), r.x + 12, capsY(r.y + 15, 15, kT), 15, on ? ui::kInk : ui::kMuted, kT);
+    const Color kf = on ? ui::kSilver : ui::hovered(r) ? withAlpha(ui::kSilver, 0.2f) : ui::kNightUp;
+    DrawRectangleRec(r, kf);
+    drawText(k == 0 ? k0.c_str() : k1.c_str(), r.x + 12, capsY(r.y + 15, 15, kT), 15, on ? ui::kNight : ui::kMist, kT);
   }
   const bool padUi = padPrompts();
   const PadFamily fam = promptFamily();
   float rx = kScreenW - 40;
   auto hint = [&](const char* label, auto keys) {
-    rx -= textWidth(label, 17, kU);
-    drawText(label, rx, capsY(689, 17, kU), 17, ui::kSoft, kU);
+    rx -= textWidth(label, 14, kB);
+    drawText(label, rx, capsY(689, 14, kB), 14, ui::kMist, kB);
     rx -= 6;
     keys();
     rx -= 18;

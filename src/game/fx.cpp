@@ -454,7 +454,7 @@ void Fx::onEvents(const Match& m) {
           flashCol_ = WHITE;
         }
         shake_ = std::max(shake_, std::min(12.0f, kb / 12.0f));
-        if (e.b >= 0) hudShake[e.b & 3] = std::min(9.0f, 2.0f + kb / 14.0f);
+        if (e.b >= 0) hudHit[e.b & 3] = 0;
         hitSound(e.fx, kb, big);
         if (kb >= 100.0f && !lethal) au.play(Sfx::ImpactBoom, clampf(kb / 400.0f, 0.25f, 0.45f), 1.3f);  // a thump
         if (lethal) {
@@ -483,8 +483,8 @@ void Fx::onEvents(const Match& m) {
       case EvType::KO: {
         const Color c = e.a >= 0 ? slotColor(m.fighters[e.a]) : WHITE;
         playFx("sys_ko", e.pos, 1.3f, 0.0f, false, mixColor(c, WHITE, 0.35f));
-        if (e.a >= 0 && e.a < nf)  // the ParticleFX blast at the edge of the screen, in the fighter's colour
-          kos_.push_back({e.pos, e.dir, mixColor(c, WHITE, 0.35f), 0, art::fxSize("pfx_ko", *m.fighters[e.a].def)});
+        if (e.a >= 0 && e.a < nf)  // the screen tears where it left, in the fighter's colour
+          kos_.push_back({e.pos, e.dir, mixColor(c, WHITE, 0.35f), 0});
         shake_ = std::max(shake_, 24.0f);
         flash_ = std::max(flash_, 0.3f);
         flashCol_ = WHITE;
@@ -823,6 +823,11 @@ void Fx::update(const Match& m) {
       if (md->castFxStays) s.follow = -2;  // behind, but left where it began
       s.move = std::strncmp(md->castFx, "pfx_", 4) == 0;  // ParticleFX: shown even with kVfx off
       sprites_.push_back(s);
+      if (const char* front = art::fxFront(md->castFx)) {  // its part over the fighters, left where it began
+        s.name = front;
+        s.follow = -1;
+        sprites_.push_back(s);
+      }
     }
     castSeen_[i] = now;
   }
@@ -929,7 +934,7 @@ void Fx::update(const Match& m) {
   projectileTrails(m);
   shake_ *= 0.8f;  // brief
   flash_ *= 0.85f;
-  for (auto& s : hudShake) s *= 0.88f;
+  for (auto& a : hudHit) a = std::min(a + 1, 99);
 }
 
 // ---- Drawing ---------------------------------------------------------------------------
@@ -1187,11 +1192,15 @@ void Fx::drawWorld() const {
 void Fx::drawScreen(const Camera2D& cam) const {
   for (const auto& k : kos_) {
     Vector2 sp = GetWorldToScreen2D(V(k.pos), cam);
-    if (art::fxInfo("pfx_ko")) {  // shot inward from the edge it left by; turned by quarter turns only (pixel art)
+    if (art::fxInfo("pfx_ko")) {  // torn inward from the edge it left by; turned by quarter turns only
       const Vec2 in = -k.dir;
       const float rot = std::round(std::atan2(in.x, -in.y) / (0.5f * kPi)) * 0.5f * kPi;
       const Vec2 at{clampf(sp.x, 0.0f, float(kScreenW)), clampf(sp.y, 0.0f, float(kScreenH))};
-      art::drawFx("pfx_ko", k.t / 60.0f, at, k.size * cam.zoom, rot, false, 1.0f, k.color, false);
+      const float size = std::fabs(std::sin(rot)) > 0.5f ? 0.95f : 0.62f;  // about half the screen, whatever the zoom
+      art::drawFx("pfx_ko", k.t / 60.0f, at, size, rot, false, 1.0f, k.color, false);
+      BeginBlendMode(BLEND_ADDITIVE);  // its light again, white: the edges burn white-hot, the dark gap adds nothing
+      art::drawFx("pfx_ko", k.t / 60.0f, at, size, rot, false, 0.6f, WHITE, false);
+      ui::frameBlend();
       continue;
     }
     if (!kVfx) break;

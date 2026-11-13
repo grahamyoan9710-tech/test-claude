@@ -12,7 +12,7 @@ namespace pix {
 // pixel is exactly 3x3 pixels of the frame; 2 otherwise. The illustrated fighters use kFinePixel.
 float artPixel();
 
-bool enabled();  // settings: "Personnages en pixel art"
+bool enabled();  // settings: "Qualité graphique : Haute"
 // The frame's render texture (set by the app before drawing a frame): sprites draw back into it.
 void setFrameTarget(const RenderTexture2D* target);
 const RenderTexture2D* frameTarget();  // null outside a frame
@@ -27,5 +27,8 @@ constexpr float kFinePixel = 1.0f;
 // The character renderer sizes its ink lines with it.
 float artUnit();
 constexpr Color kInk = {18, 13, 20, 255};  // sprite outline
+// The frame so far turned black and white and darker (the « GAME » freeze), by `amount` (0..1). Screen space only.
+void desaturate(float amount);
 void unload();
+void warm();  // compiles its shaders now (the launch screen)
 }  // namespace pix

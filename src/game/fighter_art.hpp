@@ -48,12 +48,22 @@ int sheetFrames(const CharacterDef& d, int sheet);
 int sheetLastAir(const CharacterDef& d, int sheet);  // -1: none (see Pose::sheetAir)
 bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha, Color flashColor, float flash);
 
+// « Prestige »: the menus show the fighters in their own pixel art, crisp. A clip's frame count, frame size, rate and
+// whether it loops (false: the fighter has no such clip); frame `frame` of it drawn with every pixel `scale` px
+// square, the frame's top-left at (x, y), flip mirroring it in its box.
+bool clipInfo(const CharacterDef& d, int anim, int& frames, float& fw, float& fh, float& fps);
+bool drawClipPx(const CharacterDef& d, int anim, int frame, float x, float y, float scale, bool flip = false,
+                float alpha = 1.0f, Color tint = WHITE);
 // A still picture of assets/sprites (portraits "<id>_portrait", placeholder bodies "<id>_still", weapon icons
 // "<id>_icon_a"...): its size in pixels, false if there is none.
 bool pictureSize(const char* name, float& w, float& h);
 // Draws `src` (pixels of the picture) into `dst`; flipX mirrors it.
 bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha = 1.0f, bool flipX = false,
                  Color tint = WHITE);
+// Draws the whole picture into dst, fading out over its left `fadeL` and bottom `fadeB` (fractions of dst; a negative
+// fadeL fades its right side instead; fadeT its top): pictures melting into the screen.
+bool drawPictureFaded(const char* name, Rectangle dst, float fadeL, float fadeB, float alpha = 1.0f, bool flipX = false,
+                      float fadeT = 0.0f);
 // Draws the convex polygon `dst` (n screen points) textured with the picture's points `src` (pixels): slanted tiles,
 // discs, rotated strips.
 bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint = WHITE);
@@ -72,6 +82,8 @@ float pixelScale(const CharacterDef& d);
 // The size to draw effect `name` at on fighter d: a pixel-art one at d's pixel size (the movement puffs, the launch
 // trail, the KO blast and Hakuen's ultimate bigger), the others `size` times d's height over 170.
 float fxSize(const char* name, const CharacterDef& d, float size = 1.0f);
+// "<name>_front", the part of a technique's effect drawn over the fighters (the cuts of an ultimate), if it has one.
+const char* fxFront(const char* name);
 // Time of an effect shown for as long as something lasts (projectile, beam, aura): its frames cycle.
 float fxLoopTime(const char* name, float t);
 // castLight false: a decoration on a fighter (its ultimate's sparkles, the stars of a daze) does not light him.
@@ -93,4 +105,9 @@ bool drawFxFrame(const char* name, int frame, Vec2 at, float size, float rot = 0
                  float alpha = 1.0f, Color tint = WHITE, bool castLight = true);
 bool drawFxStrip(const char* name, float t, Vec2 from, Vec2 dir, float len, float size, float alpha = 1.0f,
                  float fadeIn = 0.0f);
+// Everything the game draws, loaded one item at a time (the launch screen shows the progress): 0 a fighter's clips,
+// 1 an effect, 2 a picture.
+int preloadCount();
+int preloadKind(int i);
+void preload(int i);
 }  // namespace art

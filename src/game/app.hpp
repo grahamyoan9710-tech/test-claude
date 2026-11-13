@@ -8,6 +8,7 @@
 #include "game/audio.hpp"
 #include "game/controls.hpp"
 #include "game/fx.hpp"
+#include "game/ui.hpp"
 
 struct Options {
   bool demo = false;             // start straight into a CPU match
@@ -24,8 +25,10 @@ struct Options {
   int padGlyphs = -1;            // --pad-glyphs: gamepad prompts of this PadFamily, -1 = automatic
   bool debug = false;
   bool teams = false;  // --teams: team battle (red against blue) for this run
+  bool uncapped = false;         // --uncapped: no 60 FPS cap, prints the average FPS at the end (benchmarks)
   bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
+  char skillShow = 0;            // --skill n|s|u|d: the demo's first fighter uses that special again and again
   int weaponShow = -1;           // --weapon SLOT: the demo's first fighter keeps that weapon in hand (its kit)
 };
 
@@ -47,15 +50,20 @@ class MatchScreen {
   // attract: the title screen's demo fight (CPUs only): silent with an Audio never initialised, never paused, filmed
   // by a fixed camera on the title's terrace, over at its first K.O.
   MatchScreen(const MatchConfig& cfg, const std::array<int, 4>& devices, Audio& audio, bool debug, bool attract = false);
-  Result update();
-  void draw();
+  Result update(bool catchUp = false);  // catchUp: an extra step this frame (no key edges read again)
+  void draw();         // drawWorld() then drawOverlay()
+  void drawWorld();    // the fight, at the render resolution
+  void drawOverlay();  // tags, HUD, pause: over it, at the screen's resolution
   void drawAttract();  // the title's backdrop, the fighters and their effects: no HUD; they fade in and out
   const Match& match() const { return m_; }
   bool training() const { return m_.cfg.training; }
   void forcePause() { openPause(-1); }
+  bool paused() const { return paused_; }
+  void setHitboxes(bool on) { debug_ = on; }
   // Showcase (screenshots): fighter 0 unleashes the ultimate of weapon `slot` (-1: bare-handed) on fighter 1.
   void showUltimate(int slot);
   void showWeapon(int slot) { weaponShow_ = slot; }
+  void showSkill(char dir);
   // For the results: Clash Orbs broken and biggest blow (in %) of each fighter, the fight's length since "GO !"
   int orbsBroken(int id) const { return id >= 0 && id < 4 ? orbs_[id] : 0; }
   float bestHit(int id) const { return id >= 0 && id < 4 ? bestHit_[id] : 0.0f; }
@@ -63,6 +71,7 @@ class MatchScreen {
 
  private:
   void updateCamera(bool snap);
+  void stepFight();  // one frame of the fight: inputs, simulation, effects
   Camera2D camera();
   // The pause (match_pause.cpp): opened by `port` (-1: the game); its menu, and the move list of whoever paused.
   void openPause(int port);
@@ -93,14 +102,19 @@ class MatchScreen {
   int listTab_ = 0;       // the move list's tab: 0 bare hands, 1 weapon A, 2 weapon B
   int keysDevice_ = -1;   // whose keys the move list shows
   bool quitAsk_ = false;  // QUITTER pressed once: once more quits
+  int pauseAnim_ = 0;     // frames since the pause opened (the menu slides in)
   int dropSlot_ = 0;  // training: which of the player's two weapons the pause menu drops
   std::array<bool, 4> padLost_{};      // the player's gamepad got unplugged (auto pause)
   std::array<InputState, 4> held_{};   // buttons held when the game resumed: ignored until released
   int endTimer_ = 0;
+  float finishZoom_ = 1.0f;  // the camera's zoom as the fight ended (GAME pushes in from it)
+  int cutT_ = -1;            // frames since an ultimate's cut-in began (-1: none)
+  int shown_ = 0;            // frames this fight has been drawn
   bool debug_ = false;
   bool attract_ = false;
   int ultShow_ = -2;
   int weaponShow_ = -1;
+  char skillShow_ = 0;
   bool ultFired_ = false;
   float time_ = 0.0f;
   // Training: combo counter per fighter
@@ -121,7 +135,7 @@ class MatchScreen {
   int bestCombo_ = 0;
 };
 
-enum class Screen { MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
+enum class Screen { Loading, Title, MainMenu, CharSelect, StageSelect, Versus, Match, Results, Settings, Poses, Anim, Gallery };
 
 struct SlotSetup {
   int type = 0;  // 0 = off, 1 = human, 2 = cpu
@@ -152,6 +166,8 @@ class App {
   void finishMatch();
   void toast(const char* text);
   // screens (screen_title.cpp)
+  void updateTitle(const MenuNav& nav);  // « Appuie sur ENTRÉE », the demo fight behind
+  void drawTitle();
   void updateMainMenu(const MenuNav& nav);
   void drawMainMenu();
   void activateMenu(int item, int device = -1);
@@ -188,6 +204,14 @@ class App {
   // screens (screen_settings.cpp)
   void updateSettings(const MenuNav& nav);
   void drawSettings();
+  // The launch screen: every clip, effect and picture loaded and every shader compiled before the title, so that
+  // nothing is decoded during a fight or a transition (screen_loading.cpp).
+  void updateLoading();
+  void drawLoading();
+  int loadNext_ = 0;       // the next item to load (art::preload), the shaders being item 0
+  int loadDoneAt_ = -1;    // the frame everything was loaded
+  double loadSeconds_ = 0;  // how long it took (printed for the benchmark)
+  int loadTip_ = -1;        // the tip shown (-1: one drawn at random), ENTRÉE shows the next
   void drawPoses();      // development sheet (--screen poses)
   void drawAnimSheet();  // development filmstrips (--screen anim)
   int settingsRowCount() const;
@@ -197,21 +221,30 @@ class App {
   Screen screen_ = Screen::MainMenu;
   Screen next_ = Screen::MainMenu;
   int transition_ = -1;  // frames into a screen transition, -1 = none
+  ui::Wipe wipe_ = ui::Wipe::Horizon;
   Audio audio_;
   RenderTexture2D target_{};
+  RenderTexture2D snap_{};  // the last screen, frozen, for the « Coupe » transition
+  RenderTexture2D ui_{};    // the interface, at the screen's resolution (over the fight: transparent)
+  RenderTexture2D shot_{};  // --shot / --record: the frame as seen
+  void composeFrame(RenderTexture2D& out);
   float targetScale_ = 0.0f;
+  float stepClock_ = 0.0f;  // fight steps owed to real time (60 a second)
   float time_ = 0.0f;
   int frames_ = 0;
   int screenFrames_ = 0;
   bool quit_ = false;
   std::string toast_;
   int toastTimer_ = 0;
-  float slowTime_ = 0.0f;       // seconds spent below 45 FPS (automatic quality fallback)
-  bool autoQualityDone_ = false;
+  int shownW_ = -1, shownH_ = -1;  // the resolution and mode the window has (applyDisplaySettings)
+  bool shownFs_ = false;
+  RenderTexture2D aa_{}, fsr_{};           // the FXAA pass, at the render's size
+  Shader fxaa_{}, rcas_{}, easu_{};         // anti-aliasing; upscaling with FSR 1's sharpening (RCAS)
 
   // main menu
   int menuSel_ = 0;
-  float markY_ = -1.0f;  // the spark beside the chosen big button, gliding to it
+  float markY_ = -1.0f;  // the main menu's choice when menuChanged_ was set
+  int menuChanged_ = 0;  // screenFrames_ when the main menu's choice last changed
   bool introDone_ = false;
   int gallerySel_ = 0;
   bool stageBrowse_ = false;  // the arenas opened from the main menu: ENTRÉE trains there, ÉCHAP goes back
@@ -221,24 +254,27 @@ class App {
   int stage_ = 0;
   int cssCol_ = 0, cssRow_ = 1;  // the card and field under the mouse
   bool rulesOpen_ = false;  // the « Règles & mode » sheet is open over the character select
+  int rulesAnim_ = 0;       // frames since it opened (its slide in)
   int rulesSel_ = 0;        // its field under the keyboard / gamepad
   std::array<CssCursor, kDeviceCount> cssCur_{};
   bool stageRandom_ = false;  // the stage select's "?" card: an arena drawn at random
   int vsTip_ = 0;             // the VS screen's tip (drawn when it opens)
   bool teamsForced_ = false;  // --teams
   std::array<int, 4> joinedAt_{-1000, -1000, -1000, -1000};  // frame a gamepad joined each card (flash)
+  std::array<int, 4> pickSeen_{-3, -3, -3, -3}, pickAt_{};  // each card's fighter as last drawn, the frame it changed
   std::array<bool, 4> padLeft_{};  // pads that left their card on this visit of the CSS: no auto re-join
   std::unique_ptr<MatchScreen> match_;
-  std::unique_ptr<MatchScreen> demo_;  // the title screen's demo fight
-  Audio silent_;                       // never initialised: the demo fight makes no sound
-  void updateDemo();                   // steps it; a new random pair after each K.O.
   // settings
   int setTab_ = 0;
-  int setRow_ = -1;   // -1 = tab bar
-  int setCol_ = 0;    // controls tab: keyboard 1, keyboard 2, pad button 1, pad button 2
+  int setRow_ = -1;   // the chosen row (-1: the first one)
+  int setCol_ = 0;    // Commandes, a keyboard: the column of its grid
+  int setTabFrom_ = 0, setTabAt_ = -1000;  // the tab before and the frame it changed (the mark slides, the rows come in)
+  int setDevice_ = -1;   // Commandes: 0, 1 the keyboards, 2 the gamepad (-1: the one last used)
+  int padFocus_ = -1;    // Commandes, the gamepad: the chosen label (action * 2 + slot, or 100 + a fixed one)
+  int bindAction_ = -1, bindSlot_ = 0;  // where the key or the button waited for goes
   bool waitingKey_ = false;
   bool waitingPad_ = false;  // rebinding a gamepad button (Commandes tab)
-  int soundTestAt_ = -1000;  // frame of the last sound test (the audio card's meters move)
+  int soundTestAt_ = -1000;  // frame of the last sound test (ÉCOUTER shows LECTURE…)
   bool bindPadButton(int action, int slot, int button);
   int dragSlider_ = -1;
   Screen settingsReturn_ = Screen::MainMenu;

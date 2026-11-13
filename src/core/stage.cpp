@@ -78,8 +78,15 @@ StageDef monastereDesNuees() {
 }  // namespace
 
 const std::vector<StageDef>& stageList() {
-  static const std::vector<StageDef> list = {abimeLunaire(), citadelleDeGivre(), canyonEcarlate(), toitsKurenai(),
-                                             monastereDesNuees()};
+  static const std::vector<StageDef> list = [] {
+    std::vector<StageDef> v = {abimeLunaire(), citadelleDeGivre(), canyonEcarlate(), toitsKurenai(), monastereDesNuees()};
+    for (auto& s : v) {  // the sides and the top 20 % closer (owner, 12/11: KOs were too far); the bottom stays
+      const float bottom = s.blast.bottom();
+      s.blast.x *= 0.8f, s.blast.w *= 0.8f, s.blast.y *= 0.8f;
+      s.blast.h = bottom - s.blast.y;
+    }
+    return v;
+  }();
   return list;
 }
 

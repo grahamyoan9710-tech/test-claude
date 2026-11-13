@@ -8,6 +8,172 @@
 
 ## Nouveautés
 
+Version 15.8 : **Paramètres et écran de chargement refaits, vrai FSR 1, plus de ralenti**.
+
+- Vrai AMD FSR 1, avec ses deux passes : EASU agrandit l'image en gardant les bords nets, RCAS la rend nette (avant,
+  le « FSR » n'avait que la netteté).
+- Plus de ralenti : le combat avance toujours à la même vitesse, même quand les FPS baissent (avant, FSR avec le
+  lancer de rayons Moyen pouvait le ralentir).
+- Les menus et les textes restent toujours nets, à la résolution de l'écran, même en résolution basse ou avec FSR 1 :
+  seul le combat est calculé plus petit.
+- L'ancien « RTX » s'appelle maintenant Lancer de rayons : c'est l'éclairage tracé par le jeu, pas celui des cartes
+  NVIDIA RTX. Avec FSR 1, il trace moins de pixels lui aussi : il est plus rapide.
+- Paramètres refaits (DA « Prestige ») : les onglets comme sur le menu principal (A et E, Q et E en QWERTY, ou LB
+  et RB, pour en changer), un Préréglage dans Graphismes (Performance, Équilibré, Qualité, Ultra), la résolution de
+  rendu affichée.
+- Commandes : on choisit d'abord le périphérique (Clavier 1, Clavier 2 ou Manette). La manette est dessinée selon son
+  type, Xbox, PS4 ou PS5 (reconnue toute seule, même sous Windows), chaque bouton relié à son action. Le dessin et les
+  boutons affichés peuvent être forcés, par exemple pour une manette PlayStation que Steam Input fait passer pour une
+  Xbox.
+- Écran de chargement refait : le mot CHARGEMENT se remplit, avec une astuce (Entrée pour la suivante).
+
+Version 15.7 : **résolution comme dans les autres jeux, nouveaux réglages graphiques, paramètres et pause refaits**.
+
+- Résolution : la liste vient de ton écran. En plein écran, l'image remplit toujours tout l'écran ; une résolution
+  plus basse calcule le jeu en plus petit (plus rapide) au lieu de faire une petite fenêtre entourée de noir.
+- Nouvel onglet Graphismes : mise à l'échelle AMD FSR 1 (Qualité, Équilibré, Performance), anticrénelage (FXAA ou
+  SSAA ×2), netteté, synchronisation verticale. Pas de TAA : sur du pixel art, il laisse des traînées floues.
+- Paramètres et menu pause refaits dans la DA « Prestige ».
+- Écran de chargement au lancement : tous les persos, effets et images sont chargés et les shaders compilés une
+  seule fois, avant le titre. Plus de blocage la première fois qu'un effet s'affiche en combat.
+- La bulle de garde est maintenant la bulle de verre du contre, refaite dans Blender.
+
+Version 15.6 : **la page GitHub et la notice refaites**.
+
+- La page du jeu sur GitHub montre le jeu d'aujourd'hui : nouvelles captures, texte court, plus aucun ancien
+  perso.
+- La page de téléchargement de chaque version ne montre plus que ses nouveautés (à partir de la 15.6).
+- La notice de l'archive (LISEZ-MOI) est plus courte et à jour : touches, Clash Orb, armes, réglages.
+
+Version 15.5 : **les effets des techniques refaits dans Blender**.
+
+- Les 40 techniques de côté, du haut et du bas des 5 persos (à mains nues et avec chaque arme) ont leur effet
+  Blender, aux couleurs du perso. Aucun anneau ni boule : des coupes, des traînées effilées, des flammes, du givre,
+  de la foudre et de la lumière.
+- Ruées (Iaï, Glissade gelée, Charge brûlante, Rafale…) : lignes de vitesse, traînée de l'élément derrière le perso,
+  et ce qu'il laisse sur son chemin (flammes, cristaux de glace, foudre au sol, éclats de lumière).
+- Pas de l'ombre et Pas-éclair : une longue coupe nette en travers du chemin, qui se brise et s'efface.
+- Montées : traînée de coupe (Lune montante, Lame ascendante, Saut-foudre, Ascension sacrée), tourbillon de vent
+  (Vrille, Spirale céleste, Spirale rouge), ailes de lumière (Ailes de vent) ou de feu (Phénix), éclairs qui
+  montent (Coup de pied foudre).
+- Piliers qui restent au sol : glace qui se brise en éclats (Pilier de glace), flammes (Uppercut volcanique),
+  rayon de lumière (Rayon montant).
+- Contres : garde en croissant (Riposte d'ombre, Garde-lame, Riposte, Contre sacré), mur de glace qui vole en éclats
+  (Miroir de glace), bulle de verre (Dôme astral, Barrière de lumière).
+- Explosions : gerbe de feu (Éruption), flammes qui jaillissent le long d'une faille (Séisme), tourbillon de feu
+  qui explose (Cercle de brasier), décharge de foudre (Décharge).
+- Téléportations (Ascension spectrale, Saut stellaire) : une flaque de lumière au sol, puis un trait vers le haut.
+- Les projections de lame du 01 et du 03 volent maintenant à hauteur du corps, comme celle de Hakuen (elles
+  partaient vers le bas).
+
+Version 15.4 : **choix de la résolution et vrai plein écran**.
+
+- Paramètres > Affichage > Résolution : Écran (la taille de ton écran), 1280 × 720, 1600 × 900, 1920 × 1080,
+  2560 × 1440 ou 3840 × 2160.
+- Le plein écran est maintenant un vrai plein écran : l'écran passe à la résolution choisie et l'image le remplit,
+  sans bandes noires sur les côtés (F11 bascule toujours).
+- Le jeu ne baisse plus tout seul la RTX ou la qualité graphique quand il ralentit : tes réglages restent les tiens.
+
+Version 15.2 : **tous les projectiles refaits dans Blender**.
+
+- 01 : orbe d'ombre violette (mains nues), dagues spectrales qui tournent avec leurs images fantômes, marque d'ombre
+  posée au sol (anneaux violets et trois lunes).
+- 02 : sphère de givre avec ses cristaux, lance de glace, étoiles filantes (Étoile filante et Constellation),
+  pieux de glace qui jaillissent du sol.
+- 03 : poing de feu, météore (roche fendue de lave et crinière de flammes), et l'ultime EXÉCUTION ÉCARLATE frappe
+  maintenant avec des colonnes de feu.
+- 07 : éclair rouge (boule de plasma et foudre), lance de foudre, foudre au sol, et l'ultime TEMPÊTE ÉCARLATE frappe
+  avec des colonnes de foudre rouge.
+- 08 : plume de lumière, lance de lumière dorée, pilier sacré (un faisceau de lumière).
+- Les grosses frappes en colonne partent du sol sous l'adversaire.
+
+Version 15.1 : **projections de lame et MILLE LUNES refaites dans Blender**.
+
+- Projections de lame : un grand croissant d'énergie au tranchant blanc, dont le corps se déchire en flammes vers
+  l'arrière, une traînée à chaque pointe, aux couleurs de chaque perso : violet et fumée sombre pour le 01, feu et
+  braises pour le 03, foudre rouge et arcs pour le 07, lumière dorée et éclats pour le 08, rouge sang et arcs pour
+  Hakuen (tous ses croissants). Elles sont maintenant à la taille d'un perso.
+- MILLE LUNES (ultime du 01 à l'odachi) : l'espace autour de l'adversaire devient une lune violette, des coupes en
+  croissant la traversent à chaque coup, puis le coup final la fait voler en éclats.
+
+Version 15.0 : **les effets passent dans Blender**, en commençant par l'ultime de Hakuen et le KO.
+
+- Ultime de Hakuen : chaque éclair est fin, aux craquelures nettes, traverse l'écran en diagonale depuis le côté
+  de Hakuen et frappe le sol sous l'adversaire. Il descend, frappe une fois et s'éteint avant le suivant : on voit
+  les cinq coups un par un.
+- KO : là où le perso sort, l'écran se fissure en toile d'araignée et se déchire, sur environ la moitié de
+  l'écran quelle que soit la caméra, aux couleurs du joueur éliminé.
+- Les autres effets suivent, refaits un par un dans Blender.
+
+Version 14.9 : **nouvelle DA « Prestige »**, sobre et pro, comme une grande compétition.
+
+- Tous les écrans refaits : titre (un vrai bouton COMMENCER), menu, choix des persos, règles, choix de l'arène,
+  VS, combat et victoire. Chaque perso s'affiche dans son propre pixel art, net, sur sa couleur coupée par une lame
+  penchée, son nom en grand sur une plaque de nuit.
+- Choix des persos : face-à-face des stats des deux combattants, et 4 cartes penchées à 3 ou 4 joueurs.
+- Combat : nouveau 3-2-1-GO, cartes des joueurs redessinées, cut-in de l'ultime qui tient une seconde, ralenti et
+  zoom sur le dernier coup avant GAME.
+- Résultats : grand VICTOIRE, tableau des KO, chutes, dégâts et orbes, revanche en un geste.
+- Le combat de démo derrière l'écran titre est retiré.
+
+Version 14.8 : **réglages graphiques comme dans un vrai jeu**.
+
+- Qualité graphique : **Haute** (rendu ×2, persos en pixel art, halos) ou **Moyenne** (rendu simple, bien plus
+  léger). Le réglage « Personnages en pixel art » est retiré : il fait partie de la qualité.
+- RTX : **Non**, **Moyen** ou **Haut**. Haut = la RTX d'avant. Moyen = le même éclairage en 4 fois moins de pixels
+  et 2 fois moins de rayons : environ 4 fois plus rapide, pour les cartes comme la RTX 4060.
+- Si le jeu rame trop en RTX Haut, il passe une fois tout seul en RTX Moyen (et la qualité Haute en Moyenne hors RTX).
+
+Version 14.6 : **combats plus serrés et % qui réagit**.
+
+- Le % d'un perso fait une secousse « glitch » quand il prend des dégâts (couleurs décalées, bandes qui sautent).
+- La caméra est plus près du combat, et les sorties de terrain sont 20 % plus proches (côtés et haut).
+- Tous les dégâts des persos baissés de 20 % pour compenser (les ultimes gardent toute leur puissance).
+- Hakuen : son dash électrique (Pas-iaï) va 25 % plus loin.
+- Cartes de combat : tous les persos ont un portrait aussi grand que celui de Hakuen.
+- Plus de rayons de soleil dans la DA (titre, cut-in, GAME, victoire).
+
+Version 14.5 : **cartes de combat transparentes, comme dans Smash**.
+
+- Plus de fond plein : le portrait sort d'un carré penché à la couleur du joueur (gris pour un CPU), le % est en
+  grand avec un contour noir, et le nom est posé sur une fine bande sombre soulignée de la couleur du joueur.
+
+Version 14.4 : **les dernières touches de la DA « Épure »**.
+
+- Règles & mode : un volet qui glisse depuis la droite, comme sur la maquette (mode, règles, joueurs et VALIDER).
+- Panneau d'entraînement refait dans le style Épure (combo en grand, dégâts, meilleur combo, mannequin, options
+  actives en pastilles).
+- Transition « Coupe » avant le VS : les deux moitiés de l'écran pivotent légèrement en s'envolant.
+
+Version 14.3 : **la DA « Épure » finie, avec ses animations**.
+
+- Cartes de combat : comme dans Smash, un fond à la couleur du joueur sous le portrait, le % et les vies (gris pour
+  un CPU). Au début du combat, les cartes montent du bas de l'écran l'une après l'autre.
+- « GAME » : le combat se fige en noir et blanc sous le mot GAME, puis le balayage vers la victoire.
+- Transition Horizon au rythme de la maquette (les volets se ferment sur la ligne, tiennent, puis se rouvrent).
+- Animations d'entrée : les persos tombent un par un à la sélection, les fiches à 3 ou 4 joueurs montent, la fenêtre
+  Règles & mode glisse, les arènes montent, la pause glisse, la galerie et les options apparaissent en douceur.
+- Refaits dans le style Épure : la sélection à 3 ou 4 joueurs, la pause et la liste des coups, les options, la
+  galerie des personnages.
+- Contient la 14.2.
+
+Version 14.2 : **nouvelle direction artistique « Épure », palette Crépuscule**.
+
+- Tout le jeu passe aux polices Archivo (titres larges) et Inter (textes), sur un fond crépuscule (violet nuit) avec
+  un seul accent cyan ; les boutons sont arrondis et ont une icône.
+- Nouvel écran titre (le combat de démo derrière, le logo « Soleil » CLASH / HORIZON), puis un menu principal à part,
+  avec le portrait du perso et la description de chaque mode.
+- Sélection des persos : cartes arrondies avec les portraits, grandes fiches avec les stats ; fenêtre « Règles &
+  mode » refaite.
+- Écran VS : écran coupé en biais aux couleurs des deux persos, grands noms, disque « VS ».
+- En combat : nouvelles cartes des joueurs (portrait rond, % en grand), nouveau « GAME » de fin et nouveau cut-in
+  d'ultime (bande inclinée avec le regard du perso).
+- Écran de victoire refait : le gagnant dans sa couleur (rayons, son nom, son portrait et sa pose), le classement et
+  quatre boutons à icône.
+- Transitions entre les écrans : la ligne d'horizon qui se referme, un éclair avant le combat, une coupe nette avant
+  le VS et un balayage « GAME » vers les résultats.
+- Contient la 14.1.
+
 Version 14.1 : **un combat plus rapide, plus agressif et plus fluide**.
 
 - Annulations : un coup normal qui touche peut être enchaîné tout de suite après son dernier coup actif (saut,

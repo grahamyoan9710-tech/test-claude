@@ -339,7 +339,7 @@ float fxSize(const char* name, const CharacterDef& d, float size) {
   // A few bigger than the fighters' pixels (the owner, 11/11: a dynamic, aggressive game).
   static const std::pair<const char*, float> kGrow[] = {{"pfx_jump", 1.05f}, {"pfx_airjump", 1.05f},
                                                         {"pfx_land", 1.05f}, {"pfx_dash", 1.05f},
-                                                        {"pfx_trail", 1.6f}, {"pfx_ko", 1.7f},
+                                                        {"pfx_trail", 1.6f},
                                                         {"pfx_h01_ult", 1.05f / 0.8f}};  // the model 5 % wider (made at 80 %)
   for (const auto& [n, g] : kGrow)
     if (std::strcmp(n, name) == 0) return pixelScale(d) * g;
@@ -468,6 +468,32 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   return true;
 }
 
+bool clipInfo(const CharacterDef& d, int anim, int& frames, float& fw, float& fh, float& fps) {
+  const Art* A = anim >= 0 && anim < kSheetCount ? clipsOf(d.hero) : nullptr;
+  if (!A || !A->sheets[anim].ok) return false;
+  const Art::Sheet& S = A->sheets[anim];
+  frames = S.frames, fw = S.fw, fh = S.fh, fps = S.fps;
+  return true;
+}
+
+bool drawClipPx(const CharacterDef& d, int anim, int frame, float x, float y, float scale, bool flip, float alpha, Color tint) {
+  const Art* A = anim >= 0 && anim < kSheetCount ? clipsOf(d.hero) : nullptr;
+  if (!A || !A->sheets[anim].ok) return false;
+  if (alpha <= 0.0f) return true;
+  const Art::Sheet& S = A->sheets[anim];
+  const int i = ((frame % S.frames) + S.frames) % S.frames;
+  // On the frame's own pixel grid, sampled without smoothing (the batch is drawn before the filter changes back)
+  const float k = g_renderScale;
+  x = std::round(x * k) / k, y = std::round(y * k) / k;
+  rlDrawRenderBatchActive();
+  SetTextureFilter(S.tex, TEXTURE_FILTER_POINT);
+  DrawTexturePro(S.tex, {i * S.fw, 0, flip ? -S.fw : S.fw, S.fh}, {x, y, S.fw * scale, S.fh * scale}, {0, 0}, 0.0f,
+                 withAlpha(tint, alpha * tint.a / 255.0f));
+  rlDrawRenderBatchActive();
+  SetTextureFilter(S.tex, TEXTURE_FILTER_TRILINEAR);
+  return true;
+}
+
 namespace {
 struct Picture {
   Texture2D tex{};
@@ -513,6 +539,33 @@ bool drawPicture(const char* name, Rectangle src, Rectangle dst, float alpha, bo
   return true;
 }
 
+bool drawPictureFaded(const char* name, Rectangle dst, float fadeL, float fadeB, float alpha, bool flipX, float fadeT) {
+  const Picture* P = pictureOf(name);
+  if (!P || alpha <= 0.0f) return P != nullptr;
+  const bool right = fadeL < 0.0f;
+  fadeL = std::fabs(fadeL);
+  const float us[3] = {0.0f, right ? 1.0f - fadeL : fadeL, 1.0f}, vs[4] = {0.0f, fadeT, 1.0f - fadeB, 1.0f};
+  auto vertex = [&](int i, int j) {  // a 2x3 grid of quads, each corner its own alpha
+    const float ax = fadeL <= 0.0f ? 1.0f : right ? (i == 2 ? 0.0f : 1.0f) : (i == 0 ? 0.0f : 1.0f);
+    const float ay = (fadeB > 0.0f && j == 3) || (fadeT > 0.0f && j == 0) ? 0.0f : 1.0f;
+    rlColor4ub(255, 255, 255, (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f) * std::min(ax, ay)));
+    rlTexCoord2f(flipX ? 1.0f - us[i] : us[i], vs[j]);
+    rlVertex2f(dst.x + dst.width * us[i], dst.y + dst.height * vs[j]);
+  };
+  rlSetTexture(P->tex.id);
+  rlBegin(RL_QUADS);
+  for (int j = 0; j < 3; ++j)
+    for (int i = 0; i < 2; ++i) {  // counter-clockwise on screen
+      vertex(i, j);
+      vertex(i, j + 1);
+      vertex(i + 1, j + 1);
+      vertex(i + 1, j);
+    }
+  rlEnd();
+  rlSetTexture(0);
+  return true;
+}
+
 bool drawPicturePoly(const char* name, const Vector2* src, const Vector2* dst, int n, Color tint) {
   const Picture* P = pictureOf(name);
   if (!P || n < 3 || tint.a == 0) return P != nullptr;
@@ -542,7 +595,7 @@ struct Fx {
   Texture2D glow{};  // a ParticleFX effect's halo: its frames blurred, premultiplied, kGlowDown times smaller
   Color light{};     // its mean colour, brightened: the light it throws on the fighters
   std::vector<Vector4> beams;  // per frame, that light: from (x, y, frame pixels), spreading z, strength w
-  bool ownGlow = false;  // a ParticleFX sprite sheet, not a GIF: its own soft bloom is kept, no halo over it
+  bool ownGlow = false;  // its own bloom is kept (the 11th field of its line), no halo over it
   bool ok = false;
 };
 // The halo of a ParticleFX effect (pfx_*): their GIF export has on/off transparency, so the light their site draws
@@ -610,10 +663,10 @@ const Fx* fxOf(const char* name) {
     const std::string line = index.substr(pos, end - pos);
     pos = end + 1;
     char key[64] = {};
-    int frames = 0, loop = 0, pixel = 0;
+    int frames = 0, loop = 0, pixel = 0, own = 0;
     float fw = 0, fh = 0, ax = 0, ay = 0, fps = 15.0f, hit = 0.0f;
-    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop, &hit,
-                    &pixel) < 6 ||
+    if (std::sscanf(line.c_str(), "fx %63s %d %f %f %f %f %f %d %f %d %d", key, &frames, &fw, &fh, &ax, &ay, &fps, &loop,
+                    &hit, &pixel, &own) < 6 ||
         std::strcmp(key, name) != 0 || frames <= 0)
       continue;
     const unsigned char* data = nullptr;
@@ -623,10 +676,12 @@ const Fx* fxOf(const char* name) {
     if (!img.data) break;
     F.tex = LoadTextureFromImage(img);
     F.info = {frames, fw, fh, ax, ay, fps > 0.0f ? fps : 15.0f, loop != 0, hit, pixel != 0};
-    F.ownGlow = std::strcmp(name, "pfx_h01_ult") == 0;  // (the owner's model, 11/11: the halo turned it white)
+    F.ownGlow = own != 0;  // made in Blender: its bloom is baked in, the game's halo would blur it and wash it white
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0) {
       ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-      if (!smoke(name)) F.glow = glowOf(img, F.info);  // the bloom (the owner: the game is « RTX », its effects glow)
+      // the bloom (the owner: the game is « RTX », its effects glow); a Blender strip has its own (never computed:
+      // it cost a hitch the first time each one played)
+      if (!smoke(name) && !F.ownGlow) F.glow = glowOf(img, F.info);
     }
     // Pixel art does not tint the fighters: its yellow turned the dark ones olive.
     if (F.tex.id != 0 && std::strncmp(name, "pfx_", 4) == 0 && !F.info.pixel) {
@@ -680,6 +735,13 @@ namespace art {
 const FxInfo* fxInfo(const char* name) {
   const Fx* F = fxOf(name);
   return F ? &F->info : nullptr;
+}
+
+const char* fxFront(const char* name) {
+  static std::map<std::string, std::string, std::less<>> names;  // (node-based: the names stay put)
+  auto it = names.find(name);
+  if (it == names.end()) it = names.emplace(name, std::string(name) + "_front").first;
+  return fxOf(it->second.c_str()) ? it->second.c_str() : nullptr;
 }
 
 float fxLoopTime(const char* name, float t) {
@@ -817,4 +879,46 @@ bool drawFx(const char* name, float t, Vec2 at, float size, float rot, bool flip
   frame = I.loop ? frame % I.frames : std::min(frame, I.frames - 1);
   return drawFxFrame(name, frame, at, size, rot, flip, alpha, tint, castLight);
 }
+// ---- Loading everything up front (the launch screen): no effect or clip is decoded in the middle of a fight -----
+namespace {
+struct Item {
+  int kind;  // 0 a fighter's clips, 1 an effect, 2 a picture
+  std::string name;
+  Hero hero{};
+};
+const std::vector<Item>& preloadItems() {
+  static std::vector<Item> items;
+  if (!items.empty()) return items;
+  for (const auto& c : roster()) items.push_back({0, c.id, c.hero});
+  const std::string& index = spriteIndex();
+  size_t pos = 0;
+  while (pos < index.size()) {
+    size_t end = index.find('\n', pos);
+    if (end == std::string::npos) end = index.size();
+    char key[64] = {};
+    if (std::sscanf(index.c_str() + pos, "fx %63s", key) == 1 && index.compare(pos, 3, "fx ") == 0) items.push_back({1, key});
+    pos = end + 1;
+  }
+  for (const ClashSheet* cs = clash_sheets; cs->name; ++cs) {  // the rest: menus, arenas, portraits
+    const std::string n = cs->name;
+    if (n.rfind("fx_", 0) == 0) continue;
+    bool clip = false;
+    for (const auto& c : roster())
+      if (n.size() > c.id.size() + 1 && n.compare(0, c.id.size() + 1, c.id + "_") == 0)
+        for (int i = 0; i < kSheetCount && !clip; ++i) clip = n.compare(c.id.size() + 1, std::string::npos, sheetName(i)) == 0;
+    if (!clip) items.push_back({2, n});
+  }
+  return items;
+}
+}  // namespace
+
+int preloadCount() { return int(preloadItems().size()); }
+int preloadKind(int i) { return preloadItems()[size_t(i)].kind; }
+void preload(int i) {
+  const Item& it = preloadItems()[size_t(i)];
+  if (it.kind == 0) clipsOf(it.hero);
+  else if (it.kind == 1) fxOf(it.name.c_str());
+  else pictureOf(it.name.c_str());
+}
+
 }  // namespace art

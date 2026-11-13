@@ -1,35 +1,41 @@
 #pragma once
-// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon, « Ligne d'horizon »: flat night
-// blue panels with bevelled corners, azure for the idle lines and player 1, gold for what is chosen and player 2, the
-// horizon line azure -> white -> gold, Saira Condensed type).
+// Small immediate-mode UI kit: the visual identity of every menu (Clash Horizon, « Épure », palette « Crépuscule »:
+// a night-to-dusk gradient, flat indigo panels with round corners, cream for text and for what is chosen, one cyan
+// accent; Archivo Expanded titles, Inter text).
+#include <functional>
 #include <initializer_list>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "game/common.hpp"
 #include "game/controls.hpp"
 
 namespace ui {
 
-constexpr Color kInk = {6, 10, 24, 255};         // « Nuit »: the deepest blue, outlines, text on gold
-constexpr Color kNavy = {20, 29, 64, 255};       // « Panneau »: cards (top)
-constexpr Color kNavyDeep = {13, 20, 48, 255};   // « Abysse »: cards (bottom)
+constexpr Color kInk = {23, 23, 58, 255};        // the deepest indigo: outlines, text on cream
+constexpr Color kNavy = {42, 39, 88, 255};       // panels (top)
+constexpr Color kNavyDeep = {33, 31, 72, 255};   // panels (bottom)
 constexpr Color kSlate = kNavy;
-constexpr Color kBlue = {61, 139, 255, 255};     // « Azur »: idle lines, player 1
-constexpr Color kSky = {191, 217, 255, 255};     // light trims and small labels
-constexpr Color kStone = {58, 76, 128, 255};     // idle marks
-constexpr Color kGold = {255, 181, 71, 255};     // « Or »: what is chosen, player 2
-constexpr Color kGoldDeep = {222, 132, 30, 255};
-constexpr Color kCream = {238, 243, 255, 255};   // « Éclat »: text
-constexpr Color kSoft = {212, 222, 245, 255};    // body text
-constexpr Color kMuted = {154, 168, 199, 255};   // « Brume »: secondary text
-constexpr Color kDisabled = {130, 144, 179, 255};  // what is not open yet
-constexpr Color kTrack = {26, 37, 80, 255};      // slider tracks, idle segments
+constexpr Color kBlue = {111, 227, 255, 255};    // the cyan accent: lines, sparks
+constexpr Color kSky = {218, 211, 234, 255};     // light trims and small labels
+constexpr Color kStone = {91, 86, 128, 255};     // idle marks
+constexpr Color kGold = {255, 243, 230, 255};    // what is chosen: cream
+constexpr Color kGoldDeep = {218, 211, 234, 255};
+constexpr Color kCream = {255, 243, 230, 255};   // text
+constexpr Color kSoft = {218, 211, 234, 255};    // body text
+constexpr Color kMuted = {171, 166, 204, 255};   // secondary text
+constexpr Color kDisabled = {138, 134, 174, 255};  // what is not open yet
+constexpr Color kTrack = {52, 49, 98, 255};      // slider tracks, idle segments
 constexpr Color kUmber = kInk;                   // outline of the big titles
-constexpr Color kTeal = kSky;                    // light accents
+constexpr Color kTeal = kBlue;                   // light accents
 constexpr Color kRed = {255, 96, 82, 255};       // cancel, danger
 constexpr Color kRedDark = {168, 34, 44, 255};
 constexpr Color kGreen = {61, 220, 151, 255};    // go
+// The « Crépuscule » gradient (top, middle at 55 %, bottom) and its flat deep tone.
+constexpr Color kDuskTop = {20, 20, 58, 255}, kDuskMid = {35, 30, 77, 255}, kDuskLow = {59, 37, 86, 255};
+constexpr Color kDeep = {23, 23, 58, 255};
+constexpr Color kHair = {255, 243, 230, 36};     // hairlines (cream at 14 %)
 
 // The tones of the chunky buttons.
 enum class Tone : int { Gold, Blue, Navy, Red, Green, Grey };
@@ -76,7 +82,6 @@ void boldCentered(const char* text, float cx, float y, float size, Color fill = 
 void menuPlate(Rectangle r, float slant, bool chosen, float alpha = 1.0f);
 Rectangle grow(Rectangle r, float px);
 void glow(Vector2 c, float radius, Color col, int layers = 10);
-void sunburst(Vector2 c, float radius, int rays, float rot, Color col);
 void vignette(float strength);
 void star(Vector2 c, float rOut, float rIn, float rot, Color col);
 void diamond(Vector2 c, float r, Color col);
@@ -92,7 +97,9 @@ void rule(float x0, float x1, float y, Color col);
 void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
 
 // ---- Backgrounds ----------------------------------------------------------------
-// Painterly sky: gradient, soft cloud banks, drifting motes (tinted by `motes`).
+// The « Crépuscule » gradient over the whole screen (a: its opacity).
+void dusk(float a = 1.0f);
+// The menus' ground: the « Crépuscule » gradient (the colours are ignored now).
 void backdrop(float time, Color top, Color bottom, Color motes);
 // A real stage background, slowly panning, under a navy veil (dim 0..1).
 void stageBackdrop(int stage, float time, float dim);
@@ -150,9 +157,19 @@ struct Hint {
 void footer(std::initializer_list<Hint> hints, const char* info = nullptr, const Hint* go = nullptr, bool goOn = true);
 Rectangle goRect(const Hint& go);  // where the footer puts it (mouse clicks)
 
+// « Épure » labels: Inter capitals spaced out (em: CSS letter-spacing), their caps centred on cy; returns the width.
+float label(const char* text, float x, float cy, float size, float em, Color col);
+float labelWidth(const char* text, float size, float em);
+// Line icons of the charte (24-unit grid, round caps), centred on c, `size` px wide.
+enum class Icon : int { Play, Versus, Training, Online, Fighters, Arenas, Options, Quit, Sliders, Dice, Sword, Trophy,
+                        Rematch, Home, Close, ChevronL, ChevronR, Arrow, Person };
+void icon(Icon i, Vector2 c, float size, Color col, float stroke = 1.75f);
+
 // Small capitals spaced out like the charte's labels (CSS letter-spacing, in em), title font; returns the width.
 float tracked(const char* text, float x, float y, float size, float em, Color col);
 float trackedWidth(const char* text, float size, float em);
+// `text` cut at its spaces into lines at most `width` px wide (at `size`, in font k).
+std::vector<std::string> wrapText(const std::string& text, float width, float size, FontKind k);
 // Draws `text` wrapped to `width`, line after line; returns the y under the last line (draw = false: only measures).
 float drawWrapped(const std::string& text, float x, float y, float width, float size, Color col, bool draw = true);
 // Title text with a horizontal gradient, left -> middle -> right (the "VS").
@@ -172,7 +189,83 @@ bool clicked(Rectangle r);
 bool mouseMoved();  // the pointer really moved this frame (not the initial jump)
 void newFrame();    // call once per frame, before the screen updates
 
-// ---- Screen transition (t in [0,1], fully covered at 0.5) -----------------------
-void wipe(float t);
+// ---- « Prestige » (12/11): each screen a match poster ----------------------------------
+// The fighter's colour in a flat flood cut by one blade leaning 12°, his name huge, white, on a night plate; his own
+// pixel art, crisp; the red / blue split only on 3-2-1-GO, GAME and the % hit; strokes drawn in Blender 2D.
+constexpr Color kNight = {3, 5, 15, 255};       // the ground
+constexpr Color kNightUp = {7, 11, 34, 255};    // a raised night (bars)
+constexpr Color kSilver = {238, 242, 250, 255}; // text, the blade
+constexpr Color kMist = {163, 174, 203, 255};   // secondary text
+constexpr Color kDim = {93, 106, 142, 255};     // what is not open yet
+constexpr Color kSplitR = {255, 79, 79, 255}, kSplitB = {79, 155, 255, 255};  // J1 red, J2 blue
+constexpr Color kCpuTag = {201, 205, 212, 255};
+constexpr float kLean = 153.0f / 720.0f;  // the blade: 12° from upright, 0.2125 px across per px down
+struct Flood {
+  Color fill, deep;
+};
+Flood flood(Hero h);  // the fighter's colour and its deep tone
+// A band between two edges leaning like the blade ("/", lean < 0: "\"), through (x0, 0) and (x1, 0).
+void lean(float x0, float x1, Color c, float k = kLean, float y0 = 0.0f, float y1 = float(kScreenH));
+// CSS easings: cubic-bezier(x1, y1, x2, y2) at t (0..1), and the progress of t through [a, b] eased by it.
+float bezier(float t, float x1, float y1, float x2, float y2);
+float seg(float t, float a, float b, float x1 = 0.2f, float y1 = 0.9f, float x2 = 0.1f, float y2 = 1.0f);
+// Draws `draw` scaled by s around (ox, oy) (CSS scale with its transform-origin).
+void scaled(float s, float ox, float oy, const std::function<void()>& draw);
+// The jolt as something heavy lands (GO, an ultimate's name, VICTOIRE), s seconds after: 0.45 s, then still.
+Vector2 slam(float s);
+// Big capitals (CSS sizes: em = font-size; top = the top of its line box, lh its line-height in em; ls the
+// letter-spacing in em), from distance fields: crisp at any size. stroke: a CSS text-stroke width in px.
+enum class Face : int { Cond, Wide, Exo };  // Archivo 62 %, Archivo 125 %, Exo 2 Black Italic
+float bigWidth(const char* s, float em, Face f, float ls = 0.0f);
+void big(const char* s, float x, float top, float em, Face f, Color fill, float lh = 0.84f, float ls = 0.0f,
+         float stroke = 0.0f, Color strokeCol = kNight);
+void bigHollow(const char* s, float x, float top, float em, Face f, float stroke, Color col, float lh = 0.84f,
+               float ls = 0.0f);
+// The big type is kept on one side of a line leaning like the blade, through (x0, 0): left (keepLeft) or right of it.
+void bigClip(float x0, bool keepLeft, float lean = kLean);
+void bigClipOff();
+// The choc: white capitals with a night outline, their red and blue copies split by `split` px either way.
+void choc(const char* s, float cx, float top, float em, float split, float alpha = 1.0f, float stroke = 5.0f,
+          Face f = Face::Wide, float lh = 1.0f, float ls = 0.0f);
+// Exo 2 Black Italic at a CSS font-size `em`, its baseline at `base` (the damage, the places, the results' numbers).
+float exoWidth(const char* s, float em);
+void exo(const char* s, float x, float base, float em, Color c);
+// Small capitals (Archivo 125 %), caps centred on cy; returns the width.
+float caps(const char* s, float x, float cy, float size, float ls, Color col);
+float capsWidth(const char* s, float size, float ls);
+// A fighter's name in big condensed capitals (em), broken at its spaces when wider than maxW on one line.
+std::vector<std::string> nameLines(const std::string& name, float em, float maxW);
+// A key cap of the charte (night, a silver rim; filled: silver, night text), or the gamepad's button; its width.
+float pkey(const char* key, Btn pad, float x, float y, float h, bool filled = false, float alpha = 1.0f);
+float pkeyWidth(const char* key, Btn pad, float h);
+// A keyboard key as in the Paramètres mockup: rounded, a night box and a silver rim (alpha `rim`), its name in small
+// capitals of `size` (10: at least 12 wide inside, 11: 20), centred on cy, h high in all; its width.
+float keyCap(const char* key, float x, float cy, float h, float size, float rim, float alpha = 1.0f);
+float keyCapWidth(const char* key, float size);
+// The masks drawn in Blender 2D, tinted: the brush that wipes the screen (frame 0..19, 24 a second, frames 8-10
+// cover it all), the ultimate's speed lines (frame 0..11, looping) in a band, the brush stroke under a word (0..9).
+void brushFrame(int frame, Color col, float alpha = 1.0f);
+void speedFrame(int frame, Rectangle band, Color col);
+void swooshFrame(int frame, Rectangle dst, Color col);
+// The logo: CLASH cut on the blade, H◎RIZON between two thin lines, the cyan star in the O (it pops in, turns and
+// breathes); drawn in its 1200 x 500 box at (x, y) scaled by s. in: the parts landing (title), 1 = all there.
+struct LogoIn {
+  float cut = 1.0f;  // CLASH's halves sliding in along the cut (< 0: not there yet)
+  float word = 1.0f, lines = 1.0f;  // H◎RIZON rising in, the lines growing
+  float starScale = 1.0f, starRot = 0.0f;  // the star's pop (it overshoots), in degrees
+};
+void prestigeLogo(float x, float y, float s, float time, const LogoIn& in = {});
+
+// ---- Screen transitions (t in [0,1]) -------------------------------------------
+// « Prestige »: Horizon (menus) and Game (out of a fight): the brush drawn in Blender 2D wipes the screen in a
+// fighter's colour, its deep tone a frame ahead (covered from frame 8 to 10). Flash (into a fight): the choc, each
+// fighter's colour coming in from its side to hit the other's on the blade, then opening on the fight. Cut (into the
+// VS): the old screen `old` (a snapshot) splits on the blade, its halves flying apart over the new one.
+enum class Wipe : int { Horizon, Flash, Cut, Game };
+// The colours of the next transition: the brush's (a), the choc's left (a) and right (b).
+void wipeColors(Flood a, Flood b);
+float wipeSwap(Wipe w);   // the t at which the next screen comes in
+int wipeFrames(Wipe w);   // its length
+void wipe(Wipe w, float t, const Texture2D* old = nullptr);
 
 }  // namespace ui

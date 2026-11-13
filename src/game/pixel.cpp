@@ -84,7 +84,7 @@ void premultipliedBlend() {
 Rectangle layerSrc(int x, int y, int w, int h, int lh) { return {float(x), float(lh - y - h), float(w), -float(h)}; }
 }  // namespace
 
-bool enabled() { return settings().pixelArt; }
+bool enabled() { return settings().highQuality; }  // (part of "Qualité graphique : Haute")
 
 float artPixel() { return g_renderScale >= 1.5f ? 1.5f : 2.0f; }
 
@@ -168,12 +168,68 @@ void sprite(Rect b, float alpha, const std::function<void(float)>& draw, float p
   ui::frameBlend();
 }
 
+namespace {
+RenderTexture2D g_grey{};
+Shader g_greyShader{};
+const char* kGreyFrag = R"(#version 330
+in vec2 fragTexCoord;
+in vec4 fragColor;
+uniform sampler2D texture0;
+out vec4 finalColor;
+void main() {
+  vec3 c = texture(texture0, fragTexCoord).rgb;
+  float l = clamp((dot(c, vec3(0.299, 0.587, 0.114)) - 0.5) * 1.1 + 0.5, 0.0, 1.0) * 0.55;  // grey, darker, a bit of contrast
+  finalColor = vec4(vec3(l), fragColor.a);
+}
+)";
+}  // namespace
+
+void desaturate(float amount) {
+  if (amount <= 0.0f || !g_frame) return;
+  const int W = g_frame->texture.width, H = g_frame->texture.height;
+  if (g_grey.id == 0 || g_grey.texture.width != W || g_grey.texture.height != H) {
+    if (g_grey.id) UnloadRenderTexture(g_grey);
+    g_grey = LoadRenderTexture(W, H);
+  }
+  if (g_greyShader.id == 0) g_greyShader = LoadShaderFromMemory(nullptr, kGreyFrag);
+  rlDrawRenderBatchActive();
+  const Matrix mv = rlGetMatrixModelview(), proj = rlGetMatrixProjection();
+  const Rectangle src{0, 0, float(W), -float(H)}, dst{0, 0, float(W), float(H)};
+  // A copy of the frame, then the frame drawn back over itself through the grey shader
+  rlEnableFramebuffer(g_grey.id);
+  rlViewport(0, 0, W, H);
+  rlSetMatrixProjection(MatrixOrtho(0, W, H, 0, 0, 1));
+  rlSetMatrixModelview(MatrixIdentity());
+  rlSetBlendMode(BLEND_ALPHA);
+  rlClearColor(0, 0, 0, 255);
+  rlClearScreenBuffers();
+  DrawTexturePro(g_frame->texture, src, dst, {0, 0}, 0.0f, WHITE);
+  rlDrawRenderBatchActive();
+  rlEnableFramebuffer(g_frame->id);
+  rlViewport(0, 0, W, H);
+  BeginShaderMode(g_greyShader);
+  DrawTexturePro(g_grey.texture, src, dst, {0, 0}, 0.0f, withAlpha(WHITE, clampf(amount, 0.0f, 1.0f)));
+  EndShaderMode();
+  rlDrawRenderBatchActive();
+  rlSetMatrixProjection(proj);
+  rlSetMatrixModelview(mv);
+  ui::frameBlend();
+}
+
 void unload() {
+  if (g_grey.id) UnloadRenderTexture(g_grey);
+  if (g_greyShader.id) UnloadShader(g_greyShader);
+  g_grey = RenderTexture2D{};
+  g_greyShader = Shader{};
   if (g_raw.id) UnloadRenderTexture(g_raw);
   if (g_out.id) UnloadRenderTexture(g_out);
   if (g_shader.id) UnloadShader(g_shader);
   g_raw = g_out = RenderTexture2D{};
   g_shader = Shader{};
   g_ready = false;
+}
+void warm() {
+  ready();
+  if (g_greyShader.id == 0) g_greyShader = LoadShaderFromMemory(nullptr, kGreyFrag);
 }
 }  // namespace pix
