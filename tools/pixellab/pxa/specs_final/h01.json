@@ -10,7 +10,7 @@
    true,
    true,
    "none",
-   "calm idle loop: stands tall and still in the same upright stance, the chest rising and falling slowly with calm breaths (a very small movement), shoulders relaxed, knees soft and never bending lower, hips at the same height the whole time; the ponytail, the red ribbons and the coat tails drift gently in a soft wind, a little after the body; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
+   "calm idle loop: stands tall and still in the same upright stance, the chest rising and falling slowly with calm breaths (a very small movement), shoulders relaxed, knees soft and never bending lower, hips at the same height the whole time; the ponytail, the red ribbons and the coat tails sway gently, a little after the body; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
   ],
   "walk": [
    8,
@@ -34,7 +34,7 @@
    true,
    false,
    "forward",
-   "karate jab, fast and precise, eyes narrowed: from the calm upright stance his right hand closes into a fist and snaps straight forward at face height to full extension, then snaps straight back into the stance. His body stays seen from the side, facing right, never facing the viewer; the white coat stays off his shoulders, open over his black top. On the one frame of full extension only, a thin short white smear edged with red trails just behind the fist, no longer than his forearm; it is gone on the next frame"
+   "karate jab, fast and precise, eyes narrowed: from the calm upright stance his right hand closes into a fist and snaps straight forward at face height to full extension, then snaps straight back into the stance. His body stays seen from the side, facing right, never facing the viewer; the white coat stays off his shoulders, open over his black top."
   ],
   "jab2": [
    8,
@@ -42,7 +42,7 @@
    true,
    false,
    "forward",
-   "karate reverse punch, eyes narrowed: a short step in, the hips turn and his left fist drives straight forward at chest height to full extension while his right fist pulls back tight against his right hip, then he settles back into the stance. His body stays seen from the side, facing right, never facing the viewer; the white coat stays off his shoulders, open over his black top. On the one frame of full extension only, a thin short white smear edged with red trails just behind the fist, no longer than his forearm; it is gone on the next frame"
+   "karate reverse punch, eyes narrowed: a short step in, the hips turn and his left fist drives straight forward at chest height to full extension while his right fist pulls back tight against his right hip, then he settles back into the stance. His body stays seen from the side, facing right, never facing the viewer; the white coat stays off his shoulders, open over his black top."
   ],
   "jab3": [
    12,
@@ -50,7 +50,7 @@
    true,
    false,
    "forward",
-   "karate high kick to finish the combo, eyes narrowed: he lifts the rear knee high, then snaps the leg out forward at head height in a fast arc, holds it an instant, then sets the foot down back into the stance. His body stays seen from the side, facing right; the coat and the ponytail fly out with the kick. On the two frames of the kick only, a thin curved white smear edged with red follows just behind the foot along the end of its path, a short arc, never a full circle, staying close to the leg; it is gone after"
+   "karate high kick to finish the combo, eyes narrowed: he lifts the rear knee high, then snaps the leg out forward at head height in a fast arc, holds it an instant, then sets the foot down back into the stance. His body stays seen from the side, facing right; the coat and the ponytail fly out with the kick."
   ],
   "ftilt": [
    8,
@@ -98,7 +98,7 @@
    true,
    false,
    "up",
-   "rising crescent kick in one fluid motion: plants the front foot with the standing knee slightly bent, leans the upper body back and a little to the side, both arms swing out for counterweight, the rear leg sweeps from low behind across the front and up over the head in a wide circular arc without stopping at the top, then comes down and lands back in the guard"
+   "rising circular kick in one fluid motion: plants the front foot with the standing knee slightly bent, leans the upper body back and a little to the side, both arms swing out for counterweight, the rear leg sweeps from low behind across the front and up over the head in a wide circular arc without stopping at the top, then comes down and lands back in the guard"
   ],
   "dsmash": [
    12,
@@ -170,7 +170,7 @@
    null,
    false,
    "none",
-   "a very visible dash: from the upright stance he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward and the back leg fully extended behind him, the arms swept back, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet"
+   "a very visible dash: from the upright stance he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward and the back leg fully extended behind him, the arms swept back, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background"
   ],
   "bthrow": [
    8,
@@ -178,7 +178,7 @@
    "guard",
    false,
    "back",
-   "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands, no beam, no motion streak, no trail behind the arms"
+   "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"
   ],
   "dthrow": [
    8,
@@ -212,7 +212,7 @@
    true,
    false,
    "forward",
-   "dashes forward very low and fast, then a lightning-fast horizontal knife-hand cut, ending far ahead with the arm extended like a blade and his back half turned, then back into the guard"
+   "dashes forward very low and fast, then a very fast horizontal knife-hand cut, ending far ahead with the arm extended like a blade and his back half turned, then back into the guard"
   ],
   "uspecial": [
    12,

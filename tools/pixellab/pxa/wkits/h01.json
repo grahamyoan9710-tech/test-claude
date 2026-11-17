@@ -13,7 +13,7 @@
      true,
      false,
      "forward",
-     "a fast flat horizontal cut: the nodachi sweeps from low beside him forward at chest height to full reach in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and red inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance, calm and precise; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "a fast flat horizontal cut: the nodachi sweeps from low beside him forward at chest height to full reach in one clean stroke; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance, calm and precise"
     ],
     "w0_jab2": [
      12,
@@ -21,7 +21,7 @@
      true,
      false,
      "forward",
-     "a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and red inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "a rising diagonal cut: the nodachi sweeps from low in front up over his head in one clean stroke, the coat flaring; then he lowers the blade back into the stance"
     ],
     "w0_jab3": [
      12,
@@ -29,7 +29,7 @@
      true,
      false,
      "forward",
-     "a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and red inside, following the blade on the strike frames only; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "a powerful finishing cut: steps in, raises the nodachi high above his head with both hands and brings it down in one big vertical cut to the ground in front of him; then he flicks the blade sharply down to his side and lowers it back into the stance, the left hand returning to the scabbard"
     ],
     "w0_nair": [
      12,
@@ -45,7 +45,7 @@
      true,
      false,
      "forward",
-     "swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "swings the nodachi in a wide flat arc low along the ground, sending its edge forward, then holds the follow-through"
     ],
     "w0_sspecial": [
      12,
@@ -53,7 +53,7 @@
      true,
      false,
      "forward",
-     "dashes forward very low and fast and draws a lightning-fast horizontal cut with the nodachi, ending far ahead with his back half turned and the blade extended; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "dashes forward very low and fast and draws a very fast horizontal cut with the nodachi, ending far ahead with his back half turned and the blade extended"
     ],
     "w0_uspecial": [
      12,
@@ -61,7 +61,7 @@
      true,
      false,
      "up",
-     "springs up spinning with the nodachi held out, cutting in a rising spiral above his head; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "springs up spinning with the nodachi held out, cutting in a rising spiral above his head"
     ],
     "w0_dspecial": [
      12,
@@ -101,7 +101,7 @@
      true,
      true,
      "none",
-     "idle loop of a calm swordsman: stands tall holding the drawn nodachi low in his right hand, the point lowered forward and perfectly still, his left hand resting on the scabbard at his hip; deep slow breaths lift the chest a little; the knees soft, never bending lower; the ponytail, the ribbons, the coat tails and the red tassel of the sword drift in a soft wind; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
+     "idle loop of a calm swordsman: stands tall holding the drawn nodachi low in his right hand, the point lowered forward and perfectly still, his left hand resting on the scabbard at his hip; deep slow breaths lift the chest a little; the knees soft, never bending lower; the ponytail, the ribbons, the coat tails and the red tassel of the sword sway gently; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
     ],
     "w0_walk": [
      12,
@@ -133,7 +133,7 @@
      null,
      false,
      "none",
-     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet; no speed lines, no dust, no smoke, no cloud, no sparks on the ground, no grey anywhere"
+     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the nodachi held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background"
     ],
     "w0_bthrow": [
      8,
@@ -166,7 +166,7 @@
      true,
      false,
      "forward",
-     "a fast diagonal cut: the star-guarded sword sweeps from high to low in front of him in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and gold inside, following the blade on the strike frames only; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance"
+     "a fast diagonal cut: the star-guarded sword sweeps from high to low in front of him in one clean stroke; the coat and the ponytail snap after the cut; then he brings the blade back low into the stance"
     ],
     "w1_jab2": [
      12,
@@ -174,7 +174,7 @@
      true,
      false,
      "forward",
-     "a reverse rising cut: the star-guarded sword sweeps from low behind him up in front of him in one clean stroke, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and gold inside, following the blade on the strike frames only, the coat flaring; then he lowers the blade back into the stance"
+     "a reverse rising cut: the star-guarded sword sweeps from low behind him up in front of him in one clean stroke, the coat flaring; then he lowers the blade back into the stance"
     ],
     "w1_jab3": [
      12,
@@ -182,7 +182,7 @@
      true,
      false,
      "forward",
-     "a spinning finishing cut: turns once on the spot and finishes with a wide horizontal cut of the star-guarded sword at chest height, a thin crisp trail only two pixels wide hugging the edge of the blade, never a wide crescent,, white along the edge and gold inside, following the blade on the strike frames only; ends facing right and lowers the blade back into the stance"
+     "a spinning finishing cut: turns once on the spot and finishes with a wide horizontal cut of the star-guarded sword at chest height; ends facing right and lowers the blade back into the stance"
     ],
     "w1_nair": [
      12,
@@ -206,7 +206,7 @@
      true,
      false,
      "forward",
-     "dashes forward very low and fast and draws a lightning-fast horizontal cut with the star-guarded sword, ending far ahead with his back half turned and the blade extended"
+     "dashes forward very low and fast and draws a very fast horizontal cut with the star-guarded sword, ending far ahead with his back half turned and the blade extended"
     ],
     "w1_uspecial": [
      12,
@@ -254,7 +254,7 @@
      true,
      true,
      "none",
-     "idle loop of a calm swordsman: stands tall holding the drawn star-guarded sword low in his right hand, the point lowered forward and perfectly still, his left hand resting on the scabbard at his hip; deep slow breaths lift the chest a little; the knees soft, never bending lower; the ponytail, the ribbons, the coat tails and the red tassel of the sword drift in a soft wind; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
+     "idle loop of a calm swordsman: stands tall holding the drawn star-guarded sword low in his right hand, the point lowered forward and perfectly still, his left hand resting on the scabbard at his hip; deep slow breaths lift the chest a little; the knees soft, never bending lower; the ponytail, the ribbons, the coat tails and the red tassel of the sword sway gently; once he slowly closes his eyes and opens them with a cold calm look; the feet stay planted, returns exactly to the first pose"
     ],
     "w1_walk": [
      12,
@@ -286,7 +286,7 @@
      null,
      false,
      "none",
-     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the star-guarded sword held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background: no dust, no smoke, no streaks, no lines, nothing behind him or under his feet"
+     "a very visible dash: he dips for an instant, then pushes off into one long low lunge to the right, the body leaning far forward, the star-guarded sword held low and back in his right hand, the left hand on the scabbard, the back leg fully extended behind him, the coat and the ponytail flying back, then lands on the front foot already in a running stride. Every frame shows only him, crisp and clean, on an empty background"
     ],
     "w1_bthrow": [
      8,
