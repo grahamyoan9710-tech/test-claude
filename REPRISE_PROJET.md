@@ -50,9 +50,9 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender) | 17/11 07 h 40 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-3uctyp (16.0) | 17/11 11 h 20 UTC |
 
 ### Journal (le plus récent en haut)
 - 17/11 10 h UTC, fil « Faire le tri des anciens persos et terrains » (validé par yoyo) : retirés les 47 lignes
