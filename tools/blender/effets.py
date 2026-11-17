@@ -30,7 +30,12 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "p08": ("#C98F28", "#FFD45A", "#FFF3BF", "#FFFFFF", None),
     "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
+if KIND in ("aura", "eveil"):  # the awakened forms: their own colours (aura_geo.PAL)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import aura_geo
+    PALETTES[STYLE] = aura_geo.PAL[STYLE]
 rng = random.Random(sum(map(ord, RECIPE)))
+LAYER = ""  # the layer being rendered: "" (behind the fighters) or "_front" (over them)
 
 
 def lin(c):
@@ -307,6 +312,71 @@ def m_bubble():
     rim = nd.math('SUBTRACT', 1.0, nd.smooth(v, 0.96, 1.0))
     return nd.surface(nd.ramp(nd.add(0.6, nd.mul(x, 0.4)), RAMP), nd.mul(S, nd.add(0.2, nd.mul(x, 2.2))),
                       nd.mul(nd.mul(A, nd.mul(x, 0.85)), rim))
+
+
+def m_aura(smoky=True):
+    """An aura's flame (a ribbon, u: 0 at its root): its colour from the heat knob (its layer: deep outside, hot at its
+    heart), hotter at its root; its edges eaten by noise streaming up it (each flame its own: the object's random
+    number), its end turning to the fighter's smoke if it has one."""
+    smoke = SMOKE if smoky else None
+    nd = Nodes("Aura")
+    u, v = nd.uv()
+    S, A, Wk = nd.knobs()
+    t = nd.clock()
+    seed = nd.mul(nd.new('ShaderNodeObjectInfo').outputs['Random'], 40.0)
+    f1 = nd.loop_noise(v, u, t, 4.0, 2.0, 2.4, detail=4.0, seed=seed, rho=0.22)
+    f2 = nd.loop_noise(v, u, t, 9.0, 3.0, 2.4, detail=2.0, seed=nd.add(seed, 11.0), rho=0.22)
+    fl = nd.add(nd.mul(f1, 0.7), nd.mul(f2, 0.3))
+    mid = nd.math('SUBTRACT', 1.0, nd.math('ABSOLUTE', nd.math('SUBTRACT', nd.mul(v, 2.0), 1.0)))
+    burn = nd.add(nd.add(0.06, nd.mul(nd.math('POWER', u, 2.0), 0.25)), nd.mul(nd.math('SUBTRACT', 1.0, mid), 0.22))
+    a = nd.smooth(nd.math('SUBTRACT', fl, burn), -0.04, 0.05)
+    x = nd.mul(nd.mul(nd.heat, nd.add(0.7, nd.mul(nd.math('SUBTRACT', 1.0, u), 0.4))), nd.add(0.8, nd.mul(fl, 0.4)))
+    if smoke:  # its end darkens into smoke
+        x = nd.mul(x, nd.math('SUBTRACT', 1.0, nd.mul(nd.smooth(u, 0.7, 1.0), 0.6)))
+    stops = [(0.0, smoke or DEEP), (0.25, DEEP), (0.5, MAIN), (0.78, HOT), (1.0, CORE)]
+    light = nd.add(nd.mul(nd.math('POWER', x, 2.0), 2.4), 0.15)
+    return nd.surface(nd.ramp(x, stops), nd.mul(S, light), nd.mul(A, a))
+
+
+def m_veil():
+    """A veil of frost or light (a ribbon): brightest along its middle, its edges soft and rippling (noise streaming
+    along it), its colour from the heat knob."""
+    nd = Nodes("Voile")
+    u, v = nd.uv()
+    S, A, Wk = nd.knobs()
+    t = nd.clock()
+    seed = nd.mul(nd.new('ShaderNodeObjectInfo').outputs['Random'], 40.0)
+    rip = nd.loop_noise(v, u, t, 3.0, 1.0, 2.0, detail=3.0, seed=seed, rho=0.25)
+    mid = nd.math('SUBTRACT', 1.0, nd.math('ABSOLUTE', nd.math('SUBTRACT', nd.mul(v, 2.0), 1.0)))
+    body = nd.mul(nd.smooth(mid, 0.0, 0.4), nd.add(0.55, nd.mul(rip, 0.6)))
+    x = nd.mul(nd.heat, nd.add(0.75, nd.mul(mid, 0.35)))
+    return nd.surface(nd.ramp(x, RAMP), nd.mul(S, nd.add(0.25, nd.mul(nd.math('POWER', x, 2.0), 2.2))),
+                      nd.mul(A, body))
+
+
+def m_halo(path):
+    """The glow behind the body: the fighter's outline blurred (an image), hottest against the body."""
+    nd = Nodes("Halo")
+    S, A, Wk = nd.knobs()
+    tex = nd.new('ShaderNodeTexImage')
+    tex.image = bpy.data.images.load(path)
+    tex.image.colorspace_settings.name = 'Non-Color'
+    tex.extension = 'CLIP'
+    nd.t.links.new(nd.new('ShaderNodeTexCoord').outputs['UV'], tex.inputs['Vector'])
+    g = nd.math('POWER', nd.math('ADD', tex.outputs['Color'], 0.0), 1.3)
+    return nd.surface(nd.ramp(nd.mul(g, nd.heat), RAMP), nd.mul(S, nd.add(0.3, nd.mul(g, 1.2))),
+                      nd.mul(A, nd.smooth(g, 0.1, 0.6)))
+
+
+def m_rock():
+    """A stone of energy flung out (a filled shape, v: 0 at its centre, 1 at its outline): dark, its rim as hot as
+    the heat (the planche's stones, molten)."""
+    nd = Nodes("Roche")
+    u, v = nd.uv()
+    S, A, Wk = nd.knobs()
+    edge = nd.smooth(v, 0.55, 0.95)
+    ramp = [(0.0, SMOKE or DEEP), (0.4, DEEP), (0.75, MAIN), (1.0, HOT)]
+    return nd.surface(nd.ramp(nd.mul(edge, nd.heat), ramp), nd.mul(S, nd.add(0.15, nd.mul(edge, 1.5))), A)
 
 
 # --- geometry ----------------------------------------------------------------------------------------------
@@ -822,8 +892,9 @@ def r_pilier():
 # Played once (LOOP 0) at 30 fps from the move's castFxFrame: strip frame i is the move's game frame 2i after it.
 # Read like anime and game effects, not diagrams: no glowing balls, whole rings or cones; a blow flashes as uneven
 # spikes for a frame or two, its shock is thin broken arcs, trails are teardrops, flames and wisps.
-ELEMENT = {"p01": "ombre", "p02": "givre", "p03": "feu", "p07": "foudre", "p08": "lumiere", "garde": "verre"}[STYLE]
-MOTE = {"p01": "kite", "p02": "star", "p03": "dot", "p07": "kite", "p08": "star", "garde": "star"}[STYLE]
+ELEMENT = {"p01": "ombre", "p02": "givre", "p03": "feu", "p07": "foudre", "p08": "lumiere", "garde": "verre",
+           "h01": "feu"}[STYLE]
+MOTE = {"p01": "kite", "p02": "star", "p03": "dot", "p07": "kite", "p08": "star", "garde": "star", "h01": "dot"}[STYLE]
 MOTE_SIZE = {"star": 0.05, "dot": 0.024, "kite": 0.04}[MOTE]
 DYN = []  # objects rebuilt every frame (lightning, arcs)
 M = {}  # materials shared by the rebuilt objects
@@ -858,7 +929,11 @@ def drop(s, head=0.15, p=0.8):
 def bolt(name, a, b, depth, amp, r, w=1.0, alpha=1.0, y=-0.03):
     """A jagged arc of lightning from a to b, for this frame only: a white-hot core in a red halo (thick enough to
     read in the game, where a fighter is often half the 170 px it is drawn for)."""
-    p = jag(a, b, depth, amp, r)
+    return zap(name, jag(a, b, depth, amp, r), w, alpha, y)
+
+
+def zap(name, p, w=1.0, alpha=1.0, y=-0.03):
+    """Lightning along the points p, for this frame only."""
     for tag, rad, mat, s, al, heat, dy in (("", 0.01, "core", 1.0, 1.0, 0.9, 0.0),
                                            ("h", 0.03, "halo", 1.0, 0.75, 0.3, 0.005),
                                            ("g", 0.085, "halo", 0.45, 0.3, 0.1, 0.01)):
@@ -1675,24 +1750,93 @@ def r_bulle():
     return meta, anim
 
 
+# --- the awakened forms (aura_geo.py) ----------------------------------------------------------------------
+def aura_mats():
+    M.update(flame=m_aura(SMOKE is not None), veil=m_veil(), line=m_line(), shape=m_shape(0.85),
+             solid=m_solid(5.0), core=m_solid(16.0), halo=m_solid(4.5), rock=m_rock())
+
+
+def frame_of(boxes, margin=0.18):
+    """The strip's frame (px) round every frame's shapes, and its anchor (the feet)."""
+    x0, z0 = min(b[0] for b in boxes) - margin, min(b[1] for b in boxes) - margin
+    x1, z1 = max(b[2] for b in boxes) + margin, max(b[3] for b in boxes) + margin
+    return math.ceil((x1 - x0) * 100), math.ceil((z1 - z0) * 100), round(-x0 * 100, 1), round(z1 * 100, 1)
+
+
+def build(shapes):
+    """aura_geo's shapes as this frame's objects."""
+    for j, sh in enumerate(shapes):
+        name, k = "s%d" % j, sh["k"]
+        if k == "rib":
+            ob = ribbon(name, sh["pts"], sh["w"], M[sh["m"]], sh["y"])
+        elif k == "poly":
+            n = len(sh["pts"])
+            c = (sum(p[0] for p in sh["pts"]) / n, sum(p[1] for p in sh["pts"]) / n)
+            ob = fan(name, sh["pts"], M[sh["m"]], sh["y"], centre=c)
+        elif k == "dot":
+            ob = disc(name, sh["r"], M[sh["m"]], sh["y"], at=sh["c"], rings=2, segs=12)
+        else:
+            zap(name, sh["pts"], sh.get("w", 1.0), sh["a"], sh["y"])
+            continue
+        knob(dyn(ob), sh["s"], sh["a"], 0.5, sh["h"])
+
+
+def r_aura():
+    """An awakened form's aura: loops behind its fighter (a fighter 170 px tall), its glow against the body under
+    flames born on its outline."""
+    fn, N = aura_geo.AURAS[STYLE]
+    W, H, AX, AY = frame_of([aura_geo.bounds(fn(f / N)) for f in range(N)])
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=0, N=N, FPS=30, LOOP=1)
+    scene(W, H, AX, AY)
+    aura_mats()
+    hl = aura_geo.SIL[STYLE]["halo"]
+    x0, z1, w, h = hl["x0"], hl["z1"], hl["w"], hl["h"]
+    halo = mesh("halo", [(x0, 0.03, z1 - h), (x0 + w, 0.03, z1 - h), (x0 + w, 0.03, z1), (x0, 0.03, z1)], [(0, 1, 2, 3)],
+                [(0, 0), (1, 0), (1, 1), (0, 1)], m_halo(os.path.join(aura_geo.HERE, "aura", hl["file"])))
+
+    def anim(f, t):
+        fresh()
+        knob(halo, 0.8, 0.4 + 0.06 * math.sin(2 * math.pi * 2 * t), 0.0, 0.6)  # it breathes
+        build(fn(t))
+
+    return meta, anim
+
+
+def r_eveil():
+    """An awakened form's burst (played once at its feet as the form begins, drawn 1.6 times bigger): its far half
+    behind the fighters, its near half over them (`_front`)."""
+    fn, N = aura_geo.EVEILS[STYLE], aura_geo.BN
+    W, H, AX, AY = frame_of([aura_geo.bounds(fn(f)) for f in range(N)], 0.15)
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=0, N=N, FPS=30, LOOP=0, LAYERS=["", "_front"])
+    scene(W, H, AX, AY)
+    aura_mats()
+
+    def anim(f, t):
+        fresh()
+        build([sh for sh in fn(f) if sh.get("front", False) == (LAYER == "_front")])
+
+    return meta, anim
+
+
 RECIPES = dict(bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
-               plume=r_plume, marque=r_marque, pilier=r_pilier)
+               plume=r_plume, marque=r_marque, pilier=r_pilier, aura=r_aura, eveil=r_eveil)
 if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]
     meta, anim = CASTS[kind](**opts)
 else:
     meta, anim = RECIPES[KIND]()
-os.makedirs(OUT, exist_ok=True)
 FRAMES = [int(x) for x in os.environ.get("CH_FRAMES", "").split(",") if x.strip()] or range(meta["N"])
-for f in FRAMES:
-    t = f / meta["N"]
-    for c in CLOCK:
-        c.outputs[0].default_value = t
-    anim(f, t)
-    sc.render.filepath = os.path.join(OUT, "f%02d.exr" % f)
-    bpy.ops.render.render(write_still=True)
-    print("IMAGE", f, flush=True)
-print("FXLINE fx pfx_%s_%s %d %d %d %.1f %.1f %d %d %d 0 1" % (STYLE, SECOND if CAST else KIND, meta["N"], meta["W"],
-                                                             meta["H"], meta["AX"],
-                                                             meta["AY"], meta["FPS"], meta["LOOP"], meta["RH"]))
+for LAYER in meta.get("LAYERS", [""]):  # (a burst's near half: its own strip, <name>_front)
+    os.makedirs(OUT + LAYER, exist_ok=True)
+    for f in FRAMES:
+        t = f / meta["N"]
+        for c in CLOCK:
+            c.outputs[0].default_value = t
+        anim(f, t)
+        sc.render.filepath = os.path.join(OUT + LAYER, "f%02d.exr" % f)
+        bpy.ops.render.render(write_still=True)
+        print("IMAGE", LAYER, f, flush=True)
+    print("FXLINE fx pfx_%s_%s%s %d %d %d %.1f %.1f %d %d %d 0 1" % (STYLE, SECOND if CAST else KIND, LAYER, meta["N"],
+                                                                   meta["W"], meta["H"], meta["AX"], meta["AY"],
+                                                                   meta["FPS"], meta["LOOP"], meta["RH"]))
 print("FIN", OUT)
