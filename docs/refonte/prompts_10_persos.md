@@ -46,8 +46,8 @@ l'idle et la marche, concentré dans les coups, la douleur dans les coups reçus
 
 ## Les 10 persos
 
-### 01 · Hakuen (homme)
-- **subject** : `an adult man with very long silver-white hair in a high ponytail tied with red ribbons and red and
+### 01 · Hakuen (femme depuis le 17/11, yoyo)
+- **subject** : `an adult woman with very long silver-white hair in a high ponytail tied with red ribbons and red and
   gold beads, red eyes, a long white off-shoulder coat with red and gold flame patterns and a red lining, a black
   sleeveless high-collared top, a red and gold belt with a red buckle, baggy black trousers, black fingerless gloves,
   red and black boots with gold buckles`

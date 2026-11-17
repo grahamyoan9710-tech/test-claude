@@ -176,6 +176,9 @@ void fighterCard(const Match& m, const Fighter& f, float L, float T, float a, in
         DrawRectangleRec(b, withAlpha(ui::kNight, 0.65f * a));
         const char* sec = TextFormat("%d", (f.moveCooldown[NSpecial] + 59) / 60);
         drawText(sec, b.x + (b.width - textWidth(sec, 14, kB)) * 0.5f, capsY(b.y + 13, 14, kB), 14, withAlpha(ui::kSilver, a), kB);
+      } else if (k == 0 && f.moveDef(NSpecial).charges > 1 && f.moveUses[NSpecial] > 0) {  // uses left in a row
+        const char* n = TextFormat("%d", f.moveDef(NSpecial).charges - f.moveUses[NSpecial]);
+        drawText(n, b.x + b.width - textWidth(n, 11, kB) - 2, capsY(b.y + b.height - 7, 11, kB), 11, withAlpha(ui::kSilver, a), kB);
       }
       wx -= 30;
     }

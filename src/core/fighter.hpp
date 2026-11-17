@@ -59,6 +59,7 @@ struct Fighter {
   bool airDodgeUsed = false;
   bool sideSpecialUsed = false;
   int moveCooldown[MOVE_COUNT] = {};  // frames left before a move with a cooldown can be used again
+  int moveUses[MOVE_COUNT] = {};      // uses in a row of a move with charges (MoveDef::charges)
 
   // Current move
   int move = -1;
@@ -185,7 +186,7 @@ struct Fighter {
   }
   bool isIntangible() const { return intangible > 0 || invincible > 0; }
   void gainWill(int n) {
-    if (def->willForm >= 0) will = will + n > kWillMax ? kWillMax : will + n;
+    if (def->willForm >= 0 && weapon >= 0) will = will + n > kWillMax ? kWillMax : will + n;  // owner 17/11: armed only
   }
   bool active() const { return !eliminated && state != FState::Dead; }
 };

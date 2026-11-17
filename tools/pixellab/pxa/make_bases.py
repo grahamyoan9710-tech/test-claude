@@ -4,7 +4,8 @@
     python3 make_bases.py guard           -> pxa/base/<id>_guard256.png from the chosen pro candidate (PICK)
     python3 make_bases.py armed [ids...]  -> submits the armed guards: the guard + the owner's weapon icon, as
                                              references to the pro model (pxa/base_src/<id>_w<slot>/)
-    python3 make_bases.py armedpick       -> pxa/base/<id>_w<slot>guard256.png from the chosen candidates (APICK),
+    python3 make_bases.py v2 [ids...]     -> submits the guards of the new fighters (V2) from their cell of the sheet
+    python3 make_bases.py armedpick      -> pxa/base/<id>_w<slot>guard256.png from the chosen candidates (APICK),
                                              feet where the guard's are, and pxa/anchors14.json for import_all.py
 
 Every base is a 256x256 canvas, the fighter's feet on y = 244, its body centred on x = 118 (room in front for the
@@ -30,6 +31,43 @@ APICK = {("p01", 0): 0, ("p01", 1): 0, ("p02", 0): ("b", 1), ("p02", 1): ("b", 0
 REDO = {("p08", 1): ("b", "His skin stays pale exactly like the first reference: only the halberd is golden"),
         ("p02", 0): ("b", "Her legs stay fully covered like the first reference: knee-length shorts over opaque tights"),
         ("p02", 1): ("b", "Her legs stay fully covered like the first reference: knee-length shorts over opaque tights")}
+
+
+# The new fighters (planche v2): their look as the owner's sheet draws it (docs/refonte/ref_persos_v2.png, cut into
+# pxa/base_src/refs_v2/<id>.png by recolor.cells/body) and their martial art's guard (FICHES.md 1.7).
+ADULT = (" An adult of at least 20 with adult proportions: longer legs and torso, a slightly smaller head; everything "
+         "else exactly as the reference.")
+V2 = {
+    "h02": ("an adult woman with very long dark brown-black hair falling to her knees, tied in a high ponytail with long "
+            "red ribbons and a cluster of red and gold beads, a long front lock, red eyes, a white shrine maiden robe "
+            "with very long wide sleeves with red patterns and red cuffs, worn off her bare shoulders, a black top with "
+            "a red collar, a wide red belt with a gold buckle, a red and gold front sash, a long white and red skirt "
+            "panel over a red and black checkered underskirt, sheer black stockings with garters, red and black heeled "
+            "boots with gold buckles",
+            "standing in a calm aikido guard, her open hands raised in front of her, half hidden in her long sleeves"),
+    "h05": ("a huge muscular adult man with a big wild white mane falling down his back, a short black beard and thick "
+            "eyebrows, tanned skin, a bare muscular chest and abs with dark tattoos, a big white fur collar, a long "
+            "black and red coat with gold trim and red and orange flame patterns on its lower part, a wide red sash "
+            "belt with a big gold buckle with a red gem, a red and black front panel, bronze armoured shoulder and arm "
+            "guards, a red rope coiled around his upper left arm, black fingerless gloves with gold studs, baggy black "
+            "trousers, brown and bronze armoured boots",
+            "standing in a wide low judo guard, his open hands raised in front of his chest"),
+    "h08": ("an adult woman with long wavy teal hair worn inside her hood, falling in front of her shoulders, never "
+            "coming out through the hood or down her back, green eyes, a white hood with cat ears (yellow inside) and "
+            "yellow patterns that covers the back of her head and her hair, a long loose white coat with yellow "
+            "patterns, a black crop top with yellow patterns, black shorts with a silver belt, black fingerless gloves, "
+            "a grey stocking on one leg and a black garter on the other, chunky white and yellow sneakers, a big dark "
+            "khaki backpack with yellow-green straps and a tassel",
+            "standing in a kung fu tiger guard, her hands raised in front of her like tiger claws"),
+    "h10": ("an adult woman with very long silver-white hair with a faint lavender tint falling to her knees, "
+            "violet-pink eyes, a large black witch hat with gold trim, a violet band, long violet ribbons, white and "
+            "violet flowers and hanging red pendants, a long white coat with violet patterns, gold trim and a violet "
+            "lining, worn off her shoulders, a black top with gold ornaments, a short white and violet pleated skirt, "
+            "black fingerless gloves, a pink crystal pendant at her hip, black thigh-high stockings with garters, black "
+            "and violet heeled boots",
+            "standing in a kickboxing guard, fists raised"),
+}
+V2_ADULT = {"h08"}  # drawn younger on the sheet: the base makes her adult (planche v2, prompts_10_persos.md)
 
 
 def guard_src(k):
@@ -119,6 +157,24 @@ def main():
                                 "--ref", icon + "|the weapon held: keep exactly its shape and colours",
                                 "--no-wait"], capture_output=True, text=True, timeout=300)
             print(k, slot, r.returncode, (r.stdout + r.stderr).strip().splitlines()[-1:])
+    elif cmd == "v2":  # python3 make_bases.py v2 h02 h05 ... -> pro candidates in pxa/base_src/<id>_guard/
+        for k in sys.argv[2:] or sorted(V2):
+            look, stance = V2[k]
+            out = os.path.join(S, "base_src", f"{k}_guard")
+            if os.path.exists(os.path.join(out, "job.json")):
+                print(k, "already submitted")
+                continue
+            ref = os.path.join(S, "base_src", "refs_v2", f"{k}.png")
+            her = "her" if look.startswith("an adult woman") else "his"
+            desc = (f"{look[0].upper()}{look[1:]}. Full body, side view facing right, {stance}, feet apart, "
+                    f"bare-handed. Same character design, hair, face, outfit and colours as the reference. Only this "
+                    f"character is drawn." + (ADULT if k in V2_ADULT else ""))
+            r = subprocess.run(["python3", os.path.join(os.path.dirname(S), "tools", "pxcli.py"), "image", out,
+                                "--model", "pro", "--desc", desc, "--w", "170", "--h", "170", "--style", ref,
+                                "--ref", ref + f"|the character to draw: copy {her} hair, face, outfit, colours and "
+                                               "proportions exactly", "--no-wait"],
+                               capture_output=True, text=True, timeout=300)
+            print(k, r.returncode, (r.stdout + r.stderr).strip().splitlines()[-1:])
     elif cmd == "armedpick":
         for (k, slot), i in APICK.items():
             suffix, i = i if isinstance(i, tuple) else ("", i)

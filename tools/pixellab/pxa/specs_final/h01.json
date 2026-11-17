@@ -1,7 +1,7 @@
 {
  "guard_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip",
  "armed": "none",
- "she": false,
+ "she": true,
  "style": "Karate",
  "overrides": {
   "idle": [
