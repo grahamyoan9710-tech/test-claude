@@ -125,7 +125,10 @@ l'idle et la marche, concentré dans les coups, la douleur dans les coups reçus
   exactly like the first frame,` + fin de la marche.
 
 ### 08 · Kotora (femme, adulte à valider)
-- **subject** : `an adult woman with long wavy teal hair, green eyes, a white hood with cat ears (yellow inside), a
+- Cheveux (yoyo, 17/11) : ils restent sous la capuche, sur le devant des épaules ; ils ne traversent jamais la capuche
+  et ne sortent pas dans son dos (incohérence vue sur sa vue de dos). À garder dans chacun de ses clips.
+- **subject** : `an adult woman with long wavy teal hair worn inside her hood, falling in front of her shoulders, green
+  eyes, a white hood with cat ears (yellow inside) that covers the back of her head and her hair, a
   long white coat with yellow patterns, a black crop top with yellow patterns, black shorts with a silver belt, black
   fingerless gloves, a grey stocking on one leg and a black garter on the other, white and yellow sneakers, a big
   dark khaki backpack with yellow-green straps and a tassel`
