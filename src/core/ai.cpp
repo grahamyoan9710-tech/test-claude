@@ -148,6 +148,14 @@ int ledgeToward(const Match& m, Vec2 p, float dir) {
   }
   return best;
 }
+// Walking on from p in direction dir (-1 / 1): 0 = fine (ground ahead, or lower ground to drop onto),
+// 1 = a gap with ground a jump away (islands, the far roof), -1 = the void.
+int edgeAhead(const Match& m, Vec2 p, float dir) {
+  if (m.groundBelow({p.x + dir * 40.0f, p.y}, 400.0f)) return 0;
+  for (float x = 60.0f; x <= 260.0f; x += 20.0f)
+    if (m.groundBelow({p.x + dir * x, p.y - 160.0f}, 560.0f)) return 1;
+  return -1;
+}
 }  // namespace
 
 CpuBrain::CpuBrain(int level, uint32_t seed)
@@ -333,7 +341,11 @@ bool CpuBrain::fetchWeapon(const Match& m, const Fighter& f, InputState& in) {
   for (const auto& o : m.fighters)  // once on it, it keeps holding: the take needs kPickupFrames
     if (!onIt && m.foes(f, o) && o.active() && (o.pos - f.pos).len() < 110.0f) return false;  // busy fighting
   in.stick.x = std::fabs(dx) > 12.0f ? signf(dx) : 0.0f;
-  if (!m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f) && dy > -20.0f) in.stick.x = 0.0f;  // no walking off
+  if (in.stick.x != 0.0f && dy > -20.0f) {  // never into the void: across a gap it jumps, else it leaves the weapon
+    const int e = edgeAhead(m, f.pos, in.stick.x);
+    if (e < 0) return false;
+    if (e > 0) cross(in, in.stick.x);
+  }
   if (onIt) in.weapon = true;  // on it: holds the button to take it
   if (dy < -50.0f && std::fabs(dx) < 160.0f && f.state != FState::JumpSquat) tap(in, &IS::jump);
   else if (dy > 30.0f && std::fabs(dx) < 30.0f) in.stick.y = 1.0f;  // drop through a thin platform
@@ -373,7 +385,11 @@ bool CpuBrain::chaseOrb(const Match& m, const Fighter& f, InputState& in) {
     if (m.foes(f, o) && o.active() && (o.pos - f.pos).len() < 120.0f) return false;  // busy fighting
   if (!f.grounded && !m.groundBelow({f.pos.x + f.vel.x * 12.0f, f.pos.y}, 1500.0f)) return false;
   in.stick.x = std::fabs(d.x) > 30.0f ? signf(d.x) : 0.0f;
-  if (f.grounded && !m.groundBelow({f.pos.x + in.stick.x * 40.0f, f.pos.y}, 30.0f)) in.stick.x = 0.0f;
+  if (f.grounded && in.stick.x != 0.0f) {  // same at an edge: jump the gap, or leave the orb (it froze there)
+    const int e = edgeAhead(m, f.pos, in.stick.x);
+    if (e < 0) return false;
+    if (e > 0) cross(in, in.stick.x);
+  }
   if (--decisionTimer_ > 0) return true;
   decisionTimer_ = std::max(3, 14 - level_);
   bool canAct = f.state == FState::Idle || f.state == FState::Walk || f.state == FState::Run ||
@@ -490,16 +506,11 @@ void CpuBrain::fight(const Match& m, const Fighter& f, const Fighter& t, InputSt
         m.groundBelow({f.pos.x + f.vel.x * 20.0f, f.pos.y}, 1500.0f) && rng_.chance(0.3f * skill_))
       in.stick.y = 1.0f;  // fast fall (never over the void, nor drifting into it)
   } else {
-    // stop at the edge, unless the target waits across a gap: then jump over it
-    float ahead = f.pos.x + in.stick.x * 40.0f;
-    if (in.stick.x != 0.0f && !m.groundBelow({ahead, f.pos.y}, 30.0f)) {
-      if (targetGrounded && signf(dx) == in.stick.x && adx < 600.0f) {
-        tap(in, &IS::jump);
-        crossDir_ = in.stick.x;
-        crossTimer_ = 150;
-      } else {
-        in.stick.x = 0.0f;
-      }
+    // stop at the void, unless the target waits across a gap: then jump over it
+    const int e = in.stick.x != 0.0f ? edgeAhead(m, f.pos, in.stick.x) : 0;
+    if (e != 0) {
+      if (targetGrounded && signf(dx) == in.stick.x && (e > 0 || adx < 600.0f)) cross(in, in.stick.x);
+      else in.stick.x = 0.0f;
     }
   }
 

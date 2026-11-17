@@ -17,6 +17,11 @@ class CpuBrain {
   void tapCStick(InputState& in, Vec2 dir) const {
     in.cstick = last_.cstick.len() > 0.5f ? Vec2{} : dir;
   }
+  void cross(InputState& in, float dir) {  // jump over a gap toward dir; recover() then makes for the far side
+    tap(in, &InputState::jump);
+    crossDir_ = dir;
+    crossTimer_ = 150;
+  }
   bool recover(const Match& m, const Fighter& f, InputState& in);
   bool chaseOrb(const Match& m, const Fighter& f, InputState& in);
   bool fetchWeapon(const Match& m, const Fighter& f, InputState& in);
