@@ -82,104 +82,6 @@ def spine(base, d0, L, n=14, turn=1.5, g=(0.0, 1.0), lean=0.0, wave=0.0, ph=0.0,
     return out
 
 
-def tongue(site, L, W, ph, lives, t, lean=0.0, hook=0.0, out=0.6, turn=1.6, wave=0.12, g=(0.0, 1.0), m="flame",
-           a=1.0, s=1.0, y=0.0, inset=0.03, heats=(0.3, 0.62, 0.95), core=True, wisp_m=None):
-    """One flame on the outline: it rises (a quarter of its life), sways, pinches off at 55 % of its height (the top
-    piece flies off along g and fades) and sinks back into the body. g = (0, -1): it falls (frost)."""
-    x, z, nx, nz = site
-    e = frac(t * lives + ph)
-    grow = sm(0.0, 0.3, e)
-    base = (x - nx * inset, z - nz * inset)
-    d0 = unit(nx * out + g[0], nz * out + g[1])
-    n = 16
-    P = spine(base, d0, L * (0.3 + 0.7 * grow), n, turn, g, lean, wave, e + ph, 1.3, hook)
-    neck = 0.55
-    pinch = sm(0.48, 0.68, e)
-    shapes = []
-
-    def prof(i, end=1.0):
-        q = i / n / end
-        return min(1.0, q / 0.12) ** 0.5 * max(0.0, 1.0 - q) ** 0.85
-
-    def layers(pts, ws, alpha, deep_only=False):
-        for j, (kw, kl) in enumerate(((1.0, 1.0), (0.6, 0.8), (0.3, 0.5))):
-            if (j == 2 and not core) or (deep_only and j == 2):
-                continue
-            cut = max(2, round((len(pts) - 1) * kl)) + 1
-            shapes.append(rib(pts[:cut], [w * kw for w in ws[:cut]], m if j == 0 or not wisp_m else m, alpha * a,
-                              s, heats[j], y - 0.002 * j))
-
-    wmul = W * (0.55 + 0.45 * grow)
-    if e < 0.68:
-        ws = [wmul * prof(i) * (1.0 - pinch * math.exp(-((i / n - neck) / 0.07) ** 2)) for i in range(n + 1)]
-        layers(P, ws, 1.0)
-        return shapes
-    f = (e - 0.68) / 0.32
-    cut = round(n * neck)
-    end = max(0.08, neck * (1.0 - f) ** 0.7)  # the root sinks back
-    low = P[:max(2, round(n * end)) + 1]
-    layers(low, [wmul * prof(i, end) for i in range(len(low))], 1.0)
-    up = P[cut:]
-    dz = L * 0.9 * f ** 1.1  # the top piece flies on
-    cx, cz = up[len(up) // 2]
-    k = 1.0 - 0.55 * f
-    up = [(cx + (px - cx) * k + g[0] * dz, cz + (pz - cz) * k + g[1] * dz) for px, pz in up]
-    m2 = len(up) - 1
-    ws = [wmul * k * min(1.0, (i / m2) / 0.3) ** 0.6 * (1.0 - i / m2) ** 0.9 for i in range(m2 + 1)]
-    for j, kw in enumerate((1.0, 0.55)):
-        shapes.append(rib(up, [w * kw for w in ws], wisp_m or m, a * (1.0 - f) ** 1.3, s, heats[j], y - 0.002 * j))
-    return shapes
-
-
-def ground(who, n, rng):
-    """Sites at the soles of the fighter's feet: flames licking up round them (not in a row between them)."""
-    pool = [p for p in SIL[who]["edge"] if p[1] < 0.12]
-    got = []
-    for _ in range(2000):
-        if len(got) == n or not pool:
-            break
-        p = rng.choice(pool)
-        if all(abs(p[0] - q[0]) > 0.07 for q in got):
-            got.append((p[0], 0.0, 0.0, 1.0))
-    return got
-
-
-def flames(who, t, n, lives, rng, L, W, lean, out=0.6, turn=1.6, wave=0.12, g=(0.0, 1.0), feet=6, a=1.0, s=1.0,
-           heats=(0.3, 0.62, 0.95), weight=None, hooks=0.45, core=True, major=4, avoid=None, kmaj=1.8):
-    """n flames on the outline (and `feet` on the ground): the `major` ones high on the body half as big again, the
-    rest varied (never a comb of equal tongues); avoid(x, z): keep clear (a horn's place)."""
-    up = g[1] > 0
-    weight = weight or (lambda x, z, nx, nz: (0.0 if (nz < -0.35 if up else nz > 0.35) or z < 0.08 or
-                                              (avoid and avoid(x, z)) else
-                                              0.35 + max(0.0, nz if up else -nz) + 0.6 * abs(nx)))
-    S = sites(who, n, rng, weight) + (ground(who, feet, rng) if up else [])
-    top = SIL[who]["top"]
-    high = [i for i, p in enumerate(S) if p[1] > 0.55 * top]
-    big = set(rng.sample(high, min(major, len(high))))
-    shapes = []
-    for i, site in enumerate(S):
-        hi = sm(0.2, 1.0, site[1] / top)  # taller up the body; on the ground low and wide
-        low = site[1] == 0.0
-        kL = 0.5 if low else (0.75 + 0.45 * hi) * (kmaj if i in big else rng.uniform(0.7, 1.05))
-        kW = 1.4 if low else (1.3 if i in big else 1.0)
-        shapes += tongue(site, rng.uniform(*L) * kL, rng.uniform(*W) * kW, rng.random(), rng.choice(lives),
-                         t, lean * rng.uniform(0.6, 1.3), rng.uniform(-hooks, hooks), out, turn, wave, g, "flame",
-                         a, s, 0.0005 * i, heats=tuple(h * 0.7 for h in heats) if low else heats, core=core)
-    return shapes
-
-
-def embers(who, t, n, rng, rise=0.5, size=(0.012, 0.022), lives=(1, 2), h=0.95, drift=0.06, a=1.0):
-    S = sites(who, n, rng, lambda x, z, nx, nz: 0.2 + max(0.0, nz), gap=0.03)
-    out = []
-    for i, (x, z, nx, nz) in enumerate(S):
-        ph, lv, r, w = rng.random(), rng.choice(lives), rng.uniform(*size), rng.uniform(1.5, 3.5)
-        e = frac(t * lv + ph)
-        px = x + nx * 0.05 + drift * math.sin(TAU * (w * e + ph))
-        out.append(dict(k="dot", c=(px, z + nz * 0.05 + rise * e), r=r * (1.0 - 0.6 * e), m="solid",
-                        a=a * math.sin(math.pi * e) ** 0.7, s=1.6, h=h, y=-0.02 - 0.0003 * i))
-    return out
-
-
 def star(n, ro, ri, rot=0.0):
     return [((ro if k % 2 == 0 else ri) * math.cos(rot + math.pi * k / n),
              (ro if k % 2 == 0 else ri) * math.sin(rot + math.pi * k / n)) for k in range(2 * n)]
@@ -190,128 +92,105 @@ def place(poly, at, rot=0.0, k=1.0):
     return [(at[0] + k * (x * c - z * s), at[1] + k * (x * s + z * c)) for x, z in poly]
 
 
-def twinkles(who, t, n, rng, size=(0.04, 0.07), lives=(2, 3), h=1.0, reach=0.18):
-    """Four-point sparkles flashing near the outline (not a halo of dots)."""
-    S = sites(who, n, rng, lambda x, z, nx, nz: 0.3 + max(0.0, nz), gap=0.1)
-    out = []
-    for i, (x, z, nx, nz) in enumerate(S):
-        ph, lv, r, d = rng.random(), rng.choice(lives), rng.uniform(*size), rng.uniform(0.04, reach)
-        e = frac(t * lv + ph)
-        k = sm(0.0, 0.15, e) * (1.0 - sm(0.15, 0.45, e))
-        if k > 0.01:
-            out.append(dict(k="poly", pts=place(star(4, r, r * 0.16), (x + nx * d, z + nz * d), 0.0, k),
-                            m="shape", a=1.0, s=1.8, h=h, y=-0.03 - 0.0003 * i))
-    return out
-
-
 def shard(L, w):
     return [(L * 0.5, 0.0), (0.0, w * 0.5), (-L * 0.5, 0.0), (0.0, -w * 0.5)]
 
 
 # --- the auras ---------------------------------------------------------------------------------------------------
+# yoyo, 17/11: no more flames round the body. The burst carries the show; the aura that stays is quiet and sharp:
+# slow motes drifting up, tiny lightning crackling on the outline (refs: Dragon Ball FighterZ's Super Saiyan 2 sparks,
+# Guilty Gear Strive's install glows, Solo Leveling's violet aura). The rim light hugging the body is the game's
+# (it follows the animation): this strip never draws the body's shape.
+AN = 72  # 2.4 s a loop: the motes are slow
+
+
+def motes(who, t, n, rng, rise, size, h, drift=0.05, star_k=0.0, a=1.0, flick=0.0):
+    """n motes drifting up from round the body, each once a loop, slowly, swaying; star_k: the share drawn as tiny
+    four-point glints (frost, light) instead of dots; flick: an ember's flicker."""
+    S = sites(who, n, rng, lambda x, z, nx, nz: 0.25 + max(0.0, nz) + 0.5 * abs(nx), gap=0.025)
+    out = []
+    for i, (x, z, nx, nz) in enumerate(S):
+        ph, r, off, w = rng.random(), rng.uniform(*size), rng.uniform(0.02, 0.16), rng.uniform(0.6, 1.4)
+        glint, fp = rng.random() < star_k, rng.random()
+        e = frac(t + ph)
+        px = x + nx * off + drift * math.sin(TAU * (w * e + ph))
+        pz = z + nz * off * 0.5 + rise * e
+        k = math.sin(math.pi * e) ** 0.8 * (1.0 - flick * 0.5 * (1 + math.sin(TAU * (9 * t + 3 * fp))))
+        if k < 0.02:
+            continue
+        if glint:
+            out.append(dict(k="poly", pts=place(star(4, r * 2.6, r * 0.45), (px, pz), TAU * fp, 0.6 + 0.4 * k),
+                            m="shape", a=a * k, s=1.8, h=h, y=-0.02 - 0.0003 * i))
+        else:
+            out.append(dict(k="dot", c=(px, pz), r=r * (0.7 + 0.3 * k), m="solid", a=a * k, s=1.8, h=h,
+                            y=-0.02 - 0.0003 * i))
+    return out
+
+
+def crackles(who, t, n, seed, every=3, w=0.9, h=0.9, reach=(0.02, 0.05), steps=(4, 8)):
+    """Tiny lightning: one crackle every `every` frames somewhere on the outline, three frames each (bright, then
+    fading, re-jagged every frame so it crackles), a short run just outside the body, often a fork leaping out."""
+    f = round(t * AN) % AN
+    out = []
+    for i in range(n):
+        b = (i * every) % AN
+        age = (f - b) % AN
+        if age > 2:
+            continue
+        q = random.Random(seed * 1000 + i)  # its own draws: the same bolt on both of its frames
+        site = q.choice([p for p in SIL[who]["edge"] if p[1] > 0.12])
+        P = crawl(who, site, q.randint(*steps), q.choice((1, -1)))
+        P = [(x + nx * o, z + nz * o) for (x, z, nx, nz), o in zip(P, [q.uniform(*reach) for _ in P])]
+        if len(P) < 2:
+            continue
+        j = random.Random(seed * 1000 + i + 77 * age)  # its path kept, its zigzag new each frame
+        pts = [P[0]]
+        for u, v in zip(P, P[1:]):
+            pts += jag(u, v, 2, 0.5, j)[1:]
+        a = (1.0, 0.6, 0.3)[age]
+        out.append(dict(k="bolt", pts=pts, w=w, a=a, s=1.0, h=h, y=-0.03))
+        if q.random() < 0.65:  # a fork leaping off the body
+            m = pts[q.randrange(len(pts))]
+            x, z, nx, nz = site
+            ang = math.atan2(nz, nx) + q.uniform(-0.8, 0.8)
+            d = q.uniform(0.06, 0.13)
+            out.append(dict(k="bolt", pts=jag(m, (m[0] + d * math.cos(ang), m[1] + d * math.sin(ang)), 3, 0.35, j),
+                            w=w * 0.7, a=a * 0.8, s=1.0, h=h, y=-0.03))
+    return out
+
+
 def aura_p01(t):
-    """ÉVEIL DU NÉANT (Ombre violette): violet flames hugging him, rising and curling, their tips going to dark
-    smoke (ref. T01: tongues from the shoulders, arms and coat tails)."""
+    """ÉVEIL DU NÉANT: violet motes rising like ash of shadow, violet crackles (Solo Leveling's purple)."""
     r = random.Random(101)
-    return flames("p01", t, 36, (2,), r, (0.26, 0.68), (0.055, 0.12), lean=-0.1, out=1.0, feet=6, a=0.95,
-                  heats=(0.22, 0.55, 0.9), hooks=0.6, major=5)
+    return motes("p01", t, 30, r, 0.45, (0.01, 0.026), 0.5, a=0.95) + crackles("p01", t, 36, 1, every=2, h=0.85)
 
 
 def aura_p02(t):
-    """GIVRE CÉLESTE (Givre stellaire): veils of frost falling from the shoulders, the arms and the hair down to the
-    ground, crystals of ice floating up round the head, sparkles (ref. T02)."""
+    """GIVRE CÉLESTE: frost glints and motes floating up slowly, ice-blue crackles, sparser."""
     r = random.Random(202)
-    out = []
-    S = sites("p02", 20, r, lambda x, z, nx, nz: 0.0 if z < 0.5 or nz < -0.3 else 0.4 + abs(nx) + max(0.0, nz),
-              gap=0.06)
-    for i, site in enumerate(S):
-        x, z, nx, nz = site
-        L = min(r.uniform(0.45, 0.95), 0.9 * (z - 0.04))
-        ph = r.random()
-        e = frac(t + ph)
-        W = r.uniform(0.08, 0.16) * (0.85 + 0.15 * math.sin(TAU * (t + ph)))
-        P = spine((x - nx * 0.03, z - nz * 0.03), unit(nx * 0.9, -0.6), L, 16, 1.1, (0.0, -1.0), r.uniform(-0.1, 0.1),
-                  0.1, -e, 1.0, 0.0)
-        ws = [W * math.sin(0.5 * math.pi * min(1.0, j / 16 / 0.3)) ** 0.7 * (1.0 - j / 16) ** 0.6 for j in range(17)]
-        out.append(rib(P, ws, "veil", 0.8, 1.0, 0.4, 0.0005 * i))
-        out.append(rib(P[:13], [w * 0.45 for w in ws[:13]], "veil", 0.85, 1.2, 0.7, 0.0005 * i - 0.002))
-        out.append(rib(P[:9], [w * 0.15 for w in ws[:9]], "veil", 0.9, 1.4, 0.85, 0.0005 * i - 0.004))
-        k = frac(2 * t + ph)  # a drop of frost falls from its end
-        tx, tz = P[-1]
-        out.append(dict(k="poly", pts=place(shard(0.05, 0.016), (tx, tz - 0.22 * k), -math.pi / 2, 1.0 - 0.5 * k),
-                        m="shape", a=math.sin(math.pi * k) * 0.9, s=1.4, h=0.8, y=-0.01))
-    for i in range(10):  # crystals of ice floating up round the head and shoulders, turning slowly
-        ph, x0, z0 = r.random(), r.choice((-1, 1)) * r.uniform(0.25, 0.5), r.uniform(0.95, 1.55)
-        e = frac(t + ph)
-        L = r.uniform(0.08, 0.14)
-        out.append(dict(k="poly", pts=place(shard(L, L * 0.38), (x0 + 0.04 * math.sin(TAU * (e + ph)), z0 + 0.32 * e),
-                                            TAU * (ph + 0.25 * e) * r.choice((1, -1)), 1.0), m="shape",
-                        a=math.sin(math.pi * e) ** 0.6, s=1.5, h=0.75, y=-0.03 - 0.0003 * i))
-    for i in range(5):  # cold mist sinking at the feet, creeping out
-        ph, side = r.random(), r.choice((1, -1))
-        e = frac(t + ph)
-        x0 = side * (0.1 + 0.25 * e)
-        P = [(x0 + side * 0.35 * j / 10, 0.03 + 0.03 * math.sin(math.pi * j / 10) + 0.01 * math.sin(TAU * (e + j / 10)))
-             for j in range(11)]
-        out.append(rib(P, [0.07 * math.sin(math.pi * j / 10) ** 0.8 for j in range(11)], "veil",
-                       0.38 * math.sin(math.pi * e), 0.8, 0.35, 0.004))
-    return out + twinkles("p02", t, 10, r, size=(0.05, 0.09), h=1.0)
+    return (motes("p02", t, 28, r, 0.35, (0.01, 0.022), 0.7, drift=0.07, star_k=0.45) +
+            crackles("p02", t, 18, 2, every=4, h=0.95))
 
 
 def aura_p03(t):
-    """BRASIER DÉMONIAQUE (Brasier rouge): a cloak of red flames streaming back like a cape, two horns of fire on his
-    head, embers (ref. T03)."""
+    """BRASIER DÉMONIAQUE: embers flickering up a little faster, red-orange crackles."""
     r = random.Random(303)
-    hx = [p for p in SIL["p03"]["edge"] if p[1] > SIL["p03"]["top"] - 0.1]
-    cx, cz = sum(p[0] for p in hx) / len(hx), SIL["p03"]["top"] - 0.08
-    out = flames("p03", t, 32, (3,), r, (0.22, 0.62), (0.06, 0.13), lean=-0.32, out=0.5, turn=2.0, feet=7,
-                 heats=(0.12, 0.4, 0.78), major=5, avoid=lambda x, z: z > cz - 0.2 and abs(x - cx) < 0.2)
-    for i, (dx, d0, hook) in enumerate(((0.05, (0.35, 1.0), -0.55), (-0.07, (-0.25, 1.0), -0.35))):
-        fl = 1.0 + 0.08 * math.sin(TAU * (3 * t + i * 0.3)) + 0.05 * math.sin(TAU * (7 * t + i))
-        P = spine((cx + dx, cz), unit(*d0), 0.34 * fl, 14, 1.2, (-0.6, 1.0), 0.0, 0.04, 2 * t + i * 0.5, 1.0, hook)
-        ws = [0.09 * min(1.0, j / 14 / 0.15) ** 0.5 * (1.0 - j / 14) ** 1.2 for j in range(15)]
-        for j, (kw, kl) in enumerate(((1.0, 15), (0.5, 11), (0.22, 7))):
-            out.append(rib(P[:kl], [w * kw for w in ws[:kl]], "flame", 1.0, 1.0, (0.2, 0.5, 0.82)[j],
-                           -0.006 - 0.002 * j))
-    return out + embers("p03", t, 10, r, rise=0.55, size=(0.008, 0.015), lives=(1, 2, 3), h=0.75, a=0.8)
+    return (motes("p03", t, 32, r, 0.6, (0.01, 0.022), 0.65, drift=0.04, flick=0.6) +
+            crackles("p03", t, 36, 3, every=2, h=0.8))
 
 
 def aura_p08(t):
-    """ANGE BLANC (Lumière blanche): veils of white light rising slowly, swaying, their tips drifting off like
-    feathers, a few sparkles (ref. T08: white-blue)."""
+    """ANGE BLANC: motes and glints of white light rising very slowly, pale blue crackles."""
     r = random.Random(808)
-    out = flames("p08", t, 22, (1,), r, (0.25, 0.6), (0.08, 0.16), lean=0.0, out=1.0, turn=1.0, wave=0.2,
-                 feet=4, a=0.75, heats=(0.18, 0.55, 0.9), hooks=0.3, major=4, kmaj=1.3)
-    return out + twinkles("p08", t, 7, r, size=(0.045, 0.08), lives=(1, 2))
+    return (motes("p08", t, 26, r, 0.3, (0.012, 0.024), 0.8, drift=0.06, star_k=0.35) +
+            crackles("p08", t, 18, 8, every=4, h=1.0))
 
 
 def aura_h01(t):
-    """Hakuen awakened (Volonté de la lame): sharp flames of his awakened blade and red lightning crackling over
-    him (his ultimate's): each bolt crawls along his outline, just outside it, with a small fork."""
+    """Hakuen awakened: embers of his blade rising, red lightning crackling over him (his ultimate's), denser."""
     r = random.Random(1)
-    out = flames("h01", t, 28, (2,), r, (0.2, 0.55), (0.05, 0.1), lean=-0.15, out=0.55, turn=1.8, wave=0.08,
-                 feet=5, hooks=0.4, heats=(0.2, 0.5, 0.85), major=4, kmaj=1.5)
-    S = sites("h01", 12, r, lambda x, z, nx, nz: 0.0 if z < 0.15 else 1.0, gap=0.12)
-    N = 36
-    f = round(t * N) % N
-    for i, site in enumerate(S):  # each bolt flashes for two frames once a loop
-        b = (i * 3) % N
-        if (f - b) % N < 2:
-            q = random.Random(i * 7 + (f - b) % N)
-            P = crawl("h01", site, q.randint(8, 14), q.choice((1, -1)))
-            P = [(x + nx * o, z + nz * o) for (x, z, nx, nz), o in zip(P, [q.uniform(0.02, 0.05) for _ in P])]
-            pts = [P[0]]
-            for u, v in zip(P, P[1:]):
-                pts += jag(u, v, 2, 0.35, q)[1:]
-            a = 1.0 if (f - b) % N == 0 else 0.55
-            out.append(dict(k="bolt", pts=pts, w=0.6, a=a, s=1.0, h=0.9, y=-0.03))
-            m = pts[len(pts) // 2]  # a small fork, outward
-            x, z, nx, nz = site
-            ang = math.atan2(nz, nx) + q.uniform(-0.7, 0.7)
-            d = q.uniform(0.07, 0.13)
-            out.append(dict(k="bolt", pts=jag(m, (m[0] + d * math.cos(ang), m[1] + d * math.sin(ang)), 3, 0.3, q),
-                            w=0.45, a=a * 0.8, s=1.0, h=0.9, y=-0.03))
-    return out
+    return (motes("h01", t, 28, r, 0.55, (0.01, 0.022), 0.65, drift=0.04, flick=0.5) +
+            crackles("h01", t, 36, 4, every=2, w=1.0, h=0.9))
 
 
 def crawl(who, p, steps, sgn):
@@ -347,7 +226,7 @@ def jag(a, b, depth, amp, r):
     return pts
 
 
-AURAS = dict(p01=(aura_p01, 36), p02=(aura_p02, 48), p03=(aura_p03, 36), p08=(aura_p08, 48), h01=(aura_h01, 36))
+AURAS = {k: (v, AN) for k, v in dict(p01=aura_p01, p02=aura_p02, p03=aura_p03, p08=aura_p08, h01=aura_h01).items()}
 
 
 # --- the bursts (played once as the form begins, behind the fighter; their near halves over it) ----------------

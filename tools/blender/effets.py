@@ -1782,21 +1782,16 @@ def build(shapes):
 
 
 def r_aura():
-    """An awakened form's aura: loops behind its fighter (a fighter 170 px tall), its glow against the body under
-    flames born on its outline."""
+    """An awakened form's aura: loops behind its fighter (a fighter 170 px tall): motes and crackles round it (its
+    rim light is the game's, on the animated body)."""
     fn, N = aura_geo.AURAS[STYLE]
     W, H, AX, AY = frame_of([aura_geo.bounds(fn(f / N)) for f in range(N)])
     meta = dict(W=W, H=H, AX=AX, AY=AY, RH=0, N=N, FPS=30, LOOP=1)
     scene(W, H, AX, AY)
     aura_mats()
-    hl = aura_geo.SIL[STYLE]["halo"]
-    x0, z1, w, h = hl["x0"], hl["z1"], hl["w"], hl["h"]
-    halo = mesh("halo", [(x0, 0.03, z1 - h), (x0 + w, 0.03, z1 - h), (x0 + w, 0.03, z1), (x0, 0.03, z1)], [(0, 1, 2, 3)],
-                [(0, 0), (1, 0), (1, 1), (0, 1)], m_halo(os.path.join(aura_geo.HERE, "aura", hl["file"])))
 
     def anim(f, t):
         fresh()
-        knob(halo, 0.8, 0.4 + 0.06 * math.sin(2 * math.pi * 2 * t), 0.0, 0.6)  # it breathes
         build(fn(t))
 
     return meta, anim
