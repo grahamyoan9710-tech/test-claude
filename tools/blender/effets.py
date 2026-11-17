@@ -893,8 +893,8 @@ def r_pilier():
 # Read like anime and game effects, not diagrams: no glowing balls, whole rings or cones; a blow flashes as uneven
 # spikes for a frame or two, its shock is thin broken arcs, trails are teardrops, flames and wisps.
 ELEMENT = {"p01": "ombre", "p02": "givre", "p03": "feu", "p07": "foudre", "p08": "lumiere", "garde": "verre",
-           "h01": "feu"}[STYLE]
-MOTE = {"p01": "kite", "p02": "star", "p03": "dot", "p07": "kite", "p08": "star", "garde": "star", "h01": "dot"}[STYLE]
+           "h01": "feu", "h01b": "lumiere"}[STYLE]
+MOTE = {"p01": "kite", "p02": "star", "p03": "dot", "p07": "kite", "p08": "star", "garde": "star", "h01": "dot", "h01b": "star"}[STYLE]
 MOTE_SIZE = {"star": 0.05, "dot": 0.024, "kite": 0.04}[MOTE]
 DYN = []  # objects rebuilt every frame (lightning, arcs)
 M = {}  # materials shared by the rebuilt objects
