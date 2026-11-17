@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "83c119d7-2671-413b-83c5-2d78ad6176a1",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:b32f1d3f-5b5d-49ab-ada7-cb73e9346b12",
+  "last_frame_url": "upload:84256aa8-5505-4498-8421-79e1a1199d12",
+  "description": "held up by the collar from in front of her: chest pulled forward, head tilted back in pain, her free hand clutching at the collar at her throat, the other hand still gripping the long odachi pointing down, legs kicking and squirming, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 83c119d7-2671-413b-83c5-2d78ad6176a1\njob_id: 83c119d7-2671-413b-83c5-2d78ad6176a1\ndescription: held up by the collar from in front of her: chest pulled forward, head tilted back in pain, her free hand clutching at the collar at her throat, the other hand still gripping the long odachi pointing down, legs kicking and squirming, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"83c119d7-2671-413b-83c5-2d78ad6176a1\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/83c119d7-2671-413b-83c5-2d78ad6176a1/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d169a5da-306d-5edf-8c6b-23eb12c76063\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

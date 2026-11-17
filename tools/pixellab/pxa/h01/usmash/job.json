@@ -1,20 +1,18 @@
 {
- "status": "done",
- "job_id": "ee8bfae8-5c76-46fb-9bf3-a2b5a58150b4",
+ "status": "submitted",
+ "job_id": "a54d6b2c-9364-44ef-aa05-728bed0400bb",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:3dca9cda-469a-49dd-93bc-64da9fe054d6",
-  "last_frame_url": "upload:a6cc1784-ab61-4648-b789-832d07cde282",
-  "description": "a rising circular kick: plants the front foot, leans the upper body back and to the side with both arms out for balance; his rear leg goes from low behind him to the front, then straight up above his head, the leg fully stretched, then comes back down, and he lands back in the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:439d25dc-4d8f-4002-ae25-1c801161ec3d",
+  "last_frame_url": "upload:6a39d77f-7203-4e58-b633-ed389f080773",
+  "description": "a rising kick: plants the front foot, leans the upper body back and to the side with both arms out for balance; in a single frame her rear leg goes from the floor straight up above her head, the leg fully stretched; she holds that high kick perfectly still for three frames; then slowly lowers the leg and stands back in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 12,
   "view": "side",
   "direction": "east",
-  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
   "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
  },
- "reply": "id: ee8bfae8-5c76-46fb-9bf3-a2b5a58150b4\njob_id: ee8bfae8-5c76-46fb-9bf3-a2b5a58150b4\ndescription: a rising circular kick: plants the front foot, leans the upper body back and to the side with both arms out for balance; his rear leg goes from low behind him to the front, then straight up above his head, the leg fully stretched, then comes back down, and he lands back in the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ee8bfae8-5c76-46fb-9bf3-a2b5a58150b4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/ee8bfae8-5c76-46fb-9bf3-a2b5a58150b4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d854eb9f-3e34-540a-ad65-347ce4d70c68\nasset_status: pending (saved to your gallery when generation completes)",
+ "reply": "id: a54d6b2c-9364-44ef-aa05-728bed0400bb\njob_id: a54d6b2c-9364-44ef-aa05-728bed0400bb\ndescription: a rising kick: plants the front foot, leans the upper body back and to the side with both arms out for balance; in a single frame her rear leg goes from the floor straight up above her head, the leg fully stretched; she holds that high kick perfectly still for three frames; then slowly lowers the leg and stands back in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a54d6b2c-9364-44ef-aa05-728bed0400bb\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/a54d6b2c-9364-44ef-aa05-728bed0400bb/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a7b8c22b-6076-5c3e-8de2-43fd278e12ec\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
- "frames": 13,
- "charged": "2 generations"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png"
 }

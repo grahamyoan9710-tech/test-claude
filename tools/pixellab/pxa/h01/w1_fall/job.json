@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "470408cf-5e3e-4bd1-b67a-e1a5a11b4f3c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e6e7ef42-0673-4980-bd06-3c70f5153e64",
+  "last_frame_url": "upload:f6f14a57-aeeb-4a85-ac42-7c5efb3b3321",
+  "description": "falls through the air holding one still pose: the body, arms, legs and the long odachi do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward as she falls, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "in mid-air facing right, knees tucked, holding the drawn long odachi level in front of her"
+ },
+ "reply": "id: 470408cf-5e3e-4bd1-b67a-e1a5a11b4f3c\njob_id: 470408cf-5e3e-4bd1-b67a-e1a5a11b4f3c\ndescription: falls through the air holding one still pose: the body, arms, legs and the long odachi do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward as she falls, a seamless loop that ends exactly on the first pose. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"470408cf-5e3e-4bd1-b67a-e1a5a11b4f3c\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/470408cf-5e3e-4bd1-b67a-e1a5a11b4f3c/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a6d9b1c0-4221-50b0-a089-c1e26321c3e8\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "1e07bd6a-31c0-4d2a-a517-40d683b03a85",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:728e2193-9bed-49ee-8e30-86d84f02e1a4",
+  "description": "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half her standing height, the long odachi held low and ready in front of her. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 1e07bd6a-31c0-4d2a-a517-40d683b03a85\njob_id: 1e07bd6a-31c0-4d2a-a517-40d683b03a85\ndescription: crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half her standing height, the long odachi held low and ready in front of her. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1e07bd6a-31c0-4d2a-a517-40d683b03a85\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/1e07bd6a-31c0-4d2a-a517-40d683b03a85/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 3e4623bd-3121-55f6-b176-9d841d3c1639\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

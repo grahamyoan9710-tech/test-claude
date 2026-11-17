@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "d2f042ee-4a32-4b58-8cf5-5ec08a54fbac",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:58a7169f-8fd2-4261-901e-9e6d2119f201",
+  "last_frame_url": "upload:45819660-b37b-42aa-b11f-d288f4ba5f33",
+  "description": "dodge roll: tucks into a tight ball and rolls forward holding the long odachi close to her body, then springs back up into the same stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: d2f042ee-4a32-4b58-8cf5-5ec08a54fbac\njob_id: d2f042ee-4a32-4b58-8cf5-5ec08a54fbac\ndescription: dodge roll: tucks into a tight ball and rolls forward holding the long odachi close to her body, then springs back up into the same stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d2f042ee-4a32-4b58-8cf5-5ec08a54fbac\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/d2f042ee-4a32-4b58-8cf5-5ec08a54fbac/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 10381530-367b-5ddf-b366-6120fc3eb503\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

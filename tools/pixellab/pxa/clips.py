@@ -349,6 +349,7 @@ def jobs(fighter, only=None):
         if ks and ks.get("look") == "new":  # the weapon's own look
             subject = ks.get("subject", subject)
             pose = ks.get(f"{kind}_pose", pose) if kind in ("guard", "air") else pose
+            pose = ks.get("poses", {}).get(name, pose)  # a part that starts in another pose (w0_jab.b: the reach)
         bad = sorted({w.lower() for w in EFFECTS.findall(desc)})
         if bad:
             print(f"left out {fighter}/{name}: its prompt names an effect ({', '.join(bad)})", file=sys.stderr)

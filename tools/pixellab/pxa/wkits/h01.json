@@ -230,7 +230,361 @@
      false,
      "up",
      "lifts the invisible opponent he is holding high with his free hand and lets go, then swings the nodachi upward over his head, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
+    ],
+    "w0_jab.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps forward on the front foot and draws the nodachi back low beside her right hip, the blade pointing behind her, then holds that coiled pose perfectly still"
+    ],
+    "w0_jab.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she turns her hips and stretches both arms out to the right at chest height until the nodachi is level and fully extended to the right, then holds that long reach perfectly still"
+    ],
+    "w0_jab.b": [
+     8,
+     "w0_jab.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the long reach perfectly still for three frames, then slowly lowers the nodachi and draws the front foot back into the stance"
+    ],
+    "w0_jab3.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps in and raises the nodachi high above her head in both hands, the blade pointing back behind her, then holds it there perfectly still"
+    ],
+    "w0_jab3.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she bends forward into a deep lunge, both arms stretched to the right, until the nodachi lies level in front of her just above the floor, then holds that low pose perfectly still"
+    ],
+    "w0_jab3.b": [
+     8,
+     "w0_jab3.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the deep low lunge perfectly still for three frames, then slowly rises back into the stance, the left hand returning to the scabbard"
+    ],
+    "w0_ftilt.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low step forward, leaning far forward, and raises the nodachi high above her right shoulder in both hands, then holds that pose perfectly still"
+    ],
+    "w0_ftilt.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low lunge, her body twisted to the right, until the nodachi points low in front of her front foot, then holds that pose perfectly still"
+    ],
+    "w0_ftilt.b": [
+     8,
+     "w0_ftilt.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises back into the stance"
+    ],
+    "w0_utilt.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low step forward with her back half turned to the right, the nodachi held low behind her, then holds that pose perfectly still"
+    ],
+    "w0_utilt.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low step forward and stretches her right arm and the nodachi straight out to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w0_utilt.b": [
+     8,
+     "w0_utilt.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade back into the stance"
+    ],
+    "w0_dtilt.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she crouches very low in a long step forward, the nodachi held low in front of her with the point near the floor, then holds that pose perfectly still"
+    ],
+    "w0_dtilt.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she rises onto the toes of her front foot and lifts both arms until the nodachi points straight up above her head, then holds that pose perfectly still"
+    ],
+    "w0_dtilt.b": [
+     8,
+     "w0_dtilt.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade back into the stance"
+    ],
+    "w0_fair.a": [
+     8,
+     "jump@last",
+     null,
+     false,
+     "none",
+     "in mid-air with the knees tucked, slowly, she raises the nodachi above her head in both hands, then holds that pose perfectly still"
+    ],
+    "w0_fair.p": [
+     8,
+     "jump@last",
+     null,
+     false,
+     "none",
+     "in mid-air with the knees tucked, slowly, she stretches both arms down in front of her until the nodachi points below her tucked feet, then holds that pose perfectly still"
+    ],
+    "w0_fair.b": [
+     8,
+     "w0_fair.p@last",
+     "w0_jump@last",
+     false,
+     "none",
+     "in mid-air with the knees tucked, holds the pose perfectly still for three frames, then slowly brings the nodachi back up level in front of her"
+    ],
+    "w0_ledgeattack.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she sinks into a low crouch, the nodachi held back low behind her, then holds that pose perfectly still"
+    ],
+    "w0_ledgeattack.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she sinks into a low crouch and stretches the nodachi straight out to the right at knee height, then holds that pose perfectly still"
+    ],
+    "w0_ledgeattack.b": [
+     8,
+     "w0_ledgeattack.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises back into the stance"
+    ],
+    "w0_getupattack.a": [
+     8,
+     "knockdown@last",
+     null,
+     false,
+     "none",
+     "from lying on her back, slowly, she rolls up onto one knee with the nodachi held back low behind her, then holds that pose perfectly still"
+    ],
+    "w0_getupattack.p": [
+     8,
+     "knockdown@last",
+     null,
+     false,
+     "none",
+     "from lying on her back, slowly, she rolls up onto one knee and stretches the nodachi straight out to the right at knee height, then holds that pose perfectly still"
+    ],
+    "w0_getupattack.b": [
+     8,
+     "w0_getupattack.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly stands up into the stance"
+    ],
+    "w0_fthrow.a": [
+     8,
+     "holdstart@last",
+     null,
+     false,
+     "none",
+     "slowly, she pushes her free hand forward to shove the invisible opponent away and draws the nodachi back low behind her, then holds that pose perfectly still. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+    ],
+    "w0_fthrow.p": [
+     8,
+     "holdstart@last",
+     null,
+     false,
+     "none",
+     "slowly, she steps forward and stretches the nodachi straight out to the right at chest height in both hands, then holds that pose perfectly still. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+    ],
+    "w0_fthrow.b": [
+     8,
+     "w0_fthrow.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade back into the stance"
+    ],
+    "w0_coupeeclair.a": [
+     8,
+     "w0_rengaine@last",
+     null,
+     false,
+     "none",
+     "from the still iai stance with the blade sheathed, slowly, she grips the hilt and sinks lower, leaning forward, then holds that pose perfectly still"
+    ],
+    "w0_coupeeclair.p": [
+     8,
+     "w0_rengaine@last",
+     null,
+     false,
+     "none",
+     "from the still iai stance with the blade sheathed, slowly, she draws the nodachi and slides into a very long low stance to the right, the right arm and the blade stretched fully out to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w0_coupeeclair.b": [
+     8,
+     "w0_coupeeclair.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises into the stance with the blade drawn, the point low and forward"
+    ],
+    "w0_uspecial.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she crouches low with the nodachi held low at her side, then holds that pose perfectly still"
+    ],
+    "w0_uspecial.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she draws her knees up as if leaping and lifts the nodachi in both hands straight above her head, the arms stretched high, then holds that pose perfectly still"
+    ],
+    "w0_uspecial.b": [
+     8,
+     "w0_uspecial.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade and settles back into the stance"
+    ],
+    "w0_sspecial.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she crouches very low with the nodachi held back along her right side, the left hand gripping the scabbard, then holds that pose perfectly still"
+    ],
+    "w0_sspecial.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she slides into an extremely long low stance to the right, the back leg stretched straight behind her, the right arm stretched far forward with the nodachi level at waist height pointing right, then holds that pose perfectly still"
+    ],
+    "w0_sspecial.b": [
+     8,
+     "w0_sspecial.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the long low lunge perfectly still for four frames, then slowly draws the back foot in and rises into the stance"
+    ],
+    "w0_jab2.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she lowers the nodachi until its point nearly touches the floor in front of her front foot, both hands on the hilt, then holds that pose perfectly still"
+    ],
+    "w0_jab2.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she rises on the front foot and lifts the nodachi in both hands until the blade points straight up above her head, the arms stretched high, then holds that pose perfectly still"
+    ],
+    "w0_jab2.b": [
+     8,
+     "w0_jab2.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the nodachi back into the stance"
+    ],
+    "w0_ultimate.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she drops into a very low stance, the nodachi drawn back low behind her right hip, her eyes narrowed, then holds that pose perfectly still"
+    ],
+    "w0_ultimate.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she drops low and stretches the nodachi far out to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w0_ultimate.b": [
+     16,
+     "w0_ultimate.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the stretched pose perfectly still for two frames; then she rises upright and slowly slides the whole blade into the scabbard at her left hip until the gold guard touches it; her eyes close and she stands perfectly still for three frames, her right hand on the hilt; then she calmly draws the nodachi out again and lowers it into the first pose"
     ]
+   },
+   "poses": {
+    "w0_jab.b": "lunging forward facing right, both arms and the nodachi stretched level to the right at chest height",
+    "w0_jab3.b": "in a deep forward lunge facing right, both arms stretched, the nodachi level in front of her just above the floor",
+    "w0_ftilt.b": "in a long low lunge facing right, body twisted, both hands on the nodachi pointing low in front of her front foot",
+    "w0_utilt.b": "in a long low step forward facing right, the right arm and the nodachi stretched straight out to the right at chest height",
+    "w0_dtilt.b": "standing on the toes of her front foot facing right, both arms raised, the nodachi pointing straight up above her head",
+    "w0_fair.b": "in mid-air facing right, knees tucked, both arms stretched down in front, the nodachi pointing below her feet",
+    "w0_ledgeattack.b": "crouching low facing right, the nodachi stretched straight out to the right at knee height",
+    "w0_getupattack.b": "kneeling on one knee facing right, the nodachi stretched straight out to the right at knee height",
+    "w0_fthrow.b": "stepping forward facing right, both arms and the nodachi stretched straight out to the right at chest height",
+    "w0_coupeeclair.b": "in a very long low lunge facing right, the right arm and the nodachi stretched fully out to the right at chest height",
+    "w0_coupeeclair.a": "still iai stance facing right, the blade sheathed in the scabbard at her left hip, her right hand on the hilt",
+    "w0_coupeeclair.p": "still iai stance facing right, the blade sheathed in the scabbard at her left hip, her right hand on the hilt",
+    "w0_uspecial.b": "in mid-air facing right, knees tucked, both arms stretched high, the nodachi pointing straight up above her head",
+    "w0_sspecial.b": "in an extremely long low lunge facing right, the back leg stretched behind, the right arm and the nodachi stretched far forward at waist height",
+    "w0_jab2.b": "standing tall on the front foot facing right, both arms stretched high, the nodachi pointing straight up above her head",
+    "w0_ultimate.b": "low stance facing right, the right arm and the nodachi stretched far out to the right at chest height"
    }
   },
   "1": {
@@ -246,7 +600,7 @@
      true,
      true,
      "none",
-     "a calm swordsman's idle loop with the long odachi: he stands in the same stance, the long blade low in his right hand with the point near the floor in front of him, his left hand resting on the long scabbard at his hip; his weight shifts slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; halfway through he raises the long blade until its back rests flat on his right shoulder, holds it there a moment, then lowers it back to its place; the ponytail, ribbons, coat tails and the sword's red tassel sway a little; the feet stay planted, returns exactly to the first pose"
+     "a calm swordsman's idle loop with the long odachi: he stands in the same stance, the long blade low in his right hand with the point near the floor in front of him, his left hand resting on the long scabbard at his hip; his weight shifts slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; the long blade stays low and still in his hand the whole time, only turning slightly as he breathes; the ponytail, ribbons, coat tails and the sword's red tassel sway a little; the feet stay planted, returns exactly to the first pose"
     ],
     "w1_walk": [
      12,
@@ -369,12 +723,12 @@
      "a final iai, in keyframes: he slides the long odachi into the long scabbard at his left hip and crouches low with his right hand on the hilt, perfectly still for three frames, the eyes closed; then he opens his eyes, draws and cuts in one horizontal motion while lunging far to the right, the long blade fully stretched to the right at chest height, and holds it for two frames; then he rises and lowers the long blade into the first pose; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_rengaine": [
-     8,
+     12,
      "guard",
      null,
      false,
      "none",
-     "slides the long odachi into the long scabbard at his left hip in one smooth motion, then holds a still iai stance: right hand on the hilt, left hand on the scabbard, knees bent, eyes narrowed, perfectly still"
+     "in keyframes: he lifts the long odachi and brings its point back to the mouth of the long scabbard at his left hip; then slowly slides the whole long blade into the scabbard until only the hilt shows at his hip; then holds a still iai stance: right hand on the hilt, left hand on the scabbard, knees bent, eyes narrowed, perfectly still"
     ],
     "w1_coupeeclair": [
      16,
@@ -463,7 +817,411 @@
      false,
      "up",
      "lifts the invisible opponent he is holding high with his free hand and lets go, then swings the long odachi upward over his head, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
+    ],
+    "w1_ftilt.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low step forward, leaning far forward, and raises the long odachi high above her right shoulder in both hands, then holds that pose perfectly still"
+    ],
+    "w1_ftilt.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low lunge, her body twisted to the right, until the long odachi points low in front of her front foot, then holds that pose perfectly still"
+    ],
+    "w1_ftilt.b": [
+     8,
+     "w1_ftilt.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises back into the stance"
+    ],
+    "w1_utilt.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low step forward with her back half turned to the right, the long odachi held low behind her, then holds that pose perfectly still"
+    ],
+    "w1_utilt.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long low step forward and stretches her right arm and the long odachi straight out to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w1_utilt.b": [
+     8,
+     "w1_utilt.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade back into the stance"
+    ],
+    "w1_dtilt.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she crouches very low in a long step forward, the long odachi held low in front of her with the point near the floor, then holds that pose perfectly still"
+    ],
+    "w1_dtilt.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she rises onto the toes of her front foot and lifts both arms until the long odachi points straight up above her head, then holds that pose perfectly still"
+    ],
+    "w1_dtilt.b": [
+     8,
+     "w1_dtilt.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade back into the stance"
+    ],
+    "w1_fair.a": [
+     8,
+     "jump@last",
+     null,
+     false,
+     "none",
+     "in mid-air with the knees tucked, slowly, she raises the long odachi above her head in both hands, then holds that pose perfectly still"
+    ],
+    "w1_fair.p": [
+     8,
+     "jump@last",
+     null,
+     false,
+     "none",
+     "in mid-air with the knees tucked, slowly, she stretches both arms down in front of her until the long odachi points below her tucked feet, then holds that pose perfectly still"
+    ],
+    "w1_fair.b": [
+     8,
+     "w1_fair.p@last",
+     "w1_jump@last",
+     false,
+     "none",
+     "in mid-air with the knees tucked, holds the pose perfectly still for three frames, then slowly brings the long odachi back up level in front of her"
+    ],
+    "w1_ledgeattack.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she sinks into a low crouch, the long odachi held back low behind her, then holds that pose perfectly still"
+    ],
+    "w1_ledgeattack.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she sinks into a low crouch and stretches the long odachi straight out to the right at knee height, then holds that pose perfectly still"
+    ],
+    "w1_ledgeattack.b": [
+     8,
+     "w1_ledgeattack.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises back into the stance"
+    ],
+    "w1_getupattack.a": [
+     8,
+     "knockdown@last",
+     null,
+     false,
+     "none",
+     "from lying on her back, slowly, she rolls up onto one knee with the long odachi held back low behind her, then holds that pose perfectly still"
+    ],
+    "w1_getupattack.p": [
+     8,
+     "knockdown@last",
+     null,
+     false,
+     "none",
+     "from lying on her back, slowly, she rolls up onto one knee and stretches the long odachi straight out to the right at knee height, then holds that pose perfectly still"
+    ],
+    "w1_getupattack.b": [
+     8,
+     "w1_getupattack.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly stands up into the stance"
+    ],
+    "w1_fthrow.a": [
+     8,
+     "holdstart@last",
+     null,
+     false,
+     "none",
+     "slowly, she pushes her free hand forward to shove the invisible opponent away and draws the long odachi back low behind her, then holds that pose perfectly still. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+    ],
+    "w1_fthrow.p": [
+     8,
+     "holdstart@last",
+     null,
+     false,
+     "none",
+     "slowly, she steps forward and stretches the long odachi straight out to the right at chest height in both hands, then holds that pose perfectly still. Only the character is drawn: the opponent is invisible, there is no other person in the frame"
+    ],
+    "w1_fthrow.b": [
+     8,
+     "w1_fthrow.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade back into the stance"
+    ],
+    "w1_coupeeclair.a": [
+     8,
+     "w1_rengaine@last",
+     null,
+     false,
+     "none",
+     "from the still iai stance with the blade sheathed, slowly, she grips the hilt and sinks lower, leaning forward, then holds that pose perfectly still"
+    ],
+    "w1_coupeeclair.p": [
+     8,
+     "w1_rengaine@last",
+     null,
+     false,
+     "none",
+     "from the still iai stance with the blade sheathed, slowly, she draws the long odachi and slides into a very long low stance to the right, the right arm and the blade stretched fully out to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w1_coupeeclair.b": [
+     8,
+     "w1_coupeeclair.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises into the stance with the blade drawn, the point low and forward"
+    ],
+    "w1_uspecial.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she crouches low with the long odachi held low at her side, then holds that pose perfectly still"
+    ],
+    "w1_uspecial.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she draws her knees up as if leaping and lifts the long odachi in both hands straight above her head, the arms stretched high, then holds that pose perfectly still"
+    ],
+    "w1_uspecial.b": [
+     8,
+     "w1_uspecial.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the blade and settles back into the stance"
+    ],
+    "w1_sspecial.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she crouches very low with the long odachi held back along her right side, the left hand gripping the scabbard, then holds that pose perfectly still"
+    ],
+    "w1_sspecial.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "holds the long low lunge perfectly still for two frames; then slowly turns her upper body away so her back is half toward the right, the long blade now pointing behind her, and holds that for two frames; then slowly rises into the stance"
+    ],
+    "w1_sspecial.b": [
+     8,
+     "w1_sspecial.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the long low lunge perfectly still for four frames, then slowly draws the back foot in and rises into the stance"
+    ],
+    "w1_jab.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she raises the long odachi in both hands above her right shoulder, the blade pointing up and back, then holds that pose perfectly still"
+    ],
+    "w1_jab.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps forward and stretches both arms forward and down until the point of the long odachi is low in front of her front foot, then holds that pose perfectly still"
+    ],
+    "w1_jab.b": [
+     8,
+     "w1_jab.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lifts the long blade back low into the stance"
+    ],
+    "w1_jab2.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she turns her right wrist so the long odachi points down and back behind her right leg, then holds that pose perfectly still"
+    ],
+    "w1_jab2.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she raises her right arm across her chest until it is stretched up and forward, the long odachi pointing up and forward above her head, then holds that pose perfectly still"
+    ],
+    "w1_jab2.b": [
+     8,
+     "w1_jab2.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly lowers the long blade back into the stance"
+    ],
+    "w1_jab3.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she turns her back to the right, the long odachi held out behind her at arm's length at chest height, then holds that pose perfectly still"
+    ],
+    "w1_jab3.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she sinks into a deep lunge facing right, the right arm and the long odachi fully stretched to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w1_jab3.b": [
+     8,
+     "w1_jab3.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises back into the stance"
+    ],
+    "w1_nspecial.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she turns her upper body away, the long odachi held in both hands far back behind her left hip, the blade pointing behind her, then holds that pose perfectly still"
+    ],
+    "w1_nspecial.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she turns her hips and stretches both arms and the long odachi fully out to the right at waist height, then holds that pose perfectly still"
+    ],
+    "w1_nspecial.b": [
+     8,
+     "w1_nspecial.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for four frames, then slowly returns to the stance"
+    ],
+    "w1_dspecial.a": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she raises the long odachi crosswise in front of her face with both hands, the blade level above her head, and holds it perfectly still, the eyes narrowed"
+    ],
+    "w1_dspecial.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she steps into a long lunge and stretches the long odachi straight forward at chest height, the right arm fully stretched, then holds that pose perfectly still"
+    ],
+    "w1_dspecial.b": [
+     8,
+     "w1_dspecial.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly returns to the stance"
+    ],
+    "w1_ultimate.a": [
+     12,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she slides the long odachi into the long scabbard at her left hip and crouches low with her right hand on the hilt, then holds perfectly still, the eyes closed"
+    ],
+    "w1_ultimate.p": [
+     8,
+     "guard",
+     null,
+     false,
+     "none",
+     "slowly, she sinks into a far lunge to the right, the long odachi fully stretched to the right at chest height, then holds that pose perfectly still"
+    ],
+    "w1_ultimate.b": [
+     8,
+     "w1_ultimate.p@last",
+     "guard",
+     false,
+     "none",
+     "holds the pose perfectly still for three frames, then slowly rises and lowers the long blade into the stance"
     ]
+   },
+   "poses": {
+    "w1_ftilt.b": "in a long low lunge facing right, body twisted, both hands on the long odachi pointing low in front of her front foot",
+    "w1_utilt.b": "in a long low step forward facing right, the right arm and the long odachi stretched straight out to the right at chest height",
+    "w1_dtilt.b": "standing on the toes of her front foot facing right, both arms raised, the long odachi pointing straight up above her head",
+    "w1_fair.b": "in mid-air facing right, knees tucked, both arms stretched down in front, the long odachi pointing below her feet",
+    "w1_ledgeattack.b": "crouching low facing right, the long odachi stretched straight out to the right at knee height",
+    "w1_getupattack.b": "kneeling on one knee facing right, the long odachi stretched straight out to the right at knee height",
+    "w1_fthrow.b": "stepping forward facing right, both arms and the long odachi stretched straight out to the right at chest height",
+    "w1_coupeeclair.b": "in a very long low lunge facing right, the right arm and the long odachi stretched fully out to the right at chest height",
+    "w1_coupeeclair.a": "still iai stance facing right, the blade sheathed in the scabbard at her left hip, her right hand on the hilt",
+    "w1_coupeeclair.p": "still iai stance facing right, the blade sheathed in the scabbard at her left hip, her right hand on the hilt",
+    "w1_uspecial.b": "in mid-air facing right, knees tucked, both arms stretched high, the long odachi pointing straight up above her head",
+    "w1_sspecial.b": 12,
+    "w1_jab.b": "stepping forward facing right, both arms stretched forward and down, the long odachi pointing low in front of her front foot",
+    "w1_jab2.b": "standing facing right, the right arm stretched up and forward, the long odachi pointing up and forward above her head",
+    "w1_jab3.b": "in a deep lunge facing right, the right arm and the long odachi fully stretched to the right at chest height",
+    "w1_nspecial.b": "facing right, both arms and the long odachi fully stretched out to the right at waist height",
+    "w1_dspecial.b": "in a long lunge facing right, the right arm and the long odachi stretched straight forward at chest height",
+    "w1_ultimate.b": "in a far lunge facing right, the right arm and the long odachi fully stretched to the right at chest height"
    }
   }
  }

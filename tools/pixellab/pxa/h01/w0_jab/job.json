@@ -1,18 +1,9 @@
 {
- "status": "submitted",
- "job_id": "5f207148-16c7-4a6b-b7a4-bc9783a93610",
- "tool": "animate_image_pixminimax",
- "args": {
-  "first_frame_url": "upload:f9bcd59c-3748-42c4-8f27-480d54db792b",
-  "last_frame_url": "upload:232d43a7-4226-4c7b-9804-2e72add18fc7",
-  "description": "a horizontal cut at chest height, in keyframes: she steps forward on the front foot and draws the nodachi back low beside her right hip, the blade behind her; then turns her hips and brings the blade across in front of her at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; she holds that reach for two frames; then brings the blade back low into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
-  "frame_count": 16,
-  "view": "side",
-  "direction": "east",
-  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
-  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
- },
- "reply": "id: 5f207148-16c7-4a6b-b7a4-bc9783a93610\njob_id: 5f207148-16c7-4a6b-b7a4-bc9783a93610\ndescription: a horizontal cut at chest height, in keyframes: she steps forward on the front foot and draws the nodachi back low beside her right hip, the blade behind her; then turns her hips and brings the blade across in front of her at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; she holds that reach for two frames; then brings the blade back low into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5f207148-16c7-4a6b-b7a4-bc9783a93610\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/5f207148-16c7-4a6b-b7a4-bc9783a93610/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 88d97af8-8838-5954-a82c-5760c2ad5afa\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png"
+ "status": "done",
+ "tool": "join",
+ "parts": [
+  "w0_jab.a",
+  "w0_jab.b"
+ ],
+ "cut_after": 8
 }

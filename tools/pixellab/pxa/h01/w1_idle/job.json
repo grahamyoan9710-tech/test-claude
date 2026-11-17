@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "1fbc9569-87e2-41c9-ab22-ed87e93847ea",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:dd593f86-94bb-4c3d-8db3-9bac76e31729",
+  "last_frame_url": "upload:2c3c5ab6-a960-45d1-997a-8744b0465a39",
+  "description": "a calm swordsman's idle loop with the long odachi: she stands in the same stance, the long blade low in her right hand with the point near the floor in front of her, her left hand resting on the long scabbard at her hip; her weight shifts slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; the long blade stays low and still in her hand the whole time, only turning slightly as she breathes; the ponytail, ribbons, coat tails and the sword's red tassel sway a little; the feet stay planted, returns exactly to the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 1fbc9569-87e2-41c9-ab22-ed87e93847ea\njob_id: 1fbc9569-87e2-41c9-ab22-ed87e93847ea\ndescription: a calm swordsman's idle loop with the long odachi: she stands in the same stance, the long blade low in her right hand with the point near the floor in front of her, her left hand resting on the long scabbard at her hip; her weight shifts slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; the long blade stays low and still in her hand the whole time, only turning slightly as she breathes; the ponytail, ribbons, coat tails and the sword's red tassel sway a little; the feet stay planted, returns exactly to the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1fbc9569-87e2-41c9-ab22-ed87e93847ea\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/1fbc9569-87e2-41c9-ab22-ed87e93847ea/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 305c7d1c-5d1a-517d-84f8-af12707c1471\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "6e7a43dd-f1de-4d22-b304-5eb215305638",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:1b316d7f-7993-4852-9d14-efd844d62a22",
+  "last_frame_url": "upload:49ccf380-960d-4763-b60f-371e640d2414",
+  "description": "falls helplessly, exhausted: the free arm hangs limp above her head, the long odachi dangling loosely from the other hand, head drooping, legs dangling, the body tilting slowly as she drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "in mid-air facing right, knees tucked, holding the drawn long odachi level in front of her"
+ },
+ "reply": "id: 6e7a43dd-f1de-4d22-b304-5eb215305638\njob_id: 6e7a43dd-f1de-4d22-b304-5eb215305638\ndescription: falls helplessly, exhausted: the free arm hangs limp above her head, the long odachi dangling loosely from the other hand, head drooping, legs dangling, the body tilting slowly as she drops, a seamless loop that ends exactly on the first pose. Only the character is drawn. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6e7a43dd-f1de-4d22-b304-5eb215305638\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/6e7a43dd-f1de-4d22-b304-5eb215305638/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 60317432-18d5-526b-aa24-3bada92f73ff\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}
