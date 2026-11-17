@@ -162,6 +162,7 @@ class App {
   void goTo(Screen s, bool instant = false);
   void enterScreen(Screen s);
   void applyDisplaySettings();
+  void placeWindow();
   void startMatch();
   void finishMatch();
   void toast(const char* text);
@@ -238,6 +239,7 @@ class App {
   int toastTimer_ = 0;
   int shownW_ = -1, shownH_ = -1;  // the resolution and mode the window has (applyDisplaySettings)
   bool shownFs_ = false;
+  double placeAt_ = 0.0;  // when the windowed size and place are asked for again (0: not waiting)
   RenderTexture2D aa_{}, fsr_{};           // the FXAA pass, at the render's size
   Shader fxaa_{}, rcas_{}, easu_{};         // anti-aliasing; upscaling with FSR 1's sharpening (RCAS)
 
