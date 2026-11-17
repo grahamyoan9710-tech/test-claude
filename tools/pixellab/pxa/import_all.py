@@ -225,7 +225,7 @@ def main():
     ax, ay, pxh = ANCHOR[fighter]
     spec = clips(fighter)
     for name, (n, base, pin, loop, direction, desc) in spec.items():
-        if name in HELPERS or (only and name not in only):
+        if name in HELPERS or "." in name or (only and name not in only):  # w0_jab.a: a part (join.py)
             continue
         d = os.path.join(S, fighter, name)
         job = os.path.join(d, "job.json")

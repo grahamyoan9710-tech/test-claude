@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "cd882c23-b7ce-4cf3-9dae-3b344e4c21fd",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:c1e36eb4-1745-4b0f-9d19-5f7bac261e00",
+  "last_frame_url": "upload:04b409ee-e116-40df-a840-98c0d671707b",
+  "description": "holds the pose perfectly still for three frames, then slowly lowers the blade and settles back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "in mid-air facing right, knees tucked, both arms stretched high, the long odachi pointing straight up above her head"
+ },
+ "reply": "id: cd882c23-b7ce-4cf3-9dae-3b344e4c21fd\njob_id: cd882c23-b7ce-4cf3-9dae-3b344e4c21fd\ndescription: holds the pose perfectly still for three frames, then slowly lowers the blade and settles back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"cd882c23-b7ce-4cf3-9dae-3b344e4c21fd\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/cd882c23-b7ce-4cf3-9dae-3b344e4c21fd/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 4ae79b76-7159-54f6-a545-49bec6c15fa8\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_uspecial.p/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

@@ -1,5 +1,5 @@
 {
- "status": "submitted",
+ "status": "done",
  "job_id": "a54d6b2c-9364-44ef-aa05-728bed0400bb",
  "tool": "animate_image_pixminimax",
  "args": {
@@ -14,5 +14,7 @@
  },
  "reply": "id: a54d6b2c-9364-44ef-aa05-728bed0400bb\njob_id: a54d6b2c-9364-44ef-aa05-728bed0400bb\ndescription: a rising kick: plants the front foot, leans the upper body back and to the side with both arms out for balance; in a single frame her rear leg goes from the floor straight up above her head, the leg fully stretched; she holds that high kick perfectly still for three frames; then slowly lowers the leg and stands back in the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a54d6b2c-9364-44ef-aa05-728bed0400bb\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/a54d6b2c-9364-44ef-aa05-728bed0400bb/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a7b8c22b-6076-5c3e-8de2-43fd278e12ec\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
- "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png"
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }

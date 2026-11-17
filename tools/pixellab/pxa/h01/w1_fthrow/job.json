@@ -1,0 +1,9 @@
+{
+ "status": "done",
+ "tool": "join",
+ "parts": [
+  "w1_fthrow.a",
+  "w1_fthrow.b"
+ ],
+ "cut_after": 8
+}

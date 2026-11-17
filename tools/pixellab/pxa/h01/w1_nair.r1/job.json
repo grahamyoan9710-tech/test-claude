@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "bce9788d-7ea0-4635-a17d-d49d334bfba2",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:8751cc43-f0d5-4bf8-9d02-69985a8dbb2e",
+  "last_frame_url": "upload:c19a24bc-b43d-4909-bb53-6a939efcee8e",
+  "description": "in mid-air with the knees tucked, she turns her whole body once around holding the long odachi out at arm's length at waist height, in keyframes: the blade pointing forward to the right, then her back turned and the blade pointing behind her to the left, then facing right again with the blade pointing forward exactly as in the first frame; the ponytail and the coat follow the motion; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "in mid-air facing right, knees tucked, holding the drawn long odachi level in front of her"
+ },
+ "reply": "id: bce9788d-7ea0-4635-a17d-d49d334bfba2\njob_id: bce9788d-7ea0-4635-a17d-d49d334bfba2\ndescription: in mid-air with the knees tucked, she turns her whole body once around holding the long odachi out at arm's length at waist height, in keyframes: the blade pointing forward to the right, then her back turned and the blade pointing behind her to the left, then facing right again with the blade pointing forward exactly as in the first frame; the ponytail and the coat follow the motion; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bce9788d-7ea0-4635-a17d-d49d334bfba2\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/bce9788d-7ea0-4635-a17d-d49d334bfba2/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 3c94739e-cd0b-5d01-a414-b7f59acad24e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "frames": 17,
+ "charged": "2 generations"
+}

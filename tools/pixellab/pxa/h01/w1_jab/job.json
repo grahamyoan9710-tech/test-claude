@@ -1,0 +1,9 @@
+{
+ "status": "done",
+ "tool": "join",
+ "parts": [
+  "w1_jab.a",
+  "w1_jab.b"
+ ],
+ "cut_after": 8
+}
