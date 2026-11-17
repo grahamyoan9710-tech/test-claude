@@ -13,7 +13,7 @@
      true,
      false,
      "forward",
-     "a horizontal cut at chest height, in keyframes: he steps forward on the front foot and draws the nodachi back low beside his right hip, the blade behind him; then turns his hips and brings the blade across in front of him at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; he holds that reach for two frames, the coat and the ponytail swinging after the body; then brings the blade back low into the stance, calm and precise; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a horizontal cut at chest height, in keyframes: he steps forward on the front foot and draws the nodachi back low beside his right hip, the blade behind him; then turns his hips and brings the blade across in front of him at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; he holds that reach for two frames; then brings the blade back low into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_jab2": [
      16,
@@ -21,7 +21,7 @@
      true,
      false,
      "forward",
-     "a rising cut, in keyframes: he lowers the nodachi until its point nearly touches the floor in front of his front foot; then lifts it diagonally with both hands in front of his body until the blade points straight up above his head, the arms stretched high, rising on the front foot; he holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a rising cut, in keyframes: he lowers the nodachi until its point nearly touches the floor in front of his front foot; then lifts it diagonally with both hands in front of his body until the blade points straight up above his head, the arms stretched high, rising on the front foot; he holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_jab3": [
      16,
@@ -29,7 +29,7 @@
      true,
      false,
      "forward",
-     "a big downward finishing cut, in keyframes: he steps in and raises the nodachi high above his head with both hands, the blade pointing back behind him; then brings it straight down in front of him, bending forward into a deep lunge until the blade lies level in front of him just above the floor, the arms fully stretched to the right; he holds that low pose for two frames; then gives the blade one short downward shake at his side and rises back into the stance, the left hand returning to the scabbard; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a big downward finishing cut, in keyframes: he steps in and raises the nodachi high above his head, the blade pointing back behind him; then brings it straight down in front of him, bending forward into a deep lunge until the blade lies level in front of him just above the floor, the arms fully stretched to the right; he holds that low pose for two frames; then rises back into the stance, the left hand returning to the scabbard; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_nair": [
      16,
@@ -37,7 +37,7 @@
      true,
      false,
      "around",
-     "in mid-air with the knees tucked, he turns the nodachi once all around his body, in keyframes: the blade level in front of him, then raised above his head pointing back, then down behind his back, then under his tucked feet, then level in front of him again exactly as in the first frame; the body leans with the blade; the ponytail and the coat follow the motion; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "in mid-air with the knees tucked, he turns the nodachi once all around his body, in keyframes: the blade level in front of him, then raised above his head pointing back, then down behind his back, then under his tucked feet, then level in front of him again exactly as in the first frame; the body leans with the blade; the ponytail and the coat follow the motion; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_nspecial": [
      16,
@@ -45,7 +45,7 @@
      "guard",
      false,
      "none",
-     "an instant iai, in keyframes: she slides the nodachi into the scabbard at her left hip in one smooth motion and crouches a little, her right hand on the hilt; then she draws the blade a hand's width out of the scabbard and slides it straight back in, the gold guard meeting the scabbard; she stays perfectly still for two frames, her eyes narrowed; then she draws the nodachi out again and lowers it into the first pose; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "an instant iai, in keyframes: she slides the nodachi into the scabbard at her left hip in one smooth motion and crouches a little, her right hand on the hilt; then she draws the blade a hand's width out of the scabbard and slides it straight back in, the gold guard meeting the scabbard; she stays perfectly still for two frames, her eyes narrowed; then she draws the nodachi out again and lowers it into the first pose; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_sspecial": [
      16,
@@ -53,7 +53,7 @@
      true,
      false,
      "forward",
-     "an iai rush, in keyframes: he crouches very low with the nodachi held back along his right side, the left hand gripping the scabbard; then lunges into an extremely long low stance to the right, the front knee deeply bent and the back leg stretched straight behind him, the right arm stretched far forward with the nodachi level at waist height pointing right; he holds that long low lunge for four frames, the coat and the ponytail flowing back; then draws the back foot in and rises into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "an iai rush, in keyframes: he crouches very low with the nodachi held back along his right side, the left hand gripping the scabbard; then lunges into an extremely long low stance to the right, the back leg stretched straight behind him, the right arm stretched far forward with the nodachi level at waist height pointing right; he holds that long low lunge for four frames; then draws the back foot in and rises into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_uspecial": [
      16,
@@ -61,7 +61,7 @@
      true,
      false,
      "up",
-     "a rising spin cut, in keyframes: he crouches low with the nodachi held low at his side; then leaps straight up, his body turning once all the way around as he rises, the nodachi held out at arm's length; at the top he is high in the air with the blade raised straight above his head in both hands and the knees tucked; then he comes back down and lands in the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a rising spin cut, in keyframes: he crouches low with the nodachi held low at his side; then leaps straight up, his body turning once all the way around as he rises, the nodachi held out at arm's length; at the top he is high in the air with the blade raised straight above his head in both hands and the knees tucked; then he comes back down and lands in the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_dspecial": [
      12,
@@ -77,7 +77,7 @@
      "guard",
      false,
      "none",
-     "a final iai, in keyframes: he drops low and stretches the nodachi far out to the right at chest height in one wide cut and holds it for two frames; then he rises upright, brings the point of the blade to the mouth of the scabbard held at his left hip and slowly slides the whole blade in until the gold guard touches the scabbard; his eyes close and he stands perfectly still for three frames, his right hand on the hilt; then he calmly draws the nodachi out again and lowers it into the first pose; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a final iai, in keyframes: he drops low, cuts once and holds the nodachi stretched far to the right at chest height for two frames; then he rises upright, slowly slides the whole blade into the scabbard at his left hip until the gold guard touches it; his eyes close and he stands perfectly still for three frames, his right hand on the hilt; then he calmly draws the nodachi out again and lowers it into the first pose; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_rengaine": [
      8,
@@ -93,7 +93,7 @@
      "guard",
      false,
      "forward",
-     "from the still iai stance with the blade sheathed, in keyframes: he grips the hilt, then draws the nodachi in one horizontal cut while lunging into a very long low stance to the right, the right arm and the blade stretched fully out to the right at chest height; he holds that pose for two frames; then rises and returns to the stance with the blade drawn, the point low and forward; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "from the still iai stance with the blade sheathed, in keyframes: he grips the hilt, then draws the nodachi in one horizontal cut while lunging into a very long low stance to the right, the right arm and the blade stretched fully out to the right at chest height; he holds that pose for two frames; then rises and returns to the stance with the blade drawn, the point low and forward; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_idle": [
      12,
@@ -117,7 +117,7 @@
      null,
      false,
      "none",
-     "starts a run to the right: first bends his knees and leans forward, the nodachi turned back along his right side with the point down behind him, the left hand holding the scabbard against his hip; then his back foot pushes off and he lands in a long low running stride, the torso leaning far forward, the coat and the ponytail flowing back behind him"
+     "starts a run to the right: first bends his knees and leans forward, the nodachi turned back along his right side with the point down behind him, the left hand holding the scabbard against his hip; then his back foot pushes off and he lands in a long low running stride, the torso leaning far forward, the coat flowing back behind him"
     ],
     "w0_run": [
      8,
@@ -173,7 +173,7 @@
      true,
      false,
      "forward",
-     "a lunging overhead cut, in keyframes: she starts in a long low step forward, leaning far forward, the nodachi raised high above her right shoulder in both hands; then she cuts diagonally down in front of her until the blade points low in front of her front foot, her body twisted into the cut; she holds that low pose for two frames, the coat and the ponytail swinging after the body; then rises back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a lunging overhead cut, in keyframes: she starts in a long low step forward, leaning far forward, the nodachi raised high above her right shoulder in both hands; then she cuts diagonally down in front of her until the blade points low in front of her front foot, her body twisted into the cut; she holds that low pose for two frames, the coat swinging after the body; then rises back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_utilt": [
      16,
@@ -181,7 +181,7 @@
      true,
      false,
      "forward",
-     "a backhand cut at chest height, in keyframes: she starts in a long low step forward with her back half turned to the right, the nodachi held low behind her; then she turns around and cuts across in front of her at chest height until her right arm and the blade are stretched straight out to the right; she holds that reach for two frames; then lowers the blade back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a backhand cut at chest height, in keyframes: she starts in a long low step forward with her back half turned to the right, the nodachi held low behind her; then she turns around and cuts across in front of her at chest height until her right arm and the blade are stretched straight out to the right; she holds that reach for two frames; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_dtilt": [
      16,
@@ -189,7 +189,7 @@
      true,
      false,
      "forward",
-     "a rising finishing cut, in keyframes: she starts crouched very low in a long step forward, the nodachi held low in front of her with the point near the floor; then she springs up and cuts upward in front of her, both arms rising until the blade points straight up above her head and she stands on the toes of her front foot; she holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "a rising finishing cut, in keyframes: she starts crouched very low in a long step forward, the nodachi held low in front of her with the point near the floor; then she springs up and cuts upward in front of her, both arms rising until the blade points straight up above her head and she stands on the toes of her front foot; she holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_fair": [
      16,
@@ -197,7 +197,7 @@
      true,
      false,
      "around",
-     "in mid-air with the knees tucked, two cuts, in keyframes: the nodachi raised above her head, then cut straight down in front of her until it points below her tucked feet; then she turns her body once around and cuts upward from below behind her to high above her head; ends exactly in the pose of the first frame; the ponytail and the coat follow the motion; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "in mid-air with the knees tucked, two cuts, in keyframes: the nodachi raised above her head, then cut straight down in front of her until it points below her tucked feet; then she turns her body once around and cuts upward from below behind her to high above her head; ends exactly in the pose of the first frame; the ponytail and the coat follow the motion; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_ledgeattack": [
      16,
@@ -205,7 +205,7 @@
      true,
      false,
      "forward",
-     "rises from a low crouch with a low horizontal cut of the nodachi forward at knee height, then back into the ready stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "rises from a low crouch with a low horizontal cut of the nodachi forward at knee height, then back into the ready stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_getupattack": [
      16,
@@ -213,14 +213,30 @@
      "guard",
      false,
      "around",
-     "from lying on his back, swings the nodachi low across in front of him, then low behind him while springing to his feet, ending in the ready stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible"
+     "from lying on his back, swings the nodachi low across in front of him, then low behind him while springing to his feet, ending in the ready stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
+    ],
+    "w0_fthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "forward",
+     "shoves the invisible opponent he is holding forward with his free hand, then slashes straight ahead with the nodachi, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
+    ],
+    "w0_uthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "up",
+     "lifts the invisible opponent he is holding high with his free hand and lets go, then swings the nodachi upward over his head, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ]
    }
   },
   "1": {
    "look": "new",
    "held": "the long odachi",
-   "subject": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, a long red scabbard at the hip, holding a very long slender curved odachi with a spiky gold star-shaped guard",
+   "subject": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
    "guard_pose": "calm iai stance facing right, holding the drawn long odachi low in his right hand, the point forward and down near the floor, his left hand on the long scabbard at his hip",
    "air_pose": "in mid-air facing right, knees tucked, holding the drawn long odachi level in front of him",
    "clips": {
@@ -230,7 +246,7 @@
      true,
      true,
      "none",
-     "a calm swordsman's idle loop with the long odachi: he stands in the same stance, the long blade low in his right hand with the point near the floor in front of him, his left hand resting on the long scabbard at his hip; his weight shifts slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; halfway through he raises the long blade until its back rests flat on his right shoulder, holds it there a moment, then lowers it back to its place; the eyes calm and cold; the long ponytail, the red ribbons, the coat tails and the red tassel of the sword sway a little after the body; the feet stay planted, returns exactly to the first pose"
+     "a calm swordsman's idle loop with the long odachi: he stands in the same stance, the long blade low in his right hand with the point near the floor in front of him, his left hand resting on the long scabbard at his hip; his weight shifts slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; halfway through he raises the long blade until its back rests flat on his right shoulder, holds it there a moment, then lowers it back to its place; the ponytail, ribbons, coat tails and the sword's red tassel sway a little; the feet stay planted, returns exactly to the first pose"
     ],
     "w1_walk": [
      12,
@@ -246,7 +262,7 @@
      null,
      false,
      "none",
-     "starts a run to the right: first bends his knees and leans forward, the long odachi turned back along his right side with the point down behind him, the left hand holding the long scabbard against his hip; then his back foot pushes off and he lands in a long low running stride, the torso leaning far forward, the coat and the ponytail flowing back behind him"
+     "starts a run to the right: first bends his knees and leans forward, the long odachi turned back along his right side with the point down behind him, the left hand holding the long scabbard against his hip; then his back foot pushes off and he lands in a long low running stride, the torso leaning far forward, the coat flowing back behind him"
     ],
     "w1_run": [
      8,
@@ -286,7 +302,7 @@
      true,
      false,
      "forward",
-     "a long diagonal cut from high to low, in keyframes: he raises the long odachi with both hands above his right shoulder, the blade pointing up and back; then steps forward and brings it down diagonally in front of him until the point is low in front of his front foot, the arms stretched forward and down; he holds that low pose for two frames, the coat and the ponytail swinging after the body; then lifts the blade back low into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a long diagonal cut from high to low, in keyframes: he raises the long odachi with both hands above his right shoulder, the blade pointing up and back; then steps forward and brings it down diagonally in front of him until the point is low in front of his front foot, the arms stretched forward and down; he holds that low pose for two frames, the coat swinging after the body; then lifts the blade back low into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_jab2": [
      16,
@@ -294,7 +310,7 @@
      true,
      false,
      "forward",
-     "a backhand rising cut, in keyframes: he turns his right wrist so the long odachi points down and back behind his right leg; then lifts it backhand upward in front of him, the right arm crossing his chest and ending stretched up and forward, the long blade pointing up and forward above his head; he holds that high pose for two frames; then lowers the blade back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a backhand rising cut, in keyframes: he turns his right wrist so the long odachi points down and back behind his right leg; then lifts it backhand upward in front of him, the right arm crossing his chest and ending stretched up and forward, the long blade pointing up and forward above his head; he holds that high pose for two frames; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_jab3": [
      16,
@@ -302,7 +318,7 @@
      true,
      false,
      "forward",
-     "a spinning finishing cut, in keyframes: he turns his body once all the way around on his front foot, the long odachi held out at arm's length at chest height, his back to the right for one frame; then he ends facing right in a deep lunge, the right arm and the long blade fully stretched to the right at chest height; he holds that pose for two frames; then rises back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a spinning finishing cut, in keyframes: he turns his body once all the way around on his front foot, the long odachi held out at arm's length at chest height, his back to the right for one frame; then he ends facing right in a deep lunge, the right arm and the long blade fully stretched to the right at chest height; he holds that pose for two frames; then rises back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_nair": [
      16,
@@ -310,7 +326,7 @@
      true,
      false,
      "around",
-     "in mid-air with the knees tucked, he turns his whole body once around holding the long odachi out at arm's length at waist height, in keyframes: the blade pointing forward to the right, then his back turned and the blade pointing behind him to the left, then facing right again with the blade pointing forward exactly as in the first frame; the ponytail and the coat follow the motion; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "in mid-air with the knees tucked, he turns his whole body once around holding the long odachi out at arm's length at waist height, in keyframes: the blade pointing forward to the right, then his back turned and the blade pointing behind him to the left, then facing right again with the blade pointing forward exactly as in the first frame; the ponytail and the coat follow the motion; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_nspecial": [
      16,
@@ -318,7 +334,7 @@
      true,
      false,
      "forward",
-     "a huge two-handed horizontal cut from behind, in keyframes: he turns his upper body away, the long odachi held with both hands far back behind his left hip, the blade pointing behind him; then turns his hips and brings the blade forward across his body at waist height until both arms and the long blade are fully stretched to the right; he holds that reach for three frames, the coat and the ponytail flying after the body; then returns to the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a huge two-handed horizontal cut from behind, in keyframes: he turns his upper body away, the long odachi held with both hands far back behind his left hip, the blade pointing behind him; then turns his hips and brings the blade forward across his body at waist height until both arms and the long blade are fully stretched to the right; he holds that reach for three frames, the coat and the ponytail flying after the body; then returns to the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_sspecial": [
      16,
@@ -326,7 +342,7 @@
      true,
      false,
      "forward",
-     "an iai rush, in keyframes: he crouches very low with the long odachi held back along his right side, the left hand gripping the long scabbard; then lunges into an extremely long low stance to the right, the front knee deeply bent and the back leg stretched straight behind him, the right arm stretched far forward with the long blade level at waist height pointing right; he holds that lunge for two frames; then turns his upper body away so his back is half toward the right, the long blade now pointing behind him, and holds that pose for two frames; then rises into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "an iai rush, in keyframes: he crouches very low, the long odachi held back along his right side; then lunges into an extremely long low stance to the right, the back leg stretched straight behind him, the right arm stretched far forward with the long blade level at waist height pointing right; he holds that lunge for two frames; then turns his upper body away so his back is half toward the right, the long blade now pointing behind him, and holds that pose for two frames; then rises into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_uspecial": [
      16,
@@ -334,7 +350,7 @@
      true,
      false,
      "up",
-     "a rising double spin cut, in keyframes: he crouches low with the long odachi held low at his side; then leaps straight up, his body turning twice all the way around as he rises, the long blade held out at arm's length at shoulder height; at the top he is high in the air with the long blade raised straight above his head in both hands and the knees tucked; then he comes back down and lands in the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a rising double spin cut, in keyframes: he crouches low with the long odachi held low at his side; then leaps straight up, his body turning twice all the way around as he rises, the long blade held out at arm's length at shoulder height; at the top he is high in the air with the long blade raised straight above his head in both hands and the knees tucked; then he comes back down and lands in the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_dspecial": [
      16,
@@ -342,7 +358,7 @@
      true,
      false,
      "forward",
-     "a calm parry and counter, in keyframes: he raises the long odachi crosswise in front of his face with both hands, the blade level above his head, and holds it perfectly still for several frames, the eyes narrowed; then he steps into a long lunge and thrusts the long blade straight forward at chest height, the right arm fully stretched; then returns to the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a calm parry and counter, in keyframes: he raises the long odachi crosswise in front of his face with both hands, the blade level above his head, and holds it perfectly still for several frames, the eyes narrowed; then he steps into a long lunge and thrusts the long blade straight forward at chest height, the right arm fully stretched; then returns to the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_ultimate": [
      16,
@@ -350,7 +366,7 @@
      "guard",
      false,
      "none",
-     "a final iai, in keyframes: he slides the long odachi into the long scabbard at his left hip and crouches low with his right hand on the hilt, perfectly still for three frames, the eyes closed; then he opens his eyes, draws and cuts in one horizontal motion while lunging far to the right, the long blade fully stretched to the right at chest height, and holds it for two frames; then he rises and lowers the long blade into the first pose; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a final iai, in keyframes: he slides the long odachi into the long scabbard at his left hip and crouches low with his right hand on the hilt, perfectly still for three frames, the eyes closed; then he opens his eyes, draws and cuts in one horizontal motion while lunging far to the right, the long blade fully stretched to the right at chest height, and holds it for two frames; then he rises and lowers the long blade into the first pose; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_rengaine": [
      8,
@@ -366,7 +382,7 @@
      "guard",
      false,
      "forward",
-     "from the still iai stance with the blade sheathed, in keyframes: he grips the hilt, then draws the long odachi in one horizontal cut while lunging into a very long low stance to the right, the right arm and the long blade stretched fully out to the right at chest height; he holds that pose for two frames; then rises and returns to the stance with the blade drawn, the point low and forward; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "from the still iai stance with the blade sheathed, in keyframes: he grips the hilt, then draws the long odachi in one horizontal cut while lunging into a very long low stance to the right, the right arm and the long blade stretched fully out to the right at chest height; he holds that pose for two frames; then rises and returns to the stance with the blade drawn, the point low and forward; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_bthrow": [
      8,
@@ -390,7 +406,7 @@
      true,
      false,
      "forward",
-     "a lunging overhead cut, in keyframes: she starts in a long low step forward, leaning far forward, the long odachi raised high above her right shoulder in both hands; then she cuts diagonally down in front of her until the blade points low in front of her front foot, her body twisted into the cut; she holds that low pose for two frames, the coat and the ponytail swinging after the body; then rises back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a lunging overhead cut, in keyframes: she starts in a long low step forward, leaning far forward, the long odachi raised high above her right shoulder in both hands; then she cuts diagonally down in front of her until the blade points low in front of her front foot, her body twisted into the cut; she holds that low pose for two frames, the coat swinging after the body; then rises back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_utilt": [
      16,
@@ -398,7 +414,7 @@
      true,
      false,
      "forward",
-     "a backhand cut at chest height, in keyframes: she starts in a long low step forward with her back half turned to the right, the long odachi held low behind her; then she turns around and cuts across in front of her at chest height until her right arm and the blade are stretched straight out to the right; she holds that reach for two frames; then lowers the blade back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a backhand cut at chest height, in keyframes: she starts in a long low step forward with her back half turned to the right, the long odachi held low behind her; then she turns around and cuts across in front of her at chest height until her right arm and the blade are stretched straight out to the right; she holds that reach for two frames; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_dtilt": [
      16,
@@ -406,7 +422,7 @@
      true,
      false,
      "forward",
-     "a rising finishing cut, in keyframes: she starts crouched very low in a long step forward, the long odachi held low in front of her with the point near the floor; then she springs up and cuts upward in front of her, both arms rising until the blade points straight up above her head and she stands on the toes of her front foot; she holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "a rising finishing cut, in keyframes: she starts crouched very low in a long step forward, the long odachi held low in front of her with the point near the floor; then she springs up and cuts upward in front of her, both arms rising until the blade points straight up above her head and she stands on the toes of her front foot; she holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_fair": [
      16,
@@ -414,7 +430,7 @@
      true,
      false,
      "around",
-     "in mid-air with the knees tucked, two cuts, in keyframes: the long odachi raised above her head, then cut straight down in front of her until it points below her tucked feet; then she turns her body once around and cuts upward from below behind her to high above her head; ends exactly in the pose of the first frame; the ponytail and the coat follow the motion; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "in mid-air with the knees tucked, two cuts, in keyframes: the long odachi raised above her head, then cut straight down in front of her until it points below her tucked feet; then she turns her body once around and cuts upward from below behind her to high above her head; ends exactly in the pose of the first frame; the ponytail and the coat follow the motion; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_ledgeattack": [
      16,
@@ -422,7 +438,7 @@
      true,
      false,
      "forward",
-     "rises from a low crouch with a low horizontal cut of the long odachi forward at knee height, then back into the ready stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "rises from a low crouch with a low horizontal cut of the long odachi forward at knee height, then back into the ready stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ],
     "w1_getupattack": [
      16,
@@ -430,7 +446,23 @@
      "guard",
      false,
      "around",
-     "from lying on his back, swings the long odachi low across in front of him, then low behind him while springing to his feet, ending in the ready stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one long thin curved silver blade with red and gold patterns, its whole length visible"
+     "from lying on his back, swings the long odachi low across in front of him, then low behind him while springing to his feet, ending in the ready stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
+    ],
+    "w1_fthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "forward",
+     "shoves the invisible opponent he is holding forward with his free hand, then slashes straight ahead with the long odachi, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
+    ],
+    "w1_uthrow": [
+     8,
+     "holdstart@last",
+     "guard",
+     false,
+     "up",
+     "lifts the invisible opponent he is holding high with his free hand and lets go, then swings the long odachi upward over his head, then returns to the ready stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
     ]
    }
   }

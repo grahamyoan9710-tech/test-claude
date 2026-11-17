@@ -356,6 +356,9 @@ def jobs(fighter, only=None):
         desc = desc.rstrip(" .") + "." + TAIL
         if she:
             desc, pose = feminine(desc), feminine(pose)
+        if len(desc) > 1000 or len(subject) > 300:  # PixelLab refuses them (17/11)
+            print(f"left out {fighter}/{name}: prompt {len(desc)}/1000, subject {len(subject)}/300 characters", file=sys.stderr)
+            continue
         j = {"out": os.path.join(S, fighter, name), "src": src, "frames": n, "desc": desc,
              "subject": subject, "pose": pose}
         if last:

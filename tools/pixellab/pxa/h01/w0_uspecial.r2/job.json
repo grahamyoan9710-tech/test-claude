@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "91e5e5cf-7a20-49d1-9420-3ea168c3efe4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:df9327b2-6f14-4921-93bc-f9354a820c86",
+  "last_frame_url": "upload:6560011d-c03f-4302-82d2-b68ca02c05d9",
+  "description": "a rising spin cut, in keyframes: she crouches low with the nodachi held low at her side; then leaps straight up, her body turning once all the way around as she rises, the nodachi held out at arm's length; at the top she is high in the air with the blade raised straight above her head in both hands and the knees tucked; then she comes back down and lands in the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+ },
+ "reply": "id: 91e5e5cf-7a20-49d1-9420-3ea168c3efe4\njob_id: 91e5e5cf-7a20-49d1-9420-3ea168c3efe4\ndescription: a rising spin cut, in keyframes: she crouches low with the nodachi held low at her side; then leaps straight up, her body turning once all the way around as she rises, the nodachi held out at arm's length; at the top she is high in the air with the blade raised straight above her head in both hands and the knees tucked; then she comes back down and lands in the stance; the blade moves a little at a time from one position to the next and keeps exactly its shape in every frame: one thin curved silver blade with red patterns, its whole length visible. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"91e5e5cf-7a20-49d1-9420-3ea168c3efe4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/91e5e5cf-7a20-49d1-9420-3ea168c3efe4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 1dbec6f6-4a46-5dd4-8e59-61bfaa726f52\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 17,
+ "charged": "2 generations"
+}
