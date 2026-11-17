@@ -93,7 +93,7 @@ void corners(Rectangle r, float slant, float len, float thick, Color col);
 void plate(Rectangle r, float slant, Color top, Color bottom, Color line);
 // Hairline rule with a small diamond at both ends.
 void rule(float x0, float x1, float y, Color col);
-// Zonai rune glyph (kind 0 spiral, 1 eye, 2 three dots, 3 compass) inside a circle of radius r.
+// Rune glyph (kind 0 spiral, 1 eye, 2 three dots, 3 compass) inside a circle of radius r.
 void rune(Vector2 c, float r, int kind, float rot, Color col, float thick = 2.0f);
 
 // ---- Backgrounds ----------------------------------------------------------------

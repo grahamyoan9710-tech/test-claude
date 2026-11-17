@@ -83,7 +83,7 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   - `render_world.cpp` : projectiles. La table `kShotFx` associe un projectile à son effet PixelLab.
   - `render_vfx.cpp`, `render_ult.cpp` : rayons et ultimes.
   - `fx.cpp` : effets ponctuels (`playFx`).
-  - `pixel.cpp` : shader de distorsion du Kamui.
+  - `pixel.cpp` : rendu pixel art des persos (calque basse résolution + shader).
 - Outils de mise au point dans le binaire :
   - `--check-hitboxes`, `--fit-impacts` et `--fit-hitboxes`, avec leurs scripts dans `scripts/` ;
   - `--export-pose`.

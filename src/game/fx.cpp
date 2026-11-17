@@ -629,7 +629,7 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::Crowd, 0.8f, 1.1f);
         break;
       case EvType::FinalSmash: {  // the ultimate is unleashed, in the hero's element
-        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kZonaiGlow;
+        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kRuneGlow;
         flash_ = std::max(flash_, 0.55f);
         flashCol_ = mixColor(el, WHITE, 0.55f);
         shake_ = std::max(shake_, 10.0f);
@@ -642,7 +642,7 @@ void Fx::onEvents(const Match& m) {
         break;
       }
       case EvType::UltReady: {  // ultimate ready: a flash in the hero's element (its light: MatchScreen)
-        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kZonaiGlow;
+        const Color el = e.a >= 0 && e.a < nf ? hitFxGlow(heroElement(m.fighters[e.a].def->hero)) : kRuneGlow;
         flash_ = std::max(flash_, 0.1f);
         flashCol_ = el;
         shake_ = std::max(shake_, 3.0f);
