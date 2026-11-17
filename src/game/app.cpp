@@ -282,7 +282,9 @@ void App::applyDisplaySettings() {
       SetWindowPosition(GetMonitorPosition(m).x + (mw - w) / 2, GetMonitorPosition(m).y + std::max(0, (mh - h) / 2));
     }
   }
-  if (s.vsync) SetWindowState(FLAG_VSYNC_HINT);
+  // raylib 5.5's SetWindowState() toggles fullscreen whenever that flag differs from the window's: pass it as it is,
+  // or V-Sync would take the game straight back out of fullscreen
+  if (s.vsync) SetWindowState(FLAG_VSYNC_HINT | (IsWindowState(FLAG_FULLSCREEN_MODE) ? FLAG_FULLSCREEN_MODE : 0u));
   else ClearWindowState(FLAG_VSYNC_HINT);
   // The render: the resolution (the screen's by default) fitted to 16:9, times the upscaler's and the SSAA's scale.
   // (fullscreen: the chosen resolution, or the screen's; windowed: the window's size)
