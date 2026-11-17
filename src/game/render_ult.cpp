@@ -1,4 +1,5 @@
-// A transformed fighter's aura: its PixelLab effect (FormDef::aura), looping around it, behind the fighter.
+// A transformed fighter's aura: its PixelLab effect (FormDef::aura), looping around it, behind the fighter; else the
+// aura of the weapon it holds (WeaponDef::aura).
 #include <cmath>
 #include <cstring>
 
@@ -6,6 +7,8 @@
 
 void drawFormAvatar(const Fighter& f, float time, bool front) {
   const FormDef* fd = f.formDef();
-  if (front || !fd || !fd->aura || !f.active() || (!kVfx && std::strncmp(fd->aura, "pfx_", 4) != 0)) return;  // (ParticleFX: always)
-  art::drawFx(fd->aura, art::fxLoopTime(fd->aura, time), f.pos, art::fxSize(fd->aura, *f.def), 0.0f, f.facing < 0, 0.95f);
+  const WeaponDef* wd = f.weaponDef();
+  const char* aura = fd && fd->aura ? fd->aura : wd ? wd->aura : nullptr;
+  if (front || !aura || !f.active() || (!kVfx && std::strncmp(aura, "pfx_", 4) != 0)) return;  // (ParticleFX: always)
+  art::drawFx(aura, art::fxLoopTime(aura, time), f.pos, art::fxSize(aura, *f.def), 0.0f, f.facing < 0, 0.95f);
 }
