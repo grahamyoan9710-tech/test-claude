@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 17/11 08 h UTC, session claude/project-thread-03jksh : version 15.9 = plein écran Linux. Cause : dans raylib 5.5,
+  `SetWindowState()` bascule le plein écran dès que son drapeau diffère de celui de la fenêtre, donc
+  `SetWindowState(FLAG_VSYNC_HINT)` sortait du plein écran ; on passe le drapeau actuel avec. Sous mutter (GNOME), une
+  taille demandée juste après la sortie du plein écran est ignorée : `placeWindow()` est rappelé 0,15 s plus tard
+  (`placeAt_`). Vérifié sous Xvfb avec openbox, mutter, xfwm4 et sans gestionnaire, par F11 et par Paramètres ; bug
+  15.8 reproduit sur le portable de yoyo (Zorin OS 18.1, Wayland, Intel UHD). Verrou « Version et paquets » libéré.
 - 13/11 09 h 55 UTC, session claude/project-thread-03jksh : version 15.8 = la maquette Paramètres + chargement
   validée par yoyo le 13/11 (« oui vz je valide »), codée. Avant elle : vrai FSR 1 (EASU + RCAS), jeu à pas fixe
   (60 pas par seconde réelle, plus de ralenti quand les FPS baissent), interface toujours à la résolution native

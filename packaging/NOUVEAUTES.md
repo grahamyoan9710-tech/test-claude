@@ -8,6 +8,12 @@
 
 ## Nouveautés
 
+Version 15.9 : **le plein écran marche sous Linux**.
+
+- Le plein écran s'active vraiment sous Linux, au lancement comme avec F11 ou dans Paramètres (avant, la fenêtre
+  restait avec ses bords et la barre du bureau ; la V-Sync l'en faisait ressortir aussitôt).
+- En quittant le plein écran sous GNOME (Ubuntu, Zorin…), la fenêtre reprend bien sa taille et revient au centre.
+
 Version 15.8 : **Paramètres et écran de chargement refaits, vrai FSR 1, plus de ralenti**.
 
 - Vrai AMD FSR 1, avec ses deux passes : EASU agrandit l'image en gardant les bords nets, RCAS la rend nette (avant,

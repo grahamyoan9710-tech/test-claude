@@ -262,6 +262,15 @@ void App::toast(const char* text) {
   toastTimer_ = 150;
 }
 
+// The window at its windowed size, centred on its screen.
+void App::placeWindow() {
+  const Settings& s = settings();
+  const int m = GetCurrentMonitor(), mw = GetMonitorWidth(m), mh = GetMonitorHeight(m);
+  const int w = windowW(s, mw), h = windowH(s, mw, mh);
+  SetWindowSize(w, h);
+  SetWindowPosition(GetMonitorPosition(m).x + (mw - w) / 2, GetMonitorPosition(m).y + std::max(0, (mh - h) / 2));
+}
+
 void App::applyDisplaySettings() {
   const Settings& s = settings();
   // The window: only when the mode or the size changed, so a window the player resized by hand stays as it is.
@@ -276,13 +285,16 @@ void App::applyDisplaySettings() {
       // resolution is the render's, scaled up to fill it.
       SetWindowSize(mw, mh);
       ToggleFullscreen();
+      placeAt_ = 0.0;
     } else {
-      const int w = windowW(s, mw), h = windowH(s, mw, mh);
-      SetWindowSize(w, h);
-      SetWindowPosition(GetMonitorPosition(m).x + (mw - w) / 2, GetMonitorPosition(m).y + std::max(0, (mh - h) / 2));
+      placeWindow();
+      // GNOME (mutter) drops a size asked for right after leaving fullscreen: it is asked for again a moment later
+      placeAt_ = GetTime() + 0.15;
     }
   }
-  if (s.vsync) SetWindowState(FLAG_VSYNC_HINT);
+  // raylib 5.5's SetWindowState() toggles fullscreen whenever that flag differs from the window's: pass it as it is,
+  // or V-Sync would take the game straight back out of fullscreen
+  if (s.vsync) SetWindowState(FLAG_VSYNC_HINT | (IsWindowState(FLAG_FULLSCREEN_MODE) ? FLAG_FULLSCREEN_MODE : 0u));
   else ClearWindowState(FLAG_VSYNC_HINT);
   // The render: the resolution (the screen's by default) fitted to 16:9, times the upscaler's and the SSAA's scale.
   // (fullscreen: the chosen resolution, or the screen's; windowed: the window's size)
@@ -457,6 +469,10 @@ void App::run() {
     audio_.update();
     const std::string padNotice = takePadNotice();
     if (!padNotice.empty()) toast(padNotice.c_str());
+    if (placeAt_ > 0.0 && GetTime() >= placeAt_) {
+      placeAt_ = 0.0;
+      if (!IsWindowFullscreen()) placeWindow();
+    }
     if (IsKeyPressed(KEY_F11)) {
       settings().fullscreen = !settings().fullscreen;
       applyDisplaySettings();
