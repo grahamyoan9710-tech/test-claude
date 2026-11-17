@@ -48,13 +48,20 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session claude/project-thread-58u7pf (Hakuen, rengainages) | 17/11 22 h 30 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session claude/project-thread-58u7pf (Hakuen, rengainages) | 17/11 22 h 30 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 17/11 22 h 30 UTC, session claude/project-thread-58u7pf (fil « Refaire 10 persos ») : Hakuen jouable armée
+  (`armed = false` retiré) : les clips des armes A et B importés et recalés ; chaque coup de lame est fait de deux
+  parties propres jointes à la coupe (`pxa/join.py`, PixelLab peint une traînée sur tout geste rapide), l'impact
+  sur la fin de la coupe (`pxa/lock_impacts.py`). yoyo (22 h 09) : les rengainages sont faux (la lame disparaît,
+  la poignée finit derrière la hanche) : refaits pour finir sur une pose « lame au fourreau » faite au modèle pro
+  (`pxa/h01/w<slot>_rengaine.end/`), avec la Fente écarlate, la Coupe-éclair A et B et l'ultime B. Verrous
+  « Imports de clips » et « fitall.sh » pris. Règle yoyo : aucune version avant au moins 2 persos finis.
 - 17/11 12 h 30 UTC, session claude/project-thread-3uctyp : version 16.1 = les 3 correctifs du fil « chasse aux bugs »
   (validés par yoyo, patchs `git am` sur la 16.0) : IA qui ne se fige plus au bord d'un vide (`ai.cpp`), assets
   intégrés fichier par fichier (`cmake/embed.cmake`, configure ~2 min), 8 hitbox de Hakuen recalées

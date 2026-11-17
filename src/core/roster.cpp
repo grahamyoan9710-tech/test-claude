@@ -555,7 +555,6 @@ CharacterDef makeH01() {
   k.c.id = "h01";
   k.c.name = "Hakuen";
   k.c.hero = Hero::H01;
-  k.c.armed = false;  // shortcut: bare-handed until his nodachi clips pass QA (13/11), then remove this line
   k.c.walkStride = 1.6f;  // her short 3/4 steps at the usual stride looked hurried (owner, 10/11)
   const F e = k.e;
   const auto far = [](MoveDef m) {  // his electric dash goes 25 % further (owner, 12/11)
@@ -576,7 +575,7 @@ CharacterDef makeH01() {
   ultimateOf(k, 0, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));  // shortcut: the katana's own slashing ultimate comes with its clips
   drawCut(k, 0, L::Weapon, 14);
 
-  arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
+  arm(k, 1, "Lame éveillée", "Très long odachi, garde en étoile dorée", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
   skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
          far(through("Ruée ardente", e, k.pfx("draw"), 12)), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
