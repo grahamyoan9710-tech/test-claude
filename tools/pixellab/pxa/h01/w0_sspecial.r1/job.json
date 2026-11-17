@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "1866f657-1b87-49d6-bd8c-fda7c0bfabb3",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e7d7a2fc-b2cc-431b-948c-5e9dc9f7458c",
+  "last_frame_url": "upload:f817f770-0dde-4e6e-b79e-fdf69959f247",
+  "description": "an iai rush, in keyframes: he crouches very low with the nodachi held back along his right side, the left hand gripping the scabbard; then lunges into an extremely long low stance to the right, the front knee deeply bent and the back leg stretched straight behind him, the right arm stretched far forward with the nodachi level at waist height pointing right; he holds that long low lunge for four frames, the coat and the ponytail flowing back; then draws the back foot in and rises into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 1866f657-1b87-49d6-bd8c-fda7c0bfabb3\njob_id: 1866f657-1b87-49d6-bd8c-fda7c0bfabb3\ndescription: an iai rush, in keyframes: he crouches very low with the nodachi held back along his right side, the left hand gripping the scabbard; then lunges into an extremely long low stance to the right, the front knee deeply bent and the back leg stretched straight behind him, the right arm stretched far forward with the nodachi level at waist height pointing right; he holds that long low lunge for four frames, the coat and the ponytail flowing back; then draws the back foot in and rises into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1866f657-1b87-49d6-bd8c-fda7c0bfabb3\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/1866f657-1b87-49d6-bd8c-fda7c0bfabb3/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 89182be1-75d6-5df8-a1ad-18817209e1e6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

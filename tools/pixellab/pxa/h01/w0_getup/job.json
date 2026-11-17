@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "37a7f221-3384-4a57-b329-218091df9fd0",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4960602d-6f3f-4d6f-b376-4092f3d0bfbc",
+  "last_frame_url": "upload:1499383e-bd02-4c1c-aab0-da5fe80351dc",
+  "description": "gets up from lying on her back: rolls onto her feet and stands back up into the ready stance, the nodachi in hand. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "lying on her back on the ground"
+ },
+ "reply": "id: 37a7f221-3384-4a57-b329-218091df9fd0\njob_id: 37a7f221-3384-4a57-b329-218091df9fd0\ndescription: gets up from lying on her back: rolls onto her feet and stands back up into the ready stance, the nodachi in hand. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"37a7f221-3384-4a57-b329-218091df9fd0\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/37a7f221-3384-4a57-b329-218091df9fd0/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 358e7a9b-ce7e-5329-ac00-8b2ca690bf4c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_knockdown/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png"
+}

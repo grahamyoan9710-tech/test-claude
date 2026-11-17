@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "addf5a5b-0e22-431b-944f-2ddde21775ca",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4dfcec0b-aefb-4b09-88ad-9c521ce958ee",
+  "last_frame_url": "upload:c6b684d1-238c-4012-a969-ebb6729fbe10",
+  "description": "dodge roll: tucks into a tight ball and rolls forward holding the nodachi close to his body, then springs back up into the same stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: addf5a5b-0e22-431b-944f-2ddde21775ca\njob_id: addf5a5b-0e22-431b-944f-2ddde21775ca\ndescription: dodge roll: tucks into a tight ball and rolls forward holding the nodachi close to his body, then springs back up into the same stance. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"addf5a5b-0e22-431b-944f-2ddde21775ca\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/addf5a5b-0e22-431b-944f-2ddde21775ca/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 4447aacb-687b-5f29-8f84-a628bff9675d\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

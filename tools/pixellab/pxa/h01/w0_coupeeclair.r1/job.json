@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "0c1cf67b-6f89-438b-ac50-3c82ffd5fd77",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ccbc89ff-1094-40c8-9a69-b8cc0f8a8a98",
+  "last_frame_url": "upload:0329734c-f8be-4dd0-88eb-5ea03b54164f",
+  "description": "from the still iai stance with the blade sheathed, in keyframes: he grips the hilt, then draws the nodachi in one horizontal cut while lunging into a very long low stance to the right, the right arm and the blade stretched fully out to the right at chest height; he holds that pose for two frames; then rises and returns to the stance with the blade drawn, the point low and forward. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 0c1cf67b-6f89-438b-ac50-3c82ffd5fd77\njob_id: 0c1cf67b-6f89-438b-ac50-3c82ffd5fd77\ndescription: from the still iai stance with the blade sheathed, in keyframes: he grips the hilt, then draws the nodachi in one horizontal cut while lunging into a very long low stance to the right, the right arm and the blade stretched fully out to the right at chest height; he holds that pose for two frames; then rises and returns to the stance with the blade drawn, the point low and forward. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0c1cf67b-6f89-438b-ac50-3c82ffd5fd77\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/0c1cf67b-6f89-438b-ac50-3c82ffd5fd77/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: f55ffdf3-01b6-5b7c-ab7e-df3dcc43b977\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_rengaine/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

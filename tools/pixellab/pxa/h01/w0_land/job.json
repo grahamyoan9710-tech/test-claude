@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "2e34eb33-35b6-4313-83cb-da8f10f9fe77",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:51d19510-e74b-4986-b2ca-96257cf210d7",
+  "last_frame_url": "upload:5ad1aafe-dd2a-4bad-b2da-f3b461a8d8dd",
+  "description": "standing on the floor, bends the knees deeply as if just landed, the nodachi held ready, then rises back into the stance; the feet stay on the floor, nothing is drawn around them. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 2e34eb33-35b6-4313-83cb-da8f10f9fe77\njob_id: 2e34eb33-35b6-4313-83cb-da8f10f9fe77\ndescription: standing on the floor, bends the knees deeply as if just landed, the nodachi held ready, then rises back into the stance; the feet stay on the floor, nothing is drawn around them. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"2e34eb33-35b6-4313-83cb-da8f10f9fe77\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/2e34eb33-35b6-4313-83cb-da8f10f9fe77/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 0c04842b-c6c7-5ae0-83f2-e56e9ec3e20e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

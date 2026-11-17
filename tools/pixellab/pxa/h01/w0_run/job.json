@@ -1,0 +1,18 @@
+{
+ "status": "submitted",
+ "job_id": "ef681bff-6495-441e-afc5-46c02bf8a693",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:dc407d58-79a8-4bcd-a7db-55731baea673",
+  "last_frame_url": "upload:3cb41164-feef-4709-a9d8-c5db30dbc995",
+  "description": "a low swordsman's run to the right: the torso leaning far forward and low, the nodachi held in her right hand along her side with the blade pointing back and down behind her, the left hand holding the scabbard against her hip; only the legs drive the run: long gliding strides with both feet off the ground in the middle of each stride, the head steady and level, the coat tails and the long ponytail flowing behind her, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "running to the right, leaning forward, arms swept back"
+ },
+ "reply": "id: ef681bff-6495-441e-afc5-46c02bf8a693\njob_id: ef681bff-6495-441e-afc5-46c02bf8a693\ndescription: a low swordsman's run to the right: the torso leaning far forward and low, the nodachi held in her right hand along her side with the blade pointing back and down behind her, the left hand holding the scabbard against her hip; only the legs drive the run: long gliding strides with both feet off the ground in the middle of each stride, the head steady and level, the coat tails and the long ponytail flowing behind her, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"ef681bff-6495-441e-afc5-46c02bf8a693\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/ef681bff-6495-441e-afc5-46c02bf8a693/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: fa57dfef-3d1c-57fa-905b-ea532605c87f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_runstart/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_runstart/f_08.png"
+}

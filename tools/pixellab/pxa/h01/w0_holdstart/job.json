@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "c3f2edf0-1860-4761-b33d-239f5e1eb3ad",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:10138909-d92a-490b-9a74-88c4f603b44a",
+  "description": "reaches forward with his free hand and closes it on the collar of an invisible opponent in front of him, then holds it at arm's length, the other hand still holding the nodachi. Only the character is drawn: the opponent is invisible, there is no other person in the frame.. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: c3f2edf0-1860-4761-b33d-239f5e1eb3ad\njob_id: c3f2edf0-1860-4761-b33d-239f5e1eb3ad\ndescription: reaches forward with his free hand and closes it on the collar of an invisible opponent in front of him, then holds it at arm's length, the other hand still holding the nodachi. Only the character is drawn: the opponent is invisible, there is no other person in the frame.. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c3f2edf0-1860-4761-b33d-239f5e1eb3ad\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/c3f2edf0-1860-4761-b33d-239f5e1eb3ad/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d7ad476d-5108-59e8-9922-4a75d370fd65\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

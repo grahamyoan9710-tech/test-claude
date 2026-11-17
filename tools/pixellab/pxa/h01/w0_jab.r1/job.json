@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "24474e80-369d-433d-9124-8fa149d7da6e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:b0fc94a3-7961-4174-b0d5-5fe225460a0d",
+  "last_frame_url": "upload:435d6993-77bc-4dab-ba83-0835862ceafe",
+  "description": "a horizontal cut at chest height, in keyframes: he steps forward on the front foot and draws the nodachi back low beside his right hip, the blade behind him; then turns his hips and brings the blade across in front of him at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; he holds that reach for two frames, the coat and the ponytail swinging after the body; then brings the blade back low into the stance, calm and precise. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 24474e80-369d-433d-9124-8fa149d7da6e\njob_id: 24474e80-369d-433d-9124-8fa149d7da6e\ndescription: a horizontal cut at chest height, in keyframes: he steps forward on the front foot and draws the nodachi back low beside his right hip, the blade behind him; then turns his hips and brings the blade across in front of him at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; he holds that reach for two frames, the coat and the ponytail swinging after the body; then brings the blade back low into the stance, calm and precise. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"24474e80-369d-433d-9124-8fa149d7da6e\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/24474e80-369d-433d-9124-8fa149d7da6e/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 7bcdd357-a5f6-5498-981f-1d0c532ba5b5\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}
