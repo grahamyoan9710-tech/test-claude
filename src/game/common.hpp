@@ -48,8 +48,8 @@ inline void beginClip(Rectangle r) {
 inline void endClip() { EndScissorMode(); }
 
 // ---- Palette ----------------------------------------------------------------
-// Ancient-tech glow (TotK Zonai teal-green): runes on outfits, ultimate aura, menu selection.
-constexpr Color kZonaiGlow = {72, 228, 190, 255};
+// Ancient-tech glow (teal-green): runes on outfits, ultimate aura, menu selection.
+constexpr Color kRuneGlow = {72, 228, 190, 255};
 constexpr Color kOutline = {23, 23, 58, 255};  // default text outline (indigo ink)
 
 // The colour of each card, a CPU's too (« Épure »): J1 red, J2 blue, J3 yellow, J4 green.

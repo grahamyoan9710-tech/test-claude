@@ -92,7 +92,7 @@ class Fx {
   Particle& add(PK kind, Vec2 pos, Vec2 vel, float life, float size, float size1, Color c, float gravity = 0.0f,
                 float drag = 0.92f);
   void burst(Vec2 pos, int count, float speed, Color c, PK kind, float life, float size);
-  void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kZonaiGlow);
+  void motes(Vec2 pos, int count, float radius, float speed, float rise, Color col = kRuneGlow);
   // The hit's mark; tint: the attacker's colour, for the white ParticleFX cut; px: the fighters' pixel size (a
   // pixel-art mark is drawn with it). True: a ParticleFX mark was played.
   bool hitSpark(Vec2 pos, Vec2 dir, float kb, HitFx fx, bool big, Color tint, float px);

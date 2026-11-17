@@ -11,7 +11,7 @@
 constexpr bool kVfx = false;
 
 // ---- Fighters (render_fighter.cpp) ----------------------------------------
-// kZonaiGlow (ancient-tech teal-green) lives with the palette in common.hpp.
+// kRuneGlow (ancient-tech teal-green) lives with the palette in common.hpp.
 
 // Pose in fighter-local pixels, relative to the body center, facing right.
 struct Pose {

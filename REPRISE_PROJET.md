@@ -55,6 +55,11 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 17/11 10 h UTC, fil « Faire le tri des anciens persos et terrains » (validé par yoyo) : retirés les 47 lignes
+  mortes de `sheets.txt` aux noms d'animes (`weapon`, `bow`, `icon`, `shield`), `prototype_godot/` (Naruto/Sasuke),
+  les images des 14 persos jamais faits (04-06, 09-17) ; `kZonaiGlow` renommé `kRuneGlow`. Gardés : les 5 anciens
+  persos (jouables jusqu'aux nouveaux), les 5 terrains, et les effets PixelLab masqués (leur absence rallumerait
+  les effets codés de repli : à retirer quand Blender les remplace). Branches, PR et releases 9.x : à la main.
 - 13/11 09 h 55 UTC, session claude/project-thread-03jksh : version 15.8 = la maquette Paramètres + chargement
   validée par yoyo le 13/11 (« oui vz je valide »), codée. Avant elle : vrai FSR 1 (EASU + RCAS), jeu à pas fixe
   (60 pas par seconde réelle, plus de ralenti quand les FPS baissent), interface toujours à la résolution native
