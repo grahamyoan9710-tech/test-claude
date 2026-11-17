@@ -7,7 +7,7 @@ pourcentage de dégâts de l'adversaire jusqu'à pouvoir l'éjecter de l'arène.
 
 ## Jouer
 
-Version actuelle : **15.9** (bêta). Rien à installer : le jeu tient dans un seul fichier.
+Version actuelle : **16.0** (bêta). Rien à installer : le jeu tient dans un seul fichier.
 
 - **Windows** :
   [ClashHorizon-windows-x64.zip](https://github.com/grahamyoan9710-tech/test-claude/releases/latest/download/ClashHorizon-windows-x64.zip).
@@ -82,7 +82,7 @@ cmake --build build -j
   `build\Release\super_clash.exe`.
 - **Tests** de la simulation, sans écran : `cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF`,
   `cmake --build build-core -j`, puis `./build-core/sim_test`.
-- **Archives** Linux et Windows : `scripts/package_release.sh 15.9` (dans `dist/`).
+- **Archives** Linux et Windows : `scripts/package_release.sh 16.0` (dans `dist/`).
 
 ## Crédits
 

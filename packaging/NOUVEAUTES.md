@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 16.0 : **les auras d'éveil refaites dans Blender**.
+
+- Au déclenchement de l'ultime d'éveil (Ombre violette, Givre stellaire, Brasier rouge, Lumière blanche) : un
+  faisceau de lumière et une onde de choc autour du perso, avec du bloom (flammes violettes et pierres d'énergie,
+  anneaux de givre, gerbe de feu et pierres en fusion, anneaux de lumière en bandes).
+- Pendant l'éveil, le perso a un détourage lumineux collé au corps qui suit chaque image de son animation, de petites
+  particules qui montent lentement et de minuscules éclairs qui crépitent sur son contour. Hakuen éveillé aussi.
+- Ménage : les anciens contenus inutilisés aux noms d'animes sont retirés du jeu.
+
 Version 15.9 : **le plein écran marche sous Linux**.
 
 - Le plein écran s'active vraiment sous Linux, au lancement comme avec F11 ou dans Paramètres (avant, la fenêtre

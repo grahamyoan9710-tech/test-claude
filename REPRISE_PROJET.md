@@ -50,11 +50,18 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 |---|---|---|
 | `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
-| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender) | 17/11 07 h 40 UTC |
+| Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-3uctyp (16.0) | 17/11 11 h 20 UTC |
+| Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 17/11 12 h UTC, session claude/project-thread-3uctyp (fil VFX Blender) : version 16.0. Auras d'éveil refaites
+  (yoyo, 17/11 : les flammes autour du corps refusées) : éclats du déclenchement `pfx_<id>_eveil` + `_front`
+  (`tools/blender/aura_geo.py` EVEILS, rochers en fusion), aura en boucle `pfx_<id>_aura` = particules lentes +
+  mini-éclairs sur le contour (72 images), détourage du corps dessiné par le jeu sur chaque image
+  (`render_fighter.cpp`, copies décalées comme le contour de la Clash Orb, couleurs de l'aura). Démo :
+  `tools/blender/aura/demo.py`. `k.fx("t", ...)` → `k.pfx("aura"/"eveil")`, anciennes bandes `p0X_t_*` retirées.
+  Tri des anciens contenus (branche id3eis, PR #18) fusionné. Verrou « Version et paquets » libéré.
 - 17/11 10 h UTC, fil « Faire le tri des anciens persos et terrains » (validé par yoyo) : retirés les 47 lignes
   mortes de `sheets.txt` aux noms d'animes (`weapon`, `bow`, `icon`, `shield`), `prototype_godot/` (Naruto/Sasuke),
   les images des 14 persos jamais faits (04-06, 09-17) ; `kZonaiGlow` renommé `kRuneGlow`. Gardés : les 5 anciens
