@@ -52,7 +52,7 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-gzf1un (tous les effets refaits dans Blender) | 12/11 17 h 15 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
-| Version et paquets (README, numéros de version, `dist/`) | libre | |
+| Version et paquets (README, numéros de version, `dist/`) | session claude/project-thread-03jksh (15.9, plein écran Linux) | 17/11 07 h 55 UTC |
 
 ### Journal (le plus récent en haut)
 - 13/11 09 h 55 UTC, session claude/project-thread-03jksh : version 15.8 = la maquette Paramètres + chargement
