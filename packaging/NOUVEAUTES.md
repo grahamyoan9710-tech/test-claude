@@ -8,6 +8,12 @@
 
 ## Nouveautés
 
+Version 16.1 : **correctifs**.
+
+- L'IA est plus active : les CPU ne se figent plus au bord d'un vide quand une arme ou l'orbe est de l'autre côté.
+- Hakuen touche là où il frappe : 8 zones de coup recalées sur ses animations.
+- La compilation du jeu est bien plus rapide (préparation de ~40 min à 2 min).
+
 Version 16.0 : **les auras d'éveil refaites dans Blender**.
 
 - Au déclenchement de l'ultime d'éveil (Ombre violette, Givre stellaire, Brasier rouge, Lumière blanche) : un

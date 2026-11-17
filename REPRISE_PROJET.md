@@ -55,6 +55,10 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 17/11 12 h 30 UTC, session claude/project-thread-3uctyp : version 16.1 = les 3 correctifs du fil « chasse aux bugs »
+  (validés par yoyo, patchs `git am` sur la 16.0) : IA qui ne se fige plus au bord d'un vide (`ai.cpp`), assets
+  intégrés fichier par fichier (`cmake/embed.cmake`, configure ~2 min), 8 hitbox de Hakuen recalées
+  (`roster_hitfit.inc`). Verrou « Version et paquets » pris et libéré dans ce commit.
 - 17/11 12 h UTC, session claude/project-thread-3uctyp (fil VFX Blender) : version 16.0. Auras d'éveil refaites
   (yoyo, 17/11 : les flammes autour du corps refusées) : éclats du déclenchement `pfx_<id>_eveil` + `_front`
   (`tools/blender/aura_geo.py` EVEILS, rochers en fusion), aura en boucle `pfx_<id>_aura` = particules lentes +
