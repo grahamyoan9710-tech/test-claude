@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "6bc51e23-bccd-4288-89aa-584c8cc9d0e5",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a3dac01e-9e9e-4e49-9a91-bdf97f772f27",
+  "last_frame_url": "upload:686b1fa1-5751-4954-9bd3-01d58a396542",
+  "description": "a calm parry and counter: raises both open hands in front of his chest into a still guard, the left palm forward, eyes narrowed, holds it perfectly still for several frames, then steps in with a fast straight knife-hand thrust of the right hand at chest height to a full arm's length, then returns to the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 6bc51e23-bccd-4288-89aa-584c8cc9d0e5\njob_id: 6bc51e23-bccd-4288-89aa-584c8cc9d0e5\ndescription: a calm parry and counter: raises both open hands in front of his chest into a still guard, the left palm forward, eyes narrowed, holds it perfectly still for several frames, then steps in with a fast straight knife-hand thrust of the right hand at chest height to a full arm's length, then returns to the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6bc51e23-bccd-4288-89aa-584c8cc9d0e5\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/6bc51e23-bccd-4288-89aa-584c8cc9d0e5/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 04dc8d97-0d9c-5732-8464-892a39d8eb58\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

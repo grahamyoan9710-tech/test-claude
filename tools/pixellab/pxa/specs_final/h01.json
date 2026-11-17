@@ -151,7 +151,7 @@
   "runstart": [
    8,
    "guard",
-   null,
+   "runstart.r2@last",
    false,
    "none",
    "explosive start of a sprint: drops low for an instant, then pushes off hard with the back foot and launches forward, the torso leaning forward, the arms bent and pumping, the coat and the ponytail whipping back, already in a long running stride"
@@ -195,6 +195,14 @@
    false,
    "none",
    "recoils in pain from a hit: teeth clenched, eyes squeezed shut, head jerked back, the body leaning backwards, arms flung out, then holds that pained pose"
+  ],
+  "jump": [
+   8,
+   "guard",
+   "jump.v17@last",
+   false,
+   "none",
+   "jumps straight up: a deep quick crouch, springs up off both feet, the coat opening wide around his legs, then tucks the knees up in mid-air into the exact pose of the last frame; the ponytail and the ribbons fly upward"
   ]
  },
  "specific": {

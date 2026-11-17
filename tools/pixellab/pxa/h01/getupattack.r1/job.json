@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "fbd6a43d-1d05-4a33-bf36-282bddbb4a56",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a2e9096d-2481-439c-91ac-bcff1b1d396d",
+  "last_frame_url": "upload:37ea5633-551e-4493-b40c-2590ed4a6d2e",
+  "description": "from lying on his back, he spins on his back with both legs stretched and sweeps them in a full circle low along the floor around him, then plants his hands and springs up onto his feet into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "lying on his back on the ground"
+ },
+ "reply": "id: fbd6a43d-1d05-4a33-bf36-282bddbb4a56\njob_id: fbd6a43d-1d05-4a33-bf36-282bddbb4a56\ndescription: from lying on his back, he spins on his back with both legs stretched and sweeps them in a full circle low along the floor around him, then plants his hands and springs up onto his feet into the fighting stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"fbd6a43d-1d05-4a33-bf36-282bddbb4a56\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/fbd6a43d-1d05-4a33-bf36-282bddbb4a56/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 0e096cc9-d39d-59e7-b96a-0cfa51ee4090\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/knockdown/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

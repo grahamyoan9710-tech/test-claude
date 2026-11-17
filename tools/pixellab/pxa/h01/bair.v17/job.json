@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "2d4114e5-559b-4244-9fba-59ba210c3cab",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:64b7fddf-dede-47bf-a1b0-ac3580b24040",
+  "last_frame_url": "upload:f5fd6db2-9c4c-4000-8705-6bbf59b4bbd1",
+  "description": "in mid-air, looks back over his shoulder and stretches one leg straight out behind him, heel first, then pulls it back into the tucked pose; only his leg moves. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 2d4114e5-559b-4244-9fba-59ba210c3cab\njob_id: 2d4114e5-559b-4244-9fba-59ba210c3cab\ndescription: in mid-air, looks back over his shoulder and stretches one leg straight out behind him, heel first, then pulls it back into the tucked pose; only his leg moves. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon clearly in a crisp pose, never blurred.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"2d4114e5-559b-4244-9fba-59ba210c3cab\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/2d4114e5-559b-4244-9fba-59ba210c3cab/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 9856293f-7839-5627-a571-370f745dbf9a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

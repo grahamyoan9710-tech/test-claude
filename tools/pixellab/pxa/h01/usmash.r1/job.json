@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "068b1494-9683-47d5-bc7d-bb05862db1db",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6e716ad0-672b-4378-b76d-98064edd1a3d",
+  "last_frame_url": "upload:642ecf23-3f2c-44c3-bf29-fc18f99d3a82",
+  "description": "rising circular kick in one fluid motion: plants the front foot with the standing knee slightly bent, leans the upper body back and a little to the side, both arms swing out for counterweight, the rear leg sweeps from low behind across the front and up over the head in a wide circular arc without stopping at the top, then comes down and lands back in the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 068b1494-9683-47d5-bc7d-bb05862db1db\njob_id: 068b1494-9683-47d5-bc7d-bb05862db1db\ndescription: rising circular kick in one fluid motion: plants the front foot with the standing knee slightly bent, leans the upper body back and a little to the side, both arms swing out for counterweight, the rear leg sweeps from low behind across the front and up over the head in a wide circular arc without stopping at the top, then comes down and lands back in the guard. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"068b1494-9683-47d5-bc7d-bb05862db1db\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/068b1494-9683-47d5-bc7d-bb05862db1db/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 4d5edda0-4cfe-5e69-8dcb-11b4bca4ffb6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

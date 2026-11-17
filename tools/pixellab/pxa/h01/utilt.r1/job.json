@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "1838b754-1b45-46ff-8b84-2300fef320b6",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a366ea08-5b25-45e3-90f0-4cce326e8dcb",
+  "last_frame_url": "upload:d6287503-5a25-4639-a0de-0a174967262b",
+  "description": "a rising knife-hand: bends his knees, then rises onto his toes and sweeps his open right hand, fingers together like a blade, from low in front of his knees up in a big arc to full reach straight above his head, the whole body stretching upward with it; holds the top for an instant, then lowers back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 1838b754-1b45-46ff-8b84-2300fef320b6\njob_id: 1838b754-1b45-46ff-8b84-2300fef320b6\ndescription: a rising knife-hand: bends his knees, then rises onto his toes and sweeps his open right hand, fingers together like a blade, from low in front of his knees up in a big arc to full reach straight above his head, the whole body stretching upward with it; holds the top for an instant, then lowers back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"1838b754-1b45-46ff-8b84-2300fef320b6\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/1838b754-1b45-46ff-8b84-2300fef320b6/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: bab99fd1-77ec-5702-ace9-6433c1b7a7a2\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

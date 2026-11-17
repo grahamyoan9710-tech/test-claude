@@ -150,7 +150,7 @@ TAIL = (" The character stays at the same place in the frame (the game moves him
         " inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.")
 EFFECTS = re.compile(r"\b(trails?|glow\w*|flash\w*|sparks?|energy|smoke|dust|lightning|fire|flames?|streaks?|aura|blur\w*|"
                      r"speed lines?|wind|shockwave|projectile|crescent|afterimages?|impact|cloud|effects?|grey|gray|beam|"
-                     r"smear\w*)\b", re.I)
+                     r"smear\w*|arcs?|sweep\w*)\b", re.I)  # "arc", "sweep": PixelLab draws the path as a white trail (17/11)
 
 # --- the moves every fighter has (bare-handed brawler moves) ---
 COMMON = {
@@ -334,6 +334,8 @@ def jobs(fighter, only=None):
         elif pin == "guard":  # a weapon that changes the look ends on its own guard
             ks = wslot(fighter, name)
             last = base_file(fighter, wbase(name[1], "guard") if ks and ks.get("look") == "new" else "guard")
+        elif isinstance(pin, str):  # "<clip>@last": a redone clip keeps the old one's end pose (the clips that start there)
+            last = base_file(fighter, pin)
         m = re.fullmatch(r"w(\d)guard", name)
         if m and armed_base(fighter, m.group(1)):  # taking the weapon ends on the armed picture
             last = armed_base(fighter, m.group(1))

@@ -24,7 +24,7 @@ DESC = {
     "p08_b": "a golden halberd spear, ornate gold spear tip with side blades, dark shaft, golden flames, cream ribbons",
     # v2: the object only, no effect words (owner, 17/11)
     "h01_a": "a long curved nodachi sword, white steel blade with red patterns, dark red wrapped handle, round gold guard, red tassel",
-    "h01_b": "a curved sword with an ornate gold star-shaped guard, white steel blade with red and gold patterns, dark red handle, red tassel with gold beads",
+    "h01_b": "a very long slender odachi, its long thin curved blade about three times the length of the handle, white steel with red and gold patterns, an ornate gold star-shaped guard, dark red wrapped handle, red tassel with gold beads",
     "h02_a": "a Chinese glaive polearm, curved purple and silver blade on top, long black shaft with gold rings, gold tassel, gold spike at the bottom",
     "h02_b": "a bundle of paper talisman charms, cream paper strips with red patterns hanging from a bronze ring with gold beads and tassels",
     "h03_a": "a big mechanical gauntlet, purple and gold armour plates, dark grey metal fingers",
@@ -45,6 +45,14 @@ DESC = {
     "h10_b": "an open grimoire spellbook, purple and gold cover, cream pages with purple star circle drawings, purple ribbon bookmark",
 }
 V2 = os.path.join(REPO, "docs", "refonte", "ref_armes_v2_normales.png")
+# v2 items: PixelLab's pro model at 256 px redraws the cut-out given as a reference (owner, 17/11: the 128 px pixflux
+# redraw looked dull and blurred)
+V2_SIZE = 256
+V2_STYLE = ("pixel art game item, crisp clean pixels, vivid saturated colours, rich detailed shading with bright "
+            "highlights, transparent background")
+V2_REF = "the item to draw: keep exactly its shape, details and colours"
+V2_REF_OWN = {"h01_b": "the item to draw: keep its guard, handle, tassel, patterns and colours, but make the blade much "
+                       "longer and slimmer, a long odachi"}
 # Each v2 weapon = the blobs (ink darker than 236) whose top-left corner is listed; 10's staff and book touch, so the
 # staff keeps x < 1540 or y < 575 of their blob and the book the rest.
 V2_PARTS = {
@@ -89,6 +97,30 @@ def v2_cutout(key):
     return img
 
 
+def v2_fit(a, path):
+    """The cut-out without the sheet's white blended into its edge, scaled into the V2_SIZE square with premultiplied
+    alpha (no white bleeding in) and a hard edge."""
+    a = a.astype(np.float32)
+    al = a[..., 3] > 0
+    rgb = a[..., :3]
+    light = (rgb.min(-1) > 170) & (rgb.max(-1) - rgb.min(-1) < 40)
+    for _ in range(2):
+        edge = al & ~(np.roll(al, 1, 0) & np.roll(al, -1, 0) & np.roll(al, 1, 1) & np.roll(al, -1, 1))
+        al &= ~(edge & light)
+    a[..., 3] = al * 255.0
+    a[..., :3] *= a[..., 3:] / 255
+    im = Image.fromarray(a.astype(np.uint8))
+    im = im.crop(im.getbbox())
+    k = (V2_SIZE - 12) / max(im.size)
+    q = np.asarray(im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)).astype(np.float32)
+    q[..., :3] /= np.maximum(q[..., 3:], 1) / 255
+    q[..., 3] = np.where(q[..., 3] > 128, 255, 0)
+    r = Image.fromarray(np.clip(q, 0, 255).astype(np.uint8))
+    out = Image.new("RGBA", (V2_SIZE, V2_SIZE))
+    out.alpha_composite(r, ((V2_SIZE - r.width) // 2, (V2_SIZE - r.height) // 2))
+    out.save(path)
+
+
 def init_picture(key, path):
     """The old icon without its stray bits (pieces of the neighbour cells, the sheet's white left in a hole), fitted
     in the SIZE square."""
@@ -105,6 +137,8 @@ def init_picture(key, path):
     for i, ar in enumerate(areas, 1):
         if ar < 0.15 * max(areas) or (i in edge and ar < 0.5 * max(areas)):
             a[lab == i, 3] = 0
+    if key in V2_PARTS:
+        return v2_fit(a, path)
     im = Image.fromarray(a)
     im = im.crop(im.getbbox())
     k = (SIZE - 8) / max(im.size)
@@ -122,6 +156,11 @@ def main():
             os.makedirs(d, exist_ok=True)
             init = os.path.join(d, "init.png")
             init_picture(key, init)
+            if key in V2_PARTS:
+                subprocess.run(["python3", PXCLI, "image", d, "--model", "pro", "--w", str(V2_SIZE), "--h", str(V2_SIZE),
+                                "--ref", init + "|" + V2_REF_OWN.get(key, V2_REF), "--desc", f"{V2_STYLE}, {DESC[key]}",
+                                "--no-wait"], check=True)
+                continue
             subprocess.run(["python3", PXCLI, "image", d, "--model", "pixflux", "--w", str(SIZE), "--h", str(SIZE),
                             "--init", init, "--strength", "400", "--outline", "single color black outline",
                             "--detail", "highly detailed", "--desc", f"{STYLE}, {DESC[key]}", "--no-wait"], check=True)
