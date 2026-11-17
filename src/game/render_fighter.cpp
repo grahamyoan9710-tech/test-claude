@@ -4,6 +4,8 @@
 // drawFighter adds what needs memory: inertial blending between poses, squash & stretch,
 // cloth drag, smears and afterimages. That memory is render-only: it never feeds the simulation.
 #include <cstdio>
+#include <cstring>
+#include <tuple>
 
 #include "core/swing.hpp"
 #include "game/fighter_art.hpp"
@@ -1582,6 +1584,24 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
         drawCharacter(d, f.palette, pose, feet + Vec2{std::cos(ang) * r, std::sin(ang) * r}, f.facing, 1.0f,
                       i < 8 ? a * 0.45f * beat : a, i < 8 ? ui::kGold : WHITE, 1.0f, at);
       }
+    }
+    if (const FormDef* fd = f.formDef(); fd && fd->aura && std::strncmp(fd->aura, "pfx_", 4) == 0) {
+      // An awakened form's rim light (yoyo, 17/11): a crisp line hugging the body over a soft glow, on every frame of
+      // its animation (its Blender aura only has the motes and crackles round it). Its colours: the aura's.
+      static const std::pair<Color, Color> kRim[] = {{{138, 77, 255, 255}, {201, 162, 255, 255}},   // 01 violet
+                                                     {{92, 200, 240, 255}, {216, 246, 255, 255}},   // 02 frost
+                                                     {{232, 38, 26, 255}, {255, 138, 61, 255}},     // 03 crimson
+                                                     {{169, 212, 255, 255}, {234, 245, 255, 255}},  // 08 white-blue
+                                                     {{232, 52, 60, 255}, {255, 138, 76, 255}}};    // Hakuen blood red
+      const Hero h = d.hero;
+      const int k = h == Hero::P01 ? 0 : h == Hero::P02 ? 1 : h == Hero::P03 ? 2 : h == Hero::P08 ? 3 : 4;
+      const float beat = 0.8f + 0.2f * std::sin(at * 2.0f * kPi / 1.2f);
+      for (const auto& [r, al, crisp] : {std::tuple{6.0f, 0.16f, false}, {4.0f, 0.32f, false}, {2.0f, 1.0f, true}})
+        for (int i = 0; i < 8; ++i) {
+          const float ang = i * kPi / 4.0f;
+          drawCharacter(d, f.palette, pose, feet + Vec2{std::cos(ang) * r, std::sin(ang) * r}, f.facing, 1.0f,
+                        a * al * (crisp ? 1.0f : beat), crisp ? kRim[k].second : kRim[k].first, 1.0f, at);
+        }
     }
     drawCharacter(d, f.palette, pose, feet, f.facing, 1.0f, a, flashCol, flash, at);
   };

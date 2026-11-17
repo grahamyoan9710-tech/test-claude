@@ -127,7 +127,7 @@ def motes(who, t, n, rng, rise, size, h, drift=0.05, star_k=0.0, a=1.0, flick=0.
     return out
 
 
-def crackles(who, t, n, seed, every=3, w=0.9, h=0.9, reach=(0.02, 0.05), steps=(4, 8)):
+def crackles(who, t, n, seed, every=3, w=1.1, h=0.9, reach=(0.02, 0.05), steps=(4, 8)):
     """Tiny lightning: one crackle every `every` frames somewhere on the outline, three frames each (bright, then
     fading, re-jagged every frame so it crackles), a short run just outside the body, often a fork leaping out."""
     f = round(t * AN) % AN
@@ -162,34 +162,34 @@ def crackles(who, t, n, seed, every=3, w=0.9, h=0.9, reach=(0.02, 0.05), steps=(
 def aura_p01(t):
     """ÉVEIL DU NÉANT: violet motes rising like ash of shadow, violet crackles (Solo Leveling's purple)."""
     r = random.Random(101)
-    return motes("p01", t, 30, r, 0.45, (0.01, 0.026), 0.5, a=0.95) + crackles("p01", t, 36, 1, every=2, h=0.85)
+    return motes("p01", t, 30, r, 0.45, (0.016, 0.036), 0.5, a=0.95) + crackles("p01", t, 36, 1, every=2, h=0.85)
 
 
 def aura_p02(t):
     """GIVRE CÉLESTE: frost glints and motes floating up slowly, ice-blue crackles, sparser."""
     r = random.Random(202)
-    return (motes("p02", t, 28, r, 0.35, (0.01, 0.022), 0.7, drift=0.07, star_k=0.45) +
+    return (motes("p02", t, 28, r, 0.35, (0.015, 0.032), 0.7, drift=0.07, star_k=0.45) +
             crackles("p02", t, 18, 2, every=4, h=0.95))
 
 
 def aura_p03(t):
     """BRASIER DÉMONIAQUE: embers flickering up a little faster, red-orange crackles."""
     r = random.Random(303)
-    return (motes("p03", t, 32, r, 0.6, (0.01, 0.022), 0.65, drift=0.04, flick=0.6) +
+    return (motes("p03", t, 32, r, 0.6, (0.015, 0.032), 0.65, drift=0.04, flick=0.6) +
             crackles("p03", t, 36, 3, every=2, h=0.8))
 
 
 def aura_p08(t):
     """ANGE BLANC: motes and glints of white light rising very slowly, pale blue crackles."""
     r = random.Random(808)
-    return (motes("p08", t, 26, r, 0.3, (0.012, 0.024), 0.8, drift=0.06, star_k=0.35) +
+    return (motes("p08", t, 26, r, 0.3, (0.017, 0.034), 0.8, drift=0.06, star_k=0.35) +
             crackles("p08", t, 18, 8, every=4, h=1.0))
 
 
 def aura_h01(t):
     """Hakuen awakened: embers of his blade rising, red lightning crackling over him (his ultimate's), denser."""
     r = random.Random(1)
-    return (motes("h01", t, 28, r, 0.55, (0.01, 0.022), 0.65, drift=0.04, flick=0.5) +
+    return (motes("h01", t, 28, r, 0.55, (0.015, 0.032), 0.65, drift=0.04, flick=0.5) +
             crackles("h01", t, 36, 4, every=2, w=1.0, h=0.9))
 
 
