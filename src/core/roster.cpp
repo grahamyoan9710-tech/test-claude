@@ -317,8 +317,8 @@ CharacterDef make01() {
   skills(k, -1, shot("Orbe d'ombre", e, PV::Orb, k.pfx("orbe"), 5.5f, 22, 9),
          through("Pas de l'ombre", e, k.pfx("x_s"), 9), blink("Ascension spectrale", e, k.pfx("x_u")),
          counter("Riposte d'ombre", e, k.pfx("x_d"), false, L::ArmFront));
-  ultimateOf(k, -1, ult::awaken("ÉVEIL DU NÉANT", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
-                                k.fx("t", "burst")));
+  ultimateOf(k, -1, ult::awaken("ÉVEIL DU NÉANT", ult::form(k.c, k.pfx("aura"), e, 15, 1.15f, 0.9f), e,
+                                k.pfx("eveil")));
 
   arm(k, 0, "Odachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 95, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Grande coupe descendante"});
@@ -350,8 +350,8 @@ CharacterDef make02() {
          rush("Glissade gelée", e, k.pfx("x_s"), 13, 0, 9, L::LegFront),
          staying(rise("Pilier de glace", e, k.pfx("x_u"), 15.5f, 3, L::Body)),
          counter("Miroir de glace", e, k.pfx("x_d"), true, L::ArmFront));
-  ultimateOf(k, -1, ult::awaken("GIVRE CÉLESTE", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
-                                k.fx("t", "burst")));
+  ultimateOf(k, -1, ult::awaken("GIVRE CÉLESTE", ult::form(k.c, k.pfx("aura"), e, 15, 1.15f, 0.9f), e,
+                                k.pfx("eveil")));
 
   arm(k, 0, "Lance argentée", "Lance à rubans blancs", WeaponVisual::Held, Kit::Lance, 110, 1.0f,
       {"Estoc", "Double estoc", "Balayage circulaire"});
@@ -383,8 +383,8 @@ CharacterDef make03() {
          rush("Charge brûlante", e, k.pfx("x_s"), 14, 0, 11, L::Body),
          staying(rise("Uppercut volcanique", e, k.pfx("x_u"), 15, 4, L::ArmFront)),
          burst("Éruption", e, k.pfx("x_d"), 70, 12));
-  ultimateOf(k, -1, ult::awaken("BRASIER DÉMONIAQUE", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
-                                k.fx("t", "burst")));
+  ultimateOf(k, -1, ult::awaken("BRASIER DÉMONIAQUE", ult::form(k.c, k.pfx("aura"), e, 15, 1.15f, 0.9f), e,
+                                k.pfx("eveil")));
 
   arm(k, 0, "Grande épée noire", "Lame lourde aux veines rouges", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Taille lourde", "Revers", "Frappe au sol"}, 1.15f);
@@ -448,8 +448,8 @@ CharacterDef make08() {
          rush("Rafale", e, k.pfx("x_s"), 15, 0, 10, L::Body),
          rise("Ailes de vent", e, k.pfx("x_u"), 16.5f, 2, L::Body),
          counter("Barrière de lumière", e, k.pfx("x_d"), true, L::Body));
-  ultimateOf(k, -1, ult::awaken("ANGE BLANC", ult::form(k.c, k.fx("t", "aura"), e, 15, 1.15f, 0.9f), e,
-                                k.fx("t", "burst")));
+  ultimateOf(k, -1, ult::awaken("ANGE BLANC", ult::form(k.c, k.pfx("aura"), e, 15, 1.15f, 0.9f), e,
+                                k.pfx("eveil")));
 
   arm(k, 0, "Épée blanche et or", "Lame blanche à rubans", WeaponVisual::Held, Kit::Blade, 85, 1.0f,
       {"Coupe", "Seconde coupe", "Coupe en croix"});

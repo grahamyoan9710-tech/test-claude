@@ -374,9 +374,9 @@ def m_rock():
     nd = Nodes("Roche")
     u, v = nd.uv()
     S, A, Wk = nd.knobs()
-    edge = nd.smooth(v, 0.55, 0.95)
-    ramp = [(0.0, SMOKE or DEEP), (0.4, DEEP), (0.75, MAIN), (1.0, HOT)]
-    return nd.surface(nd.ramp(nd.mul(edge, nd.heat), ramp), nd.mul(S, nd.add(0.15, nd.mul(edge, 1.5))), A)
+    edge = nd.smooth(v, -0.4, 1.0)  # a wide glow to the rim: a lit stone, not a hollow ring
+    ramp = [(0.0, SMOKE or DEEP), (0.3, DEEP), (0.7, MAIN), (1.0, HOT)]
+    return nd.surface(nd.ramp(nd.mul(edge, nd.heat), ramp), nd.mul(S, nd.add(0.5, nd.mul(edge, 1.3))), A)
 
 
 # --- geometry ----------------------------------------------------------------------------------------------

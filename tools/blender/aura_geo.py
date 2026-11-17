@@ -477,7 +477,7 @@ def eveil_p01(f):
     ring(out, r, f, 1, 10, 0.0, 0.3 * H, 1.9 * H, 0.05 * H, sy=0.24, pieces=5)
     ring(out, r, f, 3, 10, 0.0, 0.25 * H, 1.5 * H, 0.035 * H, sy=0.24, pieces=4)
     chunks(out, r, f, 8, (0.0, 0.15 * H), 0.12 * H, born=(2, 4), life=(12, 16), size=(0.035, 0.06), grav=0.006,
-           h=0.55, m="rock", lift=(0.35, 1.2))
+           h=0.8, m="rock", lift=(0.35, 1.2))
     streaks(out, r, f, 9, -0.6 * H, 0.6 * H, 0.3 * H, 2.2 * H, L=(0.25, 0.5))
     return out
 
@@ -535,7 +535,7 @@ def eveil_p03(f):
               hook=r.uniform(-0.3, 0.3), ph=r.random())
     ring(out, r, f, 1, 9, 0.0, 0.3 * H, 1.6 * H, 0.05 * H, sy=0.24, pieces=4)
     chunks(out, r, f, 12, (0.0, 0.1 * H), 0.13 * H, born=(1, 3), life=(12, 18), size=(0.04, 0.07), grav=0.006,
-           h=0.6, m="rock", lift=(0.35, 1.25))
+           h=0.85, m="rock", lift=(0.35, 1.25))
     for i in range(16):  # embers
         b, a, v = r.randint(2, 8), r.uniform(0.3, math.pi - 0.3), r.uniform(0.04, 0.09) * H
         fr = r.random() < 0.5
