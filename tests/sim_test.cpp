@@ -1421,6 +1421,48 @@ static void testHakuen() {
   }
 }
 
+// Fuyuri's spirit marks (fiche 02): her glaive's sweep marks, its windmill bursts them (+3 % a mark), a burst of 3 or
+// more gives her a charge of her awakening (armed only), and they fade 8 s after the last one.
+static void testFuyuri() {
+  std::printf("[fuyuri]\n");
+  const int h = charIndex("Fuyuri"), o = charIndex("N° 07");
+  CHECK(roster()[h].name == "Fuyuri", "Fuyuri is in the roster");
+  MatchConfig cfg = duel(0, h, o, false, false);
+  cfg.items = false;
+  cfg.weapons = false;
+  Match m(cfg);
+  skipCountdown(m);
+  Fighter& f = m.fighters[0];
+  Fighter& v = m.fighters[1];
+  f.weapon = 0;  // the glaive in hand (its drops wait for the clips)
+  f.weapons = 1;
+  const MoveDef& sweep = f.moveDef(Jab2);
+  const MoveDef& mill = f.moveDef(Jab3);
+  CHECK(!sweep.hitboxes.empty() && sweep.hitboxes[0].marks == 1, "the glaive's sweep marks");
+  CHECK(!mill.hitboxes.empty() && mill.hitboxes[0].detonate, "its windmill bursts the marks");
+  if (sweep.hitboxes.empty() || mill.hitboxes.empty()) return;
+  for (int i = 0; i < 7; ++i) m.markHit(f.id, v, sweep.hitboxes[0]);
+  CHECK(v.marks == kMarksMax && v.markedBy == f.id, "at most %d marks (%d)", kMarksMax, v.marks);
+  const float before = v.percent;
+  m.markHit(f.id, v, mill.hitboxes[0]);
+  const float burst = v.percent - before;
+  CHECK(v.marks == 0 && burst > kMarkDamage * kDamageScale * kMarksMax - 0.01f, "five marks burst for %.1f%%", burst);
+  bool event = false;
+  for (const auto& e : m.events) event |= e.type == EvType::MarkBurst;
+  CHECK(event, "the burst is shown");
+  CHECK(f.will == 1, "a burst of 3 marks or more gives her a charge (%d)", f.will);
+  m.markHit(f.id, v, sweep.hitboxes[0]);
+  std::array<InputState, 4> in{};
+  for (int i = 0; i < kMarkFrames + 2; ++i) m.step(in);
+  CHECK(v.marks == 0, "the marks fade (%d)", v.marks);
+  f.weapon = -1;  // bare-handed: her awakening is armed only, like Hakuen's
+  f.weapons = 0;
+  f.will = 0;
+  for (int i = 0; i < 3; ++i) m.markHit(f.id, v, sweep.hitboxes[0]);
+  m.markHit(f.id, v, mill.hitboxes[0]);
+  CHECK(v.marks == 0 && f.will == 0, "bare-handed, a burst gives no charge (will %d)", f.will);
+}
+
 int main(int argc, char** argv) {
   std::string only = argc > 1 ? argv[1] : "";
   if (only.empty() || only == "kb") testKnockback();
@@ -1442,6 +1484,7 @@ int main(int argc, char** argv) {
   if (only.empty() || only == "training") testTraining();
   if (only.empty() || only == "weapons") testWeapons();
   if (only.empty() || only == "hakuen") testHakuen();
+  if (only.empty() || only == "fuyuri") testFuyuri();
   if (only.empty() || only == "recovery") testRecovery();
   if (only.empty() || only == "recovery") testRecoveryStages();
   if (only.empty() || only == "battle") testBattles();

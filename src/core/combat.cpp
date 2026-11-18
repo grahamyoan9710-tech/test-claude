@@ -183,7 +183,9 @@ void Match::resolveHits() {
     }  // (a shield stops the catch: the blow lands on the shield below)
     if (!ult && tryCounter(v, &a)) continue;  // ultimates cannot be countered
     int dir = ph.h.reverse ? -a.facing : a.facing;
+    const bool blocked = v.state == FState::Shield || v.state == FState::ShieldStun;
     applyHit(&a, v, ph.h, ph.pos, dir, ph.mul, false, ult);
+    if (!blocked) markHit(a.id, v, ph.h);
     if (const MoveDef* am = a.currentMove(); am && am->fillsWill && am->counterStart < 0 && !a.willGiven) {
       a.willGiven = true;
       a.gainWill(1);
@@ -366,6 +368,24 @@ void Match::creditProjectile(int owner, Fighter& v, float damage, bool wasShield
   }
 }
 
+// Spirit marks: one owner's at a time on a fighter; a detonating blow bursts them (kMarkDamage each), then the
+// blow's own marks are put.
+void Match::markHit(int owner, Fighter& v, const HitboxDef& h) {
+  if (owner < 0 || owner >= int(fighters.size()) || (h.marks <= 0 && !h.detonate)) return;
+  if (v.markedBy != owner) v.marks = 0;
+  v.markedBy = owner;
+  if (h.detonate && v.marks > 0) {
+    damageOnly(*this, fighters[owner], v, kMarkDamage * kDamageScale * float(v.marks));
+    emit(EvType::MarkBurst, v.center(), owner, v.id, float(v.marks));
+    if (v.marks >= 3) fighters[owner].gainWill(1);  // a big burst feeds the owner's awakening (Fuyuri's)
+    v.marks = 0;
+  }
+  if (h.marks > 0) {
+    v.marks = std::min(kMarksMax, v.marks + h.marks);
+    v.markTimer = kMarkFrames;
+  }
+}
+
 void Match::explodeProjectile(Projectile& pr) {
   if (pr.explodeRadius <= 0.0f) return;
   const float r = pr.explodeRadius;
@@ -380,6 +400,7 @@ void Match::explodeProjectile(Projectile& pr) {
     const bool wasShielding = !pr.ult && (v.state == FState::Shield || v.state == FState::ShieldStun);
     applyHit(nullptr, v, pr.explode, pr.pos, v.center().x >= pr.pos.x ? 1 : -1, 1.0f, false, pr.ult);
     creditProjectile(pr.owner, v, pr.explode.damage, wasShielding);
+    if (!wasShielding) markHit(pr.owner, v, pr.explode);
   }
 }
 
@@ -582,6 +603,7 @@ void Match::updateProjectiles() {
       if (v.state == FState::Captured) v.captor = -1;  // the user's own shot launches it out of the hold
       applyHit(nullptr, v, pr.hit, pr.pos, dir, 1.0f, false, pr.ult);
       creditProjectile(pr.owner, v, pr.hit.damage, wasShielding);
+      if (!wasShielding) markHit(pr.owner, v, pr.hit);
       if (pr.follow && pr.stuckTo < 0 && v.active()) {  // latches on
         pr.stuckTo = v.id;
         pr.stickOffset = (pr.pos - v.center()) * 0.25f;

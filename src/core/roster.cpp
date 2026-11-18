@@ -600,6 +600,82 @@ CharacterDef makeH01() {
   return k.c;
 }
 
+// ---------------------------------------------------------------------------------------------
+// 02 · Fuyuri, the talisman priestess (fiche 02): aikido bare-handed, a glaive (02-A), talismans (02-B). Her glaive's
+// sweeps and her talismans put spirit marks on the foe (Yinlin, Kafka); her armed skills and the glaive's last M1
+// burst them, the more the harder (Match::markHit).
+// ---------------------------------------------------------------------------------------------
+// The marks a move puts (its blows, or its projectile's burst when it bursts), and whether it bursts the old ones.
+MoveDef marking(MoveDef m, int marks, bool burst) {
+  for (auto& h : m.hitboxes) h.marks = marks, h.detonate = burst;
+  ProjectileDef* ps[8] = {&m.projectile};
+  int n = 1;
+  for (auto& s : m.shots)
+    if (n < 8) ps[n++] = &s.def;
+  for (int i = 0; i < n; ++i) {
+    HitboxDef& h = ps[i]->explodeRadius > 0.0f ? ps[i]->explode : ps[i]->hit;
+    h.marks = marks, h.detonate = burst;
+  }
+  return m;
+}
+
+CharacterDef makeH02() {
+  Fighter k = start(2, "Prêtresse aux talismans", Build::Light, F::Wind,  // jade spirit flames (fiche 02)
+                    colours({240, 232, 236}, {208, 42, 43}, {242, 159, 86}, {49, 31, 50}, {225, 45, 46}),
+                    colours({240, 232, 236}, {40, 150, 150}, {242, 159, 86}, {49, 31, 50}, {60, 190, 180}));
+  k.c.id = "h02";
+  k.c.name = "Fuyuri";
+  k.c.hero = Hero::H02;
+  k.c.armed = false;  // shortcut: her glaive and talisman clips are not made yet; drop the line once they are
+  const F e = k.e;
+  // Aikido: a palm that pushes a spirit away, a gliding entry, a rise on her sleeves, a parry that turns the blow
+  // (and sends shots back).
+  skills(k, -1, shot("Paume d'esprit", e, PV::Wave, k.pfx("paume"), 8, 24, 8, 20),
+         rush("Pas d'irimi", e, k.pfx("irimi"), 13, 0, 9, L::ArmFront),
+         rise("Envol des manches", e, k.pfx("envol"), 15.5f, 3, L::Body),
+         counter("Renvoi", e, k.pfx("renvoi"), true, L::ArmFront));
+  // The fiche's ultimate: talismans close round the foe and burst one after another, then the great seal.
+  ultimateOf(k, -1, ult::downpour("SCEAU DES CENT ESPRITS", e, k.pfx("sceau"), 70, 6));
+
+  arm(k, 0, "Glaive", "Lame courbe sur une longue hampe", WeaponVisual::Held, Kit::Lance, 120, 1.0f,
+      {"Estoc", "Balayage", "Moulinet"});
+  for (auto& [id, m] : k.c.weapons[0].moves) {
+    if (id == Jab2 || id == NAir) m = marking(m, 1, false);  // the sweeps mark
+    if (id == Jab3) m = marking(m, 0, true);                 // the windmill bursts them
+  }
+  skills(k, 0, marking(piercing(shot("Pique d'esprit", e, PV::Spear, k.pfx("a_pique"), 12, 20, 8, 34)), 0, true),
+         marking(rush("Charge du glaive", e, k.pfx("a_charge"), 15, 2, 9), 1, false),
+         rise("Vrille du glaive", e, k.pfx("a_vrille"), 15.5f, 4),
+         marking(pillar("Sceau du glaive", e, k.pfx("a_sceau"), 80, 11), 0, true));
+  ultimateOf(k, 0, ult::ambush("VALSE DU GLAIVE", e, k.pfx("a_ult"), L::Weapon, 8));
+
+  arm(k, 1, "Talismans", "Liasse de talismans aux perles d'or", WeaponVisual::Held, Kit::Magic, 0, 0.95f,
+      {"Talisman", "Double talisman", "Sceau éclair"});
+  for (auto& [id, m] : k.c.weapons[1].moves)
+    if (id == Jab3 || id == NAir) m = marking(m, 1, false);
+  // The fiche's talismans: one thrown that bursts (2 marks), three in a fan, a trap that pulls to its centre and
+  // bursts the marks, a flight on a cloud of talismans.
+  skills(k, 1, marking(exploding(shot("Talisman explosif", e, PV::Feather, k.pfx("b_talisman"), 9, 16, 5, 50), 56, 6), 2,
+                       true),
+         marking(spread(shot("Rafale de talismans", e, PV::Feather, k.pfx("b_talisman"), 9, 14, 4, 46), 3, 14), 1, false),
+         marking(pulling(trap("Talisman-piège", e, k.pfx("b_piege"), 9), 2.5f, 120), 0, true),
+         rise("Envol de talismans", e, k.pfx("b_envol"), 16, 3, L::Body));
+  MoveDef cloud = ult::rain("NUÉE DE TALISMANS", e, k.pfx("b_ult"), PV::Feather, 7);
+  cloud.shots.back().def.hit.detonate = true;  // the last one bursts every mark
+  ultimateOf(k, 1, cloud);
+
+  // Communion des esprits (her own awakening, armed only like Hakuen's): bursting 3 marks or more gives a charge
+  // (Match::markHit); at 3, 8 s where every M1 also throws a talisman that marks.
+  const int awake = ult::form(k.c, k.pfx("aura"), e, 8, 1.1f, 1.0f);
+  FormDef& aw = k.c.forms[awake];
+  aw.m1Waves = true;
+  aw.m1Wave = proj({30, -10}, {10, 0}, 0, 30, 14, 3.0f, 20, 40, e, PV::Feather);
+  aw.m1Wave.fx = k.pfx("b_talisman");
+  aw.m1Wave.hit.marks = 1;
+  k.c.willForm = awake;
+  return k.c;
+}
+
 }  // namespace
 
 bool g_rawHitboxes = false;
@@ -671,7 +747,8 @@ void applyTempo(std::vector<CharacterDef>& v) {
 
 const std::vector<CharacterDef>& roster() {
   static const std::vector<CharacterDef> r = [] {
-    std::vector<CharacterDef> v = {makeH01(), make02(), make03(), make07(), make08()};  // Hakuen took the old 01's place
+    // Hakuen took the old 01's place; Fuyuri (h02) comes last, beside the old 02, until the owner validates her.
+    std::vector<CharacterDef> v = {makeH01(), make02(), make03(), make07(), make08(), makeH02()};
     if (!g_rawHitboxes) applyHitFit(v);
     applyTempo(v);
     return v;

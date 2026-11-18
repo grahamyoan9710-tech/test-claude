@@ -26,6 +26,10 @@ constexpr float kLevel10Power = 2.0f;
 // Every fighter's damage, lowered with the closer blast zones (owner, 12/11): KOs come at about the same percent.
 constexpr float kDamageScale = 0.8f;
 constexpr int kWillMax = 3;  // charges of will (CharacterDef::willForm)
+// Spirit marks (HitboxDef::marks): at most 5 on a fighter, gone 8 s after the last one; a burst deals 3 % a mark.
+constexpr int kMarksMax = 5;
+constexpr int kMarkFrames = 8 * 60;
+constexpr float kMarkDamage = 3.0f;
 
 struct Fighter {
   int id = 0;          // index in Match::fighters
@@ -110,6 +114,9 @@ struct Fighter {
   Vec2 capturePos;           // Captured with holdInPlace: where it was caught
   bool finalSmash = false;   // ultimate ready (full meter or Clash Orb broken): the ultimate button unleashes it
   int will = 0;              // charges of will (CharacterDef::willForm), 0..kWillMax
+  int marks = 0;             // spirit marks on this fighter (HitboxDef::marks), all from `markedBy`
+  int markedBy = -1;
+  int markTimer = 0;         // frames before they fade
   int attackHeld = 0;        // frames the attack button has been held
 
   // Input

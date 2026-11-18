@@ -55,6 +55,14 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 18/11 11 h 35 UTC, session claude/project-thread-58u7pf : Fuyuri (h02, perso 02) commencée. Base pro (garde
+  aïkido, `make_bases.py v2 h02`, `V2_REDO`/`V2_PICK`) ; kit dans le moteur : marques d'esprit
+  (`HitboxDef::marks/detonate`, `Match::markHit`, `EvType::MarkBurst` ; une explosion de 3 marques ou plus nourrit
+  son éveil), `makeH02` ajoutée en fin de roster (à côté de l'ancien 02 jusqu'à validation par yoyo), test
+  `sim_test fuyuri`. **PixelLab peint un clip avec la palette exacte de son image de départ** : la base de Fuyuri
+  avait 10 pixels gris parasites et la moitié des prises sortaient avec des taches grises. Ils sont retirés de la
+  base, et `clips.py` (`without_greys`) part d'une copie sans gris de toute image de départ qui n'en a que quelques
+  uns (`pxa/base/starts/`, ignoré par git). Étape A : 22 clips sur 32 retenus, le reste et l'étape B en cours.
 - 18/11 07 h 10 UTC, session claude/project-thread-58u7pf : nouveaux M1 de Hakuen importés (arme A : kenjutsu à
   deux mains, coupe diagonale, montante, descendante ; arme B : une main façon Alpha, Fente montante, Croix pourpre
   horizontale, Coupe rasante ; 7 parties générées une à une, 3 prises chacune, chaque coup part de la fin du

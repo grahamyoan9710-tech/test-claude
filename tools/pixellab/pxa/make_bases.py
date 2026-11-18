@@ -39,11 +39,12 @@ ADULT = (" An adult of at least 20 with adult proportions: longer legs and torso
          "else exactly as the reference.")
 V2 = {
     "h02": ("an adult woman with very long dark brown-black hair falling to her knees, tied in a high ponytail with long "
-            "red ribbons and a cluster of red and gold beads, a long front lock, red eyes, a white shrine maiden robe "
-            "with very long wide sleeves with red patterns and red cuffs, worn off her bare shoulders, a black top with "
-            "a red collar, a wide red belt with a gold buckle, a red and gold front sash, a long white and red skirt "
-            "panel over a red and black checkered underskirt, sheer black stockings with garters, red and black heeled "
-            "boots with gold buckles",
+            "red ribbons and a cluster of red and gold beads, a long front lock, red eyes, a gentle smile, a white "
+            "shrine maiden robe with very long wide sleeves with red branch patterns and red cuffs, the sleeves "
+            "detached at her bare shoulders, a white kimono collar with red edges crossed over her chest, a black "
+            "corset, a wide red belt with a big gold buckle and a thin gold chain, a black front panel with red and "
+            "gold trim, a long white skirt panel with red branch patterns over a red and black checkered underskirt, "
+            "sheer black stockings with garters, red and black heeled boots with gold buckles",
             "standing in a calm aikido guard, her open hands raised in front of her, half hidden in her long sleeves"),
     "h05": ("a huge muscular adult man with a big wild white mane falling down his back, a short black beard and thick "
             "eyebrows, tanned skin, a bare muscular chest and abs with dark tattoos, a big white fur collar, a long "
@@ -68,6 +69,12 @@ V2 = {
             "standing in a kickboxing guard, fists raised"),
 }
 V2_ADULT = {"h08"}  # drawn younger on the sheet: the base makes her adult (planche v2, prompts_10_persos.md)
+# A guard asked again in another stance (pxa/base_src/<id>_guard<suffix>/): Fuyuri's idle keeps her hands in her
+# sleeves (fiche 02), and a stance clip from the first guard came out blurrier than a pro picture.
+V2_REDO = {"h02": ("b", "standing relaxed and upright in a calm aikido stance, one foot a little forward, her hands "
+                        "joined in front of her waist and tucked inside her long wide sleeves, the head slightly "
+                        "tilted, a mischievous little smile")}
+V2_PICK = {"h02": ("b", 2)}  # the chosen guard of a new fighter, as PICK (make_bases.py guard places it too)
 
 
 def guard_src(k):
@@ -136,6 +143,9 @@ def main():
     if cmd == "guard":
         for k in PICK:
             print(k, place(guard_src(k), os.path.join(S, "base", f"{k}_guard256.png")))
+        for k, (suffix, i) in V2_PICK.items():
+            print(k, place(os.path.join(S, "base_src", f"{k}_guard{suffix}", f"f_{i:02d}.png"),
+                           os.path.join(S, "base", f"{k}_guard256.png")))
     elif cmd == "armed":
         ids = sys.argv[2:] or sorted(PICK)
         for (k, slot), (weapon, hold) in WEAPONS.items():
@@ -160,7 +170,8 @@ def main():
     elif cmd == "v2":  # python3 make_bases.py v2 h02 h05 ... -> pro candidates in pxa/base_src/<id>_guard/
         for k in sys.argv[2:] or sorted(V2):
             look, stance = V2[k]
-            out = os.path.join(S, "base_src", f"{k}_guard")
+            suffix, stance = V2_REDO.get(k, ("", stance))
+            out = os.path.join(S, "base_src", f"{k}_guard{suffix}")
             if os.path.exists(os.path.join(out, "job.json")):
                 print(k, "already submitted")
                 continue

@@ -1,0 +1,335 @@
+{
+ "guard_pose": "calm playful aikido stance facing right, standing upright, knees soft, both hands resting together in front of her belt, half hidden in her long wide sleeves, the head slightly tilted",
+ "armed": "none",
+ "she": true,
+ "style": "Aikido",
+ "overrides": {
+  "idle": [
+   12,
+   "guard",
+   true,
+   true,
+   "none",
+   "playful idle loop: stands upright and relaxed in the same stance, both hands resting in her long sleeves in front of her belt, the chest rising and falling slowly with calm breaths (a very small movement), knees soft and never bending lower, hips at the same height the whole time; she slowly tilts her head to one side with a mischievous little smile and a wink, then tilts it back; the ponytail, the red ribbons and the long sleeves sway gently, a little after the body; the feet stay planted, returns exactly to the first pose"
+  ],
+  "walk": [
+   8,
+   "guard",
+   true,
+   true,
+   "none",
+   "walks to the right: keeps exactly the same three-quarter view facing right as in the first frame, her chest, face and toes pointing to the right, never turning towards the viewer; small light gliding steps, upright chest, chin up, a mischievous smile, both hands staying in her long sleeves in front of her belt, the long sleeves and the ponytail swaying with each step: the back foot steps forward past the front foot, then the other; a seamless two-step cycle that ends exactly on the first pose"
+  ],
+  "victory": [
+   12,
+   "guard",
+   null,
+   false,
+   "none",
+   "victory pose: makes a small polite bow with her hands joined in her long sleeves, then straightens up, raises one open hand beside her face and winks with a mischievous smile, holding still, the ponytail and the ribbons floating"
+  ],
+  "runstart": [
+   8,
+   "guard",
+   null,
+   false,
+   "none",
+   "starts a sprint to the right: a quick lean forward, then her back foot pushes off hard and she lands in a long low running stride, the torso leaning well forward, the arms bent and pumping close to her body, the long sleeves hanging down from her forearms, the ponytail held straight back level with her head"
+  ],
+  "run": [
+   8,
+   "runstart@last",
+   true,
+   true,
+   "none",
+   "a light, quick run to the right: the torso leaning forward, the arms bent and pumping close to her body, the long sleeves hanging down from her forearms; quick light strides with both feet off the ground in the middle of each stride, the head steady and level, the ponytail held straight back level with her head, a seamless loop that ends exactly on the first pose"
+  ],
+  "dash": [
+   12,
+   "guard",
+   null,
+   false,
+   "none",
+   "from the upright stance she dips for an instant, then takes one long low gliding step to the right, the body leaning forward and the back leg stretched behind her, the arms bent close to her body, the long sleeves hanging down from her forearms, the ponytail held straight back level with her head, then lands on the front foot already in a running stride; she is alone on an empty background in every frame"
+  ],
+  "jump": [
+   8,
+   "guard",
+   null,
+   false,
+   "none",
+   "jumps straight up: a quick crouch, springs up off both feet, then tucks the knees up in mid-air, the long sleeves opening wide, the ponytail and the ribbons lifting softly above her head; the last frames stay high in the air in that tucked pose, the feet never come back down"
+  ],
+  "hurt": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "flinches backwards in pain: cheeks puffed out, eyes squeezed shut, head thrown back, the body leaning backwards, arms thrown out to the sides with the long sleeves flapping, then holds that pained pose; she is alone on an empty background and nothing touches her"
+  ],
+  "crouch": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "crouches down as low as she can on the spot and holds it: knees fully bent, hips dropped right down onto the heels, torso folded forward over the knees, head ducked low at about half her standing height, both hands in her long sleeves in front of her. Only the character is drawn"
+  ],
+  "jab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "aikido palm strike, quick and light, eyes narrowed: from the relaxed stance her front hand slips out of the sleeve and pushes straight forward at chest height, the open palm leading, the arm at full extension, the long sleeve swinging forward, then she draws it back into the stance. Her body stays seen from the side, facing right, never facing the viewer; her hand stays empty"
+  ],
+  "jab2": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "aikido knife-hand strike: a short gliding step in, her other open hand rises above her head and cuts straight down in front of her to chest height, fingers together, the long sleeve swinging down with it, then she settles back into the stance. Her body stays seen from the side, facing right, never facing the viewer; her hands stay empty"
+  ],
+  "jab3": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "aikido double push to finish the combo, eyes narrowed: she turns her hips and thrusts both open palms forward together at chest height, both arms fully stretched, the long sleeves and the ponytail flying forward, holds it an instant, then glides back into the stance. Her body stays seen from the side, facing right; her hands stay empty"
+  ],
+  "ftilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "a sleeve lash: turns her hips and flings her front arm straight forward at chest height so the long wide sleeve snaps out flat in front of her, then pulls it back into the stance; her hand stays empty"
+  ],
+  "utilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "up",
+   "a rising palm: bends her knees with her open hand low in front of her knees, then stands up tall on her toes with that arm stretched straight above her head, the palm open to the sky, the long sleeve hanging down from it; holds that pose for a moment, then lowers back into the stance; her hand stays empty"
+  ],
+  "dtilt": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "a crouching trip: drops low on the back leg and slides the front foot forward along the floor, the leg stretched out low in front of her, then pulls it back and rises into the stance; only her leg moves and nothing appears around the foot"
+  ],
+  "dashattack": [
+   12,
+   "runstart@last",
+   "guard",
+   false,
+   "forward",
+   "from the run, a gliding shoulder push: glides forward and shoves both open palms straight ahead at chest height, both arms fully stretched, the long sleeves flying forward, holds it an instant, then slides to a stop and stands back up in the stance; her hands stay empty"
+  ],
+  "fsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "charged double palm: draws both open hands back to her right hip and holds them there, eyes closed in concentration, then opens her eyes, takes a long step and thrusts both palms straight forward at chest height, both arms fully stretched, the long sleeves flying forward, then recovers into the stance; her hands stay empty"
+  ],
+  "usmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "rising sleeves: crouches, then springs up on her toes and throws both open hands straight up above her head, the long sleeves flying high above her, holds that pose for two frames, then lands back in the stance; her hands stay empty"
+  ],
+  "dsmash": [
+   12,
+   "guard",
+   true,
+   false,
+   "around",
+   "two low sleeve lashes: drops low and lashes one long sleeve out flat along the floor in front of her to the right, then the other one out flat along the floor behind her to the left, her face still turned to the right, then rises back into the stance; her hands stay empty"
+  ],
+  "nair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "around",
+   "in mid-air, flings both arms out wide to the sides, the long sleeves flying out flat to the left and to the right of her, staying in side profile facing right the whole time, holds it for two frames, then tucks back in; her hands stay empty"
+  ],
+  "fair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "forward",
+   "in mid-air, thrusts both open palms straight forward at chest height, both arms fully stretched, the long sleeves flying forward, holds it for two frames, then pulls the arms back into the tucked pose; her hands stay empty"
+  ],
+  "bair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "back",
+   "in mid-air, a back kick to the left: her body stays facing right while she twists her hips and drives her left heel straight out to the left, behind her back, the leg fully stretched at waist height, her head turned to look back over her left shoulder at her foot; holds it for two frames, then pulls the leg back into the tucked pose"
+  ],
+  "uair": [
+   8,
+   "jump@last",
+   true,
+   false,
+   "up",
+   "in mid-air, swings both open hands straight up above her head, the long sleeves flying high above her, holds it for two frames, then back to the tucked pose; her hands stay empty"
+  ],
+  "dair": [
+   12,
+   "jump@last",
+   true,
+   false,
+   "down",
+   "in mid-air, lifts one leg high with the knee bent, then drives the heel straight down beneath her with the leg stretched, then pulls the leg back up into the tucked pose; only her leg moves and nothing appears under her feet"
+  ],
+  "grab": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "leans forward and reaches out with her front open hand, closes it on empty air as if seizing a wrist, then pulls back; nothing leaves her hands"
+  ],
+  "holdstart": [
+   4,
+   "guard",
+   null,
+   false,
+   "none",
+   "reaches forward with both hands and seizes the wrist of an invisible opponent in front of her, ending with both arms extended forward at chest height, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame."
+  ],
+  "hold": [
+   4,
+   "holdstart@last",
+   true,
+   true,
+   "none",
+   "holds the wrist of an invisible opponent in front of her with both hands, arms extended, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame."
+  ],
+  "pummel": [
+   4,
+   "holdstart@last",
+   true,
+   false,
+   "forward",
+   "holding the wrist of the invisible opponent in front of her with both hands, twists it with a small sharp turn of both hands, then back to holding. There is no other person in the frame and her hands stay empty."
+  ],
+  "fthrow": [
+   8,
+   "holdstart@last",
+   "guard",
+   false,
+   "forward",
+   "holding the wrist of an invisible opponent with both hands, turns it outward, steps forward and pushes both hands down and forward, then returns to the stance. There is no other person in the frame and her hands stay empty."
+  ],
+  "bthrow": [
+   12,
+   "holdstart@last",
+   "guard",
+   false,
+   "back",
+   "holding the wrist of an invisible opponent with both hands, raises both arms over her head, pivots on her front foot and cuts both hands down behind her to the left, her face still turned to the right, then opens her hands and returns to the stance. There is no other person in the frame and her hands stay empty"
+  ],
+  "uthrow": [
+   8,
+   "holdstart@last",
+   "guard",
+   false,
+   "up",
+   "holding an invisible opponent with both hands, steps in and lifts both arms straight up above her head as if lifting something, opens her hands, then lowers them back into the stance. There is no other person in the frame and her hands stay empty."
+  ],
+  "dthrow": [
+   12,
+   "holdstart@last",
+   "guard",
+   false,
+   "down",
+   "holding the arm of an invisible opponent with both hands, kneels on one knee and presses both hands down to the floor in front of her, then rises back into the stance. There is no other person in the frame and her hands stay empty."
+  ],
+  "ledgeattack": [
+   8,
+   "guard",
+   true,
+   false,
+   "forward",
+   "rises from a low crouch and lashes one long sleeve forward low along the floor, then steps back into the stance; her hand stays empty"
+  ],
+  "getupattack": [
+   8,
+   "knockdown@last",
+   "guard",
+   false,
+   "around",
+   "from lying on her back, she lifts both stretched legs off the floor and turns them around her: first stretched out flat to the right, then stretched out flat to the left, just above the floor; then she plants her hands and jumps up onto her feet into the stance"
+  ],
+  "dizzy": [
+   8,
+   "guard",
+   true,
+   true,
+   "none",
+   "dazed and dizzy after her guard breaks: stands slumped on wobbly bent knees, both arms hanging limp at her sides, head drooping and rolling slowly in a small circle, eyes half closed, the whole body wobbling gently forward and back on the spot, staying in side profile facing right the whole time, a seamless loop that ends exactly on the first pose. Only the character is drawn"
+  ]
+ },
+ "specific": {
+  "nspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "gathers both hands into her long sleeves at her chest with her eyes closed in concentration, then opens her eyes and thrusts her right open palm straight forward at chest height, the arm fully stretched, the long sleeve flying forward; holds the pose, then returns to the stance; her hand stays empty and nothing leaves it"
+  ],
+  "sspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "glides forward very low and fast with small quick steps, then turns her hips and pushes both open palms straight forward at chest height, both arms fully stretched, the long sleeves flying forward; holds the push, then straightens up into the stance; her hands stay empty"
+  ],
+  "uspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "up",
+   "crouches low, then springs straight up with both arms stretched out wide to her sides, the long sleeves opening and the ponytail flowing below her, the body upright and staying in side profile facing right the whole time, then comes back down into the stance; her hands stay empty"
+  ],
+  "dspecial": [
+   12,
+   "guard",
+   true,
+   false,
+   "forward",
+   "a calm parry and turning throw: raises both open hands softly in front of her chest, eyes closed in concentration, and holds perfectly still for several frames; then she opens her eyes, steps aside and guides both hands down and around to her right side as if leading an invisible attacker past her, then returns to the stance; her hands stay empty"
+  ],
+  "ultimate": [
+   16,
+   "guard",
+   true,
+   false,
+   "none",
+   "staying in side profile facing right the whole time: joins her hands in prayer in front of her chest with her eyes closed and holds perfectly still, then spreads both arms wide, the long sleeves opening like wings, then raises her right hand in front of her face and snaps her fingers with a mischievous smile, holds it, then returns to the stance; her hands stay empty"
+  ]
+ },
+ "skip": [
+  "airjump",
+  "w0_airjump",
+  "w1_airjump"
+ ]
+}

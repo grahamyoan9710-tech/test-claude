@@ -13,6 +13,10 @@ import json
 import os
 import re
 import sys
+from collections import Counter
+
+import numpy as np
+from PIL import Image
 
 S = os.path.dirname(os.path.abspath(__file__))
 SUBJECT = {}
@@ -297,16 +301,40 @@ def armed_base(fighter, slot):
     return p if os.path.exists(p) else None
 
 
+def without_greys(path, key):
+    """PixelLab paints a clip only with the colours of its start picture (18/11): a few stray grey pixels there are
+    enough for it to fill gaps with flat grey patches. Such a start is used through a copy where each of them takes
+    its neighbours' colour. A design that really has grey (many pixels) is left alone."""
+    if not path or not os.path.exists(path):
+        return path
+    a = np.asarray(Image.open(path).convert("RGBA")).copy()
+    rgb = a[..., :3].astype(int)
+    grey = (a[..., 3] > 0) & (rgb.max(-1) - rgb.min(-1) < 16) & (rgb.max(-1) >= 40) & (rgb.max(-1) <= 225)
+    if not grey.any() or grey.sum() > 80:
+        return path
+    for y, x in zip(*np.nonzero(grey)):
+        for r in (1, 2, 3):
+            near = Counter(tuple(a[j, i]) for j in range(max(0, y - r), y + r + 1) for i in range(max(0, x - r), x + r + 1)
+                           if a[j, i, 3] > 0 and not grey[j, i])
+            if near:
+                a[y, x] = near.most_common(1)[0][0]
+                break
+    out = os.path.join(S, "base", "starts", key + ".png")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    Image.fromarray(a).save(out)
+    return out
+
+
 def base_file(fighter, base):
     if base == "guard":
-        return os.path.join(S, "base", f"{fighter}_guard256.png")
+        return without_greys(os.path.join(S, "base", f"{fighter}_guard256.png"), f"{fighter}_guard")
     m = re.fullmatch(r"w(\d)guard@last", base)
     if m and armed_base(fighter, m.group(1)):  # the exact armed picture, not the end of the swap clip
-        return armed_base(fighter, m.group(1))
+        return without_greys(armed_base(fighter, m.group(1)), f"{fighter}_w{m.group(1)}guard")
     clip = base.split("@")[0]
     d = os.path.join(S, fighter, clip)
     frames = sorted(f for f in os.listdir(d) if f.startswith("f_")) if os.path.isdir(d) else []
-    return os.path.join(d, frames[-1]) if frames else None
+    return without_greys(os.path.join(d, frames[-1]), f"{fighter}_{clip}_last") if frames else None
 
 
 SHE = [(r"\bhe\b", "she"), (r"\bHe\b", "She"), (r"\bhim\b", "her"), (r"\bhis\b", "her"), (r"\bHis\b", "Her"),

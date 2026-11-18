@@ -35,7 +35,8 @@ enum class EvType : uint8_t {
   Transform,   // a = fighter, b = form index: a transformation begins
   FormEnd,     // a = fighter: it wears off
   Capture,     // a = attacker, b = victim: caught by a cinematic ultimate
-  Glint        // a = fighter, b = move: a timed draw is ready, released now it is perfect
+  Glint,       // a = fighter, b = move: a timed draw is ready, released now it is perfect
+  MarkBurst    // a = attacker, b = victim, strength = marks: its spirit marks burst (HitboxDef::detonate)
 };
 
 // A fighter's weapon lying on the stage (or falling on it): its owner takes it by standing on it and holding the
@@ -219,6 +220,7 @@ class Match {
   void loseWeapon(Fighter& f);      // a KO: back to bare hands, both weapons lost
   void explodeProjectile(Projectile& pr);
   void creditProjectile(int owner, Fighter& victim, float damage, bool wasShielding);
+  void markHit(int owner, Fighter& victim, const HitboxDef& h);
   void gainUlt(Fighter& f, float amount);
 };
 

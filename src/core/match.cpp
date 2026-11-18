@@ -156,6 +156,7 @@ void Match::koFighter(Fighter& f) {
   loseWeapon(f);
   if (f.form >= 0) endForm(f);
   f.captor = -1;
+  f.marks = 0;
   if (f.lastHitBy >= 0 && f.lastHitBy != f.id && frame - f.lastHitFrame < 600)
     fighters[f.lastHitBy].kos++;
   f.falls++;

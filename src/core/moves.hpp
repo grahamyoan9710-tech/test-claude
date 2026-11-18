@@ -55,6 +55,10 @@ struct HitboxDef {
   // knockback, until a `launch` hitbox (or the end of the move) releases it with its knockback.
   bool capture = false;
   bool launch = false;
+  // Spirit marks (Fuyuri, fiche 02): `marks` puts that many of the attacker's marks on the victim (Fighter::marks);
+  // `detonate` first bursts the ones already there.
+  int marks = 0;
+  bool detonate = false;
 };
 
 // Shoulder pivot of blade swings, as a fraction of the fighter's height (from its center, facing right).
@@ -268,6 +272,7 @@ struct Palette {
 enum class Hero : uint8_t {
   P01, P02, P03, P04, P05, P06, P07, P08, P09, P10, P11, P12, P13, P14, P15, P16, P17,
   H01,  // the new 01 (Hakuen), a beta beside the old 01
+  H02,  // the new 02 (Fuyuri)
   Count
 };
 

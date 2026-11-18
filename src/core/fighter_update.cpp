@@ -320,6 +320,7 @@ void Match::updateFighter(Fighter& f) {
     return;
   }
   if (f.flash > 0) f.flash--;
+  if (f.markTimer > 0 && --f.markTimer == 0) f.marks = 0;
   if (f.hitlag > 0) {
     f.hitlag--;
     return;
