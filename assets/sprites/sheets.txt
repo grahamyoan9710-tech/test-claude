@@ -101,42 +101,41 @@ fx pfx_airjump 9 81 27 40.0 13.0 30 0 0 1
 fx pfx_dash 11 54 21 37.0 17.0 30 0 0 1
 fx pfx_giant_sphere 30 267 267 138.4 128.1 10 1 75
 fx pfx_h01_aura 72 167 271 93.9 249.2 30 1 0 0 1
-fx pfx_h01_a_jab 11 394 174 121.2 159.9 30 0 0 0 1
-fx pfx_h01_a_jab2 11 219 333 28.9 333.1 30 0 0 0 1
-fx pfx_h01_a_jab3 11 301 270 16.0 230.8 30 0 0 0 1
-fx pfx_h01_a_ftilt 11 319 256 67.7 237.4 30 0 0 0 1
-fx pfx_h01_a_utilt 11 453 182 146.5 153.8 30 0 0 0 1
-fx pfx_h01_a_dtilt 11 229 343 33.9 338.6 30 0 0 0 1
-fx pfx_h01_a_fair 11 244 390 28.9 304.8 30 0 0 0 1
-fx pfx_h01_a_nair 11 386 274 228.5 242.4 30 0 0 0 1
-fx pfx_h01_a_fthrow 11 383 164 130.7 159.9 30 0 0 0 1
-fx pfx_h01_a_uthrow 11 217 305 43.5 337.9 30 0 0 0 1
-fx pfx_h01_a_ledgeattack 11 395 174 143.4 97.5 30 0 0 0 1
-fx pfx_h01_a_getupattack 11 500 168 227.5 109.9 30 0 0 0 1
+fx pfx_h01_a_jab 11 170 183 12.0 170.4 30 0 0 0 1
+fx pfx_h01_a_jab2 11 178 294 123.4 281.3 30 0 0 0 1
+fx pfx_h01_a_jab3 11 165 202 12.0 189.3 30 0 0 0 1
+fx pfx_h01_a_ftilt 11 170 183 12.0 170.4 30 0 0 0 1
+fx pfx_h01_a_utilt 11 178 294 123.4 281.3 30 0 0 0 1
+fx pfx_h01_a_dtilt 11 165 202 12.0 189.3 30 0 0 0 1
+fx pfx_h01_a_fair 11 113 143 36.8 130.8 30 0 0 0 1
+fx pfx_h01_a_nair 11 127 202 12.0 189.3 30 0 0 0 1
+fx pfx_h01_a_fthrow 11 147 162 12.0 149.1 30 0 0 0 1
+fx pfx_h01_a_uthrow 11 117 247 30.5 234.7 30 0 0 0 1
+fx pfx_h01_a_ledgeattack 11 147 100 12.0 87.2 30 0 0 0 1
+fx pfx_h01_a_getupattack 11 241 94 106.2 87.2 30 0 0 0 1
 fx pfx_h01_crescent 12 330 360 240.0 180.0 30 1 50 0 1
 fx pfx_h01_degaine 16 378 171 41.7 158.7 60 0 0 0 1
 fx pfx_h01_draw 16 264 119 7.0 121.0 20 0 0 1
 fx pfx_h01_glint 11 42 42 21.0 21.0 30 0 0 1
-fx pfx_h01_jugement 42 455 479 228.0 239.5 60 0 56 0 1
+fx pfx_h01_jugement 42 264 199 137.4 94.8 60 0 64 0 1
 fx pfx_h01_parry 12 76 82 42.0 34.0 30 0 0 1
 fx pfx_h01_spiral 20 132 171 71.0 162.0 20 0 0 1
 fx pfx_h01_ult 25 900 740 680.0 670.0 30 0 0 1 1
 fx pfx_h01_wave 20 142 109 71.0 89.0 20 0 0 1
-fx pfx_h01_b_jab 11 531 512 182.2 426.4 30 0 0 0 1
-fx pfx_h01_b_jab2 11 363 346 74.4 257.5 30 0 0 0 1
-fx pfx_h01_b_jab3 11 675 510 188.3 390.5 30 0 0 0 1
-fx pfx_h01_b_nair 11 615 535 328.2 319.7 30 0 0 0 1
-fx pfx_h01_b_ftilt 11 448 570 93.1 306.9 30 0 0 0 1
-fx pfx_h01_b_utilt 11 629 534 199.2 455.0 30 0 0 0 1
-fx pfx_h01_b_dtilt 11 615 485 337.3 448.2 30 0 0 0 1
-fx pfx_h01_b_fair 11 630 514 332.3 325.2 30 0 0 0 1
-fx pfx_h01_b_fthrow 11 562 499 176.9 460.7 30 0 0 0 1
-fx pfx_h01_b_uthrow 11 551 460 346.7 473.4 30 0 0 0 1
-fx pfx_h01_b_ledgeattack 11 561 499 171.9 398.2 30 0 0 0 1
-fx pfx_h01_b_getupattack 11 725 520 311.0 398.2 30 0 0 0 1
+fx pfx_h01_b_jab 11 167 283 12.0 270.3 30 0 0 0 1
+fx pfx_h01_b_jab2 11 158 156 12.0 143.7 30 0 0 0 1
+fx pfx_h01_b_jab3 11 157 96 12.0 83.9 30 0 0 0 1
+fx pfx_h01_b_nair 11 112 155 60.8 142.5 30 0 0 0 1
+fx pfx_h01_b_ftilt 11 167 283 12.0 270.3 30 0 0 0 1
+fx pfx_h01_b_utilt 11 158 156 12.0 143.7 30 0 0 0 1
+fx pfx_h01_b_dtilt 11 157 96 12.0 83.9 30 0 0 0 1
+fx pfx_h01_b_fair 11 115 143 56.2 130.8 30 0 0 0 1
+fx pfx_h01_b_fthrow 11 157 156 12.0 143.5 30 0 0 0 1
+fx pfx_h01_b_uthrow 11 121 257 26.2 244.1 30 0 0 0 1
+fx pfx_h01_b_ledgeattack 11 157 94 12.0 81.7 30 0 0 0 1
+fx pfx_h01_b_getupattack 11 259 88 114.4 81.7 30 0 0 0 1
 fx pfx_h01_b_wave 8 159 99 123.0 49.4 30 1 20 0 1
 fx pfx_h01_b_trait 8 201 149 153.4 74.1 30 1 28 0 1
-fx pfx_h01_jugement 42 455 479 228.0 239.5 60 0 56 0 1
 fx pfx_h01_degaine 16 378 171 41.7 158.7 60 0 0 0 1
 fx pfx_hit_crit 12 137 158 69.0 72.0 30 0 0 1
 fx pfx_hit_quick 12 102 95 45.0 50.0 30 0 0 1

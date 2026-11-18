@@ -34,7 +34,7 @@ CUT = STYLE == "h01" and (KIND or "")[:2] in ("a_", "b_") and KIND not in ("b_wa
 if KIND in ("aura", "eveil", "jugement", "degaine", "b_wave", "b_trait") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import aura_geo
-    PALETTES[STYLE] = aura_geo.PAL["h01b" if KIND[:2] == "b_" else "h01j" if KIND in ("jugement", "degaine") else STYLE]
+    PALETTES[STYLE] = aura_geo.PAL["h01w" if CUT else "h01b" if KIND[:2] == "b_" else "h01j" if KIND in ("jugement", "degaine") else STYLE]
 rng = random.Random(sum(map(ord, RECIPE)))
 LAYER = ""  # the layer being rendered: "" (behind the fighters) or "_front" (over them)
 
