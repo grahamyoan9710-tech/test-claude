@@ -485,7 +485,7 @@ void Fx::onEvents(const Match& m) {
         playFx("sys_ko", e.pos, 1.3f, 0.0f, false, mixColor(c, WHITE, 0.35f));
         if (e.a >= 0 && e.a < nf)  // the screen tears where it left, in the fighter's colour
           kos_.push_back({e.pos, e.dir, mixColor(c, WHITE, 0.35f), 0});
-        shake_ = std::max(shake_, 24.0f);
+        koShake_ = std::max(koShake_, 26.0f);
         flash_ = std::max(flash_, 0.3f);
         flashCol_ = WHITE;
         au.play(Sfx::KO, 1.0f);
@@ -932,7 +932,8 @@ void Fx::update(const Match& m) {
              sp > 16.0f ? Color{255, 190, 140, 255} : WHITE);
   }
   projectileTrails(m);
-  shake_ *= 0.8f;  // brief
+  koShake_ *= 0.9f;  // a KO's shake lasts (about 0.4 s), the others are brief
+  shake_ = std::max(shake_ * 0.8f, koShake_);
   flash_ *= 0.85f;
   for (auto& a : hudHit) a = std::min(a + 1, 99);
 }
@@ -1192,14 +1193,14 @@ void Fx::drawWorld() const {
 void Fx::drawScreen(const Camera2D& cam) const {
   for (const auto& k : kos_) {
     Vector2 sp = GetWorldToScreen2D(V(k.pos), cam);
-    if (art::fxInfo("pfx_ko")) {  // torn inward from the edge it left by; turned by quarter turns only
+    if (art::fxInfo("pfx_ko")) {  // a jet bursting inward from the edge it left by; turned by quarter turns only
       const Vec2 in = -k.dir;
       const float rot = std::round(std::atan2(in.x, -in.y) / (0.5f * kPi)) * 0.5f * kPi;
       const Vec2 at{clampf(sp.x, 0.0f, float(kScreenW)), clampf(sp.y, 0.0f, float(kScreenH))};
       const float size = std::fabs(std::sin(rot)) > 0.5f ? 0.95f : 0.62f;  // about half the screen, whatever the zoom
       art::drawFx("pfx_ko", k.t / 60.0f, at, size, rot, false, 1.0f, k.color, false);
-      BeginBlendMode(BLEND_ADDITIVE);  // its light again, white: the edges burn white-hot, the dark gap adds nothing
-      art::drawFx("pfx_ko", k.t / 60.0f, at, size, rot, false, 0.6f, WHITE, false);
+      BeginBlendMode(BLEND_ADDITIVE);  // its light again, white: the core burns white-hot, the fan keeps the colour
+      art::drawFx("pfx_ko", k.t / 60.0f, at, size, rot, false, 0.4f, WHITE, false);
       ui::frameBlend();
       continue;
     }

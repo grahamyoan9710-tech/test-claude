@@ -141,6 +141,7 @@ class Fx {
   float punch_ = 0.0f;
   Vec2 punchPos_;
   float shake_ = 0.0f;
+  float koShake_ = 0.0f;  // a KO's long, decaying shake (Smash's feel)
   float flash_ = 0.0f;
   Color flashCol_ = WHITE;
   Rng rng_{4242};
