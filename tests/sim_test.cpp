@@ -689,7 +689,7 @@ static void testWeapons() {
   CHECK(f.weapon < 0, "it respawns bare-handed (weapon %d)", f.weapon);
 
   // The CPUs take their weapon and switch between their two.
-  MatchConfig c2 = duel(0, charIndex("N° 01"), charIndex("N° 08"), true, true);
+  MatchConfig c2 = duel(0, charIndex("Hakuen"), charIndex("N° 08"), true, true);
   c2.items = false;
   Match m2(c2);
   std::vector<CpuBrain> brains;
@@ -1384,10 +1384,23 @@ static void testHakuen() {
     CHECK(v.percent > before, "the riposte hits (%.0f%% -> %.0f%%)", before, v.percent);
     delete &m;
   }
+  {  // each blade has its own ultimate (the cuts); the thunder stays bare-handed
+    Match& m = *fresh(200);
+    const CharacterDef& d = *m.fighters[0].def;
+    for (int s : {0, 1}) {
+      std::string a = "none";
+      for (const auto& [id, md] : d.weapons[s].moves)
+        if (id == FinalSmash) a = md.name;
+      CHECK(a != "none" && a != d.moves[FinalSmash].name, "weapon %c has its own ultimate (%s)", 'A' + s, a.c_str());
+    }
+    delete &m;
+  }
   {  // her ultimate: each bolt strikes where the opponent stood when it appeared; stepping away dodges it
     Match& m = *fresh(200);
     Fighter& f = m.fighters[0];
     Fighter& v = m.fighters[1];
+    f.weapon = -1;  // bare-handed: the blades cut instead
+    f.weapons = 0;
     f.ult = kUltMax;
     f.finalSmash = true;
     in[0] = InputState{};

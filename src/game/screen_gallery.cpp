@@ -8,7 +8,6 @@
 
 // docs/refonte/FICHES.md: the fiche's title, the martial art of the bare hands (§1.7), the style in a word, the build.
 Fiche fiche(const CharacterDef& d) {
-  if (d.id == "p01") return {"OMBRE VIOLETTE", "Penchak Silat", "Polyvalent", 3};
   if (d.id == "p02") return {"GIVRE STELLAIRE", "Taekwondo", "Rapide en l'air", 2};
   if (d.id == "p03") return {"BRASIER ROUGE", "Muay Thaï", "Puissant", 4};
   if (d.id == "p07") return {"FOUDRE ROUGE", "Karaté", "Très rapide", 2};

@@ -305,38 +305,6 @@ Palette colours(Color3 coat, Color3 trim, Color3 accent, Color3 hair, Color3 eye
 }
 
 // ---------------------------------------------------------------------------------------------
-// 01 · violet shadow · T01
-// ---------------------------------------------------------------------------------------------
-CharacterDef make01() {
-  Fighter k = start(1, "Ombre", Build::Medium, F::Shadow,
-                    colours({30, 28, 40}, {96, 60, 160}, {150, 90, 230}, {28, 26, 34}, {150, 90, 230}),
-                    colours({220, 220, 230}, {96, 60, 160}, {150, 90, 230}, {28, 26, 34}, {150, 90, 230}));
-  const F e = k.e;
-  k.P = 1.06f;  // balance (sim_test balance)
-  k.c.weight -= 6;  // balance
-  skills(k, -1, shot("Orbe d'ombre", e, PV::Orb, k.pfx("orbe"), 5.5f, 22, 9),
-         through("Pas de l'ombre", e, k.pfx("x_s"), 9), blink("Ascension spectrale", e, k.pfx("x_u")),
-         counter("Riposte d'ombre", e, k.pfx("x_d"), false, L::ArmFront));
-  ultimateOf(k, -1, ult::awaken("ÉVEIL DU NÉANT", ult::form(k.c, k.pfx("aura"), e, 15, 1.15f, 0.9f), e,
-                                k.pfx("eveil")));
-
-  arm(k, 0, "Odachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 95, 1.0f,
-      {"Coupe horizontale", "Coupe montante", "Grande coupe descendante"});
-  skills(k, 0, piercing(shot("Croissant du néant", e, PV::Wave, k.pfx("lame"), 9, 24, 9)),
-         rush("Iaï", e, k.pfx("a_s"), 17, 0, 11), rise("Lune montante", e, k.pfx("a_u"), 15.5f, 4),
-         counter("Garde-lame", e, k.pfx("a_d"), false));
-  ultimateOf(k, 0, ult::ambush("MILLE LUNES", e, k.pfx("a_ult"), L::Weapon, 7));
-
-  arm(k, 1, "Dagues jumelles", "Deux dagues spectrales", WeaponVisual::Held, Kit::Blade, 42, 0.95f,
-      {"Entaille gauche", "Entaille droite", "Double estoc en X"}, 0.85f);
-  skills(k, 1, boomerang(spread(shot("Dagues spectrales", e, PV::Blade, k.pfx("dague"), 10, 14, 5, 44), 2, 12)),
-         rush("Assaut fantôme", e, k.pfx("b_s"), 14, 4, 7), rise("Vrille", e, k.pfx("b_u"), 15, 5),
-         trap("Marque d'ombre", e, k.pfx("marque"), 10));
-  ultimateOf(k, 1, ult::ambush("DANSE DU NÉANT", e, k.fx("b", "ult"), L::Weapon, 9));
-  return k.c;
-}
-
-// ---------------------------------------------------------------------------------------------
 // 02 · stellar frost · T02
 // ---------------------------------------------------------------------------------------------
 CharacterDef make02() {
@@ -468,7 +436,7 @@ CharacterDef make08() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// The new 01 · Hakuen, the white blade (a beta beside the old 01; docs: the fiches' Claude Doc). Karate bare-handed.
+// 01 · Hakuen, the white blade (docs: the fiches' Claude Doc). Karate bare-handed.
 // ---------------------------------------------------------------------------------------------
 // His draw: the attack held after an M1 sheathes the blade (Rengaine, a red glint); released on the glint, the
 // Coupe-éclair (through the opponent, untouchable, a charge of will), else a plain cut. Bare-handed, the hand's edge.
@@ -568,11 +536,12 @@ CharacterDef makeH01() {
   drawCut(k, -1, L::ArmFront, 11);
 
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
-      {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
+      {"Coupe diagonale", "Coupe montante", "Coupe descendante"});  // kenjutsu: kesa-giri, kiriage, kirioroshi
   skills(k, 0, farCut("Fente écarlate", e, k.pfx("jugement"), 200, 3),
          far(through("Ruée-iaï", e, k.pfx("draw"), 11)), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
          prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
-  ultimateOf(k, 0, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));  // shortcut: the katana's own slashing ultimate comes with its clips
+  // With a blade, the cuts (the owner, 10/11: the slashing ultimate is the katana's; the thunder stays bare-handed).
+  ultimateOf(k, 0, ult::ambush("CRÉPUSCULE ÉCARLATE", e, k.pfx("a_ult"), L::Weapon, 7));
   drawCut(k, 0, L::Weapon, 14);
 
   arm(k, 1, "Lame éveillée", "Très long odachi, garde en étoile dorée", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
@@ -580,7 +549,7 @@ CharacterDef makeH01() {
   skills(k, 1, piercing(shot("Trait final", e, PV::Crescent, k.pfx("b_trait"), 11, 28, 10)),
          far(through("Ruée ardente", e, k.pfx("draw"), 12)), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
          prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
-  ultimateOf(k, 1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));
+  ultimateOf(k, 1, ult::ambush("SENTENCE POURPRE", e, k.pfx("b_ult"), L::Weapon, 9));
   drawCut(k, 1, L::Weapon, 15);
   blinkCuts(k, 0);  // after drawCut: the blink cuts keep the hold that sheathes
   blinkCuts(k, 1);
@@ -696,7 +665,7 @@ void applyTempo(std::vector<CharacterDef>& v) {
 
 const std::vector<CharacterDef>& roster() {
   static const std::vector<CharacterDef> r = [] {
-    std::vector<CharacterDef> v = {make01(), make02(), make03(), make07(), make08(), makeH01()};
+    std::vector<CharacterDef> v = {makeH01(), make02(), make03(), make07(), make08()};  // Hakuen took the old 01's place
     if (!g_rawHitboxes) applyHitFit(v);
     applyTempo(v);
     return v;

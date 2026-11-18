@@ -55,6 +55,13 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 18/11 06 h 30 UTC, session claude/project-thread-58u7pf : Hakuen à la place de l'ancien 01, fait et vérifié
+  (titre, choix des persos, galerie, pause ; la bande-annonce du titre bouclait sur 6 coupes fixes et plantait
+  avec 5 persos : elle suit maintenant `kCuts`). yoyo trouve les M1 au katana « bizarres » et l'arme B pas assez
+  Alpha : les 3 M1 des deux armes sont refaits (arme A : kenjutsu à deux mains, coupe diagonale, montante,
+  descendante ; arme B : une main façon Alpha, montante, allonge, ras du sol ; chaque coup part de la fin du
+  précédent), ainsi que la Fente écarlate (iai façon Vergil, rengainé à plat ; le fil VFX a calé `farCut` : 52
+  images, clic à 36). Les anciennes parties sont dans `pxa/h01/*.old`. Verrous gardés jusqu'à l'import.
 - 18/11 02 h 50 UTC, session claude/project-thread-58u7pf : yoyo valide l'arme B et les coupes (« oui je valide fait
   le reste »). Hakuen (h01) remplace l'ancien 01 « Ombre violette » (p01) : roster, titre, galerie, liste des coups
   de la pause ; fichiers p01 retirés (clips, `fx_p01_*` et `fx_pfx_p01_*` : le fil VFX qui tient « Effets » est
