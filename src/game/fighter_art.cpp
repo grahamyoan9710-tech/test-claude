@@ -55,6 +55,7 @@ struct Art {
   struct Sheet {  // a generated animation: frames side by side
     bool ok = false, loop = false;
     Texture2D tex{};
+    Texture2D glow{};  // <clip>_glow: a light laid over the frame, added (Hakuen's weapon B: its blade, red)
     int frames = 0, impact = -1;  // impact: the frame where the (first) blow lands (-1: none)
     int impacts[4] = {-1, -1, -1, -1}, nImpacts = 0;  // every blow's frame, in order (sheets.txt "7,22")
     float fw = 0, fh = 0, ax = 0, ay = 0, pxPerH = 1;  // frame size, the feet (hips' x on the ground), scale
@@ -239,6 +240,14 @@ void loadSheets(Art& A, const char* fighter) {
         if (*end != ',') break;
       }
       S.impact = S.nImpacts > 0 ? S.impacts[0] : -1;
+      const std::string glowKey = key + "_glow";
+      for (const ClashSheet* gs = clash_sheets; gs->name; ++gs)
+        if (glowKey == gs->name) {
+          Image gi = LoadImageFromMemory(".png", gs->data, int(*gs->size));
+          if (gi.data) S.glow = LoadTextureFromImage(gi), UnloadImage(gi);
+          SetTextureFilter(S.glow, TEXTURE_FILTER_BILINEAR);
+          break;
+        }
       S.fps = fps > 0.0f ? fps : 15.0f;
       S.drop = drop;
       S.ok = true;
@@ -449,8 +458,8 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   }
   if (shaded) beginTint(tc, amount, L);
   const unsigned char a = (unsigned char)(255.0f * clampf(alpha, 0.0f, 1.0f));
-  auto quad = [&] {
-    rlSetTexture(S.tex.id);
+  auto quad = [&](unsigned tex = 0) {
+    rlSetTexture(tex ? tex : S.tex.id);
     rlBegin(RL_QUADS);
     for (int c = 0; c < 4; ++c) {
       rlColor4ub(255, 255, 255, a);
@@ -462,6 +471,11 @@ bool drawSheet(const CharacterDef& d, const Pose& pose, const Xf& X, float alpha
   };
   quad();
   if (shaded) EndShaderMode();
+  if (S.glow.id && flash < 1.0f) {  // (not on the holder's outline copies)
+    BeginBlendMode(BLEND_ADDITIVE);
+    quad(S.glow.id);
+    ui::frameBlend();
+  }
   // The fighter blocks the ray traced light; its full-flash copies (the orb holder's 16-copy outline) do not:
   // shortcut: each solid() switches targets, 17 a frame for the holder; a flash of 1 never hides the body itself.
   if (flash < 1.0f) rtx::solid(quad);
@@ -901,7 +915,7 @@ const std::vector<Item>& preloadItems() {
   }
   for (const ClashSheet* cs = clash_sheets; cs->name; ++cs) {  // the rest: menus, arenas, portraits
     const std::string n = cs->name;
-    if (n.rfind("fx_", 0) == 0) continue;
+    if (n.rfind("fx_", 0) == 0 || (n.size() > 5 && n.compare(n.size() - 5, 5, "_glow") == 0)) continue;
     bool clip = false;
     for (const auto& c : roster())
       if (n.size() > c.id.size() + 1 && n.compare(0, c.id.size() + 1, c.id + "_") == 0)

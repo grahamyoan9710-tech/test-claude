@@ -130,3 +130,52 @@ def one(c, R, a0, a1, sy, W, b, f, seed):
                 out.append(dict(k="poly", pts=place(star(4, r * 1.5 * q, r * 0.3), p, math.pi / 4 + 0.2 * age),
                                 m="shape", a=q * 0.8, s=2.2, h=0.8, y=-0.0361))
     return out
+
+
+# --- the Fente écarlate (her weapon A neutral special): cuts opening in the air 200 px ahead -----------------------
+# Feel: Vergil's Judgment Cut (feel only): a click, then a knot of thin, very long, very fast cuts crossing on the spot,
+# in three bursts (its three hits, 6 frames apart), each cut white-hot then red, gone in a few frames; shards flung
+# out. Centred on the projectile (its hit radius RH = 56 px), drawn as it lives (played once).
+JN = 22
+JRH = 56
+
+
+def slash(p, ang, L, w, k, heat, y):
+    """A straight cut through p: thin at both ends, widest a little ahead of its middle; its razor line on it."""
+    n = 16
+    pts = [(p[0] + (i / n - 0.5) * L * math.cos(ang), p[1] + (i / n - 0.5) * L * math.sin(ang)) for i in range(n + 1)]
+    ws = [w * math.sin(math.pi * i / n) ** 0.7 * (0.6 + 0.4 * i / n) + 0.003 for i in range(n + 1)]
+    return [dict(k="rib", pts=pts, w=ws, m="solid", a=k, s=1.1, h=heat, y=y),
+            dict(k="rib", pts=pts, w=[0.3 * x + 0.002 for x in ws], m="line", a=k, s=3.0, h=1.0, y=y - 0.001)]
+
+
+def jugement(f):
+    rng = random.Random(77)
+    out = []
+    for burst, born0 in enumerate((1, 7, 13)):
+        for j in range(5 if burst < 2 else 7):
+            born = born0 + rng.randint(0, 2)
+            ang = rng.uniform(0, math.pi)
+            off = (rng.uniform(-0.18, 0.18), rng.uniform(-0.18, 0.18))
+            L = rng.uniform(1.1, 1.7) * (1.15 if burst == 2 else 1.0)
+            w = rng.uniform(0.035, 0.06)
+            age = f - born
+            if 0 <= age < 5:
+                k = (1.0, 0.9, 0.6, 0.35, 0.15)[age]
+                grow = (0.55, 1.0, 1.05, 1.08, 1.1)[age]  # it snaps open in a frame
+                out += slash(off, ang, L * grow, w * (1.3 if age == 0 else 1.0) * (1.2 - 0.2 * age / 4), k,
+                             0.42 - 0.06 * age, -0.02 - 0.002 * j - 0.02 * burst)
+            # its shards: flung out along it from its second frame
+            for s in range(2):
+                sa = ang + rng.choice((0.0, math.pi)) + rng.uniform(-0.3, 0.3)
+                sp, life = rng.uniform(0.05, 0.1), rng.randint(4, 7)
+                a2 = f - born - 1
+                if 0 <= a2 < life:
+                    q = 1.0 - a2 / life
+                    x, z = off[0] + (0.3 + sp * a2) * math.cos(sa), off[1] + (0.3 + sp * a2) * math.sin(sa)
+                    Ls = rng.uniform(0.06, 0.12) * q
+                    out.append(dict(k="poly", pts=place(shard(Ls, Ls * 0.25), (x, z), sa), m="solid", a=q, s=1.6,
+                                    h=0.5 + 0.3 * q, y=-0.09))
+    if f < 2:  # the click: a hairline flash across the spot
+        out += slash((0.0, 0.0), 0.15, 2.0, 0.012, (1.0, 0.5)[f], 1.0, -0.1)
+    return out

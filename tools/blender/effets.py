@@ -31,7 +31,7 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
 CUT = STYLE == "h01" and (KIND or "")[:2] in ("a_", "b_")  # Hakuen's sword cuts: a_jab-h01 -> pfx_h01_a_jab
-if KIND in ("aura", "eveil") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
+if KIND in ("aura", "eveil", "jugement") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import aura_geo
     PALETTES[STYLE] = aura_geo.PAL["h01b" if CUT and KIND[0] == "b" else STYLE]
@@ -1832,7 +1832,23 @@ def r_coupe():
     return meta, anim
 
 
-RECIPES = dict(bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
+def r_jugement():
+    """Hakuen's Fente écarlate (coupe_geo.jugement): on its projectile 200 px ahead, played once."""
+    import coupe_geo
+    N = coupe_geo.JN
+    W, H, AX, AY = frame_of([aura_geo.bounds(coupe_geo.jugement(f)) for f in range(N)], 0.12)
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=coupe_geo.JRH, N=N, FPS=30, LOOP=0)
+    scene(W, H, AX, AY)
+    aura_mats()
+
+    def anim(f, t):
+        fresh()
+        build(coupe_geo.jugement(f))
+
+    return meta, anim
+
+
+RECIPES = dict(jugement=r_jugement, bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
                plume=r_plume, marque=r_marque, pilier=r_pilier, aura=r_aura, eveil=r_eveil)
 if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]
