@@ -68,8 +68,8 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
   `./build/super_clash --demo --fighters A,B --ult SLOT --record 270 500 10 DIR --quit-after 505`.
   SLOT vaut -1 (mains nues), 0 ou 1 (arme).
 - Démo de compétence (le 1er perso la refait dès qu'elle est rechargée, à partir de l'image 300) :
-  `./build/super_clash --demo --fighters A,B --weapon SLOT --skill n|s|u|d|a --record 312 372 6 DIR --quit-after 375`
-  (`a` : le combo de M1 ; DIR doit exister).
+  `./build/super_clash --demo --fighters A,B --weapon SLOT --skill n|s|u|d|j --record 312 372 6 DIR --quit-after 375`
+  (`j` : le combo de M1 ; DIR doit exister).
 
 ## Architecture
 - `src/core/` : la simulation, déterministe et sans rendu.

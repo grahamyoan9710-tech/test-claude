@@ -28,7 +28,7 @@ struct Options {
   bool uncapped = false;         // --uncapped: no 60 FPS cap, prints the average FPS at the end (benchmarks)
   bool fullRes = false;          // --fullres: screenshots at the resolution of the frame (no downscale)
   int ultShow = -2;              // --ult SLOT: the demo's first fighter unleashes its ultimate (-1 bare-handed, 0/1 weapon)
-  char skillShow = 0;            // --skill n|s|u|d|a: the demo's first fighter uses that special (a: its M1 combo) again and again
+  char skillShow = 0;            // --skill n|s|u|d|j: the demo's first fighter uses that special (j: its M1 combo) again and again
   int weaponShow = -1;           // --weapon SLOT: the demo's first fighter keeps that weapon in hand (its kit)
 };
 
