@@ -1072,7 +1072,7 @@
      null,
      false,
      "none",
-     "slowly, she raises the long odachi in both hands above her right shoulder, the blade pointing up and back, then holds that pose perfectly still"
+     "slowly, she sinks into a long low step forward, leaning far forward, the long odachi held low in her right hand far behind her, the blade level just above the floor behind her, then holds that pose perfectly still"
     ],
     "w1_jab.p": [
      8,
@@ -1080,7 +1080,7 @@
      null,
      false,
      "none",
-     "slowly, she steps forward and stretches both arms forward and down until the point of the long odachi is low in front of her front foot, then holds that pose perfectly still"
+     "slowly, she lunges forward and stretches her right arm up and forward, the long odachi pointing up and forward above her head, then holds that pose perfectly still"
     ],
     "w1_jab.b": [
      8,
@@ -1088,7 +1088,7 @@
      "guard",
      false,
      "none",
-     "holds the pose perfectly still for three frames, then slowly lifts the long blade back low into the stance"
+     "holds the pose perfectly still for three frames, then slowly lowers the long blade back into the stance"
     ],
     "w1_jab2.a": [
      8,
@@ -1096,7 +1096,7 @@
      null,
      false,
      "none",
-     "slowly, she turns her right wrist so the long odachi points down and back behind her right leg, then holds that pose perfectly still"
+     "slowly, she raises the long odachi high above her right shoulder in her right hand, the blade pointing up and back, then holds that pose perfectly still"
     ],
     "w1_jab2.p": [
      8,
@@ -1104,7 +1104,7 @@
      null,
      false,
      "none",
-     "slowly, she raises her right arm across her chest until it is stretched up and forward, the long odachi pointing up and forward above her head, then holds that pose perfectly still"
+     "slowly, she swings the long odachi down across her body and leans forward into a low wide stance facing right, her right arm stretched down in front of her left knee, the blade pointing down and back behind her left foot, its point near the floor, then holds that pose perfectly still"
     ],
     "w1_jab2.b": [
      8,
@@ -1112,7 +1112,7 @@
      "guard",
      false,
      "none",
-     "holds the pose perfectly still for three frames, then slowly lowers the long blade back into the stance"
+     "holds the pose perfectly still for three frames, then very slowly stands up while lifting the long odachi up in front of her chest, then slowly lowers it into the stance"
     ],
     "w1_jab3.a": [
      8,
@@ -1120,7 +1120,7 @@
      null,
      false,
      "none",
-     "slowly, she turns her back to the right, the long odachi held out behind her at arm's length at chest height, then holds that pose perfectly still"
+     "slowly, she sinks into a very deep crouch facing right, leaning forward, her right arm swung far back behind her, the long odachi held low behind her, the blade level just above the floor and pointing back, then holds that pose perfectly still"
     ],
     "w1_jab3.p": [
      8,
@@ -1128,7 +1128,7 @@
      null,
      false,
      "none",
-     "slowly, she sinks into a deep lunge facing right, the right arm and the long odachi fully stretched to the right at chest height, then holds that pose perfectly still"
+     "slowly, she turns to face right and drops into a very deep crouch, the right arm and the long odachi stretched far forward just above the floor, then holds that pose perfectly still"
     ],
     "w1_jab3.b": [
      8,
@@ -1144,7 +1144,7 @@
      null,
      false,
      "none",
-     "slowly, she turns her upper body away, the long odachi held in both hands far back behind her left hip, the blade pointing behind her, then holds that pose perfectly still"
+     "slowly, she lifts the long odachi high over her right shoulder with both hands on the handle, the blade pointing up and back behind her head, still facing right, then holds that pose perfectly still"
     ],
     "w1_nspecial.p": [
      8,
@@ -1152,7 +1152,7 @@
      null,
      false,
      "none",
-     "slowly, she turns her hips and stretches both arms and the long odachi fully out to the right at waist height, then holds that pose perfectly still"
+     "slowly, she brings the long odachi down in one huge diagonal cut and steps into a very low lunge facing right, both arms stretched forward and down, the blade pointing down and forward, its point near the floor ahead of her, then holds that pose perfectly still"
     ],
     "w1_nspecial.b": [
      8,
@@ -1160,7 +1160,7 @@
      "guard",
      false,
      "none",
-     "holds the pose perfectly still for four frames, then slowly returns to the stance"
+     "holds the pose perfectly still for three frames, then slowly rises back into the stance"
     ],
     "w1_dspecial.a": [
      8,
@@ -1216,7 +1216,7 @@
      null,
      false,
      "none",
-     "in mid-air with the knees tucked, slowly, she turns her back to the right, the long odachi held out behind her at arm's length at waist height, then holds that pose perfectly still"
+     "in mid-air with the knees tucked, slowly, she raises the long odachi high above her right shoulder, the blade pointing up and back, then holds that pose perfectly still"
     ],
     "w1_nair.p": [
      8,
@@ -1224,7 +1224,7 @@
      null,
      false,
      "none",
-     "in mid-air with the knees tucked, slowly, she stretches the long odachi out to the right at arm's length at waist height, then holds that pose perfectly still"
+     "in mid-air with the knees tucked, slowly, she brings her right arm down across her body, the long odachi pointing down and back past her left hip, then holds that pose perfectly still"
     ],
     "w1_nair.b": [
      8,
@@ -1272,13 +1272,13 @@
     "w1_coupeeclair.p": "still iai stance facing right, the sword sheathed in the scabbard at her left hip, only its handle sticking out forward from the scabbard mouth, her right hand on the handle",
     "w1_uspecial.b": "in mid-air facing right, knees tucked, both arms stretched high, the long odachi pointing straight up above her head",
     "w1_sspecial.b": "holds the long low lunge perfectly still for four frames, then slowly draws the back foot in and rises into the stance",
-    "w1_jab.b": "stepping forward facing right, both arms stretched forward and down, the long odachi pointing low in front of her front foot",
-    "w1_jab2.b": "standing facing right, the right arm stretched up and forward, the long odachi pointing up and forward above her head",
-    "w1_jab3.b": "in a deep lunge facing right, the right arm and the long odachi fully stretched to the right at chest height",
-    "w1_nspecial.b": "facing right, both arms and the long odachi fully stretched out to the right at waist height",
+    "w1_jab.b": "in a long lunge facing right, the right arm stretched up and forward, the long odachi pointing up and forward above her head",
+    "w1_jab2.b": "in a low wide stance facing right, leaning forward, the right arm stretched down in front of her left knee, the long odachi pointing down and back behind her left foot",
+    "w1_jab3.b": "in a very deep crouch facing right, the right arm and the long odachi stretched far forward just above the floor",
+    "w1_nspecial.b": "in a very low lunge facing right, both arms stretched forward and down, the long odachi pointing down and forward, its point near the floor ahead of her",
     "w1_dspecial.b": "in a long lunge facing right, the right arm and the long odachi stretched straight forward at chest height",
     "w1_ultimate.b": "in a far lunge facing right, the right arm and the long odachi fully stretched to the right at chest height",
-    "w1_nair.b": "in mid-air facing right, knees tucked, the right arm and the long odachi stretched out to the right at waist height",
+    "w1_nair.b": "in mid-air facing right, knees tucked, the right arm crossed down in front of her body, the long odachi pointing down and back past her left hip",
     "w1_uthrow.b": "standing facing right, both arms raised, the long odachi pointing straight up above her head"
    }
   }

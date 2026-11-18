@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "e91ee4af-c21f-40cf-819c-a3eded6c3993",
+ "job_id": "5f434f53-1867-4167-8a0f-03a56d4c9417",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:d769efdf-3c62-4dee-9b36-4598310770d6",
-  "last_frame_url": "upload:b55d1e94-7c6d-45c1-910f-8b92a3eb66bb",
+  "first_frame_url": "upload:e67b8fe9-bf0b-4c1f-8cf9-73840868d545",
+  "last_frame_url": "upload:35363a5f-83aa-4d2d-9a83-a45e7a3fe0a5",
   "description": "in mid-air with the knees tucked, holds the pose perfectly still for three frames, then slowly brings the long odachi back level in front of her. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
-  "initial_pose": "in mid-air facing right, knees tucked, the right arm and the long odachi stretched out to the right at waist height"
+  "initial_pose": "in mid-air facing right, knees tucked, the right arm crossed down in front of her body, the long odachi pointing down and back past her left hip"
  },
- "reply": "id: e91ee4af-c21f-40cf-819c-a3eded6c3993\njob_id: e91ee4af-c21f-40cf-819c-a3eded6c3993\ndescription: in mid-air with the knees tucked, holds the pose perfectly still for three frames, then slowly brings the long odachi back level in front of her. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"e91ee4af-c21f-40cf-819c-a3eded6c3993\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/e91ee4af-c21f-40cf-819c-a3eded6c3993/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: bd907529-79d7-556f-838b-9864c7bf51cb\nasset_status: pending (saved to your gallery when generation completes)",
+ "reply": "id: 5f434f53-1867-4167-8a0f-03a56d4c9417\njob_id: 5f434f53-1867-4167-8a0f-03a56d4c9417\ndescription: in mid-air with the knees tucked, holds the pose perfectly still for three frames, then slowly brings the long odachi back level in front of her. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5f434f53-1867-4167-8a0f-03a56d4c9417\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/5f434f53-1867-4167-8a0f-03a56d4c9417/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 30519c90-a37a-5b1a-9857-93d2415e891f\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_nair.p/f_08.png",
  "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
  "frames": 9,

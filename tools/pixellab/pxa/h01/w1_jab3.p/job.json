@@ -1,17 +1,17 @@
 {
  "status": "done",
- "job_id": "b3301a31-98b4-412d-a4cf-99ccb0981e65",
+ "job_id": "cb7dd238-22b6-40d3-ba7c-0f6e725c7808",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:ed162bf1-580e-48d2-a481-f29b2eb90a6f",
-  "description": "slowly, she sinks into a deep lunge facing right, the right arm and the long odachi fully stretched to the right at chest height, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:c9740a9e-c9d9-4d19-b6a1-9bf043913ae1",
+  "description": "slowly, she turns to face right and drops into a very deep crouch, the right arm and the long odachi stretched far forward just above the floor, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
   "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
  },
- "reply": "id: b3301a31-98b4-412d-a4cf-99ccb0981e65\njob_id: b3301a31-98b4-412d-a4cf-99ccb0981e65\ndescription: slowly, she sinks into a deep lunge facing right, the right arm and the long odachi fully stretched to the right at chest height, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"b3301a31-98b4-412d-a4cf-99ccb0981e65\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/b3301a31-98b4-412d-a4cf-99ccb0981e65/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 0dd4b6c6-f128-5be6-aef4-280c5c334d40\nasset_status: pending (saved to your gallery when generation completes)",
+ "reply": "id: cb7dd238-22b6-40d3-ba7c-0f6e725c7808\njob_id: cb7dd238-22b6-40d3-ba7c-0f6e725c7808\ndescription: slowly, she turns to face right and drops into a very deep crouch, the right arm and the long odachi stretched far forward just above the floor, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"cb7dd238-22b6-40d3-ba7c-0f6e725c7808\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/cb7dd238-22b6-40d3-ba7c-0f6e725c7808/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e705cdff-1343-5514-a584-d915eae8614e\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
  "last": null,
  "frames": 9,

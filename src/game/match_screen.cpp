@@ -377,8 +377,14 @@ void MatchScreen::stepFight() {
       f.pos = {-170.0f, 0.0f};
       f.facing = 1;
       m_.fighters[1].pos = {130.0f, 0.0f};
-      inputs[f.port].special = true;
-      inputs[f.port].stick = skillShow_ == 's' ? Vec2{1, 0} : skillShow_ == 'u' ? Vec2{0, -1} : skillShow_ == 'd' ? Vec2{0, 1} : Vec2{};
+      if (skillShow_ == 'a') {  // the M1 combo
+        inputs[f.port].attack = true;
+      } else {
+        inputs[f.port].special = true;
+        inputs[f.port].stick = skillShow_ == 's' ? Vec2{1, 0} : skillShow_ == 'u' ? Vec2{0, -1} : skillShow_ == 'd' ? Vec2{0, 1} : Vec2{};
+      }
+    } else if (skillShow_ == 'a' && f.state == FState::Attack && m_.frame % 6 == 0) {
+      inputs[f.port].attack = true;  // short taps chain the combo (a held button would sheathe)
     }
   }
   m_.step(inputs);

@@ -576,8 +576,8 @@ CharacterDef makeH01() {
   drawCut(k, 0, L::Weapon, 14);
 
   arm(k, 1, "Lame éveillée", "Très long odachi, garde en étoile dorée", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
-      {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
-  skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
+      {"Fente montante", "Croix pourpre", "Coupe rasante"});  // in the manner of Alpha (PGR)
+  skills(k, 1, piercing(shot("Trait final", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
          far(through("Ruée ardente", e, k.pfx("draw"), 12)), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
          prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));
@@ -598,6 +598,14 @@ CharacterDef makeH01() {
           m.castFxFrame = m.hitboxes.front().start;
           for (const auto& h : m.hitboxes) m.castFxFrame = std::min(m.castFxFrame, h.start);
         }
+  // Weapon B in the manner of Alpha (the owner, 17/11): its third cut skims the floor and sends a wave ahead, low.
+  for (auto& [id, m] : k.c.weapons[1].moves)
+    if (id == Jab3 && !m.hitboxes.empty()) {
+      m.projectileFrame = m.castFxFrame;
+      m.projectile = proj({36 * k.S, 28 * k.S}, {11, 0}, 0, 18, 20, 3.5f * k.P, 20, 40, e, PV::Crescent);
+      m.projectile.fx = k.pfx("crescent");  // shortcut: the awakened crescent until weapon B has its own wave strip
+      m.projectile.piercing = true;
+    }
 
   // Volonté de la lame, with a weapon in hand only (the owner, 17/11): 3 charges (Coupe-éclair, parries) and she
   // awakens for 8 s: her M1 become the blink cuts and send cutting waves, her neutral three crescents in a fan (great

@@ -48,17 +48,19 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », arme B de Hakuen façon Alpha) | 18/11 01 h 20 UTC |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », arme B de Hakuen façon Alpha) | 18/11 01 h 20 UTC |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », arme B de Hakuen façon Alpha) | 18/11 01 h 20 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
 - 18/11 01 h 20 UTC, session claude/project-thread-58u7pf : arme B de Hakuen refaite façon Alpha (PGR, ressenti
   seul ; yoyo 17/11 22 h 47 : pas d'aura, lame en bloom rouge par le fil VFX, « slashs qui partent ») : M1 Fente
-  montante, Croix pourpre, Coupe rasante (envoie une vague basse), aérien, neutre « Trait final ». Verrous
-  « Imports de clips », « fitall.sh » et « Équilibrage » pris.
+  montante, Croix pourpre, Coupe rasante (envoie une vague basse), aérien, neutre « Trait final ». Fait : chaque coup
+  en parties jointes, toutes contrôlées (aucun pixel détaché : `pxa/floaters.py`, nouveau), importées, `fitall.sh`
+  passé (tests 100 %, Hakuen 50 %) ; vague et Trait final jouent `pfx_h01_crescent` en attendant `pfx_h01_b_wave` /
+  `pfx_h01_b_trait` (fil VFX). Démo : `--skill a` rejoue le combo de M1. Verrous libérés.
 - 18/11 01 h UTC, session claude/project-thread-58u7pf : rengainages de Hakuen refaits (A, B, Fente écarlate =
   rengainage + déclic + la même lame qui ressort, `pxa/join.py --back` ; début des Coupe-éclair A et B et de
   l'ultime B), importés, `fitall.sh` passé (tests 100 %, Hakuen 49 %). Chaque coupe d'arme simple joue un effet
