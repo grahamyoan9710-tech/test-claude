@@ -149,12 +149,18 @@ def one(c, R, a0, a1, sy, W, b, f, seed):
     return out
 
 
-# --- the Fente écarlate (her weapon A neutral special): cuts opening in the air 200 px ahead -----------------------
-# Feel: Vergil's Judgment Cut (feel only): a click, then a knot of thin, very long, very fast cuts crossing on the spot,
-# in three bursts (its three hits, 6 frames apart), each cut white-hot then red, gone in a few frames; shards flung
-# out. Centred on the projectile (its hit radius RH = 56 px), drawn as it lives (played once).
-JN = 22
+# --- the Fente écarlate (her weapon A neutral special), v3 (yoyo, 18/11: "pas assez d'effet, juste plein de
+# traits", his GIF of Vergil in PGR; "01 fait de la foudre rouge") -------------------------------------------------
+# What the GIF does, frame by frame: a glint and a hairline at the draw; then, on the target, a white flash and a
+# great sphere of thick energy ribbons whirling round it (orbits seen at every tilt, white-hot leading edges, tails
+# melting into dark smoke), the inside darkened, sparks flung out; it fades in thin arcs; again; a last bigger one.
+# Ours, in red with red lightning (Hakuen's own): three vortices on the projectile's three hits, the last one
+# exploding: long cuts through it, its smoke torn into dark shards rimmed with fire, lightning leaping out.
+# Never a ball, a whole ring or a cone: the ribbons are broken arcs, the flash uneven rays. 60 fps, centred on the
+# projectile (RH = 56 px): the game holds it 42 frames, hits on 0, 14 and 28 (the last on her resheathe).
+JN = 42
 JRH = 56
+VBORN = (1, 14, 28)
 
 
 def slash(p, ang, L, w, k, heat, y):
@@ -166,35 +172,205 @@ def slash(p, ang, L, w, k, heat, y):
             dict(k="rib", pts=pts, w=[0.3 * x + 0.002 for x in ws], m="line", a=k, s=3.0, h=1.0, y=y - 0.001)]
 
 
+def jag(a, b, depth, amp, r):
+    pts = [a, b]
+    for _ in range(depth):
+        new = [pts[0]]
+        for p, q in zip(pts, pts[1:]):
+            dx, dz = q[0] - p[0], q[1] - p[1]
+            L = math.hypot(dx, dz) or 1e-6
+            o = r.uniform(-amp, amp) * L
+            new += [((p[0] + q[0]) / 2 - dz / L * o, (p[1] + q[1]) / 2 + dx / L * o), q]
+        pts = new
+    return pts
+
+
+def bolt(out, p, ang, L, r, a, w=1.0, fork=0.6, y=-0.06):
+    """Red lightning from p, L long, zigzagging; often a fork."""
+    q = (p[0] + L * math.cos(ang), p[1] + L * math.sin(ang))
+    pts = jag(p, q, 4, 0.45, r)
+    out.append(dict(k="bolt", pts=pts, w=w, a=a, s=1.0, h=0.9, y=y))
+    if r.random() < fork:
+        m = pts[r.randrange(4, len(pts) - 2)]
+        fa = ang + r.choice((-1, 1)) * r.uniform(0.4, 0.9)
+        fl = L * r.uniform(0.3, 0.55)
+        out.append(dict(k="bolt", pts=jag(m, (m[0] + fl * math.cos(fa), m[1] + fl * math.sin(fa)), 3, 0.45, r),
+                        w=w * 0.65, a=a * 0.8, s=1.0, h=0.9, y=y))
+
+
+def vortex(out, f, born, seed, R, big=False):
+    a = f - born
+    life = 13 if big else 15
+    if not 0 <= a < life:
+        return
+    rng = random.Random(seed)
+    fade = 1.0 if a < life - 7 else (life - a) / 7.0
+    grow = (0.55 + 0.45 * min(1.0, a / 4.0) ** 0.5) * (1.0 + 0.012 * a) * (1.0 + (0.05 * max(0, a - 3) if big else 0))
+    # the flash: uneven white rays, three frames
+    if a < 3:
+        g = (1.0, 0.75, 0.4)[a]
+        q = random.Random(seed * 3 + a)
+        pts, rot = [], q.uniform(0, math.pi)
+        for j in range(18):
+            an = rot + math.pi * j / 9 + q.uniform(-0.1, 0.1)
+            rr = R * (0.1 if j % 2 else q.uniform(0.3, 0.7)) * (0.7 + 0.5 * a) * (1.3 if big else 1.0)
+            pts.append((rr * math.cos(an), rr * math.sin(an)))
+        out.append(dict(k="poly", pts=pts, m="shape", a=g, s=3.2, h=1.0, y=-0.12))
+    # its heart: dark, smoky, jagged (it darkens what it swallows)
+    if 1 <= a < life - 2:
+        q = random.Random(seed * 7 + a // 2)
+        rr = R * 0.78 * grow
+        n = 30
+        pts = [(rr * (1.0 + q.uniform(-0.14, 0.14)) * math.cos(TAU * i / n),
+                rr * (0.9 + q.uniform(-0.14, 0.14)) * math.sin(TAU * i / n)) for i in range(n)]
+        out.append(dict(k="poly", pts=pts, m="void", a=0.85 * fade * min(1.0, a / 2.0), s=0.3, h=0.0, y=0.08))
+    # the whirl: thick ribbons on orbits of every tilt, white-hot heads, smoky tails
+    nr = 12 if big else 10
+    for j in range(nr):
+        tilt = rng.uniform(0, math.pi)
+        sy = rng.uniform(0.18, 0.62)
+        Rj = R * rng.uniform(0.75, 1.08) * grow
+        om = rng.uniform(0.32, 0.46) * (1 if j % 3 else -1)
+        h0 = rng.uniform(0, TAU) + om * a
+        span = rng.uniform(1.7, 2.6) * (0.55 + 0.45 * min(1.0, a / 3.0))
+        W = rng.uniform(0.2, 0.34) * (1.2 if big else 1.0)
+        n = 22
+        ct, st = math.cos(tilt), math.sin(tilt)
+        pts, ws = [], []
+        for i in range(n + 1):
+            u = i / n
+            an = h0 - math.copysign(span * u, om)
+            x, z = Rj * math.cos(an), Rj * sy * math.sin(an)
+            pts.append((x * ct - z * st, x * st + z * ct))
+            ws.append(W * fade ** 0.5 * (min(1.0, u / 0.08) ** 0.5) * (1.0 - u) ** 0.7 + 0.004)
+        k = fade * (1.0 if a > 0 else 0.6)
+        out.append(dict(k="rib", pts=pts, w=ws, m="veil", a=0.85 * k, s=1.6, h=0.5, y=-0.02 - 0.003 * j))
+        out.append(dict(k="rib", pts=pts, w=[x * 1.6 for x in ws], m="swirl", a=0.7 * k, s=1.2, h=1.0,
+                        y=-0.015 - 0.003 * j))  # its smoky, burning fringe
+        hot = pts[: int(n * 0.55)]
+        out.append(dict(k="rib", pts=hot, w=[x * 0.3 for x in ws[: len(hot)]], m="veil", a=k, s=2.4, h=0.9,
+                        y=-0.03 - 0.003 * j))
+        head = pts[: n // 2]  # its razor edge, white-hot
+        out.append(dict(k="rib", pts=head, w=[0.02 * (1.0 - i / len(head)) + 0.003 for i in range(len(head))],
+                        m="line", a=k, s=3.0, h=1.0, y=-0.05 - 0.003 * j))
+    # cuts flickering in it, two a frame for its first frames
+    for i in range(6 if big else 4):
+        b = rng.randint(0, 5)
+        ang, off = rng.uniform(0, math.pi), (rng.uniform(-0.4, 0.4) * R, rng.uniform(-0.35, 0.35) * R)
+        L, w = rng.uniform(1.2, 2.0) * R, rng.uniform(0.025, 0.04)
+        ag = a - b
+        if 0 <= ag < 3:
+            out += slash(off, ang, L * (0.7, 1.0, 1.05)[ag], w * (1.3, 1.0, 0.6)[ag], (1.0, 0.8, 0.45)[ag],
+                         (0.8, 0.55, 0.35)[ag], -0.08 - 0.001 * i)
+    # red lightning crackling in it and leaping out: new paths every frame
+    q = random.Random(seed * 13 + a)
+    for i in range(int((4 if big else 3) * fade + 0.5)):  # from the whirl's edge, leaping out
+        an = q.uniform(0, TAU)
+        p0 = (0.7 * R * grow * math.cos(an), 0.6 * R * grow * math.sin(an))
+        bolt(out, p0, an + q.uniform(-0.6, 0.6), R * q.uniform(0.5, 0.9), q, 0.95 * fade, 1.2 if big else 1.0)
+    # sparks flung off the whirl
+    for i in range(16):
+        an = rng.uniform(0, TAU)
+        b = rng.randint(1, 6)
+        sp = rng.uniform(0.05, 0.12)
+        lf = rng.randint(5, 9)
+        ag = a - b
+        if 0 <= ag < lf:
+            k = 1.0 - ag / lf
+            d = R * 0.8 + sp * ag
+            c = (d * math.cos(an), d * math.sin(an) - 0.003 * ag * ag)
+            Ls = rng.uniform(0.06, 0.12) * k
+            out.append(dict(k="poly", pts=place(shard(Ls, Ls * 0.25), c, an + 1.3), m="solid", a=k, s=2.2,
+                            h=0.6 + 0.4 * k, y=-0.1))
+
+
 def jugement(f):
-    rng = random.Random(77)
     out = []
-    for burst, born0 in enumerate((1, 7, 13)):
-        for j in range(5 if burst < 2 else 7):
-            born = born0 + rng.randint(0, 2)
-            ang = rng.uniform(0, math.pi)
-            off = (rng.uniform(-0.18, 0.18), rng.uniform(-0.18, 0.18))
-            L = rng.uniform(1.1, 1.7) * (1.15 if burst == 2 else 1.0)
-            w = rng.uniform(0.035, 0.06)
-            age = f - born
-            if 0 <= age < 5:
-                k = (1.0, 0.9, 0.6, 0.35, 0.15)[age]
-                grow = (0.55, 1.0, 1.05, 1.08, 1.1)[age]  # it snaps open in a frame
-                out += slash(off, ang, L * grow, w * (1.3 if age == 0 else 1.0) * (1.2 - 0.2 * age / 4), k,
-                             0.42 - 0.06 * age, -0.02 - 0.002 * j - 0.02 * burst)
-            # its shards: flung out along it from its second frame
-            for s in range(2):
-                sa = ang + rng.choice((0.0, math.pi)) + rng.uniform(-0.3, 0.3)
-                sp, life = rng.uniform(0.05, 0.1), rng.randint(4, 7)
-                a2 = f - born - 1
-                if 0 <= a2 < life:
-                    q = 1.0 - a2 / life
-                    x, z = off[0] + (0.3 + sp * a2) * math.cos(sa), off[1] + (0.3 + sp * a2) * math.sin(sa)
-                    Ls = rng.uniform(0.06, 0.12) * q
-                    out.append(dict(k="poly", pts=place(shard(Ls, Ls * 0.25), (x, z), sa), m="solid", a=q, s=1.6,
-                                    h=0.5 + 0.3 * q, y=-0.09))
-    if f < 2:  # the click: a hairline flash across the spot
-        out += slash((0.0, 0.0), 0.15, 2.0, 0.012, (1.0, 0.5)[f], 1.0, -0.1)
+    vortex(out, f, VBORN[0], 101, 1.05)
+    vortex(out, f, VBORN[1], 202, 1.15)
+    vortex(out, f, VBORN[2], 303, 1.3, big=True)
+    a = f - VBORN[2]
+    q = random.Random(11)
+    if 0 <= a < 13:  # the last one bursts: long cuts through it, white then breaking apart
+        for i in range(3):
+            ang = (0.6, 2.5, 1.55)[i] + q.uniform(-0.1, 0.1)
+            L = q.uniform(2.8, 3.4)
+            if a < 3:
+                out += slash((0.0, 0.0), ang, L * (0.8, 1.0, 1.05)[a], (0.09, 0.065, 0.045)[a], (1.0, 0.95, 0.8)[a],
+                             (1.0, 0.85, 0.65)[a], -0.14 - 0.001 * i)
+            else:
+                kk = max(0.0, 1.0 - (a - 3) / 8.0)
+                if kk <= 0:
+                    continue
+                for side in (-1, 1):
+                    for pc in range(3):
+                        c0 = side * (0.2 + pc * 0.45 + 0.04 * (a - 3))
+                        mid = (c0 * L / 2.6 * math.cos(ang), c0 * L / 2.2 * math.sin(ang))
+                        out += slash(mid, ang, L / 4.2 * kk ** 0.5, 0.03 * kk, kk, 0.35 + 0.25 * kk, -0.14 - 0.001 * i)
+    if 0 <= a < 14:  # its smoke torn into dark shards rimmed with fire, lightning leaping far
+        for i in range(16):
+            ang = q.uniform(0, TAU)
+            sp = q.uniform(0.07, 0.15)
+            life = q.randint(9, 13)
+            if a < life:
+                k = 1.0 - a / life
+                d = 0.5 + sp * a * (1.0 - a / 30.0)
+                c = (d * math.cos(ang), d * math.sin(ang) - 0.004 * a * a)
+                L = q.uniform(0.14, 0.28)
+                out.append(dict(k="poly", pts=place(shard(L, L * q.uniform(0.35, 0.6)), c, ang + a * q.uniform(-0.3, 0.3)),
+                                m="rock", a=k, s=1.4, h=0.55 + 0.4 * k, y=-0.13))
+        if a < 5:
+            r = random.Random(500 + a)
+            for i in range(7):
+                an = TAU * i / 7 + r.uniform(-0.3, 0.3)
+                bolt(out, (0.3 * math.cos(an), 0.3 * math.sin(an)), an, r.uniform(1.1, 1.6), r,
+                     (1.0, 0.9, 0.7, 0.45, 0.2)[a], 1.4, 0.8, -0.15)
+    if f < 3:  # the click: a hairline flash across the spot as the draw arrives
+        out += slash((0.0, 0.0), -0.12, 3.0, 0.016, (1.0, 0.7, 0.3)[f], 1.0, -0.16)
+    return out
+
+
+# --- the draw (pfx_h01_degaine, castFx on the projectile's frame, left where it began): a razor line from her hip to
+# the spot 200 px ahead, its glint at the hip, speed lines along it. Feet at the origin, facing right, 60 fps.
+DN = 16
+
+
+def degaine(f):
+    out = []
+    hip = (0.25, 0.92)
+    end = (2.75, 0.84)
+    ang = math.atan2(end[1] - hip[1], end[0] - hip[0])
+    L = math.hypot(end[0] - hip[0], end[1] - hip[1])
+    mid = ((hip[0] + end[0]) / 2, (hip[1] + end[1]) / 2)
+    if f < 8:
+        k = (1.0, 1.0, 0.85, 0.65, 0.45, 0.3, 0.18, 0.08)[f]
+        out += slash(mid, ang, L * (1.0 + 0.02 * f), (0.07, 0.05, 0.04, 0.03, 0.025, 0.02, 0.016, 0.012)[f], k,
+                     0.6 + 0.4 * k, -0.02)
+    if f < 4:  # the glint at her hip
+        g = (1.0, 0.8, 0.5, 0.25)[f]
+        out.append(dict(k="poly", pts=place(star(4, 0.45 * g + 0.1, 0.02), hip, 0.1), m="shape", a=g, s=3.0, h=1.0,
+                        y=-0.04))
+    if f < 6:  # red lightning racing along the draw
+        r = random.Random(40 + f)
+        for i in range(3):
+            s0 = r.uniform(0.0, 0.7)
+            p0 = (hip[0] + s0 * L * math.cos(ang), hip[1] + s0 * L * math.sin(ang))
+            bolt(out, p0, ang + r.uniform(-0.35, 0.35), r.uniform(0.5, 1.1), r, (1.0, 0.9, 0.7, 0.5, 0.3, 0.15)[f], 0.9,
+                 0.6, -0.05)
+    q = random.Random(3)
+    for i in range(10):  # speed lines along the draw, rushing ahead
+        born = q.randint(0, 3)
+        age = f - born
+        life = q.randint(5, 8)
+        if 0 <= age < life:
+            k = 1.0 - age / life
+            off = q.uniform(-0.18, 0.18)
+            s0 = q.uniform(0.0, 0.6) + 0.06 * age
+            Ls = q.uniform(0.5, 1.0)
+            p0 = (hip[0] + s0 * L * math.cos(ang) - off * math.sin(ang), hip[1] + s0 * L * math.sin(ang) + off * math.cos(ang))
+            pts = [(p0[0] + Ls * j / 8 * math.cos(ang), p0[1] + Ls * j / 8 * math.sin(ang)) for j in range(9)]
+            out.append(dict(k="rib", pts=pts, w=[0.012 * (j / 8) * k + 0.002 for j in range(9)], m="line", a=k, s=2.2,
+                            h=0.8, y=-0.03))
     return out
 
 

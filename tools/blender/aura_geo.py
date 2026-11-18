@@ -27,6 +27,7 @@ PAL = {
     "p03": ("#8E0B0B", "#E8261A", "#FF8A3D", "#FFE2B0", "#1E0F0B"),
     "p08": ("#3E6FD8", "#A9D4FF", "#EAF5FF", "#FFFFFF", None),
     "h01": ("#7A0E1A", "#E8343C", "#FF8A4C", "#FFE9D6", "#1A0A0C"),
+    "h01j": ("#4A0410", "#D80E26", "#FF4652", "#FFEEF0", "#12060A"),  # her Fente écarlate: crimson, red lightning
     "h01b": ("#5A0614", "#FF1E4A", "#FF7A9A", "#FFF0F4", None),  # her long odachi's cuts: neon red (Alpha's, PGR)
 }
 

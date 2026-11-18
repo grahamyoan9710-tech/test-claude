@@ -139,7 +139,7 @@ def main():
             for i, f in enumerate(frames):
                 a = np.array(f).astype(int)
                 src = i if i in keys else next((k for k in keys if np.abs(np.array(frames[k]).astype(int) - a).mean() < 1.0), None)
-                B.append(None if src is None or keys[src] is None else
+                B.append(None if src is None else False if keys[src] is None else  # null: placed as hidden
                          (np.array(keys[src][:2], float), np.array(keys[src][2:], float)))
         else:  # found by its shape: the guard BLADE px back from the tip, kept if it lies on the drawing
             B = []
@@ -152,10 +152,10 @@ def main():
                 continue
         for i in range(n):  # a frame where it hides: its nearest neighbour's
             if B[i] is None:
-                B[i] = next((B[j] for j in sorted(range(n), key=lambda j: abs(j - i)) if B[j] is not None), None)
+                B[i] = next((B[j] for j in sorted(range(n), key=lambda j: abs(j - i)) if B[j] is not None and B[j] is not False), None)
         out = Image.new('RGBA', sheet.size, (0, 0, 0, 0))
         for i, b in enumerate(B):
-            pts = curve(b[0], b[1], fit_bow(frames[i], b[0], b[1])) if b is not None else None
+            pts = curve(b[0], b[1], fit_bow(frames[i], b[0], b[1])) if b is not None and b is not False else None
             out.paste(glow((fw, fh), pts), (i * fw, 0))
         out.save(R + 'assets/sprites/%s_%s_glow.png' % (who, clip), optimize=True)
         print(clip, sum(b is not None for b in B), '/', n)

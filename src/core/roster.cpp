@@ -471,12 +471,18 @@ void drawCut(Fighter& k, int slot, Limb limb, float dmg) {
 // The owner's Vergil technique, in red (17/11, PGR): a draw and a sheathe in a blink, and cuts open on the spot
 // `dist` ahead, three hits; four in a row, then a long recharge.
 MoveDef farCut(const char* name, F e, const char* fx, float dist, float dmg) {
-  MoveDef m = mv(name, 24, {});
+  // Iaijutsu (the owner, 18/11, Vergil's in PGR): drawn on frame 8, held drawn to 24, resheathed with a click on 36,
+  // back on guard by 52. The cut's three hits (0, 14, 28 after the draw) land the last on the click.
+  MoveDef m = mv(name, 52, {});
+  m.channelEnd = 24;
   m.projectileFrame = 8;
-  m.projectile = proj({dist, -10}, {0, 0}, 0, 16, 56, dmg, 25, 30, e, PV::Crescent);
+  m.projectile = proj({dist, -10}, {0, 0}, 0, 42, 56, dmg, 25, 30, e, PV::Crescent);
   m.projectile.fx = fx;
   m.projectile.piercing = true;
-  m.projectile.rehit = 6;  // three hits over its 16 frames
+  m.projectile.rehit = 14;
+  m.castFx = "pfx_h01_degaine";  // the draw: a razor line from her hip to the spot, red lightning on it
+  m.castFxFrame = m.projectileFrame;
+  m.castFxStays = true;
   m.projectile.ignoreGround = true;
   m.charges = 4;
   m.cooldown = 8 * 60;
