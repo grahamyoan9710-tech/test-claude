@@ -196,7 +196,7 @@ void App::goTo(Screen s, bool instant) {
                                                               : ui::Wipe::Horizon;
   // « Prestige »: the brush in Hakuen's colour between the menus, in the winner's out of a fight; the choc in the colours
   // of the first two fighters
-  ui::Flood a = ui::flood(Hero::H01), b = ui::flood(Hero::P01);
+  ui::Flood a = ui::flood(Hero::H01), b = ui::flood(Hero::P02);
   if (match_ && match_->match().fighters.size() >= 2) {
     const Match& m = match_->match();
     if (wipe_ == ui::Wipe::Flash) a = ui::flood(m.fighters[0].def->hero), b = ui::flood(m.fighters[1].def->hero);

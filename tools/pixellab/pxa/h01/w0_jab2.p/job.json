@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "86ad1538-8a4f-4266-bf41-dbf1afd3383c",
+ "job_id": "129fff6c-2854-4ff2-bb20-ab0571ca24e0",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:9e101e33-0dd3-40c6-956f-59fefd5d9298",
-  "description": "slowly, she rises on the front foot and lifts the nodachi in both hands until the blade points straight up above her head, the arms stretched high, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:53989ee8-c369-44c1-b267-d66e484065fb",
+  "description": "slowly, she rises onto her front foot and lifts the nodachi with both hands up in front of her body until both arms are stretched high above her head, the hands above her forehead and the blade slanting up and back over her head, her back leg straight behind her, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
-  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+  "initial_pose": "in a low stance facing right, both hands on the hilt beside her right hip, the nodachi pointing down and back behind her, its point near the floor"
  },
- "reply": "id: 86ad1538-8a4f-4266-bf41-dbf1afd3383c\njob_id: 86ad1538-8a4f-4266-bf41-dbf1afd3383c\ndescription: slowly, she rises on the front foot and lifts the nodachi in both hands until the blade points straight up above her head, the arms stretched high, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"86ad1538-8a4f-4266-bf41-dbf1afd3383c\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/86ad1538-8a4f-4266-bf41-dbf1afd3383c/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d5086070-bd65-50cc-88f4-0d869e6d010c\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "reply": "id: 129fff6c-2854-4ff2-bb20-ab0571ca24e0\njob_id: 129fff6c-2854-4ff2-bb20-ab0571ca24e0\ndescription: slowly, she rises onto her front foot and lifts the nodachi with both hands up in front of her body until both arms are stretched high above her head, the hands above her forehead and the blade slanting up and back over her head, her back leg straight behind her, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"129fff6c-2854-4ff2-bb20-ab0571ca24e0\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/129fff6c-2854-4ff2-bb20-ab0571ca24e0/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: cf9dfd20-dc22-5182-90d9-08c8920d3336\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_jab2.a/f_08.png",
  "last": null,
  "frames": 9,
  "charged": "1 generation"

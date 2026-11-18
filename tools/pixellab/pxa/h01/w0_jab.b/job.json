@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "8c5069ee-45f6-4ce9-9ed9-0b253ab78e09",
+ "job_id": "d852a8d1-b7e9-4693-8ec9-688ea046ef29",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:c188dbf3-6cf1-4a14-bdec-fcbbe735aefc",
-  "last_frame_url": "upload:a82d7ee1-2470-4b1b-b389-f4e9739966ac",
-  "description": "holds the long reach perfectly still for three frames, then slowly lowers the nodachi and draws the front foot back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:e70ed476-d2c2-49aa-bb32-28fd9f26be06",
+  "last_frame_url": "upload:a26db11a-9f5a-46c4-a306-e47e6bf7ab3d",
+  "description": "holds the finished cut perfectly still for three frames while her coat and ponytail swing forward and settle, then slowly draws the front foot back, takes her left hand off the hilt back to the scabbard and lowers the nodachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
-  "initial_pose": "lunging forward facing right, both arms and the nodachi stretched level to the right at chest height"
+  "initial_pose": "in a forward lunge facing right, both arms straight, both hands on the hilt in front of her front knee, the nodachi stopped low in front of her, its point forward"
  },
- "reply": "id: 8c5069ee-45f6-4ce9-9ed9-0b253ab78e09\njob_id: 8c5069ee-45f6-4ce9-9ed9-0b253ab78e09\ndescription: holds the long reach perfectly still for three frames, then slowly lowers the nodachi and draws the front foot back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"8c5069ee-45f6-4ce9-9ed9-0b253ab78e09\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/8c5069ee-45f6-4ce9-9ed9-0b253ab78e09/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a1cb3c00-5091-586a-9168-78c27e361e1e\nasset_status: pending (saved to your gallery when generation completes)",
+ "reply": "id: d852a8d1-b7e9-4693-8ec9-688ea046ef29\njob_id: d852a8d1-b7e9-4693-8ec9-688ea046ef29\ndescription: holds the finished cut perfectly still for three frames while her coat and ponytail swing forward and settle, then slowly draws the front foot back, takes her left hand off the hilt back to the scabbard and lowers the nodachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d852a8d1-b7e9-4693-8ec9-688ea046ef29\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/d852a8d1-b7e9-4693-8ec9-688ea046ef29/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 1058842d-196d-5fbd-a968-73b4829d476e\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_jab.p/f_08.png",
  "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
  "frames": 9,

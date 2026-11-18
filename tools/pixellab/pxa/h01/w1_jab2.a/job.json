@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "31854bf4-0dbc-47b1-a868-5576fe8df4a4",
+ "job_id": "e812a25a-9f90-4622-9bb3-3ff5f093254b",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:251050d9-4325-4943-8db8-e27c142338c1",
-  "description": "slowly, she raises the long odachi high above her right shoulder in her right hand, the blade pointing up and back, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:2b1149d5-4c92-4a61-bd48-0566eb0a3cba",
+  "description": "slowly, she lowers the long odachi and draws it back beside her right hip until the long blade lies level behind her at waist height, pointing back, her right elbow bent, her right shoulder drawn back, her knees bent and her weight on the back foot, her left hand forward, then holds that coiled pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
-  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+  "initial_pose": "rising on the front foot facing right, the right arm stretched high and forward, the long odachi pointing up and forward, the left arm stretched back"
  },
- "reply": "id: 31854bf4-0dbc-47b1-a868-5576fe8df4a4\njob_id: 31854bf4-0dbc-47b1-a868-5576fe8df4a4\ndescription: slowly, she raises the long odachi high above her right shoulder in her right hand, the blade pointing up and back, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"31854bf4-0dbc-47b1-a868-5576fe8df4a4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/31854bf4-0dbc-47b1-a868-5576fe8df4a4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 77fd3c76-133a-53ed-8cbb-4ba1c28a3fd2\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "reply": "id: e812a25a-9f90-4622-9bb3-3ff5f093254b\njob_id: e812a25a-9f90-4622-9bb3-3ff5f093254b\ndescription: slowly, she lowers the long odachi and draws it back beside her right hip until the long blade lies level behind her at waist height, pointing back, her right elbow bent, her right shoulder drawn back, her knees bent and her weight on the back foot, her left hand forward, then holds that coiled pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"e812a25a-9f90-4622-9bb3-3ff5f093254b\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/e812a25a-9f90-4622-9bb3-3ff5f093254b/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 8ed3b17e-8fe9-5767-973c-e623a450b4f4\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jab.p/f_08.png",
  "last": null,
  "frames": 9,
  "charged": "1 generation"

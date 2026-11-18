@@ -1,9 +1,0 @@
-{
- "status": "done",
- "tool": "join",
- "parts": [
-  "w0_ftilt.a",
-  "w0_ftilt.b"
- ],
- "cut_after": 8
-}

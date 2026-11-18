@@ -48,13 +48,29 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », Hakuen remplace l'ancien 01) | 18/11 02 h 50 UTC |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », Hakuen remplace l'ancien 01) | 18/11 02 h 50 UTC |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », Hakuen remplace l'ancien 01) | 18/11 02 h 50 UTC |
+| Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 18/11 07 h 10 UTC, session claude/project-thread-58u7pf : nouveaux M1 de Hakuen importés (arme A : kenjutsu à
+  deux mains, coupe diagonale, montante, descendante ; arme B : une main façon Alpha, Fente montante, Croix pourpre
+  horizontale, Coupe rasante ; 7 parties générées une à une, 3 prises chacune, chaque coup part de la fin du
+  précédent). Les coupes-éclipses `w<slot>_ftilt/utilt/dtilt` sont des liens vers `jab/jab2/jab3` (mêmes clips).
+  Fente écarlate v3 montée (`pxa/h01/w0_nspecial` : rengainé, dégainé = feuille 8 tenu 8→24, rengainé lent, clic
+  feuille 16 ≈ image 36, retour). Lueurs `h01_w1_{jab,jab2,jab3,ftilt,utilt,dtilt}_glow.png` retirées (elles
+  dessinaient l'ancienne lame) : à refaire par le fil VFX, comme les slashs de ces coups
+  (`/mnt/project-files/hakuen/coupes_h01.md`, section v2). Anciennes versions : historique git (les `pxa/h01/*.old`
+  ne sont pas poussés). fitall : tests 100 %, Hakuen 56 % → 56 %. Verrous libérés.
+- 18/11 06 h 30 UTC, session claude/project-thread-58u7pf : Hakuen à la place de l'ancien 01, fait et vérifié
+  (titre, choix des persos, galerie, pause ; la bande-annonce du titre bouclait sur 6 coupes fixes et plantait
+  avec 5 persos : elle suit maintenant `kCuts`). yoyo trouve les M1 au katana « bizarres » et l'arme B pas assez
+  Alpha : les 3 M1 des deux armes sont refaits (arme A : kenjutsu à deux mains, coupe diagonale, montante,
+  descendante ; arme B : une main façon Alpha, montante, allonge, ras du sol ; chaque coup part de la fin du
+  précédent), ainsi que la Fente écarlate (iai façon Vergil, rengainé à plat ; le fil VFX a calé `farCut` : 52
+  images, clic à 36). Les anciennes parties sont dans `pxa/h01/*.old`. Verrous gardés jusqu'à l'import.
 - 18/11 02 h 50 UTC, session claude/project-thread-58u7pf : yoyo valide l'arme B et les coupes (« oui je valide fait
   le reste »). Hakuen (h01) remplace l'ancien 01 « Ombre violette » (p01) : roster, titre, galerie, liste des coups
   de la pause ; fichiers p01 retirés (clips, `fx_p01_*` et `fx_pfx_p01_*` : le fil VFX qui tient « Effets » est

@@ -166,7 +166,7 @@ struct Cut {
   const char* id;
   float figX;  // the left of its x4 frame
 };
-const Cut kCuts[] = {{"h01", 814}, {"p01", 60}, {"p02", 724}, {"p03", 80}, {"p07", 740}, {"p08", 100}};
+const Cut kCuts[] = {{"h01", 814}, {"p02", 60}, {"p03", 724}, {"p07", 80}, {"p08", 740}};
 
 std::string numberLabel(const CharacterDef& d) {
   const Fiche fi = fiche(d);
@@ -251,7 +251,7 @@ void App::drawTitle() {
   if (p >= 37.0f) {  // the two fighters face to face, x3
     const float a = up(37.0f, 42.0f), dy = 30.0f * (1.0f - a);
     figure("h01", art::kSheetIdle, T, 70, 655 + dy, 3, false, a);
-    figure("p01", art::kSheetIdle, T, 838, 655 + dy, 3, true, a);
+    figure("p02", art::kSheetIdle, T, 838, 655 + dy, 3, true, a);
   }
   if (p >= 35.6f) {
     ui::LogoIn in;
@@ -312,7 +312,7 @@ void App::drawTitle() {
     const float k = ui::seg(p, 0.0f, 2.2f, 0.7f, 0.0f, 0.2f, 1.0f);
     DrawRectanglePro({640, 359.5f, 1400 * k, 3}, {700 * k, 1.5f}, -12.0f, ui::kSilver);
   }
-  for (int i = 0; i < 6; ++i) {
+  for (int i = 0; i < int(std::size(kCuts)); ++i) {
     const float u = p - (0.30f + 0.45f * i) / 9.0f * 100.0f;
     if (u >= 0.0f && u < 5.0f) drawCut(i, u);
   }

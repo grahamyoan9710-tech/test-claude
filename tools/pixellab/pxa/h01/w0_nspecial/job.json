@@ -3,7 +3,10 @@
  "tool": "join",
  "parts": [
   "w0_nspecial.a",
-  "w0_nspecial.b"
+  "w0_nspecial.p (last frame)",
+  "w0_nspecial.r",
+  "w0_nspecial.a (backwards)"
  ],
- "cut_after": 12
+ "cut_after": 8,
+ "click": 16
 }

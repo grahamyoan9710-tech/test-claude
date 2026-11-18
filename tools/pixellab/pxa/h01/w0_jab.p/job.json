@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "8a75d1c0-c5ae-4287-82f4-d2d6cebe2f69",
+ "job_id": "4c07e4cc-2366-4bbe-9060-cd8f402ea89f",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:0da83dcc-c7f8-4742-b6e9-ef5c6968aeb0",
-  "description": "slowly, she turns her hips and stretches both arms out to the right at chest height until the nodachi is level and fully extended to the right, then holds that long reach perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:d107e936-b602-403b-a683-4c6164c37607",
+  "description": "slowly, she steps forward onto her bent front knee and brings the nodachi down at a slant in front of her with both hands until both arms are straight, the hands in front of her front knee and the blade stopped low in front of her, its point forward a little above the floor, her hips square and her back leg straight, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
-  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+  "initial_pose": "standing facing right, both hands on the hilt of the nodachi beside her right shoulder, the blade pointing up and back behind her"
  },
- "reply": "id: 8a75d1c0-c5ae-4287-82f4-d2d6cebe2f69\njob_id: 8a75d1c0-c5ae-4287-82f4-d2d6cebe2f69\ndescription: slowly, she turns her hips and stretches both arms out to the right at chest height until the nodachi is level and fully extended to the right, then holds that long reach perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"8a75d1c0-c5ae-4287-82f4-d2d6cebe2f69\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/8a75d1c0-c5ae-4287-82f4-d2d6cebe2f69/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e516a199-7d13-531b-8a20-b53a7997ca88\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "reply": "id: 4c07e4cc-2366-4bbe-9060-cd8f402ea89f\njob_id: 4c07e4cc-2366-4bbe-9060-cd8f402ea89f\ndescription: slowly, she steps forward onto her bent front knee and brings the nodachi down at a slant in front of her with both hands until both arms are straight, the hands in front of her front knee and the blade stopped low in front of her, its point forward a little above the floor, her hips square and her back leg straight, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"4c07e4cc-2366-4bbe-9060-cd8f402ea89f\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/4c07e4cc-2366-4bbe-9060-cd8f402ea89f/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: cee3fb33-49ad-5c05-82a3-7994d06af188\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_jab.a/f_08.png",
  "last": null,
  "frames": 9,
  "charged": "1 generation"
