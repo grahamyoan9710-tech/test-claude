@@ -54,7 +54,32 @@ def arcpts(c, R, a0, a1, sy, n=36):
 def frames(cut, b, f):
     """The shapes of frame f of cut `cut` (weapon B if b)."""
     g, seed = CUTS[cut], sum(map(ord, cut)) * 2 + b
-    if g[-1] == "x":  # a cross: two long straight cuts through c, the second 2 frames later (Alpha's X)
+    if g[-1] == "x":  # Alpha's X: two huge lines crossing ahead of her, the second 2 frames later
+        out = []
+        for j, (ang, born) in enumerate(((math.radians(g[2]), 0), (math.radians(g[3]), 2))):
+            age = f - born
+            if 0 <= age < 9:
+                k = (1.0, 1.0, 0.9, 0.75, 0.6, 0.45, 0.3, 0.18, 0.08)[age]
+                L = g[1] * 1.6 * (0.55, 1.0, 1.06, 1.1, 1.13, 1.15, 1.16, 1.17, 1.18)[age]
+                p = (g[0][0] + 0.04 * age * math.cos(ang), g[0][1] + 0.04 * age * math.sin(ang))
+                out += neon(p, ang, L, 0.075 * (1.5 if age == 0 else 1.0) * (1 - 0.07 * age), k, -0.02 - 0.01 * j)
+            if age == 0:
+                out += spray(g[0], ang, 1.6, 10, 0, seed + j, -0.05)
+            elif 1 <= age < 6:
+                out += spray(g[0], ang, 1.6, 10, age, seed + j, -0.05)
+        if 0 <= f - 2 < 3:  # the crossing flashes
+            gk = (1.0, 0.6, 0.3)[f - 2]
+            out.append(dict(k="poly", pts=place(star(4, 0.7 * gk + 0.2, 0.03), g[0], 0.4), m="shape", a=gk, s=3.0,
+                            h=1.0, y=-0.08))
+        out += crackle(g[0], 0.7, f, seed, 3)
+        return out
+    if b:
+        out = alpha(*g[:6], f, seed)
+        if len(g) > 6 and f >= 2:
+            c, R, a0, a1, sy, W = g[:6]
+            out += alpha((c[0], c[1] - 0.08), R * 0.95, a1, a0, sy, W, f - 2, seed + 1)
+        return out
+    if False:
         out = []
         for j, (ang, born) in enumerate(((math.radians(g[2]), 0), (math.radians(g[3]), 2))):
             age = f - born
@@ -135,7 +160,8 @@ def one(c, R, a0, a1, sy, W, b, f, seed):
         L = rng.uniform(0.07, 0.15) * q
         out.append(dict(k="poly", pts=place(shard(L, L * 0.22), (x, z), dirn), m="solid", a=q,
                         s=1.6, h=0.75 if (b and i % 2) else 0.55 + 0.3 * q, y=-0.028))
-    # weapon B: Alpha's cuts that go on: long straight lines shooting on from the tip, along its travel
+    # Hakuen's red lightning crackling along the cut
+    out += crackle_arc(c, R * grow, a1, tail, sy, f, seed)
     if b:
         ta = math.radians(a1 + (-90 if a1 < a0 else 90))  # the tip's direction of travel
         tip = arcpts(c, R, a1, a1, sy, 1)[0]
@@ -410,4 +436,151 @@ def flying(kind, f):
         Ls = rng.uniform(0.04, 0.08) * q
         out.append(dict(k="poly", pts=place(shard(Ls, Ls * 0.25), (-0.1 - 0.6 * ph, z - 0.1 * ph * ph), math.pi),
                         m="solid", a=q, s=1.6, h=0.6, y=-0.06))
+    return out
+
+
+# --- Hakuen's red lightning on her cuts, and weapon B in the manner of Alpha (PGR) ----------------------------------
+# yoyo, 18/11 (his GIF of Alpha): "lâche-toi, ose". What it does: a huge soft smear of neon rose light behind the
+# blade, its leading edge white, a dark crimson shadow crescent under it; very long thin neon lines shooting on from
+# the cut and crossing; a spray of tapered streaks at the contact; everything two or three times her height; a pink
+# haze of bloom. And "01 fait de la foudre rouge": red lightning crackles on every cut of hers.
+def bolt_pts(p, q, r, depth=4, amp=0.45):
+    return jag(p, q, depth, amp, r)
+
+
+def crackle_arc(c, R, a1, tail, sy, f, seed):
+    """Red bolts running along a crescent and leaping off it, new every frame, its first 8 frames."""
+    out = []
+    if f >= 8:
+        return out
+    r = random.Random(seed * 31 + f)
+    fa = (1.0, 1.0, 0.9, 0.8, 0.65, 0.5, 0.35, 0.2)[f]
+    for i in range(3 if f < 3 else 2):
+        s0 = r.uniform(0.0, 0.6)
+        an0 = math.radians(a1 + (tail - a1) * s0)
+        an1 = math.radians(a1 + (tail - a1) * min(1.0, s0 + r.uniform(0.2, 0.35)))
+        p0 = (c[0] + R * math.cos(an0), c[1] + R * sy * math.sin(an0))
+        p1 = (c[0] + (R + r.uniform(-0.15, 0.25)) * math.cos(an1), c[1] + (R + r.uniform(-0.15, 0.25)) * sy * math.sin(an1))
+        out.append(dict(k="bolt", pts=jag(p0, p1, 4, 0.5, r), w=1.3, a=fa, s=1.0, h=0.9, y=-0.045))
+    # one or two forked bolts leaping outward off the edge
+    for i in range(2 if f < 4 else 1):
+        an = math.radians(a1 + (tail - a1) * r.uniform(0.0, 0.5))
+        p0 = (c[0] + R * math.cos(an), c[1] + R * sy * math.sin(an))
+        bolt(out, p0, math.atan2(sy * math.sin(an), math.cos(an)) + r.uniform(-0.5, 0.5), R * r.uniform(0.35, 0.6), r,
+             fa, w=1.2, fork=0.8, y=-0.05)
+    return out
+
+
+def crackle(p, R, f, seed, n):
+    """Red bolts leaping out of p, new every frame, its first 6 frames."""
+    out = []
+    if f >= 6:
+        return out
+    r = random.Random(seed * 37 + f)
+    for i in range(n):
+        an = r.uniform(0, TAU)
+        q0 = (p[0] + 0.1 * math.cos(an), p[1] + 0.1 * math.sin(an))
+        q1 = (p[0] + R * r.uniform(0.6, 1.1) * math.cos(an), p[1] + R * r.uniform(0.6, 1.1) * math.sin(an))
+        out.append(dict(k="bolt", pts=jag(q0, q1, 4, 0.5, r), w=0.9, a=(1.0, 0.9, 0.75, 0.55, 0.35, 0.2)[f], s=1.0,
+                        h=0.9, y=-0.06))
+    return out
+
+
+def neon(p, ang, L, w, k, y):
+    """Alpha's long line: a wide soft rose glow, a hot middle, a white razor core; sharp at both ends."""
+    n = 18
+    pts = [(p[0] + (i / n - 0.5) * L * math.cos(ang), p[1] + (i / n - 0.5) * L * math.sin(ang)) for i in range(n + 1)]
+    prof = [math.sin(math.pi * i / n) ** 0.6 * (0.55 + 0.45 * i / n) for i in range(n + 1)]
+    return [dict(k="rib", pts=pts, w=[w * 3.2 * x + 0.004 for x in prof], m="veil", a=0.55 * k, s=1.2, h=0.5, y=y + 0.002),
+            dict(k="rib", pts=pts, w=[w * x + 0.003 for x in prof], m="solid", a=k, s=1.4, h=0.6, y=y),
+            dict(k="rib", pts=pts, w=[w * 0.35 * x + 0.002 for x in prof], m="line", a=k, s=3.2, h=1.0, y=y - 0.001)]
+
+
+def spray(p, ang, L, n, age, seed, y):
+    """A fan of tapered streaks thrown from p along ang (the contact), flying out and thinning."""
+    out = []
+    r = random.Random(seed * 53)
+    for i in range(n):
+        da = r.uniform(-0.55, 0.55)
+        Ls = L * r.uniform(0.45, 1.0)
+        sp = r.uniform(0.06, 0.12)
+        k = max(0.0, 1.0 - age / 6.0)
+        if k <= 0:
+            continue
+        a = ang + da
+        d0 = 0.1 + sp * age
+        q0 = (p[0] + d0 * math.cos(a), p[1] + d0 * math.sin(a))
+        m = 10
+        pts = [(q0[0] + Ls * (0.6 + 0.4 * k) * j / m * math.cos(a), q0[1] + Ls * (0.6 + 0.4 * k) * j / m * math.sin(a))
+               for j in range(m + 1)]
+        w = r.uniform(0.02, 0.05) * k
+        out.append(dict(k="rib", pts=pts, w=[w * (1 - j / m) ** 0.8 + 0.002 for j in range(m + 1)], m="line", a=k,
+                        s=2.6, h=0.85, y=y - 0.001 * i))
+    return out
+
+
+def alpha(c, R, a0, a1, sy, W, f, seed):
+    """One of weapon B's cuts, frame f, in the manner of Alpha (PGR)."""
+    rng = random.Random(seed)
+    out = []
+    R = R * 1.25  # bigger than her: the cut's light reaches past the long blade
+    eat = 0.0 if f < 2 else min(0.95, ((f - 1) / 9.0) ** 0.8)
+    k = 1.0 if f < 2 else max(0.0, 1.0 - (f - 1) / 10.0) ** 0.8
+    if k <= 0:
+        return out
+    tail = a1 + (a0 - a1) * (1.0 - eat)
+    grow = 1.0 + 0.05 * f
+    P = arcpts(c, R * grow, a1, tail, sy, 40)
+    n = len(P) - 1
+    Wd = W * 2.4 * (1.3 if f == 0 else 1.0) * k ** 0.6
+    ws = [Wd * drop(i / n, 0.1, 0.8) for i in range(n + 1)]
+
+    def inward(pts, wl, frac):
+        o = []
+        for i, (x, z) in enumerate(pts):
+            dx, dz = x - c[0], (z - c[1]) / max(sy, 0.2)
+            L = math.hypot(dx, dz) or 1.0
+            o.append((x - dx / L * wl[i] * frac, z - dz / L * wl[i] * frac * sy))
+        return o
+    # the smear: a wide soft band of rose light inside the edge
+    out.append(dict(k="rib", pts=inward(P, ws, 0.5), w=ws, m="veil", a=0.9 * k, s=1.8, h=0.55, y=-0.01))
+    out.append(dict(k="rib", pts=inward(P, ws, 0.25), w=[x * 0.45 for x in ws], m="veil", a=k, s=2.4, h=0.85, y=-0.015))
+    # its razor leading edge, white-hot
+    out.append(dict(k="rib", pts=P, w=[0.028 * (0.4 + 0.6 * drop(i / n, 0.05, 0.5)) + 0.004 for i in range(n + 1)],
+                    m="line", a=k, s=3.4, h=1.0, y=-0.03))
+    # the dark crimson shadow crescent just outside it, a frame late
+    if 1 <= f < 9:
+        E = arcpts(c, R * grow + 0.12, a1 - (a1 - a0) * 0.04, tail + (a1 - tail) * 0.2, sy, 30)
+        out.append(dict(k="rib", pts=E, w=[0.07 * k * drop(i / 30, 0.15, 1.0) + 0.004 for i in range(31)], m="rock",
+                        a=0.85 * k, s=1.0, h=0.25, y=0.01))
+    # very long neon lines shooting on from the tip along its travel, crossing
+    ta = math.radians(a1 + (-90 if a1 < a0 else 90))
+    tip = arcpts(c, R, a1, a1, sy, 1)[0]
+    for i, (born, L, da) in enumerate(((0, 3.6, 0.0), (1, 2.8, 0.22), (2, 2.4, -0.3))):
+        age = f - born
+        if 0 <= age < 8:
+            q = (1.0, 1.0, 0.85, 0.7, 0.5, 0.35, 0.2, 0.1)[age]
+            a = ta + da
+            p = (tip[0] + (0.3 + 0.12 * age) * math.cos(a), tip[1] + (0.3 + 0.12 * age) * math.sin(a))
+            out += neon(p, a, L * (0.6 if age == 0 else 1.0 + 0.03 * age), 0.05 * (1 - 0.08 * age), q, -0.04 - 0.003 * i)
+    # the spray at the contact (the tip's travel)
+    out += spray(tip, ta, 1.3, 9, f, seed, -0.06)
+    # the tip's glint
+    if f < 3:
+        g = (1.0, 0.7, 0.35)[f]
+        out.append(dict(k="poly", pts=place(star(4, 0.55 * g, 0.022), P[0], math.radians(a1)), m="shape", a=g, s=3.0,
+                        h=1.0, y=-0.07))
+    # rose motes left floating
+    for i in range(10):
+        born = rng.randint(1, 4)
+        age = f - born
+        lf = rng.randint(5, 9)
+        s0 = rng.uniform(0.0, 0.8)
+        an = math.radians(a1 + (a0 - a1) * s0)
+        if 0 <= age < lf:
+            qk = 1.0 - age / lf
+            x = c[0] + (R + rng.uniform(-0.1, 0.2)) * math.cos(an)
+            z = c[1] + (R + rng.uniform(-0.1, 0.2)) * sy * math.sin(an) + 0.01 * age
+            out.append(dict(k="dot", c=(x, z), r=0.018 * qk + 0.004, m="solid", a=qk, s=2.4, h=0.8, y=-0.065))
+    out += crackle_arc(c, R * grow, a1, tail, sy, f, seed)
     return out
