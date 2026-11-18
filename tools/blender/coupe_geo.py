@@ -13,12 +13,22 @@ from aura_geo import star, place, shard
 TAU = 2 * math.pi
 CN = 11  # frames (30 fps): about a third of a second
 
-# name: centre, radius, start and end angles (degrees, the blade moves from a0 to a1), vertical squash, width
+# clip: centre, radius, start and end angles (degrees, the blade moves from a0 to a1), vertical squash (a flat ellipse:
+# a horizontal cut seen from the side), width; poses from /mnt/project-files/hakuen/coupes_h01.md and her clips
+H_CUT = ((0.15, 1.12), 1.2, -170, 5, 0.38, 0.32)      # horizontal, behind to front, chest high
 CUTS = {
-    "h": ((0.35, 0.95), 1.05, 160, -25, 0.42, 0.30),     # a wide horizontal cut in front
-    "up": ((0.45, 0.6), 1.0, -70, 115, 1.0, 0.32),       # a rising cut, low ahead to over the head
-    "down": ((0.45, 0.75), 1.0, 115, -70, 1.0, 0.34),    # a falling cut, over the head to low ahead
-    "diag": ((0.3, 0.85), 1.1, 140, -40, 0.75, 0.30),    # high behind to low ahead
+    "a_jab": H_CUT,
+    "a_jab2": ((0.25, 1.05), 1.15, -50, 95, 1.0, 0.32),    # rising in front, to straight up
+    "a_jab3": ((0.4, 0.85), 1.2, 110, -25, 1.0, 0.36),    # falling over the head to low ahead
+    "a_ftilt": ((0.2, 1.0), 1.15, 125, -40, 0.9, 0.32),   # high behind the shoulder to low ahead
+    "a_utilt": ((0.15, 1.05), 1.35, -170, 5, 0.42, 0.34),  # a wide horizontal
+    "a_dtilt": ((0.2, 1.0), 1.15, -45, 95, 1.0, 0.32),    # rising
+    "a_fair": ((0.25, 1.35), 1.15, 100, -95, 1.0, 0.34),  # in the air: over the head to under the feet, in front
+    "a_nair": ((0.0, 1.15), 1.15, 180, -180, 0.5, 0.26),  # a full turn round her
+    "a_fthrow": H_CUT,
+    "a_uthrow": ((0.1, 1.1), 1.1, -30, 95, 1.0, 0.3),     # rising over her
+    "a_ledgeattack": ((0.2, 0.5), 1.2, -170, 5, 0.35, 0.3),  # horizontal, knee high
+    "a_getupattack": ((0.2, 0.5), 1.2, -170, 5, 0.35, 0.3, 2),  # twice (its second cut 2 frames later)
 }
 
 
@@ -34,8 +44,17 @@ def arcpts(c, R, a0, a1, sy, n=36):
 
 def frames(cut, b, f):
     """The shapes of frame f of cut `cut` (weapon B if b)."""
-    c, R, a0, a1, sy, W = CUTS[cut]
-    rng = random.Random(sum(map(ord, cut)) * 2 + b)
+    g, seed = CUTS[cut], sum(map(ord, cut)) * 2 + b
+    out = one(*g[:6], b, f, seed)
+    if len(g) > 6 and f >= 2:  # its second cut, back the other way, a hair lower
+        c, R, a0, a1, sy, W = g[:6]
+        out += one((c[0], c[1] - 0.08), R * 0.95, a1, a0, sy, W, b, f - 2, seed + 1)
+    return out
+
+
+def one(c, R, a0, a1, sy, W, b, f, seed):
+    """One cut, frame f."""
+    rng = random.Random(seed)
     out = []
     # the tail eats toward the tip from frame 2; the whole cut thins and cools
     eat = 0.0 if f < 2 else min(0.92, ((f - 1) / (CN - 2)) ** 0.8)
@@ -62,12 +81,12 @@ def frames(cut, b, f):
             dx, dz = x - c[0], (z - c[1]) / max(sy, 0.2)
             L = math.hypot(dx, dz) or 1.0
             body.append((x - dx / L * ws[i] * 0.45, z - dz / L * ws[i] * 0.45 * sy))
-        heat = (0.3 if b else 0.27) + 0.18 * k  # red bodies: the white (A) or gold (B) is the edge's
-        out.append(dict(k="rib", pts=body, w=ws, m="flame", a=k, s=1.3 + (0.6 if f < 2 else 0.0), h=heat, y=-0.02))
+        heat = (0.3 if b else 0.16) + 0.2 * k  # red bodies: the white (A) or gold (B) is the edge's
+        out.append(dict(k="rib", pts=body, w=ws, m="solid", a=k, s=1.0 + (0.5 if f < 2 else 0.0), h=heat, y=-0.02))
         # the razor edge: white-hot on A, gold on B
         out.append(dict(k="rib", pts=seg, w=[0.022 * (0.4 + 0.6 * drop((lo + i) / n, 0.05, 0.6)) + 0.004
                                             for i in range(len(seg))],
-                        m="line", a=k, s=2.2 if not b else 1.8, h=1.0 if not b else 0.78, y=-0.03))
+                        m="line", a=k, s=3.0 if not b else 2.4, h=1.0 if not b else 0.78, y=-0.03))
     # its echo, a hair outside, a frame late, thin
     if 1 <= f <= 6:
         E = arcpts(c, R * grow + 0.09, a1 - (a1 - a0) * 0.05, tail + (a1 - tail) * 0.25, sy)

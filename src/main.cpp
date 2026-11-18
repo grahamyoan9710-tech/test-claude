@@ -6,7 +6,7 @@
 //                    [--pad-glyphs xbox|ps|switch]   (gamepad button prompts, no gamepad needed)
 //                    [--shot FRAME FILE.png]... [--record FROM TO EVERY DIR] [--fullres] [--quit-after FRAMES] [--debug]
 //                    [--ult SLOT]   (with --demo: the first fighter unleashes its ultimate, SLOT -1/0/1)
-//                    [--skill n|s|u|d] [--weapon SLOT]   (with --demo: the first fighter repeats that special)
+//                    [--skill n|s|u|d|j] [--weapon SLOT]   (with --demo: the first fighter repeats that special)
 //                    [--teams]   (team battle: red against blue)
 //                    [--palette N]   (colours of the menus, see menu_theme.hpp; 0 = the game's)
 //                    [--export-audio DIR]

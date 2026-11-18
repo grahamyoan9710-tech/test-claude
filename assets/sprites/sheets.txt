@@ -115,6 +115,18 @@ fx pfx_airjump 9 81 27 40.0 13.0 30 0 0 1
 fx pfx_dash 11 54 21 37.0 17.0 30 0 0 1
 fx pfx_giant_sphere 30 267 267 138.4 128.1 10 1 75
 fx pfx_h01_aura 72 167 271 93.9 249.2 30 1 0 0 1
+fx pfx_h01_a_jab 11 320 146 121.2 159.9 30 0 0 0 1
+fx pfx_h01_a_jab2 11 212 282 28.9 281.3 30 0 0 0 1
+fx pfx_h01_a_jab3 11 232 238 16.0 230.8 30 0 0 0 1
+fx pfx_h01_a_ftilt 11 253 245 67.7 237.4 30 0 0 0 1
+fx pfx_h01_a_utilt 11 367 181 146.5 153.8 30 0 0 0 1
+fx pfx_h01_a_dtilt 11 214 280 33.9 276.3 30 0 0 0 1
+fx pfx_h01_a_fair 11 210 310 28.9 268.1 30 0 0 0 1
+fx pfx_h01_a_nair 11 331 219 175.7 212.8 30 0 0 0 1
+fx pfx_h01_a_fthrow 11 330 164 130.7 159.9 30 0 0 0 1
+fx pfx_h01_a_uthrow 11 217 246 43.5 279.1 30 0 0 0 1
+fx pfx_h01_a_ledgeattack 11 347 156 143.4 97.5 30 0 0 0 1
+fx pfx_h01_a_getupattack 11 349 156 145.1 97.5 30 0 0 0 1
 fx pfx_h01_crescent 12 330 360 240.0 180.0 30 1 50 0 1
 fx pfx_h01_draw 16 264 119 7.0 121.0 20 0 0 1
 fx pfx_h01_glint 11 42 42 21.0 21.0 30 0 0 1

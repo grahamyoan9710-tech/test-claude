@@ -30,10 +30,11 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "p08": ("#C98F28", "#FFD45A", "#FFF3BF", "#FFFFFF", None),
     "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
-if KIND in ("aura", "eveil") or (KIND or "").startswith("coupe_"):  # their own colours (aura_geo.PAL)
+CUT = STYLE == "h01" and (KIND or "")[:2] in ("a_", "b_")  # Hakuen's sword cuts: a_jab-h01 -> pfx_h01_a_jab
+if KIND in ("aura", "eveil") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import aura_geo
-    PALETTES[STYLE] = aura_geo.PAL[STYLE]
+    PALETTES[STYLE] = aura_geo.PAL["h01b" if CUT and KIND[0] == "b" else STYLE]
 rng = random.Random(sum(map(ord, RECIPE)))
 LAYER = ""  # the layer being rendered: "" (behind the fighters) or "_front" (over them)
 
@@ -1814,10 +1815,10 @@ def r_eveil():
 
 
 def r_coupe():
-    """Hakuen's sword cut (coupe_geo.py): played once at her feet on the cut's frame. coupe_<cut>-h01 (weapon A) or
-    -h01b (weapon B)."""
+    """Hakuen's sword cut (coupe_geo.py): played once at her feet on the cut's first hitbox frame (it follows her).
+    a_<clip>-h01: weapon A's, b_<clip>-h01: weapon B's."""
     import coupe_geo
-    cut, b = KIND[len("coupe_"):], STYLE == "h01b"
+    cut, b = KIND, KIND[0] == "b"
     N = coupe_geo.CN
     W, H, AX, AY = frame_of([aura_geo.bounds(coupe_geo.frames(cut, b, f)) for f in range(N)], 0.12)
     meta = dict(W=W, H=H, AX=AX, AY=AY, RH=0, N=N, FPS=30, LOOP=0)
@@ -1837,7 +1838,7 @@ if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]
     meta, anim = CASTS[kind](**opts)
 else:
-    meta, anim = r_coupe() if KIND.startswith("coupe_") else RECIPES[KIND]()
+    meta, anim = r_coupe() if CUT else RECIPES[KIND]()
 FRAMES = [int(x) for x in os.environ.get("CH_FRAMES", "").split(",") if x.strip()] or range(meta["N"])
 for LAYER in meta.get("LAYERS", [""]):  # (a burst's near half: its own strip, <name>_front)
     os.makedirs(OUT + LAYER, exist_ok=True)
