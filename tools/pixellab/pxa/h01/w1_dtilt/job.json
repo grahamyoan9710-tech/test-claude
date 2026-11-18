@@ -1,9 +1,0 @@
-{
- "status": "done",
- "tool": "join",
- "parts": [
-  "w1_dtilt.a",
-  "w1_dtilt.b"
- ],
- "cut_after": 8
-}

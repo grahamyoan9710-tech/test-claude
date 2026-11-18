@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "f592a86f-c7b7-4db9-9e9c-455fd3dc0406",
+ "job_id": "839ffaa5-f11a-46ef-881b-9feeb0ac2ae7",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:6c685464-a063-4fa6-bb69-24aa28f37d6a",
-  "last_frame_url": "upload:8d9b054a-f862-4552-ae83-bc99221fcaa7",
-  "description": "holds the pose perfectly still for three frames, then slowly rises back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:43ee9c39-ef77-4508-8158-b0fc544364db",
+  "last_frame_url": "upload:a62fa76b-2154-4efe-8d83-c4bea38212a5",
+  "description": "holds the low lunge perfectly still for three frames while her coat and ponytail settle, then slowly rises, draws the back leg in and lifts the long odachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
-  "initial_pose": "in a very deep crouch facing right, the right arm and the long odachi stretched far forward just above the floor"
+  "initial_pose": "in a very long low lunge facing right, the right arm stretched far forward, the long odachi level in front of her at knee height, the left arm stretched back"
  },
- "reply": "id: f592a86f-c7b7-4db9-9e9c-455fd3dc0406\njob_id: f592a86f-c7b7-4db9-9e9c-455fd3dc0406\ndescription: holds the pose perfectly still for three frames, then slowly rises back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f592a86f-c7b7-4db9-9e9c-455fd3dc0406\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/f592a86f-c7b7-4db9-9e9c-455fd3dc0406/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 0ebb27cb-86a8-5173-b965-86bf95548424\nasset_status: pending (saved to your gallery when generation completes)",
+ "reply": "id: 839ffaa5-f11a-46ef-881b-9feeb0ac2ae7\njob_id: 839ffaa5-f11a-46ef-881b-9feeb0ac2ae7\ndescription: holds the low lunge perfectly still for three frames while her coat and ponytail settle, then slowly rises, draws the back leg in and lifts the long odachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"839ffaa5-f11a-46ef-881b-9feeb0ac2ae7\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/839ffaa5-f11a-46ef-881b-9feeb0ac2ae7/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a5ac1091-c6b9-54e7-92a0-8c6f538ec122\nasset_status: pending (saved to your gallery when generation completes)",
  "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jab3.p/f_08.png",
  "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
  "frames": 9,

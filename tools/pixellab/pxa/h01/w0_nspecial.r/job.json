@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "db160a6c-d92e-48e5-8cdc-4da25084418b",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:2feba865-6d1b-4361-928e-2a138cde66cd",
+  "last_frame_url": "upload:c3d32fc4-a6bc-438a-add0-8fd275dd49e6",
+  "description": "slowly sheathes the nodachi back into the low iai crouch: she brings the blade back past her left hip, level and pointing behind her, her right arm stretched forward holding the handle; the point enters the mouth of the scabbard and she draws her right hand back toward her hip, sliding the blade straight into the scabbard, until the gold guard touches the mouth; then holds the low iai crouch perfectly still, her right hand on the handle. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "leaning forward facing right, knees bent, the right arm stretched straight in front at shoulder height, the nodachi level and pointing forward, the left hand holding the scabbard back at her hip"
+ },
+ "reply": "id: db160a6c-d92e-48e5-8cdc-4da25084418b\njob_id: db160a6c-d92e-48e5-8cdc-4da25084418b\ndescription: slowly sheathes the nodachi back into the low iai crouch: she brings the blade back past her left hip, level and pointing behind her, her right arm stretched forward holding the handle; the point enters the mouth of the scabbard and she draws her right hand back toward her hip, sliding the blade straight into the scabbard, until the gold guard touches the mouth; then holds the low iai crouch perfectly still, her right hand on the handle. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"db160a6c-d92e-48e5-8cdc-4da25084418b\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/db160a6c-d92e-48e5-8cdc-4da25084418b/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 9d992efa-a329-5ab1-837a-14c282e80f68\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_nspecial.p/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_rengaine.end/f_00.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "9b35d740-d6cc-4d8e-b3ef-5c09b18512ad",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3da2d1f4-95d7-46eb-8fba-76f5016ae0d6",
+  "description": "from the low iai crouch, slowly, she draws the nodachi out of the scabbard with her right hand in one level motion, leaning forward, until her right arm is stretched straight in front of her at shoulder height and the blade is level, pointing forward, her left hand holding the scabbard pulled back at her hip, her left shoulder drawn back, her knees still bent, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "low iai crouch facing right, the sword sheathed in the scabbard at her left hip, only its handle sticking out forward from the scabbard mouth, her right hand on the handle"
+ },
+ "reply": "id: 9b35d740-d6cc-4d8e-b3ef-5c09b18512ad\njob_id: 9b35d740-d6cc-4d8e-b3ef-5c09b18512ad\ndescription: from the low iai crouch, slowly, she draws the nodachi out of the scabbard with her right hand in one level motion, leaning forward, until her right arm is stretched straight in front of her at shoulder height and the blade is level, pointing forward, her left hand holding the scabbard pulled back at her hip, her left shoulder drawn back, her knees still bent, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9b35d740-d6cc-4d8e-b3ef-5c09b18512ad\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/9b35d740-d6cc-4d8e-b3ef-5c09b18512ad/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 00e80e50-b73d-5e25-ae6c-3c994fb55343\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_rengaine.end/f_00.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

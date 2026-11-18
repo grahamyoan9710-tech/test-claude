@@ -1,18 +1,18 @@
 {
  "status": "done",
- "job_id": "517183f1-e1e6-4f9f-9274-bd27c62b91c2",
+ "job_id": "299df1a3-c07e-4035-ade9-b409fc24644e",
  "tool": "animate_image_pixminimax",
  "args": {
-  "first_frame_url": "upload:4e9c5bdf-96d9-4df4-97e5-94fb14603836",
-  "description": "slowly, she steps in and raises the nodachi high above her head in both hands, the blade pointing back behind her, then holds it there perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "first_frame_url": "upload:e5c21f99-4ca2-498a-8297-09bf6558c71f",
+  "description": "slowly, she lifts the nodachi further back over her head with both hands until the blade lies level behind her head, its point aiming back, her elbows above her head, her weight sinking onto the back foot, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
   "frame_count": 8,
   "view": "side",
   "direction": "east",
   "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
-  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+  "initial_pose": "rising on the front foot facing right, both arms stretched high, both hands on the hilt above her forehead, the nodachi slanting up and back over her head"
  },
- "reply": "id: 517183f1-e1e6-4f9f-9274-bd27c62b91c2\njob_id: 517183f1-e1e6-4f9f-9274-bd27c62b91c2\ndescription: slowly, she steps in and raises the nodachi high above her head in both hands, the blade pointing back behind her, then holds it there perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"517183f1-e1e6-4f9f-9274-bd27c62b91c2\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/517183f1-e1e6-4f9f-9274-bd27c62b91c2/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 86722fdf-27af-5d47-a258-a8b7ec3a5361\nasset_status: pending (saved to your gallery when generation completes)",
- "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "reply": "id: 299df1a3-c07e-4035-ade9-b409fc24644e\njob_id: 299df1a3-c07e-4035-ade9-b409fc24644e\ndescription: slowly, she lifts the nodachi further back over her head with both hands until the blade lies level behind her head, its point aiming back, her elbows above her head, her weight sinking onto the back foot, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"299df1a3-c07e-4035-ade9-b409fc24644e\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/299df1a3-c07e-4035-ade9-b409fc24644e/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: ad7cb306-10a1-5290-821f-53286075d2ac\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_jab2.p/f_08.png",
  "last": null,
  "frames": 9,
  "charged": "1 generation"
