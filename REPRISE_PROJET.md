@@ -55,6 +55,9 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 18/11 11 h 50 UTC, session claude/project-thread-x1gfn9 : version 16.2 = version de test de Hakuen (exception à la
+  règle « 2 persos finis », demandée par yoyo), sur la pointe de 3uctyp (e4f7c00). Verrou « Version et paquets » pris et
+  libéré dans ce commit.
 - 18/11 07 h 10 UTC, session claude/project-thread-58u7pf : nouveaux M1 de Hakuen importés (arme A : kenjutsu à
   deux mains, coupe diagonale, montante, descendante ; arme B : une main façon Alpha, Fente montante, Croix pourpre
   horizontale, Coupe rasante ; 7 parties générées une à une, 3 prises chacune, chaque coup part de la fin du

@@ -8,6 +8,15 @@
 
 ## Nouveautés
 
+Version 16.2 : **version de test de Hakuen**.
+
+- Hakuen prend la place de l'ancien 01 (choix des persos, titre, galerie, liste des coups en pause).
+- Ses deux armes sont complètes : arme A (nodachi, kenjutsu à deux mains) et arme B (long odachi façon Alpha, lame
+  qui brille en rouge, fines coupes néon en croix).
+- Nouveaux coups de base (M1) aux deux armes, et coupes-éclipses qui les reprennent en mode éveillé.
+- Fente écarlate refaite : un tourbillon plat de rubans rouges, plus petit.
+- Toutes ses coupes ont de la foudre rouge ; les traînées de lame sont simples, blanches et collées à l'arme.
+
 Version 16.1 : **correctifs**.
 
 - L'IA est plus active : les CPU ne se figent plus au bord d'un vide quand une arme ou l'orbe est de l'autre côté.
