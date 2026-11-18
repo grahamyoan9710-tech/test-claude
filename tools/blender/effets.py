@@ -30,11 +30,11 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "p08": ("#C98F28", "#FFD45A", "#FFF3BF", "#FFFFFF", None),
     "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
-CUT = STYLE == "h01" and (KIND or "")[:2] in ("a_", "b_")  # Hakuen's sword cuts: a_jab-h01 -> pfx_h01_a_jab
-if KIND in ("aura", "eveil", "jugement") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
+CUT = STYLE == "h01" and (KIND or "")[:2] in ("a_", "b_") and KIND not in ("b_wave", "b_trait")  # Hakuen's sword cuts: a_jab-h01 -> pfx_h01_a_jab
+if KIND in ("aura", "eveil", "jugement", "b_wave", "b_trait") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import aura_geo
-    PALETTES[STYLE] = aura_geo.PAL["h01b" if CUT and KIND[0] == "b" else STYLE]
+    PALETTES[STYLE] = aura_geo.PAL["h01b" if KIND[:2] == "b_" else STYLE]
 rng = random.Random(sum(map(ord, RECIPE)))
 LAYER = ""  # the layer being rendered: "" (behind the fighters) or "_front" (over them)
 
@@ -1848,7 +1848,23 @@ def r_jugement():
     return meta, anim
 
 
-RECIPES = dict(jugement=r_jugement, bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
+def r_flying():
+    """Weapon B's flying cuts (coupe_geo.flying): on the projectile, looped, turned along its course."""
+    import coupe_geo
+    N = coupe_geo.PN
+    W, H, AX, AY = frame_of([aura_geo.bounds(coupe_geo.flying(KIND, f)) for f in range(N)], 0.12)
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=coupe_geo.PROJ[KIND][1], N=N, FPS=30, LOOP=1)
+    scene(W, H, AX, AY)
+    aura_mats()
+
+    def anim(f, t):
+        fresh()
+        build(coupe_geo.flying(KIND, f))
+
+    return meta, anim
+
+
+RECIPES = dict(b_wave=r_flying, b_trait=r_flying, jugement=r_jugement, bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
                plume=r_plume, marque=r_marque, pilier=r_pilier, aura=r_aura, eveil=r_eveil)
 if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]

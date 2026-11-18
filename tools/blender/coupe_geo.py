@@ -29,7 +29,16 @@ CUTS = {
     "a_uthrow": ((0.1, 1.1), 1.1, -30, 95, 1.0, 0.3),     # rising over her
     "a_ledgeattack": ((0.2, 0.5), 1.2, -170, 5, 0.35, 0.3),  # horizontal, knee high
     "a_getupattack": ((0.2, 0.5), 1.2, -170, 5, 0.35, 0.3, 2),  # twice (its second cut 2 frames later)
+    # weapon B, the long odachi in the manner of Alpha (PGR): its own three cuts and its air cut, the rest as A's
+    # with the longer blade
+    "b_jab": ((0.3, 0.95), 1.4, -130, 60, 0.85, 0.3),    # rising diagonal, low behind to high ahead
+    "b_jab2": ((0.85, 0.85), 2.3, 40, -40, 0, 0.05, "x"),  # the X: two long cuts crossing ahead of her
+    "b_jab3": ((0.45, 0.42), 1.7, -170, 5, 0.3, 0.3),    # skimming the floor, far ahead
+    "b_nair": ((0.3, 1.2), 1.4, 100, -95, 1.0, 0.3),     # falling in front, in the air
 }
+for _k in ("ftilt", "utilt", "dtilt", "fair", "fthrow", "uthrow", "ledgeattack", "getupattack"):
+    _c, _R, *_r = CUTS["a_" + _k]
+    CUTS["b_" + _k] = (_c, _R * 1.15, *_r)
 
 
 def drop(s, head=0.12, p=0.9):
@@ -45,6 +54,16 @@ def arcpts(c, R, a0, a1, sy, n=36):
 def frames(cut, b, f):
     """The shapes of frame f of cut `cut` (weapon B if b)."""
     g, seed = CUTS[cut], sum(map(ord, cut)) * 2 + b
+    if g[-1] == "x":  # a cross: two long straight cuts through c, the second 2 frames later (Alpha's X)
+        out = []
+        for j, (ang, born) in enumerate(((math.radians(g[2]), 0), (math.radians(g[3]), 2))):
+            age = f - born
+            if 0 <= age < 7:
+                q = (1.0, 0.95, 0.8, 0.6, 0.4, 0.22, 0.1)[age]
+                grow = (0.6, 1.0, 1.04, 1.07, 1.09, 1.1, 1.1)[age]
+                out += slash(g[0], ang, g[1] * grow, g[5] * (1.4 if age == 0 else 1.0) * (1 - 0.1 * age), q,
+                             0.48 - 0.04 * age, -0.02 - 0.01 * j)
+        return out
     out = one(*g[:6], b, f, seed)
     if len(g) > 6 and f >= 2:  # its second cut, back the other way, a hair lower
         c, R, a0, a1, sy, W = g[:6]
@@ -65,7 +84,7 @@ def one(c, R, a0, a1, sy, W, b, f, seed):
     grow = 1.0 + 0.04 * f
     P = arcpts(c, R * grow, a1, tail, sy)  # from the tip back
     n = len(P) - 1
-    w = W * (1.25 if f == 0 else 1.0) * k ** 0.9
+    w = W * (1.25 if f == 0 else 1.0) * k ** 0.9 * (0.45 if b else 1.0)  # B: a thin neon cut (Alpha's)
     pieces = 1 if f < 4 else 2 if f < 7 else 3  # it breaks as it fades
     for j in range(pieces):
         lo, hi = j * n // pieces, (j + 1) * n // pieces
@@ -81,12 +100,12 @@ def one(c, R, a0, a1, sy, W, b, f, seed):
             dx, dz = x - c[0], (z - c[1]) / max(sy, 0.2)
             L = math.hypot(dx, dz) or 1.0
             body.append((x - dx / L * ws[i] * 0.45, z - dz / L * ws[i] * 0.45 * sy))
-        heat = (0.3 if b else 0.16) + 0.2 * k  # red bodies: the white (A) or gold (B) is the edge's
+        heat = (0.38 if b else 0.16) + 0.2 * k  # red bodies (B: neon red), the white is the edge's
         out.append(dict(k="rib", pts=body, w=ws, m="solid", a=k, s=1.0 + (0.5 if f < 2 else 0.0), h=heat, y=-0.02))
-        # the razor edge: white-hot on A, gold on B
+        # the razor edge: white-hot
         out.append(dict(k="rib", pts=seg, w=[0.022 * (0.4 + 0.6 * drop((lo + i) / n, 0.05, 0.6)) + 0.004
                                             for i in range(len(seg))],
-                        m="line", a=k, s=3.0 if not b else 2.4, h=1.0 if not b else 0.78, y=-0.03))
+                        m="line", a=k, s=3.0, h=1.0, y=-0.03))
     # its echo, a hair outside, a frame late, thin
     if 1 <= f <= 6:
         E = arcpts(c, R * grow + 0.09, a1 - (a1 - a0) * 0.05, tail + (a1 - tail) * 0.25, sy)
@@ -116,19 +135,17 @@ def one(c, R, a0, a1, sy, W, b, f, seed):
         L = rng.uniform(0.07, 0.15) * q
         out.append(dict(k="poly", pts=place(shard(L, L * 0.22), (x, z), dirn), m="solid", a=q,
                         s=1.6, h=0.75 if (b and i % 2) else 0.55 + 0.3 * q, y=-0.028))
-    # weapon B: gold eight-point stars blinking on the cut
+    # weapon B: Alpha's cuts that go on: long straight lines shooting on from the tip, along its travel
     if b:
-        for i, (s0, born) in enumerate(((0.15, 1), (0.45, 2), (0.75, 3))):
+        ta = math.radians(a1 + (-90 if a1 < a0 else 90))  # the tip's direction of travel
+        tip = arcpts(c, R, a1, a1, sy, 1)[0]
+        for i, (born, L, off) in enumerate(((0, 2.2, 0.0), (1, 1.6, 0.06), (2, 1.2, -0.07))):
             age = f - born
-            if 0 <= age < 5:
-                q = (1.0, 0.85, 0.6, 0.35, 0.15)[age]
-                ang = math.radians(a1 + (a0 - a1) * s0)
-                p = (c[0] + (R * grow + 0.05) * math.cos(ang), c[1] + (R * grow + 0.05) * sy * math.sin(ang))
-                r = 0.05 * (1.0 + 0.3 * (i == 1))
-                out.append(dict(k="poly", pts=place(star(4, r * 3 * q, r * 0.3), p, 0.2 * age), m="shape", a=q,
-                                s=2.2, h=0.85, y=-0.036))
-                out.append(dict(k="poly", pts=place(star(4, r * 1.5 * q, r * 0.3), p, math.pi / 4 + 0.2 * age),
-                                m="shape", a=q * 0.8, s=2.2, h=0.8, y=-0.0361))
+            if 0 <= age < 4:
+                q = (1.0, 0.75, 0.45, 0.2)[age]
+                p = (tip[0] + (0.35 + 0.25 * age) * math.cos(ta) - off * math.sin(ta),
+                     tip[1] + (0.35 + 0.25 * age) * math.sin(ta) + off * math.cos(ta))
+                out += slash(p, ta, L * (0.8 + 0.1 * age), 0.03 * (1.0 - 0.15 * age), q, 0.45, -0.04 - 0.002 * i)
     return out
 
 
@@ -178,4 +195,43 @@ def jugement(f):
                                     h=0.5 + 0.3 * q, y=-0.09))
     if f < 2:  # the click: a hairline flash across the spot
         out += slash((0.0, 0.0), 0.15, 2.0, 0.012, (1.0, 0.5)[f], 1.0, -0.1)
+    return out
+
+
+# --- weapon B's flying cuts (projectiles, looped, drawn along their course: x ahead) -------------------------------
+# Feel: Alpha's (PGR) cuts that go on and Vergil's flying crescents (feel only): a thin neon-red crescent bowed ahead,
+# white razor edge, short speed lines and shards trailing behind. b_wave: the Coupe rasante's low wave (RH 20);
+# b_trait: the Trait final, taller and with a second crescent nested behind (RH 28).
+PN = 8
+PROJ = {"b_wave": (0.36, 20), "b_trait": (0.62, 28)}  # half height (units of 100 px), hit radius in px
+
+
+def flying(kind, f):
+    hh, _ = PROJ[kind]
+    rng = random.Random(sum(map(ord, kind)))
+    fl = 1.0 + 0.06 * math.sin(TAU * f / PN)  # a slow flicker, looped
+    out = []
+    for j, (dx, sc, k) in enumerate(((0.0, 1.0, 1.0), (-0.16, 0.8, 0.55)) if kind == "b_trait" else ((0.0, 1.0, 1.0),)):
+        R = hh * sc
+        P = arcpts((dx - R * 0.55, 0.0), R, 80, -80, 1.0, 30)  # bowed ahead, top to bottom
+        n = len(P) - 1
+        ws = [0.11 * sc * fl * math.sin(math.pi * i / n) ** 0.8 + 0.004 for i in range(n + 1)]
+        body = [(x - w * 0.4, z) for (x, z), w in zip(P, ws)]
+        out.append(dict(k="rib", pts=body, w=ws, m="solid", a=k, s=1.2, h=0.5, y=-0.02 - 0.005 * j))
+        out.append(dict(k="rib", pts=P, w=[0.25 * w + 0.003 for w in ws], m="line", a=k, s=3.0, h=1.0, y=-0.03 - 0.005 * j))
+    # speed lines streaming behind, each crossing the strip once per loop
+    for i in range(5):
+        z = rng.uniform(-0.7, 0.7) * hh
+        ph = (f / PN + i / 5) % 1.0
+        L = rng.uniform(0.35, 0.7) * (hh / 0.36) ** 0.5
+        q = math.sin(math.pi * ph)
+        out += slash((-0.2 - 0.9 * ph * L, z), 0.0, L, 0.014, q * 0.8, 0.45, -0.04 - 0.002 * i)
+    # shards shed behind
+    for i in range(6):
+        ph = (f / PN + i / 6) % 1.0
+        z = rng.uniform(-0.8, 0.8) * hh
+        q = 1.0 - ph
+        Ls = rng.uniform(0.04, 0.08) * q
+        out.append(dict(k="poly", pts=place(shard(Ls, Ls * 0.25), (-0.1 - 0.6 * ph, z - 0.1 * ph * ph), math.pi),
+                        m="solid", a=q, s=1.6, h=0.6, y=-0.06))
     return out
