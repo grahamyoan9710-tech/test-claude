@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "f9c20ce7-cba6-4d4d-8f3e-1653c7597cdd",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ceed4564-8c2d-44e9-942c-418daaededf7",
+  "last_frame_url": "upload:3542057e-1c23-4c41-ac82-70074d8bb21f",
+  "description": "aikido double push to finish the combo, eyes narrowed: she turns her hips and thrusts both open palms forward together at chest height, both arms fully stretched, the long sleeves and the ponytail flying forward, holds it an instant, then glides back into the stance. Her body stays seen from the side, facing right; her hands stay empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "calm playful aikido stance facing right, standing upright, knees soft, both hands resting together in front of her belt, half hidden in her long wide sleeves, the head slightly tilted"
+ },
+ "reply": "id: f9c20ce7-cba6-4d4d-8f3e-1653c7597cdd\njob_id: f9c20ce7-cba6-4d4d-8f3e-1653c7597cdd\ndescription: aikido double push to finish the combo, eyes narrowed: she turns her hips and thrusts both open palms forward together at chest height, both arms fully stretched, the long sleeves and the ponytail flying forward, holds it an instant, then glides back into the stance. Her body stays seen from the side, facing right; her hands stay empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f9c20ce7-cba6-4d4d-8f3e-1653c7597cdd\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/f9c20ce7-cba6-4d4d-8f3e-1653c7597cdd/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 2f5bb81b-0663-5c62-b1ce-e362335db51d\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

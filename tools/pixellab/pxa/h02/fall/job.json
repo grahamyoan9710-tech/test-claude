@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "63a9f6c8-2080-4240-8362-dbb482216e21",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:1489953b-d3bc-4083-ba93-308711fe1111",
+  "last_frame_url": "upload:88ecd669-1589-4131-b46a-3eacbd2b4397",
+  "description": "falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward as she falls, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 63a9f6c8-2080-4240-8362-dbb482216e21\njob_id: 63a9f6c8-2080-4240-8362-dbb482216e21\ndescription: falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward as she falls, a seamless loop that ends exactly on the first pose. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"63a9f6c8-2080-4240-8362-dbb482216e21\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/63a9f6c8-2080-4240-8362-dbb482216e21/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: bf7d4c66-c361-592c-ba06-d78d83ccecb0\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

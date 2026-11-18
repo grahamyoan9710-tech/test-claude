@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "7a79c7d1-bcab-4079-9bde-e917c4750105",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:1d56d764-4766-48cc-9dcd-71bb7c6a1a09",
+  "last_frame_url": "upload:d450b72d-711e-4038-b6ac-7f6841f5c55a",
+  "description": "a sleeve lash: turns her hips and flings her front arm straight forward at chest height so the long wide sleeve snaps out flat in front of her, then pulls it back into the stance; her hand stays empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "calm playful aikido stance facing right, standing upright, knees soft, both hands resting together in front of her belt, half hidden in her long wide sleeves, the head slightly tilted"
+ },
+ "reply": "id: 7a79c7d1-bcab-4079-9bde-e917c4750105\njob_id: 7a79c7d1-bcab-4079-9bde-e917c4750105\ndescription: a sleeve lash: turns her hips and flings her front arm straight forward at chest height so the long wide sleeve snaps out flat in front of her, then pulls it back into the stance; her hand stays empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7a79c7d1-bcab-4079-9bde-e917c4750105\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/7a79c7d1-bcab-4079-9bde-e917c4750105/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 2aa09c08-b1b1-561d-939c-0a418b8dcf21\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

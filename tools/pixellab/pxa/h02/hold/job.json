@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "448ac6e6-5c51-46af-aebe-47e3ecf547da",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5e333cb8-b053-45de-b8d2-4c1eed3e16ab",
+  "last_frame_url": "upload:b377447b-42d7-4ca1-9aa8-b0991d3bbd8b",
+  "description": "holds the wrist of an invisible opponent in front of her with both hands, arms extended, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "holding an invisible opponent in front of her with both hands"
+ },
+ "reply": "id: 448ac6e6-5c51-46af-aebe-47e3ecf547da\njob_id: 448ac6e6-5c51-46af-aebe-47e3ecf547da\ndescription: holds the wrist of an invisible opponent in front of her with both hands, arms extended, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"448ac6e6-5c51-46af-aebe-47e3ecf547da\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/448ac6e6-5c51-46af-aebe-47e3ecf547da/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 084df896-f896-5c94-b971-2b13cd7993f2\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_holdstart_last.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_holdstart_last.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

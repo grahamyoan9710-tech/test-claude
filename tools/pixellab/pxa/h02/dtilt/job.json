@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "c9f19240-c574-412c-acdf-b95b6d984482",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:bf18ba3a-8c52-4366-875d-84f0a7efc07f",
+  "last_frame_url": "upload:e3d9f7ac-037e-4075-a17e-502154928ee4",
+  "description": "a crouching trip: drops low on the back leg and slides the front foot forward along the floor, the leg stretched out low in front of her, then pulls it back and rises into the stance; only her leg moves and nothing appears around the foot. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "calm playful aikido stance facing right, standing upright, knees soft, both hands resting together in front of her belt, half hidden in her long wide sleeves, the head slightly tilted"
+ },
+ "reply": "id: c9f19240-c574-412c-acdf-b95b6d984482\njob_id: c9f19240-c574-412c-acdf-b95b6d984482\ndescription: a crouching trip: drops low on the back leg and slides the front foot forward along the floor, the leg stretched out low in front of her, then pulls it back and rises into the stance; only her leg moves and nothing appears around the foot. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c9f19240-c574-412c-acdf-b95b6d984482\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/c9f19240-c574-412c-acdf-b95b6d984482/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: b1c875fe-7449-5560-9d00-d5cbeaf0c6ab\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

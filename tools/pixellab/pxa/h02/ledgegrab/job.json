@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "6dd71d67-091a-47b3-817b-8bc0368efccb",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e440b5f7-fa13-4188-bb71-42468dd5df82",
+  "description": "jumps up and stretches both arms straight up above her head, the hands closing on nothing near the top of the picture but fully inside it, then hangs still from her raised hands with the legs dangling below; empty background above and around the hands: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: 6dd71d67-091a-47b3-817b-8bc0368efccb\njob_id: 6dd71d67-091a-47b3-817b-8bc0368efccb\ndescription: jumps up and stretches both arms straight up above her head, the hands closing on nothing near the top of the picture but fully inside it, then hangs still from her raised hands with the legs dangling below; empty background above and around the hands: no log, no bar, no branch, no cliff, no rock, no wall, no platform, no ground. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6dd71d67-091a-47b3-817b-8bc0368efccb\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/6dd71d67-091a-47b3-817b-8bc0368efccb/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 81f5e133-f8d1-5a0f-9f81-4fb0f1383b82\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

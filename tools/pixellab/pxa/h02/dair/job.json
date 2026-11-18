@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "f511e6ac-7325-4c39-abb8-e6820224a0ff",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3ef49a74-775f-42cb-b912-daa8fff20575",
+  "last_frame_url": "upload:de0a175c-d5ab-4875-a9cf-9fbcf975bbe2",
+  "description": "in mid-air, lifts one leg high with the knee bent, then drives the heel straight down beneath her with the leg stretched, then pulls the leg back up into the tucked pose; only her leg moves and nothing appears under her feet. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: f511e6ac-7325-4c39-abb8-e6820224a0ff\njob_id: f511e6ac-7325-4c39-abb8-e6820224a0ff\ndescription: in mid-air, lifts one leg high with the knee bent, then drives the heel straight down beneath her with the leg stretched, then pulls the leg back up into the tucked pose; only her leg moves and nothing appears under her feet. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f511e6ac-7325-4c39-abb8-e6820224a0ff\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/f511e6ac-7325-4c39-abb8-e6820224a0ff/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a312db12-3359-5918-bcbe-763904aae1d6\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

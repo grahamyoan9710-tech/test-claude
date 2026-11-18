@@ -22,7 +22,8 @@ if os.path.exists(os.path.join(S, "anchors14.json")):  # the 14 others: feet of 
     ANCHOR.update({k: tuple(v) for k, v in json.load(open(os.path.join(S, "anchors14.json"))).items()})
 # Clips whose generated frames go past what the move shows: (fighter, clip) -> extra import_clip.py arguments.
 EXTRA = {("sasuke", "uspecial"): ["--only", "1-8"],  # flung up: what follows (landing crouched) happens in the air
-         ("h01", "idle"): ["--fps", "10"]}  # the owner (17/11): her calm idle, a little slower than 15
+         ("h01", "idle"): ["--fps", "10"],  # the owner (17/11): her calm idle, a little slower than 15
+         ("h02", "idle"): ["--fps", "10"]}  # the same calm pace: her head tilt and wink read
 # Clips with several blows: the frame of each, in the order of the move's hitbox windows (reviewed by eye).
 IMPACTS = {("kakashi", "w0_nspecial"): "5", ("kakashi", "w0_ultimate"): "16",  # the eye techniques: the held stare
            ("sasuke", "w1_nspecial"): "5", ("sasuke", "w1_ultimate"): "12",

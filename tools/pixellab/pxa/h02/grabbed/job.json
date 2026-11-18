@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "9e6b5ff2-c767-4954-9384-3f7955aed57d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:7731758a-7f65-44b8-9263-47553010efb1",
+  "last_frame_url": "upload:063c6a27-88e1-45ad-8350-6b52d42a5c78",
+  "description": "held up by the collar from in front of her: chest pulled forward, head tilted back in pain, hands clutching at the collar at her throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "calm playful aikido stance facing right, standing upright, knees soft, both hands resting together in front of her belt, half hidden in her long wide sleeves, the head slightly tilted"
+ },
+ "reply": "id: 9e6b5ff2-c767-4954-9384-3f7955aed57d\njob_id: 9e6b5ff2-c767-4954-9384-3f7955aed57d\ndescription: held up by the collar from in front of her: chest pulled forward, head tilted back in pain, hands clutching at the collar at her throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"9e6b5ff2-c767-4954-9384-3f7955aed57d\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/9e6b5ff2-c767-4954-9384-3f7955aed57d/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 984a6702-93dd-5dbe-9ce2-5bce7f19558b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

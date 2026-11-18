@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "cd77f1c4-4302-4142-9744-bf3c02cc1a41",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e3c02cff-0a1c-4cae-b58b-279716e96d13",
+  "last_frame_url": "upload:13f3a3c1-c62b-4703-af96-d0963cb45551",
+  "description": "in mid-air, pulls both arms in tight against her chest and tucks her knees, then snaps both arms out wide to the sides at once, the long sleeves flying out flat to the left and to the right of her, staying in side profile facing right the whole time, holds it for two frames, then settles back into the first pose; her hands stay empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "in mid-air facing right, knees tucked"
+ },
+ "reply": "id: cd77f1c4-4302-4142-9744-bf3c02cc1a41\njob_id: cd77f1c4-4302-4142-9744-bf3c02cc1a41\ndescription: in mid-air, pulls both arms in tight against her chest and tucks her knees, then snaps both arms out wide to the sides at once, the long sleeves flying out flat to the left and to the right of her, staying in side profile facing right the whole time, holds it for two frames, then settles back into the first pose; her hands stay empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"cd77f1c4-4302-4142-9744-bf3c02cc1a41\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/cd77f1c4-4302-4142-9744-bf3c02cc1a41/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e910f387-28bb-569b-9cdb-930774d1904f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_jump_last.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

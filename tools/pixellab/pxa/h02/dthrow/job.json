@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "0da1c53b-adfc-489c-8acb-861d73ebad23",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:ad338d0e-8e7c-408f-9f11-0e23e0851f07",
+  "last_frame_url": "upload:24b77fd0-66d8-40bd-bfc6-ed32ccf3877f",
+  "description": "holding the arm of an invisible opponent with both hands, kneels on one knee and presses both hands down to the floor in front of her, then rises back into the stance. There is no other person in the frame and her hands stay empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "holding an invisible opponent in front of her with both hands"
+ },
+ "reply": "id: 0da1c53b-adfc-489c-8acb-861d73ebad23\njob_id: 0da1c53b-adfc-489c-8acb-861d73ebad23\ndescription: holding the arm of an invisible opponent with both hands, kneels on one knee and presses both hands down to the floor in front of her, then rises back into the stance. There is no other person in the frame and her hands stay empty. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0da1c53b-adfc-489c-8acb-861d73ebad23\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/0da1c53b-adfc-489c-8acb-861d73ebad23/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 049bd357-7ddd-5050-8cab-bb6cc5d48f2c\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/starts/h02_holdstart_last.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

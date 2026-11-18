@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "49fb7c67-6dc1-4dcc-9e38-8b06360e2748",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:5dddc5dc-624c-4505-95db-e55bb215e3d7",
+  "description": "jumps straight up: a quick crouch, springs up off both feet, then tucks the knees up in mid-air, the long sleeves opening wide, the ponytail and the ribbons lifting softly above her head; the last frames stay high in the air in that tucked pose, the feet never come back down. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long black ponytail with red ribbons and gold beads, red eyes, white shrine maiden robe with long wide sleeves with red patterns, bare shoulders, black corset, red belt with gold buckle, red and black checkered underskirt, black stockings with garters, red and black heeled boots",
+  "initial_pose": "calm playful aikido stance facing right, standing upright, knees soft, both hands resting together in front of her belt, half hidden in her long wide sleeves, the head slightly tilted"
+ },
+ "reply": "id: 49fb7c67-6dc1-4dcc-9e38-8b06360e2748\njob_id: 49fb7c67-6dc1-4dcc-9e38-8b06360e2748\ndescription: jumps straight up: a quick crouch, springs up off both feet, then tucks the knees up in mid-air, the long sleeves opening wide, the ponytail and the ribbons lifting softly above her head; the last frames stay high in the air in that tucked pose, the feet never come back down. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"49fb7c67-6dc1-4dcc-9e38-8b06360e2748\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/49fb7c67-6dc1-4dcc-9e38-8b06360e2748/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 132cfe09-af09-533e-81d0-f29eebc1afa1\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h02_guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}
