@@ -1350,7 +1350,7 @@ static void testHakuen() {
         if (f.state == FState::Attack && f.move == NSpecial && f.moveFrame == 1) ++casts;
       }
     };
-    spam(160);
+    spam(240);  // four 52-frame cuts
     CHECK(casts == 4, "four cuts in a row (%d)", casts);
     CHECK(f.moveCooldown[NSpecial] > 6 * 60, "then a long recharge (%d frames)", f.moveCooldown[NSpecial]);
     spam(60);
