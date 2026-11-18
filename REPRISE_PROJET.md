@@ -48,13 +48,18 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », Hakuen remplace l'ancien 01) | 18/11 02 h 50 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », Hakuen remplace l'ancien 01) | 18/11 02 h 50 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
-| Équilibrage (`src/core/roster*.cpp`) | libre | |
+| Équilibrage (`src/core/roster*.cpp`) | session claude/project-thread-58u7pf (fil « Refaire 10 persos », Hakuen remplace l'ancien 01) | 18/11 02 h 50 UTC |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 18/11 02 h 50 UTC, session claude/project-thread-58u7pf : yoyo valide l'arme B et les coupes (« oui je valide fait
+  le reste »). Hakuen (h01) remplace l'ancien 01 « Ombre violette » (p01) : roster, titre, galerie, liste des coups
+  de la pause ; fichiers p01 retirés (clips, `fx_p01_*` et `fx_pfx_p01_*` : le fil VFX qui tient « Effets » est
+  prévenu). Ultimes des armes de Hakuen : coupes (arme A) et version Alpha (arme B) au lieu de l'orage. Verrous
+  « Imports de clips », « fitall.sh » et « Équilibrage » pris.
 - 18/11 01 h 20 UTC, session claude/project-thread-58u7pf : arme B de Hakuen refaite façon Alpha (PGR, ressenti
   seul ; yoyo 17/11 22 h 47 : pas d'aura, lame en bloom rouge par le fil VFX, « slashs qui partent ») : M1 Fente
   montante, Croix pourpre, Coupe rasante (envoie une vague basse), aérien, neutre « Trait final ». Fait : chaque coup
