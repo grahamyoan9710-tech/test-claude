@@ -153,7 +153,7 @@ void tileFace(const CharacterDef& d, Rectangle r, float a) {
   const std::string pic = d.id + "_portrait";
   float pw, ph;
   if (!art::pictureSize(pic.c_str(), pw, ph)) return;
-  const bool roomy = d.id == "h01";
+  const bool roomy = d.id[0] == 'h';  // the new fighters' portraits (hNN) leave room around them
   const float w = roomy ? 150.0f : 110.0f;
   beginClip(r);
   art::drawPicture(pic.c_str(), {0, 0, pw, ph}, {r.x + (roomy ? -16.0f : -14.0f), r.y + (roomy ? -20.0f : -8.0f), w, ph * w / pw}, a);

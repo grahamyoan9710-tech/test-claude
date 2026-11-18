@@ -673,6 +673,8 @@ CharacterDef makeH02() {
   aw.m1Wave.fx = k.pfx("b_talisman");
   aw.m1Wave.hit.marks = 1;
   k.c.willForm = awake;
+  k.c.markFx = k.pfx("marque");
+  k.c.markBurstFx = k.pfx("eclat");
   return k.c;
 }
 

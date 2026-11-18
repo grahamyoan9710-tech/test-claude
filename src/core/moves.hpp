@@ -334,6 +334,9 @@ struct CharacterDef {
   std::vector<FormDef> forms;
   bool armed = true;  // false: its weapon clips are not made yet, so its weapons never drop
   int willForm = -1;  // 3 charges of will (MoveDef::fillsWill): this transformation begins once the fighter is free
+  // Its spirit marks (HitboxDef::marks) as drawn on whoever carries them, and their burst: Blender effects, or none.
+  const char* markFx = nullptr;
+  const char* markBurstFx = nullptr;
 };
 
 const std::vector<CharacterDef>& roster();

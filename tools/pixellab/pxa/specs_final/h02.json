@@ -66,7 +66,7 @@
    null,
    false,
    "none",
-   "flinches backwards in pain: cheeks puffed out, eyes squeezed shut, head thrown back, the body leaning backwards, arms thrown out to the sides with the long sleeves flapping, then holds that pained pose; she is alone on an empty background and nothing touches her"
+   "flinches backwards in pain, staying in side profile facing right the whole time: cheeks puffed out, eyes squeezed shut, head thrown back, the upper body bent backwards, both arms flung up and back, the long sleeves flapping, then holds that pained pose; she is alone on an empty background and nothing touches her"
   ],
   "crouch": [
    4,
@@ -154,7 +154,7 @@
    true,
    false,
    "around",
-   "two low sleeve lashes: drops low and lashes one long sleeve out flat along the floor in front of her to the right, then the other one out flat along the floor behind her to the left, her face still turned to the right, then rises back into the stance; her hands stay empty"
+   "drops into a low crouch and swings her front arm low along the floor in front of her, the long sleeve sliding flat over the floor, then swings her back arm low along the floor behind her, staying in side profile facing right the whole time, then rises back into the stance; her hands stay empty"
   ],
   "nair": [
    12,
@@ -162,7 +162,7 @@
    true,
    false,
    "around",
-   "in mid-air, flings both arms out wide to the sides, the long sleeves flying out flat to the left and to the right of her, staying in side profile facing right the whole time, holds it for two frames, then tucks back in; her hands stay empty"
+   "in mid-air, pulls both arms in tight against her chest and tucks her knees, then snaps both arms out wide to the sides at once, the long sleeves flying out flat to the left and to the right of her, staying in side profile facing right the whole time, holds it for two frames, then settles back into the first pose; her hands stay empty"
   ],
   "fair": [
    12,

@@ -49,7 +49,7 @@ void face(const CharacterDef& d, float x, float y, float a) {
   const std::string pic = d.id + "_portrait";
   float pw, ph;
   if (!art::pictureSize(pic.c_str(), pw, ph)) return;
-  const bool roomy = d.id == "h01";
+  const bool roomy = d.id[0] == 'h';  // the new fighters' portraits (hNN) leave room around them
   const float s = (roomy ? 96.0f : 68.0f) / 240.0f;
   beginClip({x, y, 48, 48});
   art::drawPicture(pic.c_str(), {0, 0, pw, ph}, {x + (roomy ? -12.0f : -11.0f), y + (roomy ? -10.0f : -7.0f), pw * s, ph * s}, a);

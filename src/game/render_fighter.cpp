@@ -1613,6 +1613,19 @@ void drawFighter(const Fighter& f, const Match& m, float time, bool debugBoxes) 
     pix::sprite(box, alpha, drawAll);
 
   drawFormAvatar(f, at, true);
+  // Spirit marks (Fighter::marks): the owner's effect, one a mark side by side above the head, fading in their last
+  // second.
+  if (f.marks > 0 && f.markedBy >= 0 && f.markedBy < int(m.fighters.size())) {
+    const CharacterDef& o = *m.fighters[f.markedBy].def;
+    if (o.markFx && art::fxInfo(o.markFx)) {
+      const float k = std::min(1.0f, f.markTimer / 60.0f), gap = 0.16f * H;
+      for (int i = 0; i < f.marks; ++i) {
+        const Vec2 p{feet.x + (i - 0.5f * (f.marks - 1)) * gap, feet.y - 1.12f * H + 3.0f * std::sin(at * 3.0f + i)};
+        art::drawFx(o.markFx, art::fxLoopTime(o.markFx, at + 0.17f * i), p, art::fxSize(o.markFx, o), 0.0f, false, k,
+                    WHITE, false);
+      }
+    }
+  }
   if (kVfx && !(pose.sheet >= 0 && art::hasSheet(d.hero, pose.sheet)))  // a PixelLab clip draws its own slash trail
     drawSmear(anim, pose, alpha);
   if (f.state == FState::Shield || f.state == FState::ShieldStun) {  // the owner's bubble (always on), smaller as it wears out

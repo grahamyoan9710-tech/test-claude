@@ -48,8 +48,8 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session claude/project-thread-58u7pf (import de Fuyuri h02) | 18/11 11 h 51 UTC |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session claude/project-thread-58u7pf (import de Fuyuri h02) | 18/11 11 h 51 UTC |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |

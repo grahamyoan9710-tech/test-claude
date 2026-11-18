@@ -761,6 +761,14 @@ void Fx::onEvents(const Match& m) {
         au.play(Sfx::WeaponBreak, 0.9f);
         break;
       }
+      case EvType::MarkBurst:  // spirit marks burst: the owner's effect on the victim, bigger with more marks
+        if (e.a >= 0 && e.a < nf) {
+          const CharacterDef& o = *m.fighters[e.a].def;
+          if (o.markBurstFx) playFx(o.markBurstFx, e.pos, art::fxSize(o.markBurstFx, o, 0.7f + 0.1f * e.strength));
+        }
+        shake_ = std::max(shake_, 3.0f + 1.5f * e.strength);
+        au.play(Sfx::Counter, std::min(1.0f, 0.5f + 0.1f * e.strength), 1.2f);
+        break;
     }
   }
 }

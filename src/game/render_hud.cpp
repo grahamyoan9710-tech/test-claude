@@ -84,7 +84,7 @@ void fighterCard(const Match& m, const Fighter& f, float L, float T, float a, in
     const std::string pic = f.def->id + "_portrait";
     float pw, ph;
     if (art::pictureSize(pic.c_str(), pw, ph)) {
-      const bool roomy = f.def->id == "h01";  // his portrait leaves room around him: drawn larger
+      const bool roomy = f.def->id[0] == 'h';  // the new fighters' portraits leave room around them: drawn larger
       const float s = (roomy ? 140.0f : 101.0f) / 240.0f;
       beginClip({L - 4, T - 26, 100, 122});
       art::drawPicture(pic.c_str(), {0, 0, pw, ph}, {L + (roomy ? -7.0f : -11.0f), T + (roomy ? -34.0f : -26.0f), pw * s, ph * s},
