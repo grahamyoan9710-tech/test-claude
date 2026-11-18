@@ -27,7 +27,7 @@ PAL = {
     "p03": ("#8E0B0B", "#E8261A", "#FF8A3D", "#FFE2B0", "#1E0F0B"),
     "p08": ("#3E6FD8", "#A9D4FF", "#EAF5FF", "#FFFFFF", None),
     "h01": ("#7A0E1A", "#E8343C", "#FF8A4C", "#FFE9D6", "#1A0A0C"),
-    "h01b": ("#6E0A16", "#D9332E", "#F2B33D", "#FFF2C4", None),  # her long odachi: crimson lacquer, gold star guard
+    "h01b": ("#5A0614", "#FF1E4A", "#FF7A9A", "#FFF0F4", None),  # her long odachi's cuts: neon red (Alpha's, PGR)
 }
 
 
@@ -227,56 +227,7 @@ def jag(a, b, depth, amp, r):
     return pts
 
 
-def petals(who, t, n, rng, size, h, top=1.6, a=1.0):
-    """n flakes of crimson lacquer and gold leaf falling slowly round the body, each once a loop, tumbling (their
-    width beats as they turn), swaying: the opposite way to the awakening's rising motes."""
-    out = []
-    for i in range(n):
-        ph, L, x0 = rng.random(), rng.uniform(*size), rng.uniform(-0.55, 0.45)
-        spin, sway, hot = rng.uniform(2.0, 4.0) * rng.choice((1, -1)), rng.uniform(0.03, 0.08), rng.random() < 0.4
-        e = frac(t + ph)
-        k = math.sin(math.pi * e) ** 0.7
-        if k < 0.03:
-            continue
-        x = x0 + sway * math.sin(TAU * (e * 1.5 + ph))
-        z = top + 0.1 * abs(x0) - (top - 0.02) * e
-        turn = abs(math.cos(TAU * spin * e))  # its face to us, then its edge
-        poly = shard(L, L * (0.12 + 0.45 * turn))
-        out.append(dict(k="poly", pts=place(poly, (x, z), TAU * ph + 0.6 * math.sin(TAU * spin * e * 0.5)),
-                        m="solid", a=a * k, s=(0.8 if hot else 0.45), h=(0.72 if hot else h) * (0.85 + 0.15 * turn), y=-0.02 - 0.0003 * i))
-    return out
-
-
-def stars(t, n, rng, size, h, R=(0.32, 0.62), z=(0.2, 1.55)):
-    """Its signature: gold eight-point stars (its guard's) blinking round it, each twice a loop: a sharp flash
-    growing out of nothing, a slow fade, turning a little; most small, a few large."""
-    out = []
-    for i in range(n):
-        ph, r = rng.random(), rng.uniform(*size) * (2.2 if rng.random() < 0.15 else 1.0)
-        side = rng.choice((1, -1))  # her back: past her long hair
-        x, zz, rot = side * rng.uniform(*R) - (0.25 if side < 0 else 0.0), rng.uniform(*z), rng.random() * TAU
-        e = frac(2 * t + ph)
-        if e > 0.45:
-            continue
-        k = (e / 0.06) if e < 0.06 else (1 - (e - 0.06) / 0.39) ** 1.5
-        long_ = star(4, r * 3.2 * (0.6 + 0.4 * k), r * 0.32, rot + 0.3 * e)
-        short = star(4, r * 1.5 * (0.6 + 0.4 * k), r * 0.3, rot + math.pi / 4 + 0.3 * e)
-        y = -0.025 - 0.0003 * i
-        out.append(dict(k="poly", pts=place(long_, (x, zz)), m="shape", a=k, s=2.0, h=h, y=y))
-        out.append(dict(k="poly", pts=place(short, (x, zz)), m="shape", a=k * 0.8, s=2.0, h=h * 0.9, y=y - 0.0001))
-        out.append(dict(k="dot", c=(x, zz), r=r * 0.55 * k, m="solid", a=k, s=2.2, h=1.0, y=y + 0.0002))
-    return out
-
-
-def aura_h01b(t):
-    """Hakuen holding her long odachi (weapon B): crimson and gold-leaf flakes falling slowly, gold eight-point stars
-    blinking round her, no lightning (that is her awakening's). The rim light: the game's, gold."""
-    r = random.Random(11)
-    return petals("h01", t, 20, r, (0.07, 0.11), 0.33) + stars(t, 10, r, (0.024, 0.038), 0.92)
-
-
-AURAS = {k: (v, AN) for k, v in dict(p01=aura_p01, p02=aura_p02, p03=aura_p03, p08=aura_p08, h01=aura_h01,
-                                     h01b=aura_h01b).items()}
+AURAS = {k: (v, AN) for k, v in dict(p01=aura_p01, p02=aura_p02, p03=aura_p03, p08=aura_p08, h01=aura_h01).items()}
 
 
 # --- the bursts (played once as the form begins, behind the fighter; their near halves over it) ----------------

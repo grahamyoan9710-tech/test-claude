@@ -30,7 +30,7 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "p08": ("#C98F28", "#FFD45A", "#FFF3BF", "#FFFFFF", None),
     "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
-if KIND in ("aura", "eveil"):  # the awakened forms: their own colours (aura_geo.PAL)
+if KIND in ("aura", "eveil") or (KIND or "").startswith("coupe_"):  # their own colours (aura_geo.PAL)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import aura_geo
     PALETTES[STYLE] = aura_geo.PAL[STYLE]
@@ -1813,13 +1813,31 @@ def r_eveil():
     return meta, anim
 
 
+def r_coupe():
+    """Hakuen's sword cut (coupe_geo.py): played once at her feet on the cut's frame. coupe_<cut>-h01 (weapon A) or
+    -h01b (weapon B)."""
+    import coupe_geo
+    cut, b = KIND[len("coupe_"):], STYLE == "h01b"
+    N = coupe_geo.CN
+    W, H, AX, AY = frame_of([aura_geo.bounds(coupe_geo.frames(cut, b, f)) for f in range(N)], 0.12)
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=0, N=N, FPS=30, LOOP=0)
+    scene(W, H, AX, AY)
+    aura_mats()
+
+    def anim(f, t):
+        fresh()
+        build(coupe_geo.frames(cut, b, f))
+
+    return meta, anim
+
+
 RECIPES = dict(bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
                plume=r_plume, marque=r_marque, pilier=r_pilier, aura=r_aura, eveil=r_eveil)
 if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]
     meta, anim = CASTS[kind](**opts)
 else:
-    meta, anim = RECIPES[KIND]()
+    meta, anim = r_coupe() if KIND.startswith("coupe_") else RECIPES[KIND]()
 FRAMES = [int(x) for x in os.environ.get("CH_FRAMES", "").split(",") if x.strip()] or range(meta["N"])
 for LAYER in meta.get("LAYERS", [""]):  # (a burst's near half: its own strip, <name>_front)
     os.makedirs(OUT + LAYER, exist_ok=True)
