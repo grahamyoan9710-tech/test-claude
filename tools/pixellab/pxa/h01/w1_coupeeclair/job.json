@@ -1,0 +1,9 @@
+{
+ "status": "done",
+ "tool": "join",
+ "parts": [
+  "w1_coupeeclair.a",
+  "w1_coupeeclair.b"
+ ],
+ "cut_after": 8
+}

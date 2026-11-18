@@ -61,13 +61,13 @@ ARMED_HOLD = ("reaches forward with his free hand and closes it on the collar of
 # M1 (w<slot>_nair), 4 skills and an ultimate. A slot whose "look" is "new" also gets the states below, so the weapon
 # is seen in every animation; their bases are its own (guard -> w<slot>guard@last, jump@last -> w<slot>_jump@last).
 WSTATES = {
-    "idle": (8, "guard", True, True, "none", "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, {held} held exactly as in the first frame, the feet stay planted, returns exactly to the first pose"),
+    "idle": (8, "guard", True, True, "none", "idle stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway gently, {held} held exactly as in the first frame, the feet stay planted, returns exactly to the first pose"),
     "walk": (8, "guard", True, True, "none", "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right like the first frame, {held} held exactly as in the first frame, a seamless two-step walk cycle that ends exactly on the first pose"),
     "runstart": (8, "guard", None, False, "none", "breaks into a fast run to the right: leans the torso far forward, {held} held low and trailing behind him in one hand, the free arm swept back, legs start a long running stride"),
     "dash": (8, "guard", None, False, "none", "leans the torso far forward and takes one long low stride to the right from the stance, {held} held low and trailing behind him in one hand, the free arm swept back, landing on the front foot already in a running stride; nothing is drawn behind the feet"),
     "run": (8, "runstart@last", True, True, "none", "fast run cycle to the right: leaning far forward, {held} held low and trailing behind him in one hand, long fast strides, a seamless loop that ends exactly on the first pose"),
     "jump": (8, "guard", None, False, "none", "jumps straight up: a quick crouch, springs up, then tucks the knees up in mid-air, {held} held ready in one hand, hair and clothes fly upward; the last frames stay high in the air in that tucked pose, the feet never come back down"),
-    "fall": (8, "jump@last", True, True, "none", "falls through the air holding one still pose: the body, arms, legs and {held} do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward in the wind of the fall, a seamless loop that ends exactly on the first pose"),
+    "fall": (8, "jump@last", True, True, "none", "falls through the air holding one still pose: the body, arms, legs and {held} do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward as he falls, a seamless loop that ends exactly on the first pose"),
     "airjump": (8, "jump@last", True, False, "none", "double jump in mid-air: tucks the knees and does a full forward somersault holding {held} close to his body, ending tucked in the same pose"),
     "land": (4, "guard", True, False, "none", "standing on the floor, bends the knees deeply as if just landed, {held} held ready, then rises back into the stance; the feet stay on the floor, nothing is drawn around them"),
     "crouch": (4, "guard", None, False, "none", "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, {held} held low and ready in front of him"),
@@ -143,21 +143,19 @@ def spec(fighter):
     return json.load(open(p)) if os.path.exists(p) else None
 
 
+# Only the body and its motion (owner, 17/11): naming an effect, even "no smoke", makes PixelLab draw it, and every
+# effect is made in Blender. EFFECTS catches a prompt that still names one: jobs() leaves it out.
 TAIL = (" The character stays at the same place in the frame (the game moves him), always facing right, seen from the side;"
-        " keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no effect, no"
-        " motion streak, no speed lines, no trail behind the limbs or the weapon, no glow, no energy, no projectile, no"
-        " smoke, no dust, no ground, the whole body inside the picture. Every frame shows the arms, legs and weapon"
-        " clearly in a crisp pose, never blurred.")
-# Blows (the owner allows the trails of fast blows and blades): nothing else is drawn but the character.
-TAIL_BLOW = (" The character stays at the same place in the frame (the game moves him), always facing right, seen from the"
-             " side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds: no"
-             " glow, no flash, no sparks, no energy, no projectile, no smoke, no dust, no ground; the whole body, the weapon"
-             " and any trail stay inside the picture.")
+        " keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body"
+        " inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.")
+EFFECTS = re.compile(r"\b(trails?|glow\w*|flash\w*|sparks?|energy|smoke|dust|lightning|fire|flames?|streaks?|aura|blur\w*|"
+                     r"speed lines?|wind|shockwave|projectile|crescent|afterimages?|impact|cloud|effects?|grey|gray|beam|"
+                     r"smear\w*|arcs?|sweep\w*)\b", re.I)  # "arc", "sweep": PixelLab draws the path as a white trail (17/11)
 
 # --- the moves every fighter has (bare-handed brawler moves) ---
 COMMON = {
     # name: (frames, base, pin, loop, direction, description)
-    "idle": (8, "guard", True, True, "none", "idle fighting stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway in the wind, the feet stay planted, returns exactly to the first pose"),
+    "idle": (8, "guard", True, True, "none", "idle fighting stance loop: breathes calmly, shoulders rise and fall, knees bounce slightly, hair and clothes sway gently, the feet stay planted, returns exactly to the first pose"),
     "walk": (8, "guard", True, True, "none", "walks forward to the right in side profile: the back leg steps past the front leg, then the other, the body and head stay turned to the right the whole time exactly like the first frame, fists raised, a seamless two-step walk cycle that ends exactly on the first pose"),
     "runstart": (8, "guard", None, False, "none", "breaks into a fast run to the right: leans the torso far forward and sweeps both arms straight back behind him, legs start a long running stride"),
     "dash": (8, "guard", None, False, "none", "leans the torso far forward and takes one long low stride to the right from the stance, both arms swept back, landing on the front foot already in a running stride; nothing is drawn behind the feet"),
@@ -173,7 +171,7 @@ COMMON = {
     "grabbed": (4, "guard", True, True, "none", "held up by the collar from in front of him: chest pulled forward, head tilted back in pain, hands clutching at the collar at his throat, legs kicking and squirming, body wriggling, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame"),
     "holdstart": (4, "guard", None, False, "none", "thrusts his right arm straight forward at shoulder height, the open hand closing on the collar of an invisible opponent in front of him, ending with the arm fully extended forward, holding it at arm's length, staying in side profile facing right the whole time. Only the character is drawn: the opponent is invisible, there is no other person in the frame."),
     "victory": (12, "guard", None, False, "none", "victory pose with empty hands: straightens up, crosses his arms over his chest and smiles confidently, holding still"),
-    "jab": (8, "guard", True, False, "forward", "fast straight jab with the left fist: snaps the fist straight forward at full arm extension, then pulls it back into the stance; no smoke, no grey effects"),
+    "jab": (8, "guard", True, False, "forward", "fast straight jab with the left fist: snaps the fist straight forward at full arm extension, then pulls it back into the stance"),
     "jab2": (8, "guard", True, False, "forward", "fast cross punch: throws the rear fist straight forward at full extension with a twist of the hips, then back into the stance"),
     "jab3": (8, "guard", True, False, "forward", "strong front kick: lifts the front knee and kicks straight forward at belly height, then back into the stance"),
     "ftilt": (8, "guard", True, False, "forward", "stepping side kick: steps forward and kicks straight ahead at chest height, then back into the stance"),
@@ -188,7 +186,7 @@ COMMON = {
 STAGE_B = {
     "run": (8, "runstart@last", True, True, "none", "fast run cycle to the right: leaning far forward, both arms swept straight back, long fast strides, a seamless loop that ends exactly on the first pose"),
     "dashattack": (12, "runstart@last", "guard", False, "forward", "running tackle: rushes forward shoulder first, then slides to a stop and stands back up in the fighting stance"),
-    "fall": (8, "jump@last", True, True, "none", "falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward in the wind of the fall, a seamless loop that ends exactly on the first pose"),
+    "fall": (8, "jump@last", True, True, "none", "falls through the air holding one still pose: the body, arms and legs do not move at all, the legs stay exactly as in the first frame and never bend or stretch; only the hair and the loose clothes flutter upward as he falls, a seamless loop that ends exactly on the first pose"),
     "airjump": (8, "jump@last", True, False, "none", "double jump in mid-air: tucks the knees and does a full forward somersault, ending tucked in the same pose"),
     "airdodge": (8, "jump@last", True, False, "none", "air dodge: curls up tightly in mid-air in the same place, the body staying in the middle of the picture, then opens up again in the same pose"),
     "helpless": (8, "jump@last", True, True, "none", "falls helplessly, exhausted: both arms hang limp and loose straight up above his head, head drooping, eyes half closed, legs dangling loosely below him, the body tilting slowly as he drops, a seamless loop that ends exactly on the first pose. Only the character is drawn"),
@@ -204,7 +202,7 @@ STAGE_B = {
     "hold": (4, "holdstart@last", True, True, "none", "holds an invisible opponent in front of him with both hands, arms extended and fists closed on empty air, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame."),
     "pummel": (4, "holdstart@last", True, False, "forward", "holding the invisible opponent in front of him with both hands, raises one knee sharply toward it, then lowers it back. Only the character is drawn: the opponent is invisible, there is no other person in the frame."),
     "fthrow": (8, "holdstart@last", "guard", False, "forward", "holding an invisible opponent, steps forward and pushes both hands forward, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"),
-    "bthrow": (12, "holdstart@last", "guard", False, "back", "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands, no beam, no motion streak, no trail behind the arms"),
+    "bthrow": (12, "holdstart@last", "guard", False, "back", "holding an invisible opponent, turns his body around and swings both arms behind him, lets go, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"),
     "uthrow": (8, "holdstart@last", "guard", False, "up", "hoists the invisible opponent he is holding high above his head with both arms and throws it straight up, then returns to the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame."),
     "dthrow": (12, "holdstart@last", "guard", False, "down", "holding an invisible opponent, crouches and brings both hands down to the floor in front of him, then rises back into the fighting stance. Only the character is drawn: the opponent is invisible, there is no other person in the frame; nothing leaves his hands"),
 }
@@ -336,6 +334,8 @@ def jobs(fighter, only=None):
         elif pin == "guard":  # a weapon that changes the look ends on its own guard
             ks = wslot(fighter, name)
             last = base_file(fighter, wbase(name[1], "guard") if ks and ks.get("look") == "new" else "guard")
+        elif isinstance(pin, str):  # "<clip>@last": a redone clip keeps the old one's end pose (the clips that start there)
+            last = base_file(fighter, pin)
         m = re.fullmatch(r"w(\d)guard", name)
         if m and armed_base(fighter, m.group(1)):  # taking the weapon ends on the armed picture
             last = armed_base(fighter, m.group(1))
@@ -349,11 +349,17 @@ def jobs(fighter, only=None):
         if ks and ks.get("look") == "new":  # the weapon's own look
             subject = ks.get("subject", subject)
             pose = ks.get(f"{kind}_pose", pose) if kind in ("guard", "air") else pose
-        # a clip rewritten after the review drew effects: the strict tail (no trail either) for its remake
-        blow = direction not in ("none", None) and name not in QA_PROMPTS.get(fighter, {})
-        desc = desc.rstrip(" .") + "." + (TAIL_BLOW if blow else TAIL)
+            pose = ks.get("poses", {}).get(name, pose)  # a part that starts in another pose (w0_jab.b: the reach)
+        bad = sorted({w.lower() for w in EFFECTS.findall(desc)})
+        if bad:
+            print(f"left out {fighter}/{name}: its prompt names an effect ({', '.join(bad)})", file=sys.stderr)
+            continue
+        desc = desc.rstrip(" .") + "." + TAIL
         if she:
             desc, pose = feminine(desc), feminine(pose)
+        if len(desc) > 1000 or len(subject) > 300:  # PixelLab refuses them (17/11)
+            print(f"left out {fighter}/{name}: prompt {len(desc)}/1000, subject {len(subject)}/300 characters", file=sys.stderr)
+            continue
         j = {"out": os.path.join(S, fighter, name), "src": src, "frames": n, "desc": desc,
              "subject": subject, "pose": pose}
         if last:

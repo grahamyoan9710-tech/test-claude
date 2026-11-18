@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "0563fa3b-2bd1-42bc-97c7-e019fc2577cf",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:8ea85120-43c2-42db-acc2-350e05d039df",
+  "description": "slowly, she turns her right wrist so the long odachi points down and back behind her right leg, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 0563fa3b-2bd1-42bc-97c7-e019fc2577cf\njob_id: 0563fa3b-2bd1-42bc-97c7-e019fc2577cf\ndescription: slowly, she turns her right wrist so the long odachi points down and back behind her right leg, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"0563fa3b-2bd1-42bc-97c7-e019fc2577cf\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/0563fa3b-2bd1-42bc-97c7-e019fc2577cf/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 2d97fbc3-8e50-5de3-a89f-f837dc3c0837\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

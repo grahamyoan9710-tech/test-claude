@@ -127,10 +127,11 @@ cmake -S . -B build-core -DCLASH_BUILD_GAME=OFF && cmake --build build-core -j  
 - Règle du jeu (propriétaire, 06/11) : style « RTX », **tous les effets ont du bloom** (sauf, depuis le 10/11, la
   fumée et la poussière des déplacements et la traînée d'éjection : trop lumineuses), et aucun effet ne teinte
   les persos au point de les salir (les effets pixel art ne les éclairent pas : ils les rendaient olive).
-- Aucun effet dans les clips des persos : les prompts PixelLab se terminent par « Only <nom> is drawn ». Seule
-  exception, les traînées : à mains nues, seuls les coups rapides en ont une ; avec une arme, **tous** les coups en
-  ont une. Un clip où un autre effet est collé au perso est régénéré, pas découpé avec `erase` ou `degrey`. Aucun
-  perso coupé au bord du cadre.
+- Aucun effet dans les clips des persos (propriétaire, 17/11) : un prompt PixelLab ne décrit **que le corps et son
+  mouvement** (pose, membres, arme nue), sans aucun mot d'effet, même à la forme négative (« no smoke » fait
+  dessiner de la fumée) : traînées, éclairs, impacts, poussière, vent… se font tous dans Blender. `clips.py` écarte
+  un prompt qui en nomme un (`EFFECTS`). Un clip où un effet est collé au perso est régénéré, pas découpé avec
+  `erase` ou `degrey`. Aucun perso coupé au bord du cadre.
 - Catégorie bâton (aujourd'hui : 02-B, le sceptre-étoile) : le perso se bat comme Wukong dans Black Myth: Wukong
   (grands balayages, moulinets, frappes écrasantes, vrilles). Les faux et les lances n'en font pas partie.
 - Double saut : aucun salto ni tournoiement (le jeu rejoue le clip de saut).

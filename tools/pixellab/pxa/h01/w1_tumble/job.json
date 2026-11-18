@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "d755e6df-eab1-4156-99f3-0dbd9b93dc50",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a2070e3f-e998-4e57-a56a-3f247a105f7f",
+  "last_frame_url": "upload:bcbd85f7-515d-4aa4-b266-2befd32cc878",
+  "description": "tumbles head over heels through the air after a heavy blow, spinning out of control, still gripping the long odachi, a seamless loop. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "in mid-air facing right, knees tucked, holding the drawn long odachi level in front of her"
+ },
+ "reply": "id: d755e6df-eab1-4156-99f3-0dbd9b93dc50\njob_id: d755e6df-eab1-4156-99f3-0dbd9b93dc50\ndescription: tumbles head over heels through the air after a heavy blow, spinning out of control, still gripping the long odachi, a seamless loop. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d755e6df-eab1-4156-99f3-0dbd9b93dc50\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/d755e6df-eab1-4156-99f3-0dbd9b93dc50/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 08f2e7d8-e04c-514e-8639-3e18da505b8f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_jump/f_08.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

@@ -209,6 +209,7 @@ struct MoveDef {
   bool turnAfterTeleport = false;   // faces back after it (strikes from behind)
   // Use limits
   int cooldown = 0;                 // frames from its start before it can be used again (0: none)
+  int charges = 0;                  // uses in a row before that cooldown starts (0 or 1: after each use)
   int channelEnd = -1;              // the technique is held up to this frame: its clip keeps the cast pose
   // Presentation
   int superFlash = 0;               // frames of "super freeze" when the move starts (cut-in with its name)
@@ -300,6 +301,7 @@ struct FormDef {
   const char* aura = nullptr; // its PixelLab aura, looping around the fighter
   std::vector<std::pair<int, MoveDef>> moves;  // moves replaced while transformed
   bool m1Waves = false;       // its M1 blows (jab, jab2, jab3, the air M1) also fire m1Wave (the new 01's awakening)
+  bool m1Blink = false;       // with a kit weapon, its M1 become the weapon's blink cuts (FTilt, UTilt, DTilt, FAir)
   ProjectileDef m1Wave;
 };
 

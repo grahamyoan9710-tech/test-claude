@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "3825d10d-6da3-4b23-9316-a8d43fe14294",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:d3c0d09e-3e95-4935-925a-9f1066bd1c0f",
+  "last_frame_url": "upload:b91f762f-f4ac-44d1-81dc-c154926c7632",
+  "description": "two low spinning sweeps: drops into a deep crouch on his left leg, both hands touching the floor, sweeps his stretched right leg in a wide arc just above the floor in front of him to the right, then pivots on his hands and sweeps the same leg along the floor behind him to the left, his face still turned to the right, then rises back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 3825d10d-6da3-4b23-9316-a8d43fe14294\njob_id: 3825d10d-6da3-4b23-9316-a8d43fe14294\ndescription: two low spinning sweeps: drops into a deep crouch on his left leg, both hands touching the floor, sweeps his stretched right leg in a wide arc just above the floor in front of him to the right, then pivots on his hands and sweeps the same leg along the floor behind him to the left, his face still turned to the right, then rises back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"3825d10d-6da3-4b23-9316-a8d43fe14294\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/3825d10d-6da3-4b23-9316-a8d43fe14294/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 18b65c13-5f71-511c-98ef-eff0120deb1f\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

@@ -1255,8 +1255,10 @@ static void testDeterminism() {
 }
 
 // The new 01 (Hakuen). The jab held past its end sheathes (Rengaine); let go in the window the Glint shows, it is the
-// Coupe-éclair, earlier the plain cut. The Coupe-éclair's first hit and each parry give a charge of will; full will
-// awakens him, and awake his M1 throw crescents. The Prescience held parries up to 3 blows: the third fills the will.
+// Coupe-éclair, earlier the plain cut. With a weapon in hand only, the Coupe-éclair's first hit and each parry give a
+// charge of will; full will awakens her, and awake her M1 are blink cuts (a vanish, a step ahead) that throw
+// crescents. The Prescience held parries up to 3 blows: the third fills the will. The nodachi's neutral (Vergil's
+// technique) opens cuts ahead four times in a row, then recharges.
 static void testHakuen() {
   std::printf("[hakuen]\n");
   const int h = charIndex("Hakuen"), o = charIndex("N° 07");
@@ -1271,6 +1273,8 @@ static void testHakuen() {
     m->fighters[0].facing = 1;
     m->fighters[1].pos = {gap, 0};
     m->fighters[1].facing = -1;
+    m->fighters[0].weapon = 0;  // the nodachi in hand (its drops wait for the clips)
+    m->fighters[0].weapons = 1;
     return m;
   };
   std::array<InputState, 4> in{};
@@ -1295,18 +1299,64 @@ static void testHakuen() {
     for (int i = 0; i < 60 && f.state == FState::Attack; ++i) m.step(in);
     CHECK(m.fighters[1].percent > 0.0f && f.will == 1, "it hits and gives one will (%.0f%%, will %d)",
           m.fighters[1].percent, f.will);
-    f.will = kWillMax;  // full will: he awakens as soon as he can act
+    f.will = kWillMax;  // full will: she awakens as soon as she can act
     for (int i = 0; i < 5 && f.form < 0; ++i) m.step(in);
-    CHECK(f.form == f.def->willForm && f.will == 0, "full will awakens him (form %d, will %d)", f.form, f.will);
+    CHECK(f.form == f.def->willForm && f.will == 0, "full will awakens her (form %d, will %d)", f.form, f.will);
     for (int i = 0; i < 120 && f.state != FState::Idle; ++i) m.step(in);
-    m.fighters[1].pos = {300, 0};
+    m.fighters[1].pos = {400, 0};
     const size_t shots = m.projectiles.size();
+    const float x0 = f.pos.x;
+    bool hidden = false;
     in[0] = key(0, 0, true);
     for (int i = 0; i < 12; ++i) {
       m.step(in);
       in[0] = InputState{};
+      hidden |= f.move == FTilt && f.intangible > 0 && f.moveFrame < f.moveDef(FTilt).teleportFrame;
     }
-    CHECK(m.projectiles.size() > shots, "awake, his jab throws a crescent (%zu -> %zu)", shots, m.projectiles.size());
+    CHECK(f.move == FTilt && hidden, "awake, her jab is the blink cut and she vanishes (move %d)", f.move);
+    CHECK(f.pos.x - x0 > 40.0f, "she reappears ahead (%.0f px)", f.pos.x - x0);
+    CHECK(m.projectiles.size() > shots, "awake, her jab throws a crescent (%zu -> %zu)", shots, m.projectiles.size());
+    in[0] = key(0, 0, true);
+    for (int i = 0; i < 40 && f.move != UTilt; ++i) {
+      m.step(in);
+      in[0] = i % 2 ? key(0, 0, true) : InputState{};
+    }
+    CHECK(f.move == UTilt, "the second blink cut follows (move %d)", f.move);
+    delete &m;
+  }
+  {  // bare-handed: the Coupe-éclair gives no will
+    Match& m = *fresh(70);
+    Fighter& f = m.fighters[0];
+    f.weapon = -1;
+    f.weapons = 0;
+    sheathe(m);
+    for (int i = 0; i < 200 && f.charge < f.moveDef(Extra1).perfectFrom + 2; ++i) m.step(in);
+    in[0] = InputState{};
+    m.step(in);
+    for (int i = 0; i < 60 && f.state == FState::Attack; ++i) m.step(in);
+    CHECK(m.fighters[1].percent > 0.0f && f.will == 0, "bare-handed, its hit gives no will (%.0f%%, will %d)",
+          m.fighters[1].percent, f.will);
+    delete &m;
+  }
+  {  // the nodachi's neutral: cuts open ahead, four in a row, then the long recharge
+    Match& m = *fresh(200);
+    Fighter& f = m.fighters[0];
+    Fighter& v = m.fighters[1];
+    int casts = 0;
+    auto spam = [&](int frames) {
+      for (int i = 0; i < frames; ++i) {
+        in[0] = key(0, 0, false, false, false, f.state != FState::Attack && i % 2 == 0);
+        m.step(in);
+        if (f.state == FState::Attack && f.move == NSpecial && f.moveFrame == 1) ++casts;
+      }
+    };
+    spam(160);
+    CHECK(casts == 4, "four cuts in a row (%d)", casts);
+    CHECK(f.moveCooldown[NSpecial] > 6 * 60, "then a long recharge (%d frames)", f.moveCooldown[NSpecial]);
+    spam(60);
+    CHECK(casts == 4, "no fifth while it recharges (%d)", casts);
+    CHECK(v.percent > 0.0f, "the cuts open on the opponent 200 px ahead (%.0f%%)", v.percent);
+    in[0] = InputState{};
     delete &m;
   }
   {  // let go too early: the plain cut

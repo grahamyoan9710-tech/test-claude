@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "c6f9a0c9-2dd4-4ab3-aac0-5beecbe37d02",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e5e77747-b474-4f8f-9db2-75e8429bf57d",
+  "description": "in keyframes: she lifts the long odachi and brings its point back to the mouth of the long scabbard at her left hip; then slowly slides the whole long blade into the scabbard until only the hilt shows at her hip; then holds a still iai stance: right hand on the hilt, left hand on the scabbard, knees bent, eyes narrowed, perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: c6f9a0c9-2dd4-4ab3-aac0-5beecbe37d02\njob_id: c6f9a0c9-2dd4-4ab3-aac0-5beecbe37d02\ndescription: in keyframes: she lifts the long odachi and brings its point back to the mouth of the long scabbard at her left hip; then slowly slides the whole long blade into the scabbard until only the hilt shows at her hip; then holds a still iai stance: right hand on the hilt, left hand on the scabbard, knees bent, eyes narrowed, perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"c6f9a0c9-2dd4-4ab3-aac0-5beecbe37d02\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/c6f9a0c9-2dd4-4ab3-aac0-5beecbe37d02/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: b13ed8dd-382e-5420-b7db-415474da2880\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": null,
+ "frames": 13,
+ "charged": "2 generations"
+}

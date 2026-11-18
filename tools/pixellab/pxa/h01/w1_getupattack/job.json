@@ -1,0 +1,9 @@
+{
+ "status": "done",
+ "tool": "join",
+ "parts": [
+  "w1_getupattack.a",
+  "w1_getupattack.b"
+ ],
+ "cut_after": 8
+}

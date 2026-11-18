@@ -500,6 +500,43 @@ void drawCut(Fighter& k, int slot, Limb limb, float dmg) {
   w.insert(w.end(), {{Extra1, sheathe}, {Extra2, flash}, {Extra3, plain}});
 }
 
+// The owner's Vergil technique, in red (17/11, PGR): a draw and a sheathe in a blink, and cuts open on the spot
+// `dist` ahead, three hits; four in a row, then a long recharge.
+MoveDef farCut(const char* name, F e, const char* fx, float dist, float dmg) {
+  MoveDef m = mv(name, 24, {});
+  m.projectileFrame = 8;
+  m.projectile = proj({dist, -10}, {0, 0}, 0, 16, 56, dmg, 25, 30, e, PV::Crescent);
+  m.projectile.fx = fx;
+  m.projectile.piercing = true;
+  m.projectile.rehit = 6;  // three hits over its 16 frames
+  m.projectile.ignoreGround = true;
+  m.charges = 4;
+  m.cooldown = 8 * 60;
+  m.pose = PoseHint::Cast;
+  return m;
+}
+
+// The awakened M1 (the owner, 17/11: Ayato's flicker, Alpha's cuts): the weapon's M1 again, each cut begun by a
+// vanish and a short step forward. Kept under ids a kit weapon never plays (FTilt, UTilt, DTilt, FAir: the clips
+// w<slot>_ftilt...); FormDef::m1Blink plays them in place of the M1.
+void blinkCuts(Fighter& k, int slot) {
+  auto& w = k.c.weapons[slot].moves;
+  std::vector<std::pair<int, MoveDef>> cuts;
+  for (const auto& [id, m] : w) {
+    const int to = id == Jab ? FTilt : id == Jab2 ? UTilt : id == Jab3 ? DTilt : id == NAir ? FAir : -1;
+    if (to < 0) continue;
+    MoveDef b = m;
+    b.teleportFrame = 3;  // hidden from frame 1, back 60 px ahead before the cut (every kit cut starts after frame 4)
+    b.teleportDist = 60 * k.S;
+    b.teleportForward = true;
+    b.intangibleStart = 1;
+    b.intangibleEnd = 5;
+    b.nextMove = m.nextMove == Jab2 ? UTilt : m.nextMove == Jab3 ? DTilt : -1;
+    cuts.push_back({to, b});
+  }
+  w.insert(w.end(), cuts.begin(), cuts.end());
+}
+
 // Prescience: the guard held (the special held) parries up to three blows, a spark each; on release the riposte,
 // harder for each parry; after the third, untouchable and the will full.
 MoveDef prescience(MoveDef m, const char* spark) {
@@ -518,7 +555,6 @@ CharacterDef makeH01() {
   k.c.id = "h01";
   k.c.name = "Hakuen";
   k.c.hero = Hero::H01;
-  k.c.armed = false;  // shortcut: bare-handed until his nodachi clips pass QA (13/11), then remove this line
   k.c.walkStride = 1.6f;  // her short 3/4 steps at the usual stride looked hurried (owner, 10/11)
   const F e = k.e;
   const auto far = [](MoveDef m) {  // his electric dash goes 25 % further (owner, 12/11)
@@ -533,25 +569,43 @@ CharacterDef makeH01() {
 
   arm(k, 0, "Nodachi", "Longue lame courbe", WeaponVisual::Held, Kit::Blade, 100, 1.0f,
       {"Coupe horizontale", "Coupe montante", "Coupe descendante"});
-  skills(k, 0, piercing(shot("Croissant du néant", e, PV::Crescent, k.pfx("crescent"), 10, 30, 9)),
+  skills(k, 0, farCut("Fente écarlate", e, k.pfx("jugement"), 200, 3),
          far(through("Ruée-iaï", e, k.pfx("draw"), 11)), rise("Coupe en spirale", e, k.pfx("spiral"), 15.5f, 4),
          prescience(counter("Prescience de la lame", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 0, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));  // shortcut: the katana's own slashing ultimate comes with its clips
   drawCut(k, 0, L::Weapon, 14);
 
-  arm(k, 1, "Lame éveillée", "La même lame, en flammes", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
+  arm(k, 1, "Lame éveillée", "Très long odachi, garde en étoile dorée", WeaponVisual::Held, Kit::Blade, 100, 1.05f,
       {"Coupe diagonale", "Revers montant", "Coupe tournoyante"});
   skills(k, 1, piercing(shot("Croissant de feu", e, PV::Crescent, k.pfx("crescent"), 11, 28, 10)),
          far(through("Ruée ardente", e, k.pfx("draw"), 12)), rise("Spirale de feu", e, k.pfx("spiral"), 16, 5),
          prescience(counter("Prescience ardente", e, nullptr, false), k.pfx("parry")));
   ultimateOf(k, 1, ult::thunder("FORGE DE L'AUBE", e, k.pfx("ult"), 28, 5));
   drawCut(k, 1, L::Weapon, 15);
+  blinkCuts(k, 0);  // after drawCut: the blink cuts keep the hold that sheathes
+  blinkCuts(k, 1);
+  // The cut of each plain blade move is a Blender effect (the owner, 17/11: no swing drawn in the sprites),
+  // pfx_h01_<a|b>_<clip>, played when the move's first hitbox comes out; nothing shows until its strip exists.
+  // The specials keep their own effects.
+  const std::pair<int, const char*> cuts[] = {{Jab, "jab"}, {Jab2, "jab2"}, {Jab3, "jab3"}, {FTilt, "ftilt"},
+      {UTilt, "utilt"}, {DTilt, "dtilt"}, {NAir, "nair"}, {FAir, "fair"}, {FThrow, "fthrow"}, {UThrow, "uthrow"},
+      {LedgeAttack, "ledgeattack"}, {GetupAttack, "getupattack"}};
+  for (int slot : {0, 1})
+    for (auto& [id, m] : k.c.weapons[slot].moves)
+      for (const auto& [cid, clip] : cuts)
+        if (id == cid && !m.castFx && !m.hitboxes.empty()) {
+          m.castFx = k.pfx((std::string(slot ? "b_" : "a_") + clip).c_str());
+          m.castFxFrame = m.hitboxes.front().start;
+          for (const auto& h : m.hitboxes) m.castFxFrame = std::min(m.castFxFrame, h.start);
+        }
 
-  // Volonté de la lame: 3 charges (Coupe-éclair, parries) and he awakens for 8 s: his M1 send cutting waves, his
-  // neutral three crescents in a fan (great crescents of fire with the awakened blade).
+  // Volonté de la lame, with a weapon in hand only (the owner, 17/11): 3 charges (Coupe-éclair, parries) and she
+  // awakens for 8 s: her M1 become the blink cuts and send cutting waves, her neutral three crescents in a fan (great
+  // crescents of fire with the awakened blade).
   const int awake = ult::form(k.c, k.pfx("aura"), e, 8, 1.1f, 1.0f);
   FormDef& aw = k.c.forms[awake];
   aw.m1Waves = true;
+  aw.m1Blink = true;
   aw.m1Wave = proj({30, -6}, {11, 0}, 0, 26, 16, 3.5f, 20, 40, e, PV::Crescent);
   aw.m1Wave.fx = k.pfx("crescent");
   aw.m1Wave.piercing = true;

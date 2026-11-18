@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "d3abdf64-274b-4de2-ada1-6999eefdcc5b",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:84afc106-0289-480d-858a-7a50925ebff2",
+  "last_frame_url": "upload:da7561b4-f6fb-458f-81fd-13b9d255a7bc",
+  "description": "holds the still iai stance perfectly still for three frames, her right hand on the handle; then slowly draws the nodachi forward out of the scabbard, the blade sliding out of the mouth in front of her left hip until its point is free, and lowers it into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "still iai stance facing right, the sword sheathed in the scabbard at her left hip, only its handle sticking out forward from the scabbard mouth, her right hand on the handle"
+ },
+ "reply": "id: d3abdf64-274b-4de2-ada1-6999eefdcc5b\njob_id: d3abdf64-274b-4de2-ada1-6999eefdcc5b\ndescription: holds the still iai stance perfectly still for three frames, her right hand on the handle; then slowly draws the nodachi forward out of the scabbard, the blade sliding out of the mouth in front of her left hip until its point is free, and lowers it into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"d3abdf64-274b-4de2-ada1-6999eefdcc5b\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/d3abdf64-274b-4de2-ada1-6999eefdcc5b/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 1b09a2e3-9c79-5622-8426-d526b61520be\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_rengaine.end/f_00.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

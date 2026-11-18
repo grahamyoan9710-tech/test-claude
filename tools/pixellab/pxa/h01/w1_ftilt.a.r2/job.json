@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "bc046788-8729-4074-b671-4611a34834c4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:2caad579-67ea-4c1d-9c13-008a3ee4cf8b",
+  "description": "slowly, she steps into a long low step forward, leaning far forward, and raises the long odachi high above her right shoulder in both hands, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: bc046788-8729-4074-b671-4611a34834c4\njob_id: bc046788-8729-4074-b671-4611a34834c4\ndescription: slowly, she steps into a long low step forward, leaning far forward, and raises the long odachi high above her right shoulder in both hands, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"bc046788-8729-4074-b671-4611a34834c4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/bc046788-8729-4074-b671-4611a34834c4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: ed711556-c48d-56af-8c69-acfaa00b4249\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

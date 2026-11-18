@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "5cbe35d8-41b0-412c-bc0c-d46bc95a357e",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:67196e68-ed6c-47f6-95bc-4ecd713f7fd3",
+  "description": "from the still iai stance with the blade sheathed, slowly, she grips the hilt and sinks lower, leaning forward; the whole blade stays inside the scabbard, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "still iai stance facing right, the blade sheathed in the scabbard at her left hip, her right hand on the hilt"
+ },
+ "reply": "id: 5cbe35d8-41b0-412c-bc0c-d46bc95a357e\njob_id: 5cbe35d8-41b0-412c-bc0c-d46bc95a357e\ndescription: from the still iai stance with the blade sheathed, slowly, she grips the hilt and sinks lower, leaning forward; the whole blade stays inside the scabbard, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5cbe35d8-41b0-412c-bc0c-d46bc95a357e\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/5cbe35d8-41b0-412c-bc0c-d46bc95a357e/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: bb1aa3e5-96c3-55d0-b453-97b2512a2022\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_rengaine/f_12.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

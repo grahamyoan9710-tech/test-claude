@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "6ea05ea7-348b-4f11-9350-6d6b262cf84c",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:9353d20a-3a48-4d52-93f2-ae80f661ad5e",
+  "description": "holds the long low lunge perfectly still for two frames; then slowly turns her upper body away so her back is half toward the right, the long blade now pointing behind her, and holds that for two frames; then slowly rises into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 6ea05ea7-348b-4f11-9350-6d6b262cf84c\njob_id: 6ea05ea7-348b-4f11-9350-6d6b262cf84c\ndescription: holds the long low lunge perfectly still for two frames; then slowly turns her upper body away so her back is half toward the right, the long blade now pointing behind her, and holds that for two frames; then slowly rises into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"6ea05ea7-348b-4f11-9350-6d6b262cf84c\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/6ea05ea7-348b-4f11-9350-6d6b262cf84c/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e49aadf5-a129-5d04-9567-3ec4389663a5\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

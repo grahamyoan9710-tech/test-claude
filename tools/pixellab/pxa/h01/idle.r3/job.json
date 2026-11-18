@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "490645a3-bfe1-494f-a2de-5342a0d39bd4",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:e1b797ac-9798-448a-b3c6-ed15d3c10916",
+  "last_frame_url": "upload:f1589457-e7fc-4f95-8af0-fc99deea56bf",
+  "description": "a calm swordsman's idle loop, alive but composed: he stands upright in the same stance, his weight shifting slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; halfway through, his right hand drifts to his left hip and rests there a moment as if on the hilt of a sheathed sword, then returns to its place; the head stays steady, the eyes calm and cold; the long ponytail, the red ribbons and the coat tails sway a little after the body; the feet stay planted, returns exactly to the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat worn off the shoulders, printed with red and gold patterns, red belt, black fingerless gloves, baggy black trousers, red and black boots",
+  "initial_pose": "calm upright karate ready stance facing right, standing tall, knees almost straight, right hand open low in front of the belt, left hand relaxed at the hip"
+ },
+ "reply": "id: 490645a3-bfe1-494f-a2de-5342a0d39bd4\njob_id: 490645a3-bfe1-494f-a2de-5342a0d39bd4\ndescription: a calm swordsman's idle loop, alive but composed: he stands upright in the same stance, his weight shifting slowly from the back foot to the front foot and back, the knees soft; deep slow breaths lift the chest; halfway through, his right hand drifts to his left hip and rests there a moment as if on the hilt of a sheathed sword, then returns to its place; the head stays steady, the eyes calm and cold; the long ponytail, the red ribbons and the coat tails sway a little after the body; the feet stay planted, returns exactly to the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"490645a3-bfe1-494f-a2de-5342a0d39bd4\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/490645a3-bfe1-494f-a2de-5342a0d39bd4/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: f79b5a91-6f1b-5870-a880-9b668641846e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

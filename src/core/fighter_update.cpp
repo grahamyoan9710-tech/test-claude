@@ -94,18 +94,26 @@ void Match::setState(Fighter& f, FState s, int timer) {
 
 void Match::startMove(Fighter& f, int id) {
   if (const WeaponDef* w = f.weaponDef(); w && w->kit) {  // the weapon's kit: its M1 on the ground and in the air
-    if (id == FTilt || id == UTilt || id == DTilt || id == DashAttack)
+    const FormDef* fd = f.formDef();
+    const bool blink = fd && fd->m1Blink;  // awake: the blink cuts, kept under ids the kit never uses
+    if (blink && f.state == FState::Attack && f.moveDef(f.move).nextMove == id) {
+      // the next blink cut of their combo
+    } else if (id == FTilt || id == UTilt || id == DTilt || id == DashAttack)
       id = Jab;
     else if (id == FSmash || id == USmash || id == DSmash)  // the heavy attack: the combo's finisher at once
       id = Jab3;
     else if (id == FAir || id == BAir || id == UAir || id == DAir)
       id = NAir;
+    if (blink) id = id == Jab ? FTilt : id == Jab2 ? UTilt : id == Jab3 ? DTilt : id == NAir ? FAir : id;
   }
   const MoveDef& m = f.moveDef(id);
   if (!m.exists() || id == f.cancelling) return;
   if (m.cooldown > 0) {  // still recharging: nothing happens
     if (f.moveCooldown[id] > 0) return;
-    f.moveCooldown[id] = m.cooldown;
+    if (++f.moveUses[id] >= std::max(1, m.charges)) {  // its last charge: the cooldown starts
+      f.moveUses[id] = 0;
+      f.moveCooldown[id] = m.cooldown;
+    }
   }
   f.state = FState::Attack;
   f.stateFrame = 0;
@@ -630,7 +638,9 @@ void Match::updateMove(Fighter& f) {
       }
   }
   const FormDef* fd = f.formDef();
-  if (fd && fd->m1Waves && (f.move <= Jab3 || f.move == NAir) && !m.hitboxes.empty() && m.hitboxes[0].start == t) {
+  const bool m1 = fd && fd->m1Blink ? (f.move >= FTilt && f.move <= DTilt) || f.move == FAir  // the blink cuts
+                                    : f.move <= Jab3 || f.move == NAir;
+  if (fd && fd->m1Waves && m1 && !m.hitboxes.empty() && m.hitboxes[0].start == t) {
     ProjectileDef w = fd->m1Wave;
     if (f.weapon == 1) w.radius *= 1.5f, w.hit.radius *= 1.5f, w.hit.damage *= 1.3f;  // B: great crescents of fire
     spawnProjectiles(f, w);

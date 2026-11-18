@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "a8cd9808-94e7-4bd2-8cff-e8536aa93d6d",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a7978235-cf9b-47be-aead-2aec500fe541",
+  "last_frame_url": "upload:7148ece1-85ef-4974-acc6-4d707d1b4348",
+  "description": "a final iai, in keyframes: he drops low and stretches the nodachi far out to the right at chest height in one wide cut and holds it for two frames; then he rises upright, brings the point of the blade to the mouth of the scabbard held at his left hip and slowly slides the whole blade in until the gold guard touches the scabbard; his eyes close and he stands perfectly still for three frames, his right hand on the hilt; then he calmly draws the nodachi out again and lowers it into the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 16,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: a8cd9808-94e7-4bd2-8cff-e8536aa93d6d\njob_id: a8cd9808-94e7-4bd2-8cff-e8536aa93d6d\ndescription: a final iai, in keyframes: he drops low and stretches the nodachi far out to the right at chest height in one wide cut and holds it for two frames; then he rises upright, brings the point of the blade to the mouth of the scabbard held at his left hip and slowly slides the whole blade in until the gold guard touches the scabbard; his eyes close and he stands perfectly still for three frames, his right hand on the hilt; then he calmly draws the nodachi out again and lowers it into the first pose. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 16\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a8cd9808-94e7-4bd2-8cff-e8536aa93d6d\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/a8cd9808-94e7-4bd2-8cff-e8536aa93d6d/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: a4816322-d9b4-5852-bf54-15b2148a8f95\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 17,
+ "charged": "2 generations"
+}

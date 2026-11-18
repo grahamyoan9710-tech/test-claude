@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "45019f19-45d0-413d-945a-e644771a4293",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:6f8182b2-43ab-45ec-a1bf-40cc49a7f2d1",
+  "last_frame_url": "upload:fd5acd3f-9d2c-40db-a071-93e934aff8fb",
+  "description": "a one-handed rising diagonal cut from the hip, in keyframes: he crouches low with the nodachi held back low behind him in his right hand, the left hand gripping the scabbard; then rises and cuts upward across his body until his right arm is stretched out forward at shoulder height and the blade points forward and up; he holds that extended pose for three frames, the coat and the ponytail lifting; then lowers back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 45019f19-45d0-413d-945a-e644771a4293\njob_id: 45019f19-45d0-413d-945a-e644771a4293\ndescription: a one-handed rising diagonal cut from the hip, in keyframes: he crouches low with the nodachi held back low behind him in his right hand, the left hand gripping the scabbard; then rises and cuts upward across his body until his right arm is stretched out forward at shoulder height and the blade points forward and up; he holds that extended pose for three frames, the coat and the ponytail lifting; then lowers back into the stance. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"45019f19-45d0-413d-945a-e644771a4293\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/45019f19-45d0-413d-945a-e644771a4293/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: e1167f5d-8a64-5774-ac36-1b371e238f4d\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

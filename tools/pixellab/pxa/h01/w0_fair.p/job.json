@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "7bee1692-265d-4ec3-8a62-3e51868b40cd",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:06534bbb-b73d-467e-b819-65209fc3f0bc",
+  "description": "in mid-air with the knees tucked, slowly, she stretches both arms down in front of her until the nodachi points below her tucked feet, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "in mid-air facing right, knees tucked, holding the drawn nodachi"
+ },
+ "reply": "id: 7bee1692-265d-4ec3-8a62-3e51868b40cd\njob_id: 7bee1692-265d-4ec3-8a62-3e51868b40cd\ndescription: in mid-air with the knees tucked, slowly, she stretches both arms down in front of her until the nodachi points below her tucked feet, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7bee1692-265d-4ec3-8a62-3e51868b40cd\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/7bee1692-265d-4ec3-8a62-3e51868b40cd/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 23b75bde-3b69-5a1a-96cf-0885485a6964\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_jump/f_08.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

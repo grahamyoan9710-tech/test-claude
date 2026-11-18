@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "a818ed1a-ba59-4c44-8e77-49ff0113c555",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:7d2eafb9-06c2-48a4-b8de-d2da1ab9665e",
+  "last_frame_url": "upload:8b644639-c000-42da-9762-86dfe4547d09",
+  "description": "holds the low lunge perfectly still for three frames, then slowly rises back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "in a long low lunge facing right, body twisted, both hands on the nodachi pointing low in front of her front foot"
+ },
+ "reply": "id: a818ed1a-ba59-4c44-8e77-49ff0113c555\njob_id: a818ed1a-ba59-4c44-8e77-49ff0113c555\ndescription: holds the low lunge perfectly still for three frames, then slowly rises back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"a818ed1a-ba59-4c44-8e77-49ff0113c555\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/a818ed1a-ba59-4c44-8e77-49ff0113c555/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 2b7abeef-b147-5194-bafd-8e38c33e976b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_ftilt.p/f_08.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 9,
+ "charged": "1 generation"
+}

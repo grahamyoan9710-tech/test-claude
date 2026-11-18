@@ -1,0 +1,9 @@
+{
+ "status": "done",
+ "tool": "join",
+ "parts": [
+  "w1_ledgeattack.a",
+  "w1_ledgeattack.b"
+ ],
+ "cut_after": 8
+}

@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "e8cd48e8-797f-4cd5-8007-07f0092e994f",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:4d31a18e-9ff9-4afe-b3f6-821d7e189fb1",
+  "description": "from the still iai stance with the blade sheathed, slowly, she grips the handle and sinks lower, leaning forward; the handle stays against the mouth of the scabbard in front of her left hip and the whole blade stays inside, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "still iai stance facing right, the sword sheathed in the scabbard at her left hip, only its handle sticking out forward from the scabbard mouth, her right hand on the handle"
+ },
+ "reply": "id: e8cd48e8-797f-4cd5-8007-07f0092e994f\njob_id: e8cd48e8-797f-4cd5-8007-07f0092e994f\ndescription: from the still iai stance with the blade sheathed, slowly, she grips the handle and sinks lower, leaning forward; the handle stays against the mouth of the scabbard in front of her left hip and the whole blade stays inside, then holds that pose perfectly still. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"e8cd48e8-797f-4cd5-8007-07f0092e994f\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/e8cd48e8-797f-4cd5-8007-07f0092e994f/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 8669829a-d41a-59d2-a004-24772115189e\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_rengaine/f_12.png",
+ "last": null,
+ "frames": 9,
+ "charged": "1 generation"
+}

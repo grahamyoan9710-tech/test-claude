@@ -1,0 +1,19 @@
+{
+ "status": "done",
+ "job_id": "303a564a-1b72-462d-9161-2c8eba65fbb8",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:8a2f6da4-c65f-4f79-b91f-401917b1e39a",
+  "description": "crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, the nodachi held low and ready in front of him. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult man, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in his right hand, the point forward, his left hand on the scabbard at his hip"
+ },
+ "reply": "id: 303a564a-1b72-462d-9161-2c8eba65fbb8\njob_id: 303a564a-1b72-462d-9161-2c8eba65fbb8\ndescription: crouches down low on the spot and holds it: knees fully bent, hips dropped onto the heels, torso folded forward, head ducked low at about half his standing height, the nodachi held low and ready in front of him. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves him), always facing right, seen from the side; keep his look, proportions and colours exactly. Only the character is drawn, with what he holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"303a564a-1b72-462d-9161-2c8eba65fbb8\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/303a564a-1b72-462d-9161-2c8eba65fbb8/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 6c0fcaea-7082-5d01-9711-dee3318ef6d3\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": null,
+ "frames": 5,
+ "charged": "1 generation"
+}

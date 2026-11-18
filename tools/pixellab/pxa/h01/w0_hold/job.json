@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "7cb61848-153d-44cb-b481-bb6d896e122b",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:9c595066-48f7-470e-b0c9-a4325a80b2e4",
+  "last_frame_url": "upload:03a47070-16d2-4c77-9337-82fbff8fd045",
+  "description": "holds an invisible opponent by the collar at arm's length with her free hand, the other hand keeping the nodachi ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 4,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "holding an invisible opponent in front of her with both hands"
+ },
+ "reply": "id: 7cb61848-153d-44cb-b481-bb6d896e122b\njob_id: 7cb61848-153d-44cb-b481-bb6d896e122b\ndescription: holds an invisible opponent by the collar at arm's length with her free hand, the other hand keeping the nodachi ready, breathing calmly, a seamless loop. Only the character is drawn: the opponent is invisible, there is no other person in the frame. The whole weapon stays inside the picture. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 4\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"7cb61848-153d-44cb-b481-bb6d896e122b\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/7cb61848-153d-44cb-b481-bb6d896e122b/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 4618b2f6-e2e2-540d-85df-11010bf2df70\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_holdstart/f_04.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_holdstart/f_04.png",
+ "frames": 5,
+ "charged": "1 generation"
+}

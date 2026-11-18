@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "315d40a4-6592-4bf4-b63f-29a7ed5c4420",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:a85108bc-80db-408f-882b-25d316cbe67f",
+  "last_frame_url": "upload:cc3360b5-f170-4236-97bb-33d4d4ed8d56",
+  "description": "slowly sheathes the nodachi, in keyframes: she lifts the blade and turns it until its point faces back toward her left hip; she brings the point to the mouth of the scabbard in front of her left hip; then she slowly pushes the blade back into the scabbard, the visible part of the blade getting shorter as her right hand comes back toward her hip, until the gold guard touches the mouth; then she holds the still iai stance perfectly still, her right hand on the handle. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 8,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+ },
+ "reply": "id: 315d40a4-6592-4bf4-b63f-29a7ed5c4420\njob_id: 315d40a4-6592-4bf4-b63f-29a7ed5c4420\ndescription: slowly sheathes the nodachi, in keyframes: she lifts the blade and turns it until its point faces back toward her left hip; she brings the point to the mouth of the scabbard in front of her left hip; then she slowly pushes the blade back into the scabbard, the visible part of the blade getting shorter as her right hand comes back toward her hip, until the gold guard touches the mouth; then she holds the still iai stance perfectly still, her right hand on the handle. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 8\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 1 generation\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"315d40a4-6592-4bf4-b63f-29a7ed5c4420\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/315d40a4-6592-4bf4-b63f-29a7ed5c4420/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d9e4837c-dbfd-5413-917c-703fea81c256\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w0_rengaine.end/f_00.png",
+ "frames": 9,
+ "charged": "1 generation"
+}
