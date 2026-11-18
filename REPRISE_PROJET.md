@@ -48,13 +48,18 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 
 | Ressource | Détenteur | Depuis |
 |---|---|---|
-| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | session claude/project-thread-58u7pf (Hakuen, rengainages) | 17/11 22 h 30 UTC |
-| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | session claude/project-thread-58u7pf (Hakuen, rengainages) | 17/11 22 h 30 UTC |
+| `fitall.sh` (`roster_hitfit.inc`, impacts de `sheets.txt`) | libre | |
+| Imports de clips (lignes `sheet`, `assets/sprites/<perso>_*.png`) | libre | |
 | Effets (lignes `fx`, `assets/sprites/fx_*.png`) | session claude/project-thread-3uctyp (fil VFX Blender, tous les effets Blender) | 17/11 07 h 40 UTC |
 | Équilibrage (`src/core/roster*.cpp`) | libre | |
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 18/11 01 h UTC, session claude/project-thread-58u7pf : rengainages de Hakuen refaits (A, B, Fente écarlate =
+  rengainage + déclic + la même lame qui ressort, `pxa/join.py --back` ; début des Coupe-éclair A et B et de
+  l'ultime B), importés, `fitall.sh` passé (tests 100 %, Hakuen 49 %). Chaque coupe d'arme simple joue un effet
+  Blender `pfx_h01_<a|b>_<clip>` à sa 1re hitbox (`castFx`, makeH01) : rien ne s'affiche tant que la bande
+  n'existe pas (le fil VFX les fait). Verrous « Imports de clips » et « fitall.sh » libérés.
 - 17/11 22 h 30 UTC, session claude/project-thread-58u7pf (fil « Refaire 10 persos ») : Hakuen jouable armée
   (`armed = false` retiré) : les clips des armes A et B importés et recalés ; chaque coup de lame est fait de deux
   parties propres jointes à la coupe (`pxa/join.py`, PixelLab peint une traînée sur tout geste rapide), l'impact

@@ -3,6 +3,8 @@
 
     python3 join.py FIGHTER CLIP   -> pxa/<fighter>/<clip>/ = <clip>.a (the slow wind-up) + <clip>.b (from the end
                                       of the cut back to the stance), the cut itself being the jump between them
+    python3 join.py FIGHTER CLIP --back -> first makes <clip>.b = <clip>.a played backwards (the Fente écarlate:
+                                      the sheathe, the click, then the same blade path out of the scabbard)
 
 PixelLab draws a white trail on every fast swing frame, whatever the prompt. So the attack is never generated in one
 go: <clip>.a winds up slowly and holds, <clip>.p moves slowly into the end pose of the cut (only its last frame is
@@ -19,6 +21,18 @@ S = os.path.dirname(os.path.abspath(__file__))
 
 def frames(d):
     return sorted(f for f in os.listdir(d) if f.startswith("f_") and f.endswith(".png"))
+
+
+def back(fighter, clip):
+    """<clip>.b = the frames of <clip>.a in reverse order: f_00 is the last frame of .a, the last is its f_00."""
+    a, b = (os.path.join(S, fighter, f"{clip}.{p}") for p in "ab")
+    if os.path.exists(b):
+        raise SystemExit(f"{b} exists: set it aside first")
+    os.makedirs(b)
+    fs = frames(a)
+    for i, f in enumerate(reversed(fs)):
+        shutil.copyfile(os.path.join(a, f), os.path.join(b, f"f_{i:02d}.png"))
+    json.dump({"status": "done", "tool": "back", "of": f"{clip}.a"}, open(os.path.join(b, "job.json"), "w"), indent=1)
 
 
 def join(fighter, clip):
@@ -40,4 +54,6 @@ def join(fighter, clip):
 
 
 if __name__ == "__main__":
+    if "--back" in sys.argv:
+        back(sys.argv[1], sys.argv[2])
     print(sys.argv[2], join(sys.argv[1], sys.argv[2]), "frames")

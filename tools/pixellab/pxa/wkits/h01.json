@@ -80,12 +80,12 @@
      "a final iai, in keyframes: he drops low, cuts once and holds the nodachi stretched far to the right at chest height for two frames; then he rises upright, slowly slides the whole blade into the scabbard at his left hip until the gold guard touches it; his eyes close and he stands perfectly still for three frames, his right hand on the hilt; then he calmly draws the nodachi out again and lowers it into the first pose; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
     ],
     "w0_rengaine": [
-     8,
+     12,
      "guard",
      "w0_rengaine.end@last",
      false,
      "none",
-     "slowly sheathes the nodachi, in keyframes: she lifts the blade and turns it until its point faces back toward her left hip; she brings the point to the mouth of the scabbard in front of her left hip; then she slowly pushes the blade back into the scabbard, the visible part of the blade getting shorter as her right hand comes back toward her hip, until the gold guard touches the mouth; then she holds the still iai stance perfectly still, her right hand on the handle"
+     "slowly sheathes the nodachi, in keyframes: she raises the blade in front of her and turns it until its point faces down toward her left hip; she brings the point to the mouth of the scabbard in front of her left hip, her right hand high in front of her chest; then she slowly pushes the blade down into the scabbard, the visible part of the blade getting shorter as her right hand comes down toward her hip, until the gold guard touches the mouth; then she holds the still iai stance perfectly still, her right hand on the handle"
     ],
     "w0_coupeeclair": [
      16,
@@ -453,7 +453,7 @@
      null,
      false,
      "none",
-     "from the still iai stance with the blade sheathed, slowly, she grips the handle and sinks lower, leaning forward; the handle stays against the mouth of the scabbard in front of her left hip and the whole blade stays inside, then holds that pose perfectly still"
+     "from the still iai stance with the blade sheathed, slowly, she sinks lower and leans forward, both hands staying on the sword: her right hand tight on the handle in front of the scabbard mouth, her left hand holding the scabbard just behind the gold guard; the whole blade stays inside the scabbard, then holds that pose perfectly still"
     ],
     "w0_coupeeclair.p": [
      8,
@@ -568,20 +568,12 @@
      "holds the stretched pose perfectly still for two frames; then she rises upright and slowly slides the whole blade into the scabbard at her left hip until the gold guard touches it; her eyes close and she stands perfectly still for three frames, her right hand on the hilt; then she calmly draws the nodachi out again and lowers it into the first pose"
     ],
     "w0_nspecial.a": [
-     8,
+     12,
      "guard",
      "w0_rengaine.end@last",
      false,
      "none",
-     "slowly sheathes the nodachi, in keyframes: she lifts the blade and turns it until its point faces back toward her left hip; she brings the point to the mouth of the scabbard in front of her left hip; then she slowly pushes the blade back into the scabbard, the visible part of the blade getting shorter as her right hand comes back toward her hip, until the gold guard touches the mouth; then she holds the still iai stance perfectly still, her right hand on the handle"
-    ],
-    "w0_nspecial.b": [
-     8,
-     "w0_rengaine.end@last",
-     "guard",
-     false,
-     "none",
-     "holds the still iai stance perfectly still for three frames, her right hand on the handle; then slowly draws the nodachi forward out of the scabbard, the blade sliding out of the mouth in front of her left hip until its point is free, and lowers it into the stance"
+     "slowly sheathes the nodachi, in keyframes: she raises the blade in front of her and turns it until its point faces down toward her left hip; she brings the point to the mouth of the scabbard in front of her left hip, her right hand high in front of her chest; then she slowly pushes the blade down into the scabbard, the visible part of the blade getting shorter as her right hand comes down toward her hip, until the gold guard touches the mouth; then she holds the still iai stance perfectly still, her right hand on the handle"
     ]
    },
    "poses": {
@@ -600,8 +592,7 @@
     "w0_uspecial.b": "in mid-air facing right, knees tucked, both arms stretched high, the nodachi pointing straight up above her head",
     "w0_sspecial.b": "in an extremely long low lunge facing right, the back leg stretched behind, the right arm and the nodachi stretched far forward at waist height",
     "w0_jab2.b": "standing tall on the front foot facing right, both arms stretched high, the nodachi pointing straight up above her head",
-    "w0_ultimate.b": "low stance facing right, the right arm and the nodachi stretched far out to the right at chest height",
-    "w0_nspecial.b": "still iai stance facing right, the sword sheathed in the scabbard at her left hip, only its handle sticking out forward from the scabbard mouth, her right hand on the handle"
+    "w0_ultimate.b": "low stance facing right, the right arm and the nodachi stretched far out to the right at chest height"
    }
   },
   "1": {

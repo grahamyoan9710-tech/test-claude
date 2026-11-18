@@ -584,6 +584,20 @@ CharacterDef makeH01() {
   drawCut(k, 1, L::Weapon, 15);
   blinkCuts(k, 0);  // after drawCut: the blink cuts keep the hold that sheathes
   blinkCuts(k, 1);
+  // The cut of each plain blade move is a Blender effect (the owner, 17/11: no swing drawn in the sprites),
+  // pfx_h01_<a|b>_<clip>, played when the move's first hitbox comes out; nothing shows until its strip exists.
+  // The specials keep their own effects.
+  const std::pair<int, const char*> cuts[] = {{Jab, "jab"}, {Jab2, "jab2"}, {Jab3, "jab3"}, {FTilt, "ftilt"},
+      {UTilt, "utilt"}, {DTilt, "dtilt"}, {NAir, "nair"}, {FAir, "fair"}, {FThrow, "fthrow"}, {UThrow, "uthrow"},
+      {LedgeAttack, "ledgeattack"}, {GetupAttack, "getupattack"}};
+  for (int slot : {0, 1})
+    for (auto& [id, m] : k.c.weapons[slot].moves)
+      for (const auto& [cid, clip] : cuts)
+        if (id == cid && !m.castFx && !m.hitboxes.empty()) {
+          m.castFx = k.pfx((std::string(slot ? "b_" : "a_") + clip).c_str());
+          m.castFxFrame = m.hitboxes.front().start;
+          for (const auto& h : m.hitboxes) m.castFxFrame = std::min(m.castFxFrame, h.start);
+        }
 
   // Volonté de la lame, with a weapon in hand only (the owner, 17/11): 3 charges (Coupe-éclair, parries) and she
   // awakens for 8 s: her M1 become the blink cuts and send cutting waves, her neutral three crescents in a fan (great
