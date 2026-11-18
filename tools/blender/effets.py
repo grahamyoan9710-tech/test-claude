@@ -31,10 +31,10 @@ PALETTES = {  # deep, main, hot, core, smoke (None: no smoke)
     "garde": ("#1E5C9E", "#5CC8F0", "#D8F6FF", "#FFFFFF", None),  # the shield: the counter's dome, as it is
 }
 CUT = STYLE == "h01" and (KIND or "")[:2] in ("a_", "b_") and KIND not in ("b_wave", "b_trait")  # Hakuen's sword cuts: a_jab-h01 -> pfx_h01_a_jab
-if KIND in ("aura", "eveil", "jugement", "b_wave", "b_trait") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
+if KIND in ("aura", "eveil", "jugement", "degaine", "b_wave", "b_trait") or CUT:  # their own colours (aura_geo.PAL; weapon B's cuts: h01b)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import aura_geo
-    PALETTES[STYLE] = aura_geo.PAL["h01b" if KIND[:2] == "b_" else STYLE]
+    PALETTES[STYLE] = aura_geo.PAL["h01b" if KIND[:2] == "b_" else "h01j" if KIND in ("jugement", "degaine") else STYLE]
 rng = random.Random(sum(map(ord, RECIPE)))
 LAYER = ""  # the layer being rendered: "" (behind the fighters) or "_front" (over them)
 
@@ -367,6 +367,16 @@ def m_halo(path):
     g = nd.math('POWER', nd.math('ADD', tex.outputs['Color'], 0.0), 1.3)
     return nd.surface(nd.ramp(nd.mul(g, nd.heat), RAMP), nd.mul(S, nd.add(0.3, nd.mul(g, 1.2))),
                       nd.mul(A, nd.smooth(g, 0.1, 0.6)))
+
+
+def m_void():
+    """A pocket of dark smoke (a filled shape, v: 0 at its centre, 1 at its outline): it darkens what is behind it,
+    deepest at its heart, its edge soft."""
+    nd = Nodes("Vide")
+    u, v = nd.uv()
+    S, A, Wk = nd.knobs()
+    return nd.surface(nd.ramp(v, [(0.0, SMOKE or DEEP), (1.0, DEEP)]), nd.mul(S, 0.3),
+                      nd.mul(A, nd.mul(nd.math('SUBTRACT', 1.0, nd.smooth(v, 0.55, 1.0)), 0.8)))
 
 
 def m_rock():
@@ -1754,7 +1764,8 @@ def r_bulle():
 # --- the awakened forms (aura_geo.py) ----------------------------------------------------------------------
 def aura_mats():
     M.update(flame=m_aura(SMOKE is not None), veil=m_veil(), line=m_line(), shape=m_shape(0.85),
-             solid=m_solid(5.0), core=m_solid(16.0), halo=m_solid(4.5), rock=m_rock())
+             solid=m_solid(5.0), core=m_solid(16.0), halo=m_solid(4.5), rock=m_rock(),
+             void=m_void(), swirl=m_flame(rho=0.2, ka=6.0))
 
 
 def frame_of(boxes, margin=0.18):
@@ -1837,13 +1848,29 @@ def r_jugement():
     import coupe_geo
     N = coupe_geo.JN
     W, H, AX, AY = frame_of([aura_geo.bounds(coupe_geo.jugement(f)) for f in range(N)], 0.12)
-    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=coupe_geo.JRH, N=N, FPS=30, LOOP=0)
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=coupe_geo.JRH, N=N, FPS=60, LOOP=0)
     scene(W, H, AX, AY)
     aura_mats()
 
     def anim(f, t):
         fresh()
         build(coupe_geo.jugement(f))
+
+    return meta, anim
+
+
+def r_degaine():
+    """Hakuen's draw for the Fente écarlate (coupe_geo.degaine): at her feet, left where it began."""
+    import coupe_geo
+    N = coupe_geo.DN
+    W, H, AX, AY = frame_of([aura_geo.bounds(coupe_geo.degaine(f)) for f in range(N)], 0.12)
+    meta = dict(W=W, H=H, AX=AX, AY=AY, RH=0, N=N, FPS=60, LOOP=0)
+    scene(W, H, AX, AY)
+    aura_mats()
+
+    def anim(f, t):
+        fresh()
+        build(coupe_geo.degaine(f))
 
     return meta, anim
 
@@ -1864,7 +1891,7 @@ def r_flying():
     return meta, anim
 
 
-RECIPES = dict(b_wave=r_flying, b_trait=r_flying, jugement=r_jugement, bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
+RECIPES = dict(degaine=r_degaine, b_wave=r_flying, b_trait=r_flying, jugement=r_jugement, bulle=r_bulle, orbe=r_orbe, meteore=r_meteore, lance=r_lance, eclair=r_eclair, etoile=r_etoile, dague=r_dague,
                plume=r_plume, marque=r_marque, pilier=r_pilier, aura=r_aura, eveil=r_eveil)
 if CAST:
     kind, opts = MOVES[(STYLE, SECOND)]
