@@ -89,5 +89,41 @@ namespace ClashHorizon.Tests
             float a = big, b = one;
             Assert.AreEqual(1f, a + b - a, "float maths now round like the C++ build: tighten the parity tolerances");
         }
+
+        // C++ copies these by value; the C# classes must deep-copy in Clone() so a copy never edits the original.
+        [Test]
+        public void Clone_IsDeep()
+        {
+            var m = new MoveDef { name = "a", duration = 10 };
+            m.hitboxes.Add(HitboxDef.Default); m.vel.Add(new VelEvent { frame = 1 }); m.shots.Add(ProjShot.Default);
+            var c = m.Clone();
+            var h = c.hitboxes[0]; h.damage = 99; c.hitboxes[0] = h;
+            c.hitboxes.Add(HitboxDef.Default); c.vel.Clear(); c.shots.Clear();
+            c.projectile.lifetime = 1; c.beam.start = 5;
+            Assert.AreEqual(1, m.hitboxes.Count); Assert.AreEqual(5.0f, m.hitboxes[0].damage);
+            Assert.AreEqual(1, m.vel.Count); Assert.AreEqual(1, m.shots.Count);
+            Assert.AreEqual(60, m.projectile.lifetime); Assert.AreEqual(-1, m.beam.start);
+
+            var w = new WeaponDef(); w.moves.Add((MoveId.Jab, m));
+            var wc = w.Clone(); wc.moves[0].second.duration = 3; wc.moves.Add((MoveId.FTilt, new MoveDef()));
+            Assert.AreEqual(10, m.duration); Assert.AreEqual(1, w.moves.Count);
+
+            var f = new FormDef(); f.moves.Add((MoveId.Jab, m));
+            var fc = f.Clone(); fc.moves[0].second.duration = 4; fc.m1Wave.lifetime = 2;
+            Assert.AreEqual(10, m.duration); Assert.AreEqual(60, f.m1Wave.lifetime);
+
+            var cd = new CharacterDef(); cd.forms.Add(f);
+            var cc = cd.Clone();
+            cc.moves[MoveId.Jab].duration = 7; cc.weapons[0].name = "x";
+            cc.weapons[1].moves.Add((MoveId.Jab, new MoveDef())); cc.forms[0].duration = 9; cc.forms.Add(new FormDef());
+            cc.palettes[0].hair = new Color3(1, 2, 3);
+            Assert.AreEqual(0, cd.moves[MoveId.Jab].duration); Assert.AreEqual("", cd.weapons[0].name);
+            Assert.AreEqual(0, cd.weapons[1].moves.Count); Assert.AreEqual(0, cd.forms[0].duration);
+            Assert.AreEqual(1, cd.forms.Count); Assert.AreEqual(40, cd.palettes[0].hair.r);
+
+            var s = new StageDef(); s.platforms.Add(Platform.Default); s.spawns.Add(new Vec2(1, 2));
+            var sc = s.Clone(); var p = sc.platforms[0]; p.period = 5; sc.platforms[0] = p; sc.spawns.Clear();
+            Assert.AreEqual(0, s.platforms[0].period); Assert.AreEqual(1, s.spawns.Count);
+        }
     }
 }
