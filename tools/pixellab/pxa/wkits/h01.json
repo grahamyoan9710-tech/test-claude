@@ -8,28 +8,28 @@
    "air_pose": "in mid-air facing right, knees tucked, holding the drawn nodachi",
    "clips": {
     "w0_jab": [
-     16,
+     12,
      "guard",
      true,
      false,
      "forward",
-     "a horizontal cut at chest height, in keyframes: he steps forward on the front foot and draws the nodachi back low beside his right hip, the blade behind him; then turns his hips and brings the blade across in front of him at chest height until both arms are stretched to the right and the blade is level and fully extended to the right; he holds that reach for two frames; then brings the blade back low into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
+     "a fast two-handed diagonal katana cut, in keyframes: she lifts the nodachi with both hands beside her right shoulder, the blade pointing up and back; then steps forward and cuts down at a slant in front of her in two quick frames, a thin plain white trail following the edge of the blade; both arms end straight, the hands in front of her front knee, the blade stopped low in front, its point forward; she holds that pose for two frames; then returns the nodachi into the stance"
     ],
     "w0_jab2": [
-     16,
+     12,
      "guard",
      true,
      false,
      "forward",
-     "a rising cut, in keyframes: he lowers the nodachi until its point nearly touches the floor in front of his front foot; then lifts it diagonally with both hands in front of his body until the blade points straight up above his head, the arms stretched high, rising on the front foot; he holds that high pose for two frames, the coat lifting; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
+     "a fast two-handed rising katana cut, in keyframes: she lowers the nodachi beside her right knee, its point down and back; then cuts upward at a slant in front of her in two quick frames with both hands, a thin plain white trail following the edge of the blade; both arms end raised forward above her head, the blade pointing up and forward; she holds that pose for two frames; then lowers the nodachi into the stance"
     ],
     "w0_jab3": [
-     16,
+     12,
      "guard",
      true,
      false,
      "forward",
-     "a big downward finishing cut, in keyframes: he steps in and raises the nodachi high above his head, the blade pointing back behind him; then brings it straight down in front of him, bending forward into a deep lunge until the blade lies level in front of him just above the floor, the arms fully stretched to the right; he holds that low pose for two frames; then rises back into the stance, the left hand returning to the scabbard; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one thin curved silver blade with red patterns"
+     "a fast two-handed downward finishing cut, in keyframes: she raises the nodachi straight above her head with both hands, the blade pointing back; then steps into a deep lunge and cuts straight down in front of her in two quick frames, a thin plain white trail following the edge of the blade; both arms straight, the blade level in front of her at knee height; she holds that pose for two frames; then rises back into the stance"
     ],
     "w0_nair": [
      16,
@@ -682,28 +682,28 @@
      "raises his guard to block: holds the long odachi crosswise in front of his body with both hands, the blade slanted from low in front to high behind his head, the knees bent in a firm low stance, the eyes narrowed, then holds that pose perfectly still"
     ],
     "w1_jab": [
-     16,
+     12,
      "guard",
      true,
      false,
      "forward",
-     "a long diagonal cut from high to low, in keyframes: he raises the long odachi with both hands above his right shoulder, the blade pointing up and back; then steps forward and brings it down diagonally in front of him until the point is low in front of his front foot, the arms stretched forward and down; he holds that low pose for two frames, the coat swinging after the body; then lifts the blade back low into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
+     "a fast one-handed rising slash, in keyframes: she draws the long odachi low behind her right hip with her right hand; then steps forward and slashes up at a slant in front of her in two quick frames, a thin plain white trail following the edge of the blade; her right arm ends stretched high and forward, the long blade pointing up and forward, her left arm back; she holds that pose for two frames; then lowers the long odachi into the stance"
     ],
     "w1_jab2": [
-     16,
+     12,
      "guard",
      true,
      false,
      "forward",
-     "a backhand rising cut, in keyframes: he turns his right wrist so the long odachi points down and back behind his right leg; then lifts it backhand upward in front of him, the right arm crossing his chest and ending stretched up and forward, the long blade pointing up and forward above his head; he holds that high pose for two frames; then lowers the blade back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
+     "a fast one-handed horizontal slash, in keyframes: she draws the long odachi back level beside her right hip with her right hand; then steps forward and slashes straight across at chest height in two quick frames, a thin plain white trail following the edge of the blade; her right arm ends stretched far forward, the long blade level and pointing forward, her left arm back; she holds that pose for two frames; then returns into the stance"
     ],
     "w1_jab3": [
-     16,
+     12,
      "guard",
      true,
      false,
      "forward",
-     "a spinning finishing cut, in keyframes: he turns his body once all the way around on his front foot, the long odachi held out at arm's length at chest height, his back to the right for one frame; then he ends facing right in a deep lunge, the right arm and the long blade fully stretched to the right at chest height; he holds that pose for two frames; then rises back into the stance; each cut takes a single frame: one frame shows the blade before the cut, the next frame already shows it at the end of the cut; the blade always keeps its exact shape, one long thin curved silver blade with red and gold patterns"
+     "a fast one-handed low finishing slash, in keyframes: she sinks low and draws the long odachi back behind her right hip; then slides forward into a long low lunge and slashes forward just above the floor in two quick frames, a thin plain white trail following the edge of the blade; her right arm stretched far forward, the long blade level at knee height, her back leg straight; she holds that pose for two frames; then rises into the stance"
     ],
     "w1_nair": [
      16,

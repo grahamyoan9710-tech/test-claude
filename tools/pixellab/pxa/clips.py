@@ -152,6 +152,8 @@ EFFECTS = re.compile(r"\b(trails?|glow\w*|flash\w*|sparks?|energy|smoke|dust|lig
                      r"speed lines?|wind|shockwave|projectile|crescent|afterimages?|impact|cloud|effects?|grey|gray|beam|"
                      r"smear\w*|arcs?|sweep\w*)\b", re.I)  # "arc", "sweep": PixelLab draws the path as a white trail (17/11)
 
+M1_TRAIL = "a thin plain white trail following the edge of the blade"
+
 # --- the moves every fighter has (bare-handed brawler moves) ---
 COMMON = {
     # name: (frames, base, pin, loop, direction, description)
@@ -350,7 +352,9 @@ def jobs(fighter, only=None):
             subject = ks.get("subject", subject)
             pose = ks.get(f"{kind}_pose", pose) if kind in ("guard", "air") else pose
             pose = ks.get("poses", {}).get(name, pose)  # a part that starts in another pose (w0_jab.b: the reach)
-        bad = sorted({w.lower() for w in EFFECTS.findall(desc)})
+        # owner, 18/11: the only effect a clip may draw is the M1's plain white blade trail
+        chk = desc.replace(M1_TRAIL, "") if re.fullmatch(r"w\d_jab\d?", name) else desc
+        bad = sorted({w.lower() for w in EFFECTS.findall(chk)})
         if bad:
             print(f"left out {fighter}/{name}: its prompt names an effect ({', '.join(bad)})", file=sys.stderr)
             continue
