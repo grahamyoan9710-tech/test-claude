@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Copies the game's assets into the Unity project (unity/Assets/Resources/{Sprites,Audio}, unity/Assets/Fonts).
 # The copies are git-ignored: edit assets/, never the copies. rsync keeps file times, so Unity only reimports
-# what changed, and it leaves the .meta files Unity writes next to each copy.
+# what changed, and it leaves the .meta files Unity writes next to each copy. These three folders belong to the
+# sync (--delete removes anything else): write generated assets, such as SDF fonts, somewhere else.
 # Usage: scripts/unity_sync_assets.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
