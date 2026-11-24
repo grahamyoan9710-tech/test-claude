@@ -559,6 +559,31 @@ CharacterDef makeH01() {
   drawCut(k, 1, L::Weapon, 15);
   blinkCuts(k, 0);  // after drawCut: the blink cuts keep the hold that sheathes
   blinkCuts(k, 1);
+  // Her blade swings follow the drawn blade (the owner, 18/11: the generic kit arcs hit where no blade is drawn).
+  // Read off each clip's held hit frame (M1: the white trail): arc a0 -> a1 and the tip's distance from the
+  // shoulder, in heights; from box `from` on (the aerials' second pair can differ).
+  struct Fit { int slot, move, from; float a0, a1, tip; };
+  const Fit fits[] = {
+      {0, Jab, 0, 120, -45, 0.95f}, {0, Jab2, 0, -45, 50, 0.85f}, {0, Jab3, 0, 115, -30, 0.9f},
+      {0, NAir, 0, 40, 25, 0.6f},   {0, FTilt, 0, -30, -46, 0.8f}, {0, UTilt, 0, 112, 130, 0.95f},
+      {0, DTilt, 0, -8, -20, 0.72f}, {0, FAir, 0, -95, -112, 0.6f},
+      {1, Jab, 0, -60, 45, 1.0f},   {1, Jab2, 0, 15, -5, 0.8f},   {1, Jab3, 0, -100, -37, 0.95f},
+      {1, NAir, 0, -95, -108, 0.62f}, {1, FTilt, 0, 45, 60, 0.95f}, {1, UTilt, 0, 12, 2, 0.68f},
+      {1, DTilt, 0, -14, -28, 0.78f}, {1, FAir, 0, -90, -115, 0.62f}};
+  for (const Fit& f : fits) {
+    const WeaponDef& w = k.c.weapons[f.slot];
+    const float r = (f.tip - kGripDist) * k.c.height / w.blade;  // tip as a fraction of the blade
+    for (auto& [id, m] : k.c.weapons[f.slot].moves)
+      if (id == f.move)
+        for (size_t i = f.from; i < m.hitboxes.size(); ++i) {
+          HitboxDef& h = m.hitboxes[i];
+          if (!h.swing) continue;
+          const bool tip = h.reach0 > 0.0f;  // the kit pairs a tip box (0.55..1) with a base box (0..0.55)
+          h.a0 = f.a0, h.a1 = f.a1;
+          h.reach0 = tip ? 0.55f * r : 0.0f;
+          h.reach1 = tip ? r : 0.55f * r;
+        }
+  }
   // The cut of each plain blade move is a Blender effect (the owner, 17/11: no swing drawn in the sprites),
   // pfx_h01_<a|b>_<clip>, played when the move's first hitbox comes out; nothing shows until its strip exists.
   // The specials keep their own effects. The M1 (jab) clips draw their own white trail (the owner, 18/11).
