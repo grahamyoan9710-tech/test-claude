@@ -32,9 +32,8 @@ C++ wins.
 - **Order:** 8 phases (P0 to P7). Each is a short fresh thread that ends with a test and a push.
 - **Cost (guess):** about 22,000 lines of C# in roughly 12 to 17 short threads. I measure the real token use of P1
   and give you the projection before going further.
-- **What I need from you:** your go; the module "Windows Build Support (Mono)" for Unity 6000.6.9f1 (needed for
-  Steam and Epic builds); keep the PC on, unlocked, with Claude open while a Unity thread runs. Done: the PC can push
-  to GitHub (gh signed in, 24 Nov).
+- **What I need from you:** your go; keep the PC on, unlocked, with Claude open while a Unity thread runs. Done on
+  24 Nov: the PC can push to GitHub (gh signed in) and Windows Build Support (Mono) is installed.
 - **Not chosen:** rebuilding the game "the Unity way" (scenes, Animator, VFX Graph). It would change the look and the
   feel. New effects can use Unity tools later, once the port matches.
 
@@ -205,7 +204,7 @@ becomes the main game, the raylib game is frozen on its branch, and we decide wh
 | 4 | Slow iteration: the Unity editor takes 1 to 2 min to start for each test run | Command-line test scripts; the sim has no Unity dependency. |
 | 5 | Hitches from garbage collection | No allocation per frame in sim and renderer, checked with the Profiler in P3. |
 | 6 | The raylib game keeps changing during the port (Hakuen feedback) | Port from a fixed commit; each later C++ change is listed in the task note and redone in C#. |
-| 7 | Windows builds: from Linux only the Mono backend works (IL2CPP needs a Windows PC), and the module is not installed | Add "Windows Build Support (Mono)": Unity Hub's command line is gone, so use Unity's own CLI (`unity install-modules`) or the Hub window. |
+| 7 | Windows builds: from Linux only the Mono backend works (IL2CPP needs a Windows PC) | Mono backend for Windows builds. The module is installed (24 Nov, with Unity's CLI `~/.local/bin/unity`). |
 | 8 | French number format breaks text parsing | `CultureInfo.InvariantCulture` everywhere (translation rules). |
 | 9 | DLSS is not a switch to flip: motion vectors, pixel-art blur | After parity, tested, real Unity feature only. |
 | 10 | Work could stay only on the laptop | Solved 24 Nov: gh signed in, git pushes from the PC. Push after every task. |
