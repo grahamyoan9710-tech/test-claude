@@ -5,6 +5,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 UNITY=${UNITY:-$HOME/Unity/Hub/Editor/6000.6.9f1/Editor/Unity}
 scripts/unity_sync_assets.sh || exit 1
+scripts/unity_parity.sh > /dev/null || exit 1
 mkdir -p unity/Logs
 results=$PWD/unity/Logs/test-results.xml log=$PWD/unity/Logs/unity_test.log
 rm -f "$results"

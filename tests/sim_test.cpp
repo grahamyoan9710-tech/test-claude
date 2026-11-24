@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdio>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "core/ai.hpp"
@@ -1421,8 +1422,311 @@ static void testHakuen() {
   }
 }
 
+// ---- `sim_test trace NAME` (Unity port, docs/unity/phases/P1.md): prints a scenario trace or a data dump that the
+// C# tests compare against. Ints and bools print as %d, floats as %.4f, enums as their int, blanks in text as _.
+namespace parity {
+
+void val(int v) { std::printf(" %d", v); }
+void val(bool v) { std::printf(" %d", v ? 1 : 0); }
+void val(float v) { std::printf(" %.4f", v); }
+void val(const char* s) {
+  if (!s) {
+    std::printf(" -");
+    return;
+  }
+  std::string t = *s ? s : "''";
+  for (char& c : t)
+    if (c == ' ' || c == '\t' || c == '\n' || c == '\r') c = '_';
+  std::printf(" %s", t.c_str());
+}
+void val(const std::string& s) { val(s.c_str()); }
+void val(Vec2 v) {
+  val(v.x);
+  val(v.y);
+}
+void val(Rect r) {
+  val(r.x);
+  val(r.y);
+  val(r.w);
+  val(r.h);
+}
+void val(Color3 c) {
+  val(int(c.r));
+  val(int(c.g));
+  val(int(c.b));
+}
+template <class E, std::enable_if_t<std::is_enum_v<E>, int> = 0>
+void val(E e) {
+  val(int(e));
+}
+template <class... T>
+void line(const std::string& key, const T&... v) {
+  std::printf("%s", key.c_str());
+  (val(v), ...);
+  std::printf("\n");
+}
+std::string num(size_t i) { return std::to_string(i); }
+
+// One line per fighter: frame fighter state move moveFrame pos vel kbVel percent stocks.
+void fighters(const Match& m) {
+  for (size_t k = 0; k < m.fighters.size(); ++k) {
+    const Fighter& f = m.fighters[k];
+    line(std::to_string(m.frame), int(k), f.state, f.move, f.moveFrame, f.pos, f.vel, f.kbVel, f.percent, f.stocks);
+  }
+}
+struct TracePad {  // Pad, printing the fighters after every step
+  Match& m;
+  std::array<InputState, 4> in{};
+  void run(int frames, InputState s) {
+    for (int i = 0; i < frames; ++i) {
+      in[0] = s;
+      m.step(in);
+      fighters(m);
+    }
+  }
+  void idle(int frames) { run(frames, InputState{}); }
+};
+
+void hit(const std::string& p, const HitboxDef& h) {
+  line(p, h.start, h.end, h.offset, h.radius, h.damage, h.angle, h.baseKB, h.growth, h.group, h.limb, h.fx, h.reverse,
+       h.impact, h.swing, h.a0, h.a1, h.reach0, h.reach1, h.capture, h.launch);
+}
+void proj(const std::string& p, const ProjectileDef& d) {
+  line(p, d.spawnOffset, d.velocity, d.gravity, d.lifetime, d.radius, d.count, d.spreadDeg, d.bounces, d.piercing,
+       d.visual, d.fx, d.rehit, d.pull, d.pullRadius, d.boomerang, d.grow, d.explodeRadius, d.target, d.follow,
+       d.armDelay, d.ignoreGround, d.column, d.jitter);
+  hit(p + "/hit", d.hit);
+  hit(p + "/exp", d.explode);
+}
+void moveDef(const std::string& p, const MoveDef& md) {
+  line(p, md.name, md.duration, md.landingLag, md.gravityMul, md.frictionMul, md.allowDrift, md.chargeFrame,
+       md.maxCharge, md.chargeDamageMul, md.projectileFrame, md.projectileRepeat, md.projectileEvery,
+       md.intangibleStart, md.intangibleEnd, md.armorStart, md.armorEnd, md.counterStart, md.counterEnd,
+       md.teleportFrame, md.teleportDist, md.teleportForward, md.turnAfterTeleport, md.cooldown, md.charges,
+       md.channelEnd, md.superFlash, md.castFx, md.castFxFrame, md.castFxAt, md.castFxStays, md.castFxScale,
+       md.sparkFx, md.pose, md.reflects, md.helplessAfter, md.endOnLand, md.landMove, md.loopFrame, md.nextMove,
+       md.comboStart, md.comboEnd, md.comboAt, md.comboOnSpecial, md.perfectMove, md.perfectFrom, md.perfectTo,
+       md.releaseMove, md.holdMove, md.fillsWill, md.parries, md.ultFx, md.holdAt, md.holdInPlace,
+       md.teleportToTarget, md.formIndex, md.formFrame, md.isGrab, md.throwFrame, md.pummel, md.airOnly,
+       int(md.hitboxes.size()), int(md.vel.size()), int(md.shots.size()));
+  for (size_t j = 0; j < md.hitboxes.size(); ++j) hit(p + "/h" + num(j), md.hitboxes[j]);
+  for (size_t j = 0; j < md.vel.size(); ++j) {
+    const VelEvent& e = md.vel[j];
+    line(p + "/v" + num(j), e.frame, e.mode, e.v, e.stickX, e.airOnly);
+  }
+  proj(p + "/proj", md.projectile);
+  for (size_t j = 0; j < md.shots.size(); ++j) {
+    line(p + "/s" + num(j), md.shots[j].frame);
+    proj(p + "/s" + num(j) + "/proj", md.shots[j].def);
+  }
+  const BeamDef& b = md.beam;
+  line(p + "/beam", b.start, b.end, b.from, b.angle, b.length, b.width, b.fx, b.sprite);
+}
+
+int stages() {
+  const auto& list = stageList();
+  for (size_t s = 0; s < list.size(); ++s) {
+    const StageDef& sd = list[s];
+    const std::string p = "s" + num(s);
+    line(p, sd.name, sd.series, sd.blurb, sd.theme, sd.blast, sd.respawn, int(sd.platforms.size()),
+         int(sd.spawns.size()));
+    for (size_t j = 0; j < sd.spawns.size(); ++j) line(p + "/sp" + num(j), sd.spawns[j]);
+    for (size_t j = 0; j < sd.platforms.size(); ++j) {
+      const Platform& q = sd.platforms[j];
+      line(p + "/p" + num(j), q.rect, q.base, q.solid, q.ledges, q.amplitude, q.period, q.delta);
+    }
+    std::vector<Platform> plats = sd.platforms;  // a few frames of the moving ones
+    for (int f : {0, 37, 90}) {
+      updatePlatforms(plats, f);
+      for (size_t j = 0; j < plats.size(); ++j)
+        line(p + "/f" + std::to_string(f) + "/p" + num(j), plats[j].rect, plats[j].delta);
+    }
+  }
+  return 0;
+}
+
+int rosterDump() {
+  const auto& all = roster();
+  for (size_t c = 0; c < all.size(); ++c) {
+    const CharacterDef& d = all[c];
+    const std::string p = "c" + num(c);
+    line(p, d.id, d.name, d.title, d.series, d.element, d.hero, d.style, d.width, d.height, d.weight, d.walkSpeed,
+         d.runSpeed, d.groundAccel, d.friction, d.walkStride, d.airSpeed, d.airAccel, d.airFriction, d.gravity,
+         d.maxFall, d.fastFall, d.jumpVel, d.shortHopVel, d.airJumpVel, d.airJumps, d.jumpSquat, d.weaponLength,
+         d.armed, d.willForm, int(d.forms.size()));
+    for (size_t k = 0; k < d.palettes.size(); ++k) {
+      const Palette& pl = d.palettes[k];
+      line(p + "/pal" + num(k), pl.primary, pl.secondary, pl.accent, pl.skin, pl.hair, pl.eyes);
+    }
+    for (size_t i = 0; i < d.moves.size(); ++i) moveDef(p + "/m" + num(i), d.moves[i]);
+    for (size_t k = 0; k < d.weapons.size(); ++k) {
+      const WeaponDef& w = d.weapons[k];
+      const std::string q = p + "/w" + num(k);
+      line(q, w.name, w.desc, w.visual, w.fx, w.damageMul, w.kbMul, w.reachMul, w.blade, w.kit, int(w.moves.size()));
+      for (const auto& [id, md] : w.moves) moveDef(q + "/m(" + std::to_string(id) + ")", md);
+    }
+    for (size_t k = 0; k < d.forms.size(); ++k) {
+      const FormDef& fd = d.forms[k];
+      const std::string q = p + "/f" + num(k);
+      line(q, fd.form, fd.duration, fd.fx, fd.damageMul, fd.kbTakenMul, fd.superArmor, fd.aura, fd.m1Waves, fd.m1Blink,
+           int(fd.moves.size()));
+      proj(q + "/wave", fd.m1Wave);
+      for (const auto& [id, md] : fd.moves) moveDef(q + "/m(" + std::to_string(id) + ")", md);
+    }
+  }
+  return 0;
+}
+
+// cpuBattle(1, {0, 3, 4}, 777, 600), traced from its first step.
+int cpuVsCpu() {
+  MatchConfig cfg;
+  cfg.stage = 1;
+  cfg.stocks = 3;
+  cfg.seed = 777;
+  const int chars[3] = {0, 3, 4};
+  for (int i = 0; i < 3; ++i) cfg.slots[i] = {true, chars[i], true, 9};
+  Match m(cfg);
+  std::vector<CpuBrain> brains;
+  for (int i = 0; i < 3; ++i) brains.emplace_back(9 - i, 777u + uint32_t(i) * 77u);
+  for (int i = 0; i < 600 && !m.finished; ++i) {
+    std::array<InputState, 4> in{};
+    for (size_t k = 0; k < m.fighters.size(); ++k) in[m.fighters[k].port] = brains[k].think(m, int(k));
+    m.step(in);
+    fighters(m);
+  }
+  return 0;
+}
+
+// The scripted scenarios of P1.md: items off, countdown skipped, every step after the setup traced.
+int traceMain(const std::string& name) {
+  if (name == "stages") return stages();
+  if (name == "roster") return rosterDump();
+  if (name == "cpu_vs_cpu_600") return cpuVsCpu();
+  struct Setup {
+    const char* name;
+    int stage, c0, c1;
+    bool weapons;
+  };
+  const Setup setups[] = {
+      {"jab_hit", 0, 0, 0, true},
+      {"smash_ko", 0, 2, 0, true},
+      {"projectile", 0, 1, 0, true},
+      {"weapon_pickup_switch", 0, 1, 3, false},
+      {"ult_capture", 0, 3, 0, true},
+      {"hakuen_rift", 0, charIndex("Hakuen"), charIndex("N° 07"), false},
+      {"moving_platform", 4, 0, 1, true},
+  };
+  const Setup* s = nullptr;
+  for (const Setup& t : setups)
+    if (name == t.name) s = &t;
+  if (!s) {
+    std::fprintf(stderr, "unknown trace '%s'\n", name.c_str());
+    return 2;
+  }
+  MatchConfig cfg = duel(s->stage, s->c0, s->c1, false, false);
+  cfg.items = false;
+  cfg.weapons = s->weapons;
+  Match m(cfg);
+  skipCountdown(m);
+  Fighter& f = m.fighters[0];
+  Fighter& v = m.fighters[1];
+  TracePad p{m};
+  if (name == "jab_hit") {  // testJabHits
+    f.pos = {0, 0};
+    f.facing = 1;
+    v.pos = {45, 0};
+    InputState jab;
+    jab.attack = true;
+    p.idle(20);
+    p.run(1, jab);
+    p.idle(20);
+  } else if (name == "smash_ko") {  // testSmashKills
+    f.pos = {200, 0};
+    f.facing = 1;
+    v.pos = {270, 0};
+    v.percent = 150.0f;
+    InputState smash;
+    smash.cstick = {1, 0};
+    p.idle(10);
+    p.run(1, smash);
+    p.idle(300);
+  } else if (name == "projectile") {
+    f.pos = {0, 0};
+    f.facing = 1;
+    v.pos = {300, 0};
+    InputState special;
+    special.special = true;
+    p.idle(10);
+    p.run(1, special);
+    p.idle(90);
+  } else if (name == "weapon_pickup_switch") {  // testWeapons, short: take A, take B, switch back to A
+    f.pos = {-200, 0};
+    f.facing = 1;
+    v.pos = {250, 0};
+    InputState press;
+    press.weapon = true;
+    auto landed = [&] {
+      for (int i = 0; i < 120 && !m.items.empty() && !m.items.back().grounded; ++i) p.idle(1);
+    };
+    p.idle(20);
+    m.dropWeaponFor(0, 0);
+    m.items.back().pos = {f.pos.x + 60, -300};
+    landed();
+    if (!m.items.empty()) f.pos.x = m.items.back().pos.x, f.vel.x = 0.0f;
+    p.idle(3);
+    for (int i = 0; i < kPickupFrames + 5 && f.weapon != 0; ++i) p.run(1, press);
+    p.idle(1);
+    m.dropWeaponFor(0, 1);
+    landed();
+    if (!m.items.empty()) f.pos.x = m.items.back().pos.x;
+    p.idle(3);
+    for (int i = 0; i < kPickupFrames + 5 && f.weapon != 1; ++i) p.run(1, press);
+    p.idle(1);
+    p.run(1, press);
+    p.idle(30);
+  } else if (name == "ult_capture") {  // testAllUltimates, c = 3, slot 0, first pass
+    f.pos = {-120, 0};
+    f.facing = 1;
+    v.pos = {40, 0};
+    v.percent = 30.0f;
+    m.equipWeapon(f, 0);
+    p.idle(10);
+    f.ult = kUltMax;
+    f.finalSmash = true;
+    InputState ult;
+    ult.ultimate = true;
+    p.run(1, ult);
+    p.idle(360);
+  } else if (name == "hakuen_rift") {  // testHakuen's nodachi neutral block: fresh(200), spam(240), spam(60)
+    f.pos = {0, 0};
+    f.facing = 1;
+    v.pos = {200, 0};
+    v.facing = -1;
+    f.weapon = 0;
+    f.weapons = 1;
+    auto spam = [&](int frames) {
+      for (int i = 0; i < frames; ++i) p.run(1, key(0, 0, false, false, false, f.state != FState::Attack && i % 2 == 0));
+    };
+    spam(240);
+    spam(60);
+  } else if (name == "moving_platform") {  // f0 dropped 40 px above the moving plank
+    if (m.platforms.size() < 4 || m.platforms[3].period <= 0) {
+      std::fprintf(stderr, "stage 4 has no moving plank at platforms[3]\n");
+      return 3;
+    }
+    const Rect r = m.platforms[3].rect;
+    f.pos = {r.x + r.w / 2, r.y - 40};
+    f.vel = {0, 0};
+    p.idle(300);
+  }
+  return 0;
+}
+
+}  // namespace parity
+
 int main(int argc, char** argv) {
   std::string only = argc > 1 ? argv[1] : "";
+  if (only == "trace") return parity::traceMain(argc > 2 ? argv[2] : "");
   if (only.empty() || only == "kb") testKnockback();
   if (only.empty() || only == "jab") testJabHits();
   if (only.empty() || only == "cancels") testCancels();
