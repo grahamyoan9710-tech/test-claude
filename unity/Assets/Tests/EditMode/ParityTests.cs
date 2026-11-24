@@ -121,5 +121,85 @@ namespace ClashHorizon.Tests
             }
             Parity.Compare("stages", d.lines);
         }
+
+        [Test]
+        public void Roster_MatchesCpp()
+        {
+            var d = new Dump();
+            var all = Roster.All();
+            for (int c = 0; c < all.Count; c++)
+            {
+                var r = all[c];
+                string p = "c" + c;
+                d.Line(p, r.id, r.name, r.title, r.series, r.element, r.hero, r.style, r.width, r.height, r.weight, r.walkSpeed,
+                    r.runSpeed, r.groundAccel, r.friction, r.walkStride, r.airSpeed, r.airAccel, r.airFriction, r.gravity,
+                    r.maxFall, r.fastFall, r.jumpVel, r.shortHopVel, r.airJumpVel, r.airJumps, r.jumpSquat, r.weaponLength,
+                    r.armed, r.willForm, r.forms.Count);
+                for (int k = 0; k < r.palettes.Length; k++)
+                {
+                    var pl = r.palettes[k];
+                    d.Line(p + "/pal" + k, pl.primary, pl.secondary, pl.accent, pl.skin, pl.hair, pl.eyes);
+                }
+                for (int i = 0; i < r.moves.Length; i++) DumpMove(d, p + "/m" + i, r.moves[i]);
+                for (int k = 0; k < r.weapons.Length; k++)
+                {
+                    var w = r.weapons[k];
+                    string q = p + "/w" + k;
+                    d.Line(q, w.name, w.desc, w.visual, w.fx, w.damageMul, w.kbMul, w.reachMul, w.blade, w.kit, w.moves.Count);
+                    foreach (var (id, md) in w.moves) DumpMove(d, q + "/m(" + id + ")", md);
+                }
+                for (int k = 0; k < r.forms.Count; k++)
+                {
+                    var fd = r.forms[k];
+                    string q = p + "/f" + k;
+                    d.Line(q, fd.form, fd.duration, fd.fx, fd.damageMul, fd.kbTakenMul, fd.superArmor, fd.aura, fd.m1Waves,
+                        fd.m1Blink, fd.moves.Count);
+                    DumpProj(d, q + "/wave", fd.m1Wave);
+                    foreach (var (id, md) in fd.moves) DumpMove(d, q + "/m(" + id + ")", md);
+                }
+            }
+            Parity.Compare("roster", d.lines);
+        }
+
+        static void DumpHit(Dump d, string p, in HitboxDef h) =>
+            d.Line(p, h.start, h.end, h.offset, h.radius, h.damage, h.angle, h.baseKB, h.growth, h.group, h.limb, h.fx, h.reverse,
+                h.impact, h.swing, h.a0, h.a1, h.reach0, h.reach1, h.capture, h.launch);
+
+        static void DumpProj(Dump d, string p, in ProjectileDef x)
+        {
+            d.Line(p, x.spawnOffset, x.velocity, x.gravity, x.lifetime, x.radius, x.count, x.spreadDeg, x.bounces, x.piercing,
+                x.visual, x.fx, x.rehit, x.pull, x.pullRadius, x.boomerang, x.grow, x.explodeRadius, x.target, x.follow,
+                x.armDelay, x.ignoreGround, x.column, x.jitter);
+            DumpHit(d, p + "/hit", x.hit);
+            DumpHit(d, p + "/exp", x.explode);
+        }
+
+        static void DumpMove(Dump d, string p, MoveDef md)
+        {
+            d.Line(p, md.name, md.duration, md.landingLag, md.gravityMul, md.frictionMul, md.allowDrift, md.chargeFrame,
+                md.maxCharge, md.chargeDamageMul, md.projectileFrame, md.projectileRepeat, md.projectileEvery,
+                md.intangibleStart, md.intangibleEnd, md.armorStart, md.armorEnd, md.counterStart, md.counterEnd,
+                md.teleportFrame, md.teleportDist, md.teleportForward, md.turnAfterTeleport, md.cooldown, md.charges,
+                md.channelEnd, md.superFlash, md.castFx, md.castFxFrame, md.castFxAt, md.castFxStays, md.castFxScale,
+                md.sparkFx, md.pose, md.reflects, md.helplessAfter, md.endOnLand, md.landMove, md.loopFrame, md.nextMove,
+                md.comboStart, md.comboEnd, md.comboAt, md.comboOnSpecial, md.perfectMove, md.perfectFrom, md.perfectTo,
+                md.releaseMove, md.holdMove, md.fillsWill, md.parries, md.ultFx, md.holdAt, md.holdInPlace,
+                md.teleportToTarget, md.formIndex, md.formFrame, md.isGrab, md.throwFrame, md.pummel, md.airOnly,
+                md.hitboxes.Count, md.vel.Count, md.shots.Count);
+            for (int j = 0; j < md.hitboxes.Count; j++) DumpHit(d, p + "/h" + j, md.hitboxes[j]);
+            for (int j = 0; j < md.vel.Count; j++)
+            {
+                var e = md.vel[j];
+                d.Line(p + "/v" + j, e.frame, e.mode, e.v, e.stickX, e.airOnly);
+            }
+            DumpProj(d, p + "/proj", md.projectile);
+            for (int j = 0; j < md.shots.Count; j++)
+            {
+                d.Line(p + "/s" + j, md.shots[j].frame);
+                DumpProj(d, p + "/s" + j + "/proj", md.shots[j].def);
+            }
+            var b = md.beam;
+            d.Line(p + "/beam", b.start, b.end, b.from, b.angle, b.length, b.width, b.fx, b.sprite);
+        }
     }
 }
