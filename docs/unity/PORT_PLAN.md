@@ -36,6 +36,9 @@ C++ wins.
   24 Nov: the PC can push to GitHub (gh signed in) and Windows Build Support (Mono) is installed.
 - **Not chosen:** rebuilding the game "the Unity way" (scenes, Animator, VFX Graph). It would change the look and the
   feel. New effects can use Unity tools later, once the port matches.
+- **Asked on 24 Nov, after the port:** DMC-style air combos (P8) and new animations and attacks for each character
+  (P9). Hakuen's sheathing is fixed at the end of P3. They come after the frame-by-frame checks, because a new
+  mechanic during the port would make every difference ambiguous: port bug or new feature.
 
 ## Global constraints
 - Art, rules and character designs unchanged: `assets/` (sprites, `sheets.txt`, audio, fonts), roster numbers, kits,
@@ -164,6 +167,9 @@ accumulator, then draws (same as `app.cpp`). The fight renders at render resolut
 uncapped FPS, 600 steps take 10 s (± 0.1 s); input latch; gamepad add and remove; no garbage per frame during a match
 (Profiler recorder); RTX Medium and High FPS logged on the laptop. For yoyo: side-by-side videos of Hakuen's ults and
 skills and of the other 4 characters.
+**Last task (asked on 24 Nov):** once the checks above pass, fix Hakuen's sheathing (the noto clips look bad). Try a
+clean sheathe; if it is too hard, the blade fades out (a glint, then gone) when the draw ends. This is the one planned
+visual difference from raylib; later screenshot checks skip it.
 
 ### P4 · Menus and screens (L)
 **Files:** `Ui.cs`, `UiPrestige.cs`, `Menus.cs`, `MenuTheme.cs`, `ScreenTitle.cs`, `ScreenLoading.cs`,
@@ -190,6 +196,22 @@ never "latest".
 Side-by-side videos of every character and stage; yoyo plays both; gaps fixed. Then yoyo decides the switch: Unity
 becomes the main game, the raylib game is frozen on its branch, and we decide whether to port the hitbox tools.
 
+### P8 · Air combos, DMC style (own plan)
+Asked by yoyo on 24 Nov: grab the foe and send them up, then hit them in the air. First idea: each character gets a
+launcher (the foe goes straight up and the attacker can follow), air strings that keep the foe floating, a grab that
+launches, and an air grab that slams down. Limits keep versus fair: each air hit adds gravity and knockback, and the
+foe can escape after a few hits. The CPU learns to use and escape them.
+**Tests:** scripted combos land; a bot looking for the longest loop finds no endless combo; CPU against CPU win rates
+stay balanced.
+
+### P9 · New animations and attacks per character (own plan)
+Asked by yoyo on 24 Nov: many animations are shared by every character, some since the first game. Each character
+gets their own animations and attacks, one character per thread. First a reference study of fighting and action games
+(timing, poses, arcs), used as inspiration only: no copied art, frames or characters. From here Unity tools are
+allowed (2D Animation rigging, Animator, VFX Graph) when they look better than the current clips.
+**Tests:** side-by-side videos of the old and new moves for yoyo; hitboxes refitted to the new frames (needs the
+hitbox tools in Unity, see P7).
+
 ### After parity (separate plans)
 - DLSS and STP through URP's upscaler framework (DLSS: Windows and NVIDIA RTX only). Sprites need motion vectors, and
   temporal upscalers can blur pixel art (the reason TAA was refused), so test first and keep only if it looks right.
@@ -213,4 +235,5 @@ becomes the main game, the raylib game is frozen on its branch, and we decide wh
 - About 24,000 lines of C++ to read (core 5,400, renderer and screens 17,500, tests 1,500) and about 22,000 lines of
   C# to write, plus 18 shaders.
 - About 12 to 17 short threads: P0 1, P1 3, P2 2, P3 4, P4 3, P5 1, P6 1, P7 1 or 2.
+- P8 and P9 are sized in their own plans. Guess: P8 2 to 3 threads, P9 about 6 (the study, then one per character).
 - Tokens can't be measured in advance. After P1 I report its real use and the projection for the rest.
