@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "f9f6ec4f-dc9e-4a9b-ab19-4fbe98702035",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:fba5c416-d7d6-4682-9abd-be32ff831486",
+  "last_frame_url": "upload:47e3a494-a2c1-4074-9367-ac17821f2a83",
+  "description": "a fast two-handed rising katana cut, in keyframes: she lowers the nodachi beside her right knee, its point down and back; then cuts upward at a slant in front of her in two quick frames with both hands, a thin plain white trail following the edge of the blade; both arms end raised forward above her head, the blade pointing up and forward; she holds that pose for two frames; then lowers the nodachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+ },
+ "reply": "id: f9f6ec4f-dc9e-4a9b-ab19-4fbe98702035\njob_id: f9f6ec4f-dc9e-4a9b-ab19-4fbe98702035\ndescription: a fast two-handed rising katana cut, in keyframes: she lowers the nodachi beside her right knee, its point down and back; then cuts upward at a slant in front of her in two quick frames with both hands, a thin plain white trail following the edge of the blade; both arms end raised forward above her head, the blade pointing up and forward; she holds that pose for two frames; then lowers the nodachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"f9f6ec4f-dc9e-4a9b-ab19-4fbe98702035\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/f9f6ec4f-dc9e-4a9b-ab19-4fbe98702035/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 1ca01152-d2ac-50ff-84d3-9c464aaf798a\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

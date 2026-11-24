@@ -1,9 +1,20 @@
 {
  "status": "done",
- "tool": "join",
- "parts": [
-  "w1_jab2.a",
-  "w1_jab2.b"
- ],
- "cut_after": 8
+ "job_id": "2377c2ab-0a9e-43df-a802-6929bd703275",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:914fc83c-708e-4a2c-95e5-253d2833f1f4",
+  "last_frame_url": "upload:4acaaa03-16f6-43b0-b783-5d8c72ec9fb1",
+  "description": "a fast one-handed horizontal slash, in keyframes: she draws the long odachi back level beside her right hip with her right hand; then steps forward and slashes straight across at chest height in two quick frames, a thin plain white trail following the edge of the blade; her right arm ends stretched far forward, the long blade level and pointing forward, her left arm back; she holds that pose for two frames; then returns into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 2377c2ab-0a9e-43df-a802-6929bd703275\njob_id: 2377c2ab-0a9e-43df-a802-6929bd703275\ndescription: a fast one-handed horizontal slash, in keyframes: she draws the long odachi back level beside her right hip with her right hand; then steps forward and slashes straight across at chest height in two quick frames, a thin plain white trail following the edge of the blade; her right arm ends stretched far forward, the long blade level and pointing forward, her left arm back; she holds that pose for two frames; then returns into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"2377c2ab-0a9e-43df-a802-6929bd703275\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/2377c2ab-0a9e-43df-a802-6929bd703275/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 11ee3560-b713-5d7b-bf4d-3383f5761ead\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
 }

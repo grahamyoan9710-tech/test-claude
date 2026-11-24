@@ -561,8 +561,8 @@ CharacterDef makeH01() {
   blinkCuts(k, 1);
   // The cut of each plain blade move is a Blender effect (the owner, 17/11: no swing drawn in the sprites),
   // pfx_h01_<a|b>_<clip>, played when the move's first hitbox comes out; nothing shows until its strip exists.
-  // The specials keep their own effects.
-  const std::pair<int, const char*> cuts[] = {{Jab, "jab"}, {Jab2, "jab2"}, {Jab3, "jab3"}, {FTilt, "ftilt"},
+  // The specials keep their own effects. The M1 (jab) clips draw their own white trail (the owner, 18/11).
+  const std::pair<int, const char*> cuts[] = {{FTilt, "ftilt"},
       {UTilt, "utilt"}, {DTilt, "dtilt"}, {NAir, "nair"}, {FAir, "fair"}, {FThrow, "fthrow"}, {UThrow, "uthrow"},
       {LedgeAttack, "ledgeattack"}, {GetupAttack, "getupattack"}};
   for (int slot : {0, 1})
@@ -576,7 +576,8 @@ CharacterDef makeH01() {
   // Weapon B in the manner of Alpha (the owner, 17/11): its third cut skims the floor and sends a wave ahead, low.
   for (auto& [id, m] : k.c.weapons[1].moves)
     if (id == Jab3 && !m.hitboxes.empty()) {
-      m.projectileFrame = m.castFxFrame;
+      m.projectileFrame = m.hitboxes.front().start;
+      for (const auto& h : m.hitboxes) m.projectileFrame = std::min(m.projectileFrame, h.start);
       m.projectile = proj({36 * k.S, 28 * k.S}, {11, 0}, 0, 18, 20, 3.5f * k.P, 20, 40, e, PV::Crescent);
       m.projectile.fx = k.pfx("b_wave");
       m.projectile.piercing = true;

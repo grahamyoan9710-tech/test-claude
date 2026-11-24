@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "5e951b0f-5fa2-4e54-8fb0-5a5a14d3e858",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:3f667e03-d657-4c77-ba9c-ecc5bc1d1cef",
+  "last_frame_url": "upload:12e6663c-3e93-4038-9fd9-12b0301f44c9",
+  "description": "sheathes the long odachi the real iaido way, in keyframes: she snaps the blade down to her right side once, the point low; then brings the blade level across in front of her belly, the back of the blade laid on her left hand at the mouth of the scabbard at her left hip; she slides the blade back along her left hand until its point slips into the scabbard mouth; then smoothly pushes the level blade back into the scabbard, her right hand coming back to her hip, the blade getting shorter, until the gold star guard touches the mouth; then holds the stance still, her right hand on the handle. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 5e951b0f-5fa2-4e54-8fb0-5a5a14d3e858\njob_id: 5e951b0f-5fa2-4e54-8fb0-5a5a14d3e858\ndescription: sheathes the long odachi the real iaido way, in keyframes: she snaps the blade down to her right side once, the point low; then brings the blade level across in front of her belly, the back of the blade laid on her left hand at the mouth of the scabbard at her left hip; she slides the blade back along her left hand until its point slips into the scabbard mouth; then smoothly pushes the level blade back into the scabbard, her right hand coming back to her hip, the blade getting shorter, until the gold star guard touches the mouth; then holds the stance still, her right hand on the handle. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5e951b0f-5fa2-4e54-8fb0-5a5a14d3e858\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/5e951b0f-5fa2-4e54-8fb0-5a5a14d3e858/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 20538814-8203-5cad-9e5f-6e00577a24fb\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/h01/w1_rengaine.end/f_00.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

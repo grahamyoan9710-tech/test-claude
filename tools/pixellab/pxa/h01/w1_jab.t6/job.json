@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "5361187a-bf93-4fbb-94f0-4735991c4156",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:126f5cdc-c737-446c-ba68-62c28e4c97d4",
+  "last_frame_url": "upload:3ad47a25-4d03-4d2b-b04d-8e0d704bd5eb",
+  "description": "a fast one-handed rising slash, in keyframes: she draws the long odachi low behind her right hip with her right hand; then steps forward and slashes up at a slant in front of her in two quick frames, a thin plain white trail following the edge of the blade; her right arm ends stretched high and forward, the long blade pointing up and forward, her left arm back; she holds that pose for two frames; then lowers the long odachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, long silver-white ponytail with red ribbons, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black gloves, baggy black trousers, red and black boots, long red scabbard at the hip, holding a very long curved odachi with a gold star guard",
+  "initial_pose": "calm iai stance facing right, holding the drawn long odachi low in her right hand, the point forward and down near the floor, her left hand on the long scabbard at her hip"
+ },
+ "reply": "id: 5361187a-bf93-4fbb-94f0-4735991c4156\njob_id: 5361187a-bf93-4fbb-94f0-4735991c4156\ndescription: a fast one-handed rising slash, in keyframes: she draws the long odachi low behind her right hip with her right hand; then steps forward and slashes up at a slant in front of her in two quick frames, a thin plain white trail following the edge of the blade; her right arm ends stretched high and forward, the long blade pointing up and forward, her left arm back; she holds that pose for two frames; then lowers the long odachi into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"5361187a-bf93-4fbb-94f0-4735991c4156\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/5361187a-bf93-4fbb-94f0-4735991c4156/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: d9631b78-3966-5366-bdf9-018b62609a4b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w1guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}

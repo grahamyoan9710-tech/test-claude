@@ -1,0 +1,20 @@
+{
+ "status": "done",
+ "job_id": "77413df1-2d36-4b97-9f2c-d27b1f70ef28",
+ "tool": "animate_image_pixminimax",
+ "args": {
+  "first_frame_url": "upload:98566bda-ba95-4c5d-89ff-2609c68bc021",
+  "last_frame_url": "upload:9159600c-0254-4f80-98f3-5296eb834441",
+  "description": "a fast two-handed downward finishing cut, in keyframes: she raises the nodachi straight above her head with both hands, the blade pointing back; then steps into a deep lunge and cuts straight down in front of her in two quick frames, a thin plain white trail following the edge of the blade; both arms straight, the blade level in front of her at knee height; she holds that pose for two frames; then rises back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.",
+  "frame_count": 12,
+  "view": "side",
+  "direction": "east",
+  "subject_description": "adult woman, very long silver-white ponytail with red ribbons and beads, red eyes, black sleeveless top, long white coat with red-gold flames off the shoulders, red belt, black fingerless gloves, baggy black trousers, red and black boots, red scabbard at the hip, holding a curved nodachi",
+  "initial_pose": "calm iai fighting stance facing right, holding the drawn nodachi low in her right hand, the point forward, her left hand on the scabbard at her hip"
+ },
+ "reply": "id: 77413df1-2d36-4b97-9f2c-d27b1f70ef28\njob_id: 77413df1-2d36-4b97-9f2c-d27b1f70ef28\ndescription: a fast two-handed downward finishing cut, in keyframes: she raises the nodachi straight above her head with both hands, the blade pointing back; then steps into a deep lunge and cuts straight down in front of her in two quick frames, a thin plain white trail following the edge of the blade; both arms straight, the blade level in front of her at knee height; she holds that pose for two frames; then rises back into the stance. The character stays at the same place in the frame (the game moves her), always facing right, seen from the side; keep her look, proportions and colours exactly. Only the character is drawn, with what she holds, the whole body inside the picture, on an empty background. Every frame shows the arms, legs and weapon in a crisp pose.\nframes: 12\nsize: 256x256px\ntransparent: True\nlast_frame: yes (animating toward it)\ncost: 2 generations\nstatus: processing (~1-5 min)\n\nhint: get_image(job_id=\"77413df1-2d36-4b97-9f2c-d27b1f70ef28\")\nwithout get_image: GET https://api.pixellab.ai/mcp/images/77413df1-2d36-4b97-9f2c-d27b1f70ef28/download (423 + Retry-After until ready; ?index=N for the Nth of several images)\nasset_id: 341fd701-ec81-5a40-bbae-780413f03f4b\nasset_status: pending (saved to your gallery when generation completes)",
+ "src": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "last": "/home/user/test-claude/tools/pixellab/pxa/base/h01_w0guard256.png",
+ "frames": 13,
+ "charged": "2 generations"
+}
