@@ -15,3 +15,7 @@ for name in jab_hit smash_ko projectile weapon_pickup_switch ult_capture hakuen_
   mv "$out/$name.txt.tmp" "$out/$name.txt"
   printf '%-22s %5d lines\n' "$name" "$(wc -l < "$out/$name.txt")"
 done
+# The C++ win rates TestBalance compares with (800 CPU duels, about 7 s)
+./build-core/sim_test balance > "$out/balance.txt.tmp" || { echo "balance failed"; exit 1; }
+mv "$out/balance.txt.tmp" "$out/balance.txt"
+printf '%-22s %5d lines\n' balance "$(wc -l < "$out/balance.txt")"

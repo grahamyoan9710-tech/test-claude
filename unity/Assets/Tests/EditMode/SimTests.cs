@@ -1,8 +1,10 @@
-// Port of tests/sim_test.cpp (the non-AI tests; the CPU ones come with the AI in task 6).
+// Port of tests/sim_test.cpp.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using NUnit.Framework;
 using ClashHorizon.Core;
+using static ClashHorizon.Core.MathUtil;
 using static ClashHorizon.Core.MoveId;
 using static ClashHorizon.Core.Fighter;
 using static ClashHorizon.Core.Match;
@@ -40,7 +42,35 @@ namespace ClashHorizon.Tests
             for (int i = 0; i < r.Count; ++i) if (r[i].name == name) return i;
             return 0;
         }
+        // CPUs only (levels 9, 8, 7, 6), 3 stocks: plays until the end or maxFrames. koPercents gets each victim's
+        // percent at its KO; onStep sees the match after every frame.
+        public static BattleResult CpuBattle(int stage, int[] chars, uint seed, int maxFrames, List<float> koPercents = null,
+                                             Action<Match> onStep = null)
+        {
+            var cfg = new MatchConfig { stage = stage, stocks = 3, seed = seed };
+            for (int i = 0; i < chars.Length; ++i) cfg.slots[i] = new MatchConfig.Slot(true, chars[i], true, 9);
+            var m = new Match(cfg);
+            var brains = new List<CpuBrain>();
+            for (int i = 0; i < chars.Length; ++i) brains.Add(new CpuBrain(9 - i, seed + (uint)i * 77u));
+            var r = new BattleResult();
+            for (int i = 0; i < maxFrames && !m.finished; ++i)
+            {
+                var @in = new InputState[4];
+                for (int k = 0; k < m.fighters.Count; ++k) @in[m.fighters[k].port] = brains[k].Think(m, k);
+                var before = new List<float>();
+                foreach (var f in m.fighters) before.Add(f.percent);
+                m.Step(@in);
+                foreach (var e in m.events)
+                    if (e.type == EvType.KO && koPercents != null) koPercents.Add(before[e.a]);
+                onStep?.Invoke(m);
+                Assert.IsTrue(Sane(m), $"insane state at frame {m.frame}");
+            }
+            r.frames = m.frame; r.winner = m.winner; r.finished = m.finished;
+            return r;
+        }
     }
+
+    sealed class BattleResult { public int frames = 0; public int winner = -1; public bool finished = false; }
 
     // Drives fighter 0 like a keyboard player.
     sealed class Pad
@@ -327,23 +357,48 @@ namespace ClashHorizon.Tests
 
         [Test]
         public void TestTeams()
-        {   // a teammate's jab does nothing (the CPUs playing it out comes in task 6)
-            var m = new Match(TeamsCfg());
-            SkipCountdown(m);
-            var a = m.fighters[0]; var mate = m.fighters[1];
-            a.pos = new Vec2(0, 0); a.facing = 1; mate.pos = new Vec2(40, 0);
-            m.fighters[2].pos = new Vec2(-400, 0); m.fighters[3].pos = new Vec2(-500, 0);
-            var @in = new InputState[4];
-            for (int i = 0; i < 20; ++i) m.Step(@in);
-            float before = mate.percent;
-            var p = new Pad(m);
-            for (int i = 0; i < 6; ++i) { p.Run(1, Key(0, 0, true)); p.Idle(12); }
-            Assert.IsTrue(mate.percent == before, $"no damage to a teammate ({before:F1}% -> {mate.percent:F1}%)");
-            m.fighters[2].pos = new Vec2(40, 0); m.fighters[2].vel = new Vec2();
-            p.Idle(10);
-            float foe = m.fighters[2].percent;
-            for (int i = 0; i < 6; ++i) { p.Run(1, Key(0, 0, true)); p.Idle(12); }
-            Assert.IsTrue(m.fighters[2].percent > foe, $"the other team takes the hits ({m.fighters[2].percent:F1}%)");
+        {
+            {   // a teammate's jab does nothing
+                var m = new Match(TeamsCfg());
+                SkipCountdown(m);
+                var a = m.fighters[0]; var mate = m.fighters[1];
+                a.pos = new Vec2(0, 0); a.facing = 1; mate.pos = new Vec2(40, 0);
+                m.fighters[2].pos = new Vec2(-400, 0); m.fighters[3].pos = new Vec2(-500, 0);
+                var @in = new InputState[4];
+                for (int i = 0; i < 20; ++i) m.Step(@in);
+                float before = mate.percent;
+                var p = new Pad(m);
+                for (int i = 0; i < 6; ++i) { p.Run(1, Key(0, 0, true)); p.Idle(12); }
+                Assert.IsTrue(mate.percent == before, $"no damage to a teammate ({before:F1}% -> {mate.percent:F1}%)");
+                m.fighters[2].pos = new Vec2(40, 0); m.fighters[2].vel = new Vec2();
+                p.Idle(10);
+                float foe = m.fighters[2].percent;
+                for (int i = 0; i < 6; ++i) { p.Run(1, Key(0, 0, true)); p.Idle(12); }
+                Assert.IsTrue(m.fighters[2].percent > foe, $"the other team takes the hits ({m.fighters[2].percent:F1}%)");
+            }
+            {   // CPUs play it out: one team wins, and the ranking starts with it
+                var c = TeamsCfg();
+                c.slots[0].cpu = true;
+                var m = new Match(c);
+                var brains = new List<CpuBrain>();
+                foreach (var f in m.fighters) brains.Add(new CpuBrain(9, 77u + 13u * (uint)f.id));
+                var @in = new InputState[4];
+                for (int i = 0; i < 60 * 60 * 8 && !m.finished; ++i)
+                {
+                    for (int k = 0; k < m.fighters.Count; ++k) @in[m.fighters[k].port] = brains[k].Think(m, k);
+                    m.Step(@in);
+                }
+                Assert.IsTrue(m.finished, "the team battle ends");
+                Assert.IsTrue(m.winnerTeam == 0 || m.winnerTeam == 1, $"a team wins ({m.winnerTeam})");
+                int standing = 0;
+                foreach (var f in m.fighters)
+                    if (!f.eliminated) { ++standing; Assert.IsTrue(f.team == m.winnerTeam, "only the winning team is left"); }
+                Assert.IsTrue(standing >= 1, "someone is left");
+                var rk = m.Ranking();
+                Assert.IsTrue(m.fighters[rk[0]].team == m.winnerTeam && m.fighters[rk[1]].team == m.winnerTeam,
+                              "the winning team is ranked first");
+                Assert.IsTrue(Sane(m), "sane");
+            }
         }
 
         [Test]
@@ -442,7 +497,6 @@ namespace ClashHorizon.Tests
             }
         }
 
-        // The CPU block (CPUs take and switch their weapons) comes with the AI in task 6.
         [Test]
         public void TestWeapons()
         {
@@ -542,6 +596,25 @@ namespace ClashHorizon.Tests
             Assert.IsTrue(f.stocks < stocks && f.weapon < 0 && f.weapons == 0, $"a KO loses both weapons (stocks {f.stocks}, weapon {f.weapon})");
             p.Idle(400);
             Assert.IsTrue(f.weapon < 0, $"it respawns bare-handed (weapon {f.weapon})");
+
+            // The CPUs take their weapon and switch between their two.
+            var c2 = Duel(0, CharIndex("Hakuen"), CharIndex("N° 08"), true, true);
+            c2.items = false;
+            var m2 = new Match(c2);
+            var brains = new List<CpuBrain>();
+            foreach (var g in m2.fighters) brains.Add(new CpuBrain(7, 5u + 11u * (uint)g.id));
+            var @in = new InputState[4];
+            bool[] armed = { false, false }, both = { false, false };
+            var seen = new bool[2, 2];
+            for (int t = 0; t < 60 * 90 && !m2.finished; ++t)  // the take needs a 1 s hold, often cut by the foe
+            {
+                for (int k = 0; k < m2.fighters.Count; ++k) @in[m2.fighters[k].port] = brains[k].Think(m2, k);
+                m2.Step(@in);
+                for (int k = 0; k < 2; ++k)
+                    if (m2.fighters[k].weapon >= 0) { armed[k] = true; seen[k, m2.fighters[k].weapon] = true; }
+            }
+            for (int k = 0; k < 2; ++k) both[k] = seen[k, 0] && seen[k, 1];
+            Assert.IsTrue(armed[0] && armed[1], $"the CPUs take their weapons ({armed[0]} {armed[1]})");
             {  // both weapons of a fighter drop, one after the other (not one item giving both)
                 var c3 = Duel(0, lancer, other, false, false);
                 c3.items = false;
@@ -556,6 +629,7 @@ namespace ClashHorizon.Tests
                 }
                 Assert.IsTrue(dropped[0] && dropped[1], $"weapons A and B both drop on the stage ({dropped[0]} {dropped[1]})");
             }
+            Assert.IsTrue(both[0] || both[1], $"the CPUs switch between their two weapons ({both[0]} {both[1]})");
         }
 
         [Test]
@@ -734,6 +808,307 @@ namespace ClashHorizon.Tests
                     TestContext.WriteLine($"  {r[c].name,-10} {name,-32} {(broke ? "breaks the shield" : TextFormatShield(v.shield))}");
                 }
             TestContext.WriteLine($"  {total - broken}/{total} ultimates blocked without breaking the shield");
+        }
+
+        // Level 10 is level 9 with double damage (the match applies it, not the brain).
+        [Test]
+        public void TestLevel10()
+        {
+            var dealt = new float[2];
+            for (int pass = 0; pass < 2; ++pass)
+            {
+                var cfg = Duel(0, 0, 0, true, false);
+                cfg.slots[0].level = pass == 0 ? 9 : 10;
+                cfg.items = false;
+                var m = new Match(cfg);
+                SkipCountdown(m);
+                m.fighters[0].pos = new Vec2(-40, 0); m.fighters[0].facing = 1; m.fighters[1].pos = new Vec2(20, 0);
+                var @in = new InputState[4];
+                @in[0].attack = true; m.Step(@in); @in[0].attack = false;
+                for (int i = 0; i < 25; ++i) m.Step(@in);
+                dealt[pass] = m.fighters[1].percent;
+            }
+            Assert.IsTrue(dealt[0] > 0.0f && MathF.Abs(dealt[1] - 2.0f * dealt[0]) < 0.01f,
+                          $"level 10 jab {dealt[1]:F1}% vs level 9 {dealt[0]:F1}%");
+        }
+
+        [Test]
+        public void TestTraining()
+        {
+            var cfg = Duel(0, 2, 0, false, true);
+            cfg.training = true; cfg.items = false;
+            var m = new Match(cfg);
+            SkipCountdown(m);
+            var dummy = new CpuBrain(5, 3);
+            dummy.SetDummy(CpuBrain.kDummyStand);
+            var v = m.fighters[1];
+            v.percent = 200;
+            m.fighters[0].pos = new Vec2(200, 0); m.fighters[0].facing = 1; v.pos = new Vec2(270, 0);
+            var @in = new InputState[4];
+            for (int i = 0; i < 10; ++i) { @in[1] = dummy.Think(m, 1); m.Step(@in); }
+            Assert.IsTrue(@in[1].stick.Len() == 0.0f && !@in[1].attack && !@in[1].jump, "standing dummy does nothing");
+            @in[0].cstick = new Vec2(1, 0); m.Step(@in); @in[0].cstick = new Vec2(0, 0);
+            int falls = v.falls;
+            for (int i = 0; i < 600; ++i) { @in[1] = dummy.Think(m, 1); m.Step(@in); }
+            Assert.IsTrue(v.falls > falls, "the dummy was KO'd");
+            Assert.IsTrue(v.stocks == 3 && !v.eliminated && !m.finished, $"no stock lost in training (stocks {v.stocks})");
+            v.percent = 80;
+            m.ResetPositions();
+            Assert.IsTrue(v.percent == 0.0f && m.fighters[0].percent == 0.0f, "reset clears damage");
+            {   // The options of the training pause menu
+                var t = new Match(cfg);
+                SkipCountdown(t);
+                var me = t.fighters[0]; var dm = t.fighters[1];
+                var none = new InputState[4];
+                t.trainInfiniteUlt = true;
+                t.Step(none);
+                Assert.IsTrue(me.finalSmash && me.ult >= kUltMax, "infinite ultimate: the meter is full");
+                me.pos = new Vec2(-100, 0); me.facing = 1; dm.pos = new Vec2(100, 0);
+                var p = new Pad(t);
+                p.Idle(20);
+                var ult = new InputState { ultimate = true };
+                p.Run(1, ult);
+                Assert.IsTrue(me.move == FinalSmash, "the ultimate goes");
+                p.Idle(600);
+                Assert.IsTrue(me.finalSmash, "... and the meter fills up again");
+                t.trainInfiniteUlt = false; t.trainZeroPercent = true;
+                t.ResetPositions();
+                me.pos = new Vec2(0, 0); me.facing = 1; dm.pos = new Vec2(40, 0);
+                p.Idle(30);
+                int fallsBefore = dm.falls;
+                bool hit = false;
+                for (int i = 0; i < 4; ++i)
+                {
+                    p.Run(1, Key(0, 0, true));
+                    for (int j = 0; j < 14; ++j)
+                    {
+                        p.Idle(1);
+                        foreach (var e in t.events) hit = hit || (e.type == EvType.Hit && e.b == dm.id);
+                    }
+                }
+                Assert.IsTrue(hit && dm.percent == 0.0f && dm.falls == fallsBefore, $"hit, and it stays at 0 % ({dm.percent:F1}%)");
+                t.trainZeroPercent = false;
+                t.SetTrainFight(true);
+                Assert.IsTrue(dm.stocks == Match.kTrainStocks && me.stocks == Match.kTrainStocks, "fight mode: 3 stocks each");
+                bool gameSet = false;
+                for (int k = 0; k < 3; ++k)
+                    for (int i = 0; i < 1500 && dm.stocks > 2 - k; ++i)
+                    {
+                        if (dm.Active() && dm.state != FState.Respawn) dm.pos = new Vec2(0, 3000);  // under the blast zone
+                        t.Step(none);
+                        foreach (var e in t.events) gameSet = gameSet || e.type == EvType.GameSet;
+                    }
+                Assert.IsTrue(dm.stocks == 0 && dm.eliminated && gameSet, $"three falls end the fight (stocks {dm.stocks})");
+                Assert.IsTrue(!t.finished, "the training goes on");
+                for (int i = 0; i < 200; ++i) t.Step(none);
+                Assert.IsTrue(dm.stocks == Match.kTrainStocks && !dm.eliminated && me.stocks == Match.kTrainStocks,
+                              $"then the fight starts over (stocks {dm.stocks})");
+                t.SetTrainFight(false);
+                int falls2 = dm.falls;
+                for (int i = 0; i < 1500 && dm.falls == falls2; ++i)
+                {
+                    if (dm.Active() && dm.state != FState.Respawn) dm.pos = new Vec2(0, 3000);
+                    t.Step(none);
+                }
+                Assert.IsTrue(dm.falls > falls2 && dm.stocks == Match.kTrainStocks, "fight mode off: lives are infinite again");
+            }
+        }
+
+        [Test]
+        public void TestRecovery()
+        {
+            var roster = Roster.All();
+            for (int c = 0; c < roster.Count; ++c)
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    var m = new Match(Duel(0, c, 0, true, false));
+                    SkipCountdown(m);
+                    var brain = new CpuBrain(9, (uint)(42 + c));
+                    var f = m.fighters[0];
+                    m.fighters[1].pos = new Vec2(-side * 300.0f, 0);
+                    f.pos = new Vec2(side * 700.0f, 60.0f);
+                    f.grounded = false;
+                    f.airJumps = 0;  // worst case: only the special can save us
+                    f.state = FState.Air;
+                    bool safe = false;
+                    for (int i = 0; i < 600 && f.stocks == 3; ++i)
+                    {
+                        var @in = new InputState[4];
+                        @in[0] = brain.Think(m, 0);
+                        m.Step(@in);
+                        if (f.state == FState.LedgeHang || (f.grounded && f.groundPlat == 0))
+                        {
+                            safe = true;
+                            break;  // back on the stage: what the CPU does next is not the recovery
+                        }
+                    }
+                    Assert.IsTrue(safe && f.stocks == 3,
+                        $"{roster[c].name} failed to recover from x={side * 700} (pos {f.pos.x:F0},{f.pos.y:F0} state {(int)f.state})");
+                }
+        }
+
+        // Every stage, every fighter: thrown off either side (and into the Valley of the End's gap), it gets back.
+        [Test]
+        public void TestRecoveryStages()
+        {
+            var roster = Roster.All();
+            int tries = 0, saved = 0;
+            for (int st = 1; st < Stage.List().Count; ++st)
+            {
+                var sd = Stage.List()[st];
+                float outer = 0.0f;
+                bool gap = false;
+                foreach (var p in sd.platforms)
+                    if (p.solid)
+                    {
+                        outer = Maxf(outer, Maxf(MathF.Abs(p.@base.Left()), MathF.Abs(p.@base.Right())));
+                        gap = gap || (p.@base.Left() > 0.0f);  // a solid entirely on the right: there is a hole in the middle
+                    }
+                for (int c = 0; c < roster.Count; ++c)
+                    for (int @from = -1; @from <= (gap ? 2 : 1); @from += (gap ? 1 : 2))
+                    {
+                        if (@from == 0) continue;
+                        var m = new Match(Duel(st, c, 0, true, false));
+                        SkipCountdown(m);
+                        var brain = new CpuBrain(9, (uint)(77 + c * 3 + st));
+                        var f = m.fighters[0];
+                        bool inGap = @from == 2;
+                        m.fighters[1].pos = new Vec2(inGap ? 300.0f : -@from * 260.0f, 0);
+                        m.fighters[1].grounded = true;
+                        f.pos = inGap ? new Vec2(0.0f, 120.0f) : new Vec2(@from * (outer + 260.0f), 60.0f);
+                        f.grounded = false;
+                        f.airJumps = 0;  // worst case: only the special can save us
+                        f.state = FState.Air;
+                        bool safe = false;
+                        for (int i = 0; i < 600 && f.stocks == 3; ++i)
+                        {
+                            var @in = new InputState[4];
+                            @in[0] = brain.Think(m, 0);
+                            m.Step(@in);
+                            if (f.state == FState.LedgeHang || (f.grounded && f.groundPlat >= 0 && m.platforms[f.groundPlat].solid))
+                                safe = true;
+                        }
+                        ++tries;
+                        if (safe && f.stocks == 3) ++saved;
+                        Assert.IsTrue(safe && f.stocks == 3,
+                            $"{roster[c].name} failed to recover on {sd.name} from {(inGap ? "the gap" : @from < 0 ? "the left" : "the right")} (pos {f.pos.x:F0},{f.pos.y:F0} state {(int)f.state})");
+                    }
+            }
+            TestContext.WriteLine($"  {saved}/{tries} recoveries");
+        }
+
+        [Test]
+        public void TestBattles()
+        {
+            var roster = Roster.All();
+            int nChars = roster.Count;
+            int finished = 0, total = 0;
+            long frames = 0;
+            var koPct = new List<float>();
+            var wins = new int[nChars];
+            for (int stage = 0; stage < Stage.List().Count; ++stage)
+                for (int k = 0; k < 4; ++k)
+                {
+                    int[] chars = k % 2 == 1 ? new[] { k % nChars, (k + 1) % nChars }
+                                             : new[] { k % nChars, (k + 1) % nChars, (k + 2) % nChars, (k + 3) % nChars };
+                    var r = CpuBattle(stage, chars, (uint)(1000 + stage * 10 + k), 60 * 60 * 8, koPct);
+                    ++total;
+                    if (r.finished) { ++finished; if (r.winner >= 0) wins[chars[r.winner]]++; }
+                    frames += r.frames;
+                    TestContext.WriteLine($"  stage {stage}, {chars.Length} fighters: {(r.finished ? "finished" : "TIMEOUT")} in {r.frames / 60.0f:F1}s");
+                }
+            Assert.IsTrue(finished >= total - 2, $"most CPU battles should end ({finished}/{total})");
+            float avg = 0;
+            foreach (float p in koPct) avg += p;
+            if (koPct.Count > 0) avg /= (float)koPct.Count;
+            TestContext.WriteLine(FormattableString.Invariant($"  KOs: {koPct.Count}, average KO percent: {avg:F0}%, avg match {frames / 60.0f / total:F1}s"));
+            for (int c = 0; c < nChars; ++c) TestContext.WriteLine($"  wins {roster[c].name,-6} {wins[c]}");
+        }
+
+        // 800 CPU duels. Each win rate must stay within 5 points of the C++ one (sim_test balance, run by
+        // scripts/unity_parity.sh). Unity stops a test after 180 s by default: this one may need longer.
+        [Test, Timeout(600000)]
+        public void TestBalance()
+        {
+            var roster = Roster.All();
+            int n = roster.Count;
+            var wins = new int[n]; var games = new int[n];
+            var koAt = new List<float>[n];  // per fighter: the victim's percent at each of its KOs
+            for (int c = 0; c < n; ++c) koAt[c] = new List<float>();
+            int timeouts = 0, earlyUlt = 0;
+            for (int a = 0; a < n; ++a)
+                for (int b = 0; b < n; ++b)
+                {
+                    if (a == b) continue;
+                    for (uint seed = 0; seed < 40; ++seed)  // 3 duels on one stage were noise (a fighter at 33 or 67 %)
+                    {
+                        var cfg = Duel((int)(seed % (uint)Stage.List().Count), a, b, true, true);
+                        cfg.seed = 50 + seed;
+                        var m = new Match(cfg);
+                        var ba = new CpuBrain(9, seed * 3 + 1); var bb = new CpuBrain(9, seed * 3 + 2);
+                        int[] ultUntil = { -1, -1 };  // a KO up to this frame comes from that fighter's ultimate
+                        for (int i = 0; i < 60 * 60 * 6 && !m.finished; ++i)
+                        {
+                            var @in = new InputState[4];
+                            @in[0] = ba.Think(m, 0);
+                            @in[1] = bb.Think(m, 1);
+                            float[] pct = { m.fighters[0].percent, m.fighters[1].percent };
+                            int[] by = { m.fighters[0].lastHitBy, m.fighters[1].lastHitBy };
+                            for (int k = 0; k < 2; ++k)
+                                if (m.fighters[k].state == FState.Attack && m.fighters[k].move == FinalSmash) ultUntil[k] = m.frame + 150;
+                            m.Step(@in);
+                            foreach (var e in m.events)  // a KO by the opponent's blow (not a fall on its own)
+                                if (e.type == EvType.KO && e.a >= 0 && e.a < 2 && by[e.a] == 1 - e.a)
+                                {
+                                    koAt[e.a == 0 ? b : a].Add(pct[e.a]);
+                                    if (pct[e.a] < 70.0f && m.frame <= ultUntil[1 - e.a]) ++earlyUlt;
+                                }
+                        }
+                        games[a]++; games[b]++;
+                        if (!m.finished) ++timeouts;
+                        else if (m.winner == 0) wins[a]++;
+                        else if (m.winner == 1) wins[b]++;
+                    }
+                }
+            var cpp = new Dictionary<string, float>();  // the C++ lines: "  <name> win rate  NN%"
+            foreach (var line in Parity.Expected("balance"))
+            {
+                int at = line.IndexOf(" win rate ", StringComparison.Ordinal);
+                if (at < 0) continue;
+                string rest = line.Substring(at + " win rate ".Length);
+                cpp[line.Substring(0, at).Trim()] = float.Parse(rest.Trim().TrimEnd('%'), CultureInfo.InvariantCulture);
+            }
+            var off = new List<string>();
+            for (int c = 0; c < n; ++c)
+            {
+                float rate = 100.0f * wins[c] / Math.Max(1, games[c]);
+                bool has = cpp.TryGetValue(roster[c].name, out float want);
+                TestContext.WriteLine($"  {roster[c].name,-6} win rate {rate,3:F0}% (C++ {(has ? want.ToString("F0", CultureInfo.InvariantCulture) + "%" : "missing")})");
+                if (!has || MathF.Abs(rate - want) > 5.0f) off.Add(roster[c].name);
+            }
+            int early = 0, all = 0;
+            for (int c = 0; c < n; ++c)
+            {
+                var k = koAt[c];
+                if (k.Count == 0) continue;
+                float sum = 0.0f, low = 1e9f;
+                int under = 0;
+                foreach (float p in k) { sum += p; low = Minf(low, p); if (p < 70.0f) ++under; }
+                early += under; all += k.Count;
+                TestContext.WriteLine($"  {roster[c].name,-6} KOs at {sum / k.Count,3:F0}% on average, the earliest at {low,3:F0}%, {100.0f * under / k.Count,2:F0}% of them under 70%");
+            }
+            TestContext.WriteLine($"  {all} KOs, {100.0f * early / Math.Max(1, all):F0}% of them under 70% ({earlyUlt} of those by an ultimate)");
+            Assert.IsTrue(off.Count == 0, "win rates more than 5 points from C++: " + string.Join(", ", off));
+            Assert.IsTrue(timeouts <= 8, $"{timeouts} duels timed out");
+        }
+
+        [Test]
+        public void TestDeterminism()
+        {
+            var a = CpuBattle(1, new[] { 0, 3, 4 }, 777, 60 * 60 * 3);
+            var b = CpuBattle(1, new[] { 0, 3, 4 }, 777, 60 * 60 * 3);
+            Assert.IsTrue(a.frames == b.frames && a.winner == b.winner,
+                          $"same seed, same result ({a.frames}/{a.winner} vs {b.frames}/{b.winner})");
         }
 
         [Test]

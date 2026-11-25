@@ -125,5 +125,25 @@ namespace ClashHorizon.Tests
             var sc = s.Clone(); var p = sc.platforms[0]; p.period = 5; sc.platforms[0] = p; sc.spawns.Clear();
             Assert.AreEqual(0, s.platforms[0].period); Assert.AreEqual(1, s.spawns.Count);
         }
+
+        // Review Focus 4: no static state between matches. The same CPU battle twice in one process hashes the same.
+        [Test]
+        public void Determinism_SameSeedSameHash() => Assert.AreEqual(BattleHash(), BattleHash(), "same seed, same hash");
+
+        static ulong BattleHash()  // FNV-1a over each frame's fighter state (float bits)
+        {
+            ulong h = 14695981039346656037UL;
+            void Mix(uint v) { h = (h ^ v) * 1099511628211UL; }
+            Sim.CpuBattle(1, new[] { 0, 3, 4 }, 777, 60 * 60, null, m =>
+            {
+                Mix((uint)m.frame);
+                foreach (var f in m.fighters)
+                {
+                    Mix((uint)f.state); Mix((uint)f.move); Mix(Bits(f.pos.x)); Mix(Bits(f.pos.y));
+                    Mix(Bits(f.vel.x)); Mix(Bits(f.vel.y)); Mix(Bits(f.percent)); Mix((uint)f.stocks);
+                }
+            });
+            return h;
+        }
     }
 }

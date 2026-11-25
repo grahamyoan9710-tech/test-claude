@@ -106,15 +106,19 @@ namespace ClashHorizon.Tests
             {
                 @in[0] = s;
                 m.Step(@in);
-                for (int k = 0; k < m.fighters.Count; ++k)
-                {
-                    var f = m.fighters[k];
-                    d.Line(m.frame.ToString(CultureInfo.InvariantCulture), k, f.state, f.move, f.moveFrame, f.pos, f.vel, f.kbVel,
-                        f.percent, f.stocks);
-                }
+                Fighters(m, d);
             }
         }
         public void Idle(int frames) => Run(frames, new InputState());
+        public static void Fighters(Match m, Dump d)
+        {
+            for (int k = 0; k < m.fighters.Count; ++k)
+            {
+                var f = m.fighters[k];
+                d.Line(m.frame.ToString(CultureInfo.InvariantCulture), k, f.state, f.move, f.moveFrame, f.pos, f.vel, f.kbVel,
+                    f.percent, f.stocks);
+            }
+        }
     }
 
     [SetCulture("fr-FR")]
@@ -192,6 +196,28 @@ namespace ClashHorizon.Tests
 
         [TestCaseSource(nameof(Traces))]
         public void Trace_MatchesCpp(string name) => Parity.Compare(name, Trace(name));
+
+        // Review Focus 5: Mono's double intermediates could make long CPU fights drift. Report only: the first differing line.
+        [Test]
+        public void CpuVsCpu600_Report()
+        {
+            var cfg = new MatchConfig { stage = 1, stocks = 3, seed = 777 };
+            int[] chars = { 0, 3, 4 };
+            for (int i = 0; i < 3; ++i) cfg.slots[i] = new MatchConfig.Slot(true, chars[i], true, 9);
+            var m = new Match(cfg);
+            var brains = new List<CpuBrain>();
+            for (int i = 0; i < 3; ++i) brains.Add(new CpuBrain(9 - i, 777u + (uint)i * 77u));
+            var d = new Dump();
+            for (int i = 0; i < 600 && !m.finished; ++i)
+            {
+                var @in = new InputState[4];
+                for (int k = 0; k < m.fighters.Count; ++k) @in[m.fighters[k].port] = brains[k].Think(m, k);
+                m.Step(@in);
+                TracePad.Fighters(m, d);
+            }
+            string diff = Parity.FirstDiff("cpu_vs_cpu_600", d.lines, Parity.Tolerance("cpu_vs_cpu_600"));
+            TestContext.WriteLine("cpu_vs_cpu_600: " + (diff ?? "no difference in " + d.lines.Count + " lines"));
+        }
 
         // Review Focus 2: a match must never change the shared roster. Plays every scenario, then every ultimate,
         // kit and awakening with mashed inputs, and dumps the roster again.
