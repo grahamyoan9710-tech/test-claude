@@ -450,6 +450,7 @@ void Fx::onEvents(const Match& m) {
           c.since = 0;
         }
         if (lethal) {
+          if (e.b >= 0) lethalAt_[e.b & 3] = m.frame;
           flash_ = std::max(flash_, 0.12f);
           flashCol_ = WHITE;
         }
@@ -486,10 +487,11 @@ void Fx::onEvents(const Match& m) {
         if (e.a >= 0 && e.a < nf)  // the screen tears where it left, in the fighter's colour
           kos_.push_back({e.pos, e.dir, mixColor(c, WHITE, 0.35f), 0});
         shake_ = std::max(shake_, 24.0f);
-        flash_ = std::max(flash_, 0.3f);
-        flashCol_ = WHITE;
         au.play(Sfx::KO, 1.0f);
         au.play(Sfx::Crowd, 0.6f, rng_.range(0.95f, 1.05f));
+        if (e.a >= 0 && m.frame - lethalAt_[e.a & 3] < 180) break;  // the killing blow already flashed: one flash per KO
+        flash_ = std::max(flash_, 0.3f);
+        flashCol_ = WHITE;
         const int killer = e.b >= 0 && e.b < nf && e.b != e.a && m.fighters[e.b].active() ? e.b : -1;
         startImpact(m, e.pos, e.dir, killer, -1, HitFx::Normal, 5, true);
         if (killer >= 0) punchPos_ = m.fighters[killer].center();

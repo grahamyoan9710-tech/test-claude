@@ -55,6 +55,12 @@ Un verrou de plus de 2 h sans commit de son détenteur peut être repris, en le 
 | Version et paquets (README, numéros de version, `dist/`) | libre | |
 
 ### Journal (le plus récent en haut)
+- 25/11 12 h 30 UTC, session claude/project-thread-s2ccep (fil « chasse aux bugs + Hakuen ») : version 16.3 = un seul
+  flash par K.O. (d237a4e) + Rengaine de Hakuen sans rangement (`h01_w<0|1>_extra1` faits main : f0 lame sortie, puis
+  la pose de dégainage, lame disparue ; 47029f7). Cape rouge de Hakuen (yoyo, 24/11 : il ne doit avoir qu'un pli rouge) :
+  elle est peinte dans ses images de base PixelLab (`pxa/base_src/h01_w0`, `h01_w1`), donc dans presque tous ses
+  clips ; un masque de couleur ne la sépare pas du fourreau, des rubans et des bottes. Correctif : nettoyer la base
+  puis régénérer les clips (choix de yoyo attendu). Verrou « Version et paquets » pris et libéré dans ce commit.
 - 18/11 11 h 50 UTC, session claude/project-thread-x1gfn9 : version 16.2 = version de test de Hakuen (exception à la
   règle « 2 persos finis », demandée par yoyo), sur la pointe de 3uctyp (e4f7c00). Verrou « Version et paquets » pris et
   libéré dans ce commit.

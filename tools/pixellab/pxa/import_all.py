@@ -33,6 +33,8 @@ HELPERS = {"runstart", "ledgegrab", "holdstart", "drawsword", "airsword", "w0gua
 HELPERS |= {f"w{s}_{h}" for s in (0, 1) for h in ("runstart", "ledgegrab", "holdstart")}  # ... of a weapon's look
 # Clips the game plays under the sheet names of a fighter's extra moves (w0_rengaine -> w0_extra1 too).
 SHEET_AS = {"rengaine": ["extra1"], "coupeeclair": ["extra2", "extra3"]}  # Hakuen's draw; the plain cut reuses it
+# Hand-made since 25 Nov: h01 w0/w1_extra1 = rengaine frame 0 (blade out), then the draw's sheathed stance (the blade vanishes).
+# Re-importing rengaine overwrites them with the old sheathing; rebuild them that way after.
 
 
 QA_FIXES = json.load(open(os.path.join(S, "qa_fixes.json"))) if os.path.exists(os.path.join(S, "qa_fixes.json")) else {}
