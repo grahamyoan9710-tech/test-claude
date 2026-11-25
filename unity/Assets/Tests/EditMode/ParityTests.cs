@@ -93,6 +93,30 @@ namespace ClashHorizon.Tests
         }
     }
 
+    // Pad, writing the fighters after every step: frame fighter state move moveFrame pos vel kbVel percent stocks.
+    sealed class TracePad
+    {
+        readonly Match m;
+        readonly Dump d;
+        readonly InputState[] @in = new InputState[4];
+        public TracePad(Match m, Dump d) { this.m = m; this.d = d; }
+        public void Run(int frames, InputState s)
+        {
+            for (int i = 0; i < frames; ++i)
+            {
+                @in[0] = s;
+                m.Step(@in);
+                for (int k = 0; k < m.fighters.Count; ++k)
+                {
+                    var f = m.fighters[k];
+                    d.Line(m.frame.ToString(CultureInfo.InvariantCulture), k, f.state, f.move, f.moveFrame, f.pos, f.vel, f.kbVel,
+                        f.percent, f.stocks);
+                }
+            }
+        }
+        public void Idle(int frames) => Run(frames, new InputState());
+    }
+
     [SetCulture("fr-FR")]
     public class ParityTests
     {
@@ -123,7 +147,9 @@ namespace ClashHorizon.Tests
         }
 
         [Test]
-        public void Roster_MatchesCpp()
+        public void Roster_MatchesCpp() => Parity.Compare("roster", RosterDump().lines);
+
+        static Dump RosterDump()
         {
             var d = new Dump();
             var all = Roster.All();
@@ -158,7 +184,159 @@ namespace ClashHorizon.Tests
                     foreach (var (id, md) in fd.moves) DumpMove(d, q + "/m(" + id + ")", md);
                 }
             }
-            Parity.Compare("roster", d.lines);
+            return d;
+        }
+
+        static readonly string[] Traces =
+            { "jab_hit", "smash_ko", "projectile", "weapon_pickup_switch", "ult_capture", "hakuen_rift", "moving_platform" };
+
+        [TestCaseSource(nameof(Traces))]
+        public void Trace_MatchesCpp(string name) => Parity.Compare(name, Trace(name));
+
+        // Review Focus 2: a match must never change the shared roster. Plays every scenario, then every ultimate,
+        // kit and awakening with mashed inputs, and dumps the roster again.
+        [Test]
+        public void Roster_UnchangedAfterMatch()
+        {
+            foreach (var name in Traces) Trace(name);
+            var all = Roster.All();
+            for (int c = 0; c < all.Count; ++c)
+                for (int slot = -1; slot <= 1; ++slot)
+                {
+                    var cfg = Sim.Duel(0, c, c == 0 ? 1 : 0, false, false);
+                    cfg.items = false;
+                    var m = new Match(cfg);
+                    Sim.SkipCountdown(m);
+                    var f = m.fighters[0];
+                    f.pos = new Vec2(-120, 0); f.facing = 1;
+                    m.fighters[1].pos = new Vec2(40, 0);
+                    if (slot >= 0) m.EquipWeapon(f, slot);
+                    f.ult = Fighter.kUltMax; f.finalSmash = true;
+                    var @in = new InputState[4];
+                    for (int i = 0; i < 400; ++i)
+                    {
+                        if (i == 200) f.will = Fighter.kWillMax;
+                        var s = Sim.Key(i / 60 % 2 == 0 ? 1 : 0, i / 30 % 3 - 1, i % 8 < 2, i % 50 == 25, false, i % 24 == 12);
+                        s.ultimate = i == 0;
+                        @in[0] = s;
+                        m.Step(@in);
+                    }
+                }
+            Parity.Compare("roster", RosterDump().lines);
+        }
+
+        // The C++ `sim_test trace NAME` scenarios (sim_test.cpp, namespace parity), one fighter line per step.
+        static List<string> Trace(string name)
+        {
+            int stage = 0, c0 = 0, c1 = 0;
+            bool weapons = true;
+            switch (name)
+            {
+                case "jab_hit": break;
+                case "smash_ko": c0 = 2; break;
+                case "projectile": c0 = 1; break;
+                case "weapon_pickup_switch": c0 = 1; c1 = 3; weapons = false; break;
+                case "ult_capture": c0 = 3; break;
+                case "hakuen_rift": c0 = Sim.CharIndex("Hakuen"); c1 = Sim.CharIndex("N° 07"); weapons = false; break;
+                case "moving_platform": stage = 4; c1 = 1; break;
+                default: throw new ArgumentException("unknown trace " + name);
+            }
+            var cfg = Sim.Duel(stage, c0, c1, false, false);
+            cfg.items = false;
+            cfg.weapons = weapons;
+            var m = new Match(cfg);
+            Sim.SkipCountdown(m);
+            var f = m.fighters[0];
+            var v = m.fighters[1];
+            var d = new Dump();
+            var p = new TracePad(m, d);
+            switch (name)
+            {
+                case "jab_hit":  // testJabHits
+                    f.pos = new Vec2(0, 0); f.facing = 1;
+                    v.pos = new Vec2(45, 0);
+                    p.Idle(20);
+                    p.Run(1, new InputState { attack = true });
+                    p.Idle(20);
+                    break;
+                case "smash_ko":  // testSmashKills
+                    f.pos = new Vec2(200, 0); f.facing = 1;
+                    v.pos = new Vec2(270, 0);
+                    v.percent = 150.0f;
+                    p.Idle(10);
+                    p.Run(1, new InputState { cstick = new Vec2(1, 0) });
+                    p.Idle(300);
+                    break;
+                case "projectile":
+                    f.pos = new Vec2(0, 0); f.facing = 1;
+                    v.pos = new Vec2(300, 0);
+                    p.Idle(10);
+                    p.Run(1, new InputState { special = true });
+                    p.Idle(90);
+                    break;
+                case "weapon_pickup_switch":  // testWeapons, short: take A, take B, switch back to A
+                {
+                    f.pos = new Vec2(-200, 0); f.facing = 1;
+                    v.pos = new Vec2(250, 0);
+                    var press = new InputState { weapon = true };
+                    void Landed()
+                    {
+                        for (int i = 0; i < 120 && m.items.Count > 0 && !m.items[m.items.Count - 1].grounded; ++i) p.Idle(1);
+                    }
+                    p.Idle(20);
+                    m.DropWeaponFor(0, 0);
+                    m.items[m.items.Count - 1].pos = new Vec2(f.pos.x + 60, -300);
+                    Landed();
+                    if (m.items.Count > 0) { f.pos.x = m.items[m.items.Count - 1].pos.x; f.vel.x = 0.0f; }
+                    p.Idle(3);
+                    for (int i = 0; i < Match.kPickupFrames + 5 && f.weapon != 0; ++i) p.Run(1, press);
+                    p.Idle(1);
+                    m.DropWeaponFor(0, 1);
+                    Landed();
+                    if (m.items.Count > 0) f.pos.x = m.items[m.items.Count - 1].pos.x;
+                    p.Idle(3);
+                    for (int i = 0; i < Match.kPickupFrames + 5 && f.weapon != 1; ++i) p.Run(1, press);
+                    p.Idle(1);
+                    p.Run(1, press);
+                    p.Idle(30);
+                    break;
+                }
+                case "ult_capture":  // testAllUltimates, c = 3, slot 0, first pass
+                    f.pos = new Vec2(-120, 0); f.facing = 1;
+                    v.pos = new Vec2(40, 0);
+                    v.percent = 30.0f;
+                    m.EquipWeapon(f, 0);
+                    p.Idle(10);
+                    f.ult = Fighter.kUltMax;
+                    f.finalSmash = true;
+                    p.Run(1, new InputState { ultimate = true });
+                    p.Idle(360);
+                    break;
+                case "hakuen_rift":  // testHakuen's nodachi neutral block: fresh(200), spam(240), spam(60)
+                {
+                    f.pos = new Vec2(0, 0); f.facing = 1;
+                    v.pos = new Vec2(200, 0); v.facing = -1;
+                    f.weapon = 0;
+                    f.weapons = 1;
+                    void Spam(int frames)
+                    {
+                        for (int i = 0; i < frames; ++i) p.Run(1, Sim.Key(0, 0, false, false, false, f.state != FState.Attack && i % 2 == 0));
+                    }
+                    Spam(240);
+                    Spam(60);
+                    break;
+                }
+                case "moving_platform":  // f0 dropped 40 px above the moving plank
+                {
+                    Assert.IsTrue(m.platforms.Count >= 4 && m.platforms[3].period > 0, "stage 4 has a moving plank at platforms[3]");
+                    var r = m.platforms[3].rect;
+                    f.pos = new Vec2(r.x + r.w / 2, r.y - 40);
+                    f.vel = new Vec2(0, 0);
+                    p.Idle(300);
+                    break;
+                }
+            }
+            return d.lines;
         }
 
         static void DumpHit(Dump d, string p, in HitboxDef h) =>
