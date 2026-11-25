@@ -133,6 +133,7 @@ class Fx {
   };
   std::array<Combo, 4> combos_{};
   std::array<int, 4> stunnedAt_{-10, -10, -10, -10};  // last frame each fighter was seen stunned
+  std::array<int, 4> lethalAt_{-1000, -1000, -1000, -1000};  // last killing-blow flash on each fighter
   std::array<float, 4> calmPercent_{};                // its percent the last time it was not
   std::array<int, 4> fsWave_{-1, -1, -1, -1};  // last final smash shock wave burst, per fighter
   std::array<int, 4> beamMark_{-1, -1, -1, -1};  // beam whose start was already heard, per fighter
