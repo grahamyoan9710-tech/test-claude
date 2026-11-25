@@ -1,0 +1,5 @@
+{
+    "name": "ClashHorizon.Game",
+    "rootNamespace": "ClashHorizon.Game",
+    "references": ["ClashHorizon.Core"]
+}

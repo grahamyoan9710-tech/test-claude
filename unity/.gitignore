@@ -1,0 +1,16 @@
+/Library/
+/Temp/
+/Logs/
+/Builds/
+/UserSettings/
+/obj/
+*.csproj
+*.sln
+# Copied from ../assets by scripts/unity_sync_assets.sh: never edit or commit them here
+/Assets/Resources.meta
+/Assets/Resources/Sprites/
+/Assets/Resources/Sprites.meta
+/Assets/Resources/Audio/
+/Assets/Resources/Audio.meta
+/Assets/Fonts/
+/Assets/Fonts.meta

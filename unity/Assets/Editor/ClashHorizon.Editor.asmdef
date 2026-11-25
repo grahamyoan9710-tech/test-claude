@@ -1,0 +1,6 @@
+{
+    "name": "ClashHorizon.Editor",
+    "rootNamespace": "ClashHorizon.Editor",
+    "references": ["ClashHorizon.Game", "Unity.RenderPipelines.Universal.Runtime"],
+    "includePlatforms": ["Editor"]
+}
