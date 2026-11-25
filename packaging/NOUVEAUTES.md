@@ -8,6 +8,13 @@
 
 ## Nouveautés
 
+Version 16.3 : **corrections**.
+
+- Hakuen : la Rengaine ne rejoue plus le rangement du sabre. La lame disparaît d'un coup et Hakuen garde sa pose de
+  dégainage pendant la charge, jusqu'au relâchement (armes A et B).
+- Un seul flash par K.O. : quand le coup fatal envoie un perso hors de l'écran, la sortie ne refait plus un second
+  flash.
+
 Version 16.2 : **version de test de Hakuen**.
 
 - Hakuen prend la place de l'ancien 01 (choix des persos, titre, galerie, liste des coups en pause).
