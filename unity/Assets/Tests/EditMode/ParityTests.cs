@@ -20,7 +20,8 @@ namespace ClashHorizon.Tests
             return File.ReadAllLines(path, Encoding.UTF8);
         }
 
-        public static double Tolerance(string name) => name == "stages" || name == "roster" ? 0.0002 : 0.01;
+        // Mono's F4 rounds 2.00005 up where C prints 2.0000: the values match, the last digit may not.
+        public const double Tol = 0.0002;
 
         // First differing line as a readable message, or null when every line matches.
         public static string FirstDiff(string name, List<string> actual, double tol)
@@ -55,7 +56,7 @@ namespace ClashHorizon.Tests
 
         public static void Compare(string name, List<string> actual)
         {
-            var diff = FirstDiff(name, actual, Tolerance(name));
+            var diff = FirstDiff(name, actual, Tol);
             if (diff != null) Assert.Fail(diff);
         }
     }
@@ -197,9 +198,10 @@ namespace ClashHorizon.Tests
         [TestCaseSource(nameof(Traces))]
         public void Trace_MatchesCpp(string name) => Parity.Compare(name, Trace(name));
 
-        // Review Focus 5: Mono's double intermediates could make long CPU fights drift. Report only: the first differing line.
+        // Review Focus 5: Mono's double intermediates could make long CPU fights drift. Logs the first line that differs
+        // at all, then fails past the print rounding.
         [Test]
-        public void CpuVsCpu600_Report()
+        public void CpuVsCpu600_MatchesCpp()
         {
             var cfg = new MatchConfig { stage = 1, stocks = 3, seed = 777 };
             int[] chars = { 0, 3, 4 };
@@ -215,8 +217,8 @@ namespace ClashHorizon.Tests
                 m.Step(@in);
                 TracePad.Fighters(m, d);
             }
-            string diff = Parity.FirstDiff("cpu_vs_cpu_600", d.lines, Parity.Tolerance("cpu_vs_cpu_600"));
-            TestContext.WriteLine("cpu_vs_cpu_600: " + (diff ?? "no difference in " + d.lines.Count + " lines"));
+            TestContext.WriteLine("cpu_vs_cpu_600: " + (Parity.FirstDiff("cpu_vs_cpu_600", d.lines, 0.0) ?? "no difference in " + d.lines.Count + " lines"));
+            Parity.Compare("cpu_vs_cpu_600", d.lines);
         }
 
         // Review Focus 2: a match must never change the shared roster. Plays every scenario, then every ultimate,

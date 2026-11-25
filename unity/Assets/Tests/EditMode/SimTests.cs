@@ -1025,8 +1025,8 @@ namespace ClashHorizon.Tests
             for (int c = 0; c < nChars; ++c) TestContext.WriteLine($"  wins {roster[c].name,-6} {wins[c]}");
         }
 
-        // 800 CPU duels. Each win rate must stay within 5 points of the C++ one (sim_test balance, run by
-        // scripts/unity_parity.sh). Unity stops a test after 180 s by default: this one may need longer.
+        // 800 CPU duels. Every line must match the C++ one exactly (sim_test balance, run by scripts/unity_parity.sh):
+        // one flipped duel moves a rate. Unity stops a test after 180 s by default: this one may need longer.
         [Test, Timeout(600000)]
         public void TestBalance()
         {
@@ -1070,22 +1070,9 @@ namespace ClashHorizon.Tests
                         else if (m.winner == 1) wins[b]++;
                     }
                 }
-            var cpp = new Dictionary<string, float>();  // the C++ lines: "  <name> win rate  NN%"
-            foreach (var line in Parity.Expected("balance"))
-            {
-                int at = line.IndexOf(" win rate ", StringComparison.Ordinal);
-                if (at < 0) continue;
-                string rest = line.Substring(at + " win rate ".Length);
-                cpp[line.Substring(0, at).Trim()] = float.Parse(rest.Trim().TrimEnd('%'), CultureInfo.InvariantCulture);
-            }
-            var off = new List<string>();
+            var lines = new List<string>();  // sim_test's lines, as its printf writes them; (float) as Mono keeps doubles
             for (int c = 0; c < n; ++c)
-            {
-                float rate = 100.0f * wins[c] / Math.Max(1, games[c]);
-                bool has = cpp.TryGetValue(roster[c].name, out float want);
-                TestContext.WriteLine($"  {roster[c].name,-6} win rate {rate,3:F0}% (C++ {(has ? want.ToString("F0", CultureInfo.InvariantCulture) + "%" : "missing")})");
-                if (!has || MathF.Abs(rate - want) > 5.0f) off.Add(roster[c].name);
-            }
+                lines.Add($"  {Name6(roster[c].name)} win rate {Pct((float)(100.0f * wins[c] / Math.Max(1, games[c])), 3)}%");
             int early = 0, all = 0;
             for (int c = 0; c < n; ++c)
             {
@@ -1093,14 +1080,23 @@ namespace ClashHorizon.Tests
                 if (k.Count == 0) continue;
                 float sum = 0.0f, low = 1e9f;
                 int under = 0;
-                foreach (float p in k) { sum += p; low = Minf(low, p); if (p < 70.0f) ++under; }
+                foreach (float p in k) { sum = (float)(sum + p); low = Minf(low, p); if (p < 70.0f) ++under; }
                 early += under; all += k.Count;
-                TestContext.WriteLine($"  {roster[c].name,-6} KOs at {sum / k.Count,3:F0}% on average, the earliest at {low,3:F0}%, {100.0f * under / k.Count,2:F0}% of them under 70%");
+                lines.Add($"  {Name6(roster[c].name)} KOs at {Pct((float)(sum / k.Count), 3)}% on average, the earliest at {Pct(low, 3)}%, " +
+                          $"{Pct((float)(100.0f * under / k.Count), 2)}% of them under 70%");
             }
-            TestContext.WriteLine($"  {all} KOs, {100.0f * early / Math.Max(1, all):F0}% of them under 70% ({earlyUlt} of those by an ultimate)");
-            Assert.IsTrue(off.Count == 0, "win rates more than 5 points from C++: " + string.Join(", ", off));
+            lines.Add($"  {all} KOs, {Pct((float)(100.0f * early / Math.Max(1, all)), 0)}% of them under 70% ({earlyUlt} of those by an ultimate)");
+            foreach (var l in lines) TestContext.WriteLine(l);
+            CollectionAssert.AreEqual(Array.FindAll(Parity.Expected("balance"), l => l.StartsWith("  ", StringComparison.Ordinal)), lines,
+                                      "balance differs from C++ (sim_test balance)");
             Assert.IsTrue(timeouts <= 8, $"{timeouts} duels timed out");
         }
+
+        // printf's %*.0f: glibc rounds the exact value, ties to even (Mono's F0 rounds 52.5 up).
+        static string Pct(float v, int width) =>
+            Math.Round((double)v, MidpointRounding.ToEven).ToString("F0", CultureInfo.InvariantCulture).PadLeft(width);
+        // printf's %-6s pads by bytes: "N° 02" is 6 bytes in UTF-8.
+        static string Name6(string s) => s + new string(' ', Math.Max(0, 6 - System.Text.Encoding.UTF8.GetByteCount(s)));
 
         [Test]
         public void TestDeterminism()

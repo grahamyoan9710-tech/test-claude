@@ -159,9 +159,9 @@ namespace ClashHorizon.Core
                     plats[i] = p;
                     continue;
                 }
-                float s = MathF.Sin(2.0f * kPi * (float)frame / (float)p.period);
-                float nx = p.@base.x + p.amplitude.x * s;
-                float ny = p.@base.y + p.amplitude.y * s;
+                float s = MathF.Sin((float)((float)(2.0f * kPi * (float)frame) / (float)p.period));  // (float): see MathUtil
+                float nx = (float)(p.@base.x + (float)(p.amplitude.x * s));
+                float ny = (float)(p.@base.y + (float)(p.amplitude.y * s));
                 p.delta = new Vec2(nx - p.rect.x, ny - p.rect.y);
                 p.rect.x = nx;
                 p.rect.y = ny;

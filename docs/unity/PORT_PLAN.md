@@ -98,7 +98,8 @@ What the phase tests could miss, most likely first. The owning phase adds a test
 - **`Match`** methods spread over several C++ files become one `partial class Match` over the same files.
 - **`Rng`** is a class (never copied by accident), same xorshift32 on `uint`.
 - **Floats:** `float` and `MathF` only (no `double`), same constants, same order of operations. `const char*` effect
-  names become `string`, compared with `==` (ordinal).
+  names become `string`, compared with `==` (ordinal). Mono keeps float intermediates in double where C++ rounds each
+  step, so the shared maths (`MathUtil`, moving platforms) casts each step to `(float)` (free under IL2CPP).
 - **Numbers in text:** every parse and print uses `CultureInfo.InvariantCulture`. yoyo's PC is in French, where
   `1.5` reads as `1,5`: without this, `sheets.txt` and the settings file break.
 - **Order:** `List<T>` keeps the `std::vector` order; the only sort in core is a `std::stable_sort` (ranking), so use

@@ -12,8 +12,9 @@ namespace ClashHorizon.Core
         public static Vec2 operator *(Vec2 a, float s) => new Vec2(a.x * s, a.y * s);
         public static Vec2 operator /(Vec2 a, float s) => new Vec2(a.x / s, a.y / s);
         public static Vec2 operator -(Vec2 a) => new Vec2(-a.x, -a.y);
-        public float Len() => MathF.Sqrt(x * x + y * y);
-        public float Len2() => x * x + y * y;
+        // (float) after each step: Mono keeps float intermediates in double, C++ rounds every step (free under IL2CPP).
+        public float Len() => MathF.Sqrt((float)((float)(x * x) + (float)(y * y)));
+        public float Len2() => (float)((float)(x * x) + (float)(y * y));
         public Vec2 Norm()
         {
             float l = Len();
@@ -30,8 +31,8 @@ namespace ClashHorizon.Core
         public float Top() => y;
         public float Bottom() => y + h;
         public Vec2 Center() => new Vec2(x + w * 0.5f, y + h * 0.5f);
-        public bool Overlaps(Rect o) => x < o.x + o.w && o.x < x + w && y < o.y + o.h && o.y < y + h;
-        public bool Contains(Vec2 p) => p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h;
+        public bool Overlaps(Rect o) => x < (float)(o.x + o.w) && o.x < (float)(x + w) && y < (float)(o.y + o.h) && o.y < (float)(y + h);
+        public bool Contains(Vec2 p) => p.x >= x && p.x <= (float)(x + w) && p.y >= y && p.y <= (float)(y + h);
     }
 
     public struct Color3
@@ -55,7 +56,7 @@ namespace ClashHorizon.Core
             return s;
         }
         public float Uniform() => (Next() >> 8) * (1.0f / 16777216.0f);
-        public float Range(float a, float b) => a + (b - a) * Uniform();
+        public float Range(float a, float b) => (float)(a + (float)((float)(b - a) * Uniform()));
         public int Irange(int a, int b) => a + (int)(Next() % (uint)(b - a + 1));
         public bool Chance(float p) => Uniform() < p;
     }
@@ -68,10 +69,10 @@ namespace ClashHorizon.Core
         public static float Minf(float a, float b) => b < a ? b : a;
         public static float Maxf(float a, float b) => a < b ? b : a;
 
-        public static float Deg2rad(float d) => d * kPi / 180.0f;
-        public static float Rad2deg(float r) => r * 180.0f / kPi;
+        public static float Deg2rad(float d) => (float)((float)(d * kPi) / 180.0f);
+        public static float Rad2deg(float r) => (float)((float)(r * 180.0f) / kPi);
         public static float Clampf(float v, float lo, float hi) => Maxf(lo, Minf(hi, v));
-        public static float Lerpf(float a, float b, float t) => a + (b - a) * t;
+        public static float Lerpf(float a, float b, float t) => (float)(a + (float)((float)(b - a) * t));
         public static float Signf(float v) => v > 0.0f ? 1.0f : (v < 0.0f ? -1.0f : 0.0f);
         public static float Approach(float v, float target, float step)
         {
@@ -81,15 +82,15 @@ namespace ClashHorizon.Core
         public static float Smoothstep(float t)
         {
             t = Clampf(t, 0.0f, 1.0f);
-            return t * t * (3.0f - 2.0f * t);
+            return (float)((float)(t * t) * (float)(3.0f - (float)(2.0f * t)));
         }
 
-        public static float Dot(Vec2 a, Vec2 b) => a.x * b.x + a.y * b.y;
+        public static float Dot(Vec2 a, Vec2 b) => (float)((float)(a.x * b.x) + (float)(a.y * b.y));
         public static Vec2 Lerpv(Vec2 a, Vec2 b, float t) => a + (b - a) * t;
         public static Vec2 Rotate(Vec2 v, float rad)
         {
             float c = MathF.Cos(rad), s = MathF.Sin(rad);
-            return new Vec2(v.x * c - v.y * s, v.x * s + v.y * c);
+            return new Vec2((float)((float)(v.x * c) - (float)(v.y * s)), (float)((float)(v.x * s) + (float)(v.y * c)));
         }
 
         public static bool CircleRect(Vec2 c, float r, Rect rc)
@@ -97,7 +98,7 @@ namespace ClashHorizon.Core
             float nx = Clampf(c.x, rc.Left(), rc.Right());
             float ny = Clampf(c.y, rc.Top(), rc.Bottom());
             float dx = c.x - nx, dy = c.y - ny;
-            return dx * dx + dy * dy <= r * r;
+            return (float)((float)(dx * dx) + (float)(dy * dy)) <= (float)(r * r);
         }
     }
 }
